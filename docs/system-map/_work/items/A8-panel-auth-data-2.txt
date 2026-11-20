@@ -1,0 +1,977 @@
+# A8-panel-auth-data-2: coverage of 108 Tier 1 journeys (9 features, from A5-panel-auth-data-2). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-1012 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 10 journey phrase(s)
+F-panel-1012 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 3 journey phrase(s)
+F-panel-1012 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | asserts 3 journey phrase(s)
+F-panel-1012 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-1012 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-panel-1012 | supabase/tests/0043_member_photos.sql | db | 135 lines | asserts 3 journey phrase(s)
+F-panel-1012 | supabase/tests/0098_alerts_done_and_read.sql | db | 375 lines | asserts 3 journey phrase(s)
+F-panel-1012 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-panel-1012 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 2 journey phrase(s)
+F-panel-1012 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-panel-1012 | apps/mobile/qa/uat-r.yaml | maestro | 368 lines | asserts 2 journey phrase(s)
+F-panel-1012 | apps/mobile/qa/uat-rel-r344-c-states.yaml | maestro | 160 lines | asserts 2 journey phrase(s)
+F-panel-1005 | apps/dashboard/test/crm/pin.test.ts | unit | 159 lines | imports the code, asserts 5 journey phrase(s)
+F-panel-1005 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 6 journey phrase(s)
+F-panel-1005 | apps/dashboard/test/crm/signin.test.ts | unit | 146 lines | imports the code, file name
+F-panel-1005 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 3 journey phrase(s)
+F-panel-1005 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-1005 | apps/dashboard/test/crm/gymState.test.ts | unit | 78 lines | imports the code
+F-panel-1005 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | imports the code
+F-panel-1005 | apps/dashboard/test/crm/hqAccess.test.ts | unit | 81 lines | imports the code
+F-panel-1005 | apps/dashboard/test/crm/mobileNumber.test.ts | unit | 201 lines | imports the code
+F-panel-1005 | apps/dashboard/test/crm/permissions.test.ts | unit | 157 lines | imports the code
+F-panel-1005 | apps/dashboard/test/crm/staffJobs.test.ts | unit | 115 lines | imports the code
+F-panel-1005 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 2 journey phrase(s)
+F-panel-1000 | apps/dashboard/e2e/signin.spec.mjs | e2e | 82 lines | file name, asserts 5 journey phrase(s)
+F-panel-1000 | apps/dashboard/test/crm/signin.test.ts | unit | 146 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-panel-1000 | apps/dashboard/test/crm/pin.test.ts | unit | 159 lines | imports the code, asserts 3 journey phrase(s)
+F-panel-1000 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 4 journey phrase(s)
+F-panel-1000 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 4 journey phrase(s)
+F-panel-1000 | apps/dashboard/e2e/whatsapp-verify-uat.spec.mjs | e2e | 324 lines | asserts 4 journey phrase(s)
+F-panel-1000 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 3 journey phrase(s)
+F-panel-1000 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 3 journey phrase(s)
+F-panel-1000 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 3 journey phrase(s)
+F-panel-1000 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-1000 | apps/dashboard/test/crm/gymState.test.ts | unit | 78 lines | imports the code
+F-panel-1000 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | imports the code
+F-panel-1001 | apps/dashboard/test/crm/pin.test.ts | unit | 159 lines | imports the code, asserts 5 journey phrase(s)
+F-panel-1001 | apps/dashboard/test/crm/signin.test.ts | unit | 146 lines | imports the code, file name, asserts 3 journey phrase(s)
+F-panel-1001 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 6 journey phrase(s)
+F-panel-1001 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 6 journey phrase(s)
+F-panel-1001 | apps/dashboard/e2e/terms.spec.mjs | e2e | 149 lines | asserts 5 journey phrase(s)
+F-panel-1001 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | file name, asserts 3 journey phrase(s)
+F-panel-1001 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-panel-1001 | apps/dashboard/e2e/signin.spec.mjs | e2e | 82 lines | file name, asserts 2 journey phrase(s)
+F-panel-1001 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 4 journey phrase(s)
+F-panel-1001 | apps/dashboard/e2e/whatsapp-verify-uat.spec.mjs | e2e | 324 lines | asserts 4 journey phrase(s)
+F-panel-1001 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-1001 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 3 journey phrase(s)
+F-panel-1016 | apps/dashboard/e2e/terms.spec.mjs | e2e | 149 lines | file name, asserts 5 journey phrase(s)
+F-panel-1016 | apps/dashboard/test/crm/terms.test.ts | unit | 75 lines | imports the code, file name
+F-panel-1016 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-1016 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 3 journey phrase(s)
+F-panel-1016 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 3 journey phrase(s)
+F-panel-1016 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 3 journey phrase(s)
+F-panel-1016 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 3 journey phrase(s)
+F-panel-1016 | apps/dashboard/e2e/whatsapp-verify-uat.spec.mjs | e2e | 324 lines | asserts 3 journey phrase(s)
+F-panel-1016 | apps/dashboard/test/crm/legalPages.test.ts | unit | 135 lines | imports the code
+F-panel-1016 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-panel-1016 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 2 journey phrase(s)
+F-panel-1016 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 2 journey phrase(s)
+F-panel-1002 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 4 journey phrase(s)
+F-panel-1002 | apps/dashboard/test/crm/r448.test.ts | unit | 76 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-1002 | apps/dashboard/e2e/whatsapp-verify-uat.spec.mjs | e2e | 324 lines | asserts 3 journey phrase(s)
+F-panel-1002 | apps/dashboard/test/crm/phoneInbound.test.ts | unit | 96 lines | imports the code
+F-panel-1002 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 2 journey phrase(s)
+F-panel-1002 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 2 journey phrase(s)
+F-panel-1002 | apps/dashboard/e2e/terms.spec.mjs | e2e | 149 lines | asserts 2 journey phrase(s)
+F-panel-1002 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-1002 | deploy/panel/assistCatalogue.test.mjs | unit | 184 lines | asserts 2 journey phrase(s)
+F-panel-1002 | deploy/panel/phoneCode.test.mjs | unit | 313 lines | file name
+F-panel-1002 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-panel-1002 | apps/dashboard/e2e/feedback.spec.mjs | e2e | 34 lines | asserts 1 journey phrase(s)
+F-panel-1014 | apps/dashboard/test/crm/signin.test.ts | unit | 146 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-panel-1014 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-1014 | apps/dashboard/test/crm/gymState.test.ts | unit | 78 lines | imports the code
+F-panel-1014 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | imports the code
+F-panel-1014 | apps/dashboard/test/crm/hqAccess.test.ts | unit | 81 lines | imports the code
+F-panel-1014 | apps/dashboard/test/crm/mobileNumber.test.ts | unit | 201 lines | imports the code
+F-panel-1014 | apps/dashboard/test/crm/permissions.test.ts | unit | 157 lines | imports the code
+F-panel-1014 | apps/dashboard/test/crm/pin.test.ts | unit | 159 lines | imports the code
+F-panel-1014 | apps/dashboard/test/crm/staffJobs.test.ts | unit | 115 lines | imports the code
+F-panel-1014 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 2 journey phrase(s)
+F-panel-1014 | apps/dashboard/e2e/signin.spec.mjs | e2e | 82 lines | file name
+F-panel-1014 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | file name
+F-panel-1009 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 4 journey phrase(s)
+F-panel-1009 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-1009 | apps/dashboard/test/crm/staffJobs.test.ts | unit | 115 lines | asserts 3 journey phrase(s)
+F-panel-1009 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 1 journey phrase(s)
+F-panel-1009 | apps/dashboard/test/crm/mobileNumber.test.ts | unit | 201 lines | asserts 1 journey phrase(s)
+F-panel-1017 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 11 journey phrase(s)
+F-panel-1017 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 6 journey phrase(s)
+F-panel-1017 | apps/dashboard/test/crm/hqAccess.test.ts | unit | 81 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-panel-1017 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 5 journey phrase(s)
+F-panel-1017 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 3 journey phrase(s)
+F-panel-1017 | apps/dashboard/test/crm/trial.test.ts | unit | 140 lines | imports the code
+F-panel-1017 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-panel-1017 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-1017 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 2 journey phrase(s)
+F-panel-1017 | apps/mobile/qa/xj-2-order-cancel.yaml | maestro | 34 lines | asserts 2 journey phrase(s)
+F-panel-1017 | apps/mobile/test/shop/gym.test.ts | unit | 480 lines | asserts 2 journey phrase(s)
+F-panel-1017 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-1012-01 | type 1 | owner | Staff & sign-in, signed in as an owner, list "People who can sign in" with one front desk person
+  s1 see: Sheet titled "Remove <name>?"
+  s1 see: "<name> is signed out of every phone and computer. They can’t sign in again. Your members and payments stay as they are."
+  s1 see: Buttons "Cancel" and "Remove"
+  s1 not: The person is removed before the owner confirms
+  s1 not: A Remove button on the owner's own row
+  s2 see: Button reads "Working…" and cannot be tapped again
+  s2 see: Sheet closes; toast "<name> removed."
+  s2 see: The person is gone from the list
+  s2 not: The person still in the list after the toast
+  s2 not: Any member, payment or receipt the person saved is changed or deleted
+  s2 not: Two remove calls from a double tap
+  s3 see: Sign-in page with "You no longer have access to this gym. Talk to the gym owner."
+  s3 not: The removed person can still open or save anything
+  s3 not: The removed person can sign in again with the old PIN or an old code
+J-F-panel-1012-02 | type 3 | owner | Staff & sign-in as an owner; the same person was already removed from another device a moment ago
+  s1 see: Red line in the sheet: "That person was already removed. We updated the list."
+  s1 see: The button is live again
+  s1 not: A success toast for a removal that did nothing
+  s1 not: The sheet stuck on "Working…"
+  s2 see: The sheet closes
+  s2 not: The gone person still shown after the list is loaded again
+J-F-panel-1012-03 | type 3 | owner | Staff & sign-in, signed in as front desk staff (not an owner)
+  s1 see: Only the "You" card and "Only an owner can add people or make sign-in codes. Ask your gym owner."
+  s1 see: No list of people, no Remove button
+  s1 not: A staff person sees other people's mobile numbers
+  s1 not: A staff person can remove anyone
+J-F-panel-1012-04 | type 3 | owner | Staff & sign-in as an owner of a gym with two owners
+  s1 see: Red line: "A gym needs at least one owner. Add another owner first."
+  s1 not: A gym left with no owner
+  s1 not: The owner removing himself: his own row has no Remove button
+J-F-panel-1012-05 | type 6 | owner | Staff & sign-in as an owner; a person was removed earlier
+  s1 see: Toast "<name> added. Now make a sign-in code for them."
+  s1 see: The person is back in the list with no devices
+  s1 not: "This mobile number is already on the list." for a person who was removed
+  s1 not: The old sessions or the old PIN working again by themselves
+  s2 see: A 6-digit code with "Works once, till <time> (30 minutes)."
+  s2 not: The re-added person signed in anywhere before using a new code
+J-F-panel-1012-06 | type 6 | owner | Remove sheet open for a person
+  s1 see: The list unchanged, the person still there
+  s1 not: The person removed or signed out by opening and closing the sheet
+J-F-panel-1012-07 | type 12 | owner | Staff & sign-in as an owner, just after removing a person who saved payments
+  s1 see: The receipt and the member as before
+  s1 not: The removed person's work deleted
+  s1 not: The removed person still able to read member names or numbers on any device
+  s1 not: The removed person's mobile number still shown in the people list
+J-F-panel-1005-01 | type 1 | owner | Staff & sign-in, signed in with a PIN as an owner; the "You" card shows the "Owner" pill
+  s1 see: "You sign in with your mobile number and your own PIN (set on <day>)."
+  s1 see: Button "Change my PIN"
+  s1 not: The PIN itself shown anywhere
+  s1 not: The button missing while the server has PINs switched on
+  s2 see: Sheet "Change my PIN" with "Your current PIN", "Your new PIN (6 digits)" and "Type the PIN again"
+  s2 see: "Forgot it? Make yourself a sign-in code in the list below, sign out, and sign in with that code. Then, for 15 minutes, you can set a new PIN without the old one. Stuck? Email MettleUp at contact@mettleup.fit." under the current PIN box
+  s2 not: Digits shown in clear: all three boxes hide what is typed
+  s3 see: Button reads "Saving…"
+  s3 see: Sheet closes; toast "PIN saved. Sign in with your mobile number and this PIN."
+  s3 not: The old PIN still working at the next sign-in
+  s3 not: This device signed out by the change
+  s3 not: Two saves from a double tap
+J-F-panel-1005-02 | type 2 | owner | Sign-in page; an owner with no PIN yet signs in with a one-time code from the owner
+  s1 see: The panel opens with the sheet "Set your own PIN"
+  s1 see: "Save your own PIN. Next time, sign in with your mobile number and this PIN. You won’t need a code from the owner."
+  s1 see: Buttons "Not now" and "Save my PIN"; no current PIN box
+  s1 not: The sheet shown to someone who signed in with a PIN
+  s1 not: The sheet shown again after "Not now"
+  s2 see: Toast "PIN saved. Next time, sign in with your mobile number and this PIN."
+  s2 not: The prompt coming back on the next open of the panel on this device
+J-F-panel-1005-03 | type 2 | owner | Sign-in page; an owner who HAS a PIN but forgot it signs in with a one-time code
+  s1 see: Sheet "Choose a new PIN?"
+  s1 see: "You signed in with a one-time code. If you forgot your PIN, choose a new one now."
+  s1 see: Buttons "Keep my old PIN" and "Save my PIN"; no current PIN box
+  s1 not: The old PIN asked for inside the 15 minutes after a code sign-in
+  s2 see: Toast "New PIN saved. Next time, sign in with your mobile number and this PIN."
+  s2 not: The old PIN still accepted at the next sign-in
+  s3 see: A clear way to finish: a current PIN box, or words that say to sign in with a new code
+  s3 not: "Type your current PIN first." with no box to type it in
+  s3 not: A sheet that can only be left by "Keep my old PIN"
+J-F-panel-1005-04 | type 3 | owner | "Change my PIN" sheet open, signed in as an owner
+  s1 see: "Type your current PIN first."
+  s1 not: A save sent without the current PIN
+  s2 see: "That is not your current PIN. (<n> tries left)"; at the last one "That is not your current PIN. Too many tries. Wait 15 minutes."
+  s2 not: The PIN changed with a wrong current PIN
+  s2 not: Endless guesses with no lock
+  s3 see: "Don’t use the same digit six times. Pick a PIN that is hard to guess."
+  s3 see: "Don’t use digits in order, like 123456 or 654321. Pick a PIN that is hard to guess."
+  s3 see: "Don’t use the end of your mobile number. Pick a PIN that is hard to guess."
+  s3 see: "The two PINs are not the same. Type the same PIN in both boxes."
+  s3 not: A weak PIN saved
+  s3 not: Letters accepted: the boxes keep digits only, 6 at most
+J-F-panel-1005-05 | type 6 | owner | Staff & sign-in as an owner; states of the "You" card
+  s1 see: "You have no PIN yet. Set one, and you can sign in any time with your mobile number and your PIN."
+  s1 see: Button "Set my PIN"
+  s1 not: "Change my PIN" offered when there is none
+  s2 see: "You sign in with your mobile number and your own PIN (set on <today>)."
+  s2 see: Button "Change my PIN"
+  s2 not: The card still saying there is no PIN after the save
+  s3 see: Sheet words end "Your PIN is cleared too. Set a new one in “You” above."; then the card says "You have no PIN yet…"
+  s3 not: The cleared PIN still working at sign-in
+  s4 see: "Your PIN is locked till <time> after too many wrong tries. You can still sign in with a code from the owner."
+  s4 not: A locked PIN shown as fine
+J-F-panel-1005-06 | type 12 | owner | Staff & sign-in as an owner
+  s1 see: Only "PIN set" style words and the day it was set; never the digits
+  s1 not: The PIN shown, sent back by the server or kept on the device
+  s1 not: An owner able to read or set another person's PIN
+  s1 not: One person setting a PIN for another person's number
+J-F-panel-1005-07 | type 1 | staff | Staff & sign-in, signed in with a PIN as front desk staff; the "You" card shows the "Staff" pill
+  s1 see: "You sign in with your mobile number and your own PIN (set on <day>)."
+  s1 see: Button "Change my PIN"
+  s1 not: The PIN itself shown anywhere
+  s1 not: The button missing while the server has PINs switched on
+  s2 see: Sheet "Change my PIN" with "Your current PIN", "Your new PIN (6 digits)" and "Type the PIN again"
+  s2 see: "Forgot it? Ask your gym owner for a sign-in code, sign out, and sign in with that code. Then, for 15 minutes, you can set a new PIN without the old one." under the current PIN box
+  s2 not: Digits shown in clear: all three boxes hide what is typed
+  s3 see: Button reads "Saving…"
+  s3 see: Sheet closes; toast "PIN saved. Sign in with your mobile number and this PIN."
+  s3 not: The old PIN still working at the next sign-in
+  s3 not: This device signed out by the change
+  s3 not: Two saves from a double tap
+J-F-panel-1005-08 | type 2 | staff | Sign-in page; front desk staff with no PIN yet signs in with a one-time code from the owner
+  s1 see: The panel opens with the sheet "Set your own PIN"
+  s1 see: "Save your own PIN. Next time, sign in with your mobile number and this PIN. You won’t need a code from the owner."
+  s1 see: Buttons "Not now" and "Save my PIN"; no current PIN box
+  s1 not: The sheet shown to someone who signed in with a PIN
+  s1 not: The sheet shown again after "Not now"
+  s2 see: Toast "PIN saved. Next time, sign in with your mobile number and this PIN."
+  s2 not: The prompt coming back on the next open of the panel on this device
+J-F-panel-1005-09 | type 2 | staff | Sign-in page; front desk staff who HAS a PIN but forgot it signs in with a one-time code
+  s1 see: Sheet "Choose a new PIN?"
+  s1 see: "You signed in with a one-time code. If you forgot your PIN, choose a new one now."
+  s1 see: Buttons "Keep my old PIN" and "Save my PIN"; no current PIN box
+  s1 not: The old PIN asked for inside the 15 minutes after a code sign-in
+  s2 see: Toast "New PIN saved. Next time, sign in with your mobile number and this PIN."
+  s2 not: The old PIN still accepted at the next sign-in
+  s3 see: A clear way to finish: a current PIN box, or words that say to sign in with a new code
+  s3 not: "Type your current PIN first." with no box to type it in
+  s3 not: A sheet that can only be left by "Keep my old PIN"
+J-F-panel-1005-10 | type 3 | staff | "Change my PIN" sheet open, signed in as front desk staff
+  s1 see: "Type your current PIN first."
+  s1 not: A save sent without the current PIN
+  s2 see: "That is not your current PIN. (<n> tries left)"; at the last one "That is not your current PIN. Too many tries. Wait 15 minutes."
+  s2 not: The PIN changed with a wrong current PIN
+  s2 not: Endless guesses with no lock
+  s3 see: "Don’t use the same digit six times. Pick a PIN that is hard to guess."
+  s3 see: "Don’t use digits in order, like 123456 or 654321. Pick a PIN that is hard to guess."
+  s3 see: "Don’t use the end of your mobile number. Pick a PIN that is hard to guess."
+  s3 see: "The two PINs are not the same. Type the same PIN in both boxes."
+  s3 not: A weak PIN saved
+  s3 not: Letters accepted: the boxes keep digits only, 6 at most
+J-F-panel-1005-11 | type 6 | staff | Staff & sign-in as front desk staff; states of the "You" card
+  s1 see: "You have no PIN yet. Set one, and you can sign in any time with your mobile number and your PIN."
+  s1 see: Button "Set my PIN"
+  s1 not: "Change my PIN" offered when there is none
+  s2 see: "You sign in with your mobile number and your own PIN (set on <today>)."
+  s2 see: Button "Change my PIN"
+  s2 not: The card still saying there is no PIN after the save
+  s3 see: This device is signed out; after a new code sign-in the card says "You have no PIN yet…"
+  s3 not: The cleared PIN still working at sign-in
+  s4 see: "Your PIN is locked till <time> after too many wrong tries. You can still sign in with a code from the owner."
+  s4 not: A locked PIN shown as fine
+J-F-panel-1005-12 | type 12 | staff | Staff & sign-in as front desk staff
+  s1 see: Only "PIN set" style words and the day it was set; never the digits
+  s1 not: The PIN shown, sent back by the server or kept on the device
+  s1 not: The owner able to read this person's PIN
+  s1 not: One person setting a PIN for another person's number
+J-F-panel-1005-13 | type 1 | trainer | Staff & sign-in, signed in with a PIN as a trainer (a staff person with the Trainer tick); the "You" card shows the "Staff" pill
+  s1 see: "You sign in with your mobile number and your own PIN (set on <day>)."
+  s1 see: Button "Change my PIN"
+  s1 not: The PIN itself shown anywhere
+  s1 not: The button missing while the server has PINs switched on
+  s2 see: Sheet "Change my PIN" with "Your current PIN", "Your new PIN (6 digits)" and "Type the PIN again"
+  s2 see: "Forgot it? Ask your gym owner for a sign-in code, sign out, and sign in with that code. Then, for 15 minutes, you can set a new PIN without the old one." under the current PIN box
+  s2 not: Digits shown in clear: all three boxes hide what is typed
+  s3 see: Button reads "Saving…"
+  s3 see: Sheet closes; toast "PIN saved. Sign in with your mobile number and this PIN."
+  s3 not: The old PIN still working at the next sign-in
+  s3 not: This device signed out by the change
+  s3 not: Two saves from a double tap
+J-F-panel-1005-14 | type 2 | trainer | Sign-in page; a trainer (a staff person with the Trainer tick) with no PIN yet signs in with a one-time code from the owner
+  s1 see: The panel opens with the sheet "Set your own PIN"
+  s1 see: "Save your own PIN. Next time, sign in with your mobile number and this PIN. You won’t need a code from the owner."
+  s1 see: Buttons "Not now" and "Save my PIN"; no current PIN box
+  s1 not: The sheet shown to someone who signed in with a PIN
+  s1 not: The sheet shown again after "Not now"
+  s2 see: Toast "PIN saved. Next time, sign in with your mobile number and this PIN."
+  s2 not: The prompt coming back on the next open of the panel on this device
+J-F-panel-1005-15 | type 2 | trainer | Sign-in page; a trainer (a staff person with the Trainer tick) who HAS a PIN but forgot it signs in with a one-time code
+  s1 see: Sheet "Choose a new PIN?"
+  s1 see: "You signed in with a one-time code. If you forgot your PIN, choose a new one now."
+  s1 see: Buttons "Keep my old PIN" and "Save my PIN"; no current PIN box
+  s1 not: The old PIN asked for inside the 15 minutes after a code sign-in
+  s2 see: Toast "New PIN saved. Next time, sign in with your mobile number and this PIN."
+  s2 not: The old PIN still accepted at the next sign-in
+  s3 see: A clear way to finish: a current PIN box, or words that say to sign in with a new code
+  s3 not: "Type your current PIN first." with no box to type it in
+  s3 not: A sheet that can only be left by "Keep my old PIN"
+J-F-panel-1005-16 | type 3 | trainer | "Change my PIN" sheet open, signed in as a trainer (a staff person with the Trainer tick)
+  s1 see: "Type your current PIN first."
+  s1 not: A save sent without the current PIN
+  s2 see: "That is not your current PIN. (<n> tries left)"; at the last one "That is not your current PIN. Too many tries. Wait 15 minutes."
+  s2 not: The PIN changed with a wrong current PIN
+  s2 not: Endless guesses with no lock
+  s3 see: "Don’t use the same digit six times. Pick a PIN that is hard to guess."
+  s3 see: "Don’t use digits in order, like 123456 or 654321. Pick a PIN that is hard to guess."
+  s3 see: "Don’t use the end of your mobile number. Pick a PIN that is hard to guess."
+  s3 see: "The two PINs are not the same. Type the same PIN in both boxes."
+  s3 not: A weak PIN saved
+  s3 not: Letters accepted: the boxes keep digits only, 6 at most
+J-F-panel-1005-17 | type 6 | trainer | Staff & sign-in as a trainer (a staff person with the Trainer tick); states of the "You" card
+  s1 see: "You have no PIN yet. Set one, and you can sign in any time with your mobile number and your PIN."
+  s1 see: Button "Set my PIN"
+  s1 not: "Change my PIN" offered when there is none
+  s2 see: "You sign in with your mobile number and your own PIN (set on <today>)."
+  s2 see: Button "Change my PIN"
+  s2 not: The card still saying there is no PIN after the save
+  s3 see: This device is signed out; after a new code sign-in the card says "You have no PIN yet…"
+  s3 not: The cleared PIN still working at sign-in
+  s4 see: "Your PIN is locked till <time> after too many wrong tries. You can still sign in with a code from the owner."
+  s4 not: A locked PIN shown as fine
+J-F-panel-1005-18 | type 12 | trainer | Staff & sign-in as a trainer (a staff person with the Trainer tick)
+  s1 see: Only "PIN set" style words and the day it was set; never the digits
+  s1 not: The PIN shown, sent back by the server or kept on the device
+  s1 not: The owner able to read this person's PIN
+  s1 not: One person setting a PIN for another person's number
+J-F-panel-1000-01 | type 1 | owner | app.mettleup.fit on a signed-out device, Sign in card; an owner with a PIN
+  s1 see: The number as typed; hint under the PIN box "No PIN yet? Ask your gym owner for a sign-in code, and type it here."
+  s1 not: More than 10 digits accepted
+  s2 see: Button reads "Signing in…"
+  s2 see: The gym opens on its first page, with owner pages (money totals, Settings) there
+  s2 not: The PIN shown in clear
+  s2 not: Another gym's records shown
+  s2 not: An owner landing with staff-only rights
+  s2 not: A "Set your own PIN" prompt after a PIN sign-in
+J-F-panel-1000-02 | type 2 | owner | Sign in card; an owner holding a one-time code made on another signed-in device
+  s1 see: The gym opens
+  s1 see: Sheet "Set your own PIN" (no PIN yet) or "Choose a new PIN?" (has one)
+  s1 not: The same code working a second time
+  s1 not: The code working after its 30 minutes
+J-F-panel-1000-03 | type 2 | owner | "Create my gym" got no answer; the form shows "Sign in instead"
+  s1 see: The Sign in card with the mobile number already typed in
+  s1 not: The number lost or changed on the way
+  s2 see: The new gym opens if it was made; else "That PIN or code is wrong, or the code has expired…"
+  s2 not: A second gym made for the same mobile number
+J-F-panel-1000-04 | type 2 | owner | iPhone, the admin app opened from the home screen for the first time
+  s1 see: "Welcome to the admin app. Please sign in once more here. iPhone keeps this app apart from Safari. After this, you stay signed in."
+  s1 see: "Owner and forgot your PIN? Open MettleUp in Safari, where you are still signed in. Go to More → Staff & sign-in, tap “Make sign-in code” and type that code here."
+  s1 not: The note shown in Safari or on Android
+  s2 see: Still signed in
+  s2 not: A sign-in asked on every open
+J-F-panel-1000-05 | type 3 | owner | Sign in card, an owner
+  s1 see: "Type a 10-digit mobile number, like 98290 12345."
+  s1 not: A call made to the server
+  s2 see: "Type your 6-digit PIN, or the code your gym owner gave you."
+  s2 not: A call made to the server
+  s3 see: "That PIN or code is wrong, or the code has expired. Ask the gym owner for a new code. If you are the owner, make one on a device where you are signed in. (<n> tries left)"
+  s3 not: Words that tell whether the number has an account or a code waiting
+  s3 not: The gym opening
+  s4 see: "That PIN or code is wrong. Too many tries. Wait 15 minutes, or get a new code."; then "Too many tries for this number. Wait 15 minutes, or get a new code."
+  s4 not: Endless guesses
+  s4 not: The right PIN refused for longer than the words say
+  s5 see: The wrong-PIN words for a removed person; the paused-gym words for a paused gym
+  s5 not: A removed person getting in
+J-F-panel-1000-06 | type 6 | owner | A device where an owner is signed in
+  s1 see: The gym opens with no sign-in asked
+  s1 not: A sign-in asked on every open
+  s1 not: Another person's session opened
+  s2 see: Sheet "Sign out of this device?"; then the welcome page with "You are signed out of this device."
+  s2 not: Sign out allowed while saved items wait to send: the button is off and the words say to wait for "All sent"
+  s2 not: The gym's records left readable on the device after sign-out
+  s3 see: The same gym, the same role
+  s3 not: The old notice still on the page after signing in
+  s4 see: The other tab reloads to the welcome page by itself
+  s4 not: The other tab still showing, and saving into, the gym
+J-F-panel-1000-07 | type 12 | owner | Sign in card, then the gym, as an owner
+  s1 see: Everything, including money totals and the people list
+  s1 not: The PIN or code kept on the device or shown in the address bar
+  s1 not: The mobile number sent anywhere but the gym server
+  s1 not: Staff phone numbers shown to non-owners
+  s1 not: A wrong try revealing that a number belongs to a gym
+J-F-panel-1000-08 | type 1 | staff | app.mettleup.fit on a signed-out device, Sign in card; a front desk person with a PIN
+  s1 see: The number as typed; hint under the PIN box "No PIN yet? Ask your gym owner for a sign-in code, and type it here."
+  s1 not: More than 10 digits accepted
+  s2 see: Button reads "Signing in…"
+  s2 see: The gym opens on its first page, without money totals or owner-only pages
+  s2 not: The PIN shown in clear
+  s2 not: Another gym's records shown
+  s2 not: Owner-only pages or money totals shown
+  s2 not: A "Set your own PIN" prompt after a PIN sign-in
+J-F-panel-1000-09 | type 2 | staff | Sign in card; a front desk person holding a one-time code made by the owner
+  s1 see: The gym opens
+  s1 see: Sheet "Set your own PIN" (no PIN yet) or "Choose a new PIN?" (has one)
+  s1 not: The same code working a second time
+  s1 not: The code working after its 30 minutes
+J-F-panel-1000-10 | type 3 | staff | Sign in card, a front desk person
+  s1 see: "Type a 10-digit mobile number, like 98290 12345."
+  s1 not: A call made to the server
+  s2 see: "Type your 6-digit PIN, or the code your gym owner gave you."
+  s2 not: A call made to the server
+  s3 see: "That PIN or code is wrong, or the code has expired. Ask the gym owner for a new code. If you are the owner, make one on a device where you are signed in. (<n> tries left)"
+  s3 not: Words that tell whether the number has an account or a code waiting
+  s3 not: The gym opening
+  s4 see: "That PIN or code is wrong. Too many tries. Wait 15 minutes, or get a new code."; then "Too many tries for this number. Wait 15 minutes, or get a new code."
+  s4 not: Endless guesses
+  s4 not: The right PIN refused for longer than the words say
+  s5 see: The wrong-PIN words for a removed person; the paused-gym words for a paused gym
+  s5 not: A removed person getting in
+J-F-panel-1000-11 | type 6 | staff | A device where a front desk person is signed in
+  s1 see: The gym opens with no sign-in asked
+  s1 not: A sign-in asked on every open
+  s1 not: Another person's session opened
+  s2 see: Sheet "Sign out of this device?"; then the welcome page with "You are signed out of this device."
+  s2 not: Sign out allowed while saved items wait to send: the button is off and the words say to wait for "All sent"
+  s2 not: The gym's records left readable on the device after sign-out
+  s3 see: The same gym, the same role
+  s3 not: The old notice still on the page after signing in
+  s4 see: The other tab reloads to the welcome page by itself
+  s4 not: The other tab still showing, and saving into, the gym
+J-F-panel-1000-12 | type 12 | staff | Sign in card, then the gym, as a front desk person
+  s1 see: Members, fees and check-in at the own branch; no money totals, no people list
+  s1 not: The PIN or code kept on the device or shown in the address bar
+  s1 not: The mobile number sent anywhere but the gym server
+  s1 not: This person seeing other staff's numbers or sign-in codes
+  s1 not: A wrong try revealing that a number belongs to a gym
+J-F-panel-1000-13 | type 1 | trainer | app.mettleup.fit on a signed-out device, Sign in card; a trainer (staff with the Trainer tick) with a PIN
+  s1 see: The number as typed; hint under the PIN box "No PIN yet? Ask your gym owner for a sign-in code, and type it here."
+  s1 not: More than 10 digits accepted
+  s2 see: Button reads "Signing in…"
+  s2 see: The gym opens on its first page, without money totals or owner-only pages
+  s2 not: The PIN shown in clear
+  s2 not: Another gym's records shown
+  s2 not: Owner-only pages or money totals shown
+  s2 not: A "Set your own PIN" prompt after a PIN sign-in
+J-F-panel-1000-14 | type 2 | trainer | Sign in card; a trainer (staff with the Trainer tick) holding a one-time code made by the owner
+  s1 see: The gym opens
+  s1 see: Sheet "Set your own PIN" (no PIN yet) or "Choose a new PIN?" (has one)
+  s1 not: The same code working a second time
+  s1 not: The code working after its 30 minutes
+J-F-panel-1000-15 | type 3 | trainer | Sign in card, a trainer (staff with the Trainer tick)
+  s1 see: "Type a 10-digit mobile number, like 98290 12345."
+  s1 not: A call made to the server
+  s2 see: "Type your 6-digit PIN, or the code your gym owner gave you."
+  s2 not: A call made to the server
+  s3 see: "That PIN or code is wrong, or the code has expired. Ask the gym owner for a new code. If you are the owner, make one on a device where you are signed in. (<n> tries left)"
+  s3 not: Words that tell whether the number has an account or a code waiting
+  s3 not: The gym opening
+  s4 see: "That PIN or code is wrong. Too many tries. Wait 15 minutes, or get a new code."; then "Too many tries for this number. Wait 15 minutes, or get a new code."
+  s4 not: Endless guesses
+  s4 not: The right PIN refused for longer than the words say
+  s5 see: The wrong-PIN words for a removed person; the paused-gym words for a paused gym
+  s5 not: A removed person getting in
+J-F-panel-1000-16 | type 6 | trainer | A device where a trainer (staff with the Trainer tick) is signed in
+  s1 see: The gym opens with no sign-in asked
+  s1 not: A sign-in asked on every open
+  s1 not: Another person's session opened
+  s2 see: Sheet "Sign out of this device?"; then the welcome page with "You are signed out of this device."
+  s2 not: Sign out allowed while saved items wait to send: the button is off and the words say to wait for "All sent"
+  s2 not: The gym's records left readable on the device after sign-out
+  s3 see: The same gym, the same role
+  s3 not: The old notice still on the page after signing in
+  s4 see: The other tab reloads to the welcome page by itself
+  s4 not: The other tab still showing, and saving into, the gym
+J-F-panel-1000-17 | type 12 | trainer | Sign in card, then the gym, as a trainer (staff with the Trainer tick)
+  s1 see: Members, fees and check-in at the own branch; no money totals, no people list
+  s1 not: The PIN or code kept on the device or shown in the address bar
+  s1 not: The mobile number sent anywhere but the gym server
+  s1 not: This person seeing other staff's numbers or sign-in codes
+  s1 not: A wrong try revealing that a number belongs to a gym
+J-F-panel-1001-01 | type 1 | prospect | app.mettleup.fit welcome page on a phone, "Create my gym" form; checking by WhatsApp is on (the person sends a message)
+  s1 see: Hint "You sign in with this number. You check it by sending us one WhatsApp message. It is free."
+  s1 not: More than 10 digits accepted
+  s2 see: Hint "You sign in with your mobile number and this PIN. Keep it private."
+  s2 not: The PIN shown in clear
+  s3 see: WhatsApp opens with a message ready; back on the page "Send the message in WhatsApp" and "Waiting for your message"
+  s3 not: A gym made before the number is checked
+  s3 not: The tick set by itself
+  s4 see: "Number checked" and "+91 <number> is yours."; the main button is now "Create my gym"
+  s4 not: "Number checked" for a message sent from another number
+  s5 see: Button reads "Setting up…"
+  s5 see: The new gym opens, with the gym code and join link shown once
+  s5 not: Two gyms from a double tap
+  s5 not: The gym made without the PIN or without the terms record
+  s5 not: The address left on the sign-up link, so a refresh opens sign-up again
+J-F-panel-1001-02 | type 2 | prospect | "Create my gym" form while the older WhatsApp code way is on (MettleUp sends a code)
+  s1 see: "We sent a 6-digit code to +91 <number> on WhatsApp. It works for 10 minutes."
+  s1 see: Box "Code from WhatsApp" and "Send a new code"
+  s1 not: A gym made before the code is typed
+  s2 see: The new gym opens
+  s2 not: A wrong or old code accepted: "That code is wrong or has expired. Ask for a new code."
+J-F-panel-1001-03 | type 2 | prospect | "Create my gym" form while checking by WhatsApp is switched off
+  s1 see: Hint "You sign in with this number on any phone or computer."; the main button is "Create my gym" from the start
+  s1 not: A WhatsApp step shown
+  s2 see: The new gym opens
+  s2 not: The gym made for a number nobody checked while the words say it was checked
+J-F-panel-1001-04 | type 3 | prospect | "Create my gym" form, empty
+  s1 see: "Type your gym’s name."
+  s1 not: Any call to the server
+  s2 see: "Type your name."
+  s2 not: Any call to the server
+  s3 see: "Type a 10-digit mobile number, like 98290 12345."
+  s3 not: Any call to the server
+  s4 see: "Don’t use digits in order, like 123456 or 654321. Pick a PIN that is hard to guess."
+  s4 see: "The two PINs are not the same. Type the same PIN in both boxes."
+  s4 not: A weak PIN accepted
+  s5 see: "Tick the box to agree to the terms. Then tap “Verify with WhatsApp”." (or "…Then tap “Create my gym” again." when no check is needed)
+  s5 not: WhatsApp opened or a gym made without the tick
+  s6 see: "You tapped "Verify with WhatsApp" a moment ago. Wait <n> seconds, then try again."
+  s6 see: "Too many tries for this number. Wait an hour, then try again."
+  s6 not: Unlimited new checks for one number
+J-F-panel-1001-05 | type 6 | prospect | "Create my gym" form, number already checked ("Number checked" shows)
+  s1 see: "Number checked" goes; the main button is "Verify with WhatsApp" again
+  s1 not: The old check used for the new number
+  s2 see: "This check has run out. Tap "Verify with WhatsApp" to check your number again."
+  s2 not: A gym made with a used or old check
+  s2 not: A dead end with no button to check again
+  s3 see: "We could not hear back from MettleUp, so your gym may already be made. Tap “Sign in instead” and type your mobile number and the PIN you just chose. If that does not work, come back here and tap “Create my gym” again."
+  s3 see: Button "Sign in instead"
+  s3 not: A plain "try again" that makes a second gym
+J-F-panel-1001-06 | type 12 | prospect | "Create my gym" form
+  s1 see: Each opens in a new tab; the typed form is still there
+  s1 see: Under the form: "Your members and payments are kept online. They stay safe if a phone or computer breaks."
+  s1 not: The typed values lost by opening a link
+  s1 not: The gym made without a record of who agreed, when and to which version
+  s1 not: The mobile number or the PIN left in the address bar or in the browser's storage
+  s1 not: The checked number kept after the check is used
+J-F-panel-1001-07 | type 1 | owner | Just after "Create my gym" succeeded; the person is now the gym's owner on this device
+  s1 see: The new gym by its typed name, with the gym code and join link shown once
+  s1 see: Signed in as the owner, no second sign-in
+  s1 not: Somebody else's gym
+  s1 not: A demo gym or an older browser-only gym mixed into the new one: an old copy on this browser is set aside, not merged or deleted
+  s2 see: The "You" card with the typed name, "Owner" and "+91 <number>"; "You sign in with your mobile number and your own PIN (set on <today>)."
+  s2 not: "You have no PIN yet" straight after choosing one
+  s2 not: The terms card asked again right after ticking them at set-up
+J-F-panel-1001-08 | type 2 | owner | A person who already owns one gym opens the sign-up link (/start) on a signed-out device
+  s1 see: Either a second gym is made and opened, or plain words say this number already has a gym and what to do
+  s1 not: The first gym replaced, renamed or signed out without a word
+  s1 not: A sign-in later that cannot tell which of the two gyms is meant
+J-F-panel-1001-09 | type 3 | owner | "Create my gym" tapped while many gyms start, or while MettleUp cannot be reached
+  s1 see: "Many gyms are starting right now. Please try again in a few minutes." or the "We could not hear back from MettleUp…" words with "Sign in instead"
+  s1 not: A half-made gym: a gym with no owner, or an owner with no PIN and no way back in
+  s2 see: The gym opens if it was made
+  s2 not: Two gyms on one number after trying again
+J-F-panel-1001-10 | type 6 | owner | New owner signed in on the device that made the gym
+  s1 see: The gym, not the sign-up form
+  s1 not: The sign-up form shown to a signed-in owner
+  s1 not: The "gym code and join link" card shown again on every open
+  s2 see: The same gym
+  s2 not: "That PIN or code is wrong" for the PIN chosen a minute ago
+J-F-panel-1001-11 | type 12 | owner | New owner, Settings → Your data
+  s1 see: "You accepted the terms on <day> (version <version>)."
+  s1 not: No line although the box was ticked at set-up
+  s1 not: Another person named as the one who agreed
+J-F-panel-1016-01 | type 1 | owner | An owner of a gym that never accepted the terms signs in (or opens the panel signed in)
+  s1 see: "Opening your gym…" for a moment, then the card "Before you go on"
+  s1 see: "Please read and accept the MettleUp terms and the data agreement. They say how MettleUp keeps your gym’s records and your members’ details safe. You do this once. Your staff are not asked."
+  s1 see: Tick box "I agree to the MettleUp terms and the data agreement.", buttons "Agree and continue" and "Sign out"
+  s1 not: The gym's pages reachable behind the card
+  s1 not: The box ticked by itself
+  s2 see: Each page opens in a new tab
+  s2 not: The card lost or the owner signed out by opening a link
+  s3 see: Button reads "Saving…"; then the gym opens
+  s3 not: The card shown again at the next open
+  s3 not: The acceptance saved under another person's name or an older version
+J-F-panel-1016-02 | type 2 | owner | An owner who accepted an older version opens the panel after the terms were updated
+  s1 see: Card "Before you go on" with "We updated the MettleUp terms and the data agreement on <day>. Please read them and accept the new version. Each page has a short "What changed" line near the bottom. Your staff are not asked."
+  s1 not: The first-time words shown to someone who accepted before
+  s1 not: A date that is not the day the new version is dated, India time
+  s2 see: The gym opens; Settings shows the new version and today's day
+  s2 not: The old acceptance record lost
+J-F-panel-1016-03 | type 2 | owner | An owner who ticked the terms at "Create my gym"
+  s1 see: No terms card; the line "You accepted the terms on <day> (version <version>)."
+  s1 not: The card asked a second time for the same version
+J-F-panel-1016-04 | type 3 | owner | Terms card "Before you go on"
+  s1 see: "Tick the box first. Then tap “Agree and continue”."
+  s1 not: The gym opened without the tick
+  s1 not: A save sent
+  s2 see: "Can’t reach the internet. Check the connection and try again."; the button is live again
+  s2 not: The gym opened as if accepted
+  s2 not: The card stuck on "Saving…"
+  s3 see: The gym opens with no card
+  s3 not: Staff asked to accept, or able to accept for the owner
+J-F-panel-1016-05 | type 6 | owner | Terms card showing for an owner
+  s1 see: The welcome page with "You are signed out of this device."
+  s1 not: The terms saved as accepted by signing out
+  s2 see: The card again
+  s2 not: The gym opened without the card
+  s3 see: The gym opens with no card both times (with no internet after a short "Opening your gym…")
+  s3 not: An owner locked out of the desk while offline
+  s3 not: The card asked again after acceptance
+  s4 see: The card, and after accepting, the gym as it was
+  s4 not: Typed work thrown away without a word when the card takes over the page
+J-F-panel-1016-06 | type 12 | owner | Settings → Your data, as the owner
+  s1 see: "You accepted the terms on <day> (version <version>)." with the day in India time
+  s1 not: The line shown with another gym's day
+  s1 not: No record of who agreed, when, which version and how
+  s1 not: A day shifted by the device's own time zone
+J-F-panel-1002-01 | type 1 | prospect | On a phone: "Create my gym" form, filled and terms ticked; checking by WhatsApp is on
+  s1 see: Button reads "Please wait…"; WhatsApp opens with a message ready to send to the MettleUp number
+  s1 see: "Send it from the WhatsApp on this number. A message from another number does not work."
+  s1 not: A message sent by itself
+  s1 not: A charge or a paid SMS
+  s2 see: "Send the message in WhatsApp", the message and "To: MettleUp, <number>"
+  s2 see: "Checking your message…" and "This code works for <n> more minutes."
+  s2 not: The page started over with the typed values gone
+  s2 not: The check stopped because the page was in the background
+  s3 see: Green "Number checked" and "+91 <number> is yours."; the main button becomes "Create my gym"
+  s3 not: "Number checked" without a message from this number
+  s3 not: A second message needed
+J-F-panel-1002-02 | type 2 | prospect | On a computer: "Create my gym" form, filled and terms ticked
+  s1 see: A QR code and "Scan with the phone that has +91 <number>"
+  s1 see: "1. Open the camera on that phone and point it at the code." "2. WhatsApp opens with the message ready. Tap Send." "3. This page turns green by itself."
+  s1 see: "No camera? Send "<text>" to <number> on WhatsApp."
+  s1 not: A new window opened to WhatsApp Web by itself
+  s2 see: The computer page turns to "Number checked" by itself
+  s2 not: A refresh needed
+  s2 not: The check passed by a scan from a phone with another number
+J-F-panel-1002-03 | type 2 | prospect | "Create my gym" form, filled and terms ticked; the older way is on (MettleUp sends a code)
+  s1 see: "We sent a 6-digit code to +91 <number> on WhatsApp. It works for 10 minutes."
+  s1 see: Box "Code from WhatsApp", button "Send a new code"
+  s1 not: A code sent to a number other than the typed one
+  s2 see: With "Create my gym": the gym is made
+  s2 not: A wrong, used or 10-minute-old code accepted
+J-F-panel-1002-04 | type 3 | prospect | "Create my gym" form, filled and terms ticked; the waiting page is showing
+  s1 see: Red line "We got your message from a different number. Send it from the WhatsApp on +91 <number>."
+  s1 not: The number marked as checked
+  s2 see: "We could not find the code in your message. Tap "Open WhatsApp again" and send it without changes."
+  s2 not: The number marked as checked
+  s2 not: Silence with no hint
+  s3 see: A calm note "We have not got your message yet. In WhatsApp, check that the message to MettleUp was sent. If it was not, tap “Open WhatsApp again” and tap Send."
+  s3 not: A red error for a message that is only slow
+  s4 see: "You tapped "Verify with WhatsApp" a moment ago. Wait <n> seconds, then try again."
+  s4 see: "Too many tries for this number. Wait an hour, then try again."
+  s4 not: Unlimited tries
+  s5 see: "Checking by WhatsApp is not working right now. Please try again later."
+  s5 not: No way to make a gym at all while the check is down, with no word on what to do
+J-F-panel-1002-05 | type 6 | prospect | "Create my gym" form, filled and terms ticked; a check was started
+  s1 see: "This code has run out. Tap "Verify with WhatsApp" to get a new one." and the green button
+  s1 not: The old code still accepted after it ran out
+  s1 not: A countdown that goes below zero
+  s2 see: "Number checked"
+  s2 not: The first, old message counted for the new check
+  s3 see: The form again, the number box ready to change
+  s3 not: The old number still treated as checked
+  s4 see: "This code has run out…" and the button to start again
+  s4 not: The page waiting for ever
+  s5 see: "This check has run out. Tap "Verify with WhatsApp" to check your number again."
+  s5 not: A used or old check accepted
+  s5 not: A dead end
+J-F-panel-1002-06 | type 12 | prospect | "Create my gym" form, filled and terms ticked
+  s1 see: The chat holds only the short message with a code; the page shows the own number only
+  s1 not: The mobile number in the address bar
+  s1 not: The number kept by MettleUp for this check after it is used
+  s1 not: The check passing for a number the person does not hold
+  s1 not: Marketing messages sent to the number after the check
+J-F-panel-1002-07 | type 1 | owner | On a phone: Sign in card → "Forgot your PIN?", as an owner who forgot the PIN; checking by WhatsApp is on
+  s1 see: Button reads "Please wait…"; WhatsApp opens with a message ready to send to the MettleUp number
+  s1 see: "Send it from the WhatsApp on this number. A message from another number does not work."
+  s1 not: A message sent by itself
+  s1 not: A charge or a paid SMS
+  s2 see: "Send the message in WhatsApp", the message and "To: MettleUp, <number>"
+  s2 see: "Checking your message…" and "This code works for <n> more minutes."
+  s2 not: The page started over with the typed values gone
+  s2 not: The check stopped because the page was in the background
+  s3 see: Green "Number checked" and "+91 <number> is yours."; the form asks "Choose a new 6-digit PIN" with the button "Save new PIN"
+  s3 not: "Number checked" without a message from this number
+  s3 not: A second message needed
+J-F-panel-1002-08 | type 2 | owner | On a computer: Sign in card → "Forgot your PIN?", as an owner who forgot the PIN
+  s1 see: A QR code and "Scan with the phone that has +91 <number>"
+  s1 see: "1. Open the camera on that phone and point it at the code." "2. WhatsApp opens with the message ready. Tap Send." "3. This page turns green by itself."
+  s1 see: "No camera? Send "<text>" to <number> on WhatsApp."
+  s1 not: A new window opened to WhatsApp Web by itself
+  s2 see: The computer page turns to "Number checked" by itself
+  s2 not: A refresh needed
+  s2 not: The check passed by a scan from a phone with another number
+J-F-panel-1002-09 | type 2 | owner | Sign in card → "Forgot your PIN?", as an owner who forgot the PIN; the older way is on (MettleUp sends a code)
+  s1 see: "If +91 <number> has an account, a code is on its way on WhatsApp. It works for 10 minutes."
+  s1 see: Box "Code from WhatsApp", button "Send a new code"
+  s1 not: Words that tell whether the number has an account
+  s2 see: With a new PIN typed twice and "Set new PIN and sign in": signed in
+  s2 not: A wrong, used or 10-minute-old code accepted
+J-F-panel-1002-10 | type 2 | owner | Sign in card → "Forgot your PIN?"; the person cannot use WhatsApp
+  s1 see: "Other ways back in" with three numbered ways: a code made on another signed-in device, a code from another owner (or from MettleUp after a call), and the email contact@mettleup.fit
+  s1 see: "After you sign in with a code, you can choose a new PIN straight away."
+  s1 not: A dead end with no way back
+  s1 not: An owner told only to "ask the gym owner"
+  s2 see: The Sign in card with the number still typed
+  s2 not: The typed number lost
+J-F-panel-1002-11 | type 3 | owner | Sign in card → "Forgot your PIN?", as an owner who forgot the PIN; the waiting page is showing
+  s1 see: Red line "We got your message from a different number. Send it from the WhatsApp on +91 <number>."
+  s1 not: The number marked as checked
+  s2 see: "We could not find the code in your message. Tap "Open WhatsApp again" and send it without changes."
+  s2 not: The number marked as checked
+  s2 not: Silence with no hint
+  s3 see: A calm note "We have not got your message yet. In WhatsApp, check that the message to MettleUp was sent. If it was not, tap “Open WhatsApp again” and tap Send."
+  s3 not: A red error for a message that is only slow
+  s4 see: "You tapped "Verify with WhatsApp" a moment ago. Wait <n> seconds, then try again."
+  s4 see: "Too many tries for this number. Wait an hour, then try again."
+  s4 not: Unlimited tries
+  s5 see: "Checking by WhatsApp is not working right now. Please try again later."
+  s5 not: No pointer to the other ways back in
+J-F-panel-1002-12 | type 6 | owner | Sign in card → "Forgot your PIN?", as an owner who forgot the PIN; a check was started
+  s1 see: "This code has run out. Tap "Verify with WhatsApp" to get a new one." and the green button
+  s1 not: The old code still accepted after it ran out
+  s1 not: A countdown that goes below zero
+  s2 see: "Number checked"
+  s2 not: The first, old message counted for the new check
+  s3 see: The form again, the number box ready to change
+  s3 not: The old number still treated as checked
+  s4 see: "This code has run out…" and the button to start again
+  s4 not: The page waiting for ever
+  s5 see: Plain words that the check ran out and the way to check again
+  s5 not: A used or old check accepted
+  s5 not: A dead end
+J-F-panel-1002-13 | type 12 | owner | Sign in card → "Forgot your PIN?", as an owner who forgot the PIN
+  s1 see: The chat holds only the short message with a code; the page shows the own number only
+  s1 not: The mobile number in the address bar
+  s1 not: The number kept by MettleUp for this check after it is used
+  s1 not: The check passing for a number the person does not hold
+  s1 not: The page saying whether the number belongs to a gym before the check passes
+J-F-panel-1002-14 | type 1 | staff | On a phone: Sign in card → "Forgot your PIN?", as a front desk person who forgot the PIN; checking by WhatsApp is on
+  s1 see: Button reads "Please wait…"; WhatsApp opens with a message ready to send to the MettleUp number
+  s1 see: "Send it from the WhatsApp on this number. A message from another number does not work."
+  s1 not: A message sent by itself
+  s1 not: A charge or a paid SMS
+  s2 see: "Send the message in WhatsApp", the message and "To: MettleUp, <number>"
+  s2 see: "Checking your message…" and "This code works for <n> more minutes."
+  s2 not: The page started over with the typed values gone
+  s2 not: The check stopped because the page was in the background
+  s3 see: Green "Number checked" and "+91 <number> is yours."; the form asks "Choose a new 6-digit PIN" with the button "Save new PIN"
+  s3 not: "Number checked" without a message from this number
+  s3 not: A second message needed
+J-F-panel-1002-15 | type 2 | staff | On a computer: Sign in card → "Forgot your PIN?", as a front desk person who forgot the PIN
+  s1 see: A QR code and "Scan with the phone that has +91 <number>"
+  s1 see: "1. Open the camera on that phone and point it at the code." "2. WhatsApp opens with the message ready. Tap Send." "3. This page turns green by itself."
+  s1 see: "No camera? Send "<text>" to <number> on WhatsApp."
+  s1 not: A new window opened to WhatsApp Web by itself
+  s2 see: The computer page turns to "Number checked" by itself
+  s2 not: A refresh needed
+  s2 not: The check passed by a scan from a phone with another number
+J-F-panel-1002-16 | type 2 | staff | Sign in card → "Forgot your PIN?", as a front desk person who forgot the PIN; the older way is on (MettleUp sends a code)
+  s1 see: "If +91 <number> has an account, a code is on its way on WhatsApp. It works for 10 minutes."
+  s1 see: Box "Code from WhatsApp", button "Send a new code"
+  s1 not: Words that tell whether the number has an account
+  s2 see: With a new PIN typed twice and "Set new PIN and sign in": signed in
+  s2 not: A wrong, used or 10-minute-old code accepted
+J-F-panel-1002-17 | type 2 | staff | Sign in card → "Forgot your PIN?"; the person cannot use WhatsApp
+  s1 see: "Other ways back in" with three numbered ways: a code made on another signed-in device, a code from another owner ("Front desk staff: ask your gym owner for a code."), and the email contact@mettleup.fit
+  s1 see: "After you sign in with a code, you can choose a new PIN straight away."
+  s1 not: A dead end with no way back
+  s1 not: Staff told to open a page only an owner can open
+  s2 see: The Sign in card with the number still typed
+  s2 not: The typed number lost
+J-F-panel-1002-18 | type 3 | staff | Sign in card → "Forgot your PIN?", as a front desk person who forgot the PIN; the waiting page is showing
+  s1 see: Red line "We got your message from a different number. Send it from the WhatsApp on +91 <number>."
+  s1 not: The number marked as checked
+  s2 see: "We could not find the code in your message. Tap "Open WhatsApp again" and send it without changes."
+  s2 not: The number marked as checked
+  s2 not: Silence with no hint
+  s3 see: A calm note "We have not got your message yet. In WhatsApp, check that the message to MettleUp was sent. If it was not, tap “Open WhatsApp again” and tap Send."
+  s3 not: A red error for a message that is only slow
+  s4 see: "You tapped "Verify with WhatsApp" a moment ago. Wait <n> seconds, then try again."
+  s4 see: "Too many tries for this number. Wait an hour, then try again."
+  s4 not: Unlimited tries
+  s5 see: "Checking by WhatsApp is not working right now. Please try again later."
+  s5 not: No pointer to the other ways back in
+J-F-panel-1002-19 | type 6 | staff | Sign in card → "Forgot your PIN?", as a front desk person who forgot the PIN; a check was started
+  s1 see: "This code has run out. Tap "Verify with WhatsApp" to get a new one." and the green button
+  s1 not: The old code still accepted after it ran out
+  s1 not: A countdown that goes below zero
+  s2 see: "Number checked"
+  s2 not: The first, old message counted for the new check
+  s3 see: The form again, the number box ready to change
+  s3 not: The old number still treated as checked
+  s4 see: "This code has run out…" and the button to start again
+  s4 not: The page waiting for ever
+  s5 see: Plain words that the check ran out and the way to check again
+  s5 not: A used or old check accepted
+  s5 not: A dead end
+J-F-panel-1002-20 | type 12 | staff | Sign in card → "Forgot your PIN?", as a front desk person who forgot the PIN
+  s1 see: The chat holds only the short message with a code; the page shows the own number only
+  s1 not: The mobile number in the address bar
+  s1 not: The number kept by MettleUp for this check after it is used
+  s1 not: The check passing for a number the person does not hold
+  s1 not: The page saying whether the number belongs to a gym before the check passes
+J-F-panel-1014-01 | type 1 | owner | The panel open on a device signed in as an owner; this device is then signed out by the owner himself on another device ("Sign out other dev
+  s1 see: The gym closes and the welcome page shows "You were signed out of this gym. Ask the gym owner for a new code. If you are the owner, make one on a device where you are signed in."
+  s1 not: The gym still readable or saving after the sign-out
+  s1 not: A blank page or an error code with no reason
+  s1 not: The words for a removed person
+  s2 see: The gym opens; the notice is gone
+  s2 not: The old notice still on the page after signing in
+J-F-panel-1014-02 | type 2 | owner | The panel open on a device signed in as an owner; another owner removes this owner from the gym
+  s1 see: The welcome page with "You no longer have access to this gym. Talk to the gym owner."
+  s1 not: "Ask the gym owner for a new code" left on the page for a person who cannot come back with a code
+  s1 not: The gym's records still on the device
+J-F-panel-1014-03 | type 2 | owner | Staff & sign-in as an owner; the person signs out by choice
+  s1 see: The welcome page with "You are signed out of this device."
+  s1 not: The "You were signed out of this gym…" words for a sign-out the person chose
+J-F-panel-1014-04 | type 3 | owner | A device of an owner that was removed from the gym, with no internet at the moment the panel notices
+  s1 see: At least the signed-out words; the removed words once the reason can be asked
+  s1 not: The removed person left for good with words that tell them to ask for a new code
+  s1 not: The page hanging while the reason is asked
+  s2 see: The welcome page
+  s2 not: The reason gone after a refresh with nothing said at all: check what is shown
+J-F-panel-1014-05 | type 6 | owner | Welcome page showing a signed-out notice for an owner
+  s1 see: The gym; no notice
+  s1 not: The notice carried into the gym or shown at the next sign-out by choice
+  s2 see: The same signed-out words again, once
+  s2 not: Two notices, or none the second time
+  s3 see: Both tabs end on the welcome page
+  s3 not: One tab still inside the gym
+  s3 not: The second tab showing no reason at all: check what it shows
+J-F-panel-1014-06 | type 12 | owner | Welcome page after an owner was signed out or removed
+  s1 see: Only the reason line and the sign-in form
+  s1 not: The gym's name, members or payments still readable on the device after a removal
+  s1 not: Saved-but-unsent items thrown away without a word
+  s1 not: The words naming who signed the person out
+J-F-panel-1014-07 | type 1 | staff | The panel open on a device signed in as a front desk person; this device is then signed out by the owner ("Sign out everywhere" on this pers
+  s1 see: The gym closes and the welcome page shows "You were signed out of this gym. Ask the gym owner for a new code. If you are the owner, make one on a device where you are signed in."
+  s1 not: The gym still readable or saving after the sign-out
+  s1 not: A blank page or an error code with no reason
+  s1 not: The words for a removed person
+  s2 see: The gym opens; the notice is gone
+  s2 not: The old notice still on the page after signing in
+J-F-panel-1014-08 | type 2 | staff | The panel open on a device signed in as a front desk person; the owner removes this person from the gym
+  s1 see: The welcome page with "You no longer have access to this gym. Talk to the gym owner."
+  s1 not: "Ask the gym owner for a new code" left on the page for a person who cannot come back with a code
+  s1 not: The gym's records still on the device
+J-F-panel-1014-09 | type 2 | staff | Staff & sign-in as a front desk person; the person signs out by choice
+  s1 see: The welcome page with "You are signed out of this device."
+  s1 not: The "You were signed out of this gym…" words for a sign-out the person chose
+J-F-panel-1014-10 | type 3 | staff | A device of a front desk person that was removed from the gym, with no internet at the moment the panel notices
+  s1 see: At least the signed-out words; the removed words once the reason can be asked
+  s1 not: The removed person left for good with words that tell them to ask for a new code
+  s1 not: The page hanging while the reason is asked
+  s2 see: The welcome page
+  s2 not: The reason gone after a refresh with nothing said at all: check what is shown
+J-F-panel-1014-11 | type 6 | staff | Welcome page showing a signed-out notice for a front desk person
+  s1 see: The gym; no notice
+  s1 not: The notice carried into the gym or shown at the next sign-out by choice
+  s2 see: The same signed-out words again, once
+  s2 not: Two notices, or none the second time
+  s3 see: Both tabs end on the welcome page
+  s3 not: One tab still inside the gym
+  s3 not: The second tab showing no reason at all: check what it shows
+J-F-panel-1014-12 | type 12 | staff | Welcome page after a front desk person was signed out or removed
+  s1 see: Only the reason line and the sign-in form
+  s1 not: The gym's name, members or payments still readable on the device after a removal
+  s1 not: Saved-but-unsent items thrown away without a word
+  s1 not: The words naming who signed the person out
+J-F-panel-1014-13 | type 1 | trainer | The panel open on a device signed in as a trainer (staff with the Trainer tick); this device is then signed out by the owner ("Sign out ever
+  s1 see: The gym closes and the welcome page shows "You were signed out of this gym. Ask the gym owner for a new code. If you are the owner, make one on a device where you are signed in."
+  s1 not: The gym still readable or saving after the sign-out
+  s1 not: A blank page or an error code with no reason
+  s1 not: The words for a removed person
+  s2 see: The gym opens; the notice is gone
+  s2 not: The old notice still on the page after signing in
+J-F-panel-1014-14 | type 2 | trainer | The panel open on a device signed in as a trainer (staff with the Trainer tick); the owner removes this person from the gym
+  s1 see: The welcome page with "You no longer have access to this gym. Talk to the gym owner."
+  s1 not: "Ask the gym owner for a new code" left on the page for a person who cannot come back with a code
+  s1 not: The gym's records still on the device
+J-F-panel-1014-15 | type 2 | trainer | Staff & sign-in as a trainer (staff with the Trainer tick); the person signs out by choice
+  s1 see: The welcome page with "You are signed out of this device."
+  s1 not: The "You were signed out of this gym…" words for a sign-out the person chose
+J-F-panel-1014-16 | type 3 | trainer | A device of a trainer (staff with the Trainer tick) that was removed from the gym, with no internet at the moment the panel notices
+  s1 see: At least the signed-out words; the removed words once the reason can be asked
+  s1 not: The removed person left for good with words that tell them to ask for a new code
+  s1 not: The page hanging while the reason is asked
+  s2 see: The welcome page
+  s2 not: The reason gone after a refresh with nothing said at all: check what is shown
+J-F-panel-1014-17 | type 6 | trainer | Welcome page showing a signed-out notice for a trainer (staff with the Trainer tick)
+  s1 see: The gym; no notice
+  s1 not: The notice carried into the gym or shown at the next sign-out by choice
+  s2 see: The same signed-out words again, once
+  s2 not: Two notices, or none the second time
+  s3 see: Both tabs end on the welcome page
+  s3 not: One tab still inside the gym
+  s3 not: The second tab showing no reason at all: check what it shows
+J-F-panel-1014-18 | type 12 | trainer | Welcome page after a trainer (staff with the Trainer tick) was signed out or removed
+  s1 see: Only the reason line and the sign-in form
+  s1 not: The gym's name, members or payments still readable on the device after a removal
+  s1 not: Saved-but-unsent items thrown away without a word
+  s1 not: The words naming who signed the person out
+J-F-panel-1009-01 | type 1 | owner | Staff & sign-in as an owner; the gym server keeps job names
+  s1 see: Question "What is their job?" with Owner, Staff (front desk), Trainer, Other
+  s1 not: "Other" giving more rights than the front desk
+  s2 see: Hint "Same access as the front desk. The job only shows next to their name."
+  s2 see: Box "Type the job (for example Manager, Cleaner)"
+  s2 not: The box shown for Owner, Staff or Trainer
+  s3 see: Toast "<name> added. Now make a sign-in code for them."
+  s3 see: The new row with the pill "Manager"
+  s3 not: The pill reading "Staff" for a person with a job
+  s3 not: The person given owner rights
+J-F-panel-1009-02 | type 2 | owner | Staff & sign-in as an owner; the gym server does not keep job names yet
+  s1 see: The row with the pill "Manager" on this browser
+  s1 not: An error or a failed add because the job could not be saved on the server
+  s1 not: Words claiming the job is saved for every device
+  s2 see: The same person with the pill "Staff" (the job is only on the first browser)
+  s2 not: The person missing on the other device
+  s3 see: The job is sent by itself; now every device shows "Manager"
+  s3 not: The kept job sent over a newer job on the server
+  s3 not: The job sent for a person who was removed or made an owner
+J-F-panel-1009-03 | type 3 | owner | "Add a person" sheet with "Other" picked
+  s1 see: "Type their job, like Manager or Cleaner."
+  s1 not: A person added with an empty job pill
+  s2 see: The box stops at 40 letters
+  s2 not: A pill that pushes the row's buttons off the screen
+  s2 not: The job cut later without a word
+  s3 see: The pill "Owner" in the muted colour, with front desk rights only: check it cannot be mistaken for a real owner
+  s3 not: A front desk person who looks like an owner in the list
+J-F-panel-1009-04 | type 6 | owner | Staff & sign-in as an owner; a person has the job "Manager"
+  s1 see: A way to edit or clear the job on the person's row
+  s1 not: The only way being to remove the person and add them again
+  s1 not: A job that can never be corrected after a typing mistake
+  s2 see: The pill still shows the typed job
+  s2 not: The job lost by ticking Trainer
+  s3 see: The pill "Staff"
+  s3 not: The old job coming back from this browser's memory
+J-F-panel-1009-05 | type 12 | owner | Staff & sign-in as an owner, then as the person with the job
+  s1 see: Front desk pages only; the "You" card says "Staff"
+  s1 not: Money totals or owner pages opened by a job name
+  s1 not: The job shown to members anywhere
+  s1 not: Other gyms' job lists read from this browser's memory on a shared computer
+J-F-panel-1017-01 | type 1 | owner | Settings as an owner, card "MettleUp access"; MettleUp has never looked
+  s1 see: "MettleUp sees only your gym’s totals (how many members, check-ins and money in all), never a member’s name or number. MettleUp support can look at your records only when you let them, for one hour at most, and only to read. Every look is listed here."
+  s1 see: "MettleUp has never opened your records."
+  s1 see: Button "Let MettleUp support look (1 hour)"
+  s1 not: "Never opened" shown when a look or an action is on record
+  s2 see: Sheet "Let MettleUp support look?"
+  s2 see: "MettleUp support can read your members, plans, receipts, check-ins, shop orders and staff list for the next hour, to help with what you asked. They cannot change anything. It closes by itself after an hour, and every look is listed here."
+  s2 see: Buttons "Cancel" and "Yes, for 1 hour"
+  s2 not: Access opened by the first tap, before the owner says yes
+  s3 see: The sheet closes; the button is now the red "Close it now"
+  s3 see: A new line "Support access is open until <time> (you opened it). Nothing looked at yet. Reason: you asked MettleUp support to look."
+  s3 not: An end time more than one hour away
+  s3 not: Two open windows from a double tap
+  s3 not: The time shown on a clock other than India time
+  s4 see: "…So far MettleUp support viewed your members and receipts."
+  s4 not: A look that is not listed
+  s4 not: A look listed with no time
+J-F-panel-1017-02 | type 2 | owner | Settings, card "MettleUp access", with a support window open
+  s1 see: The button is back to "Let MettleUp support look (1 hour)"
+  s1 see: The line now reads "Support access was open <day>, <from>-<to> (you opened it). Nothing was looked at." or "MettleUp support viewed your <what> on <day>, <from>-<to> (you opened it). Reason: you asked MettleUp support to look."
+  s1 not: Support still able to read after the close
+  s1 not: The line removed from the list
+J-F-panel-1017-03 | type 2 | owner | Settings, card "MettleUp access", after MettleUp opened the records itself in an emergency or acted on the gym
+  s1 see: A line "…(MettleUp opened it in an emergency). Reason: <kind>: <what was written down>."
+  s1 see: Lines such as "<day>, <time>: MettleUp made a new sign-in code for the owner and cleared the old PIN, after a call to your gym."
+  s1 not: An emergency look with no reason shown
+  s1 not: A MettleUp action on the gym that is not in the list
+  s1 not: A line the owner can delete or hide
+J-F-panel-1017-04 | type 3 | owner | Settings as front desk staff; and as an owner on a gym server without this feature
+  s1 see: No "MettleUp access" card, or "Only an owner can do this."
+  s1 not: Staff able to open the gym's records to MettleUp
+  s1 not: Staff able to read the list of looks
+  s2 see: "MettleUp access is not switched on for your gym yet." and no button
+  s2 not: A button that fails with a code
+  s2 not: The "never opened" promise shown when nothing can be known
+  s3 see: The sheet closes and a red line "Can’t reach the internet. Check the connection and try again."
+  s3 not: The card showing the window as open when it is not
+J-F-panel-1017-05 | type 6 | owner | Settings, card "MettleUp access"; the owner opened a window and leaves it
+  s1 see: The button is "Let MettleUp support look (1 hour)" again; the line reads "Support access was open …" or "MettleUp support viewed your …"
+  s1 not: The window still open after an hour
+  s1 not: The card still saying "open until" for a time in the past
+  s2 see: Two lines in the list, each with its own times
+  s2 not: The first line overwritten by the second
+  s3 see: Check what the card shows: it must not offer "Close it now" for a window that has ended
+  s3 not: A stale "open" state that lets the owner think support can still look, or cannot
+J-F-panel-1017-06 | type 12 | owner | Settings, card "MettleUp access", as the owner
+  s1 see: Every look, with what kind of records and when
+  s1 not: A look into the records that is not listed
+  s1 not: Support able to change anything inside a window
+  s1 not: A window longer than one hour
+  s1 not: Another gym's lines in this list
+  s1 not: Member names or numbers copied into the list itself

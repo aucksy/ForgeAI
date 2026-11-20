@@ -1,0 +1,32 @@
+# L8-watch-app: 8 x watch / watch/app. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L8.1 | 8 | Every paid or capped thing: Supabase free-plan limits (DB size, egress, log retention), Cloudflare limits, GitHub storage, AI spend per gym and per call with no cap, WhatsApp template cost
+L8.2 | 8 | what happens at each limit
+L8.3 | 8 | a usage alarm before each one
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-watch-100 | live | Open the watch app: one screen chosen from the workout's state (permissions, rest, rest over, saved, no phone, no phone  | apps/mobile/android/wear/src/main/java/com/forgeai/wear/MainActivity.kt:52
+F-watch-101 | live | Rest timer on the watch screen (countdown ring, next set line; on the logging screens also -15 / +15 / Skip) | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:479
+F-watch-102 | live | Rest countdown card on the watch face and in Recents, with Done / +15 s / Skip buttons that act on the phone | apps/mobile/android/wear/src/main/java/com/forgeai/wear/RestAlerts.kt:88
+F-watch-103 | live | Rest is over: the watch's own buzz, a full-colour "Rest is over" screen and a card with "Complete set" | apps/mobile/android/wear/src/main/java/com/forgeai/wear/RestAlerts.kt:101
+F-watch-104 | live | A running rest keeps its alarm and countdown after the watch restarts, the app updates, or "Alarms & reminders" is switc | apps/mobile/android/wear/src/main/java/com/forgeai/wear/BootReceiver.kt:12
+F-watch-105 | live | Between sets: see the next set at a glance (set number, exercise, last time's numbers, today's target) | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:580
+F-watch-106 | live | Log a set from the watch (tap weight or reps, turn the crown, tap Done; the phone saves it) | apps/mobile/android/wear/src/main/java/com/forgeai/wear/LogScreens.kt:318
+F-watch-107 | behind switch | Rate the effort of a set (RPE) on the watch after Done; Skip or 4 s untouched saves the set without it | apps/mobile/android/wear/src/main/java/com/forgeai/wear/LogScreens.kt:498
+F-watch-108 | behind switch | Exercise done screen after the last set of an exercise (Go, or swipe left, moves on) | apps/mobile/android/wear/src/main/java/com/forgeai/wear/LogScreens.kt:670
+F-watch-109 | behind switch | "Not saved" screen when the phone refuses a set logged on the watch or does not answer in 10 s | apps/mobile/android/wear/src/main/java/com/forgeai/wear/LogScreens.kt:744
+F-watch-110 | live | Live heart rate on the workout screens (the watch's own sensor, only while the screen is bright and a workout is open) | apps/mobile/android/wear/src/main/java/com/forgeai/wear/HeartRate.kt:19
+F-watch-111 | live | First-launch permission screens: heart rate (1 of 2) and rest alerts incl. Alarms & reminders (2 of 2), Allow / Not now, | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:760
+F-watch-112 | live | "Workout in progress" notice for the whole workout: keeps MettleUp up instead of the watch face, icon on the watch face, | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WorkoutLive.kt:102
+F-watch-113 | behind switch | The watch opens MettleUp when a workout starts on the phone, or pops up a "Workout started" card with one buzz (once per | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WorkoutStarted.kt:65
+F-watch-114 | live | The screen dims instead of going black during a workout, also with the watch's Always-on display off (the app dims itsel | apps/mobile/android/wear/src/main/java/com/forgeai/wear/SelfDim.kt:8
+F-watch-115 | live | Watch screen diary for support: the watch keeps a short log of its screen's life and sends it when the phone's Help and  | apps/mobile/android/wear/src/main/java/com/forgeai/wear/AmbientDiag.kt:148
+F-watch-116 | live | The watch follows the phone's workout: rests, the open workout and the next set arrive from the phone, also with the wat | apps/mobile/android/wear/src/main/java/com/forgeai/wear/ForgeListenerService.kt:12
+F-watch-117 | live | The watch in the gym's colour (the accent the phone sends, made readable on black; MettleUp orange without a gym) on scr | apps/mobile/android/wear/src/main/java/com/forgeai/wear/BrandColour.kt:12
+F-watch-118 | live | Watch update ready: the watch tells the phone it is installed and which version it runs, so the phone can say a watch up | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchVersion.kt:23
+F-watch-119 | live | One buzz, not two: the phone's rest alerts are not copied to the watch while the watch app shows its own | apps/mobile/android/wear/src/main/java/com/forgeai/wear/Bridging.kt:46
+F-watch-120 | live | No workout open: "Start a workout on your phone" screen | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:682
+F-watch-121 | live | "Workout saved" shown for about 4 s after Finish on the phone | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:702
+F-watch-122 | live | Get MettleUp on your phone: when the phone has no MettleUp app, "Open on phone" opens its Play Store page | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:725
+F-watch-123 | live | "Phone not connected" screen (a running rest and its buzz still show first) | apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt:835
+## MACHINE FILES (docs/system-map/_sources/machine/)
+limits.json: MISSING (items that need it = could-not-check)

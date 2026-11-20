@@ -1,0 +1,416 @@
+# A8-watch-app-2: coverage of 63 Tier 1 journeys (11 features, from A5-watch-app-2, A5-watch-small-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-watch-114 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/AmbientDiagStoreTest.kt | watch | 48 lines | file name
+F-watch-114 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/AmbientDiagTest.kt | watch | 96 lines | file name
+F-watch-114 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/SelfDimTest.kt | watch | 234 lines | file name
+F-watch-114 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-watch-114 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-watch-101 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/NextSetTextTest.kt | watch | 47 lines | asserts 3 journey phrase(s)
+F-watch-101 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/RestTextTest.kt | watch | 69 lines | file name
+F-watch-101 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 2 journey phrase(s)
+F-watch-101 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchScreensRenderTest.kt | watch | 336 lines | file name
+F-watch-101 | apps/dashboard/test/crm/progressTrend.test.ts | unit | 245 lines | asserts 1 journey phrase(s)
+F-watch-101 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchNextExerciseTest.kt | watch | 74 lines | asserts 1 journey phrase(s)
+F-watch-101 | apps/mobile/test/db/finishReal.test.ts | unit | 104 lines | asserts 1 journey phrase(s)
+F-watch-101 | apps/mobile/test/tracker/editDraft.test.ts | unit | 330 lines | asserts 1 journey phrase(s)
+F-watch-101 | apps/mobile/test/tracker/liveCard.test.ts | unit | 146 lines | asserts 1 journey phrase(s)
+F-watch-101 | apps/mobile/test/tracker/machineInUse.test.ts | unit | 257 lines | asserts 1 journey phrase(s)
+F-watch-101 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 1 journey phrase(s)
+F-watch-101 | apps/mobile/test/tracker/phase2ReviewFixes.test.ts | unit | 287 lines | asserts 1 journey phrase(s)
+F-watch-105 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-watch-105 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-watch-105 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-watch-105 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-watch-105 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-watch-105 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-watch-105 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-watch-105 | apps/mobile/test/tracker/switcherLine.test.ts | unit | 38 lines | asserts 3 journey phrase(s)
+F-watch-105 | supabase/tests/0039_gym_busy.sql | db | 167 lines | asserts 3 journey phrase(s)
+F-watch-105 | supabase/tests/0043_member_photos.sql | db | 135 lines | asserts 3 journey phrase(s)
+F-watch-105 | supabase/tests/0045_report_requests.sql | db | 238 lines | asserts 3 journey phrase(s)
+F-watch-105 | supabase/tests/0054_member_alerts.sql | db | 139 lines | asserts 3 journey phrase(s)
+F-watch-120 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 2 journey phrase(s)
+F-watch-120 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchScreensRenderTest.kt | watch | 336 lines | file name
+F-watch-120 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-watch-120 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-watch-120 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-watch-120 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-watch-120 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-watch-120 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-watch-120 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-watch-121 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | file name, asserts 1 journey phrase(s)
+F-watch-121 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchScreensRenderTest.kt | watch | 336 lines | file name
+F-watch-121 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-watch-121 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-watch-122 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | file name, asserts 1 journey phrase(s)
+F-watch-122 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchScreensRenderTest.kt | watch | 336 lines | file name
+F-watch-122 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-watch-122 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-watch-122 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-watch-122 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-watch-122 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-watch-122 | apps/dashboard/test/crm/setupCards.test.ts | unit | 17 lines | asserts 1 journey phrase(s)
+F-watch-122 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-watch-122 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-watch-122 | apps/mobile/test/lib/helpHistory.test.ts | unit | 207 lines | asserts 1 journey phrase(s)
+F-watch-122 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-watch-111 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 3 journey phrase(s)
+F-watch-111 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 2 journey phrase(s)
+F-watch-111 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchScreensRenderTest.kt | watch | 336 lines | file name
+F-watch-111 | apps/mobile/test/tracker/liveCard.test.ts | unit | 146 lines | asserts 2 journey phrase(s)
+F-watch-111 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-watch-111 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-watch-111 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 1 journey phrase(s)
+F-watch-111 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-watch-111 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 1 journey phrase(s)
+F-watch-111 | apps/dashboard/e2e/workoutcode.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-watch-111 | apps/dashboard/test/crm/demoGym.test.ts | unit | 109 lines | asserts 1 journey phrase(s)
+F-watch-111 | apps/dashboard/test/crm/setupCards.test.ts | unit | 17 lines | asserts 1 journey phrase(s)
+F-watch-123 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 4 journey phrase(s)
+F-watch-123 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchScreensRenderTest.kt | watch | 336 lines | file name
+F-watch-123 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-watch-123 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-watch-123 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 1 journey phrase(s)
+F-watch-123 | apps/mobile/test/tracker/watchBridge.test.ts | unit | 153 lines | asserts 1 journey phrase(s)
+F-watch-118 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchVersionTest.kt | watch | 31 lines | file name
+F-watch-118 | apps/mobile/test/tracker/healthOnOff.test.ts | unit | 136 lines | asserts 1 journey phrase(s)
+F-watch-112 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WorkoutLiveTest.kt | watch | 51 lines | file name
+F-watch-112 | apps/mobile/qa/redesign-r.yaml | maestro | 1131 lines | asserts 2 journey phrase(s)
+F-watch-112 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 2 journey phrase(s)
+F-watch-112 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-watch-112 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-watch-112 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-watch-112 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-watch-112 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 1 journey phrase(s)
+F-watch-112 | apps/mobile/qa/brand-theme.yaml | maestro | 170 lines | asserts 1 journey phrase(s)
+F-watch-112 | apps/mobile/qa/brand-welcome.yaml | maestro | 149 lines | asserts 1 journey phrase(s)
+F-watch-112 | apps/mobile/qa/phase6-link.yaml | maestro | 30 lines | asserts 1 journey phrase(s)
+F-watch-112 | apps/mobile/qa/phase7-bigtext.yaml | maestro | 326 lines | asserts 1 journey phrase(s)
+F-watch-3200 | apps/mobile/test/db/workoutPhotosReal.test.ts | unit | 327 lines | asserts 1 journey phrase(s)
+F-watch-3200 | apps/mobile/test/tracker/phoneFeatures.test.ts | unit | 87 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-watch-114-01 | type 1 | member | Watch with Always-on display OFF and Battery Saver off; a workout open on the phone; MettleUp on the watch screen
+  s1 see: About 1 s after the wrist goes down the screen drops to its lowest brightness
+  s1 see: The same screen in black with outlined numbers (the rest countdown keeps ticking)
+  s1 not: The screen turns fully black
+  s1 not: The watch face replaces MettleUp
+  s2 see: The screen is bright again with the same screen
+  s2 not: The first tap presses a button such as Skip or -15 (it must only wake the screen)
+  s3 see: 'Workout saved', then the screen is let go and turns off by the watch's own timeout
+  s3 not: The screen kept on after the workout ended
+J-F-watch-114-02 | type 2 | member | Watch with Always-on display ON; a workout open; MettleUp on screen
+  s1 see: The watch's own dim screen (the same black, outlined screen)
+  s1 not: The app also keeps the screen on itself while Always-on is on
+  s1 not: A flicker between two dim screens
+  s2 see: Bright screen again
+  s2 not: The watch face instead of MettleUp
+J-F-watch-114-03 | type 3 | member | Watch with Always-on OFF and Battery Saver ON; a workout open
+  s1 see: The screen turns off as the watch normally does in Battery Saver
+  s1 not: The app keeps the screen on against Battery Saver
+  s1 not: An error or a message asking to change a watch setting
+J-F-watch-114-04 | type 6 | member | Always-on OFF; a workout open and dimmed by the app
+  s1 see: The watch screen is let go at once and turns off by the watch's timeout
+  s1 not: The screen kept on dimmed for hours while paused
+  s2 see: The screen is held and dims again instead of going black
+  s2 not: The screen stays let go after the workout is resumed
+  s3 see: The screen is let go (idle) and goes off
+  s3 not: The screen held on for up to 4 h with no one using it
+  s4 see: Bright again, and held (dimmed later) again
+  s4 not: The screen never held again until the app is reopened
+J-F-watch-114-05 | type 12 | member | Member who sent the watch's screen log through Help and feedback
+  s1 see: The caption says the log holds only the screen's on, off and dim times and the Battery Saver and screen settings
+  s1 not: Workout names, weights, heart rate or location in the log
+J-F-watch-101-01 | type 1 | member | A workout open on the phone, the watch connected, MettleUp on the watch
+  s1 see: A countdown ring with the time left, e.g. '1:30'
+  s1 see: The exercise and set line, e.g. 'Set 3 of 5 · Bench Press'
+  s1 see: Last time's numbers in grey and today's target in the accent colour
+  s1 not: '0:00' while time is still left (0.2 s left still reads '0:01')
+  s1 not: Another exercise's name
+  s2 see: 'Rest is over' on a full accent screen, with how long it has run over
+  s2 see: The watch buzzes
+  s2 not: No buzz
+  s2 not: A second buzz later in the set
+J-F-watch-101-02 | type 2 | member | Rest started from the phone; the watch shows the rest screen (view only)
+  s1 see: The same countdown and next set line within a few seconds
+  s1 not: Two different times on phone and watch
+  s1 not: Buttons on a view-only rest screen that do nothing
+J-F-watch-101-03 | type 2 | member | Logging on the watch: the rest screen after Done shows -15 / +15 / Skip
+  s1 see: The countdown grows by 15 seconds
+  s1 not: The ring jumps back to full or the time changes by another amount
+  s2 see: The countdown drops by 15 seconds
+  s2 not: A time below 0:00
+  s3 see: The rest ends and the next set shows
+  s3 not: A buzz after Skip
+J-F-watch-101-04 | type 3 | member | The watch was away from the phone when a rest ended
+  s1 see: No rest screen and no buzz; the next set shows
+  s1 not: A buzz in the middle of the next set
+  s1 not: A stale countdown at 0:00
+J-F-watch-101-05 | type 6 | member | A rest is running on the watch
+  s1 see: The rest screen goes and the between-sets screen shows
+  s1 not: The rest comes back or buzzes after it was skipped
+  s2 see: A fresh full ring
+  s2 not: The ring starting part-empty from the old rest
+J-F-watch-101-06 | type 12 | member | Member on the free plan with a Wear OS watch
+  s1 see: The rest counts down and buzzes on the watch
+  s1 not: A paywall over the rest timer, which is promised free for everyone
+J-F-watch-105-01 | type 1 | member | A workout open, no rest running
+  s1 see: The exercise name
+  s1 see: The set number big, e.g. '3' with 'of 5'
+  s1 see: Last time's numbers in grey, e.g. '60 kg × 8'
+  s1 see: Today's target in the accent colour when it differs
+  s1 not: Another exercise's numbers
+  s1 not: The set number cut off
+  s2 see: The watch moves to the next set within a few seconds
+  s2 not: The watch stuck on the set already done
+J-F-watch-105-02 | type 2 | member | The next set is a warm-up
+  s1 see: The label itself, e.g. 'Warm-up 1 of 2'
+  s1 not: An empty space where the set number should be
+J-F-watch-105-03 | type 3 | member | First time doing this exercise (no last time), or a phone app older than the next-set lines
+  s1 see: No last-time line; only what is known, or the phone's one text line
+  s1 not: 'null', an empty 'Last:' line or '0 kg × 0'
+J-F-watch-105-04 | type 6 | member | Today's target is the same as last time's numbers
+  s1 see: One line with the numbers, not two equal lines
+  s1 not: The same numbers shown twice
+  s2 see: The next exercise and its set 1
+  s2 not: The finished exercise still shown
+J-F-watch-105-05 | type 12 | member | Member who did this exercise last week in another routine
+  s1 see: Last time's numbers from the last time this exercise was done, in any routine, the same as on the phone
+  s1 not: Numbers that differ from the phone's Previous column
+J-F-watch-120-01 | type 1 | member | Phone connected with MettleUp, no workout open
+  s1 see: A phone icon
+  s1 see: 'Start a workout on your phone'
+  s1 see: 'Open MettleUp on your phone. Your rest timer shows up here.'
+  s1 not: A blank screen or an endless spinner
+  s1 not: An old workout's set
+  s2 see: The between-sets screen within a few seconds
+  s2 not: The watch still says to start a workout
+J-F-watch-120-02 | type 2 | member | A workout was open but the phone was reset and went silent for 4 hours
+  s1 see: 'Start a workout on your phone'
+  s1 not: The old set shown for good
+J-F-watch-120-03 | type 3 | member | No workout open
+  s1 see: Nothing changes; there is no button
+  s1 not: A crash
+  s1 not: A workout started from the watch
+J-F-watch-120-04 | type 6 | member | A workout open, then discarded on the phone
+  s1 see: 'Start a workout on your phone' straight away
+  s1 not: 'Workout saved' after a discard
+J-F-watch-121-01 | type 1 | member | A workout open, the watch connected
+  s1 see: A tick
+  s1 see: 'Workout saved'
+  s1 see: 'Well done. See the details on your phone.'
+  s1 not: 'Start a workout on your phone' at once with no word that it was saved
+  s2 see: 'Start a workout on your phone'
+  s2 not: 'Workout saved' staying on for good
+J-F-watch-121-02 | type 3 | member | A workout open
+  s1 see: 'Start a workout on your phone' straight away
+  s1 not: 'Workout saved' for a discarded workout
+J-F-watch-121-03 | type 6 | member | 'Workout saved' showing
+  s1 see: The between-sets screen for the new workout
+  s1 not: 'Workout saved' covering the new workout
+J-F-watch-121-04 | type 12 | member | Member who finished a workout
+  s1 see: 'Workout saved' and no workout details
+  s1 not: The workout's weights or names shown on the watch face for others to read
+J-F-watch-122-01 | type 1 | member | Member whose phone does not have MettleUp (never sent a workout to this watch)
+  s1 see: A phone icon
+  s1 see: 'Get MettleUp on your phone'
+  s1 see: 'Your watch needs the MettleUp app on your phone.'
+  s1 see: An 'Open on phone' button
+  s1 not: 'Start a workout on your phone' while the phone has no MettleUp
+  s2 see: 'Look at your phone to install MettleUp.'
+  s2 see: The phone opens MettleUp's Play Store page
+  s2 not: Another app's store page
+  s2 not: Nothing happens with no word on the watch
+J-F-watch-122-02 | type 3 | member | Member whose phone does not have MettleUp (never sent a workout to this watch); the phone does not answer
+  s1 see: 'Your phone did not answer. Try again.'
+  s1 not: 'Look at your phone' when nothing opened
+J-F-watch-122-03 | type 6 | member | Member who used MettleUp on this phone before, then removed the phone app
+  s1 see: 'Start a workout on your phone' (the phone counts as having MettleUp because it once sent a workout)
+  s1 not: A crash
+  s1 not: A loop between the two screens
+  s2 see: The same screen, then the workout once one is started
+  s2 not: 'Get MettleUp on your phone' after it is installed
+J-F-watch-122-04 | type 1 | prospect | Person who installed the watch app first; the phone is connected but has no MettleUp
+  s1 see: A phone icon
+  s1 see: 'Get MettleUp on your phone'
+  s1 see: 'Your watch needs the MettleUp app on your phone.'
+  s1 see: An 'Open on phone' button
+  s1 not: 'Start a workout on your phone' while the phone has no MettleUp
+  s2 see: 'Look at your phone to install MettleUp.'
+  s2 see: The phone opens MettleUp's Play Store page
+  s2 not: Another app's store page
+  s2 not: Nothing happens with no word on the watch
+J-F-watch-122-05 | type 3 | prospect | Person who installed the watch app first; the phone is connected but has no MettleUp; the phone does not answer
+  s1 see: 'Your phone did not answer. Try again.'
+  s1 not: 'Look at your phone' when nothing opened
+J-F-watch-122-06 | type 6 | prospect | Person who installed the watch app first; the phone is connected but has no MettleUp; 'Open on phone' already tapped
+  s1 see: Within a few checks the watch shows 'Start a workout on your phone'
+  s1 not: 'Get MettleUp on your phone' after it is installed
+  s2 see: The button as an outline; a tap does nothing until bright
+  s2 not: A tap while dim sends a second request
+J-F-watch-111-01 | type 1 | member | First time the watch app opens; nothing allowed yet
+  s1 see: '1 of 2'
+  s1 see: A heart icon
+  s1 see: 'Heart rate'
+  s1 see: 'Shows how hard your heart works while you rest.'
+  s1 see: 'Allow' and 'Not now'
+  s1 not: Both permission pop-ups at once
+  s1 not: The rest timer hidden behind a pop-up with no words
+  s2 see: '2 of 2'
+  s2 see: A bell icon
+  s2 see: 'Rest alerts'
+  s2 see: 'Your watch buzzes when rest is over.'
+  s2 not: '1 of 2' again
+  s3 see: If Alarms & reminders is off: 'Turn on Alarms & reminders so your watch buzzes on time.' with 'Open settings'; then the normal screen
+  s3 not: The screens asked again on the next open
+J-F-watch-111-02 | type 2 | member | Notifications already on; Alarms & reminders off (a new Wear OS 5+ watch, or a watch updated from 0.60)
+  s1 see: '2 of 2' 'Rest alerts' with 'Turn on Alarms & reminders so your watch buzzes on time.' and 'Open settings'
+  s1 not: 'Allow' that does nothing
+  s2 see: The watch's Alarms & reminders switch for MettleUp
+  s2 not: The watch's general settings with no MettleUp switch
+J-F-watch-111-03 | type 2 | member | Heart rate was refused before in the watch's pop-up (blocked)
+  s1 see: The watch's app settings page for MettleUp
+  s1 not: Nothing happens
+J-F-watch-111-04 | type 3 | member | First open
+  s1 see: The normal screen; no heart line
+  s1 not: The screens shown again on the next open
+  s1 not: The app stopping or nagging
+J-F-watch-111-05 | type 6 | member | Permissions answered, later turned on in the watch's settings
+  s1 see: No permission screen; the heart line shows
+  s1 not: 'Heart rate' asked although it is already on
+  s2 see: No new ask (asked once)
+  s2 not: A permission screen covering a running rest
+J-F-watch-111-06 | type 12 | member | Member who allowed heart rate
+  s1 see: The heart rate on the watch only
+  s1 not: Heart rate sent to MettleUp's servers or shown to the gym
+J-F-watch-123-01 | type 1 | member | No rest running; the phone's Bluetooth turned off or the phone far away
+  s1 see: After two checks: a slashed phone icon
+  s1 see: 'Phone not connected'
+  s1 see: 'Keep your phone near you with Bluetooth on.'
+  s1 not: The old set shown as if the phone were there
+  s1 not: A blank screen
+  s2 see: The screen before (between sets or 'Start a workout on your phone')
+  s2 not: 'Phone not connected' staying after the link is back
+J-F-watch-123-02 | type 2 | member | A rest is running; the phone is left in a locker
+  s1 see: The countdown keeps running and the watch buzzes at the end
+  s1 see: 'Rest is over'
+  s1 not: 'Phone not connected' hiding the countdown or the buzz
+  s2 see: 'Phone not connected' after the rest-is-over screen
+  s2 not: The watch claiming the set was saved
+J-F-watch-123-03 | type 3 | member | The link drops for one moment only
+  s1 see: The same screen as before
+  s1 not: A flash of 'Phone not connected' after one empty check
+J-F-watch-123-04 | type 6 | member | 'Phone not connected' showing during an open workout
+  s1 see: The current set from the phone within a few seconds
+  s1 not: The set from before the drop
+J-F-watch-118-01 | type 1 | member | Phone app updated; the watch app is an older version
+  s1 see: Nothing new on the watch
+  s1 not: A pop-up on the watch
+  s2 see: The phone says a watch update is ready (the phone's exact words were not read here)
+  s2 not: No word on the phone while the watch is older
+  s2 not: 'Update ready' when both are the same version
+J-F-watch-118-02 | type 3 | member | Watch app installed but never opened
+  s1 see: The phone asks the watch for its version and then says whether an update is ready
+  s1 not: 'Update ready' for a watch that is already up to date
+  s1 not: A crash on the phone
+J-F-watch-118-03 | type 6 | member | Phone says a watch update is ready
+  s1 see: The phone's message goes away
+  s1 not: The message staying after the watch is updated
+J-F-watch-118-04 | type 1 | the system | Watch app process starts
+  s1 see: (No screen) the watch writes its version name and number to the shared item and announces it is installed
+  s1 not: The write repeated and synced again when nothing changed
+  s1 not: A crash when Google Play services is missing
+J-F-watch-118-05 | type 2 | the system | Watch reboots, or the watch app is updated, or the phone asks
+  s1 see: (No screen) the item is written again, the update case with the new version
+  s1 not: The old version left in the item after an update
+J-F-watch-118-06 | type 3 | the system | The write fails (Play services busy) or the package has no version
+  s1 see: (No screen) a warning in the log; the next start tries again
+  s1 not: A crash
+  s1 not: A version of 0 or empty written to the item
+J-F-watch-118-07 | type 6 | the system | The item was already written in this process
+  s1 see: (No screen) no second write
+  s1 not: A new sync on every wake
+  s2 see: (No screen) written again on purpose
+  s2 not: The phone's ask ignored
+J-F-watch-118-08 | type 12 | the system | Any watch
+  s1 see: (No screen) only the app's version name and number
+  s1 not: The member's name, workouts or heart rate in the item
+  s1 not: The item sent anywhere but the member's own phone
+J-F-watch-112-01 | type 1 | member | Workout started on the phone; MettleUp open on the watch; notifications allowed
+  s1 see: A notice 'Workout in progress' 'Tap to open MettleUp'
+  s1 see: A MettleUp icon on the watch face
+  s1 not: A sound or buzz from the notice
+  s2 see: MettleUp stays up (dimmed), not the watch face
+  s2 not: The watch face replacing MettleUp mid-workout
+  s3 see: The notice and the icon are gone
+  s3 not: The notice staying after the workout
+J-F-watch-112-02 | type 2 | member | Workout open; the member is on the watch face or in another app
+  s1 see: MettleUp opens on the current set
+  s1 not: A second copy of MettleUp
+  s1 not: The 'Start a workout' screen during a workout
+J-F-watch-112-03 | type 3 | member | Notifications refused on the watch ('Not now' on Rest alerts), or heart rate refused on Android 14+
+  s1 see: No notice (notifications off), or the notice alone without the keep-alive (heart rate off); the app still opens
+  s1 not: A crash
+  s1 not: An error on the watch
+J-F-watch-112-04 | type 6 | member | Workout open with the notice
+  s1 see: The notice and icon are gone
+  s1 not: The notice left behind
+  s2 see: The notice back
+  s2 not: Two notices
+J-F-watch-112-05 | type 12 | member | Workout open; someone else looks at the member's watch face
+  s1 see: Only 'Workout in progress' and the icon
+  s1 not: Exercise names, weights or heart rate on the watch face notice
+J-F-watch-112-06 | type 1 | the system | Workout open; the phone dies or loses MettleUp and never sends 'ended'
+  s1 see: (No screen) the service stops and the notice times out; the watch shows 'Start a workout on your phone'
+  s1 not: The notice kept forever
+  s1 not: The old set shown for good
+J-F-watch-112-07 | type 2 | the system | Workout open; MettleUp comes back to the front after a call
+  s1 see: (No screen) the notice is posted again and the keep-alive started
+  s1 not: The watch face taking over later because the notice was lost
+J-F-watch-112-08 | type 3 | the system | MettleUp in the background when the phone's workout message arrives
+  s1 see: (No screen) the notice is posted; the keep-alive is not started from the background
+  s1 not: A crash from a refused background start
+J-F-watch-112-09 | type 6 | the system | Keep-alive running
+  s1 see: (No screen) keep-alive stopped and the notice removed
+  s1 not: The keep-alive left running after the workout
+  s2 see: (No screen) the notice stays without it
+  s2 not: The notice removed while the workout is still open
+J-F-watch-3200-01 | type 1 | member | Watch Settings, Display, Text size set to normal; MettleUp watch app installed and connected to the phone
+  s1 see: Watch system text grows
+  s1 not: The MettleUp watch app crashing or closing when the text size changes
+  s2 see: The watch shows the rest screen with the big countdown
+  s2 not: The watch staying on the old screen with no countdown
+  s3 see: The countdown digits are the same height as at the normal text size
+  s3 see: The small labels around it are a little bigger
+  s3 not: The countdown smaller than at the normal text size (it was 23 % smaller before the fix)
+  s3 not: The countdown cut by the round edge of the screen
+J-F-watch-3200-02 | type 2 | member | Watch text size at the largest; a workout running with a set waiting to be logged on the watch
+  s1 see: The weight and reps numbers at their usual size
+  s1 see: "Set 2 of 4" and the Previous line slightly bigger, never cut
+  s1 not: The weight or reps numbers shrunk compared with the normal text size
+  s1 not: The Done button pushed off the round screen
+  s2 see: The number changes at full size while the dial turns
+  s2 see: The set is logged and the rest starts
+  s2 not: The dial tip or the numbers drawn over the Done button
+J-F-watch-3200-03 | type 2 | member | Watch text size at the largest; a rest running; always-on display on
+  s1 see: The countdown as outlined digits, the same size as on the bright screen
+  s1 not: The outlined countdown smaller than at the normal text size
+  s1 not: The countdown cut by the round edge
+  s2 see: The bright rest screen with the same countdown size
+  s2 not: The digits jumping in size between the dim and the bright screen
+J-F-watch-3200-04 | type 3 | member | Watch Settings, Display, Text size set to the SMALLEST size; a rest running
+  s1 see: The countdown at its usual full size
+  s1 see: The small labels at their normal size, not smaller
+  s1 not: The countdown or the labels shrunk below the normal size
+  s1 not: Labels too small to read
+J-F-watch-3200-05 | type 6 | member | MettleUp open on the watch during a rest, text size at normal
+  s1 see: The countdown keeps its size; the labels grow a little
+  s1 not: The rest restarting or the countdown losing time
+  s1 not: The old label size kept until the app is reopened
+  s2 see: The labels back to their normal size; the countdown unchanged
+  s2 not: The countdown changing size
+  s2 not: The watch app showing the larger labels after the switch back
+J-F-watch-3200-06 | type 12 | member | Phone app, Settings, What's new, version 0.79.0
+  s1 see: Your watch keeps its big numbers full size at the largest text size.
+  s1 not: The promise failing on a watch the member owns: the countdown or weight numbers smaller at the largest text size
+  s2 see: Big numbers full size; nothing about the text size setting leaves the watch
+  s2 not: The text size setting or the workout numbers shown to the gym or anyone else

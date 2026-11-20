@@ -1,0 +1,1 @@
+{"id":"L12-hq-app","step":"L12","item":"lens 12 (Platform and store rules) x hq / hq/app: 3 items","needs":["M2-machine-pass","M3-play-report"],"checkpoint":"_work/L12-hq-app.md","out_file":"_work/out/L12-hq-app.jsonl","surface":"hq","area":"hq/app","lenses":["12"],"lens_items":["L12.1","L12.2","L12.3"]}

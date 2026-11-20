@@ -1,0 +1,105 @@
+# B-run-phone-screens-1-b: gap-8 x phone / phone/screens-1. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H8.1 | gap-8 | By script first: docs/system-map/_tools/silent.mjs lists every catch block with file:line and three flags: logs? (calls a log, report or crash function inside), tells_user? (sets an error state, toast or alert inside), rethrows?
+H8.2 | gap-8 | Output _sources/silent.csv
+H8.3 | gap-8 | Helpers read ONLY the rows where all three are "no", plus every fallback value (?? null, || [], ?? 0) that sits in a file named in a journey that writes money, messages, alerts, sign-in or sync
+H8.4 | gap-8 | Everything else is counted in the grid as "filtered by script, N rows, not read" so the gap is visible
+H8.5 | gap-8 | For each: if this path runs, does the user (or owner, or HQ) learn anything?
+H8.6 | gap-8 | A silent path that hides a failed promise = finding
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-100 | live | App start-up and frame: open the database, welcome or error screen instead of the app, gym look, keep a gym link for aft | apps/mobile/src/app/_layout.tsx:98
+F-phone-101 | live | Old, retired or broken links land on the page that replaced them (Progress, Analytics, Body weight, Home, Library, Measu | apps/mobile/src/app/+not-found.tsx:9
+F-phone-102 | live | Workout tab: Up next card (resume, start, done today), start an empty workout, folders and routines, find a plan | apps/mobile/src/app/(tabs)/workout.tsx:99
+F-phone-103 | live | Profile tab: photo and numbers, history chart, Your progress links, workouts feed, the workouts of one week or month, ba | apps/mobile/src/app/(tabs)/profile.tsx:150
+F-phone-104 | live | Edit your profile (photo, name, bio, link, mobile, goal, experience, age, height, body figure) | apps/mobile/src/app/edit-profile.tsx:58
+F-phone-106 | live | Calendar: streak, workout days by month and year, search workouts, log a past workout | apps/mobile/src/app/calendar.tsx:34
+F-phone-109 | live | Exercise list (search, filters) and one exercise's page (summary, chart, records, history, how to) | apps/mobile/src/app/exercises.tsx:18
+F-phone-110 | live | Create or edit your own exercise, and hide or show library exercises | apps/mobile/src/app/library/new.tsx:98
+F-phone-111 | live | Body: log and chart body weight and measurements (also shows what the gym's trainer measured) | apps/mobile/src/app/measures/index.tsx:66
+F-phone-113 | live | 1-rep max and percentage calculator | apps/mobile/src/app/one-rep-max.tsx:29
+F-phone-114 | live | Bring in past workouts and routines from Hevy or Strong (export file, or a Hevy share link) | apps/mobile/src/app/import/index.tsx:133
+F-phone-115 | live | Join a gym from its invite link (kept through setup if the app is new) | apps/mobile/src/app/j/[code].tsx:2
+F-phone-116 | live | Check in at the gym by QR (poster link or the app's own scanner) | apps/mobile/src/app/c/[code].tsx:2
+F-phone-117 | behind switch | Find my gym (prove your number by WhatsApp, join the gym that lists you, or tell your gym) | apps/mobile/src/app/find-gym.tsx:64
+F-phone-119 | hidden | AI coach chat and its settings page (a coach link only fills the message box) | apps/mobile/src/app/(tabs)/coach.tsx:35
+F-phone-120 | hidden | Nutrition page | apps/mobile/src/app/nutrition.tsx:62
+F-phone-137 | live | Gym tab: join your gym, or the gym's home (membership, check in, leaderboard and a gym mate's shared workouts, gym timin | apps/mobile/src/app/(tabs)/shop.tsx:2
+F-phone-233 | behind switch | Switched-off screens: AI coach chat tab (with the forgeai://coach link) and today's nutrition log; both send the member  | apps/mobile/src/app/(tabs)/coach.tsx:35
+F-phone-234 | live | Workout tab and what opens from it: Up next card, see today's workout before starting, quick workout for the time I have | apps/mobile/src/app/(tabs)/workout.tsx:99
+F-phone-235 | live | Profile tab and its pages: profile and history chart, edit my profile, badges, calendar, statistics, all records, credit | apps/mobile/src/app/(tabs)/profile.tsx:150
+F-phone-236 | live | Exercise library: the exercises list, one exercise's page (summary, history, how to), hidden exercises, create or edit m | apps/mobile/src/app/exercises.tsx:18
+F-phone-237 | live | Body measures: body weight, ten measurements and photos on one page with a graph, add a day's entry, trainer's measureme | apps/mobile/src/app/measures/index.tsx:66
+F-phone-238 | live | Gym tab: join my gym, the gym's home, join by invite link (forgeai://j), check in by QR link (forgeai://c) and the poste | apps/mobile/src/app/(tabs)/shop.tsx:2
+## SILENT CATCH ROWS TO READ (kind,file,line,logs,tells_user,rethrows,text)
+catch,apps/mobile/src/app/(tabs)/coach.tsx,68,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/(tabs)/coach.tsx,83,no,no,no,(() => { /* no profile yet — keep the fallback subtitle */ })
+catch,apps/mobile/src/app/(tabs)/profile.tsx,258,no,no,no,(() => null)
+catch,apps/mobile/src/app/(tabs)/profile.tsx,264,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/(tabs)/profile.tsx,287,no,no,no,(() => null)
+catch,apps/mobile/src/app/(tabs)/profile.tsx,306,no,no,no,{ if (mine === gen.current) setMore('error'); }
+catch,apps/mobile/src/app/(tabs)/profile.tsx,369,no,no,no,(() => void tell('Could not make the picture'  'Something went wrong. Please try again.'))
+catch,apps/mobile/src/app/(tabs)/profile.tsx,404,no,no,no,(() => void tell('Couldn’t open the link'  'Check it in Edit profile.'))
+catch,apps/mobile/src/app/(tabs)/profile.tsx,455,no,no,no,(() => null)
+catch,apps/mobile/src/app/(tabs)/profile.tsx,606,no,no,no,(() => null)
+catch,apps/mobile/src/app/(tabs)/workout.tsx,194,no,no,no,(() => { failedNow = true; if (!alive) return; setToday(null); setUpFolderId(null); })
+catch,apps/mobile/src/app/(tabs)/workout.tsx,204,no,no,no,(() => { if (alive) setPlan(null); })
+catch,apps/mobile/src/app/(tabs)/workout.tsx,211,no,no,no,(() => { if (alive) setStalled(0); })
+catch,apps/mobile/src/app/(tabs)/workout.tsx,220,no,no,no,(() => { failedNow = true; if (alive) setCounts(null); })
+catch,apps/mobile/src/app/(tabs)/workout.tsx,284,no,no,no,{ void tell('Could not change the week'  'Please try again.'); }
+catch,apps/mobile/src/app/(tabs)/workout.tsx,294,no,no,no,{ void tell('Could not change the week'  'Please try again.'); }
+catch,apps/mobile/src/app/_layout.tsx,46,no,no,no,(() => {})
+catch,apps/mobile/src/app/_layout.tsx,83,no,no,no,(() => {})
+catch,apps/mobile/src/app/_layout.tsx,121,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/_layout.tsx,140,no,no,no,(() => {})
+catch,apps/mobile/src/app/_layout.tsx,144,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/_layout.tsx,148,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/_layout.tsx,169,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/_layout.tsx,176,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/_layout.tsx,202,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/calendar.tsx,62,no,no,no,(() => [] as HistoryItem[])
+catch,apps/mobile/src/app/credits.tsx,16,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/edit-profile.tsx,89,no,no,no,(() => { if (alive) void tell('Couldn’t open your profile'  'Please try again.'); })
+catch,apps/mobile/src/app/edit-profile.tsx,104,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/edit-profile.tsx,127,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/edit-profile.tsx,209,no,no,no,{ if (e instanceof Error && e.message === 'camera-denied') { void tell('Camera not allowed
+catch,apps/mobile/src/app/exercise/[id].tsx,175,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/exercise/[id].tsx,183,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/exercise/[id].tsx,190,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/exercise/[id].tsx,193,no,no,no,(() => new Map<string  string>())
+catch,apps/mobile/src/app/exercise/[id].tsx,296,no,no,no,(() => 'not-found' as const)
+catch,apps/mobile/src/app/exercise/[id].tsx,313,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/exercise/[id].tsx,335,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/exercise/[id].tsx,350,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/import/index.tsx,291,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/import/index.tsx,296,no,no,no,(() => pv.newExercises.map((title) => ({ title  match: null }))  )
+catch,apps/mobile/src/app/import/index.tsx,307,no,no,no,(() => false)
+catch,apps/mobile/src/app/import/index.tsx,308,no,no,no,(() => pv.existingWorkouts)
+catch,apps/mobile/src/app/import/index.tsx,376,no,no,no,(() => ({ removed: ownWorkouts  onlyHere: ownWorkouts }))
+catch,apps/mobile/src/app/import/index.tsx,422,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/import/index.tsx,450,no,no,no,(() => false)
+catch,apps/mobile/src/app/import/index.tsx,483,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/import/routines.tsx,86,no,no,no,(() => found)
+catch,apps/mobile/src/app/library/new.tsx,145,no,no,no,(() => true)
+catch,apps/mobile/src/app/library/new.tsx,211,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/library/new.tsx,247,no,no,no,{ const why = e instanceof Error ? e.message : ''; void tell( 'Could not add it'  why === 
+catch,apps/mobile/src/app/library/new.tsx,302,no,no,no,(() => null)
+catch,apps/mobile/src/app/library/new.tsx,312,no,no,no,{ void tell('Could not add exercise'  'Please try again.'); }
+catch,apps/mobile/src/app/library/new.tsx,354,no,no,no,(() => null)
+catch,apps/mobile/src/app/library/new.tsx,384,no,no,no,{ savingRef.current = false; setSaving(false); void tell('Could not save'  'Something went
+catch,apps/mobile/src/app/measures/add.tsx,56,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/measures/add.tsx,77,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/measures/add.tsx,79,no,no,no,{ const denied = e instanceof Error && e.message === 'camera-denied'; setNote(denied ? 'Ca
+catch,apps/mobile/src/app/measures/add.tsx,134,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/measures/add.tsx,137,no,no,no,{ void tell('Could not save'  'Something went wrong. Please try again.'); }
+catch,apps/mobile/src/app/measures/index.tsx,96,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/measures/index.tsx,209,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/measures/index.tsx,210,no,no,no,(() => undefined)
+catch,apps/mobile/src/app/nutrition.tsx,80,no,no,no,(() => null)
+catch,apps/mobile/src/app/nutrition.tsx,80,no,no,no,(() => [])
+catch,apps/mobile/src/app/nutrition.tsx,87,no,no,no,(() => { if (alive) setLoading(false); })
+catch,apps/mobile/src/app/nutrition.tsx,136,no,no,no,{ void tell('Could not save'  'Something went wrong adding the meal — please try again.');
+catch,apps/mobile/src/app/nutrition.tsx,156,no,no,no,{ void tell('Could not delete'  'Something went wrong — please try again.'); }
+## FALLBACK ROWS TO READ (files that write money, messages, alerts, sign-in or sync)
+(none)
+## FILTERED BY SCRIPT
+90 other rows of _sources/silent.csv in this area: not read (write this number in the H8 evidence)

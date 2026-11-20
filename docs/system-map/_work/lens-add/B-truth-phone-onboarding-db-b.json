@@ -1,0 +1,1 @@
+{"id":"B-truth-phone-onboarding-db-b","step":"B-truth","item":"B-truth (Same fact, every place) x phone / phone/onboarding-db: 2 items","needs":["CAL-score"],"checkpoint":"_work/B-truth-phone-onboarding-db-b.md","out_file":"_work/out/B-truth-phone-onboarding-db-b.jsonl","surface":"phone","area":"phone/onboarding-db","lenses":["gap-9"],"lens_items":["H9.1","H9.2"]}

@@ -1,0 +1,88 @@
+# B-truth-phone-native-a: 2 + 17 x phone / phone/native. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L2.1 | 2 | Every number shown (dues, counts, dates, streaks, records, credits) is recomputed independently and compared
+L2.2 | 2 | rounding
+L2.3 | 2 | time zone (IST)
+L2.4 | 2 | duplicates on double tap / two devices
+L2.5 | 2 | import and undo-import
+L2.6 | 2 | what happens to old data after every migration
+L2.7 | 2 | Also: AI answers (assistant, AI import, AI questions, coach): built only from that gym's real data
+L2.8 | 2 | Also: AI answers (assistant, AI import, AI questions, coach): what a wrong answer costs the owner
+L2.9 | 2 | Also: AI answers (assistant, AI import, AI questions, coach): what is sent to the AI company
+L17.1 | 17 | The same fact, word, colour, icon and rule is the same on panel, phone, watch, website and messages
+L17.2 | 17 | Trace every value a user enters on one device (watch, phone, panel) to every place that should hold it (the other device, the saved record, the server, Health Connect): it arrives unchanged and stays
+L17.3 | 17 | where a paired device cannot run in the cloud, trace it in the code
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-1200 | live | Rest timer card in the notification shade (countdown, +15 s, Skip; works with the app in the background) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestCard.kt:519
+F-phone-1201 | live | "Rest is over" alert (sound, buzz, shows on the lock screen, goes away by itself) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestCard.kt:1563
+F-phone-1202 | live | Phone plays the alert sound itself when the phone maker silenced the app (OPPO / OnePlus): rest over and gym messages | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/AlertRing.kt:122
+F-phone-1203 | live | Choose the rest-over sound (bell, beep, whistle) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:263
+F-phone-1204 | live | Ring through Do Not Disturb for "Rest is over" | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:204
+F-phone-1205 | live | Workout sounds off: "Rest is over" only vibrates | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:111
+F-phone-1206 | live | Tick a set from the notification ("Done" / "Complete set"), also when the app is closed | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestActionReceiver.kt:47
+F-phone-1207 | live | "Open MettleUp to save ..." note when a tap on the notification could not be saved yet | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestCard.kt:831
+F-phone-1208 | live | Live workout card in notifications (current exercise, next set, picture, workout time, "Complete set") | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/WorkoutCard.kt:180
+F-phone-1209 | live | Rest timer and workout card come back after a phone restart, an app update, or when "Alarms & reminders" is allowed | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestBootReceiver.kt:24
+F-phone-1210 | live | Alert check-up: is the phone blocking notifications, exact alarms, alert sound or background use, with links to the phon | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:141
+F-phone-1211 | live | Gym's colour on the rest and workout notification cards | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:290
+F-phone-1212 | live | Watch shows the live workout and the rest countdown (phone to watch sync, retried until it arrives) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/WearSync.kt:134
+F-phone-1213 | live | Watch buttons log on the phone (Complete set, Done, +15 s, -15 s, Skip from the watch app) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/WearActionService.kt:24
+F-phone-1214 | live | Gym's colour on the watch app | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:297
+F-phone-1215 | behind switch | Watch shows the "free part" words of MettleUp Plus instead of the workout (watch lock) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:304
+F-phone-1216 | live | Find, install, update and open the watch app from the phone (watch app status and versions) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:311
+F-phone-1217 | live | Read the watch app's trouble log on the phone (watch diagnostics) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:360
+F-phone-1218 | live | Workout reminders on chosen days and time ("Time to train"), skipped on a day already trained or mid-workout | apps/mobile/src/tracker/phone/reminders.ts:356
+F-phone-1219 | live | Home-screen widgets "Today" (today's workout, what to beat, Start / Resume) and "This week" (days trained) | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/Widgets.kt:383
+F-phone-1220 | live | Home-screen widget "Gym right now" (how busy the gym is; tap opens the check-in scanner) | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/Widgets.kt:409
+F-phone-1221 | live | Start or resume a workout straight from the widget (one-time key so no other app can start one) | apps/mobile/src/tracker/phone/widgetLink.ts:36
+F-phone-1222 | live | Long-press shortcuts on the app icon ("Start workout" / "Resume workout", "Log body weight") | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/Shortcuts.kt:24
+F-phone-1223 | live | "Add <gym> to your home screen": a home-screen shortcut drawn from the gym's logo | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/GymShortcut.kt:47
+F-phone-1224 | live | Health Connect: send finished workouts and estimated calories (also past workouts, send again, remove a deleted one) | apps/mobile/src/tracker/phone/healthConnect.ts:586
+F-phone-1225 | live | Privacy policy page opened from Health Connect's permission screen | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/HealthRationaleActivity.kt:18
+F-phone-1226 | live | Weight from Health Connect: weigh-ins from a scale or another app join the body-weight log | apps/mobile/src/tracker/phone/healthRead.ts:233
+F-phone-1227 | live | Steps today from Health Connect | apps/mobile/src/tracker/phone/healthRead.ts:324
+F-phone-1228 | live | "Sleep and workouts": after a lighter workout, one line about last night's short sleep, or a protein tip | apps/mobile/src/tracker/phone/sleepLink.ts:247
+F-phone-1229 | live | Stop and remove MettleUp's Health Connect access (and open Health Connect settings) | apps/mobile/src/tracker/phone/healthConnect.ts:172
+F-phone-1230 | live | Share a Hevy / Strong export file to the app from Android's share menu to open the import | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/Share.kt:61
+F-phone-1231 | live | Update the app from Google Play inside the app (download while using, then Restart) | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/PlayUpdate.kt:57
+F-phone-1232 | behind switch | Buy MettleUp Plus with Google Play (monthly, yearly, lifetime; prices, pay, what is owned) | apps/mobile/modules/forge-billing/android/src/main/java/com/forgeai/billing/ForgeBillingModule.kt:148
+F-phone-1233 | live | Gym-branded start-up screen (plain start screen so the gym's logo is the first one shown, Android 13+) | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/ForgePhoneModule.kt:292
+F-phone-1234 | live | Erase all data also clears the phone side (Health Connect off, reminders, widgets, app-icon shortcuts) | apps/mobile/src/tracker/phone/phoneSync.ts:128
+F-phone-1235 | live | Member's saved choices for gym features kept on the phone (reminders from my gym, messages from my gym, name on leaderbo | apps/mobile/src/tracker/phone/phonePrefs.ts:145
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-1200 | live | Rest timer card in the notification shade (countdown, +15 s, Skip; works with the app in the background) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestCard.kt:519
+F-phone-1201 | live | "Rest is over" alert (sound, buzz, shows on the lock screen, goes away by itself) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestCard.kt:1563
+F-phone-1202 | live | Phone plays the alert sound itself when the phone maker silenced the app (OPPO / OnePlus): rest over and gym messages | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/AlertRing.kt:122
+F-phone-1203 | live | Choose the rest-over sound (bell, beep, whistle) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:263
+F-phone-1204 | live | Ring through Do Not Disturb for "Rest is over" | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:204
+F-phone-1205 | live | Workout sounds off: "Rest is over" only vibrates | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:111
+F-phone-1206 | live | Tick a set from the notification ("Done" / "Complete set"), also when the app is closed | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestActionReceiver.kt:47
+F-phone-1207 | live | "Open MettleUp to save ..." note when a tap on the notification could not be saved yet | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestCard.kt:831
+F-phone-1208 | live | Live workout card in notifications (current exercise, next set, picture, workout time, "Complete set") | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/WorkoutCard.kt:180
+F-phone-1209 | live | Rest timer and workout card come back after a phone restart, an app update, or when "Alarms & reminders" is allowed | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/RestBootReceiver.kt:24
+F-phone-1210 | live | Alert check-up: is the phone blocking notifications, exact alarms, alert sound or background use, with links to the phon | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:141
+F-phone-1211 | live | Gym's colour on the rest and workout notification cards | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:290
+F-phone-1212 | live | Watch shows the live workout and the rest countdown (phone to watch sync, retried until it arrives) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/WearSync.kt:134
+F-phone-1213 | live | Watch buttons log on the phone (Complete set, Done, +15 s, -15 s, Skip from the watch app) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/WearActionService.kt:24
+F-phone-1214 | live | Gym's colour on the watch app | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:297
+F-phone-1215 | behind switch | Watch shows the "free part" words of MettleUp Plus instead of the workout (watch lock) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:304
+F-phone-1216 | live | Find, install, update and open the watch app from the phone (watch app status and versions) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:311
+F-phone-1217 | live | Read the watch app's trouble log on the phone (watch diagnostics) | apps/mobile/modules/forge-rest/android/src/main/java/com/forgeai/rest/ForgeRestModule.kt:360
+F-phone-1218 | live | Workout reminders on chosen days and time ("Time to train"), skipped on a day already trained or mid-workout | apps/mobile/src/tracker/phone/reminders.ts:356
+F-phone-1219 | live | Home-screen widgets "Today" (today's workout, what to beat, Start / Resume) and "This week" (days trained) | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/Widgets.kt:383
+F-phone-1220 | live | Home-screen widget "Gym right now" (how busy the gym is; tap opens the check-in scanner) | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/Widgets.kt:409
+F-phone-1221 | live | Start or resume a workout straight from the widget (one-time key so no other app can start one) | apps/mobile/src/tracker/phone/widgetLink.ts:36
+F-phone-1222 | live | Long-press shortcuts on the app icon ("Start workout" / "Resume workout", "Log body weight") | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/Shortcuts.kt:24
+F-phone-1223 | live | "Add <gym> to your home screen": a home-screen shortcut drawn from the gym's logo | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/GymShortcut.kt:47
+F-phone-1224 | live | Health Connect: send finished workouts and estimated calories (also past workouts, send again, remove a deleted one) | apps/mobile/src/tracker/phone/healthConnect.ts:586
+F-phone-1225 | live | Privacy policy page opened from Health Connect's permission screen | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/HealthRationaleActivity.kt:18
+F-phone-1226 | live | Weight from Health Connect: weigh-ins from a scale or another app join the body-weight log | apps/mobile/src/tracker/phone/healthRead.ts:233
+F-phone-1227 | live | Steps today from Health Connect | apps/mobile/src/tracker/phone/healthRead.ts:324
+F-phone-1228 | live | "Sleep and workouts": after a lighter workout, one line about last night's short sleep, or a protein tip | apps/mobile/src/tracker/phone/sleepLink.ts:247
+F-phone-1229 | live | Stop and remove MettleUp's Health Connect access (and open Health Connect settings) | apps/mobile/src/tracker/phone/healthConnect.ts:172
+F-phone-1230 | live | Share a Hevy / Strong export file to the app from Android's share menu to open the import | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/Share.kt:61
+F-phone-1231 | live | Update the app from Google Play inside the app (download while using, then Restart) | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/PlayUpdate.kt:57
+F-phone-1232 | behind switch | Buy MettleUp Plus with Google Play (monthly, yearly, lifetime; prices, pay, what is owned) | apps/mobile/modules/forge-billing/android/src/main/java/com/forgeai/billing/ForgeBillingModule.kt:148
+F-phone-1233 | live | Gym-branded start-up screen (plain start screen so the gym's logo is the first one shown, Android 13+) | apps/mobile/modules/forge-phone/android/src/main/java/com/forgeai/phone/ForgePhoneModule.kt:292
+F-phone-1234 | live | Erase all data also clears the phone side (Health Connect off, reminders, widgets, app-icon shortcuts) | apps/mobile/src/tracker/phone/phoneSync.ts:128
+F-phone-1235 | live | Member's saved choices for gym features kept on the phone (reminders from my gym, messages from my gym, name on leaderbo | apps/mobile/src/tracker/phone/phonePrefs.ts:145

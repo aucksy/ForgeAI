@@ -1,0 +1,369 @@
+# A8-server-database-1-4: coverage of 57 Tier 1 journeys (8 features, from A5-server-database-1-4). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-server-328 | supabase/tests/0028_hq_breakglass_and_logs.sql | db | 165 lines | file name
+F-server-328 | apps/dashboard/e2e/signin.spec.mjs | e2e | 82 lines | asserts 1 journey phrase(s)
+F-server-328 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 1 journey phrase(s)
+F-server-328 | apps/dashboard/test/crm/assistant/todayApiVoice.test.ts | unit | 165 lines | asserts 1 journey phrase(s)
+F-server-328 | apps/dashboard/test/crm/joinPay.test.ts | unit | 223 lines | asserts 1 journey phrase(s)
+F-server-328 | apps/mobile/test/lib/loadState.test.ts | unit | 85 lines | asserts 1 journey phrase(s)
+F-server-328 | apps/mobile/test/shop/leaderboardPush.test.ts | unit | 269 lines | asserts 1 journey phrase(s)
+F-server-328 | apps/mobile/test/shop/mateShare.test.ts | unit | 125 lines | asserts 1 journey phrase(s)
+F-server-328 | apps/mobile/test/tracker/watchInstall.test.ts | unit | 159 lines | asserts 1 journey phrase(s)
+F-server-328 | apps/mobile/test/tracker/watchUpdate.test.ts | unit | 240 lines | asserts 1 journey phrase(s)
+F-server-328 | deploy/hq/hq.test.mjs | unit | 1084 lines | asserts 1 journey phrase(s)
+F-server-328 | deploy/panel/assist.test.mjs | unit | 473 lines | asserts 1 journey phrase(s)
+F-server-329 | supabase/tests/0028_hq_breakglass_and_logs.sql | db | 165 lines | file name
+F-server-331 | supabase/tests/0098_alerts_done_and_read.sql | db | 375 lines | asserts 4 journey phrase(s)
+F-server-331 | apps/dashboard/e2e/trial.spec.mjs | e2e | 72 lines | asserts 2 journey phrase(s)
+F-server-331 | supabase/tests/0030_plans_and_trials.sql | db | 136 lines | file name
+F-server-331 | apps/mobile/test/backup/backupFormat.test.ts | unit | 136 lines | asserts 1 journey phrase(s)
+F-server-331 | apps/mobile/test/backup/backupRoundTrip.test.ts | unit | 432 lines | asserts 1 journey phrase(s)
+F-server-331 | apps/mobile/test/cloud/restoreRepairs.test.ts | unit | 233 lines | asserts 1 journey phrase(s)
+F-server-331 | deploy/panel/selfJoin.test.mjs | unit | 256 lines | asserts 1 journey phrase(s)
+F-server-331 | supabase/tests/0018_staff_and_owner_rules.sql | db | 307 lines | asserts 1 journey phrase(s)
+F-server-331 | supabase/tests/0079_staff_job_title.sql | db | 86 lines | asserts 1 journey phrase(s)
+F-server-332 | supabase/tests/0031_branches.sql | db | 352 lines | file name
+F-server-312 | supabase/tests/0031_branches.sql | db | 352 lines | file name
+F-server-333 | supabase/tests/0031_branches.sql | db | 352 lines | file name
+F-server-334 | apps/mobile/test/onboarding/welcomeStart.test.ts | unit | 55 lines | asserts 2 journey phrase(s)
+F-server-334 | supabase/tests/0017_undo_import.sql | db | 86 lines | asserts 2 journey phrase(s)
+F-server-334 | supabase/tests/0032_member_cloud.sql | db | 217 lines | file name
+F-server-334 | supabase/tests/0037_leaderboard.sql | db | 548 lines | asserts 2 journey phrase(s)
+F-server-334 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 1 journey phrase(s)
+F-server-334 | apps/dashboard/test/crm/r448.test.ts | unit | 76 lines | asserts 1 journey phrase(s)
+F-server-334 | apps/mobile/qa/uat-rel-r461-plus.yaml | maestro | 365 lines | asserts 1 journey phrase(s)
+F-server-334 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 1 journey phrase(s)
+F-server-334 | deploy/hq/readLogAlert.test.mjs | unit | 265 lines | asserts 1 journey phrase(s)
+F-server-334 | supabase/tests/0015_qr_checkin.sql | db | 198 lines | asserts 1 journey phrase(s)
+F-server-334 | supabase/tests/0024_workout_plans.sql | db | 135 lines | asserts 1 journey phrase(s)
+F-server-334 | supabase/tests/0025_workout_offer.sql | db | 305 lines | asserts 1 journey phrase(s)
+F-server-336 | apps/dashboard/e2e/terms.spec.mjs | e2e | 149 lines | asserts 4 journey phrase(s)
+F-server-336 | apps/mobile/test/tracker/batch2Screens.test.ts | unit | 184 lines | asserts 3 journey phrase(s)
+F-server-336 | supabase/tests/0033_terms_acceptance.sql | db | 98 lines | file name, asserts 1 journey phrase(s)
+F-server-336 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-server-336 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 2 journey phrase(s)
+F-server-336 | apps/dashboard/e2e/gyms-site-uat.spec.mjs | e2e | 242 lines | asserts 1 journey phrase(s)
+F-server-336 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 1 journey phrase(s)
+F-server-336 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 1 journey phrase(s)
+F-server-336 | apps/dashboard/e2e/r450-uat.spec.mjs | e2e | 331 lines | asserts 1 journey phrase(s)
+F-server-336 | apps/dashboard/e2e/signin.spec.mjs | e2e | 82 lines | asserts 1 journey phrase(s)
+F-server-336 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 1 journey phrase(s)
+F-server-336 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-server-328-01 | type 1 | HQ admin | HQ, a gym's page, no support access open
+  s1 see: Rows with only when and what: sign_in, sign_out, sign_in_failed, push, pull_all
+  s1 see: Counts per kind for the last 7 days
+  s1 not: A person's name, device or address shown while no support access is open
+  s1 not: Rows of another gym
+  s2 see: One 'view_access_log' row for this gym, with no reason
+  s2 not: The look not written down
+J-F-server-328-02 | type 2 | HQ admin | HQ, a gym with support access open (an emergency or the owner let support in)
+  s1 see: 'detailed': true; each row also shows the person, the device and the address
+  s1 not: The detail shown after the window ended
+  s2 see: The look listed under the grant as 'access_log' with the number of rows
+  s2 not: A detailed look that the owner cannot see
+J-F-server-328-03 | type 3 | HQ admin | A caller that is not HQ (the admin app's anon key, a member app key)
+  s1 see: The call is refused (no execute right; _hq_guard)
+  s1 not: Any row of the log returned
+  s1 not: An audit row written as if HQ looked
+J-F-server-328-04 | type 6 | HQ admin | HQ, a gym with support access that has just ended
+  s1 see: Person, device and address shown
+  s1 not: Detail missing while access is open
+  s2 see: Only when and what again; 'detailed': false
+  s2 not: Person, device or address still shown
+J-F-server-328-05 | type 12 | HQ admin | HQ, any gym
+  s1 see: No person, device or address
+  s1 not: Personal data shown without a recorded window
+  s2 see: 7 days until 13 May 2027, 1 year from then
+  s2 not: Rows kept longer or shorter than the privacy notice says
+J-F-server-328-06 | type 1 | the system | A front-desk person signs in on a new phone
+  s1 see: One 'sign_in' row: the person's name, device (80 letters at most) and address
+  s1 not: No row written
+  s1 not: A row in another gym
+  s2 see: One 'sign_out' row for the same person
+  s2 not: A second sign_in row on sign-out
+J-F-server-328-07 | type 2 | the system | The owner's admin app saves records, then a new phone pulls the whole copy
+  s1 see: One 'push' row with the person from crm_push
+  s1 not: A push row for a member check-in or an offer reward
+  s2 see: One 'pull_all' row; an old owner key shows 'Owner (old owner key)'
+  s2 not: A pull_all row for a small pull (p_since above 0)
+J-F-server-328-08 | type 3 | the system | Someone types a wrong sign-in code
+  s1 see: One 'sign_in_failed' row: the person's name, or 'mobile ending 1234'
+  s1 not: The full mobile number kept in the log
+  s1 not: The sign-in allowed
+J-F-server-328-09 | type 6 | the system | A person signed in on two devices, then removed by the owner
+  s1 see: A 'sign_out' row for each open session that ends
+  s1 not: A session ending with no sign_out row
+  s2 see: No new row (only a change from open to ended writes)
+  s2 not: Two sign_out rows for one session
+J-F-server-328-10 | type 12 | the system | Any gym
+  s1 see: Only the gym's own id; the table has no app access (row-level security on, rights revoked)
+  s1 not: Any app, owner or member reading the raw log
+J-F-server-329-01 | type 1 | the system | 03:00 India time, the HQ Worker's Cron Trigger calls hq_nightly_cleanup
+  s1 see: Access-log rows past 7 days (1 year from 13 May 2027) deleted
+  s1 see: Creator addresses older than 1 year deleted
+  s1 see: Support-access rows, done or cancelled delete requests and HQ audit rows older than 2 years deleted
+  s1 not: A row inside its keeping period deleted
+  s1 not: An open delete request deleted
+  s2 see: One 'nightly_cleanup' row by 'nightly-cleanup' with the five counts and the Worker's 'web' detail
+  s2 not: No record of the run
+J-F-server-329-02 | type 3 | the system | A caller that is not HQ calls hq_nightly_cleanup
+  s1 see: Refused (_hq_guard; no execute right)
+  s1 not: Any row deleted
+  s1 not: The HQ audit log purge switch turned on
+J-F-server-329-03 | type 6 | the system | Clean-up runs twice in one night (a retried cron)
+  s1 see: Counts of 0; a second 'nightly_cleanup' audit row
+  s1 not: Rows deleted that the first run kept
+  s1 not: The run failing
+  s2 see: Deleted
+  s2 not: An open or cancelled-yesterday request deleted
+J-F-server-329-04 | type 12 | the system | Clean-up on 13 May 2027 (the keeping rule changes)
+  s1 see: Up to 12 May: 7 days kept; from 13 May: 1 year kept
+  s1 not: Logs deleted after the law asks for 1 year
+  s1 not: Audit rows deleted by anything but this run (append-only)
+J-F-server-331-01 | type 1 | HQ admin | HQ, a gym on its 3-month free trial
+  s1 see: The gym row now shows the new trialEndsAt and trialCapAt
+  s1 not: The trial set past 6 months from its start
+  s1 not: No reason kept
+  s2 see: plan 'pro', billing 'yearly', paidUntil on the gym row
+  s2 not: Any money moved
+  s2 not: The plan set without an audit row
+J-F-server-331-02 | type 2 | HQ admin | HQ, a gym that pays once for ever
+  s1 see: paidUntil empty (lifetime = for ever)
+  s1 not: The typed date kept for a lifetime plan
+  s2 see: The gym is back to 'no plan picked'
+  s2 not: A billing left with no plan
+J-F-server-331-03 | type 3 | HQ admin | HQ, wrong input
+  s1 see: TRIAL_CAP
+  s1 not: The trial changed
+  s2 see: TRIAL_PAST
+  s2 not: The trial ended early by mistake
+  s3 see: INVALID, NEED_DATE, BAD_DATE, NEED_REASON
+  s3 not: A half-saved plan
+J-F-server-331-04 | type 6 | HQ admin | HQ, a trial that has ended
+  s1 see: trialEndsAt in the past; the gym status unchanged
+  s1 not: The gym locked or paused because the trial ended
+  s2 see: New end saved; 'set_trial' audit row with from and to
+  s2 not: The old end lost from the audit
+J-F-server-331-05 | type 12 | HQ admin | Any gym
+  s1 see: The owner sees the change in 'ForgeAI access' (set_trial, set_plan) with the reason
+  s1 not: A change the owner cannot see
+  s1 not: Any other gym's plan shown
+J-F-server-331-06 | type 1 | owner | Admin app, a gym on its free trial
+  s1 see: Trial start and end, plan, billing and paid-until
+  s1 see: When ended: 'Your free trial ended on ...'
+  s1 not: A wrong end date
+  s1 not: Another gym's trial
+J-F-server-331-07 | type 3 | owner | The admin app tries to change its own trial or plan
+  s1 see: Refused: HQ_ONLY
+  s1 not: The trial made longer by the gym itself
+  s2 see: OWNER_ONLY
+  s2 not: The desk seeing the gym's plan and the support-access list
+J-F-server-331-08 | type 6 | owner | Trial ends, then HQ extends it
+  s1 see: 'Your free trial ended on ...'; every screen still works
+  s1 not: Members or records locked
+  s2 see: New end date; a 'set_trial' line with HQ's reason
+  s2 not: The old end still shown
+J-F-server-331-09 | type 12 | owner | Owner
+  s1 see: Every trial and plan change HQ made in the last 2 years, with the reason
+  s1 not: A plan change hidden from the owner
+  s1 not: HQ's person's name or email shown where the code gives only action and reason
+J-F-server-332-01 | type 1 | owner | Admin app, owner of a single gym, Branches
+  s1 see: The business name = the gym name; one branch; canOpen true
+  s1 not: A desk person told they can add branches
+  s2 see: Signed in to the new branch; receipt prefix 'B2'; plans copied count
+  s2 not: The new branch without its owners
+  s2 not: Receipt numbers that clash with the first branch
+  s2 not: A copied import mark
+  s3 see: Signed in there with a new key
+  s3 not: Signed in as front desk
+J-F-server-332-02 | type 2 | owner | Admin app, a business with branches
+  s1 see: The new name on every branch's list
+  s1 not: A branch renamed instead of the business
+  s2 see: The gym itself renamed (owner_rename_gym)
+  s2 not: Nothing saved
+J-F-server-332-03 | type 3 | owner | Wrong input or wrong person
+  s1 see: EMPTY, NAME_TAKEN
+  s1 not: Two branches with the same name
+  s2 see: TOO_MANY
+  s2 not: A branch over the limit
+  s3 see: OWNER_ONLY
+  s3 not: The desk inside another branch
+  s4 see: GONE
+  s4 not: Another business's gym opened
+J-F-server-332-04 | type 6 | owner | A paused (suspended) gym and its branches
+  s1 see: SUSPENDED
+  s1 not: A branch made while paused
+  s2 see: The owner is put on its list and signed in
+  s2 not: A desk person added to a paused branch
+J-F-server-332-05 | type 12 | owner | Owner of a business with branches
+  s1 see: Only this business's branches: name, join code, receipt prefix
+  s1 not: Another business's branches
+  s1 not: Member data of other branches
+  s2 see: Its trial ends when the first branch's does, on the same plan
+  s2 not: A fresh 3-month trial per new branch
+J-F-server-332-06 | type 1 | HQ admin | HQ, Groups
+  s1 see: Each group: name, branches in order, status, register and app member counts
+  s1 not: A gym in no group listed as a group
+  s2 see: One 'view_groups' row with the number of groups
+  s2 not: The look not written down
+J-F-server-332-07 | type 3 | HQ admin | A caller that is not HQ
+  s1 see: Refused
+  s1 not: Any business's branches or member counts returned
+J-F-server-332-08 | type 6 | HQ admin | A group that gets a new branch
+  s1 see: The new branch listed with its prefix and status
+  s1 not: The new branch missing until a reload of HQ data
+J-F-server-332-09 | type 12 | HQ admin | HQ, any group
+  s1 see: Counts only; no member names or phones
+  s1 not: A member's name or phone shown without a support window
+J-F-server-312-01 | type 1 | owner | Admin app, Staff & sign-in, owner of one gym
+  s1 see: The person on the list
+  s1 not: A desk person added with owner rights
+  s1 not: The mobile kept with +91 or spaces
+  s2 see: The person gone; their open sessions ended and unused codes deleted
+  s2 not: The removed person still signed in
+J-F-server-312-02 | type 2 | owner | Admin app, a business with branches
+  s1 see: The owner added to every branch of the business, paused ones too
+  s1 not: An owner of one branch only
+  s2 see: Removed from every branch; signed out everywhere
+  s2 not: Still an owner of another branch
+J-F-server-312-03 | type 3 | owner | Wrong input or not allowed
+  s1 see: BAD_PHONE, EMPTY, BAD_ROLE
+  s1 not: A half-saved person
+  s2 see: PHONE_TAKEN, TOO_MANY
+  s2 not: Two rows for one mobile
+  s3 see: STAFF_ELSEWHERE
+  s3 not: The same mobile owner here and desk there
+  s4 see: SELF, LAST_OWNER
+  s4 not: A business with no owner
+J-F-server-312-04 | type 6 | owner | A person removed, then added again
+  s1 see: Gone from the list
+  s1 not: Old sessions still open
+  s2 see: A new row; works as a fresh person
+  s2 not: PHONE_TAKEN for a removed person
+J-F-server-312-05 | type 12 | owner | Owner
+  s1 see: Only an owner can; the desk is refused
+  s1 not: A desk person adding people
+  s1 not: Another gym's people listed
+J-F-server-333-01 | type 1 | owner | Admin app at branch A; a member of branch B with 'all branches' walks in
+  s1 see: First name, branch B, allowed, planOk, alreadyIn false
+  s1 not: The member's full name, phone or plan details
+  s1 not: A search by name
+  s2 see: ok; the visit saved in branch B with 'at' branch A
+  s2 not: The visit saved in branch A's records
+  s2 not: Two visits for the same day
+  s3 see: The member listed with branch B and the time
+  s3 not: Branch A's own members in the list
+J-F-server-333-02 | type 2 | owner | The same visitor already checked in today
+  s1 see: alreadyIn true; nothing new written
+  s1 not: A second visit for the day
+  s2 see: The visit gone from today's visitors
+  s2 not: A visit made by branch B's own desk undone
+J-F-server-333-03 | type 3 | owner | Wrong input or not allowed
+  s1 see: BAD_PHONE
+  s1 not: A look-up with a partial number
+  s2 see: TOO_MANY_LOOKUPS
+  s2 not: Unlimited look-ups
+  s3 see: NOT_ALLOWED
+  s3 not: The visit saved
+  s4 see: GONE
+  s4 not: A visit saved in another business
+J-F-server-333-04 | type 6 | owner | Visitor checked in, then undone, then checked in again
+  s1 see: Visit marked deleted
+  s1 not: Visit still counted
+  s2 see: The same visit id brought back
+  s2 not: alreadyIn true from the deleted visit
+J-F-server-333-05 | type 12 | owner | Branch A's desk
+  s1 see: Only first name, branch, allowed, plan covers today, in already
+  s1 not: Phone, address, payments or plan of branch B's member shown
+J-F-server-333-06 | type 1 | staff | Admin app at branch A; a member of branch B with 'all branches' walks in
+  s1 see: First name, branch B, allowed, planOk, alreadyIn false
+  s1 not: The member's full name, phone or plan details
+  s1 not: A search by name
+  s2 see: ok; the visit saved in branch B with 'at' branch A
+  s2 not: The visit saved in branch A's records
+  s2 not: Two visits for the same day
+  s3 see: The member listed with branch B and the time
+  s3 not: Branch A's own members in the list
+J-F-server-333-07 | type 2 | staff | The same visitor already checked in today
+  s1 see: alreadyIn true; nothing new written
+  s1 not: A second visit for the day
+  s2 see: The visit gone from today's visitors
+  s2 not: A visit made by branch B's own desk undone
+J-F-server-333-08 | type 3 | staff | Wrong input or not allowed
+  s1 see: BAD_PHONE
+  s1 not: A look-up with a partial number
+  s2 see: TOO_MANY_LOOKUPS
+  s2 not: Unlimited look-ups
+  s3 see: NOT_ALLOWED
+  s3 not: The visit saved
+  s4 see: GONE
+  s4 not: A visit saved in another business
+J-F-server-333-09 | type 6 | staff | Visitor checked in, then undone, then checked in again
+  s1 see: Visit marked deleted
+  s1 not: Visit still counted
+  s2 see: The same visit id brought back
+  s2 not: alreadyIn true from the deleted visit
+J-F-server-333-10 | type 12 | staff | Branch A's desk
+  s1 see: Only first name, branch, allowed, plan covers today, in already
+  s1 not: Phone, address, payments or plan of branch B's member shown
+J-F-server-334-01 | type 1 | member | Member app, signed in with Google, workouts on the phone
+  s1 see: saved count; older 0
+  s1 not: A row of another account written
+  s1 not: One bad item saving the rest
+  s2 see: Every workout, routine and body entry back
+  s2 not: Items missing after page 1
+  s2 not: Deleted items brought back
+  s3 see: items, workouts, lastSavedAt
+  s3 not: Deleted items counted
+J-F-server-334-02 | type 2 | member | Two phones edit the same workout
+  s1 see: The item comes back in olderIds; the newer edit kept
+  s1 not: The newer edit overwritten
+  s2 see: A tombstone (data empty) kept
+  s2 not: The workout back from a slower phone
+J-F-server-334-03 | type 3 | member | Wrong input or not signed in
+  s1 see: SIGN_IN
+  s1 not: Anything saved
+  s2 see: TOO_MANY, INVALID, TOO_BIG
+  s2 not: Part of the call saved
+  s3 see: COPY_FULL
+  s3 not: Rows over the limit
+J-F-server-334-04 | type 6 | member | Member deletes the account
+  s1 see: account 'deleted'; the copy, summary, profile and Google account gone
+  s1 not: Copy rows left behind
+  s1 not: The gym's register, payments or check-ins touched
+  s2 see: account 'kept'; only the copy deleted
+  s2 not: The owner's sign-in deleted
+J-F-server-334-05 | type 12 | member | Member
+  s1 see: Keyed by the Google account only; no gym, owner, trainer or desk can read it
+  s1 not: The gym seeing the member's workouts
+  s1 not: Progress photos saved on the server
+  s2 see: Nothing sent
+  s2 not: Any row for a member who never signed in
+J-F-server-336-01 | type 1 | owner | Admin app, 'Set up a new gym', the 'I agree' box ticked
+  s1 see: Gym made and signed in; termsVersion '2026-10-24'
+  s1 not: The gym made without the acceptance kept
+  s1 not: The raw address kept in the acceptance
+  s2 see: acceptedVersion, acceptedAt, acceptedByName, how 'create'
+  s2 not: Another gym's acceptance
+J-F-server-336-02 | type 2 | owner | An existing gym's owner asked at sign-in
+  s1 see: 'We updated the MettleUp terms and the data agreement on {day}.'
+  s1 not: A desk person asked to accept
+  s2 see: how 'sign_in'; the branch group counts as accepted
+  s2 not: Each branch asked again
+J-F-server-336-03 | type 3 | owner | Wrong version or wrong person
+  s1 see: INVALID
+  s1 not: An acceptance of a made-up version
+  s2 see: OWNER_ONLY
+  s2 not: The desk accepting for the gym
+  s3 see: Gym made; owner asked at next sign-in
+  s3 not: Gym creation failing
+J-F-server-336-04 | type 6 | owner | Accepted, then the same version again, then a person removed
+  s1 see: One row kept
+  s1 not: Two rows for one version
+  s2 see: The row stays; staff id cleared, name kept
+  s2 not: The acceptance deleted or edited
+J-F-server-336-05 | type 12 | owner | Owner
+  s1 see: Gym, person name, when, version, how, a hash of the address
+  s1 not: The raw address in this table
+  s1 not: Any app changing or deleting the row (APPEND_ONLY)

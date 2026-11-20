@@ -1,0 +1,668 @@
+# A8-panel-forms-2: coverage of 83 Tier 1 journeys (8 features, from A5-panel-forms-2). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-406 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 11 journey phrase(s)
+F-panel-406 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 6 journey phrase(s)
+F-panel-406 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 5 journey phrase(s)
+F-panel-406 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 4 journey phrase(s)
+F-panel-406 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 4 journey phrase(s)
+F-panel-406 | apps/dashboard/test/crm/members.test.ts | unit | 336 lines | asserts 4 journey phrase(s)
+F-panel-406 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 3 journey phrase(s)
+F-panel-406 | apps/dashboard/test/crm/local.test.ts | unit | 1070 lines | asserts 3 journey phrase(s)
+F-panel-406 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-406 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-panel-406 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-panel-406 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | asserts 2 journey phrase(s)
+F-panel-408 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 11 journey phrase(s)
+F-panel-408 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 4 journey phrase(s)
+F-panel-408 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 3 journey phrase(s)
+F-panel-408 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 3 journey phrase(s)
+F-panel-408 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 3 journey phrase(s)
+F-panel-408 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 3 journey phrase(s)
+F-panel-408 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-408 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-panel-408 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-panel-408 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 2 journey phrase(s)
+F-panel-408 | apps/mobile/qa/xj-2-order-cancel.yaml | maestro | 34 lines | asserts 2 journey phrase(s)
+F-panel-408 | apps/mobile/test/shop/gym.test.ts | unit | 480 lines | asserts 2 journey phrase(s)
+F-panel-412 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-412 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 2 journey phrase(s)
+F-panel-412 | supabase/tests/0031_branches.sql | db | 352 lines | asserts 2 journey phrase(s)
+F-panel-412 | apps/dashboard/test/crm/branches.test.ts | unit | 224 lines | asserts 1 journey phrase(s)
+F-panel-412 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-panel-412 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 1 journey phrase(s)
+F-panel-412 | deploy/panel/helpPages.test.mjs | unit | 109 lines | asserts 1 journey phrase(s)
+F-panel-412 | supabase/tests/0033_terms_acceptance.sql | db | 98 lines | asserts 1 journey phrase(s)
+F-panel-409 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 11 journey phrase(s)
+F-panel-409 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-409 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 3 journey phrase(s)
+F-panel-409 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | asserts 3 journey phrase(s)
+F-panel-409 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-panel-409 | supabase/tests/0043_member_photos.sql | db | 135 lines | asserts 3 journey phrase(s)
+F-panel-409 | supabase/tests/0098_alerts_done_and_read.sql | db | 375 lines | asserts 3 journey phrase(s)
+F-panel-409 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-panel-409 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 2 journey phrase(s)
+F-panel-409 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 2 journey phrase(s)
+F-panel-409 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 2 journey phrase(s)
+F-panel-409 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 2 journey phrase(s)
+F-panel-407 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 11 journey phrase(s)
+F-panel-407 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-407 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-panel-407 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-panel-407 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 2 journey phrase(s)
+F-panel-407 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-panel-407 | apps/mobile/qa/xj-2-order-cancel.yaml | maestro | 34 lines | asserts 2 journey phrase(s)
+F-panel-407 | apps/mobile/test/shop/gym.test.ts | unit | 480 lines | asserts 2 journey phrase(s)
+F-panel-407 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-panel-407 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 1 journey phrase(s)
+F-panel-407 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-panel-407 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-413 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-413 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-panel-413 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 1 journey phrase(s)
+F-panel-413 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 1 journey phrase(s)
+F-panel-413 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 1 journey phrase(s)
+F-panel-413 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-413 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 1 journey phrase(s)
+F-panel-413 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 1 journey phrase(s)
+F-panel-413 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-panel-413 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 1 journey phrase(s)
+F-panel-413 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-panel-413 | apps/dashboard/test/crm/members.test.ts | unit | 336 lines | asserts 1 journey phrase(s)
+F-panel-410 | apps/dashboard/test/crm/batches.test.ts | unit | 169 lines | asserts 3 journey phrase(s)
+F-panel-410 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-410 | apps/mobile/test/tracker/r311OpenWorkoutFromChart.test.ts | unit | 96 lines | asserts 1 journey phrase(s)
+F-panel-411 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 6 journey phrase(s)
+F-panel-411 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-411 | apps/dashboard/test/crm/passMembers.test.ts | unit | 199 lines | asserts 2 journey phrase(s)
+F-panel-411 | apps/mobile/test/shop/membership.test.ts | unit | 154 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-406-01 | type 1 | owner | Members screen, All members tab, gym with members
+  s1 see: Sheet titled "Add member"
+  s1 see: Empty "Full name" box in focus, placeholder "Riya Sharma"
+  s1 see: "Code" set to the gym default, "Mobile number" with hint "Used to find them, and to send them WhatsApp messages."
+  s1 see: "Joining date" filled with today
+  s1 see: Buttons "Cancel" and "Add member"
+  s1 not: A box other than Full name and Mobile number marked as needed
+  s1 not: Joining date empty or on another day than today
+  s2 see: The typed name
+  s2 see: The mobile number as 10 digits (how a pasted "+91 98765 43210" is trimmed was not read: unknown)
+  s2 not: The country code typed twice into the number
+  s2 not: An error shown while the person is still typing
+  s3 see: Button reads "Saving…" and cannot be pressed again
+  s3 see: The sheet closes and the new member's page opens
+  s3 not: Two members made from one tap
+  s3 not: The member saved as archived
+  s3 not: The sheet closing with nothing saved and no message
+J-F-panel-406-02 | type 2 | owner | Members screen with no member yet, or the address /members/new
+  s1 see: Sheet titled "Add member" open straight away, boxes empty
+  s1 not: A name or number left over from an earlier add
+  s1 not: The list behind missing while the sheet is open
+  s2 see: The sheet closes and the new member's page opens with the details typed
+  s2 not: An optional detail dropped on save
+  s2 not: The emergency number saved in a form that cannot be called
+J-F-panel-406-03 | type 3 | owner | Add member sheet open
+  s1 see: Under Full name: "Type the member’s name."
+  s1 see: Under Mobile number: "Type their mobile number."
+  s1 see: Under Email: "That email address doesn’t look right."
+  s1 see: Under Date of birth: "Date of birth can’t be in the future."
+  s1 see: The first wrong box is scrolled into view and takes focus
+  s1 not: Only one wrong box named per press
+  s1 not: A member saved
+  s1 not: The sheet closing
+  s2 see: Under Mobile number: "This mobile number looks wrong. Check it and type it again."
+  s2 not: A member saved with a short number
+  s3 see: Under Full name: "The name can be at most 80 letters."
+  s3 not: The name cut to 80 letters and saved without a word
+J-F-panel-406-04 | type 6 | owner | Add member sheet open with a name and number typed
+  s1 see: The sheet closes; the Members list is unchanged
+  s1 not: A member saved
+  s1 not: A half-filled member in the list
+  s2 see: An empty form: no name, no number, joining date today
+  s2 not: The values typed before the cancel shown again as if saved
+J-F-panel-406-05 | type 12 | owner | Add member sheet open
+  s1 see: Hint under Mobile number: "Used to find them, and to send them WhatsApp messages."
+  s1 see: The member's page with these details
+  s1 not: A WhatsApp, SMS or email sent to the new member by the save itself
+  s1 not: The details shown to another gym
+  s1 not: The notes ("Injuries, preferences, who referred them…") shown to the member in the member app
+J-F-panel-406-06 | type 1 | staff | Members screen, All members tab, gym with members (signed in as front-desk staff)
+  s1 see: Sheet titled "Add member"
+  s1 see: Empty "Full name" box in focus, placeholder "Riya Sharma"
+  s1 see: "Code" set to the gym default, "Mobile number" with hint "Used to find them, and to send them WhatsApp messages."
+  s1 see: "Joining date" filled with today
+  s1 see: Buttons "Cancel" and "Add member"
+  s1 not: A box other than Full name and Mobile number marked as needed
+  s1 not: Joining date empty or on another day than today
+  s1 not: The "Can train at every branch" box shown to a staff login
+  s2 see: The typed name
+  s2 see: The mobile number as 10 digits (how a pasted "+91 98765 43210" is trimmed was not read: unknown)
+  s2 not: The country code typed twice into the number
+  s2 not: An error shown while the person is still typing
+  s3 see: Button reads "Saving…" and cannot be pressed again
+  s3 see: The sheet closes and the new member's page opens
+  s3 not: Two members made from one tap
+  s3 not: The member saved as archived
+  s3 not: The sheet closing with nothing saved and no message
+J-F-panel-406-07 | type 2 | staff | Members screen with no member yet, or the address /members/new (signed in as front-desk staff)
+  s1 see: Sheet titled "Add member" open straight away, boxes empty
+  s1 not: A name or number left over from an earlier add
+  s1 not: The list behind missing while the sheet is open
+  s2 see: The sheet closes and the new member's page opens with the details typed
+  s2 not: An optional detail dropped on save
+  s2 not: The emergency number saved in a form that cannot be called
+J-F-panel-406-08 | type 3 | staff | Add member sheet open (signed in as front-desk staff)
+  s1 see: Under Full name: "Type the member’s name."
+  s1 see: Under Mobile number: "Type their mobile number."
+  s1 see: Under Email: "That email address doesn’t look right."
+  s1 see: Under Date of birth: "Date of birth can’t be in the future."
+  s1 see: The first wrong box is scrolled into view and takes focus
+  s1 not: Only one wrong box named per press
+  s1 not: A member saved
+  s1 not: The sheet closing
+  s2 see: Under Mobile number: "This mobile number looks wrong. Check it and type it again."
+  s2 not: A member saved with a short number
+  s3 see: Under Full name: "The name can be at most 80 letters."
+  s3 not: The name cut to 80 letters and saved without a word
+J-F-panel-406-09 | type 6 | staff | Add member sheet open with a name and number typed (signed in as front-desk staff)
+  s1 see: The sheet closes; the Members list is unchanged
+  s1 not: A member saved
+  s1 not: A half-filled member in the list
+  s2 see: An empty form: no name, no number, joining date today
+  s2 not: The values typed before the cancel shown again as if saved
+J-F-panel-406-10 | type 12 | staff | Add member sheet open (signed in as front-desk staff)
+  s1 see: Hint under Mobile number: "Used to find them, and to send them WhatsApp messages."
+  s1 see: The member's page with these details
+  s1 not: A WhatsApp, SMS or email sent to the new member by the save itself
+  s1 not: The details shown to another gym
+  s1 not: The notes ("Injuries, preferences, who referred them…") shown to the member in the member app
+J-F-panel-408-01 | type 1 | owner | Enquiries screen, an enquiry that is not yet a member
+  s1 see: Sheet titled "Add member"
+  s1 see: Full name and Mobile number already filled from the enquiry, with the right country code
+  s1 see: Joining date today
+  s1 not: An empty form the desk has to retype
+  s1 not: A number with the country code doubled
+  s1 not: The enquiry marked joined before the member is saved
+  s2 see: Button reads "Saving…"
+  s2 see: The sheet closes and the enquiry is marked joined, linked to the new member (next screen is the member's page, or the thank-you sheet for a referred friend)
+  s2 not: The enquiry left open after the member was saved
+  s2 not: Two members for one enquiry
+J-F-panel-408-02 | type 2 | owner | Today screen, "Joined online" card with a "Become a member" request
+  s1 see: Sheet titled "Add member" with name, mobile number and the gender the person chose already filled in
+  s1 not: Gender left on "Not stated" when the person gave one
+  s1 not: A different person's details
+  s2 see: The member is saved and the flow goes on to Sell membership on the plan and day the person picked (words of that sheet not read: unknown)
+  s2 not: The flow closing before the plan can be sold
+  s2 not: The request still listed as waiting
+J-F-panel-408-03 | type 2 | owner | Members screen, "Joined in the app" tab, an app member who is not in the member list
+  s1 see: The Members screen at /members/new with the sheet "Add member" open, name and mobile number filled from the app
+  s1 not: An empty form
+  s1 not: A 10-digit app number given a country code other than +91
+  s2 see: The sheet closes and the new member's page opens
+  s2 not: The prefilled values showing again on the next plain "+ Add member"
+J-F-panel-408-04 | type 3 | owner | Enquiries screen, an enquiry whose number already belongs to a member
+  s1 see: Instead of the form, a sheet saying "{name} is already a member with {mobile number}."
+  s1 see: Buttons "Cancel" and "Mark joined and open"
+  s1 not: The Add member form opening for a number already in use
+  s1 not: A second member with the same number
+  s2 see: The sheet closes; the enquiry is unchanged
+  s2 not: The enquiry marked joined
+J-F-panel-408-05 | type 6 | owner | Add member sheet opened from an enquiry, values filled in
+  s1 see: The sheet closes; the enquiry is still not joined
+  s1 not: A member saved
+  s1 not: The enquiry's own name changed
+  s2 see: The form filled with the enquiry's own name and number again
+  s2 not: The changed name kept from the cancelled try
+J-F-panel-408-06 | type 12 | owner | Today screen, a "Become a member" request made on the gym's public page
+  s1 see: Only what the person typed on the public page: name, mobile number, gender
+  s1 not: Details of another person or another gym's request
+  s1 not: The request's details shown to anyone outside this gym's logins
+  s1 not: A message sent to the person by opening the form
+J-F-panel-408-07 | type 1 | staff | Enquiries screen, an enquiry that is not yet a member (signed in as front-desk staff)
+  s1 see: Sheet titled "Add member"
+  s1 see: Full name and Mobile number already filled from the enquiry, with the right country code
+  s1 see: Joining date today
+  s1 not: An empty form the desk has to retype
+  s1 not: A number with the country code doubled
+  s1 not: The enquiry marked joined before the member is saved
+  s1 not: The "Can train at every branch" box shown to a staff login
+  s2 see: Button reads "Saving…"
+  s2 see: The sheet closes and the enquiry is marked joined, linked to the new member (next screen is the member's page, or the thank-you sheet for a referred friend)
+  s2 not: The enquiry left open after the member was saved
+  s2 not: Two members for one enquiry
+J-F-panel-408-08 | type 2 | staff | Today screen, "Joined online" card with a "Become a member" request (signed in as front-desk staff)
+  s1 see: Sheet titled "Add member" with name, mobile number and the gender the person chose already filled in
+  s1 not: Gender left on "Not stated" when the person gave one
+  s1 not: A different person's details
+  s2 see: The member is saved and the flow goes on to Sell membership on the plan and day the person picked (words of that sheet not read: unknown)
+  s2 not: The flow closing before the plan can be sold
+  s2 not: The request still listed as waiting
+J-F-panel-408-09 | type 2 | staff | Members screen, "Joined in the app" tab, an app member who is not in the member list (signed in as front-desk staff)
+  s1 see: The Members screen at /members/new with the sheet "Add member" open, name and mobile number filled from the app
+  s1 not: An empty form
+  s1 not: A 10-digit app number given a country code other than +91
+  s2 see: The sheet closes and the new member's page opens
+  s2 not: The prefilled values showing again on the next plain "+ Add member"
+J-F-panel-408-10 | type 3 | staff | Enquiries screen, an enquiry whose number already belongs to a member (signed in as front-desk staff)
+  s1 see: Instead of the form, a sheet saying "{name} is already a member with {mobile number}."
+  s1 see: Buttons "Cancel" and "Mark joined and open"
+  s1 not: The Add member form opening for a number already in use
+  s1 not: A second member with the same number
+  s2 see: The sheet closes; the enquiry is unchanged
+  s2 not: The enquiry marked joined
+J-F-panel-408-11 | type 6 | staff | Add member sheet opened from an enquiry, values filled in (signed in as front-desk staff)
+  s1 see: The sheet closes; the enquiry is still not joined
+  s1 not: A member saved
+  s1 not: The enquiry's own name changed
+  s2 see: The form filled with the enquiry's own name and number again
+  s2 not: The changed name kept from the cancelled try
+J-F-panel-408-12 | type 12 | staff | Today screen, a "Become a member" request made on the gym's public page (signed in as front-desk staff)
+  s1 see: Only what the person typed on the public page: name, mobile number, gender
+  s1 not: Details of another person or another gym's request
+  s1 not: The request's details shown to anyone outside this gym's logins
+  s1 not: A message sent to the person by opening the form
+J-F-panel-412-01 | type 1 | owner | Gym with 2 or more branches, Add member sheet open
+  s1 see: A tick box "Can train at every branch"
+  s1 see: Hint: "Any branch’s front desk can then check them in with their mobile number. With the MettleUp app, they can also scan the QR poster at any branch."
+  s1 see: The box is not ticked
+  s1 not: The box ticked by default for a new member
+  s2 see: The sheet closes and the member's page opens
+  s2 not: The tick lost on save
+  s2 not: The member copied as a second member into each branch
+J-F-panel-412-02 | type 2 | owner | Gym with 2 or more branches, a member's page
+  s1 see: Sheet "Edit member"; "Can train at every branch" shows the saved state
+  s1 not: The box unticked for a member who was allowed before
+  s2 see: The sheet closes
+  s2 not: Any other detail of the member changed by this save
+J-F-panel-412-03 | type 3 | owner | Gym with one branch only, Add member sheet open
+  s1 see: No "Can train at every branch" box; the form ends with Notes
+  s1 not: The box shown with nothing to choose between
+  s1 not: A greyed-out box
+  s1 not: A saved "every branch" tick changed by a save from a login that cannot see the box
+J-F-panel-412-04 | type 6 | owner | Gym with 2 or more branches, a member saved with the tick on
+  s1 see: "Can train at every branch" is ticked
+  s1 not: The box shown unticked
+  s2 see: The sheet closes
+  s2 not: The member still let in at the other branches after the save
+  s3 see: The box is not ticked
+  s3 not: The old tick back
+J-F-panel-412-05 | type 12 | owner | Gym with 2 or more branches, a member with the tick on
+  s1 see: "Any branch’s front desk can then check them in with their mobile number. With the MettleUp app, they can also scan the QR poster at any branch."
+  s1 not: A member without the tick findable by mobile number at another branch's desk
+  s1 not: More of the member than is needed for check-in shown to the other branch (what the other branch sees was not read: unknown)
+J-F-panel-409-01 | type 1 | owner | Online gym whose server keeps photos, Add member sheet open on a computer with a camera
+  s1 see: "Photo (optional)" with a "Take photo" button
+  s1 see: Hint: "Helps staff recognise members at check-in. Only your gym’s staff can see it."
+  s1 not: The photo row asked for as a needed step
+  s2 see: The form is replaced by a sheet titled "Take photo"
+  s2 see: "Starting the camera… If the browser asks, tap Allow." then the live picture
+  s2 see: "Ask the member to look at the camera, with their face inside the oval."
+  s2 not: The typed name and number lost when the form comes back
+  s2 not: Two sheets on top of each other
+  s3 see: "Check that the face is clear. Tap Use photo to keep it."
+  s3 see: Back on the form: a round picture, buttons "Change photo" and "Remove"
+  s3 not: The picture flipped compared with the preview
+  s3 not: The camera left on after the photo is taken
+  s4 see: "Saving…", then the member's page with the photo
+  s4 not: The photo saved to another member
+  s4 not: The member not saved because of the photo
+J-F-panel-409-02 | type 2 | owner | Add member sheet open on a computer with no camera
+  s1 see: "No camera was found on this computer. Tap Upload a photo to pick a picture instead."
+  s1 see: Button "Upload a photo"
+  s1 not: A blank black box with no words
+  s1 not: The sheet closing by itself
+  s2 see: The picked picture, then the form with the round picture
+  s2 not: A file that is not a picture accepted (wrong file: "That photo couldn’t be used. Pick a JPG or PNG picture.")
+  s3 see: The member's page with the photo
+  s3 not: The full-size file stored instead of the small picture
+J-F-panel-409-03 | type 3 | owner | Add member sheet open with a photo taken, name and mobile filled; the photo save then fails
+  s1 see: The sheet stays open with a red banner: "{name} is added, but the photo was not saved. Open {name}’s page and tap Take photo to try again."
+  s1 see: One button: "Close"
+  s1 see: The photo row is gone
+  s1 not: "Add member" still offered, so a second tap makes the member twice
+  s1 not: The member not saved
+  s1 not: A success with no word about the photo
+  s2 see: The sheet closes and the new member's page opens, with initials in place of a photo
+  s2 not: The member lost
+  s2 not: An enquiry being converted left unlinked
+J-F-panel-409-04 | type 3 | owner | Offline gym, the demo, or a gym whose server does not keep photos; Add member sheet open
+  s1 see: No "Photo (optional)" row; the form starts with Full name
+  s1 not: A "Take photo" button that fails when pressed
+  s1 not: An empty gap where the row would be
+J-F-panel-409-05 | type 3 | owner | Add member sheet open; the browser's camera permission is refused
+  s1 see: "The camera is blocked. Tap the camera or lock icon next to the web address, choose Allow, then reload the page. Or tap Upload a photo."
+  s1 not: A permission prompt on every tap
+  s1 not: The form's typed values lost when the camera sheet is closed
+J-F-panel-409-06 | type 6 | owner | Add member sheet open with a photo already taken
+  s1 see: Sheet titled "Change photo"; then the form shows the new picture
+  s1 not: The first picture kept
+  s2 see: The round picture goes; the button reads "Take photo" again
+  s2 not: The removed picture still sent on save
+  s3 see: The member's page with initials, no photo
+  s3 not: A photo saved for the member
+J-F-panel-409-07 | type 12 | owner | Add member sheet open, camera sheet open
+  s1 see: "Helps staff recognise members at check-in. Only your gym’s staff can see it."
+  s1 see: "Only your gym’s staff can see this photo. It shows on the member’s page, their member card and at check-in."
+  s1 not: The photo visible to another gym, to other members, or on a public page
+  s1 not: The photo kept after "Cancel" on the form (it must exist only in this browser until the member is saved)
+J-F-panel-409-08 | type 1 | staff | Online gym whose server keeps photos, Add member sheet open on a computer with a camera (signed in as front-desk staff)
+  s1 see: "Photo (optional)" with a "Take photo" button
+  s1 see: Hint: "Helps staff recognise members at check-in. Only your gym’s staff can see it."
+  s1 not: The photo row asked for as a needed step
+  s2 see: The form is replaced by a sheet titled "Take photo"
+  s2 see: "Starting the camera… If the browser asks, tap Allow." then the live picture
+  s2 see: "Ask the member to look at the camera, with their face inside the oval."
+  s2 not: The typed name and number lost when the form comes back
+  s2 not: Two sheets on top of each other
+  s3 see: "Check that the face is clear. Tap Use photo to keep it."
+  s3 see: Back on the form: a round picture, buttons "Change photo" and "Remove"
+  s3 not: The picture flipped compared with the preview
+  s3 not: The camera left on after the photo is taken
+  s4 see: "Saving…", then the member's page with the photo
+  s4 not: The photo saved to another member
+  s4 not: The member not saved because of the photo
+J-F-panel-409-09 | type 2 | staff | Add member sheet open on a computer with no camera (signed in as front-desk staff)
+  s1 see: "No camera was found on this computer. Tap Upload a photo to pick a picture instead."
+  s1 see: Button "Upload a photo"
+  s1 not: A blank black box with no words
+  s1 not: The sheet closing by itself
+  s2 see: The picked picture, then the form with the round picture
+  s2 not: A file that is not a picture accepted (wrong file: "That photo couldn’t be used. Pick a JPG or PNG picture.")
+  s3 see: The member's page with the photo
+  s3 not: The full-size file stored instead of the small picture
+J-F-panel-409-10 | type 3 | staff | Add member sheet open with a photo taken, name and mobile filled; the photo save then fails (signed in as front-desk staff)
+  s1 see: The sheet stays open with a red banner: "{name} is added, but the photo was not saved. Open {name}’s page and tap Take photo to try again."
+  s1 see: One button: "Close"
+  s1 see: The photo row is gone
+  s1 not: "Add member" still offered, so a second tap makes the member twice
+  s1 not: The member not saved
+  s1 not: A success with no word about the photo
+  s2 see: The sheet closes and the new member's page opens, with initials in place of a photo
+  s2 not: The member lost
+  s2 not: An enquiry being converted left unlinked
+J-F-panel-409-11 | type 3 | staff | Offline gym, the demo, or a gym whose server does not keep photos; Add member sheet open (signed in as front-desk staff)
+  s1 see: No "Photo (optional)" row; the form starts with Full name
+  s1 not: A "Take photo" button that fails when pressed
+  s1 not: An empty gap where the row would be
+J-F-panel-409-12 | type 3 | staff | Add member sheet open; the browser's camera permission is refused (signed in as front-desk staff)
+  s1 see: "The camera is blocked. Tap the camera or lock icon next to the web address, choose Allow, then reload the page. Or tap Upload a photo."
+  s1 not: A permission prompt on every tap
+  s1 not: The form's typed values lost when the camera sheet is closed
+J-F-panel-409-13 | type 6 | staff | Add member sheet open with a photo already taken (signed in as front-desk staff)
+  s1 see: Sheet titled "Change photo"; then the form shows the new picture
+  s1 not: The first picture kept
+  s2 see: The round picture goes; the button reads "Take photo" again
+  s2 not: The removed picture still sent on save
+  s3 see: The member's page with initials, no photo
+  s3 not: A photo saved for the member
+J-F-panel-409-14 | type 12 | staff | Add member sheet open, camera sheet open (signed in as front-desk staff)
+  s1 see: "Helps staff recognise members at check-in. Only your gym’s staff can see it."
+  s1 see: "Only your gym’s staff can see this photo. It shows on the member’s page, their member card and at check-in."
+  s1 not: The photo visible to another gym, to other members, or on a public page
+  s1 not: The photo kept after "Cancel" on the form (it must exist only in this browser until the member is saved)
+J-F-panel-407-01 | type 1 | owner | A member's page
+  s1 see: Sheet titled "Edit member" with every saved detail filled in
+  s1 see: The saved country code and number (a +971 member opens as +971)
+  s1 see: Buttons "Cancel" and "Save changes"
+  s1 see: No photo row
+  s1 not: A non-Indian number shown as +91
+  s1 not: Empty boxes for details that were saved
+  s2 see: Button reads "Saving…"
+  s2 see: The sheet closes and the page shows the new name
+  s2 not: The member's photo removed
+  s2 not: The member's plan, dues or visits changed
+  s2 not: A second member made
+J-F-panel-407-02 | type 3 | owner | Edit member sheet open
+  s1 see: Under Full name: "Type the member’s name."; the box is brought into view
+  s1 not: The member saved with an empty name
+  s1 not: The sheet closing
+  s2 see: Under Mobile number: "{name} already has this mobile number in Members."
+  s2 not: Two members with one number
+  s2 not: The other member's details changed
+J-F-panel-407-03 | type 6 | owner | The page of an archived member
+  s1 see: At the end of the form: "This member is archived. Saving here won’t change that. To bring them back, tap “Restore member” on their page."
+  s1 not: No word that the member is archived
+  s2 see: The sheet closes; the member is still archived with the new name
+  s2 not: The member back on the list and in the counts
+  s2 not: The photo changed
+J-F-panel-407-04 | type 12 | owner | A member's page
+  s1 see: The sheet closes with the new number on the page
+  s1 not: A WhatsApp or SMS sent to the old or the new number by the save
+  s1 not: The change made with no trace of who made it (whether a trace is kept was not read: unknown)
+  s1 not: The member's app sign-in moved to another person without a check (not read: unknown)
+J-F-panel-407-05 | type 1 | staff | A member's page (signed in as front-desk staff)
+  s1 see: Sheet titled "Edit member" with every saved detail filled in
+  s1 see: The saved country code and number (a +971 member opens as +971)
+  s1 see: Buttons "Cancel" and "Save changes"
+  s1 see: No photo row
+  s1 not: A non-Indian number shown as +91
+  s1 not: Empty boxes for details that were saved
+  s1 not: The "Can train at every branch" box shown to a staff login
+  s2 see: Button reads "Saving…"
+  s2 see: The sheet closes and the page shows the new name
+  s2 not: The member's photo removed
+  s2 not: The member's plan, dues or visits changed
+  s2 not: A second member made
+J-F-panel-407-06 | type 3 | staff | Edit member sheet open (signed in as front-desk staff)
+  s1 see: Under Full name: "Type the member’s name."; the box is brought into view
+  s1 not: The member saved with an empty name
+  s1 not: The sheet closing
+  s2 see: Under Mobile number: "{name} already has this mobile number in Members."
+  s2 not: Two members with one number
+  s2 not: The other member's details changed
+J-F-panel-407-07 | type 6 | staff | The page of an archived member (signed in as front-desk staff)
+  s1 see: At the end of the form: "This member is archived. Saving here won’t change that. To bring them back, tap “Restore member” on their page."
+  s1 not: No word that the member is archived
+  s2 see: The sheet closes; the member is still archived with the new name
+  s2 not: The member back on the list and in the counts
+  s2 not: The photo changed
+J-F-panel-407-08 | type 12 | staff | A member's page (signed in as front-desk staff)
+  s1 see: The sheet closes with the new number on the page
+  s1 not: A WhatsApp or SMS sent to the old or the new number by the save
+  s1 not: The change made with no trace of who made it (whether a trace is kept was not read: unknown)
+  s1 not: The member's app sign-in moved to another person without a check (not read: unknown)
+J-F-panel-413-01 | type 1 | owner | Add member sheet open; the gym has an archived member with mobile number X
+  s1 see: A red banner: "{archived member's name} already has this number. They are archived, so they are hidden from the list."
+  s1 see: Buttons "Bring them back" and "Open their page"
+  s1 see: The form stays open with what was typed
+  s1 not: A second member with the same number
+  s1 not: A plain "number taken" with no name
+  s1 not: The sheet closing
+  s2 see: The sheet closes and that member's page opens; the member is back on the list
+  s2 not: The name typed in the form written over the old member's name
+  s2 not: A new member made as well
+  s2 not: The old member's receipts or visits lost
+J-F-panel-413-02 | type 2 | owner | Add member sheet showing the "already has this number… archived" banner
+  s1 see: The sheet closes and the archived member's page opens
+  s1 not: The member un-archived by only looking
+  s1 not: A new member saved
+J-F-panel-413-03 | type 2 | owner | Add member sheet open; a member who is NOT archived has mobile number Y
+  s1 see: Under Mobile number: "{name} already has this mobile number in Members."
+  s1 see: No banner and no "Bring them back" button
+  s1 not: A second member with the same number
+  s1 not: A member of another gym named
+J-F-panel-413-04 | type 2 | owner | Enquiries screen, "Add as member" on an enquiry whose number belongs to an archived member (form open and filled)
+  s1 see: The archived member is back and their page opens; the enquiry is marked joined, linked to that member
+  s1 not: The enquiry left open
+  s1 not: The enquiry linked to a member that does not exist
+J-F-panel-413-05 | type 3 | owner | Add member sheet showing the archived banner; the internet is off
+  s1 see: The sheet stays open with a message that it did not work (the server's own words, or "Could not bring back that member. Please try again.")
+  s1 not: The sheet closing as if it worked
+  s1 not: The member shown as back when they are not
+J-F-panel-413-06 | type 6 | owner | Add member sheet showing the archived banner
+  s1 see: The banner goes away at once
+  s1 not: "Bring them back" still offered for a number no longer typed
+  s2 see: The new member is saved with the new number; the archived member stays archived
+  s2 not: The archived member brought back anyway
+J-F-panel-413-07 | type 12 | owner | Add member sheet open
+  s1 see: That member's name, to this gym's login only
+  s1 not: The name of a person at another gym who has the same number
+  s1 not: Whether a number is used by any other gym given away by the message
+J-F-panel-413-08 | type 1 | staff | Add member sheet open; the gym has an archived member with mobile number X (signed in as front-desk staff)
+  s1 see: A red banner: "{archived member's name} already has this number. They are archived, so they are hidden from the list."
+  s1 see: Buttons "Bring them back" and "Open their page"
+  s1 see: The form stays open with what was typed
+  s1 not: A second member with the same number
+  s1 not: A plain "number taken" with no name
+  s1 not: The sheet closing
+  s2 see: The sheet closes and that member's page opens; the member is back on the list
+  s2 not: The name typed in the form written over the old member's name
+  s2 not: A new member made as well
+  s2 not: The old member's receipts or visits lost
+J-F-panel-413-09 | type 2 | staff | Add member sheet showing the "already has this number… archived" banner (signed in as front-desk staff)
+  s1 see: The sheet closes and the archived member's page opens
+  s1 not: The member un-archived by only looking
+  s1 not: A new member saved
+J-F-panel-413-10 | type 2 | staff | Add member sheet open; a member who is NOT archived has mobile number Y (signed in as front-desk staff)
+  s1 see: Under Mobile number: "{name} already has this mobile number in Members."
+  s1 see: No banner and no "Bring them back" button
+  s1 not: A second member with the same number
+  s1 not: A member of another gym named
+J-F-panel-413-11 | type 2 | staff | Enquiries screen, "Add as member" on an enquiry whose number belongs to an archived member (form open and filled) (signed in as front-desk s
+  s1 see: The archived member is back and their page opens; the enquiry is marked joined, linked to that member
+  s1 not: The enquiry left open
+  s1 not: The enquiry linked to a member that does not exist
+J-F-panel-413-12 | type 3 | staff | Add member sheet showing the archived banner; the internet is off (signed in as front-desk staff)
+  s1 see: The sheet stays open with a message that it did not work (the server's own words, or "Could not bring back that member. Please try again.")
+  s1 not: The sheet closing as if it worked
+  s1 not: The member shown as back when they are not
+J-F-panel-413-13 | type 6 | staff | Add member sheet showing the archived banner (signed in as front-desk staff)
+  s1 see: The banner goes away at once
+  s1 not: "Bring them back" still offered for a number no longer typed
+  s2 see: The new member is saved with the new number; the archived member stays archived
+  s2 not: The archived member brought back anyway
+J-F-panel-413-14 | type 12 | staff | Add member sheet open (signed in as front-desk staff)
+  s1 see: That member's name, to this gym's login only
+  s1 not: The name of a person at another gym who has the same number
+  s1 not: Whether a number is used by any other gym given away by the message
+J-F-panel-410-01 | type 1 | owner | Gym whose members already use batches; Add member sheet open
+  s1 see: One row of chips: each batch in use with its member count, most used first, then "None" and "+ New batch"
+  s1 see: "None" is picked
+  s1 not: The same batch twice in different spellings
+  s1 not: A batch carried only by nobody
+  s2 see: The member's page with "{batch} batch · Member since {date}" under the name
+  s2 not: The member saved with no batch
+  s2 not: A new spelling of the batch made
+J-F-panel-410-02 | type 2 | owner | Gym with batches in use, one of them "Morning 6-8"; Add member sheet open
+  s1 see: A box "New batch name" in focus, placeholder "Evening 6-9", hint "Up to 40 letters."
+  s1 not: The box closing while it is still empty
+  s2 see: The member is in the existing "Morning 6-8" batch
+  s2 not: A second chip "morning 6-8" next time the form opens
+J-F-panel-410-03 | type 2 | owner | Gym where no member has a batch yet; Add member sheet open
+  s1 see: A plain text box, placeholder "Morning 6-8", hint "The time they train. Next time, you can pick it with one tap."
+  s1 see: No chips
+  s1 not: An empty chip row with only "None"
+  s2 see: A chip "Evening 6-9" with count 1, "None" and "+ New batch"
+  s2 not: The text box alone again
+J-F-panel-410-04 | type 3 | owner | Add member sheet open, "+ New batch" tapped
+  s1 see: Under New batch name: "The batch name can be at most 40 letters."
+  s1 not: The name cut to 40 letters and saved without a word
+  s1 not: The member saved
+  s2 see: The member is saved with no batch
+  s2 not: An empty-named batch chip
+J-F-panel-410-05 | type 6 | owner | The page of a member who is the only one in the batch "Ladies 11-12"
+  s1 see: The chip "Ladies 11-12" is picked
+  s1 not: "None" picked for a member who has a batch
+  s2 see: The page no longer shows a batch under the name
+  s2 not: The batch still on the member
+  s3 see: No "Ladies 11-12" chip (nobody carries it now)
+  s3 not: A chip with count 0
+J-F-panel-410-06 | type 1 | staff | Gym whose members already use batches; Add member sheet open (signed in as front-desk staff)
+  s1 see: One row of chips: each batch in use with its member count, most used first, then "None" and "+ New batch"
+  s1 see: "None" is picked
+  s1 not: The same batch twice in different spellings
+  s1 not: A batch carried only by nobody
+  s2 see: The member's page with "{batch} batch · Member since {date}" under the name
+  s2 not: The member saved with no batch
+  s2 not: A new spelling of the batch made
+J-F-panel-410-07 | type 2 | staff | Gym with batches in use, one of them "Morning 6-8"; Add member sheet open (signed in as front-desk staff)
+  s1 see: A box "New batch name" in focus, placeholder "Evening 6-9", hint "Up to 40 letters."
+  s1 not: The box closing while it is still empty
+  s2 see: The member is in the existing "Morning 6-8" batch
+  s2 not: A second chip "morning 6-8" next time the form opens
+J-F-panel-410-08 | type 2 | staff | Gym where no member has a batch yet; Add member sheet open (signed in as front-desk staff)
+  s1 see: A plain text box, placeholder "Morning 6-8", hint "The time they train. Next time, you can pick it with one tap."
+  s1 see: No chips
+  s1 not: An empty chip row with only "None"
+  s2 see: A chip "Evening 6-9" with count 1, "None" and "+ New batch"
+  s2 not: The text box alone again
+J-F-panel-410-09 | type 3 | staff | Add member sheet open, "+ New batch" tapped (signed in as front-desk staff)
+  s1 see: Under New batch name: "The batch name can be at most 40 letters."
+  s1 not: The name cut to 40 letters and saved without a word
+  s1 not: The member saved
+  s2 see: The member is saved with no batch
+  s2 not: An empty-named batch chip
+J-F-panel-410-10 | type 6 | staff | The page of a member who is the only one in the batch "Ladies 11-12" (signed in as front-desk staff)
+  s1 see: The chip "Ladies 11-12" is picked
+  s1 not: "None" picked for a member who has a batch
+  s2 see: The page no longer shows a batch under the name
+  s2 not: The batch still on the member
+  s3 see: No "Ladies 11-12" chip (nobody carries it now)
+  s3 not: A chip with count 0
+J-F-panel-411-01 | type 1 | owner | Add member sheet open
+  s1 see: Hint: "They pay a pass company, not your gym. No plan and no dues, and never on the renewal list. Each visit counts for the pass company."
+  s1 see: "Pass company" chips: FITPASS, cultpass, any other company this gym already uses, and "+ Other company"
+  s1 see: No company picked yet
+  s1 not: A company picked by default
+  s2 see: The member's page; the member is a pass member from today
+  s2 not: A plan or dues asked for
+  s2 not: The member on the renewal list
+J-F-panel-411-02 | type 2 | owner | Add member sheet open, "Comes with a pass" ticked
+  s1 see: A box "Pass company name" in focus, placeholder "Fitternity"
+  s1 not: A chip left picked as well
+  s2 see: The member is saved under "FITPASS" (the known spelling)
+  s2 not: A second company "fit pass" in the chips next time
+J-F-panel-411-03 | type 2 | owner | The page of a member who has no pass
+  s1 see: The sheet closes; the member is a pass member from today
+  s1 not: Money already paid by the member removed
+  s1 not: The pass start set to the joining date
+J-F-panel-411-04 | type 3 | owner | Add member sheet open, name and mobile filled, "Comes with a pass" ticked, no company picked
+  s1 see: Under the Pass company chips: "Pick or type the pass company."
+  s1 see: The sheet stays open
+  s1 not: A pass member saved with no company
+  s1 not: The member saved as a normal member without a word
+  s1 not: Nothing visible happening (the message off the screen)
+  s2 see: The box stops at 40 letters
+  s2 not: A longer name saved
+J-F-panel-411-05 | type 6 | owner | The page of a FITPASS member who has been a pass member since last month
+  s1 see: The tick is on and "FITPASS" is picked
+  s1 not: The tick off for a pass member
+  s2 see: Still a pass member since the same day as before
+  s2 not: The pass start moved to today
+  s3 see: The member is a normal member with no pass company
+  s3 not: Past pass visits removed from the pass count
+  s4 see: A pass member again, from today
+  s4 not: The old start day back as if the break never happened without anyone choosing that
+J-F-panel-411-06 | type 1 | staff | Add member sheet open (signed in as front-desk staff)
+  s1 see: Hint: "They pay a pass company, not your gym. No plan and no dues, and never on the renewal list. Each visit counts for the pass company."
+  s1 see: "Pass company" chips: FITPASS, cultpass, any other company this gym already uses, and "+ Other company"
+  s1 see: No company picked yet
+  s1 not: A company picked by default
+  s2 see: The member's page; the member is a pass member from today
+  s2 not: A plan or dues asked for
+  s2 not: The member on the renewal list
+J-F-panel-411-07 | type 2 | staff | Add member sheet open, "Comes with a pass" ticked (signed in as front-desk staff)
+  s1 see: A box "Pass company name" in focus, placeholder "Fitternity"
+  s1 not: A chip left picked as well
+  s2 see: The member is saved under "FITPASS" (the known spelling)
+  s2 not: A second company "fit pass" in the chips next time
+J-F-panel-411-08 | type 2 | staff | The page of a member who has no pass (signed in as front-desk staff)
+  s1 see: The sheet closes; the member is a pass member from today
+  s1 not: Money already paid by the member removed
+  s1 not: The pass start set to the joining date
+J-F-panel-411-09 | type 3 | staff | Add member sheet open, name and mobile filled, "Comes with a pass" ticked, no company picked (signed in as front-desk staff)
+  s1 see: Under the Pass company chips: "Pick or type the pass company."
+  s1 see: The sheet stays open
+  s1 not: A pass member saved with no company
+  s1 not: The member saved as a normal member without a word
+  s1 not: Nothing visible happening (the message off the screen)
+  s2 see: The box stops at 40 letters
+  s2 not: A longer name saved
+J-F-panel-411-10 | type 6 | staff | The page of a FITPASS member who has been a pass member since last month (signed in as front-desk staff)
+  s1 see: The tick is on and "FITPASS" is picked
+  s1 not: The tick off for a pass member
+  s2 see: Still a pass member since the same day as before
+  s2 not: The pass start moved to today
+  s3 see: The member is a normal member with no pass company
+  s3 not: Past pass visits removed from the pass count
+  s4 see: A pass member again, from today
+  s4 not: The old start day back as if the break never happened without anyone choosing that

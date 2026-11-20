@@ -1,0 +1,922 @@
+# A8-panel-logic-1-1: coverage of 81 Tier 1 journeys (8 features, from A5-panel-logic-1-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-605 | supabase/tests/0060_pay_mettleup.sql | db | 317 lines | asserts 7 journey phrase(s)
+F-panel-605 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 6 journey phrase(s)
+F-panel-605 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-panel-605 | apps/dashboard/test/crm/alertHandled.test.ts | unit | 203 lines | imports the code, file name
+F-panel-605 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 4 journey phrase(s)
+F-panel-605 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 4 journey phrase(s)
+F-panel-605 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 3 journey phrase(s)
+F-panel-605 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 3 journey phrase(s)
+F-panel-605 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 3 journey phrase(s)
+F-panel-605 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 3 journey phrase(s)
+F-panel-605 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 3 journey phrase(s)
+F-panel-605 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | imports the code
+F-panel-604 | supabase/tests/0060_pay_mettleup.sql | db | 317 lines | asserts 7 journey phrase(s)
+F-panel-604 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 6 journey phrase(s)
+F-panel-604 | apps/dashboard/test/crm/alertInbox.test.ts | unit | 207 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-panel-604 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-panel-604 | apps/dashboard/test/crm/hqAccess.test.ts | unit | 81 lines | asserts 6 journey phrase(s)
+F-panel-604 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-panel-604 | apps/dashboard/test/crm/bellGroups.test.ts | unit | 190 lines | imports the code, file name
+F-panel-604 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 5 journey phrase(s)
+F-panel-604 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 4 journey phrase(s)
+F-panel-604 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 4 journey phrase(s)
+F-panel-604 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 4 journey phrase(s)
+F-panel-604 | apps/dashboard/test/crm/alertHandled.test.ts | unit | 203 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-607 | apps/dashboard/test/crm/attendance.test.ts | unit | 1063 lines | imports the code, file name, asserts 4 journey phrase(s)
+F-panel-607 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-panel-607 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 4 journey phrase(s)
+F-panel-607 | apps/dashboard/test/crm/machines/supabaseStore.test.ts | unit | 82 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-607 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-panel-607 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-panel-607 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-panel-607 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-panel-607 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-panel-607 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 3 journey phrase(s)
+F-panel-607 | apps/dashboard/test/crm/audience.test.ts | unit | 177 lines | imports the code
+F-panel-607 | apps/dashboard/test/crm/checkin.test.ts | unit | 137 lines | imports the code
+F-panel-608 | apps/dashboard/test/crm/audience.test.ts | unit | 177 lines | imports the code, file name
+F-panel-608 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 1 journey phrase(s)
+F-panel-608 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-608 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-608 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-panel-608 | apps/dashboard/e2e/r534-training-progress-uat.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-panel-608 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-panel-608 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-panel-608 | apps/dashboard/test/crm/navNames.test.ts | unit | 61 lines | asserts 1 journey phrase(s)
+F-panel-608 | apps/dashboard/test/crm/ownerOnboarding.test.ts | unit | 115 lines | asserts 1 journey phrase(s)
+F-panel-608 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 1 journey phrase(s)
+F-panel-608 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 1 journey phrase(s)
+F-panel-609 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 11 journey phrase(s)
+F-panel-609 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 7 journey phrase(s)
+F-panel-609 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 7 journey phrase(s)
+F-panel-609 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 7 journey phrase(s)
+F-panel-609 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 6 journey phrase(s)
+F-panel-609 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 6 journey phrase(s)
+F-panel-609 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 6 journey phrase(s)
+F-panel-609 | apps/dashboard/test/crm/autoReminders.test.ts | unit | 107 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-panel-609 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | asserts 5 journey phrase(s)
+F-panel-609 | apps/dashboard/test/crm/messages.test.ts | unit | 189 lines | asserts 5 journey phrase(s)
+F-panel-609 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-panel-609 | apps/dashboard/e2e/online.spec.mjs | e2e | 163 lines | asserts 4 journey phrase(s)
+F-panel-610 | apps/dashboard/test/crm/assistant/awayIdea.test.ts | unit | 316 lines | imports the code
+F-panel-610 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-610 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 1 journey phrase(s)
+F-panel-610 | apps/dashboard/e2e/r608-uat.spec.mjs | e2e | 208 lines | asserts 1 journey phrase(s)
+F-panel-610 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-panel-610 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 1 journey phrase(s)
+F-panel-610 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-panel-610 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 1 journey phrase(s)
+F-panel-610 | deploy/panel/helpPages.test.mjs | unit | 109 lines | asserts 1 journey phrase(s)
+F-panel-611 | apps/dashboard/test/crm/batches.test.ts | unit | 169 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-panel-611 | apps/dashboard/e2e/demo-showcase-uat.spec.mjs | e2e | 181 lines | asserts 1 journey phrase(s)
+F-panel-611 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 1 journey phrase(s)
+F-panel-611 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-panel-611 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 1 journey phrase(s)
+F-panel-611 | apps/mobile/test/tracker/r311OpenWorkoutFromChart.test.ts | unit | 96 lines | asserts 1 journey phrase(s)
+F-panel-611 | deploy/panel/helpPages.test.mjs | unit | 109 lines | asserts 1 journey phrase(s)
+F-panel-613 | apps/dashboard/test/crm/bodyMeasures.test.ts | unit | 114 lines | imports the code, file name, asserts 6 journey phrase(s)
+F-panel-613 | apps/dashboard/test/crm/r448.test.ts | unit | 76 lines | asserts 5 journey phrase(s)
+F-panel-613 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 4 journey phrase(s)
+F-panel-613 | apps/dashboard/test/crm/machines/pretendMachine.test.ts | unit | 216 lines | asserts 3 journey phrase(s)
+F-panel-613 | apps/dashboard/e2e/gymdata.spec.mjs | e2e | 52 lines | asserts 2 journey phrase(s)
+F-panel-613 | apps/dashboard/test/crm/machines/adms.test.ts | unit | 141 lines | asserts 2 journey phrase(s)
+F-panel-613 | apps/mobile/test/onboarding/welcomeStart.test.ts | unit | 55 lines | asserts 2 journey phrase(s)
+F-panel-613 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-613 | apps/mobile/test/tracker/notifAudit.test.ts | unit | 235 lines | asserts 2 journey phrase(s)
+F-panel-613 | supabase/tests/0017_undo_import.sql | db | 86 lines | asserts 2 journey phrase(s)
+F-panel-613 | supabase/tests/0032_member_cloud.sql | db | 217 lines | asserts 2 journey phrase(s)
+F-panel-613 | supabase/tests/0035_trainer_measurements_diet.sql | db | 227 lines | asserts 2 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-605-01 | type 1 | owner | Today, signed in as owner; a member complaint came 10 minutes ago and nobody has handled it
+  s1 see: Card titled 'Latest from your members'
+  s1 see: One line: the server's own line about the complaint, then '10 min ago'
+  s1 see: An urgent line that still waits is in bold
+  s1 not: A conversation already marked done, or a request already decided, is listed
+  s1 not: A line older than 24 hours is listed
+  s1 not: More than 5 lines
+  s2 see: The panel opens Member messages on Complaints
+  s2 not: Another page opens
+  s2 not: The line counts as done only because it was opened
+  s3 see: The line is gone from the card
+  s3 see: When no line is left the whole card is gone (no heading)
+  s3 see: The bell still keeps the line, marked 'Done'
+  s3 not: The handled line still sits on Today
+  s3 not: A line that still needs someone is hidden by a guess
+  s3 not: The bell loses the line
+J-F-panel-605-02 | type 3 | owner | Today, signed in as owner; nothing from members waits (or everything was handled)
+  s1 see: No 'Latest from your members' card at all; the rest of Today as usual
+  s1 not: An empty card with only the heading
+  s1 not: An error or a spinner in its place
+  s2 see: The line stays on Today until the panel can tell it was handled
+  s2 not: The line is hidden although nobody handled it
+  s3 see: The panel stays on Today (the safe address)
+  s3 not: A blank page
+  s3 not: An address outside the panel opens
+J-F-panel-605-03 | type 6 | owner | Today, signed in as owner; one news line (a member joined) and one line that needs someone
+  s1 see: Both lines are shown; the news line stays while this visit to Today lasts
+  s1 not: The news line vanishes while the person is still reading
+  s2 see: The news line is gone (it was shown once)
+  s2 see: The line that needs someone is still there
+  s2 not: The news line shows again on every visit
+  s2 not: The line that needs someone is gone though nobody handled it
+  s3 see: The line is still on Today: it is not done
+  s3 not: Removing it from the bell takes it off Today
+  s4 see: The line leaves Today without a reload
+  s4 not: The line stays until the browser is reloaded
+  s4 not: The whole page jumps when the list is read again
+J-F-panel-605-04 | type 2 | owner | The panel is open on any page, signed in as owner, browser alerts allowed; a new alert arrives (the ring, not the card)
+  s1 see: No ring and no browser notice for alerts that were already there
+  s1 not: Opening the panel rings for old alerts
+  s2 see: A browser notice titled 'MettleUp: news from your members' with the alert's own line
+  s2 not: The same alert rings twice
+  s2 not: The notice opens a page other than the one the line names
+  s3 see: One notice: '3 new updates from your members. Open Today to see them.'
+  s3 not: Three separate notices
+  s3 not: A count that does not match the new lines
+  s4 see: The panel opens Today (or the page of the single alert)
+  s4 not: A second copy of the panel opens on a wrong page
+J-F-panel-605-05 | type 2 | owner | Today, signed in as owner; another kind of line: a shop order, then an online payment
+  s1 see: 'New shop order #12 from <name>. Get it ready on Shop.' in bold
+  s1 not: The order number without '#'
+  s1 not: A line that disagrees with Shop today
+  s2 see: The order line is gone from Today (ready needs nothing more)
+  s2 not: 'Get it ready' still shown for an order that is ready
+  s3 see: The line has its own colour and a small 'Payment' label
+  s3 not: A payment line that looks like any other line
+  s3 not: A failed payment shown in the paid colour
+J-F-panel-605-06 | type 12 | owner | Today on the owner device; a member sent a complaint and picked the gym admin
+  s1 see: The complaint line is shown, with the first name only as the server wrote it
+  s1 not: The complaint text itself on Today
+  s1 not: A phone number in the line
+  s2 see: Member messages opens on Complaints
+  s2 not: It opens on Feedback or Questions
+  s3 see: No complaint line, and no ring for it
+  s3 not: The desk sees or hears the complaint
+J-F-panel-605-07 | type 1 | staff | Today, signed in as staff; a plan request (renew or pause) came 10 minutes ago and nobody has handled it
+  s1 see: Card titled 'Latest from your members'
+  s1 see: One line: the server's own line about the request, then '10 min ago'
+  s1 see: An urgent line that still waits is in bold
+  s1 not: A conversation already marked done, or a request already decided, is listed
+  s1 not: A line older than 24 hours is listed
+  s1 not: More than 5 lines
+  s2 see: The panel opens the page named in the alert's route
+  s2 not: Another page opens
+  s2 not: The line counts as done only because it was opened
+  s3 see: The line is gone from the card
+  s3 see: When no line is left the whole card is gone (no heading)
+  s3 see: The bell still keeps the line, marked 'Done'
+  s3 not: The handled line still sits on Today
+  s3 not: A line that still needs someone is hidden by a guess
+  s3 not: The bell loses the line
+J-F-panel-605-08 | type 3 | staff | Today, signed in as staff; nothing from members waits (or everything was handled)
+  s1 see: No 'Latest from your members' card at all; the rest of Today as usual
+  s1 not: An empty card with only the heading
+  s1 not: An error or a spinner in its place
+  s2 see: The line stays on Today until the panel can tell it was handled
+  s2 not: The line is hidden although nobody handled it
+  s3 see: The panel stays on Today (the safe address)
+  s3 not: A blank page
+  s3 not: An address outside the panel opens
+J-F-panel-605-09 | type 6 | staff | Today, signed in as staff; one news line (a member joined) and one line that needs someone
+  s1 see: Both lines are shown; the news line stays while this visit to Today lasts
+  s1 not: The news line vanishes while the person is still reading
+  s2 see: The news line is gone (it was shown once)
+  s2 see: The line that needs someone is still there
+  s2 not: The news line shows again on every visit
+  s2 not: The line that needs someone is gone though nobody handled it
+  s3 see: The line is still on Today: it is not done
+  s3 not: Removing it from the bell takes it off Today
+  s4 see: The line leaves Today without a reload
+  s4 not: The line stays until the browser is reloaded
+  s4 not: The whole page jumps when the list is read again
+J-F-panel-605-10 | type 2 | staff | The panel is open on any page, signed in as staff, browser alerts allowed; a new alert arrives (the ring, not the card)
+  s1 see: No ring and no browser notice for alerts that were already there
+  s1 not: Opening the panel rings for old alerts
+  s2 see: A browser notice titled 'MettleUp: news from your members' with the alert's own line
+  s2 not: The same alert rings twice
+  s2 not: A complaint rings on this device
+  s3 see: One notice: '3 new updates from your members. Open Today to see them.'
+  s3 not: Three separate notices
+  s3 not: A count that does not match the new lines
+  s4 see: The panel opens Today (or the page of the single alert)
+  s4 not: A second copy of the panel opens on a wrong page
+J-F-panel-605-11 | type 12 | staff | Today on a front-desk device; a member sent a complaint and another sent feedback
+  s1 see: The feedback line is shown; no complaint line
+  s1 not: The complaint is listed
+  s1 not: The complaint rings on this device
+  s2 see: No complaint there either
+  s2 not: The complaint shows in History after the owner handled it
+J-F-panel-605-12 | type 1 | trainer | Today, signed in as trainer; a workout question from a member came 10 minutes ago and nobody has handled it
+  s1 see: Card titled 'Latest from your members'
+  s1 see: One line: '<first name> asked a workout question. Open Member questions to reply.', then '10 min ago'
+  s1 see: An urgent line that still waits is in bold
+  s1 not: A conversation already marked done, or a request already decided, is listed
+  s1 not: A line older than 24 hours is listed
+  s1 not: More than 5 lines
+  s2 see: The panel opens Member questions
+  s2 not: Another page opens
+  s2 not: The line counts as done only because it was opened
+  s3 see: The line is gone from the card
+  s3 see: When no line is left the whole card is gone (no heading)
+  s3 see: The bell still keeps the line, marked 'Done'
+  s3 not: The handled line still sits on Today
+  s3 not: A line that still needs someone is hidden by a guess
+  s3 not: The bell loses the line
+J-F-panel-605-13 | type 3 | trainer | Today, signed in as trainer; nothing from members waits (or everything was handled)
+  s1 see: No 'Latest from your members' card at all; the rest of Today as usual
+  s1 not: An empty card with only the heading
+  s1 not: An error or a spinner in its place
+  s2 see: The line stays on Today until the panel can tell it was handled
+  s2 not: The line is hidden although nobody handled it
+  s3 see: The panel stays on Today (the safe address)
+  s3 not: A blank page
+  s3 not: An address outside the panel opens
+J-F-panel-605-14 | type 6 | trainer | Today, signed in as trainer; one news line (a member joined) and one line that needs someone
+  s1 see: Both lines are shown; the news line stays while this visit to Today lasts
+  s1 not: The news line vanishes while the person is still reading
+  s2 see: The news line is gone (it was shown once)
+  s2 see: The line that needs someone is still there
+  s2 not: The news line shows again on every visit
+  s2 not: The line that needs someone is gone though nobody handled it
+  s3 see: The line is still on Today: it is not done
+  s3 not: Removing it from the bell takes it off Today
+  s4 see: The line leaves Today without a reload
+  s4 not: The line stays until the browser is reloaded
+  s4 not: The whole page jumps when the list is read again
+J-F-panel-605-15 | type 2 | trainer | The panel is open on any page, signed in as trainer, browser alerts allowed; a new alert arrives (the ring, not the card)
+  s1 see: No ring and no browser notice for alerts that were already there
+  s1 not: Opening the panel rings for old alerts
+  s2 see: A browser notice titled 'MettleUp: news from your members' with the alert's own line
+  s2 not: The same alert rings twice
+  s2 not: A complaint rings on this device
+  s3 see: One notice: '3 new updates from your members. Open Today to see them.'
+  s3 not: Three separate notices
+  s3 not: A count that does not match the new lines
+  s4 see: The panel opens Today (or the page of the single alert)
+  s4 not: A second copy of the panel opens on a wrong page
+J-F-panel-605-16 | type 12 | trainer | Today on a trainer device; a member sent feedback and another sent a complaint
+  s1 see: Neither line is shown; only what the server sends a trainer (for example a workout question)
+  s1 not: A feedback line on a trainer device
+  s1 not: A complaint line on a trainer device
+  s2 see: No ring and no notice for it
+  s2 not: The browser notice shows the feedback line
+J-F-panel-604-01 | type 1 | owner | Any page of the panel, signed in as owner; three alerts wait, two of them new
+  s1 see: A number on the bell; its label reads 'Notifications, 3 waiting for you'
+  s1 not: A number that counts handled lines
+  s1 not: A line that belongs to another gym or branch
+  s2 see: A panel with the group 'Your gym' first, then 'From MettleUp' and 'What's new' when they have something
+  s2 see: The two new lines carry a 'New' tag
+  s2 see: 'History' at the top
+  s2 not: A group heading with nothing under it (other than Your gym)
+  s2 not: Lines moving while the panel is open
+  s3 see: The panel closes and the page of that line opens
+  s3 not: The line leaves the bell just because it was opened
+  s4 see: The line is no longer in the main list; History shows it with the tag 'Done'
+  s4 see: The number on the bell is one lower
+  s4 not: The line still counted on the bell
+  s4 not: The line missing from History
+J-F-panel-604-02 | type 3 | owner | Any page, signed in as owner; nothing waits and nothing happened in the last 7 days
+  s1 see: Under 'Your gym': 'Nothing is waiting for you. New messages and requests from your members will show here.'
+  s1 see: The bell's label is just 'Notifications' (no number)
+  s1 not: A blank panel
+  s1 not: A zero shown as a number on the bell
+  s2 see: 'Nothing here yet. What you finish or remove shows here for 7 days.'
+  s2 not: An error
+  s2 not: Lines older than 7 days
+  s3 see: The bell keeps what it showed before (what exactly: unknown, not read in code)
+  s3 not: The panel crashes
+  s3 not: Every old alert suddenly counts as new
+J-F-panel-604-03 | type 6 | owner | The bell panel is open, signed in as owner; one news line and one line that needs someone
+  s1 see: The line leaves the list at once; a bar says 'Removed from your list.' with 'Undo' for about 7 seconds
+  s1 not: The thing itself is marked done
+  s1 not: The line disappears for other people at the gym
+  s2 see: The line is back in its place by time
+  s2 not: Two copies of the line
+  s2 not: The line comes back as new
+  s3 see: The line is on top with the tag 'Removed · Not done yet'
+  s3 not: The tag says 'Done'
+  s3 not: The line is missing from History
+  s4 see: Its page opens; next time the bell opens the line is in History with the tag 'Opened'
+  s4 not: News stays in the main list after it was opened
+  s4 not: The number on the bell still counts it
+  s5 see: That line stays where it was and gets a 'Done' tag in place; nothing new is slipped in until the panel opens again
+  s5 not: Lines jump under the finger
+  s5 not: A handled line with no tag
+J-F-panel-604-04 | type 2 | owner | The bell, signed in as owner; another way in: History, and another kind: a payment line
+  s1 see: 'The last 7 days: what was done, opened or removed. Tap a line to open it.' and the lines, newest change first, each with a tag (Done, Opened, Removed, Older than 7 days)
+  s1 not: A line with no tag
+  s1 not: An action line removed but not done tagged 'Done'
+  s2 see: Its page opens
+  s2 not: Nothing happens
+  s2 not: The line moves back to the main list
+  s3 see: The line has the payment colour, a mark and the label 'Payment'
+  s3 not: A line that says a payment failed shown as 'Paid'
+  s3 not: Colour as the only sign (no label)
+J-F-panel-604-05 | type 12 | owner | Two people of one gym, each on their own device; this one is the owner
+  s1 see: It leaves only this person's list
+  s1 not: It leaves the other person's bell
+  s1 not: It is marked done for the gym
+  s2 see: The number drops only on this person's devices
+  s2 not: The other person's new lines become read
+  s3 see: The complaint line is in the owner's bell
+  s3 not: The complaint text or a phone number in the line
+J-F-panel-604-06 | type 1 | staff | Any page of the panel, signed in as staff; three alerts wait, two of them new
+  s1 see: A number on the bell; its label reads 'Notifications, 3 waiting for you'
+  s1 not: A number that counts handled lines
+  s1 not: A complaint line on this device
+  s2 see: A panel with the group 'Your gym' first, then 'From MettleUp' and 'What's new' when they have something
+  s2 see: The two new lines carry a 'New' tag
+  s2 see: 'History' at the top
+  s2 not: A group heading with nothing under it (other than Your gym)
+  s2 not: Lines moving while the panel is open
+  s3 see: The panel closes and the page of that line opens
+  s3 not: The line leaves the bell just because it was opened
+  s4 see: The line is no longer in the main list; History shows it with the tag 'Done'
+  s4 see: The number on the bell is one lower
+  s4 not: The line still counted on the bell
+  s4 not: The line missing from History
+J-F-panel-604-07 | type 3 | staff | Any page, signed in as staff; nothing waits and nothing happened in the last 7 days
+  s1 see: Under 'Your gym': 'Nothing is waiting for you. New messages and requests from your members will show here.'
+  s1 see: The bell's label is just 'Notifications' (no number)
+  s1 not: A blank panel
+  s1 not: A zero shown as a number on the bell
+  s2 see: 'Nothing here yet. What you finish or remove shows here for 7 days.'
+  s2 not: An error
+  s2 not: Lines older than 7 days
+  s3 see: The bell keeps what it showed before (what exactly: unknown, not read in code)
+  s3 not: The panel crashes
+  s3 not: Every old alert suddenly counts as new
+J-F-panel-604-08 | type 6 | staff | The bell panel is open, signed in as staff; one news line and one line that needs someone
+  s1 see: The line leaves the list at once; a bar says 'Removed from your list.' with 'Undo' for about 7 seconds
+  s1 not: The thing itself is marked done
+  s1 not: The line disappears for other people at the gym
+  s2 see: The line is back in its place by time
+  s2 not: Two copies of the line
+  s2 not: The line comes back as new
+  s3 see: The line is on top with the tag 'Removed · Not done yet'
+  s3 not: The tag says 'Done'
+  s3 not: The line is missing from History
+  s4 see: Its page opens; next time the bell opens the line is in History with the tag 'Opened'
+  s4 not: News stays in the main list after it was opened
+  s4 not: The number on the bell still counts it
+  s5 see: That line stays where it was and gets a 'Done' tag in place; nothing new is slipped in until the panel opens again
+  s5 not: Lines jump under the finger
+  s5 not: A handled line with no tag
+J-F-panel-604-09 | type 2 | staff | The bell, signed in as staff; another way in: History, and another kind: a payment line
+  s1 see: 'The last 7 days: what was done, opened or removed. Tap a line to open it.' and the lines, newest change first, each with a tag (Done, Opened, Removed, Older than 7 days)
+  s1 not: A line with no tag
+  s1 not: An action line removed but not done tagged 'Done'
+  s2 see: Its page opens
+  s2 not: Nothing happens
+  s2 not: The line moves back to the main list
+  s3 see: The line has the payment colour, a mark and the label 'Payment'
+  s3 not: A line that says a payment failed shown as 'Paid'
+  s3 not: Colour as the only sign (no label)
+J-F-panel-604-10 | type 12 | staff | Two people of one gym, each on their own device; this one is the staff
+  s1 see: It leaves only this person's list
+  s1 not: It leaves the other person's bell
+  s1 not: It is marked done for the gym
+  s2 see: The number drops only on this person's devices
+  s2 not: The other person's new lines become read
+  s3 see: No complaint line anywhere in this bell
+  s3 not: A complaint in the front-desk bell
+J-F-panel-604-11 | type 1 | trainer | Any page of the panel, signed in as trainer; three alerts wait, two of them new
+  s1 see: A number on the bell; its label reads 'Notifications, 3 waiting for you'
+  s1 not: A number that counts handled lines
+  s1 not: A complaint line on this device
+  s2 see: A panel with the group 'Your gym' first, then 'From MettleUp' and 'What's new' when they have something
+  s2 see: The two new lines carry a 'New' tag
+  s2 see: 'History' at the top
+  s2 not: A group heading with nothing under it (other than Your gym)
+  s2 not: Lines moving while the panel is open
+  s3 see: The panel closes and the page of that line opens
+  s3 not: The line leaves the bell just because it was opened
+  s4 see: The line is no longer in the main list; History shows it with the tag 'Done'
+  s4 see: The number on the bell is one lower
+  s4 not: The line still counted on the bell
+  s4 not: The line missing from History
+J-F-panel-604-12 | type 3 | trainer | Any page, signed in as trainer; nothing waits and nothing happened in the last 7 days
+  s1 see: Under 'Your gym': 'Nothing is waiting for you. New messages and requests from your members will show here.'
+  s1 see: The bell's label is just 'Notifications' (no number)
+  s1 not: A blank panel
+  s1 not: A zero shown as a number on the bell
+  s2 see: 'Nothing here yet. What you finish or remove shows here for 7 days.'
+  s2 not: An error
+  s2 not: Lines older than 7 days
+  s3 see: The bell keeps what it showed before (what exactly: unknown, not read in code)
+  s3 not: The panel crashes
+  s3 not: Every old alert suddenly counts as new
+J-F-panel-604-13 | type 6 | trainer | The bell panel is open, signed in as trainer; one news line and one line that needs someone
+  s1 see: The line leaves the list at once; a bar says 'Removed from your list.' with 'Undo' for about 7 seconds
+  s1 not: The thing itself is marked done
+  s1 not: The line disappears for other people at the gym
+  s2 see: The line is back in its place by time
+  s2 not: Two copies of the line
+  s2 not: The line comes back as new
+  s3 see: The line is on top with the tag 'Removed · Not done yet'
+  s3 not: The tag says 'Done'
+  s3 not: The line is missing from History
+  s4 see: Its page opens; next time the bell opens the line is in History with the tag 'Opened'
+  s4 not: News stays in the main list after it was opened
+  s4 not: The number on the bell still counts it
+  s5 see: That line stays where it was and gets a 'Done' tag in place; nothing new is slipped in until the panel opens again
+  s5 not: Lines jump under the finger
+  s5 not: A handled line with no tag
+J-F-panel-604-14 | type 2 | trainer | The bell, signed in as trainer; another way in: History, and another kind: a payment line
+  s1 see: 'The last 7 days: what was done, opened or removed. Tap a line to open it.' and the lines, newest change first, each with a tag (Done, Opened, Removed, Older than 7 days)
+  s1 not: A line with no tag
+  s1 not: An action line removed but not done tagged 'Done'
+  s2 see: Its page opens
+  s2 not: Nothing happens
+  s2 not: The line moves back to the main list
+  s3 see: The line has the payment colour, a mark and the label 'Payment'
+  s3 not: A line that says a payment failed shown as 'Paid'
+  s3 not: Colour as the only sign (no label)
+J-F-panel-604-15 | type 12 | trainer | Two people of one gym, each on their own device; this one is the trainer
+  s1 see: It leaves only this person's list
+  s1 not: It leaves the other person's bell
+  s1 not: It is marked done for the gym
+  s2 see: The number drops only on this person's devices
+  s2 not: The other person's new lines become read
+  s3 see: No complaint line anywhere in this bell
+  s3 not: Feedback or a complaint in a trainer bell
+J-F-panel-607-01 | type 1 | owner | Attendance page, signed in as owner; the register has been used for some weeks
+  s1 see: 'Who trained, and when', the box 'Check someone in', the tiles 'Check-ins today' ('So far today') and 'Check-ins a day' ('Average over the last N days')
+  s1 not: Money figures on this page
+  s1 not: Yesterday counted as today
+  s2 see: The button shows 'Saving…', then a message, and the member is on top of today's register
+  s2 see: 'Check-ins today' goes up by one
+  s2 not: Two check-ins for one tap
+  s2 not: The check-in saved on another day
+  s3 see: 'Paying members who are losing the habit'; three counts (Not settled in, Slipping, Gone quiet) and a card per member, most urgent first
+  s3 see: A card reads like '16 days since their last visit. They usually train every 2 days.' with a pill 'Slipping' and 'Usually 6 am–7 am'
+  s3 not: A member whose plan has ended, or ends within the renewals window, on this list
+  s3 not: A reason that talks about money
+  s3 not: A member who came today or yesterday listed
+  s4 see: That member's page opens
+  s4 not: Another member opens
+J-F-panel-607-02 | type 3 | owner | Attendance page, signed in as owner
+  s1 see: 'Nobody matches that' and 'Check the spelling, or add them in Members first.'
+  s1 not: A blank list with no words
+  s1 not: A check-in saved for nobody
+  s2 see: 'That day hasn’t happened yet.'; the check-in box is replaced by 'Pick a day first' / 'Pick a day that has already passed. Then the check-in box comes back.'
+  s2 not: A check-in saved on a future day
+  s3 see: 'Start checking members in' and 'This list needs a few days of check-ins first. Check members in as they arrive, and it fills in by itself. Nobody is listed just because their visits were never added.' with 'Open the register'
+  s3 not: Every member listed as gone
+  s3 not: 'Everybody is training' shown when the register was never used
+  s4 see: The server's words, or 'That didn’t work. Please try again.'
+  s4 not: A success message
+  s4 not: The row left in the register
+J-F-panel-607-03 | type 6 | owner | Attendance page, signed in as owner; a member was just checked in by mistake
+  s1 see: A message 'Check-in removed for <name>.'; the row is gone and 'Check-ins today' is one lower
+  s1 not: The count stays
+  s1 not: Another member's check-in removed
+  s2 see: One row for today
+  s2 not: Two rows for one day
+  s3 see: That member has left the list
+  s3 not: The member is still listed as away
+  s4 see: The member leaves this list (the renewals list has them)
+  s4 not: The same member on both lists with two different asks
+  s5 see: 'Everybody is training' and 'Every member with a running plan is coming as usual.' with 'Back to the register'
+  s5 not: An empty page with no words
+J-F-panel-607-04 | type 2 | owner | Attendance page, signed in as owner; the second way in: the figures and the chart of the last weeks
+  s1 see: 'Check-ins a day' as the average over the trend days, empty days counted; when it is under one a day the tile says 'Check-ins a week' (or 'Under 1')
+  s1 not: An average that leaves closed days out
+  s1 not: NaN or a figure with many decimals
+  s2 see: The 24 hours in order, with the busiest hour named as a span like 6 am–7 am
+  s2 see: With no believable times: 'No timed check-ins yet' / 'Each check-in here saves the time. This fills in as you use the register.'
+  s2 not: Imported check-ins with no real time counted in an hour
+  s2 not: A busiest hour shown when there is none
+  s3 see: 'Check-ins on <day>' / 'On that day' and that day's rows; a row from the member app carries the tag 'App', from a paper import 'Imported', from an entry machine 'Machine'
+  s3 see: A day with none: 'No check-ins on this day.'
+  s3 not: Today's rows shown under another day
+  s3 not: A member who was deleted hidden instead of shown as 'Unknown member'
+J-F-panel-607-05 | type 2 | owner | Attendance, 'Losing the habit', signed in as owner; another kind of row and the file
+  s1 see: 'Joined 12 days ago and hasn’t trained yet.' with the pill 'Not settled in'
+  s1 not: 'Has never checked in.' for a brand new member of 2 days
+  s1 not: A pass member (from a pass company) on the list
+  s2 see: Only those cards; an empty group says 'Nobody in this group'
+  s2 not: Counts on the chips that do not match the cards
+  s3 see: A CSV with the columns Member, Mobile, Batch, Status, Last visit, Days since visit, Visits in last 8 weeks, Why; a message 'Exported N members.' ('Exported 1 member.' for one)
+  s3 not: Rows in the file that are not on screen
+  s3 not: A mobile number changed by the spreadsheet (lost zero or exponent form)
+J-F-panel-607-06 | type 12 | owner | Attendance, 'Losing the habit', signed in as owner
+  s1 see: Only names, the reason in days, the usual hour and the batch
+  s1 not: Fees due, plan price or any money word in a reason
+  s1 not: A member of another branch
+  s2 see: A file with the names and mobile numbers of exactly the rows on screen
+  s2 not: Archived members in the file
+  s2 not: Members the filter hid
+J-F-panel-607-07 | type 1 | staff | Attendance page, signed in as staff; the register has been used for some weeks
+  s1 see: 'Who trained, and when', the box 'Check someone in', the tiles 'Check-ins today' ('So far today') and 'Check-ins a day' ('Average over the last N days')
+  s1 not: Money figures on this page
+  s1 not: Yesterday counted as today
+  s2 see: The button shows 'Saving…', then a message, and the member is on top of today's register
+  s2 see: 'Check-ins today' goes up by one
+  s2 not: Two check-ins for one tap
+  s2 not: The check-in saved on another day
+  s3 see: 'Paying members who are losing the habit'; three counts (Not settled in, Slipping, Gone quiet) and a card per member, most urgent first
+  s3 see: A card reads like '16 days since their last visit. They usually train every 2 days.' with a pill 'Slipping' and 'Usually 6 am–7 am'
+  s3 not: A member whose plan has ended, or ends within the renewals window, on this list
+  s3 not: A reason that talks about money
+  s3 not: A member who came today or yesterday listed
+  s4 see: That member's page opens
+  s4 not: Another member opens
+J-F-panel-607-08 | type 3 | staff | Attendance page, signed in as staff
+  s1 see: 'Nobody matches that' and 'Check the spelling, or add them in Members first.'
+  s1 not: A blank list with no words
+  s1 not: A check-in saved for nobody
+  s2 see: 'That day hasn’t happened yet.'; the check-in box is replaced by 'Pick a day first' / 'Pick a day that has already passed. Then the check-in box comes back.'
+  s2 not: A check-in saved on a future day
+  s3 see: 'Start checking members in' and 'This list needs a few days of check-ins first. Check members in as they arrive, and it fills in by itself. Nobody is listed just because their visits were never added.' with 'Open the register'
+  s3 not: Every member listed as gone
+  s3 not: 'Everybody is training' shown when the register was never used
+  s4 see: The server's words, or 'That didn’t work. Please try again.'
+  s4 not: A success message
+  s4 not: The row left in the register
+J-F-panel-607-09 | type 6 | staff | Attendance page, signed in as staff; a member was just checked in by mistake
+  s1 see: A message 'Check-in removed for <name>.'; the row is gone and 'Check-ins today' is one lower
+  s1 not: The count stays
+  s1 not: Another member's check-in removed
+  s2 see: One row for today
+  s2 not: Two rows for one day
+  s3 see: That member has left the list
+  s3 not: The member is still listed as away
+  s4 see: The member leaves this list (the renewals list has them)
+  s4 not: The same member on both lists with two different asks
+  s5 see: 'Everybody is training' and 'Every member with a running plan is coming as usual.' with 'Back to the register'
+  s5 not: An empty page with no words
+J-F-panel-607-10 | type 2 | staff | Attendance page, signed in as staff; the second way in: the figures and the chart of the last weeks
+  s1 see: 'Check-ins a day' as the average over the trend days, empty days counted; when it is under one a day the tile says 'Check-ins a week' (or 'Under 1')
+  s1 not: An average that leaves closed days out
+  s1 not: NaN or a figure with many decimals
+  s2 see: The 24 hours in order, with the busiest hour named as a span like 6 am–7 am
+  s2 see: With no believable times: 'No timed check-ins yet' / 'Each check-in here saves the time. This fills in as you use the register.'
+  s2 not: Imported check-ins with no real time counted in an hour
+  s2 not: A busiest hour shown when there is none
+  s3 see: 'Check-ins on <day>' / 'On that day' and that day's rows; a row from the member app carries the tag 'App', from a paper import 'Imported', from an entry machine 'Machine'
+  s3 see: A day with none: 'No check-ins on this day.'
+  s3 not: Today's rows shown under another day
+  s3 not: A member who was deleted hidden instead of shown as 'Unknown member'
+J-F-panel-607-11 | type 12 | staff | Attendance, 'Losing the habit', signed in as staff
+  s1 see: Only names, the reason in days, the usual hour and the batch
+  s1 not: Fees due, plan price or any money word in a reason
+  s1 not: A member of another branch
+  s2 see: A file with the names and mobile numbers of exactly the rows on screen
+  s2 not: Archived members in the file
+  s2 not: Money columns in the file
+J-F-panel-608-01 | type 1 | owner | Messages & offers, signed in as owner; the gym has members with and without the app
+  s1 see: A 'Group' list: Everyone, Plan running today, Plans ending within 7 days, Plans ended in the last 30 days, Stopped coming, Birthdays today, On one plan, In one batch
+  s1 not: A group missing
+  s1 not: Archived members counted in any group
+  s2 see: 'In the app: N members of this group. Not in the app: N.'
+  s2 see: A member whose last day is today is in the group
+  s2 not: A member who already ended yesterday in this group
+  s2 not: The two numbers not adding up to the group
+  s3 see: Two choices with counts: 'Not in the app' and 'Whole group'
+  s3 not: 'Not in the app' includes someone who has the app
+  s3 not: A count that differs from the list sent
+  s4 see: Only the members of the picked group who have the app get it
+  s4 not: Every app member gets a message meant for a small group
+  s4 not: A member outside the group gets it
+J-F-panel-608-02 | type 3 | owner | Messages & offers, Who gets it, signed in as owner
+  s1 see: A plain line that nobody is in this group today, and nothing can be sent to nobody
+  s1 not: A send button that sends to everyone instead
+  s1 not: A count of 0 with a working send
+  s2 see: 'Nobody in this group has the MettleUp app yet. Send it on WhatsApp.'
+  s2 not: 'In the app: 0 members' with an app send still offered
+  s3 see: The group falls back to 'Everyone' (for a ready message) or the Plan list is empty and the group has nobody
+  s3 not: A crash
+  s3 not: Personal-training packs offered as plans
+  s4 see: Nobody in the group until a batch is picked
+  s4 not: Everyone treated as in the batch
+J-F-panel-608-03 | type 6 | owner | Messages & offers, Who gets it, signed in as owner
+  s1 see: The count is one lower; the member is now in Plan running today
+  s1 not: The renewed member still gets the ended-plan message
+  s2 see: That member has left the group
+  s2 not: A member who came today still gets the message
+  s3 see: 'Everyone (N)' counts every person once: list members plus app members not on the list
+  s3 see: The batch picked before is still picked or is asked again
+  s3 not: A person counted twice in Everyone
+  s3 not: The old group still used for the send
+J-F-panel-608-04 | type 2 | owner | Messages & offers, signed in as owner; other kinds: 'On one plan' and 'In one batch'
+  s1 see: A 'Plan' list of the gym plans on sale in the sell order; a ready message starts on the one-month plan
+  s1 not: A plan no longer sold listed
+  s1 not: A member whose plan of that kind has ended counted
+  s2 see: A 'Batch' list of the batches that members who are not archived carry
+  s2 not: The same batch twice in two spellings
+  s2 not: A batch only archived members carry
+  s3 see: The same people as the Losing the habit list on Attendance
+  s3 not: A different count from Attendance on the same day
+J-F-panel-608-05 | type 12 | owner | Messages & offers, Who gets it, signed in as owner
+  s1 see: Counts only; the member app is matched by the 10 digits of the mobile number
+  s1 not: A member matched to another person through a badly typed number
+  s1 not: An app member of another gym counted
+  s2 see: Only that group reads it in the app
+  s2 not: The message visible to every member of the gym
+  s2 not: Members without the app counted as reached
+J-F-panel-608-06 | type 1 | staff | Any page, signed in as front desk
+  s1 see: It is not there; only the workout offer list and Automatic reminders are open to the desk
+  s1 not: A greyed-out entry
+  s1 not: The group picker shown to the desk
+  s2 see: The offer list, with no way to write a message to a group
+  s2 not: A send button for the desk
+J-F-panel-608-07 | type 3 | staff | The browser address bar, signed in as front desk
+  s1 see: The desk is sent to another page (the old link goes to Shop); no group picker
+  s1 not: The Who gets it section opens
+  s1 not: A blank page
+J-F-panel-608-08 | type 6 | staff | Signed in as front desk, then the owner signs in on the same browser
+  s1 see: Still refused
+  s1 not: The page opens after a reload
+  s2 see: Messages & offers is in the menu with the group picker
+  s2 not: The desk refusal sticks for the owner
+J-F-panel-608-09 | type 12 | staff | Signed in as front desk
+  s1 see: No such control; the server sends messages only for the owner
+  s1 not: A desk login sends a message to members
+  s1 not: The desk sees the count of app members of a group
+J-F-panel-609-01 | type 1 | owner | Messages & offers, Automatic reminders, signed in as owner, gym online
+  s1 see: The heading 'Automatic reminders' and 11 reminders, each with a switch, when it goes and an example in the gym's name (for example 'Happy birthday, Asha! Best wishes from all of us at <gym>.')
+  s1 not: '{gym}' shown as raw text
+  s1 not: A reminder missing from the list
+  s2 see: The button 'Save changes' becomes active
+  s2 not: The change saved before Save is tapped
+  s3 see: 'Saving…' then 'Saved. Members' phones pick this up the next time they open MettleUp.'
+  s3 not: A saved message when the server refused
+  s3 not: Other switches changed by this save
+  s4 see: The same switches and days as saved
+  s4 not: The defaults shown again
+J-F-panel-609-02 | type 3 | owner | Automatic reminders, signed in as owner
+  s1 see: 'Days before the last day: whole numbers from 1 to 30, up to 3 (like 7, 3).' and Save changes cannot be tapped
+  s1 not: A day outside the range saved
+  s1 not: The wrong number silently dropped and the rest saved
+  s2 see: 'Days without a check-in: a whole number from 5 to 60.'
+  s2 not: 3 saved
+  s3 see: 'Automatic reminders need your gym online' and 'Members' phones read your choices from the server. Put your gym's records online first (Settings → Staff & sign-in).'
+  s3 not: Switches that look saved but reach no phone
+  s4 see: 'One of the numbers is not allowed. Check the days and try again.'
+  s4 not: A raw error code such as INVALID on screen
+J-F-panel-609-03 | type 6 | owner | Automatic reminders, signed in as owner; Birthday wish is on
+  s1 see: 'Save changes' cannot be tapped
+  s1 not: A save with nothing changed
+  s2 see: Saved; Today and the AI Assistant at once suggest wishing every birthday member again
+  s2 not: Today still hiding birthday members as if the wish were automatic
+  s3 see: Saved; Today again leaves out the members who get the automatic wish
+  s3 not: Two wishes for one member on one day
+  s4 see: Saved as 7, 3 (largest first, each once)
+  s4 not: The same day saved twice
+  s4 not: Two reminders on one day
+J-F-panel-609-04 | type 2 | owner | Automatic reminders, signed in as owner; the other way in: a gym that never saved, and a row saved by an older version
+  s1 see: The defaults: Plan ends soon (7, 3), Plan ends today, Plan ended (7, 1), Birthday wish, Welcome and Workout offer: days added are on; the other five are off
+  s1 not: Everything off
+  s1 not: Everything on
+  s2 see: That reminder shows its default; the others show what was saved
+  s2 not: The whole page falls back to defaults
+  s2 not: A day outside the range shown or used
+J-F-panel-609-05 | type 12 | owner | Automatic reminders; first the owner, then the front desk on its own device
+  s1 see: The name of the person who saved and when, if the page shows it (exact words: unknown)
+  s1 not: Another gym's settings
+  s2 see: The same list, every switch locked, and 'Only the owner can change these.'; no Save button
+  s2 not: The desk can switch or save
+  s2 not: A greyed Save button that still works
+  s3 see: 'Only the owner can change automatic reminders.'
+  s3 not: The setting changes
+J-F-panel-610-01 | type 1 | owner | Today, signed in as owner; the Birthday wish reminder is on; two members have a birthday today, one of them uses the app with the same mobil
+  s1 see: While the panel is still asking the server the birthday count is 0; then the tile says '1 member gets no automatic birthday wish today' with 'Send a wish'
+  s1 not: The member who gets the automatic wish is counted
+  s1 not: Both members counted
+  s1 not: A count that flickers 2 then 1
+  s2 see: Only the member without the automatic wish is offered for a message
+  s2 not: The app member is offered a second wish
+J-F-panel-610-02 | type 3 | owner | Today, signed in as owner; cases where the automatic wish does NOT reach a birthday member
+  s1 see: That member is counted as getting no automatic wish
+  s1 not: The member treated as covered
+  s2 see: Counted as getting no automatic wish
+  s2 not: Treated as covered
+  s3 see: No app: counted; archived: not counted at all
+  s3 not: An archived member in the count
+  s4 see: Today behaves as before the feature: every birthday member is suggested
+  s4 not: Nobody suggested
+  s4 not: An error shown on Today
+J-F-panel-610-03 | type 6 | owner | Today, signed in as owner; the Birthday wish reminder changes
+  s1 see: Every birthday member is suggested for a wish
+  s1 not: Today still leaves out the app members
+  s2 see: Only members without the automatic wish are suggested
+  s2 not: A stale answer from before the save wins over what was just saved
+  s3 see: Within about 5 minutes that member is suggested again
+  s3 not: The member stays hidden all day
+J-F-panel-610-04 | type 2 | owner | Today, the AI Assistant card, signed in as owner; Birthday wish is on
+  s1 see: The birthday idea names only the member who gets no automatic wish
+  s1 not: The assistant suggests wishing the member who already gets it
+  s1 not: An idea is drafted and credits spent for a covered member
+  s2 see: No birthday idea
+  s2 not: A birthday idea with nobody in it
+J-F-panel-610-05 | type 12 | owner | Today, signed in as owner
+  s1 see: Counts and the names of this gym's own members only
+  s1 not: An app member who is not on this gym's list named
+  s1 not: A mobile number of an app member shown
+  s2 see: The covered member gets 'Happy birthday, <first name>! Best wishes from all of us at <gym>.' and no second gym reminder that day
+  s2 not: A member the panel calls covered gets nothing
+  s2 not: More than one gym reminder on the phone that day
+J-F-panel-610-06 | type 1 | staff | Today, signed in as staff; the Birthday wish reminder is on; two members have a birthday today, one of them uses the app with the same mobil
+  s1 see: While the panel is still asking the server the birthday count is 0; then the tile says '1 member gets no automatic birthday wish today' with 'Send a wish'
+  s1 not: The member who gets the automatic wish is counted
+  s1 not: Both members counted
+  s1 not: A count that flickers 2 then 1
+  s2 see: Only the member without the automatic wish is offered for a message
+  s2 not: The app member is offered a second wish
+J-F-panel-610-07 | type 3 | staff | Today, signed in as staff; cases where the automatic wish does NOT reach a birthday member
+  s1 see: That member is counted as getting no automatic wish
+  s1 not: The member treated as covered
+  s2 see: Counted as getting no automatic wish
+  s2 not: Treated as covered
+  s3 see: No app: counted; archived: not counted at all
+  s3 not: An archived member in the count
+  s4 see: Today behaves as before the feature: every birthday member is suggested
+  s4 not: Nobody suggested
+  s4 not: An error shown on Today
+J-F-panel-610-08 | type 6 | staff | Today, signed in as staff; the Birthday wish reminder changes
+  s1 see: Every birthday member is suggested for a wish
+  s1 not: Today still leaves out the app members
+  s2 see: Only members without the automatic wish are suggested
+  s2 not: A stale answer from before the save wins over what was just saved
+  s3 see: Within about 5 minutes that member is suggested again
+  s3 not: The member stays hidden all day
+J-F-panel-610-09 | type 12 | staff | Today, signed in as staff
+  s1 see: Counts and the names of this gym's own members only
+  s1 not: An app member who is not on this gym's list named
+  s1 not: A mobile number of an app member shown
+  s2 see: The covered member gets 'Happy birthday, <first name>! Best wishes from all of us at <gym>.' and no second gym reminder that day
+  s2 not: A member the panel calls covered gets nothing
+  s2 not: More than one gym reminder on the phone that day
+J-F-panel-611-01 | type 1 | owner | Members, Add member, signed in as owner; the gym has no batch yet
+  s1 see: A text box with the hint 'Up to 40 letters.' (no chips yet)
+  s1 not: Batch is required to save
+  s2 see: The member is saved with that batch
+  s2 not: The batch saved with extra spaces
+  s3 see: 'Morning 6-8' is offered as a chip, the most used batch first; one tap picks it
+  s3 not: The chip missing
+  s3 not: The same batch as two chips
+  s4 see: 'All batches (N)' and 'Morning 6-8 (2)'; picking it lists the two members
+  s4 not: A count that differs from the rows
+  s4 not: Members of another batch listed
+J-F-panel-611-02 | type 3 | owner | Add or edit member, signed in as owner; 'Morning 6-8' exists
+  s1 see: Saved as the gym's first spelling 'Morning 6-8'
+  s1 not: A second batch in the filter
+  s2 see: The member has no batch
+  s2 not: An empty chip
+  s2 not: A batch named with spaces
+  s3 see: The box stops at 40 letters or says so (which: unknown, not read in code)
+  s3 not: A long name cut without a word
+  s3 not: A chip that breaks the layout
+J-F-panel-611-03 | type 6 | owner | Members with the batch filter, signed in as owner
+  s1 see: The picked batch stays in the filter with (0) until another is picked
+  s1 not: The filter jumps to another batch
+  s1 not: The list shows everyone while the filter still names the batch
+  s2 see: A batch that only archived members carry is not offered
+  s2 not: A '(0)' batch offered
+  s3 see: The member is under the no-batch choice and the batch count is one lower
+  s3 not: The old batch still shown on the member
+  s4 see: The batch is offered again with its count
+  s4 not: The member comes back without the batch
+J-F-panel-611-04 | type 2 | owner | Other places the batch is used, signed in as owner: Attendance and Messages & offers
+  s1 see: 'Nobody matches that' and 'Searching only <batch>. Pick “All batches” to search everyone.'
+  s1 not: A member of another batch offered
+  s1 not: No hint why nobody matches
+  s2 see: 'Nobody in this batch'
+  s2 not: A blank list
+  s3 see: Only members of that batch who are not archived are in the group
+  s3 not: Members with no batch in the group
+J-F-panel-611-05 | type 1 | staff | Members, Add member, signed in as staff; the gym has no batch yet
+  s1 see: A text box with the hint 'Up to 40 letters.' (no chips yet)
+  s1 not: Batch is required to save
+  s2 see: The member is saved with that batch
+  s2 not: The batch saved with extra spaces
+  s3 see: 'Morning 6-8' is offered as a chip, the most used batch first; one tap picks it
+  s3 not: The chip missing
+  s3 not: The same batch as two chips
+  s4 see: 'All batches (N)' and 'Morning 6-8 (2)'; picking it lists the two members
+  s4 not: A count that differs from the rows
+  s4 not: Members of another batch listed
+J-F-panel-611-06 | type 3 | staff | Add or edit member, signed in as staff; 'Morning 6-8' exists
+  s1 see: Saved as the gym's first spelling 'Morning 6-8'
+  s1 not: A second batch in the filter
+  s2 see: The member has no batch
+  s2 not: An empty chip
+  s2 not: A batch named with spaces
+  s3 see: The box stops at 40 letters or says so (which: unknown, not read in code)
+  s3 not: A long name cut without a word
+  s3 not: A chip that breaks the layout
+J-F-panel-611-07 | type 6 | staff | Members with the batch filter, signed in as staff
+  s1 see: The picked batch stays in the filter with (0) until another is picked
+  s1 not: The filter jumps to another batch
+  s1 not: The list shows everyone while the filter still names the batch
+  s2 see: A batch that only archived members carry is not offered
+  s2 not: A '(0)' batch offered
+  s3 see: The member is under the no-batch choice and the batch count is one lower
+  s3 not: The old batch still shown on the member
+  s4 see: The batch is offered again with its count
+  s4 not: The member comes back without the batch
+J-F-panel-611-08 | type 2 | staff | Other places the batch is used, signed in as staff: Attendance
+  s1 see: 'Nobody matches that' and 'Searching only <batch>. Pick “All batches” to search everyone.'
+  s1 not: A member of another batch offered
+  s1 not: No hint why nobody matches
+  s2 see: 'Nobody in this batch'
+  s2 not: A blank list
+  s3 see: The file has a 'Batch' column with each member's batch
+  s3 not: The batch column empty for members who have one
+J-F-panel-613-01 | type 1 | owner | A member's page, signed in as owner, gym online; the member was measured once last month
+  s1 see: The last entries, newest day first, who measured, and '+ Add'
+  s1 see: The line 'Members see these in their MettleUp app (Progress → Body) after they check in at the gym once.'
+  s1 not: Another member's entries
+  s1 not: '+ Add' shown while offline
+  s2 see: A sheet 'Add measurements' with today's date, Body weight (kg), Body fat (%), nine tape sizes in cm (Waist, Chest, Arm, Hips, Thigh, Neck, Shoulders, Forearm, Calf) and a note
+  s2 not: A future date as the start value
+  s3 see: 'Measurements saved. <name> sees them in the MettleUp app.'
+  s3 see: The new entry shows '72.5 kg' with the change since last time (for example −1.5) and '84 cm'
+  s3 not: 72,5 refused or saved as 725
+  s3 not: A change shown against the wrong earlier entry
+  s3 not: Two entries for one tap
+J-F-panel-613-02 | type 3 | owner | The Add measurements sheet, signed in as owner
+  s1 see: 'Type at least one measurement.'
+  s1 not: An empty entry saved
+  s2 see: 'Body weight: a number from 20 to 350 kg.', 'Body fat: a number from 2 to 75 %.', 'Waist: a number from 5 to 300 cm.' each at its box
+  s2 not: Only the first problem shown
+  s2 not: A value outside the range saved
+  s3 see: 'The day can’t be in the future.'
+  s3 not: A future entry saved
+  s4 see: 'This member already has measurements on that day. Edit that entry instead.'
+  s4 not: Two entries on one day
+  s4 not: The old entry overwritten without a word
+  s5 see: 'Note: up to 200 letters.'
+  s5 not: The note cut without a word
+J-F-panel-613-03 | type 6 | owner | A member's page with a saved entry, signed in as owner
+  s1 see: A sheet 'Fix measurements' with the saved values
+  s1 not: Empty boxes for saved values
+  s2 see: 'Measurements updated.'; the change figures of this and the next entry follow
+  s2 not: A second entry instead of a changed one
+  s3 see: 'Delete these measurements?' with 'Delete'; then 'Deleting…' and 'Measurements deleted.'
+  s3 not: Deleted with one tap and no question
+  s3 not: Another day deleted
+  s4 see: 'That entry was deleted on another device. Close this and look again.'
+  s4 not: The deleted entry comes back
+  s4 not: A raw code such as NOT_FOUND
+  s5 see: 'This member is not on your gym’s list any more.'
+  s5 not: The entry saved for a member who is gone
+J-F-panel-613-04 | type 12 | owner | A member's page, signed in as owner; then the member's own phone
+  s1 see: The note shows in the panel only
+  s1 not: The note sent to the member
+  s2 see: The same numbers, marked as from the gym by its name
+  s2 not: Another member's numbers
+  s2 not: The numbers shown before the member ever checked in at this gym
+  s2 not: The gym's entry overwriting the member's own entry of that day without a mark
+  s3 see: The card is there for the desk too (this card has no role check of its own; the server decides)
+  s3 not: Body numbers of a member shown to a person the gym did not mean
+J-F-panel-613-05 | type 1 | trainer | A member's page, signed in as trainer, gym online; the member was measured once last month
+  s1 see: The last entries, newest day first, who measured, and '+ Add'
+  s1 see: The line 'Members see these in their MettleUp app (Progress → Body) after they check in at the gym once.'
+  s1 not: Another member's entries
+  s1 not: '+ Add' shown while offline
+  s2 see: A sheet 'Add measurements' with today's date, Body weight (kg), Body fat (%), nine tape sizes in cm (Waist, Chest, Arm, Hips, Thigh, Neck, Shoulders, Forearm, Calf) and a note
+  s2 not: A future date as the start value
+  s3 see: 'Measurements saved. <name> sees them in the MettleUp app.'
+  s3 see: The new entry shows '72.5 kg' with the change since last time (for example −1.5) and '84 cm'
+  s3 not: 72,5 refused or saved as 725
+  s3 not: A change shown against the wrong earlier entry
+  s3 not: Two entries for one tap
+J-F-panel-613-06 | type 3 | trainer | The Add measurements sheet, signed in as trainer
+  s1 see: 'Type at least one measurement.'
+  s1 not: An empty entry saved
+  s2 see: 'Body weight: a number from 20 to 350 kg.', 'Body fat: a number from 2 to 75 %.', 'Waist: a number from 5 to 300 cm.' each at its box
+  s2 not: Only the first problem shown
+  s2 not: A value outside the range saved
+  s3 see: 'The day can’t be in the future.'
+  s3 not: A future entry saved
+  s4 see: 'This member already has measurements on that day. Edit that entry instead.'
+  s4 not: Two entries on one day
+  s4 not: The old entry overwritten without a word
+  s5 see: 'Note: up to 200 letters.'
+  s5 not: The note cut without a word
+J-F-panel-613-07 | type 6 | trainer | A member's page with a saved entry, signed in as trainer
+  s1 see: A sheet 'Fix measurements' with the saved values
+  s1 not: Empty boxes for saved values
+  s2 see: 'Measurements updated.'; the change figures of this and the next entry follow
+  s2 not: A second entry instead of a changed one
+  s3 see: 'Delete these measurements?' with 'Delete'; then 'Deleting…' and 'Measurements deleted.'
+  s3 not: Deleted with one tap and no question
+  s3 not: Another day deleted
+  s4 see: 'That entry was deleted on another device. Close this and look again.'
+  s4 not: The deleted entry comes back
+  s4 not: A raw code such as NOT_FOUND
+  s5 see: 'This member is not on your gym’s list any more.'
+  s5 not: The entry saved for a member who is gone
+J-F-panel-613-08 | type 12 | trainer | A member's page, signed in as trainer; then the member's own phone
+  s1 see: The note shows in the panel only
+  s1 not: The note sent to the member
+  s2 see: The same numbers, marked as from the gym by its name
+  s2 not: Another member's numbers
+  s2 not: The numbers shown before the member ever checked in at this gym
+  s2 not: The gym's entry overwriting the member's own entry of that day without a mark
+  s3 see: What a trainer may see of other members: unknown here (this card has no check of its own; the server decides)
+  s3 not: A trainer reads or changes measurements of a member who is not theirs, if the trainer promise covers this card

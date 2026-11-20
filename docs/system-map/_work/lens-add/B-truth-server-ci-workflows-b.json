@@ -1,0 +1,1 @@
+{"id":"B-truth-server-ci-workflows-b","step":"B-truth","item":"B-truth (Same fact, every place) x server / server/ci-workflows: 2 items","needs":["CAL-score"],"checkpoint":"_work/B-truth-server-ci-workflows-b.md","out_file":"_work/out/B-truth-server-ci-workflows-b.jsonl","surface":"server","area":"server/ci-workflows","lenses":["gap-9"],"lens_items":["H9.1","H9.2"]}

@@ -1,0 +1,82 @@
+# B-truth-hq-app-a: 2 + 17 x hq / hq/app. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L2.1 | 2 | Every number shown (dues, counts, dates, streaks, records, credits) is recomputed independently and compared
+L2.2 | 2 | rounding
+L2.3 | 2 | time zone (IST)
+L2.4 | 2 | duplicates on double tap / two devices
+L2.5 | 2 | import and undo-import
+L2.6 | 2 | what happens to old data after every migration
+L2.7 | 2 | Also: AI answers (assistant, AI import, AI questions, coach): built only from that gym's real data
+L2.8 | 2 | Also: AI answers (assistant, AI import, AI questions, coach): what a wrong answer costs the owner
+L2.9 | 2 | Also: AI answers (assistant, AI import, AI questions, coach): what is sent to the AI company
+L17.1 | 17 | The same fact, word, colour, icon and rule is the same on panel, phone, watch, website and messages
+L17.2 | 17 | Trace every value a user enters on one device (watch, phone, panel) to every place that should hold it (the other device, the saved record, the server, Health Connect): it arrives unchanged and stays
+L17.3 | 17 | where a paired device cannot run in the cloud, trace it in the code
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-hq-100 | live | HQ menu and page frame: side menu, phone bottom bar, page router, signed-in email, sign out, sign-in redirect | apps/hq/public/app.js:1286
+F-hq-101 | live | Needs you: one list of what waits (leads, feedback, new gyms, payments), with a count on the menu and in the tab title,  | apps/hq/public/app.js:938
+F-hq-102 | live | Needs you alerts: a short sound and a browser pop-up when something new arrives while HQ is open | apps/hq/public/app.js:921
+F-hq-103 | live | Read-log warning line on top of every page (the read log is off, failing, or its key is missing) | apps/hq/public/app.js:194
+F-hq-104 | live | All gyms: list of every gym with search, filter, sort, summary tiles, and a tick to show test and demo gyms | apps/hq/public/app.js:212
+F-hq-105 | live | Gyms with branches: each gym business with its branches, member counts and the extra-branch price | apps/hq/public/app.js:224
+F-hq-106 | live | Export the shown gyms as a CSV file (written to the log first; has owners' names and mobiles) | apps/hq/public/app.js:347
+F-hq-107 | live | Make a gym by hand (also from a lead) and get the owner's one-time sign-in code with a WhatsApp message to copy | apps/hq/public/app.js:362
+F-hq-108 | live | One gym's page: counts (members, check-ins, takings, cancelled receipts, orders, staff, wrong codes), owner to call, del | apps/hq/public/app.js:461
+F-hq-109 | behind switch | Change a gym's free trial end date (with a reason, up to the cap) | apps/hq/public/app.js:404
+F-hq-110 | behind switch | Set a gym's plan by hand after a payment (Starter or Pro, monthly, yearly or lifetime, paid until), or take the plan off | apps/hq/public/app.js:404
+F-hq-111 | live | Gym status: mark a new gym as checked, pause a gym (read-only), un-pause it | apps/hq/public/app.js:469
+F-hq-112 | live | Owner lost their sign-in: make a new one-time sign-in code after calling the gym | apps/hq/public/app.js:486
+F-hq-113 | live | Sign a gym out everywhere (every phone and computer at once) | apps/hq/public/app.js:501
+F-hq-114 | live | AI column matching: see a gym's 30-day AI use and cost, set its reads-a-day limit or put it back to normal | apps/hq/public/app.js:514
+F-hq-115 | behind switch | AI Assistant credits: see a gym's balance, this month's use and cost, add a paid pack or free credits, or take free cred | apps/hq/public/app.js:590
+F-hq-116 | behind switch | AI Assistant daily limit: set a gym's AI requests and spoken minutes a day, or put it back to normal | apps/hq/public/app.js:645
+F-hq-117 | live | Gym web page: switch one gym's public web page off or on | apps/hq/public/app.js:623
+F-hq-118 | live | Support access: open read-only access to a gym in an emergency (reason, 15 to 60 minutes), look at its records while ope | apps/hq/public/app.js:670
+F-hq-119 | live | Sign-in history of a gym (times only; names, devices and addresses only while support access is open) | apps/hq/public/app.js:569
+F-hq-120 | live | System page: gym server storage used, totals, AI reads and cost this month, member app downloads per version, Cloudflare | apps/hq/public/app.js:702
+F-hq-122 | live | Feedback inbox: read what members and gyms sent with the AI's answer, filter (needs reply, bug, idea ...), set a status  | apps/hq/public/app.js:758
+F-hq-123 | live | Reply to feedback: the person reads it in the app's Help and feedback, and gets a phone pop-up when their app can take o | apps/hq/public/app.js:806
+F-hq-124 | behind switch | English helper: rewrite a reply draft with AI before sending, with Undo and this month's cost | apps/hq/public/app.js:831
+F-hq-125 | live | Leads: gyms that asked for a demo on the website, with status (new, called, demo, won, lost), a note, a call link and Ma | apps/hq/public/app.js:965
+F-hq-126 | live | Delete requests: write down a request (from the admin app or another way), tick the steps (called, reminded, member eras | apps/hq/public/app.js:992
+F-hq-127 | live | Delete a gym for ever (type the gym code; every record and picture erased) | apps/hq/public/app.js:1051
+F-hq-128 | behind switch | Messages: send one message to every gym's admin app bell (title, words, optional button), see sent ones, take one back | apps/hq/public/app.js:1066
+F-hq-129 | behind switch | Payments to MettleUp: see what gym owners say they paid (UPI or bank), confirm it (plan moves on) or mark not confirmed  | apps/hq/public/app.js:1122
+F-hq-130 | behind switch | Online payments to check: money a gym paid online that did not become a plan; mark refunded or added by hand with a note | apps/hq/public/app.js:1154
+F-hq-131 | live | Your payment details: set the UPI ID and bank account that gym owners see on Pay MettleUp | apps/hq/public/app.js:1222
+F-hq-132 | live | Log: everything done in HQ and every look at a gym, 100 lines at a time with Show older | apps/hq/public/app.js:1262
+F-hq-133 | live | Install HQ on the phone (Install app button, iPhone hint), the phone More menu sheet, and the plain You're offline page | apps/hq/public/pwa.js:15
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-hq-100 | live | HQ menu and page frame: side menu, phone bottom bar, page router, signed-in email, sign out, sign-in redirect | apps/hq/public/app.js:1286
+F-hq-101 | live | Needs you: one list of what waits (leads, feedback, new gyms, payments), with a count on the menu and in the tab title,  | apps/hq/public/app.js:938
+F-hq-102 | live | Needs you alerts: a short sound and a browser pop-up when something new arrives while HQ is open | apps/hq/public/app.js:921
+F-hq-103 | live | Read-log warning line on top of every page (the read log is off, failing, or its key is missing) | apps/hq/public/app.js:194
+F-hq-104 | live | All gyms: list of every gym with search, filter, sort, summary tiles, and a tick to show test and demo gyms | apps/hq/public/app.js:212
+F-hq-105 | live | Gyms with branches: each gym business with its branches, member counts and the extra-branch price | apps/hq/public/app.js:224
+F-hq-106 | live | Export the shown gyms as a CSV file (written to the log first; has owners' names and mobiles) | apps/hq/public/app.js:347
+F-hq-107 | live | Make a gym by hand (also from a lead) and get the owner's one-time sign-in code with a WhatsApp message to copy | apps/hq/public/app.js:362
+F-hq-108 | live | One gym's page: counts (members, check-ins, takings, cancelled receipts, orders, staff, wrong codes), owner to call, del | apps/hq/public/app.js:461
+F-hq-109 | behind switch | Change a gym's free trial end date (with a reason, up to the cap) | apps/hq/public/app.js:404
+F-hq-110 | behind switch | Set a gym's plan by hand after a payment (Starter or Pro, monthly, yearly or lifetime, paid until), or take the plan off | apps/hq/public/app.js:404
+F-hq-111 | live | Gym status: mark a new gym as checked, pause a gym (read-only), un-pause it | apps/hq/public/app.js:469
+F-hq-112 | live | Owner lost their sign-in: make a new one-time sign-in code after calling the gym | apps/hq/public/app.js:486
+F-hq-113 | live | Sign a gym out everywhere (every phone and computer at once) | apps/hq/public/app.js:501
+F-hq-114 | live | AI column matching: see a gym's 30-day AI use and cost, set its reads-a-day limit or put it back to normal | apps/hq/public/app.js:514
+F-hq-115 | behind switch | AI Assistant credits: see a gym's balance, this month's use and cost, add a paid pack or free credits, or take free cred | apps/hq/public/app.js:590
+F-hq-116 | behind switch | AI Assistant daily limit: set a gym's AI requests and spoken minutes a day, or put it back to normal | apps/hq/public/app.js:645
+F-hq-117 | live | Gym web page: switch one gym's public web page off or on | apps/hq/public/app.js:623
+F-hq-118 | live | Support access: open read-only access to a gym in an emergency (reason, 15 to 60 minutes), look at its records while ope | apps/hq/public/app.js:670
+F-hq-119 | live | Sign-in history of a gym (times only; names, devices and addresses only while support access is open) | apps/hq/public/app.js:569
+F-hq-120 | live | System page: gym server storage used, totals, AI reads and cost this month, member app downloads per version, Cloudflare | apps/hq/public/app.js:702
+F-hq-122 | live | Feedback inbox: read what members and gyms sent with the AI's answer, filter (needs reply, bug, idea ...), set a status  | apps/hq/public/app.js:758
+F-hq-123 | live | Reply to feedback: the person reads it in the app's Help and feedback, and gets a phone pop-up when their app can take o | apps/hq/public/app.js:806
+F-hq-124 | behind switch | English helper: rewrite a reply draft with AI before sending, with Undo and this month's cost | apps/hq/public/app.js:831
+F-hq-125 | live | Leads: gyms that asked for a demo on the website, with status (new, called, demo, won, lost), a note, a call link and Ma | apps/hq/public/app.js:965
+F-hq-126 | live | Delete requests: write down a request (from the admin app or another way), tick the steps (called, reminded, member eras | apps/hq/public/app.js:992
+F-hq-127 | live | Delete a gym for ever (type the gym code; every record and picture erased) | apps/hq/public/app.js:1051
+F-hq-128 | behind switch | Messages: send one message to every gym's admin app bell (title, words, optional button), see sent ones, take one back | apps/hq/public/app.js:1066
+F-hq-129 | behind switch | Payments to MettleUp: see what gym owners say they paid (UPI or bank), confirm it (plan moves on) or mark not confirmed  | apps/hq/public/app.js:1122
+F-hq-130 | behind switch | Online payments to check: money a gym paid online that did not become a plan; mark refunded or added by hand with a note | apps/hq/public/app.js:1154
+F-hq-131 | live | Your payment details: set the UPI ID and bank account that gym owners see on Pay MettleUp | apps/hq/public/app.js:1222
+F-hq-132 | live | Log: everything done in HQ and every look at a gym, 100 lines at a time with Show older | apps/hq/public/app.js:1262
+F-hq-133 | live | Install HQ on the phone (Install app button, iPhone hint), the phone More menu sheet, and the plain You're offline page | apps/hq/public/pwa.js:15

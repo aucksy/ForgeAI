@@ -1,0 +1,1 @@
+{"id":"CAL-2","step":"CAL","item":"calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged","needs":["CAL-prep"],"checkpoint":"_work/CAL-2.md","out_file":"_work/out/CAL-2.jsonl"}

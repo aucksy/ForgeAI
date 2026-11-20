@@ -1,0 +1,506 @@
+# A8-server-database-2-2: coverage of 87 Tier 1 journeys (8 features, from A5-server-database-2-2). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-server-409 | supabase/tests/0040_gym_mate_profiles.sql | db | 168 lines | file name
+F-server-409 | supabase/tests/0037_leaderboard.sql | db | 548 lines | asserts 1 journey phrase(s)
+F-server-410 | supabase/tests/0041_offline_desk_receipts.sql | db | 85 lines | file name
+F-server-410 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-server-410 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 1 journey phrase(s)
+F-server-410 | deploy/panel/helpPages.test.mjs | unit | 109 lines | asserts 1 journey phrase(s)
+F-server-411 | supabase/tests/0042_message_calm.sql | db | 150 lines | file name
+F-server-412 | supabase/tests/0043_member_photos.sql | db | 135 lines | file name
+F-server-413 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 5 journey phrase(s)
+F-server-413 | supabase/tests/0037_leaderboard.sql | db | 548 lines | asserts 5 journey phrase(s)
+F-server-413 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 3 journey phrase(s)
+F-server-413 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 3 journey phrase(s)
+F-server-413 | supabase/tests/0044_plan_requests.sql | db | 229 lines | file name, asserts 1 journey phrase(s)
+F-server-413 | supabase/tests/0075_gym_alerts.sql | db | 150 lines | asserts 3 journey phrase(s)
+F-server-413 | apps/dashboard/e2e/friend-live-uat.spec.mjs | e2e | 262 lines | asserts 2 journey phrase(s)
+F-server-413 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | asserts 2 journey phrase(s)
+F-server-413 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 2 journey phrase(s)
+F-server-413 | apps/dashboard/e2e/r579-uat.spec.mjs | e2e | 298 lines | asserts 2 journey phrase(s)
+F-server-413 | apps/dashboard/test/crm/branches.test.ts | unit | 224 lines | asserts 2 journey phrase(s)
+F-server-413 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 2 journey phrase(s)
+F-server-414 | supabase/tests/0045_report_requests.sql | db | 238 lines | file name
+F-server-416 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | imports the code
+F-server-416 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | imports the code
+F-server-416 | supabase/tests/0035_trainer_measurements_diet.sql | db | 227 lines | asserts 3 journey phrase(s)
+F-server-416 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 2 journey phrase(s)
+F-server-416 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 2 journey phrase(s)
+F-server-416 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 2 journey phrase(s)
+F-server-416 | supabase/tests/0015_qr_checkin.sql | db | 198 lines | asserts 2 journey phrase(s)
+F-server-416 | supabase/tests/0036_gym_timings.sql | db | 161 lines | asserts 2 journey phrase(s)
+F-server-416 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 2 journey phrase(s)
+F-server-416 | supabase/tests/0048_security_fixes.sql | db | 198 lines | file name
+F-server-416 | supabase/tests/0050_trainer_view.sql | db | 213 lines | asserts 2 journey phrase(s)
+F-server-416 | supabase/tests/0069_member_messages.sql | db | 186 lines | asserts 2 journey phrase(s)
+F-server-418 | supabase/tests/0050_trainer_view.sql | db | 213 lines | file name
+F-server-418 | supabase/tests/0053_ask_trainer_and_progress.sql | db | 232 lines | file name
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-server-409-01 | type 1 | member | Gym tab, Ranking (leaderboard) of the member's gym; another member shows their name and has 'Let my gym mates see my workouts' on
+  s1 see: The same top 10 as the leaderboard, names like 'Rahul S.'
+  s1 see: Names of sharing members can be tapped; my own row cannot
+  s1 not: A name that can be tapped for a member who does not share
+  s1 not: A full surname or phone number shown
+  s2 see: Their profile: the leaderboard name, their bio (up to 160 letters) and up to 30 workouts of the last 60 days, newest first, each with minutes, kg and up to 8 exercises with the best set
+  s2 not: Body weight, photos, notes or a list of sets
+  s2 not: A member of another gym
+  s2 not: Workouts older than 60 days
+J-F-server-409-02 | type 2 | member | Settings, Your gym; switch 'Let my gym mates see my workouts' is off (the default)
+  s1 see: The switch stays on; the phone sends the bio and up to 30 recent workout summaries
+  s1 not: Anything sent while the switch was off
+  s1 not: Workouts outside the last 60 days kept on the server
+  s2 see: My name can now be tapped there, if I also show my name on the leaderboard
+  s2 not: My profile opens while 'Show my name on my gym's leaderboard' is off
+J-F-server-409-03 | type 3 | member | A gym mate's profile link that is no longer allowed (they hid their name, stopped sharing, left, or the gym hid them)
+  s1 see: A plain message that this member does not share (server answer NOT_SHARED; app words unknown)
+  s1 not: The old bio or workouts shown
+  s1 not: An endless spinner
+  s2 see: The save is refused (INVALID) with a plain message
+  s2 not: The bio cut without a word
+  s2 not: Half of the workouts saved
+J-F-server-409-04 | type 6 | member | The member shares (switch on) and gym mates have opened the profile
+  s1 see: The switch is off; the server removes the bio and every shared workout at once
+  s1 not: Any workout left on the server
+  s1 not: A gym mate still able to open the profile
+  s2 see: A fresh profile built from the phone's current workouts
+  s2 not: The old bio or old workouts brought back from the server
+J-F-server-409-05 | type 12 | member | A member who shares their workouts with gym mates
+  s1 see: Only the leaderboard name from the gym's own list, the bio and workout summaries
+  s1 not: Phone number, body weight, photos or notes
+  s1 not: A name typed on the phone instead of the gym's record
+  s2 see: The shared profile and workouts are deleted at once
+  s2 not: The profile still open to old gym mates
+  s2 not: Data kept after leaving, against the privacy notice
+J-F-server-410-01 | type 1 | staff | Admin app at the desk with no internet; the member's plan was already fully paid at another desk
+  s1 see: A receipt printed from this desk's own series, like 2026-27/D1-0001, kept on this device until the internet is back
+  s1 not: A receipt number that another desk has used
+  s1 not: The payment lost when the app closes
+  s2 see: The server accepts the receipt as written
+  s2 see: '<member> has now paid Rs N too much ... Please ask the owner to check'
+  s2 not: The receipt refused as more than the member owes
+  s2 not: The receipt renumbered or saved as cancelled, hiding real money
+J-F-server-410-02 | type 3 | staff | Admin app online; a member whose plan is fully paid
+  s1 see: The save is refused (OVER_DUE) with a plain message
+  s1 not: The overpayment accepted from an online desk
+  s1 not: A receipt left half-saved
+  s2 see: Refused as more than owed (OVER_DUE)
+  s2 not: Any receipt marked offline skipping the check
+  s3 see: Refused as too old (TOO_OLD)
+  s3 not: An old receipt accepted because it says offline
+J-F-server-410-03 | type 1 | owner | Admin app at the desk with no internet; the member's plan was already fully paid at another desk
+  s1 see: A receipt printed from this desk's own series, like 2026-27/D1-0001, kept on this device until the internet is back
+  s1 not: A receipt number that another desk has used
+  s1 not: The payment lost when the app closes
+  s2 see: The server accepts the receipt as written
+  s2 see: '<member> has now paid Rs N too much ... Please ask the owner to check'
+  s2 not: The receipt refused as more than the member owes
+  s2 not: The receipt renumbered or saved as cancelled, hiding real money
+J-F-server-410-04 | type 3 | owner | Admin app online; a member whose plan is fully paid
+  s1 see: The save is refused (OVER_DUE) with a plain message
+  s1 not: The overpayment accepted from an online desk
+  s1 not: A receipt left half-saved
+  s2 see: Refused as more than owed (OVER_DUE)
+  s2 not: Any receipt marked offline skipping the check
+  s3 see: Refused as too old (TOO_OLD)
+  s3 not: An old receipt accepted because it says offline
+J-F-server-410-05 | type 6 | staff | An offline receipt already accepted by the server
+  s1 see: Accepted as the same receipt; nothing doubles
+  s1 not: Two receipts or double money for one payment
+  s2 see: Refused: a saved receipt is locked (RECEIPT_LOCKED)
+  s2 not: The amount changed after printing
+J-F-server-410-06 | type 2 | staff | A branch desk (branch code B2) with no internet
+  s1 see: A receipt like B2/26-27/D1-0001 accepted even when it pays ahead
+  s1 not: The branch's receipt refused because its number has a branch prefix
+  s1 not: Two branches printing the same number
+J-F-server-410-07 | type 6 | owner | A member shown as having paid too much after an offline receipt
+  s1 see: The receipt shows as cancelled with the reason; the member's paid total goes down
+  s1 not: A cancel saved without a reason (NEED_REASON is the refusal)
+  s1 not: Any other change to the receipt accepted
+  s2 see: Every receipt kept, the cancelled one marked cancelled
+  s2 not: The cancelled money still counted as paid
+J-F-server-411-01 | type 1 | owner | Admin app, Messages and offers; the gym already sent 2 messages today
+  s1 see: 'This is your 3rd message today, so members get it in the app without a phone pop-up.'
+  s1 see: The message in the Sent list, marked quiet
+  s1 not: Members' phones popping up for the 3rd message
+  s1 not: The message missing from members' message list
+J-F-server-411-02 | type 3 | owner | Admin app, Messages and offers; 10 messages already sent today
+  s1 see: Refused: too many messages today (TOO_MANY)
+  s1 not: An 11th message sent
+  s1 not: The typed text lost without a warning
+  s2 see: Refused: EMPTY or TOO_LONG
+  s2 not: Text cut without a word
+  s3 see: Refused (OFFER_TODAY); a 4th in a week is OFFER_WEEK
+  s3 not: Two offers in one day
+J-F-server-411-03 | type 6 | owner | Two messages already sent today, one of them then taken back
+  s1 see: It still pops up on phones: a taken-back message does not count toward the 2
+  s1 not: The new message marked quiet because of the taken-back one
+  s2 see: The taken-back message still counts toward the 10 a day (the limit counts every message made today)
+  s2 not: The quiet count and the nudge disagreeing about which message is the 3rd
+J-F-server-411-04 | type 2 | owner | Admin app, Messages; a timed message and a message to a picked group
+  s1 see: It counts on tomorrow for the pop-up rule (the day it appears)
+  s1 not: It made quiet because of today's messages
+  s2 see: Only those members get it; recipients counted
+  s2 not: Members outside the group getting it
+  s2 not: A group of only left members sent (NO_ONE)
+J-F-server-411-05 | type 12 | owner | A message sent to a picked group of 3 members
+  s1 see: Only the 3 picked members see it; a pop-up goes only to their phones and only if it is one of the day's first 2
+  s1 not: A member outside the group seeing it
+  s1 not: A pop-up for the 3rd message of the day
+J-F-server-411-06 | type 1 | staff | Admin app signed in as front desk staff, Messages and offers
+  s1 see: The send is refused: only the owner sends messages (owner-only key check; app words unknown)
+  s1 not: A message sent by a staff login
+  s1 not: The typed text lost without a word
+J-F-server-411-07 | type 3 | staff | A staff person removed by the owner, admin app still open
+  s1 see: Signed out: the session no longer works (BAD_KEY)
+  s1 not: A message sent by a removed person
+J-F-server-411-08 | type 6 | staff | The owner sent 3 messages today
+  s1 see: The same refusal to send; the day's count unchanged by the staff try
+  s1 not: The staff try counted toward the 10 a day
+J-F-server-411-09 | type 1 | member | Member app joined to the gym; the gym sends 3 messages today
+  s1 see: A phone pop-up for each, and each in the Gym tab's messages
+  s1 not: No pop-up for the first 2
+  s2 see: No pop-up; the message waits quietly in the Gym tab
+  s2 not: A pop-up for the 3rd
+  s2 not: The 3rd missing from the list
+J-F-server-411-10 | type 2 | member | Member app closed; the gym's 1st message of the day arrives
+  s1 see: The app opens on the gym's message
+  s1 not: The app opening on an empty screen
+J-F-server-411-11 | type 3 | member | A member who left the gym
+  s1 see: Nothing reaches the left member
+  s1 not: A pop-up or message to someone who left
+J-F-server-411-12 | type 6 | member | A quiet 3rd message waiting in the Gym tab
+  s1 see: The message marked as read
+  s1 not: A late pop-up for it on a new app (old apps may still pop it up)
+  s2 see: It goes from the list (app words unknown)
+  s2 not: A taken-back message still shown as new
+J-F-server-411-13 | type 12 | member | A member of the gym
+  s1 see: Nothing: it is not in their list
+  s1 not: Another member's group message shown
+  s1 not: The names of other recipients shown
+J-F-server-412-01 | type 1 | owner | Admin app, Add member (or a member's page)
+  s1 see: A small square photo, the same as the camera preview
+  s1 not: The photo flipped after 'Take photo'
+  s1 not: A big file sent as it is
+  s2 see: The photo on the member's page, member card and check-in screen
+  s2 not: Another member's or another gym's photo shown
+  s2 not: The member saved without the photo and no word
+J-F-server-412-02 | type 3 | owner | Admin app, a member's page
+  s1 see: Refused: BAD_PHOTO or TOO_BIG (app words unknown)
+  s1 not: A broken picture saved
+  s2 see: Refused: NO_MEMBER
+  s2 not: A photo saved for a member of another gym
+J-F-server-412-03 | type 6 | owner | A member with a photo
+  s1 see: The new photo replaces the old one everywhere
+  s1 not: Two photos for one member
+  s1 not: The old photo shown on the check-in screen
+  s2 see: Initials in place of the photo
+  s2 not: The photo still shown after removing it
+J-F-server-412-04 | type 12 | owner | A member with a photo
+  s1 see: Nothing: the photo has no link and is read only through the gym's own key
+  s1 not: A public or shareable link to the photo
+  s1 not: Another gym's key reading it
+  s2 see: Their session stops at once and can no longer read photos
+  s2 not: A removed person still loading photos
+J-F-server-412-05 | type 1 | staff | Admin app, Add member (or a member's page)
+  s1 see: A small square photo, the same as the camera preview
+  s1 not: The photo flipped after 'Take photo'
+  s1 not: A big file sent as it is
+  s2 see: The photo on the member's page, member card and check-in screen
+  s2 not: Another member's or another gym's photo shown
+  s2 not: The member saved without the photo and no word
+J-F-server-412-06 | type 3 | staff | Admin app, a member's page
+  s1 see: Refused: BAD_PHOTO or TOO_BIG (app words unknown)
+  s1 not: A broken picture saved
+  s2 see: Refused: NO_MEMBER
+  s2 not: A photo saved for a member of another gym
+J-F-server-412-07 | type 6 | staff | A member with a photo
+  s1 see: The new photo replaces the old one everywhere
+  s1 not: Two photos for one member
+  s1 not: The old photo shown on the check-in screen
+  s2 see: Initials in place of the photo
+  s2 not: The photo still shown after removing it
+J-F-server-412-08 | type 12 | staff | A member with a photo
+  s1 see: Nothing: the photo has no link and is read only through the gym's own key
+  s1 not: A public or shareable link to the photo
+  s1 not: Another gym's key reading it
+  s2 see: Their session stops at once and can no longer read photos
+  s2 not: A removed person still loading photos
+J-F-server-413-01 | type 1 | member | Member app, plan card; a gym plan that has not ended
+  s1 see: The request shows as waiting for the desk
+  s1 not: The plan's end date moved before the desk approves
+  s2 see: The plan card shows the approved pause and the new end date from the gym's record
+  s2 not: A new end date taken from the phone
+  s2 not: The answer missing until the app is reinstalled
+J-F-server-413-02 | type 2 | member | Member app, plan card
+  s1 see: The renewal shows as waiting; when approved, the new plan dates and that it is paid at the desk
+  s1 not: A PT pack offered as a plan
+  s1 not: The renewal shown as paid
+J-F-server-413-03 | type 3 | member | Member app, plan card
+  s1 see: Refused: BAD_DATES (app words unknown)
+  s1 not: A pause request saved with wrong dates
+  s2 see: Refused: ALREADY_ASKED
+  s2 not: Two waiting pause requests
+  s3 see: Refused: TOO_MANY or NO_PLAN
+  s3 not: The request sent anyway
+J-F-server-413-04 | type 6 | member | A pause request waiting for the desk
+  s1 see: The request is gone
+  s1 not: The desk still approving a request taken back
+  s2 see: The answer stops showing once seen
+  s2 not: An answer that keeps coming back after it was seen
+  s2 not: Taking back an answered request
+J-F-server-413-05 | type 12 | member | A member whose check-in number is shared with a family member
+  s1 see: A plain refusal (SHARED_NUMBER) and nothing of the plan shown
+  s1 not: Another family member's plan or requests shown
+  s2 see: Only their own requests
+  s2 not: Another member's requests
+J-F-server-413-06 | type 1 | owner | Admin app, the requests list; a member asked to pause
+  s1 see: Name, dates asked, and buttons to approve or decline
+  s1 not: A request of another gym
+  s1 not: 'A member' when the gym's list has the name
+  s2 see: The request approved, with the plan's new end date
+  s2 not: The request approved without the plan changed (NOT_DONE is the refusal)
+  s2 not: The end date moved twice
+J-F-server-413-07 | type 3 | owner | Admin app, the requests list
+  s1 see: Refused (NOT_DONE)
+  s1 not: Approved with no plan change
+  s2 see: Refused (ALREADY_DECIDED)
+  s2 not: The approval overwritten by a decline
+J-F-server-413-08 | type 6 | owner | A request waiting in the list
+  s1 see: Declined, with who decided and when
+  s1 not: The plan changed by a decline
+  s2 see: The same answer, nothing doubles
+  s2 not: An error for a repeat of the same answer
+J-F-server-413-09 | type 1 | staff | Admin app, the requests list; a member asked to pause
+  s1 see: Name, dates asked, and buttons to approve or decline
+  s1 not: A request of another gym
+  s1 not: 'A member' when the gym's list has the name
+  s2 see: The request approved, with the plan's new end date
+  s2 not: The request approved without the plan changed (NOT_DONE is the refusal)
+  s2 not: The end date moved twice
+J-F-server-413-10 | type 3 | staff | Admin app, the requests list
+  s1 see: Refused (NOT_DONE)
+  s1 not: Approved with no plan change
+  s2 see: Refused (ALREADY_DECIDED)
+  s2 not: The approval overwritten by a decline
+J-F-server-413-11 | type 6 | staff | A request waiting in the list
+  s1 see: Declined, with who decided and when
+  s1 not: The plan changed by a decline
+  s2 see: The same answer, nothing doubles
+  s2 not: An error for a repeat of the same answer
+J-F-server-413-12 | type 2 | owner | Admin app, the requests list; a member asked to renew
+  s1 see: The new plan booked as a due; the request approved
+  s1 not: The renewal shown as paid
+  s1 not: A second plan booked for the same request
+J-F-server-414-01 | type 1 | owner | Admin app, a member's page; the member has a join date and uses the app
+  s1 see: The request shows as waiting for the member
+  s1 not: A request for a member without a join date
+  s2 see: A spreadsheet of the member's workouts on or after their join date at this gym
+  s2 not: Workouts from before the join date
+  s2 not: Another member's report
+J-F-server-414-02 | type 3 | owner | Admin app, a member's page
+  s1 see: Refused: NO_JOIN_DATE
+  s1 not: A request that can never be answered
+  s2 see: Refused: TOO_MANY
+  s2 not: Many waiting requests
+  s3 see: Not sent yet (NOT_SENT) / expired (EXPIRED)
+  s3 not: An expired file handed out
+J-F-server-414-03 | type 6 | owner | A request waiting for the member
+  s1 see: The same waiting request
+  s1 not: A second waiting request
+  s2 see: The request shows as declined
+  s2 not: A file to download after a no
+  s3 see: Expired; the file is gone
+  s3 not: The file still downloadable
+J-F-server-414-04 | type 1 | staff | Admin app, a member's page; the member has a join date and uses the app
+  s1 see: The request shows as waiting for the member
+  s1 not: A request for a member without a join date
+  s2 see: A spreadsheet of the member's workouts on or after their join date at this gym
+  s2 not: Workouts from before the join date
+  s2 not: Another member's report
+J-F-server-414-05 | type 3 | staff | Admin app, a member's page
+  s1 see: Refused: NO_JOIN_DATE
+  s1 not: A request that can never be answered
+  s2 see: Refused: TOO_MANY
+  s2 not: Many waiting requests
+  s3 see: Not sent yet (NOT_SENT) / expired (EXPIRED)
+  s3 not: An expired file handed out
+J-F-server-414-06 | type 6 | staff | A request waiting for the member
+  s1 see: The same waiting request
+  s1 not: A second waiting request
+  s2 see: The request shows as declined
+  s2 not: A file to download after a no
+  s3 see: Expired; the file is gone
+  s3 not: The file still downloadable
+J-F-server-414-07 | type 12 | owner | A member's report was sent
+  s1 see: Only workouts on or after the member's join date, only after the member said yes
+  s1 not: Workouts from before the join date
+  s1 not: A report of a member of another gym
+  s1 not: A link anyone could open
+J-F-server-414-08 | type 1 | member | Member app joined and matched to the gym's list; the gym asked for a report
+  s1 see: The phone makes the report (the same spreadsheet as Settings > Export, only from the join date) and sends it
+  s1 not: Anything sent before the yes
+  s1 not: Workouts from before the join date sent
+  s2 see: The request is gone from the waiting list
+  s2 not: The question asked again
+J-F-server-414-09 | type 3 | member | The gym's question 'Send your report to the gym?'
+  s1 see: The question goes; nothing is sent
+  s1 not: Any part of the report sent after a no
+  s2 see: Refused (TOO_EARLY)
+  s2 not: The early workouts kept on the server
+J-F-server-414-10 | type 6 | member | The member said yes but the file was not sent yet (app closed)
+  s1 see: The report is sent once
+  s1 not: The question asked again after the yes
+  s1 not: Two files
+  s2 see: The new file replaces the old
+  s2 not: A refusal for a repeat
+J-F-server-414-11 | type 12 | member | A member asked for a report
+  s1 see: Only this gym gets only workouts from the join date; it is deleted 30 days after it was sent
+  s1 not: The report kept after 30 days
+  s1 not: Another gym seeing it
+J-F-server-416-01 | type 1 | member | Member app, Gym tab, at the gym's desk; the member's number is on the gym's list
+  s1 see: Checked in, with the gym's name, the first name and whether the plan is fine today
+  s1 not: Two visits for one day
+  s1 not: Checked in at another gym
+J-F-server-416-02 | type 3 | member | Member app, Gym tab
+  s1 see: 'Other gym' with the member's own gym name (OTHER_GYM)
+  s1 not: A visit saved at a gym the member does not belong to
+  s2 see: 'Too many tries, wait a minute' (TOO_MANY / TOO_MANY_NUMBERS)
+  s2 not: Guessing numbers allowed without limit
+J-F-server-416-03 | type 6 | member | Already checked in today
+  s1 see: Already in, with the time of the first check-in
+  s1 not: A second visit for today
+  s1 not: A time of 1970 for a visit with no time
+J-F-server-416-04 | type 1 | pass member | Member app, Gym tab, at the gym's desk; the member's number is on the gym's list
+  s1 see: Checked in, with the gym's name and first name (how a pass member's plan state shows is not seen in this code)
+  s1 not: Two visits for one day
+  s1 not: Checked in at another gym
+J-F-server-416-05 | type 3 | pass member | Member app, Gym tab
+  s1 see: 'Other gym' with the member's own gym name (OTHER_GYM)
+  s1 not: A visit saved at a gym the member does not belong to
+  s2 see: 'Too many tries, wait a minute' (TOO_MANY / TOO_MANY_NUMBERS)
+  s2 not: Guessing numbers allowed without limit
+J-F-server-416-06 | type 6 | pass member | Already checked in today
+  s1 see: Already in, with the time of the first check-in
+  s1 not: A second visit for today
+  s1 not: A time of 1970 for a visit with no time
+J-F-server-416-07 | type 2 | member | Member app whose check-in number is not set; the member types it
+  s1 see: 'Check in at the desk, and ask them to check your mobile number' (the desk must approve)
+  s1 see: No name and no plan state shown
+  s1 not: Checked in or linked to that member before the desk approves
+  s1 not: The member's name or plan shown to whoever typed the number
+  s2 see: An ordinary check-in
+  s2 not: A second desk request
+J-F-server-416-08 | type 12 | member | Someone types another member's number at the gym
+  s1 see: Only 'check at the desk'; nothing about that member
+  s1 not: That member's name, plan, trainer, measurements or workouts shown
+  s1 not: The app linked to that member without the desk
+J-F-server-416-09 | type 2 | pass member | A member whose plan is for every branch, at another branch of the same business
+  s1 see: Checked in, with that branch's name
+  s1 not: Refused at a branch the plan covers
+  s1 not: A plan for one branch allowed at another (OTHER_GYM with the branch name)
+J-F-server-416-10 | type 1 | owner | Admin app; a member typed their number and waits (alert comes at once)
+  s1 see: The name on the gym's list, the name the app gave, the typed number, when
+  s1 not: Requests of another gym
+  s1 not: Old requests mixed in above waiting ones
+  s2 see: Approved; the member's next scan is an ordinary check-in
+  s2 not: The number linked to a member who left (GONE)
+  s2 not: Approved twice
+J-F-server-416-11 | type 3 | owner | Admin app, waiting check-in requests
+  s1 see: Refused (GONE)
+  s1 not: A left member linked
+  s2 see: Refused (ALREADY_DECIDED)
+  s2 not: The approval undone
+J-F-server-416-12 | type 6 | owner | A waiting check-in request
+  s1 see: Declined, with who and when; it stays listed for 14 days
+  s1 not: The member linked after a decline
+  s2 see: The same answer
+  s2 not: An error for a repeat
+J-F-server-416-13 | type 1 | staff | Admin app; a member typed their number and waits (alert comes at once)
+  s1 see: The name on the gym's list, the name the app gave, the typed number, when
+  s1 not: Requests of another gym
+  s1 not: Old requests mixed in above waiting ones
+  s2 see: Approved; the member's next scan is an ordinary check-in
+  s2 not: The number linked to a member who left (GONE)
+  s2 not: Approved twice
+J-F-server-416-14 | type 3 | staff | Admin app, waiting check-in requests
+  s1 see: Refused (GONE)
+  s1 not: A left member linked
+  s2 see: Refused (ALREADY_DECIDED)
+  s2 not: The approval undone
+J-F-server-416-15 | type 6 | staff | A waiting check-in request
+  s1 see: Declined, with who and when; it stays listed for 14 days
+  s1 not: The member linked after a decline
+  s2 see: The same answer
+  s2 not: An error for a repeat
+J-F-server-416-16 | type 12 | owner | A stranger typed a list member's number
+  s1 see: The typed number and the app's name, seen only by this gym's people
+  s1 not: The request shown to another gym
+  s1 not: The stranger told anything about the member
+J-F-server-418-01 | type 1 | owner | Admin app, Settings > People
+  s1 see: The person marked Trainer; their role stays what it was
+  s1 not: The trainer given owner powers
+  s2 see: The member assigned
+  s2 not: A member of another gym assigned
+  s3 see: Every member who shares, with their weekly summary and trainer
+  s3 not: Members who switched sharing off
+  s3 not: Members who left
+J-F-server-418-02 | type 2 | owner | Admin app, a member's page
+  s1 see: Their summary and recent workouts, or that they do not share
+  s1 not: Another member's progress
+J-F-server-418-03 | type 3 | owner | Admin app
+  s1 see: Refused (NOT_TRAINER)
+  s1 not: The member assigned anyway
+  s2 see: Refused (NOT_FOUND)
+  s2 not: A removed person made a trainer
+J-F-server-418-04 | type 6 | owner | A ticked trainer with assigned members
+  s1 see: Their members are unassigned at once
+  s1 not: The person still seeing those members
+  s2 see: Trainer tick and assignments go at once
+  s2 not: A removed person keeping members
+J-F-server-418-05 | type 12 | owner | Members share their progress
+  s1 see: The owner sees every sharing member, with name and phone from the list
+  s1 not: Front desk without the tick seeing it (TRAINER_ONLY)
+  s1 not: Body weight, photos, notes or food
+J-F-server-418-06 | type 1 | trainer | Admin app signed in as a ticked trainer with assigned members
+  s1 see: Only their own members who share, each with weeks, best lifts and new records
+  s1 not: Members of other trainers
+  s1 not: Members not sharing
+  s2 see: The help mark with its time
+  s2 not: The mark on a member of another trainer
+J-F-server-418-07 | type 2 | trainer | Admin app, Member questions
+  s1 see: The answer saved; the member's phone gets a pop-up
+  s1 not: The reply lost if the pop-up fails
+  s1 not: Questions picked for another person shown
+J-F-server-418-08 | type 3 | trainer | Admin app as a trainer
+  s1 see: Not allowed
+  s1 not: The member's progress shown
+  s2 see: Refused (TRAINER_ONLY)
+  s2 not: Old members still listed
+J-F-server-418-09 | type 6 | trainer | An assigned member who shares
+  s1 see: The member no longer listed
+  s1 not: Their summary still shown
+  s2 see: The member goes from this trainer's list
+  s2 not: Two trainers seeing one member
+J-F-server-418-10 | type 12 | trainer | A trainer
+  s1 see: Only their own members' summaries and questions
+  s1 not: Feedback or complaints
+  s1 not: Members of other trainers
+J-F-server-418-11 | type 1 | member | Member app joined and matched to the gym's list; 'Share my workouts with my trainers' is on
+  s1 see: Settings shows sharing on and the trainer's first name
+  s1 not: Body weight, photos, notes or food sent
+J-F-server-418-12 | type 2 | member | Sharing on
+  s1 see: Sent; a second tap the same day says it was already sent
+  s1 not: Two help marks in one day
+J-F-server-418-13 | type 3 | member | Sharing off
+  s1 see: Refused: not shared (NOT_SHARED; app words unknown)
+  s1 not: A help mark sent while sharing is off
+  s2 see: Refused (INVALID)
+  s2 not: A broken summary kept
+J-F-server-418-14 | type 6 | member | Sharing on
+  s1 see: The summary is deleted at once
+  s1 not: The trainer still seeing it
+  s2 see: The summary is deleted at once and never sent again
+  s2 not: The phone's next send storing it again after leaving
+J-F-server-418-15 | type 12 | member | A member who shares with trainers, then leaves the gym
+  s1 see: The send is refused: the member has left
+  s1 not: A new summary stored for a member who left, against the privacy notice

@@ -1,0 +1,552 @@
+# A8-phone-components-1-1: coverage of 62 Tier 1 journeys (7 features, from A5-phone-components-1-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-phone-1300 | apps/mobile/test/lib/safekeepNudge.test.ts | unit | 107 lines | asserts 5 journey phrase(s)
+F-phone-1300 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 3 journey phrase(s)
+F-phone-1300 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 3 journey phrase(s)
+F-phone-1300 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 3 journey phrase(s)
+F-phone-1300 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 3 journey phrase(s)
+F-phone-1300 | apps/mobile/test/cloud/backupWords.test.ts | unit | 88 lines | asserts 2 journey phrase(s)
+F-phone-1300 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 2 journey phrase(s)
+F-phone-1300 | apps/dashboard/e2e/move.spec.mjs | e2e | 141 lines | asserts 1 journey phrase(s)
+F-phone-1300 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-phone-1300 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 1 journey phrase(s)
+F-phone-1300 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-phone-1300 | apps/dashboard/e2e/r450-uat.spec.mjs | e2e | 331 lines | asserts 1 journey phrase(s)
+F-phone-1301 | apps/mobile/qa/uat-e.yaml | maestro | 267 lines | asserts 4 journey phrase(s)
+F-phone-1301 | apps/mobile/qa/gate-demo.yaml | maestro | 52 lines | asserts 2 journey phrase(s)
+F-phone-1301 | apps/mobile/qa/ios-first-screens.yaml | maestro | 131 lines | asserts 2 journey phrase(s)
+F-phone-1301 | apps/mobile/qa/phase1-a.yaml | maestro | 320 lines | asserts 2 journey phrase(s)
+F-phone-1301 | apps/mobile/qa/real-workout-w1.yaml | maestro | 368 lines | asserts 2 journey phrase(s)
+F-phone-1301 | apps/mobile/qa/store-a.yaml | maestro | 219 lines | asserts 2 journey phrase(s)
+F-phone-1301 | apps/mobile/qa/sub-uat-r482-restore.yaml | maestro | 117 lines | asserts 2 journey phrase(s)
+F-phone-1301 | apps/mobile/qa/uat-bk.yaml | maestro | 229 lines | asserts 2 journey phrase(s)
+F-phone-1301 | apps/mobile/qa/uat-d.yaml | maestro | 342 lines | asserts 2 journey phrase(s)
+F-phone-1301 | apps/mobile/qa/uat-rel-1-seed.yaml | maestro | 237 lines | asserts 2 journey phrase(s)
+F-phone-1301 | apps/mobile/qa/uat-rel-look-welcome.yaml | maestro | 34 lines | asserts 2 journey phrase(s)
+F-phone-1301 | apps/mobile/qa/welcome-gym.yaml | maestro | 173 lines | asserts 2 journey phrase(s)
+F-phone-1302 | apps/mobile/test/shop/r517GymHeader.test.ts | unit | 114 lines | imports the code
+F-phone-1302 | apps/mobile/test/theme/gymTheme.test.ts | unit | 312 lines | imports the code
+F-phone-1302 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-phone-1302 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-phone-1302 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 1 journey phrase(s)
+F-phone-1302 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-phone-1302 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-phone-1302 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-phone-1302 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 1 journey phrase(s)
+F-phone-1302 | apps/dashboard/e2e/terms.spec.mjs | e2e | 149 lines | asserts 1 journey phrase(s)
+F-phone-1302 | deploy/hq/push.test.mjs | unit | 382 lines | asserts 1 journey phrase(s)
+F-phone-1306 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | file name
+F-phone-1306 | apps/dashboard/test/crm/newDots.test.ts | unit | 279 lines | file name
+F-phone-1306 | apps/mobile/test/lib/newDots.test.ts | unit | 204 lines | file name
+F-phone-1307 | apps/mobile/test/lib/safekeepNudge.test.ts | unit | 107 lines | asserts 2 journey phrase(s)
+F-phone-1307 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 1 journey phrase(s)
+F-phone-1307 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-phone-1307 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 1 journey phrase(s)
+F-phone-1307 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 1 journey phrase(s)
+F-phone-1307 | apps/dashboard/e2e/trial.spec.mjs | e2e | 72 lines | asserts 1 journey phrase(s)
+F-phone-1307 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 1 journey phrase(s)
+F-phone-1307 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-phone-1307 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-phone-1308 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-1308 | apps/mobile/test/components/saveProblemBanner.test.ts | unit | 23 lines | imports the code, file name
+F-phone-1308 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-1308 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | asserts 2 journey phrase(s)
+F-phone-1308 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 1 journey phrase(s)
+F-phone-1308 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-phone-1308 | apps/dashboard/test/crm/local.test.ts | unit | 1070 lines | asserts 1 journey phrase(s)
+F-phone-1308 | apps/mobile/qa/invite-d.yaml | maestro | 36 lines | asserts 1 journey phrase(s)
+F-phone-1308 | apps/mobile/qa/uat-rel-6-member.yaml | maestro | 153 lines | asserts 1 journey phrase(s)
+F-phone-1308 | apps/mobile/qa/uat-rel-t74-gym-icon.yaml | maestro | 59 lines | asserts 1 journey phrase(s)
+F-phone-1308 | apps/mobile/qa/xc-4c-import-check.yaml | maestro | 25 lines | asserts 1 journey phrase(s)
+F-phone-1308 | apps/mobile/test/cloud/backupWords.test.ts | unit | 88 lines | asserts 1 journey phrase(s)
+F-phone-1309 | apps/mobile/test/components/screenErrorBoundary.test.ts | unit | 78 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-phone-1309 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-phone-1309 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-phone-1309 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 2 journey phrase(s)
+F-phone-1309 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 2 journey phrase(s)
+F-phone-1309 | apps/mobile/test/db/workoutPhotosReal.test.ts | unit | 327 lines | asserts 2 journey phrase(s)
+F-phone-1309 | apps/mobile/test/onboarding/eraseLeftBehind.test.ts | unit | 59 lines | asserts 2 journey phrase(s)
+F-phone-1309 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 2 journey phrase(s)
+F-phone-1309 | apps/mobile/test/onboarding/startup.test.ts | unit | 185 lines | asserts 2 journey phrase(s)
+F-phone-1309 | apps/mobile/test/tracker/auditC9Words.test.ts | unit | 51 lines | asserts 2 journey phrase(s)
+F-phone-1309 | apps/mobile/test/tracker/phase4ImportsC.test.ts | unit | 443 lines | asserts 2 journey phrase(s)
+F-phone-1309 | deploy/panel/phoneInbound.test.mjs | unit | 355 lines | asserts 2 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-phone-1300-01 | type 1 | member | A gym member: phone that had Google Drive backup linked in an older version, not signed in to a MettleUp account, on the Workout tab
+  s1 see: Card: 'Backups now go to your MettleUp account. Sign in to keep your workouts safe.'
+  s1 see: Two links: 'Sign in' and 'Got it'
+  s1 not: Two notice cards drawn at the same time
+  s1 not: The old 'last backed up to Google Drive' card
+  s2 see: Settings page Backup and restore opens
+  s2 see: The card is gone from the Workout tab
+  s2 not: The Backup page opening twice
+  s2 not: A sign-in starting without the member choosing it on the Backup page
+  s3 see: No backup card
+  s3 not: The card coming back on this phone, even if the member did not sign in
+J-F-phone-1300-02 | type 3 | member | A gym member: phone that never linked Google Drive, or is already signed in to a MettleUp account, or runs a build that cannot sign in
+  s1 see: No backup card; the tab looks as usual
+  s1 not: The card shown to a signed-in member (nothing for them to do)
+  s1 not: A 'Sign in' link that leads to a page with no sign-in
+  s2 see: No backup card
+  s2 not: An error message or a blank gap where the card would be
+  s2 not: A card that cannot be closed
+J-F-phone-1300-03 | type 6 | member | A gym member: phone with Google Drive linked from an older version, not signed in, card showing
+  s1 see: The card goes at once
+  s1 not: The card staying until the next visit
+  s1 not: Any backup or sign-in starting
+  s2 see: No backup card
+  s2 not: The card shown a second time on this phone
+  s3 see: No backup card on the Workout tab
+  s3 not: The one-off card returning after a sign-out
+  s4 see: Only the other notice
+  s4 not: This card drawn under or over the other notice
+J-F-phone-1300-04 | type 12 | member | A gym member: phone with Google Drive linked from an older version, not signed in, card showing
+  s1 see: It says backups now go to the MettleUp account; it does not say a Drive backup is still being made
+  s1 not: Words that suggest workouts are already safe when no account is signed in
+  s2 see: Nothing more
+  s2 not: Any workout sent to Google Drive
+  s2 not: Any workout sent to a MettleUp account the member did not sign in to
+J-F-phone-1300-05 | type 1 | pass member | A pass member: phone that had Google Drive backup linked in an older version, not signed in to a MettleUp account, on the Workout tab
+  s1 see: Card: 'Backups now go to your MettleUp account. Sign in to keep your workouts safe.'
+  s1 see: Two links: 'Sign in' and 'Got it'
+  s1 not: Two notice cards drawn at the same time
+  s1 not: The old 'last backed up to Google Drive' card
+  s2 see: Settings page Backup and restore opens
+  s2 see: The card is gone from the Workout tab
+  s2 not: The Backup page opening twice
+  s2 not: A sign-in starting without the member choosing it on the Backup page
+  s3 see: No backup card
+  s3 not: The card coming back on this phone, even if the member did not sign in
+J-F-phone-1300-06 | type 3 | pass member | A pass member: phone that never linked Google Drive, or is already signed in to a MettleUp account, or runs a build that cannot sign in
+  s1 see: No backup card; the tab looks as usual
+  s1 not: The card shown to a signed-in member (nothing for them to do)
+  s1 not: A 'Sign in' link that leads to a page with no sign-in
+  s2 see: No backup card
+  s2 not: An error message or a blank gap where the card would be
+  s2 not: A card that cannot be closed
+J-F-phone-1300-07 | type 6 | pass member | A pass member: phone with Google Drive linked from an older version, not signed in, card showing
+  s1 see: The card goes at once
+  s1 not: The card staying until the next visit
+  s1 not: Any backup or sign-in starting
+  s2 see: No backup card
+  s2 not: The card shown a second time on this phone
+  s3 see: No backup card on the Workout tab
+  s3 not: The one-off card returning after a sign-out
+  s4 see: Only the other notice
+  s4 not: This card drawn under or over the other notice
+J-F-phone-1300-08 | type 12 | pass member | A pass member: phone with Google Drive linked from an older version, not signed in, card showing
+  s1 see: It says backups now go to the MettleUp account; it does not say a Drive backup is still being made
+  s1 not: Words that suggest workouts are already safe when no account is signed in
+  s2 see: Nothing more
+  s2 not: Any workout sent to Google Drive
+  s2 not: Any workout sent to a MettleUp account the member did not sign in to
+J-F-phone-1301-01 | type 1 | member | A gym member: member of a gym that has its own colour, tone or logo; app closed
+  s1 see: The gym's logo full-screen on the gym's background colour, the gym's name small under it
+  s1 see: It eases in, holds under a second and fades away by itself
+  s1 not: Another gym's logo or name
+  s1 not: An empty coloured screen while the logo loads (the name must stand large until then)
+  s2 see: The app's first screen, already in the gym's colours
+  s2 not: The logo screen staying up
+  s2 not: A flash of the plain MettleUp colours after it goes
+J-F-phone-1301-02 | type 2 | member | A gym member: no gym yet; has the join code of a gym that has its own look
+  s1 see: Full-screen: 'WELCOME TO' and the gym's name, with the logo once it has loaded
+  s1 see: It stays about two seconds
+  s1 not: The welcome shown over a workout that is open
+  s1 not: The short launch version with no welcome words
+  s2 see: The app drawn again in the gym's name and colours
+  s2 not: The app left in the old colours until the next launch
+J-F-phone-1301-03 | type 3 | member | A gym member: member of a gym with no colour, tone or logo (or a gym whose plan does not include branding), or of no gym
+  s1 see: The app's first screen straight away, in MettleUp's own look
+  s1 not: A full-screen logo or gym name for a gym with no look of its own
+  s1 not: A blank full-screen pause
+  s2 see: The gym's name large, in the middle
+  s2 not: A broken-picture mark
+  s2 not: An empty screen for the whole second
+J-F-phone-1301-04 | type 6 | member | A gym member: member of a branded gym
+  s1 see: It goes straight away
+  s1 not: The tap going through to a button underneath
+  s1 not: The logo screen coming back a moment later
+  s2 see: The logo simply shows and goes, no fade or scale
+  s2 not: The logo screen never going away
+  s3 see: No logo screen
+  s3 not: The old gym's logo on launch after leaving
+  s4 see: Nothing changes now; the next launch opens with the new logo
+  s4 not: A full-screen logo over the open workout
+  s4 not: A running rest timer reset by the re-draw
+J-F-phone-1301-05 | type 12 | member | A gym member: member of branded gym A who leaves and joins branded gym B on the same phone
+  s1 see: Gym B's welcome with gym B's name and logo
+  s1 not: Gym A's logo or name, even for a moment
+  s1 not: A logo shown from a saved copy that belongs to another gym
+  s2 see: Gym B's logo screen
+  s2 not: Gym A's logo
+  s2 not: Anything on this screen beyond the gym name and logo (no member name, no plan, no dues)
+J-F-phone-1301-06 | type 1 | pass member | A pass member: member of a gym that has its own colour, tone or logo; app closed
+  s1 see: The gym's logo full-screen on the gym's background colour, the gym's name small under it
+  s1 see: It eases in, holds under a second and fades away by itself
+  s1 not: Another gym's logo or name
+  s1 not: An empty coloured screen while the logo loads (the name must stand large until then)
+  s2 see: The app's first screen, already in the gym's colours
+  s2 not: The logo screen staying up
+  s2 not: A flash of the plain MettleUp colours after it goes
+J-F-phone-1301-07 | type 2 | pass member | A pass member: no gym yet; has the join code of a gym that has its own look
+  s1 see: Full-screen: 'WELCOME TO' and the gym's name, with the logo once it has loaded
+  s1 see: It stays about two seconds
+  s1 not: The welcome shown over a workout that is open
+  s1 not: The short launch version with no welcome words
+  s2 see: The app drawn again in the gym's name and colours
+  s2 not: The app left in the old colours until the next launch
+J-F-phone-1301-08 | type 3 | pass member | A pass member: member of a gym with no colour, tone or logo (or a gym whose plan does not include branding), or of no gym
+  s1 see: The app's first screen straight away, in MettleUp's own look
+  s1 not: A full-screen logo or gym name for a gym with no look of its own
+  s1 not: A blank full-screen pause
+  s2 see: The gym's name large, in the middle
+  s2 not: A broken-picture mark
+  s2 not: An empty screen for the whole second
+J-F-phone-1301-09 | type 6 | pass member | A pass member: member of a branded gym
+  s1 see: It goes straight away
+  s1 not: The tap going through to a button underneath
+  s1 not: The logo screen coming back a moment later
+  s2 see: The logo simply shows and goes, no fade or scale
+  s2 not: The logo screen never going away
+  s3 see: No logo screen
+  s3 not: The old gym's logo on launch after leaving
+  s4 see: Nothing changes now; the next launch opens with the new logo
+  s4 not: A full-screen logo over the open workout
+  s4 not: A running rest timer reset by the re-draw
+J-F-phone-1301-10 | type 12 | pass member | A pass member: member of branded gym A who leaves and joins branded gym B on the same phone
+  s1 see: Gym B's welcome with gym B's name and logo
+  s1 not: Gym A's logo or name, even for a moment
+  s1 not: A logo shown from a saved copy that belongs to another gym
+  s2 see: Gym B's logo screen
+  s2 not: Gym A's logo
+  s2 not: Anything on this screen beyond the gym name and logo (no member name, no plan, no dues)
+J-F-phone-1302-01 | type 1 | member | A gym member: member of a gym that has its own colour, tone or logo
+  s1 see: At the top: the gym's logo, small (whole, never cut into a circle), and the gym's name on one line
+  s1 not: Another gym's logo or name
+  s1 not: A wide logo squeezed or cropped
+  s2 see: The same logo and name at the top
+  s2 not: A different name or logo from the Workout tab
+  s3 see: It says 'Your gym: <gym name>'
+  s3 not: The logo read out as an unnamed picture
+J-F-phone-1302-02 | type 2 | member | A gym member: member of a gym that has its own colour, tone or logo
+  s1 see: The gym's logo and name at the top, as on the Workout and Profile tabs
+  s1 not: A Shop tab with no sign of whose gym it is
+  s1 not: A mark that differs from the other two tabs
+J-F-phone-1302-03 | type 3 | member | A gym member: member of a gym with no look of its own, or of no gym
+  s1 see: No gym mark; the tabs start with their usual top
+  s1 not: An empty gap where the mark would be
+  s1 not: A gym name with no gym joined
+  s2 see: A small dot in the gym's colour and the gym's name
+  s2 not: A broken-picture mark
+  s2 not: The name missing too
+J-F-phone-1302-04 | type 6 | member | A gym member: member of a branded gym, mark showing
+  s1 see: Logo, name and colours change together
+  s1 not: The new logo over the old colours, or the other way round
+  s2 see: The mark is gone from Workout and Profile
+  s2 not: The left gym's name still at the top
+  s3 see: The mark is back
+  s3 not: A mark that needs an app restart to return
+J-F-phone-1302-05 | type 1 | pass member | A pass member: member of a gym that has its own colour, tone or logo
+  s1 see: At the top: the gym's logo, small (whole, never cut into a circle), and the gym's name on one line
+  s1 not: Another gym's logo or name
+  s1 not: A wide logo squeezed or cropped
+  s2 see: The same logo and name at the top
+  s2 not: A different name or logo from the Workout tab
+  s3 see: It says 'Your gym: <gym name>'
+  s3 not: The logo read out as an unnamed picture
+J-F-phone-1302-06 | type 2 | pass member | A pass member: member of a gym that has its own colour, tone or logo
+  s1 see: The gym's logo and name at the top, as on the Workout and Profile tabs
+  s1 not: A Shop tab with no sign of whose gym it is
+  s1 not: A mark that differs from the other two tabs
+J-F-phone-1302-07 | type 3 | pass member | A pass member: member of a gym with no look of its own, or of no gym
+  s1 see: No gym mark; the tabs start with their usual top
+  s1 not: An empty gap where the mark would be
+  s1 not: A gym name with no gym joined
+  s2 see: A small dot in the gym's colour and the gym's name
+  s2 not: A broken-picture mark
+  s2 not: The name missing too
+J-F-phone-1302-08 | type 6 | pass member | A pass member: member of a branded gym, mark showing
+  s1 see: Logo, name and colours change together
+  s1 not: The new logo over the old colours, or the other way round
+  s2 see: The mark is gone from Workout and Profile
+  s2 not: The left gym's name still at the top
+  s3 see: The mark is back
+  s3 not: A mark that needs an app restart to return
+J-F-phone-1306-01 | type 1 | member | A gym member: phone that just updated from an older version to one with a new feature that has its own Settings page
+  s1 see: One small dot on the Profile tab; no number
+  s1 not: A dot on a tab that leads to nothing new
+  s1 not: A count or a badge with a number
+  s2 see: A small dot on the Settings button
+  s2 not: No dot to follow from here
+  s3 see: A small dot on the new feature's row
+  s3 not: Dots on rows that have nothing new
+  s4 see: A small dot beside the feature's heading; the screen reader says 'New'
+  s4 not: A dot that takes a tap meant for the row or button under it
+  s5 see: The row, button and tab dots are gone (unless another new feature sits under them)
+  s5 not: A dot still showing for a feature already opened
+J-F-phone-1306-02 | type 3 | member | A gym member: first install of the app (no older version ever on this phone)
+  s1 see: No dots anywhere
+  s1 not: Dots for features that are not new to a first-time user
+  s2 see: No dot for that feature
+  s2 not: A dot trail that ends at a page or row that is not there
+  s3 see: No dots at all
+  s3 not: Dots that can never be cleared
+J-F-phone-1306-03 | type 6 | member | A gym member: updated phone with four new features, none opened
+  s1 see: Dots for the three newest features only
+  s1 not: More than three features lit at once
+  s2 see: The dot beside the heading shows on the first visit and is gone on the second
+  s2 see: The fourth feature now gets its dots
+  s2 not: The heading dot gone before the member could see where the feature is
+  s3 see: No dots
+  s3 not: Dots on a feature older than 30 days
+  s3 not: Dots returning for an old feature a year later on the same date
+  s4 see: Its dots stay gone
+  s4 not: Seen dots coming back after a restart
+J-F-phone-1306-04 | type 1 | pass member | A pass member: phone that just updated from an older version to one with a new feature that has its own Settings page
+  s1 see: One small dot on the Profile tab; no number
+  s1 not: A dot on a tab that leads to nothing new
+  s1 not: A count or a badge with a number
+  s2 see: A small dot on the Settings button
+  s2 not: No dot to follow from here
+  s3 see: A small dot on the new feature's row
+  s3 not: Dots on rows that have nothing new
+  s4 see: A small dot beside the feature's heading; the screen reader says 'New'
+  s4 not: A dot that takes a tap meant for the row or button under it
+  s5 see: The row, button and tab dots are gone (unless another new feature sits under them)
+  s5 not: A dot still showing for a feature already opened
+J-F-phone-1306-05 | type 3 | pass member | A pass member: first install of the app (no older version ever on this phone)
+  s1 see: No dots anywhere
+  s1 not: Dots for features that are not new to a first-time user
+  s2 see: No dot for that feature
+  s2 not: A dot trail that ends at a page or row that is not there
+  s3 see: No dots at all
+  s3 not: Dots that can never be cleared
+J-F-phone-1306-06 | type 6 | pass member | A pass member: updated phone with four new features, none opened
+  s1 see: Dots for the three newest features only
+  s1 not: More than three features lit at once
+  s2 see: The dot beside the heading shows on the first visit and is gone on the second
+  s2 see: The fourth feature now gets its dots
+  s2 not: The heading dot gone before the member could see where the feature is
+  s3 see: No dots
+  s3 not: Dots on a feature older than 30 days
+  s3 not: Dots returning for an old feature a year later on the same date
+  s4 see: Its dots stay gone
+  s4 not: Seen dots coming back after a restart
+J-F-phone-1307-01 | type 1 | member | A gym member: no MettleUp account signed in; has just finished a third own workout (demo workouts not counted)
+  s1 see: Card: 'Your workouts are only on this phone. Sign in with Google and MettleUp keeps them safe in your account.'
+  s1 see: Links: 'Sign in to keep them safe' and 'Hide for 30 days'
+  s1 not: The card after only two own workouts
+  s1 not: Two notice cards at once
+  s2 see: Settings page Backup and restore
+  s2 not: The page opening twice on a double tap
+  s2 not: A sign-in starting by itself
+  s3 see: The card is gone
+  s3 not: The card still showing to a signed-in member
+J-F-phone-1307-02 | type 3 | member | A gym member: no account; fewer than three own workouts, or only the demo workouts, or a build that cannot sign in
+  s1 see: No safekeeping card
+  s1 not: The card counting demo workouts
+  s1 not: A sign-in link on a build where sign-in does not exist
+  s2 see: No card
+  s2 not: An error or a card with a wrong claim
+J-F-phone-1307-03 | type 6 | member | A gym member: no account; three or more own workouts; card showing
+  s1 see: The card goes at once
+  s1 not: The card staying until the next visit
+  s2 see: No card
+  s2 not: The card back before 30 days
+  s3 see: The card is back
+  s3 not: The card hidden for ever after one Hide
+  s4 see: Signed in: no card. Signed out: the card returns
+  s4 not: A signed-out member left with no warning that workouts are on this phone only
+J-F-phone-1307-04 | type 12 | member | A gym member: no account; three own workouts; has joined a gym
+  s1 see: 'Your workouts are only on this phone.'
+  s1 not: These words when a copy of the workouts already sits somewhere else (an old Drive backup, a gym summary, gym mates)
+  s2 see: Nothing more
+  s2 not: Any workout sent to a MettleUp account without a sign-in
+J-F-phone-1307-05 | type 1 | pass member | A pass member: no MettleUp account signed in; has just finished a third own workout (demo workouts not counted)
+  s1 see: Card: 'Your workouts are only on this phone. Sign in with Google and MettleUp keeps them safe in your account.'
+  s1 see: Links: 'Sign in to keep them safe' and 'Hide for 30 days'
+  s1 not: The card after only two own workouts
+  s1 not: Two notice cards at once
+  s2 see: Settings page Backup and restore
+  s2 not: The page opening twice on a double tap
+  s2 not: A sign-in starting by itself
+  s3 see: The card is gone
+  s3 not: The card still showing to a signed-in member
+J-F-phone-1307-06 | type 3 | pass member | A pass member: no account; fewer than three own workouts, or only the demo workouts, or a build that cannot sign in
+  s1 see: No safekeeping card
+  s1 not: The card counting demo workouts
+  s1 not: A sign-in link on a build where sign-in does not exist
+  s2 see: No card
+  s2 not: An error or a card with a wrong claim
+J-F-phone-1307-07 | type 6 | pass member | A pass member: no account; three or more own workouts; card showing
+  s1 see: The card goes at once
+  s1 not: The card staying until the next visit
+  s2 see: No card
+  s2 not: The card back before 30 days
+  s3 see: The card is back
+  s3 not: The card hidden for ever after one Hide
+  s4 see: Signed in: no card. Signed out: the card returns
+  s4 not: A signed-out member left with no warning that workouts are on this phone only
+J-F-phone-1307-08 | type 12 | pass member | A pass member: no account; three own workouts; has joined a gym
+  s1 see: 'Your workouts are only on this phone.'
+  s1 not: These words when a copy of the workouts already sits somewhere else (an old Drive backup, a gym summary, gym mates)
+  s2 see: Nothing more
+  s2 not: Any workout sent to a MettleUp account without a sign-in
+J-F-phone-1308-01 | type 1 | member | A gym member: a workout is open; the phone's storage is full
+  s1 see: Banner at the top of every screen: 'Couldn't save — your phone's storage may be full. Free some space; we'll keep trying.'
+  s1 not: An error code or technical text
+  s1 not: The set vanishing from the open workout
+  s2 see: The button under the banner works
+  s2 not: The banner taking the tap
+  s3 see: The banner goes by itself on the next good save; the workout has every set
+  s3 not: The banner staying after saves work again
+  s3 not: A lost or doubled set
+J-F-phone-1308-02 | type 2 | member | A gym member: a workout is open; saving fails for a reason other than full storage
+  s1 see: Banner: 'Couldn't save your workout. We'll keep trying.'
+  s1 not: Words about full storage when storage is not the cause
+  s1 not: No sign at all that the save failed
+  s2 see: The banner goes on the first good save
+  s2 not: The app giving up for good
+  s2 not: Tries so often that the workout screen stutters
+J-F-phone-1308-03 | type 2 | member | A gym member: a workout is open and Finish fails; or a past workout is being edited and Save changes fails
+  s1 see: Banner: 'Couldn't finish your workout. It's still open — tap Finish again.' (with full storage: '... free some space, then tap Finish again.')
+  s1 not: The workout shown as finished
+  s1 not: The workout closed and lost
+  s2 see: Banner: 'Couldn't save your changes. They're still open — tap Save changes again.'
+  s2 not: The edit screen closing as if saved
+  s3 see: The workout is finished once; the banner goes
+  s3 not: Two copies of the workout
+J-F-phone-1308-04 | type 3 | member | A gym member: a workout is open; saving works
+  s1 see: No banner at any time
+  s1 not: The banner flashing on a save that worked
+  s2 see: Nothing happens; it has no buttons
+  s2 not: The tap lost when a button sits under the banner
+  s2 not: A hidden action
+J-F-phone-1308-05 | type 6 | member | A gym member: a workout is open; Finish has failed and autosave is failing too
+  s1 see: The Finish line: 'Couldn't finish your workout. It's still open — tap Finish again.'
+  s1 not: Two banners on top of each other
+  s2 see: The Finish line stays (it still needs a tap)
+  s2 not: The banner going, leaving a workout the member thinks is finished
+  s3 see: The banner goes
+  s3 not: The banner left over every screen with no workout open
+J-F-phone-1308-06 | type 1 | pass member | A pass member: a workout is open; the phone's storage is full
+  s1 see: Banner at the top of every screen: 'Couldn't save — your phone's storage may be full. Free some space; we'll keep trying.'
+  s1 not: An error code or technical text
+  s1 not: The set vanishing from the open workout
+  s2 see: The button under the banner works
+  s2 not: The banner taking the tap
+  s3 see: The banner goes by itself on the next good save; the workout has every set
+  s3 not: The banner staying after saves work again
+  s3 not: A lost or doubled set
+J-F-phone-1308-07 | type 2 | pass member | A pass member: a workout is open; saving fails for a reason other than full storage
+  s1 see: Banner: 'Couldn't save your workout. We'll keep trying.'
+  s1 not: Words about full storage when storage is not the cause
+  s1 not: No sign at all that the save failed
+  s2 see: The banner goes on the first good save
+  s2 not: The app giving up for good
+  s2 not: Tries so often that the workout screen stutters
+J-F-phone-1308-08 | type 2 | pass member | A pass member: a workout is open and Finish fails; or a past workout is being edited and Save changes fails
+  s1 see: Banner: 'Couldn't finish your workout. It's still open — tap Finish again.' (with full storage: '... free some space, then tap Finish again.')
+  s1 not: The workout shown as finished
+  s1 not: The workout closed and lost
+  s2 see: Banner: 'Couldn't save your changes. They're still open — tap Save changes again.'
+  s2 not: The edit screen closing as if saved
+  s3 see: The workout is finished once; the banner goes
+  s3 not: Two copies of the workout
+J-F-phone-1308-09 | type 3 | pass member | A pass member: a workout is open; saving works
+  s1 see: No banner at any time
+  s1 not: The banner flashing on a save that worked
+  s2 see: Nothing happens; it has no buttons
+  s2 not: The tap lost when a button sits under the banner
+  s2 not: A hidden action
+J-F-phone-1308-10 | type 6 | pass member | A pass member: a workout is open; Finish has failed and autosave is failing too
+  s1 see: The Finish line: 'Couldn't finish your workout. It's still open — tap Finish again.'
+  s1 not: Two banners on top of each other
+  s2 see: The Finish line stays (it still needs a tap)
+  s2 not: The banner going, leaving a workout the member thinks is finished
+  s3 see: The banner goes
+  s3 not: The banner left over every screen with no workout open
+J-F-phone-1309-01 | type 1 | member | A gym member: any screen of the app that fails while drawing
+  s1 see: 'Something went wrong on this screen.' and 'Your workout is safe.'
+  s1 see: Buttons: 'Try again', 'Go back' (when there is a screen behind) and 'Go to Workout'
+  s1 not: The app closing
+  s1 not: Error text or code shown to the member
+  s1 not: The bottom of the app or other screens broken too
+  s2 see: The screen drawn afresh and working
+  s2 not: The old broken state kept
+  s2 not: Data typed on other screens lost
+J-F-phone-1309-02 | type 2 | member | A gym member: a screen has failed and shows the crash message
+  s1 see: The screen before
+  s1 not: The crash message on the screen before as well
+  s1 not: The app closing
+  s2 see: The Workout tab
+  s2 not: Being left on the crash message
+  s2 not: A back press returning into an endless crash
+J-F-phone-1309-03 | type 2 | member | A gym member: the frame of the app itself fails while drawing (not one screen)
+  s1 see: The same two lines with only 'Try again'
+  s1 not: 'Go back' or 'Go to Workout' buttons that cannot work
+  s1 not: The splash screen left up for ever
+  s2 see: The app drawn afresh
+  s2 not: Saved workouts or the open workout gone
+J-F-phone-1309-04 | type 3 | member | A gym member: a screen that fails every time it is drawn
+  s1 see: The same crash message again
+  s1 not: The app closing
+  s1 not: The app freezing in a loop of retries
+  s2 see: The Workout tab, working
+  s2 not: No way out of the failing screen
+J-F-phone-1309-05 | type 6 | member | A gym member: a workout is open with three sets logged; a screen fails
+  s1 see: 'Your workout is safe.'
+  s1 not: The rest timer or the open workout stopped
+  s2 see: The open workout with all three sets
+  s2 not: A set missing
+  s2 not: The workout ended or doubled
+  s3 see: The screen works, or shows the crash message again
+  s3 not: A crash message stuck on a screen that now works
+J-F-phone-1309-06 | type 12 | member | A gym member: a workout is open while saving is failing (the save banner is up) and a screen fails
+  s1 see: The two fixed lines only
+  s1 not: 'Your workout is safe.' said while the workout cannot be saved
+  s1 not: Error details, a name, a phone number or workout data on the crash screen
+  s2 see: The screen, or the crash message again
+  s2 not: A crash report sent with workouts, name, gym or phone details in it
+J-F-phone-1309-07 | type 1 | pass member | A pass member: any screen of the app that fails while drawing
+  s1 see: 'Something went wrong on this screen.' and 'Your workout is safe.'
+  s1 see: Buttons: 'Try again', 'Go back' (when there is a screen behind) and 'Go to Workout'
+  s1 not: The app closing
+  s1 not: Error text or code shown to the member
+  s1 not: The bottom of the app or other screens broken too
+  s2 see: The screen drawn afresh and working
+  s2 not: The old broken state kept
+  s2 not: Data typed on other screens lost
+J-F-phone-1309-08 | type 2 | pass member | A pass member: a screen has failed and shows the crash message
+  s1 see: The screen before
+  s1 not: The crash message on the screen before as well
+  s1 not: The app closing
+  s2 see: The Workout tab
+  s2 not: Being left on the crash message
+  s2 not: A back press returning into an endless crash
+J-F-phone-1309-09 | type 2 | pass member | A pass member: the frame of the app itself fails while drawing (not one screen)
+  s1 see: The same two lines with only 'Try again'
+  s1 not: 'Go back' or 'Go to Workout' buttons that cannot work
+  s1 not: The splash screen left up for ever
+  s2 see: The app drawn afresh
+  s2 not: Saved workouts or the open workout gone
+J-F-phone-1309-10 | type 3 | pass member | A pass member: a screen that fails every time it is drawn
+  s1 see: The same crash message again
+  s1 not: The app closing
+  s1 not: The app freezing in a loop of retries
+  s2 see: The Workout tab, working
+  s2 not: No way out of the failing screen
+J-F-phone-1309-11 | type 6 | pass member | A pass member: a workout is open with three sets logged; a screen fails
+  s1 see: 'Your workout is safe.'
+  s1 not: The rest timer or the open workout stopped
+  s2 see: The open workout with all three sets
+  s2 not: A set missing
+  s2 not: The workout ended or doubled
+  s3 see: The screen works, or shows the crash message again
+  s3 not: A crash message stuck on a screen that now works
+J-F-phone-1309-12 | type 12 | pass member | A pass member: a workout is open while saving is failing (the save banner is up) and a screen fails
+  s1 see: The two fixed lines only
+  s1 not: 'Your workout is safe.' said while the workout cannot be saved
+  s1 not: Error details, a name, a phone number or workout data on the crash screen
+  s2 see: The screen, or the crash message again
+  s2 not: A crash report sent with workouts, name, gym or phone details in it

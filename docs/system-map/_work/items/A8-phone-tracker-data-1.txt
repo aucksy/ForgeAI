@@ -1,0 +1,660 @@
+# A8-phone-tracker-data-1: coverage of 75 Tier 1 journeys (15 features, from A5-phone-tracker-data-2, A5-phone-tracker-data-3). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-phone-1001 | apps/mobile/test/onboarding/demoRemovalKeeps.test.ts | unit | 134 lines | imports the code
+F-phone-1001 | apps/mobile/test/tracker/auditPhase5Body.test.ts | unit | 469 lines | imports the code
+F-phone-1001 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | imports the code
+F-phone-1001 | apps/mobile/test/tracker/measurementsExport.test.ts | unit | 162 lines | imports the code
+F-phone-1001 | apps/mobile/qa/backup-m-prep.yaml | maestro | 134 lines | asserts 2 journey phrase(s)
+F-phone-1001 | apps/mobile/qa/xc-1-old-seed.yaml | maestro | 217 lines | asserts 2 journey phrase(s)
+F-phone-1001 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-phone-1001 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-phone-1001 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-phone-1001 | apps/mobile/qa/backup-m-check.yaml | maestro | 61 lines | asserts 1 journey phrase(s)
+F-phone-1001 | apps/mobile/qa/backup-m-photos-check.yaml | maestro | 81 lines | asserts 1 journey phrase(s)
+F-phone-1001 | apps/mobile/qa/backup-m-photos.yaml | maestro | 131 lines | asserts 1 journey phrase(s)
+F-phone-1020 | apps/dashboard/test/crm/gymWod.test.ts | unit | 144 lines | asserts 7 journey phrase(s)
+F-phone-1020 | apps/dashboard/test/crm/invite.test.ts | unit | 105 lines | asserts 6 journey phrase(s)
+F-phone-1020 | deploy/panel/hosts.test.mjs | unit | 291 lines | asserts 5 journey phrase(s)
+F-phone-1020 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 4 journey phrase(s)
+F-phone-1020 | deploy/panel/gymPage.test.mjs | unit | 328 lines | asserts 4 journey phrase(s)
+F-phone-1020 | apps/mobile/qa/sub-settings-open.yaml | maestro | 62 lines | asserts 3 journey phrase(s)
+F-phone-1020 | apps/mobile/test/db/historyChartReal.test.ts | unit | 116 lines | imports the code
+F-phone-1020 | apps/mobile/test/shop/bringFriend.test.ts | unit | 104 lines | asserts 3 journey phrase(s)
+F-phone-1020 | apps/mobile/test/shop/joinAgreement.test.ts | unit | 136 lines | asserts 3 journey phrase(s)
+F-phone-1020 | apps/mobile/test/tracker/historyChart.test.ts | unit | 354 lines | imports the code
+F-phone-1020 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 2 journey phrase(s)
+F-phone-1020 | apps/dashboard/test/crm/checkin.test.ts | unit | 137 lines | asserts 2 journey phrase(s)
+F-phone-1019 | apps/mobile/test/db/recentExercises.test.ts | unit | 82 lines | imports the code, file name
+F-phone-1019 | apps/dashboard/e2e/ai-questions-uat.spec.mjs | e2e | 434 lines | asserts 1 journey phrase(s)
+F-phone-1019 | apps/mobile/qa/v0251-f.yaml | maestro | 275 lines | asserts 1 journey phrase(s)
+F-phone-1019 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-phone-1019 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-phone-1019 | apps/mobile/test/tracker/redesignR5.test.ts | unit | 276 lines | asserts 1 journey phrase(s)
+F-phone-1019 | supabase/tests/0028_hq_breakglass_and_logs.sql | db | 165 lines | asserts 1 journey phrase(s)
+F-phone-1019 | supabase/tests/0040_gym_mate_profiles.sql | db | 168 lines | asserts 1 journey phrase(s)
+F-phone-1019 | supabase/tests/0053_ask_trainer_and_progress.sql | db | 232 lines | asserts 1 journey phrase(s)
+F-phone-1010 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-1010 | apps/mobile/test/tracker/recordStart.test.ts | unit | 412 lines | imports the code, file name
+F-phone-1010 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-1010 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | asserts 2 journey phrase(s)
+F-phone-1010 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-phone-1010 | apps/dashboard/test/crm/local.test.ts | unit | 1070 lines | asserts 1 journey phrase(s)
+F-phone-1010 | apps/mobile/qa/invite-d.yaml | maestro | 36 lines | asserts 1 journey phrase(s)
+F-phone-1010 | apps/mobile/qa/uat-rel-6-member.yaml | maestro | 153 lines | asserts 1 journey phrase(s)
+F-phone-1010 | apps/mobile/qa/uat-rel-t74-gym-icon.yaml | maestro | 59 lines | asserts 1 journey phrase(s)
+F-phone-1010 | apps/mobile/qa/xc-4c-import-check.yaml | maestro | 25 lines | asserts 1 journey phrase(s)
+F-phone-1010 | apps/mobile/test/cloud/backupWords.test.ts | unit | 88 lines | asserts 1 journey phrase(s)
+F-phone-1010 | apps/mobile/test/db/workoutPhotosReal.test.ts | unit | 327 lines | asserts 1 journey phrase(s)
+F-phone-1012 | apps/mobile/test/tracker/muscleTipsRoutines.test.ts | unit | 525 lines | imports the code, asserts 9 journey phrase(s)
+F-phone-1012 | apps/mobile/test/tracker/workoutTabR4.test.ts | unit | 280 lines | imports the code, asserts 6 journey phrase(s)
+F-phone-1012 | apps/mobile/test/tracker/muscleTipUndoBar.test.ts | unit | 87 lines | imports the code, asserts 3 journey phrase(s)
+F-phone-1012 | apps/mobile/qa/redesign-r.yaml | maestro | 1131 lines | asserts 4 journey phrase(s)
+F-phone-1012 | apps/mobile/qa/sub-uat-r576-routine.yaml | maestro | 59 lines | asserts 4 journey phrase(s)
+F-phone-1012 | apps/mobile/qa/uat-rel-f194-a-history.yaml | maestro | 139 lines | asserts 4 journey phrase(s)
+F-phone-1012 | apps/mobile/qa/uat-rel-r366-reps.yaml | maestro | 97 lines | asserts 4 journey phrase(s)
+F-phone-1012 | apps/mobile/qa/uat-rel-r439-a-history.yaml | maestro | 166 lines | asserts 4 journey phrase(s)
+F-phone-1012 | apps/mobile/qa/uat-rel-r454-a-history.yaml | maestro | 290 lines | asserts 4 journey phrase(s)
+F-phone-1012 | apps/mobile/test/db/auditC3RoutinesReal.test.ts | unit | 201 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1012 | apps/mobile/test/db/historyScopeReal.test.ts | unit | 352 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1012 | apps/mobile/test/db/importsPacketCReal.test.ts | unit | 292 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1018 | apps/mobile/test/db/finishReal.test.ts | unit | 104 lines | imports the code
+F-phone-1018 | apps/mobile/test/db/realRepos.test.ts | unit | 298 lines | imports the code
+F-phone-1018 | apps/mobile/test/db/twoWaysReal.test.ts | unit | 212 lines | imports the code
+F-phone-1018 | apps/mobile/test/tracker/switcherLine.test.ts | unit | 38 lines | asserts 3 journey phrase(s)
+F-phone-1018 | apps/mobile/qa/uat-rel-f199-profile-progress.yaml | maestro | 425 lines | asserts 2 journey phrase(s)
+F-phone-1018 | apps/mobile/qa/uat-rel-r402-profile-chart.yaml | maestro | 66 lines | asserts 2 journey phrase(s)
+F-phone-1018 | apps/mobile/qa/uat-rel-r404-bar-charts.yaml | maestro | 181 lines | asserts 2 journey phrase(s)
+F-phone-1018 | apps/mobile/test/lib/safekeepNudge.test.ts | unit | 107 lines | asserts 2 journey phrase(s)
+F-phone-1018 | apps/mobile/test/onboarding/eraseLeftBehind.test.ts | unit | 59 lines | asserts 2 journey phrase(s)
+F-phone-1018 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 2 journey phrase(s)
+F-phone-1018 | apps/mobile/test/tracker/r319ImportEraseCharts.test.ts | unit | 136 lines | asserts 2 journey phrase(s)
+F-phone-1018 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-phone-1015 | apps/mobile/test/tracker/sessionEdit.test.ts | unit | 212 lines | imports the code, file name
+F-phone-1016 | apps/mobile/test/db/recentExercises.test.ts | unit | 82 lines | imports the code
+F-phone-1016 | apps/mobile/test/tracker/finishName.test.ts | unit | 43 lines | imports the code
+F-phone-1016 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-phone-1016 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-phone-1016 | apps/mobile/qa/real-workout-w4.yaml | maestro | 228 lines | asserts 1 journey phrase(s)
+F-phone-1016 | apps/mobile/qa/store-a.yaml | maestro | 219 lines | asserts 1 journey phrase(s)
+F-phone-1016 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-phone-1016 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-phone-1016 | apps/mobile/test/tracker/hevyImport.test.ts | unit | 108 lines | asserts 1 journey phrase(s)
+F-phone-1016 | apps/mobile/test/tracker/muscleBalance.test.ts | unit | 89 lines | asserts 1 journey phrase(s)
+F-phone-1016 | apps/mobile/test/tracker/phase4Exercises.test.ts | unit | 161 lines | asserts 1 journey phrase(s)
+F-phone-1017 | apps/mobile/test/db/workoutPhotosReal.test.ts | unit | 327 lines | imports the code, asserts 5 journey phrase(s)
+F-phone-1017 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 5 journey phrase(s)
+F-phone-1017 | supabase/tests/0043_member_photos.sql | db | 135 lines | asserts 5 journey phrase(s)
+F-phone-1017 | apps/mobile/test/backup/backupFormat.test.ts | unit | 136 lines | asserts 4 journey phrase(s)
+F-phone-1017 | apps/mobile/test/tracker/auditPhase5Body.test.ts | unit | 469 lines | asserts 4 journey phrase(s)
+F-phone-1017 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | asserts 3 journey phrase(s)
+F-phone-1017 | apps/mobile/qa/backup-m-photos.yaml | maestro | 131 lines | asserts 3 journey phrase(s)
+F-phone-1017 | apps/mobile/qa/uat-rel-f146-share-gym.yaml | maestro | 354 lines | asserts 3 journey phrase(s)
+F-phone-1017 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 2 journey phrase(s)
+F-phone-1017 | apps/mobile/qa/uat-r.yaml | maestro | 368 lines | asserts 2 journey phrase(s)
+F-phone-1017 | apps/mobile/qa/uat-rel-r344-c-states.yaml | maestro | 160 lines | asserts 2 journey phrase(s)
+F-phone-1017 | apps/mobile/test/store/restoreImpact.test.ts | unit | 24 lines | asserts 2 journey phrase(s)
+F-phone-1005 | apps/mobile/qa/uat-f4.yaml | maestro | 93 lines | asserts 6 journey phrase(s)
+F-phone-1005 | apps/mobile/qa/uat-f3.yaml | maestro | 87 lines | asserts 5 journey phrase(s)
+F-phone-1005 | apps/mobile/qa/real-workout-w4.yaml | maestro | 228 lines | asserts 4 journey phrase(s)
+F-phone-1005 | apps/mobile/qa/store-b.yaml | maestro | 134 lines | asserts 4 journey phrase(s)
+F-phone-1005 | apps/mobile/qa/uat-rel-9-demo-first.yaml | maestro | 93 lines | asserts 4 journey phrase(s)
+F-phone-1005 | apps/mobile/test/tracker/homeStart.test.ts | unit | 124 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1005 | apps/mobile/test/tracker/phase2PacketE.test.ts | unit | 288 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1005 | apps/mobile/qa/phase1-b.yaml | maestro | 171 lines | asserts 3 journey phrase(s)
+F-phone-1005 | apps/mobile/qa/sub-uat-r344-bench.yaml | maestro | 92 lines | asserts 3 journey phrase(s)
+F-phone-1005 | apps/mobile/qa/sub-uat-r358-finish.yaml | maestro | 47 lines | asserts 3 journey phrase(s)
+F-phone-1005 | apps/mobile/qa/sub-uat-r439-finish.yaml | maestro | 54 lines | asserts 3 journey phrase(s)
+F-phone-1005 | apps/mobile/qa/uat-d.yaml | maestro | 342 lines | asserts 3 journey phrase(s)
+F-phone-1013 | apps/mobile/qa/v0260-g.yaml | maestro | 751 lines | asserts 7 journey phrase(s)
+F-phone-1013 | apps/mobile/qa/uat-e.yaml | maestro | 267 lines | asserts 5 journey phrase(s)
+F-phone-1013 | apps/mobile/test/tracker/muscleTipsRoutines.test.ts | unit | 525 lines | asserts 5 journey phrase(s)
+F-phone-1013 | apps/mobile/qa/real-workout-w1.yaml | maestro | 368 lines | asserts 4 journey phrase(s)
+F-phone-1013 | apps/mobile/qa/store-a.yaml | maestro | 219 lines | asserts 4 journey phrase(s)
+F-phone-1013 | apps/mobile/qa/uat-rel-1-seed.yaml | maestro | 237 lines | asserts 4 journey phrase(s)
+F-phone-1013 | apps/mobile/test/tracker/phase4Plans.test.ts | unit | 491 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1013 | apps/mobile/test/tracker/switcherLine.test.ts | unit | 38 lines | asserts 4 journey phrase(s)
+F-phone-1013 | apps/mobile/test/tracker/upNext.test.ts | unit | 199 lines | asserts 4 journey phrase(s)
+F-phone-1013 | apps/mobile/qa/phase1-a.yaml | maestro | 320 lines | asserts 3 journey phrase(s)
+F-phone-1013 | apps/mobile/qa/redesign-r.yaml | maestro | 1131 lines | asserts 3 journey phrase(s)
+F-phone-1013 | apps/mobile/qa/tour-first-run.yaml | maestro | 249 lines | asserts 3 journey phrase(s)
+F-phone-1023 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-1023 | apps/mobile/test/backup/backupCoverage.test.ts | unit | 81 lines | imports the code
+F-phone-1023 | apps/mobile/test/backup/backupRoundTrip.test.ts | unit | 432 lines | imports the code
+F-phone-1023 | apps/mobile/test/db/targetSettingsReal.test.ts | unit | 153 lines | imports the code
+F-phone-1023 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-1023 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-phone-1023 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | asserts 2 journey phrase(s)
+F-phone-1023 | apps/mobile/test/tracker/plateSetup.test.ts | unit | 272 lines | asserts 2 journey phrase(s)
+F-phone-1023 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 1 journey phrase(s)
+F-phone-1023 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-phone-1023 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 1 journey phrase(s)
+F-phone-1023 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-phone-1025 | apps/mobile/test/onboarding/saveDataFile.test.ts | unit | 122 lines | asserts 1 journey phrase(s)
+F-phone-1025 | apps/mobile/test/tracker/f199ProgressInProfile.test.ts | unit | 267 lines | asserts 1 journey phrase(s)
+F-phone-1009 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-1009 | apps/mobile/test/onboarding/startup.test.ts | unit | 185 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1009 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1009 | apps/mobile/test/backup/backupCoverage.test.ts | unit | 81 lines | imports the code
+F-phone-1009 | apps/mobile/test/backup/backupRoundTrip.test.ts | unit | 432 lines | imports the code
+F-phone-1009 | apps/mobile/test/onboarding/onboardingStore.test.ts | unit | 255 lines | imports the code
+F-phone-1009 | apps/mobile/test/tracker/auditC1LiveWorkout.test.ts | unit | 321 lines | imports the code
+F-phone-1009 | apps/mobile/test/tracker/auditC5RestBell.test.ts | unit | 132 lines | imports the code
+F-phone-1009 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-1009 | apps/mobile/test/tracker/notifAudit.test.ts | unit | 235 lines | imports the code
+F-phone-1009 | apps/mobile/test/tracker/offlineTick.test.ts | unit | 277 lines | imports the code
+F-phone-1009 | apps/mobile/test/tracker/oneNotification.test.ts | unit | 163 lines | imports the code
+F-phone-1024 | apps/mobile/test/tracker/machineInUse.test.ts | unit | 257 lines | imports the code, asserts 2 journey phrase(s)
+F-phone-1024 | apps/mobile/test/db/historyScopeReal.test.ts | unit | 352 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1024 | apps/mobile/test/tracker/historyScope.test.ts | unit | 100 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1024 | apps/mobile/test/ai/auditC3Coach.test.ts | unit | 74 lines | imports the code
+F-phone-1024 | apps/mobile/test/backup/backupCoverage.test.ts | unit | 81 lines | imports the code
+F-phone-1024 | apps/mobile/test/backup/backupRoundTrip.test.ts | unit | 432 lines | imports the code
+F-phone-1024 | apps/mobile/test/backup/driveBackup.test.ts | unit | 177 lines | imports the code
+F-phone-1024 | apps/mobile/test/db/auditC4ImportReal.test.ts | unit | 70 lines | imports the code
+F-phone-1024 | apps/mobile/test/db/previousSourceReal.test.ts | unit | 154 lines | imports the code
+F-phone-1024 | apps/mobile/test/db/r138KgToBeat.test.ts | unit | 125 lines | imports the code
+F-phone-1024 | apps/mobile/test/db/targetSettingsReal.test.ts | unit | 153 lines | imports the code
+F-phone-1024 | apps/mobile/test/db/warmupPreviousReal.test.ts | unit | 253 lines | imports the code
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-phone-1001-01 | type 1 | member | Profile, Body screen, one earlier waist entry
+  s1 see: Screen 'Add measures', 'Fill in any you like.'
+  s1 see: A Date row set to today, boxes for Body weight and each measure, the last value as a grey hint
+  s1 not: Another person's or the gym's value typed into a box as if the member typed it
+  s1 not: An empty hint where an earlier entry exists
+  s2 see: A success buzz; back on Body, History shows the waist entry for today
+  s2 not: Two waist values for the same day
+  s2 not: A cm value stored as inches or the other way round
+J-F-phone-1001-02 | type 2 | member | Body screen, Waist chip picked
+  s1 see: 'Add measures' with the Waist box first
+  s1 not: Body weight first when the member came from Waist
+  s2 see: The entry saved on yesterday's day in History
+  s2 not: The entry saved on today
+  s2 not: A picture added before the day change left on the old day
+J-F-phone-1001-03 | type 3 | member | Add measures screen
+  s1 see: Pop-up 'Check the numbers': 'Waist: type a number above 0, like 82.5.'
+  s1 not: A zero or empty value saved
+  s1 not: The screen closed as if saved
+  s2 see: Pop-up 'Nothing to save': 'Type at least one measure, or add a picture.'
+  s2 not: An empty entry in History
+J-F-phone-1001-04 | type 6 | member | Body screen, today already has a waist entry
+  s1 see: A question naming the old value, 'That day already has these. Saving replaces them.', buttons Replace and cancel
+  s1 not: The old value replaced without asking (past days)
+  s1 not: Two values kept for one day
+  s2 see: Sheet 'Fix this waist entry' with the new value; History line 'Tap an entry to fix or delete it.'
+  s2 not: The old value still shown
+  s3 see: The entry leaves History, then comes back with the same day and value
+  s3 not: Undo bringing back a different value
+  s3 not: A gym-recorded entry deletable by the member
+J-F-phone-1001-05 | type 12 | member | Member signed in with Google, linked to a gym
+  s1 see: 'MettleUp never sends your body weight, photos or notes.'
+  s1 not: The member's own measurement sent to the gym or shown in the panel
+  s2 see: It leaves History; the cloud copy loses it too
+  s2 not: The deleted entry back after the next sync or on a second phone
+  s3 see: It is marked with the gym's name; 'Ask your gym to change the ones they recorded.'
+  s3 not: Another member's measurement shown
+  s3 not: The member able to change the gym's entry
+J-F-phone-1020-01 | type 1 | member | Profile tab, no photo, no bio
+  s1 see: Screen 'Your profile', the first letter of the name in a circle, 'Add photo'
+  s1 not: A broken picture
+  s1 not: Another person's photo
+  s2 see: 'Saving the photo…', then the picture in the circle and 'Change photo'
+  s2 not: The gallery picture deleted later taking the profile photo with it
+  s3 see: Counter '13 / 150', a quiet 'Saved'; Profile shows 'instagram.com/me'
+  s3 not: The link shown with 'https://'
+  s3 not: A bio saved with extra blank lines
+J-F-phone-1020-02 | type 2 | member | Settings
+  s1 see: The same 'Your profile' page
+  s1 not: A second, different profile form
+J-F-phone-1020-03 | type 3 | member | Your profile page
+  s1 see: Under the box: 'A link has no spaces.'
+  s1 not: The bad link saved
+  s2 see: 'Use a web link, like instagram.com/yourname.'
+  s2 not: A link that opens nothing saved
+  s3 see: Pop-up 'Camera not allowed': 'Allow the camera for MettleUp in your phone’s settings, or choose a photo instead.'
+  s3 not: A crash
+  s3 not: The old photo lost
+J-F-phone-1020-04 | type 6 | member | Your profile page with a photo, bio and link
+  s1 see: The first letter in the circle again; 'Add photo'
+  s1 not: The old photo still on Profile
+  s2 see: 'Saved'; Profile shows no bio and no link
+  s2 not: An empty link line or 'https://' left on Profile
+J-F-phone-1020-05 | type 12 | member | Member in a gym, 'Show my name on my gym's leaderboard' on, signed in with Google
+  s1 see: 'Saved'
+  s1 not: The bio shown to gym mates while the leaderboard switch is off
+  s2 see: Bio and link come back from the cloud copy
+  s2 not: The profile photo uploaded anywhere (it stays on the phone and in a backup file only)
+J-F-phone-1019-01 | type 1 | member | Workout open, three earlier workouts
+  s1 see: A 'Recent' band first: the exercises of the last 5 workouts, newest workout first, each once, at most 15; then the full list A to Z
+  s1 not: The same exercise twice in Recent
+  s1 not: An exercise from a deleted workout
+  s2 see: It is added to the workout
+  s2 not: A different exercise added
+J-F-phone-1019-02 | type 2 | member | Profile, Exercises
+  s1 see: Recent first with 'Last: today' under the exercises just done, then 'Made by you', then 'All exercises'
+  s1 not: 'Last:' showing the day of a different workout than the newest one
+J-F-phone-1019-03 | type 3 | member | New member, no workouts
+  s1 see: No Recent band; the full list
+  s1 not: An empty 'Recent' heading
+  s1 not: An error
+  s2 see: Recent hides; matches only
+  s2 not: Recent rows mixed into the search results
+J-F-phone-1019-04 | type 6 | member | Exercises list, Bench done last in Monday's workout
+  s1 see: Bench's 'Last:' moves to its earlier workout, or Bench leaves Recent
+  s1 not: 'Last:' still naming the deleted workout's day
+  s2 see: Its exercises move up with 'Last: today'
+  s2 not: The old day still shown
+J-F-phone-1010-01 | type 1 | member | Exercise page of Bench, with past workouts
+  s1 see: Row 'Start records fresh…'
+  s1 not: The row missing when the exercise has history
+  s2 see: Question 'Start records fresh?': 'Records for Bench will count from today's workouts on. Past workouts stay in History and charts.'
+  s2 not: Past workouts deleted from History or charts
+  s3 see: 'Records since {day}' or 'No records since {day} yet' with a 'Count all again' link
+  s3 not: Old records still counted on Home, Records and the strength score
+J-F-phone-1010-02 | type 2 | member | A workout open with Bench in it
+  s1 see: The live record pop-up compares with the new bests
+  s1 not: No pop-up because the old best is still used
+J-F-phone-1010-03 | type 3 | member | Exercise page of a new exercise never logged
+  s1 see: No 'Start records fresh…' row
+  s1 not: The row shown with nothing to reset
+  s2 see: 'Couldn't change your records. Nothing changed — try again.'
+  s2 not: A half-changed record list
+J-F-phone-1010-04 | type 6 | member | Exercise page showing 'Records since {day}'
+  s1 see: 'Count all records again?': 'Records for Bench will count every workout again, including the ones before {day}.'
+  s1 not: The question naming a different day
+  s2 see: Old records back; menu shows 'Start records fresh…' again
+  s2 not: The old records gone for good
+J-F-phone-1012-01 | type 1 | member | Workout tab
+  s1 see: Screen 'Edit routine' named 'New routine', 'No exercises yet'
+  s1 not: A routine added to the followed plan without asking
+  s2 see: Bench row with Sets, Rep min, Rep max, 'Note (optional)'
+  s2 not: The name lost when leaving the box
+  s3 see: New order kept after leaving and coming back
+  s3 not: Rep min above rep max
+  s3 not: The order snapping back
+  s4 see: A workout with the routine's exercises and sets
+  s4 not: Exercises in a different order
+J-F-phone-1012-02 | type 2 | member | Workout page of a workout done without a routine
+  s1 see: 'Saved as a routine': 'It is in My routines. Your plan has not changed.' with 'Open routine' and 'Done'
+  s1 not: The routine put in the followed plan
+  s1 not: Warm-up sets counted as working sets
+J-F-phone-1012-03 | type 2 | member | A routine workout just finished with one exercise added
+  s1 see: '"{routine}" is updated for next time.'
+  s1 not: The routine changed after 'Keep original'
+  s1 not: A second Bench row lost when the routine has Bench twice
+J-F-phone-1012-04 | type 2 | member | Edit routine screen
+  s1 see: The copy opens, named '{name} (copy)', with every exercise, set, rest and note
+  s1 not: The copy landing in the followed plan unasked
+  s1 not: The original changed
+J-F-phone-1012-05 | type 3 | member | Edit routine screen
+  s1 see: The routine is called 'Routine'
+  s1 not: A routine with no name
+  s2 see: 'That is more sets than most routines use.' with 'Keep 60 sets'
+  s2 not: More than 50 sets saved
+  s3 see: 'No other folder': 'Make a folder on the Workout tab first.'
+  s3 not: An empty sheet
+  s4 see: 'Routine not found': 'This routine may have been deleted.'
+  s4 not: A crash or an empty editor
+J-F-phone-1012-06 | type 6 | member | Edit routine screen with Bench and Squat
+  s1 see: 'Remove Bench from this routine.'; Bench leaves the list
+  s1 not: Bench also removed from past workouts
+  s2 see: 'Delete routine?': 'This removes the routine and its exercise list. History is unaffected.'; back to the Workout tab
+  s2 not: Past workouts of the routine deleted or renamed
+  s2 not: The routine back after the next sync
+J-F-phone-1012-07 | type 12 | member | Member signed in with Google
+  s1 see: Routines stay free
+  s1 not: Routines locked behind Plus
+  s2 see: The warning names routines among what is deleted
+  s2 not: Own routines deleted without that warning
+J-F-phone-1018-01 | type 1 | member | Profile, member with workouts
+  s1 see: 'Your workouts' with a line like '12 workouts in October' and one card per workout, newest first
+  s1 not: A count that differs from the cards
+  s1 not: A workout from another day range
+  s2 see: The workout page: name, day and start time, each exercise with its sets and volume
+  s2 not: Volume counting warm-up sets as working
+  s2 not: Sets of a different workout
+J-F-phone-1018-02 | type 2 | member | Charts, a week bar picked
+  s1 see: 'Your workouts' for that week; a week with one workout opens that workout itself
+  s1 not: A list for a different week
+J-F-phone-1018-03 | type 3 | member | Charts, a month with no workouts picked
+  s1 see: 'You did not log a workout in {month}.'
+  s1 not: An endless loading bar
+  s2 see: A load error for 'these workouts' with a retry
+  s2 not: A blank screen
+  s3 see: 'Workout not found': 'This workout may have been deleted.'
+  s3 not: A crash
+J-F-phone-1018-04 | type 6 | member | Workout page
+  s1 see: 'Delete this workout?': 'This removes the workout and its sets.'
+  s1 not: Other workouts' sets removed
+  s2 see: The card is gone and the count is one less
+  s2 not: The deleted workout still listed
+J-F-phone-1018-05 | type 12 | member | Member in a gym, 'Show my name on my gym's leaderboard' on, MettleUp Plus ended
+  s1 see: Every workout, none locked
+  s1 not: Older workouts hidden behind Plus
+  s2 see: Gym mates can no longer open these workouts
+  s2 not: Recent workouts still shared with gym mates
+J-F-phone-1015-01 | type 1 | member | Workout page of yesterday's workout, Bench top set 100 kg (a record)
+  s1 see: The workout opens in the editor with every set
+  s1 not: An open workout overwritten without asking
+  s2 see: The workout page shows 90 kg and the new time
+  s2 not: The workout copied as a new one
+  s2 not: Sets of other exercises lost
+  s3 see: The 100 kg record is gone; the best is worked out again from all workouts
+  s3 not: A record still claiming 100 kg
+J-F-phone-1015-02 | type 2 | member | A workout is open on the Workout tab
+  s1 see: A question: resume the open workout, or 'Discard it and edit this one'
+  s1 not: The open workout lost without asking
+  s2 see: The past workout in the editor
+  s2 not: Sets of the open workout mixed in
+J-F-phone-1015-03 | type 3 | member | Workout page of a workout where Bench was logged as two separate blocks
+  s1 see: 'Can't edit this one': 'Bench was logged as two separate blocks in this workout. Editing would merge them, so this one can't be edited yet.'
+  s1 not: The editor opening and merging the blocks
+  s2 see: An error; nothing brought back
+  s2 not: The deleted workout brought back
+J-F-phone-1015-04 | type 6 | member | Workout page, workout moved once before
+  s1 see: The workout under the new day in History
+  s1 not: It left under the old day too
+  s2 see: The workout is known; no copy added
+  s2 not: A duplicate workout on the old day
+J-F-phone-1015-05 | type 12 | member | Member in a gym, signed in with Google
+  s1 see: The edited workout on this phone and in the cloud copy
+  s1 not: Exercises, weights or sets sent to the gym
+J-F-phone-1016-01 | type 1 | member | Workout page titled 'Pull'
+  s1 see: Sheet 'Rename workout' with the current name and 'Save name'
+  s1 not: An empty box with the name lost
+  s2 see: The page title becomes 'Back and biceps'
+  s2 not: The routine renamed too
+  s2 not: Extra spaces kept
+J-F-phone-1016-02 | type 2 | member | Exercise page of Bench, History tab
+  s1 see: Each card headed by its workout's name, or its day type ('Pull 1') when unnamed
+  s1 not: A card headed by another workout's name
+J-F-phone-1016-03 | type 3 | member | Rename workout sheet
+  s1 see: The workout keeps its name
+  s1 not: A workout with no title
+  s2 see: The name cut to 60 letters
+  s2 not: Text over the page header
+  s3 see: 'Could not rename': 'The workout keeps its name. Try again.'
+  s3 not: The new name shown though not saved
+J-F-phone-1016-04 | type 6 | member | Workout page with a typed name
+  s1 see: The newest name everywhere, History tab too
+  s1 not: The old name on the History tab
+J-F-phone-1016-05 | type 12 | member | Member in a gym with 'Show my name on my gym's leaderboard' on
+  s1 see: The name shows to gym mates on the shared workout
+  s1 not: The workout name shown to gym mates while the switch is off
+J-F-phone-1017-01 | type 1 | member | Workout complete summary right after Finish; the workout has no photos yet
+  s1 see: Header 'Photos' with '0 of 4'
+  s1 see: 'Private. They stay on this phone.'
+  s1 see: Button 'Add photo'
+  s1 not: Another workout's photos shown
+  s1 not: A count other than 0 of 4
+  s2 see: Sheet 'Add a photo to this workout' with 'Up to 4. Private: they stay on this phone.'
+  s2 see: Rows 'Take a photo' and 'Choose from gallery'
+  s2 not: The sheet opening twice after a fast double tap
+  s3 see: The button reads 'Adding…' while it saves
+  s3 see: One square photo appears; the count reads '1 of 4'
+  s3 not: Two copies of the one picture
+  s3 not: The photo saved on a different workout
+  s4 see: Full-screen 'Workout photo' that can be pinched to zoom, with a close button
+  s4 not: A broken-picture mark
+  s4 not: Another workout's picture
+J-F-phone-1017-02 | type 2 | member | Profile feed, a saved workout with one photo; the camera is allowed
+  s1 see: The Photos part with the one square and '1 of 4'
+  s1 not: The photo missing on its own page while the feed shows it
+  s2 see: 'Adding…', then a second square; '2 of 4'
+  s2 not: The photo lost when Android closed the app behind the camera
+  s2 not: The first photo replaced
+J-F-phone-1017-03 | type 2 | member | A saved workout opened for editing (not a past workout being logged)
+  s1 see: The Photos part inside the editor with the saved photos
+  s1 not: The Photos part shown while logging a brand-new past workout (it has no saved workout yet)
+  s2 see: The photo stays: it was saved the moment it was picked
+  s2 not: The photo silently removed by Discard without a word
+  s2 not: The photo saved twice
+J-F-phone-1017-04 | type 3 | member | Workout page with 4 photos; separately, the camera permission refused
+  s1 see: '4 of 4'
+  s1 see: No way to add a fifth photo
+  s1 not: A fifth photo saved
+  s2 see: 'Camera not allowed. Allow the camera for MettleUp in your phone settings, or choose a photo from the gallery.'
+  s2 see: Button 'Open settings'
+  s2 not: A crash or a blank square
+  s2 not: A photo row saved without a picture
+  s3 see: 'This workout already has 4 photos. Remove one to add another.'
+  s3 see: The list reloads with 4 photos
+  s3 not: Five photos
+  s3 not: A picture file left behind with no row
+J-F-phone-1017-05 | type 6 | member | Workout page with 2 photos
+  s1 see: Question 'Remove this photo?' with 'It is deleted from this workout and from the app for good.' and 'Remove'
+  s1 not: The photo removed before the member says yes
+  s2 see: One square left; '1 of 4'
+  s2 not: The other photo removed
+  s2 not: The count still saying 2 of 4
+  s3 see: 'This workout was deleted, so the photo wasn’t added.'
+  s3 not: A photo row for a workout that is gone
+  s3 not: The picture file left on the phone
+J-F-phone-1017-06 | type 12 | member | A workout with 2 photos; the member shares workouts with a trainer and uses Drive backup
+  s1 see: 'Private. They stay on this phone.'
+  s1 not: Any wording that photos are sent anywhere
+  s2 see: Workouts without any photo
+  s2 not: The member's workout photos shown to the trainer or the owner
+  s3 see: Workouts back without their photos (photos are not in the Drive backup)
+  s3 not: Photo rows restored whose pictures are missing (broken squares)
+  s4 see: One file that also carries the photos, as the What's new note says
+  s4 not: The member told photos never leave the phone while the saved file carries them, with no word about it
+J-F-phone-1005-01 | type 1 | member | Workout tab, a routine with two weight-and-reps exercises; no workout in progress
+  s1 see: The workout screen with a running clock and one card per exercise
+  s1 see: A PREVIOUS value on each set row from the last workout
+  s1 not: Sets of another workout prefilled as done
+  s1 not: The clock starting at a time other than now
+  s2 see: The row ticked
+  s2 see: The rest timer starts
+  s2 not: The typed numbers lost if the app is closed right after (saved 300 ms after typing and at once on a tick)
+  s3 see: W on the warm-up row
+  s3 see: The rating shown on its row (for example '@8')
+  s3 not: A warm-up counted as a working set
+  s4 see: Sheet 'Finish workout?' with the time and sets
+  s4 see: Buttons 'Finish workout' and 'Keep going'
+  s4 see: For rows not ticked: 'Leave them out' or 'Save them'
+  s4 not: The workout saved before 'Finish workout' is tapped
+  s5 see: The workout summary opens
+  s5 not: Two workouts saved after a fast double tap
+  s5 not: The workout dated on the day it finished when it started before midnight
+J-F-phone-1005-02 | type 2 | member | A workout in progress with 3 ticked sets; the member swipes the app away
+  s1 see: The Workout tab's Up next card shows the workout in progress with Resume and Discard
+  s1 not: The workout gone
+  s1 not: A second copy of the workout
+  s2 see: The same exercises, ticks, typed numbers and clock
+  s2 not: A paused workout's clock running while the app was closed
+  s2 not: Hints shown before the targets loaded and then jumping
+J-F-phone-1005-03 | type 2 | member | An empty workout with a timed exercise (plank) and a distance exercise (run)
+  s1 see: Time boxes on the plank rows, distance and time boxes on the run rows
+  s1 not: Weight and reps boxes on a timed exercise
+  s2 see: The summary shows 1:00 and 2 km
+  s2 not: The time or distance saved as reps or weight
+  s2 not: A ticked timed set left out of the workout
+J-F-phone-1005-04 | type 3 | member | Workout screen with only warm-up rows ticked, or none ticked
+  s1 see: The sheet's main button reads 'Tick a set to finish'
+  s1 not: An empty workout saved
+  s2 see: 'Nothing to save' with 'Tick at least one set before finishing.'
+  s2 not: A warm-up-only workout saved that history cannot show
+  s3 see: 'Could not save' with 'Something went wrong saving your workout. Your sets are still here — tap Finish to try again.'
+  s3 not: Half a workout saved
+  s3 not: The sets wiped
+J-F-phone-1005-05 | type 6 | member | A workout in progress; one ticked set started the running rest
+  s1 see: The row unticked; the rest that set started stops
+  s1 not: The bell ringing for a set that is no longer done
+  s1 not: Numbers filled by the tick left in a blank row
+  s2 see: 'Discard workout?' with 'This workout and its sets will be deleted. This cannot be undone.', 'Discard' and 'Keep logging'
+  s2 not: The workout discarded without the question
+  s3 see: No workout in progress
+  s3 not: The discarded workout coming back as a ghost after reopening
+J-F-phone-1005-06 | type 12 | member | A member who never signed in, on the free plan
+  s1 see: The workout saved and shown in history; no paywall
+  s1 not: Logging locked behind a paid plan
+  s1 not: The workout sent to a server when the member never signed in
+J-F-phone-1013-01 | type 1 | member | Workout tab → Find a plan; no plan followed
+  s1 see: Screen 'Build a plan', 'Step 1 of 5'
+  s1 see: Goal chips 'Build muscle', 'Get stronger', 'Lose fat', 'Stay fit' and Experience chips
+  s1 not: Answers from an earlier visit shown as if chosen now
+  s2 see: 'Step 2 of 5' with 'Days a week' and 'Split' ('Best for my days', 'Full body', 'Upper / Lower', 'Push Pull Legs')
+  s2 not: The step counter skipping a step
+  s3 see: The sore area chip selected
+  s3 not: Moves that often bother that area in the built plan
+  s4 see: The plan: its name, '3 days a week · 60 min · …', 'Routines', 'Weekly sets per muscle'
+  s4 see: Buttons 'Save and follow', 'Save', 'Change answers'
+  s4 not: Anything saved yet
+  s5 see: Back on the Workout tab with the new folder open
+  s5 not: Two folders after a fast double tap
+  s5 not: The plan saved but not followed
+J-F-phone-1013-02 | type 2 | member | Plan builder on step 4 of 5
+  s1 see: Chips '<exercise name> ✕' under 'Leave out'; the button now reads 'Choose more'
+  s1 not: A left-out exercise in the built plan
+  s2 see: Back on the Workout tab with the new folder open; the current plan unchanged
+  s2 not: The new plan made the followed plan
+  s2 not: The swapped-out exercise saved
+J-F-phone-1013-03 | type 3 | member | Plan built on screen, nothing saved yet
+  s1 see: 'Could not save the plan' with 'Please try again.'
+  s1 see: The plan still on screen
+  s1 not: Half a folder saved
+  s1 not: The followed plan changed
+  s2 see: The Find a plan screen; nothing saved
+  s2 not: A folder or plan saved by closing
+J-F-phone-1013-04 | type 6 | member | Plan built on screen from answers
+  s1 see: Step 5 of 5 with every answer kept
+  s1 not: Answers reset
+  s2 see: Step 2 of 5, answers kept
+  s2 not: The builder closing with answers lost
+  s3 see: Step 1 of 5 with goal and level from the profile, nothing else kept
+  s3 not: The old built plan shown as saved
+J-F-phone-1023-01 | type 1 | member | Settings → Workouts → Plates and bars; units kg; nothing changed before
+  s1 see: 'Turn off the plates your gym doesn't have. The plate calculator uses only the ones that are on.'
+  s1 see: Every standard plate on, the standard bar chosen
+  s1 not: An empty list
+  s1 not: lb plates on a kg setup
+  s2 see: The 1.25 kg plate off
+  s2 not: Another plate turned off
+  s2 not: The change lost after closing the app
+  s3 see: A 0.5 kg plate on the list
+  s3 not: The plate added twice after a fast double tap
+  s4 see: 'The plate calculator starts on this bar. You can switch it there for one lift.'
+  s4 see: 15 kg chosen
+  s4 not: The 20 kg bar still chosen
+  s5 see: Only plates that are on, on the 15 kg bar
+  s5 not: The 1.25 kg plate used
+J-F-phone-1023-02 | type 2 | member | Units switched to lb; a kg setup already changed
+  s1 see: The lb setup with its own standard plates and 'Like a 25 lb EZ bar.'
+  s1 not: The kg changes shown converted into lb
+  s2 see: The kg setup exactly as left
+  s2 not: The kg setup reset by the lb visit
+J-F-phone-1023-03 | type 3 | member | Plates and bars, kg
+  s1 see: 'Type a plate weight, like 1.25.'
+  s1 not: A 0 kg plate added
+  s2 see: 'Too light for a plate. Use 0.1 kg or more.'
+  s2 see: 'Too heavy for a plate. Use … kg or less.'
+  s2 see: '20 kg plates are already on the list.'
+  s2 not: A duplicate 20 kg plate
+  s3 see: 'Too light for a bar. Use 1 kg or more.'
+  s3 not: A 0.5 kg bar chosen
+  s4 see: 'No plates are on. The calculator will show just the bar.'
+  s4 not: The calculator crashing or still showing plates
+J-F-phone-1023-04 | type 6 | member | Plates and bars with an added 0.5 kg plate and a 15 kg bar
+  s1 see: The 0.5 kg plate gone
+  s1 not: A standard plate removed
+  s2 see: Standard kg plates on and the standard bar
+  s2 not: The lb setup reset too
+  s3 see: 'Couldn't read your saved plates. Showing the standard set.'
+  s3 not: A blank page or a crash
+J-F-phone-1025-01 | type 1 | member | Profile → Progress, 'Your lifts' showing the most-trained lift
+  s1 see: Screen 'Any exercise' with 'See its trend on your Profile' and the exercise list with search
+  s1 not: Two list screens after a fast double tap
+  s2 see: Back on 'Your lifts' with that exercise's chart
+  s2 not: The most-trained lift still charted
+  s2 not: Two screens popped, past Profile
+J-F-phone-1025-02 | type 2 | member | 'Your lifts' after picking Deadlift on 'Any exercise'
+  s1 see: That lift charted
+  s1 not: The chart stuck on Deadlift
+  s2 see: Deadlift charted again
+  s2 not: Nothing happening because the same exercise was picked twice
+J-F-phone-1025-03 | type 3 | member | Progress; an exercise never done in the chosen range
+  s1 see: A line that says it was not done in this range
+  s1 not: All of history shown silently
+  s1 not: 'No data' when the read failed
+  s2 see: 'Your lifts' unchanged
+  s2 not: The chart changed
+J-F-phone-1025-04 | type 6 | member | Progress showing a picked exercise
+  s1 see: The most-trained lift charted again (the pick is forgotten)
+  s1 not: The old pick shown after a restart
+  s1 not: An empty chart
+J-F-phone-1009-01 | type 1 | member | Settings → Workouts → Rest timer and sounds; workout sounds on; ringer normal
+  s1 see: Sheet 'Default rest' with 'Used for every exercise that has no rest time of its own.'
+  s1 see: The row shows the new length
+  s1 not: The old length still used
+  s2 see: The rest bar counts down from 2:00
+  s2 not: The rest starting twice
+  s2 not: A rest of another length
+  s3 see: 2:15 left
+  s3 not: The end alert still set for the old time
+  s4 see: One buzz and the picked rest-over sound
+  s4 see: The bar turns red and counts the extra time ('+0:10 over')
+  s4 not: The sound twice (app and notification)
+  s4 not: No buzz or sound
+  s5 see: The over count stops and a new rest starts
+  s5 not: The red count still running
+J-F-phone-1009-02 | type 2 | member | A rest running; the member locks the phone
+  s1 see: The 'Rest is over' notification rings on time
+  s1 not: No alert
+  s1 not: The alert deleted as it appears
+  s2 see: The ask to hear 'Rest is over' on time, with Allow and Not now
+  s2 not: The ask shown again before 7 days after Not now
+J-F-phone-1009-03 | type 2 | member | 'Open MettleUp on my watch' on; a Wear OS watch connected
+  s1 see: MettleUp opens on the watch
+  s1 not: The watch app opening when the switch is off
+  s2 see: The phone's rest bar also gains 15 seconds
+  s2 not: Phone and watch showing different times left
+J-F-phone-1009-04 | type 3 | member | Rest timer and sounds; the default rest save fails, or sounds are off
+  s1 see: 'Couldn't save it. It applies until the app closes.'
+  s1 see: The sheet stays open
+  s1 not: The sheet closing as if saved
+  s2 see: No rest starts
+  s2 not: A rest of 0 seconds ringing at once
+  s3 see: 'Workout sounds are off, so Rest is over only buzzes.'
+  s3 see: A buzz, no sound
+  s3 not: A sound while sounds are off
+J-F-phone-1009-05 | type 6 | member | A rest running after ticking set 2
+  s1 see: The rest stops
+  s1 not: The bell ringing for an unticked set
+  s2 see: On: 'Rest is over' rings through; off: it is held, buzz too
+  s2 not: A sound through Do Not Disturb while the switch is off
+J-F-phone-1009-06 | type 12 | member | A new install; Do Not Disturb permission never used
+  s1 see: Off by default
+  s1 not: The app ringing through Do Not Disturb without the member turning it on
+  s2 see: The phone's Do Not Disturb access asked for, used only for 'Rest is over'
+  s2 not: The access used for any other sound
+J-F-phone-1024-01 | type 1 | member | Settings → Workouts; first-time settings
+  s1 see: The switch on
+  s1 not: Other switches changed
+  s2 see: A one-tap rating for the set; rating it starts the rest timer
+  s2 not: No rating shown while the switch is on
+  s3 see: The weekly goal reads 3
+  s3 not: The goal jumping past 7
+  s4 see: The rows show the new choices
+  s4 not: Suggested weights still using the old step
+  s5 see: Every choice as left
+  s5 not: A choice back to its first-time value
+J-F-phone-1024-02 | type 2 | member | Settings → Workouts → Rest timer and sounds
+  s1 see: Sheet 'Rest-over sound' with 'The sound when your rest is over. The MettleUp chime is the default.'
+  s1 see: The row shows the bell
+  s1 not: The chime still playing at the end of rest
+  s2 see: No 'In use' screen after the next set
+  s2 not: The 'In use' screen still shown
+J-F-phone-1024-03 | type 3 | member | Settings → Workouts with a weekly goal of 7, and later none
+  s1 see: The button is disabled; the goal stays 7
+  s1 not: A goal of 8
+  s2 see: The button is disabled
+  s2 not: A goal of 0 or a negative goal
+J-F-phone-1024-04 | type 6 | member | 'Previous values' was 'Same folder' on an old version
+  s1 see: 'Previous values' reads Any workout
+  s1 not: The retired 'Same folder' choice still in use
+  s2 see: On: coach notes in the workout; off: none
+  s2 not: A coach note shown while off
+J-F-phone-1024-05 | type 12 | member | A member who trains at a gym; share picture gym name left at its first-time value
+  s1 see: The gym's name or logo on the picture (on by default) with a way to turn it off
+  s1 not: Body weight, photos or notes on the picture
+  s1 not: No way to leave the gym name off

@@ -1,0 +1,640 @@
+# A8-phone-native-1: coverage of 95 Tier 1 journeys (17 features, from A5-phone-native-2, A5-phone-native-3). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-phone-1205 | apps/mobile/test/tracker/restCard.test.ts | unit | 185 lines | file name
+F-phone-1205 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 1 journey phrase(s)
+F-phone-1205 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-phone-1205 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 1 journey phrase(s)
+F-phone-1205 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-phone-1205 | apps/dashboard/test/crm/demoGym.test.ts | unit | 109 lines | asserts 1 journey phrase(s)
+F-phone-1205 | apps/dashboard/test/crm/setupCards.test.ts | unit | 17 lines | asserts 1 journey phrase(s)
+F-phone-1205 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/BridgingTest.kt | watch | 33 lines | asserts 1 journey phrase(s)
+F-phone-1205 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 1 journey phrase(s)
+F-phone-1205 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-phone-1205 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-phone-1205 | apps/mobile/test/tracker/auditC5RestBell.test.ts | unit | 132 lines | asserts 1 journey phrase(s)
+F-phone-1210 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 2 journey phrase(s)
+F-phone-1210 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 2 journey phrase(s)
+F-phone-1210 | apps/mobile/test/tracker/restCard.test.ts | unit | 185 lines | file name
+F-phone-1210 | apps/dashboard/e2e/bell-inbox-uat.spec.mjs | e2e | 401 lines | asserts 1 journey phrase(s)
+F-phone-1210 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-phone-1210 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-phone-1210 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 1 journey phrase(s)
+F-phone-1210 | apps/dashboard/e2e/whatsnew.spec.mjs | e2e | 122 lines | asserts 1 journey phrase(s)
+F-phone-1210 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-phone-1210 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-phone-1210 | apps/dashboard/test/crm/installSteps.test.ts | unit | 43 lines | asserts 1 journey phrase(s)
+F-phone-1210 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-phone-1204 | apps/mobile/test/tracker/restCard.test.ts | unit | 185 lines | file name
+F-phone-1204 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 1 journey phrase(s)
+F-phone-1204 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 1 journey phrase(s)
+F-phone-1204 | apps/mobile/test/tracker/watchBridge.test.ts | unit | 153 lines | asserts 1 journey phrase(s)
+F-phone-1203 | apps/mobile/test/tracker/restCard.test.ts | unit | 185 lines | file name
+F-phone-1203 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-phone-1203 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-phone-1203 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-phone-1203 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/BridgingTest.kt | watch | 33 lines | asserts 1 journey phrase(s)
+F-phone-1203 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 1 journey phrase(s)
+F-phone-1203 | apps/mobile/modules/forge-rest/android/src/test/java/com/forgeai/rest/AlertRingTest.kt | native | 155 lines | asserts 1 journey phrase(s)
+F-phone-1203 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-phone-1203 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-phone-1203 | apps/mobile/test/tracker/liveClockAndSounds.test.ts | unit | 89 lines | asserts 1 journey phrase(s)
+F-phone-1203 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 1 journey phrase(s)
+F-phone-1203 | apps/mobile/test/tracker/watchBridge.test.ts | unit | 153 lines | asserts 1 journey phrase(s)
+F-phone-1211 | apps/mobile/test/tracker/restCard.test.ts | unit | 185 lines | file name
+F-phone-1211 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 1 journey phrase(s)
+F-phone-1211 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 1 journey phrase(s)
+F-phone-1211 | apps/mobile/test/tracker/watchBridge.test.ts | unit | 153 lines | asserts 1 journey phrase(s)
+F-phone-1214 | apps/mobile/test/onboarding/welcomeIntro.test.ts | unit | 355 lines | imports the code
+F-phone-1216 | apps/dashboard/test/crm/freshness.test.ts | unit | 56 lines | asserts 7 journey phrase(s)
+F-phone-1216 | apps/mobile/test/onboarding/welcomeIntro.test.ts | unit | 355 lines | imports the code, asserts 4 journey phrase(s)
+F-phone-1216 | apps/mobile/test/tracker/watchInstall.test.ts | unit | 159 lines | asserts 6 journey phrase(s)
+F-phone-1216 | apps/mobile/test/tracker/watchUpdateCard.test.ts | unit | 324 lines | asserts 4 journey phrase(s)
+F-phone-1216 | apps/mobile/qa/uat-rel-r438-b-watch-update.yaml | maestro | 184 lines | asserts 3 journey phrase(s)
+F-phone-1216 | apps/mobile/qa/uat-rel-r438-c-look.yaml | maestro | 41 lines | asserts 3 journey phrase(s)
+F-phone-1216 | apps/mobile/qa/uat-rel-r438-a-watch-update.yaml | maestro | 89 lines | asserts 2 journey phrase(s)
+F-phone-1216 | apps/mobile/qa/uat-rel-r440-popup-bars.yaml | maestro | 76 lines | asserts 2 journey phrase(s)
+F-phone-1216 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-phone-1216 | apps/dashboard/e2e/friend-live-uat.spec.mjs | e2e | 262 lines | asserts 1 journey phrase(s)
+F-phone-1216 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 1 journey phrase(s)
+F-phone-1216 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-phone-1217 | apps/mobile/test/onboarding/welcomeIntro.test.ts | unit | 355 lines | imports the code
+F-phone-1217 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-phone-1217 | apps/dashboard/e2e/feedback.spec.mjs | e2e | 34 lines | asserts 1 journey phrase(s)
+F-phone-1217 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 1 journey phrase(s)
+F-phone-1217 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 1 journey phrase(s)
+F-phone-1217 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-phone-1217 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 1 journey phrase(s)
+F-phone-1217 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-phone-1217 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-phone-1217 | apps/dashboard/test/crm/demoGym.test.ts | unit | 109 lines | asserts 1 journey phrase(s)
+F-phone-1217 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | asserts 1 journey phrase(s)
+F-phone-1217 | apps/mobile/test/tracker/watchInstall.test.ts | unit | 159 lines | asserts 1 journey phrase(s)
+F-phone-1206 | apps/mobile/test/tracker/offlineTick.test.ts | unit | 277 lines | file name
+F-phone-1206 | apps/dashboard/e2e/timings.spec.mjs | e2e | 130 lines | asserts 1 journey phrase(s)
+F-phone-1206 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-phone-1206 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-phone-1206 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-phone-1206 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 1 journey phrase(s)
+F-phone-1206 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-phone-1206 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-phone-1206 | apps/mobile/test/shop/gymBusy.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-phone-1206 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 1 journey phrase(s)
+F-phone-1206 | apps/mobile/test/tracker/watchBridge.test.ts | unit | 153 lines | asserts 1 journey phrase(s)
+F-phone-1206 | deploy/hq/readLogAlert.test.mjs | unit | 265 lines | asserts 1 journey phrase(s)
+F-phone-1209 | apps/mobile/test/tracker/restCard.test.ts | unit | 185 lines | file name
+F-phone-1209 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 1 journey phrase(s)
+F-phone-1209 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 1 journey phrase(s)
+F-phone-1209 | apps/mobile/test/tracker/watchBridge.test.ts | unit | 153 lines | asserts 1 journey phrase(s)
+F-phone-1200 | apps/mobile/test/tracker/restCard.test.ts | unit | 185 lines | file name
+F-phone-1200 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/RestTextTest.kt | watch | 69 lines | asserts 1 journey phrase(s)
+F-phone-1200 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 1 journey phrase(s)
+F-phone-1200 | apps/mobile/test/tracker/notifAudit.test.ts | unit | 235 lines | asserts 1 journey phrase(s)
+F-phone-1200 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 1 journey phrase(s)
+F-phone-1200 | apps/mobile/test/tracker/watchBridge.test.ts | unit | 153 lines | asserts 1 journey phrase(s)
+F-phone-1200 | apps/mobile/test/tracker/watchNextExercise.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-phone-1207 | apps/mobile/test/tracker/restCard.test.ts | unit | 185 lines | file name
+F-phone-1207 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-phone-1207 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-phone-1207 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 1 journey phrase(s)
+F-phone-1207 | apps/dashboard/e2e/r495-uat.spec.mjs | e2e | 303 lines | asserts 1 journey phrase(s)
+F-phone-1207 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 1 journey phrase(s)
+F-phone-1207 | apps/dashboard/e2e/timings.spec.mjs | e2e | 130 lines | asserts 1 journey phrase(s)
+F-phone-1207 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-phone-1207 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-phone-1207 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | asserts 1 journey phrase(s)
+F-phone-1207 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 1 journey phrase(s)
+F-phone-1207 | apps/dashboard/test/crm/gymReports.test.ts | unit | 140 lines | asserts 1 journey phrase(s)
+F-phone-1201 | apps/mobile/test/tracker/restCard.test.ts | unit | 185 lines | file name
+F-phone-1201 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 1 journey phrase(s)
+F-phone-1201 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-phone-1201 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-phone-1201 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 1 journey phrase(s)
+F-phone-1201 | apps/mobile/test/tracker/watchBridge.test.ts | unit | 153 lines | asserts 1 journey phrase(s)
+F-phone-1213 | apps/mobile/test/onboarding/welcomeIntro.test.ts | unit | 355 lines | imports the code
+F-phone-1213 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-phone-1213 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-phone-1213 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-phone-1213 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 1 journey phrase(s)
+F-phone-1213 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-phone-1213 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-phone-1213 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 1 journey phrase(s)
+F-phone-1213 | apps/mobile/test/tracker/watchBridge.test.ts | unit | 153 lines | asserts 1 journey phrase(s)
+F-phone-1212 | apps/mobile/test/onboarding/welcomeIntro.test.ts | unit | 355 lines | imports the code
+F-phone-1212 | apps/mobile/test/db/finishReal.test.ts | unit | 104 lines | asserts 1 journey phrase(s)
+F-phone-1212 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-phone-1212 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-phone-1212 | apps/mobile/test/tracker/phase2ReviewFixes.test.ts | unit | 287 lines | asserts 1 journey phrase(s)
+F-phone-1212 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 1 journey phrase(s)
+F-phone-1208 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/SelfDimTest.kt | watch | 234 lines | asserts 5 journey phrase(s)
+F-phone-1208 | apps/mobile/test/tracker/idlePause.test.ts | unit | 113 lines | asserts 2 journey phrase(s)
+F-phone-1208 | apps/mobile/test/tracker/workoutPause.test.ts | unit | 164 lines | asserts 2 journey phrase(s)
+F-phone-1208 | supabase/tests/0031_branches.sql | db | 352 lines | asserts 2 journey phrase(s)
+F-phone-1208 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 1 journey phrase(s)
+F-phone-1208 | apps/dashboard/test/crm/hqAccess.test.ts | unit | 81 lines | asserts 1 journey phrase(s)
+F-phone-1208 | apps/mobile/qa/p2-pause-b.yaml | maestro | 20 lines | asserts 1 journey phrase(s)
+F-phone-1208 | apps/mobile/test/lib/watchDiag.test.ts | unit | 336 lines | asserts 1 journey phrase(s)
+F-phone-1208 | apps/mobile/test/shop/gymPaused.test.ts | unit | 30 lines | asserts 1 journey phrase(s)
+F-phone-1208 | apps/mobile/test/shop/planRequest.test.ts | unit | 171 lines | asserts 1 journey phrase(s)
+F-phone-1208 | supabase/tests/0030_plans_and_trials.sql | db | 136 lines | asserts 1 journey phrase(s)
+F-phone-1208 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 1 journey phrase(s)
+F-phone-1229 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | imports the code, asserts 6 journey phrase(s)
+F-phone-1229 | apps/mobile/test/tracker/healthOldForgeAi.test.ts | unit | 117 lines | imports the code, file name
+F-phone-1229 | apps/mobile/test/tracker/healthOnOff.test.ts | unit | 136 lines | imports the code, file name
+F-phone-1229 | apps/mobile/test/tracker/healthR267.test.ts | unit | 297 lines | imports the code, file name
+F-phone-1229 | apps/mobile/test/tracker/healthReadF55.test.ts | unit | 393 lines | imports the code, file name
+F-phone-1229 | apps/mobile/test/tracker/healthUnsent.test.ts | unit | 131 lines | imports the code, file name
+F-phone-1229 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | imports the code, asserts 2 journey phrase(s)
+F-phone-1229 | apps/mobile/test/tracker/r72HealthSend.test.ts | unit | 52 lines | imports the code, file name
+F-phone-1229 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | asserts 3 journey phrase(s)
+F-phone-1229 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-1229 | apps/mobile/test/tracker/historyExport.test.ts | unit | 414 lines | imports the code
+F-phone-1229 | apps/mobile/test/tracker/phase5Review.test.ts | unit | 85 lines | imports the code
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-phone-1205-01 | type 1 | member | Android phone, Settings > Rest timer and sounds, 'Workout sounds' on, a workout running
+  s1 see: The switch shows off
+  s1 see: The 'Rest-over sound' row now reads 'Workout sounds are off: Rest is over only buzzes'
+  s1 not: The default rest or the chosen rest-over sound changes
+  s1 not: The switch springs back on
+  s2 see: 'Rest is over' notification with 'Next: <set>' and 'Complete set'
+  s2 see: The phone buzzes, the watch buzzes
+  s2 not: Any chime, bell, beep or whistle from the phone
+  s2 not: No buzz at all
+  s3 see: 'Rest is over' rings with the chosen sound again
+  s3 not: The phone keeps buzzing only after the switch is back on
+J-F-phone-1205-02 | type 2 | member | 'Workout sounds' off, MettleUp open on screen during a rest
+  s1 see: The phone buzzes once
+  s1 see: The app shows the rest is over
+  s1 not: The app's own bell plays
+  s1 not: A second buzz from a second alert
+J-F-phone-1205-03 | type 3 | member | 'Workout sounds' off; in Android settings the member turned off vibration for the 'Rest is over' quiet channel
+  s1 see: Row 'Rest alerts: Silent — tap to fix'
+  s1 not: No warning while 'Rest is over' can neither ring nor buzz
+  s1 not: A caption that only talks about sound when the fix is the buzz
+  s2 see: Android's settings page of that 'Rest is over' channel
+  s2 not: Another app's page
+  s2 not: Nothing opens
+J-F-phone-1205-04 | type 6 | member | A rest is counting down with 'Workout sounds' on
+  s1 see: The switch shows off
+  s1 not: The running rest still ends with a sound
+  s2 see: 'Rest is over' only buzzes
+  s2 not: The old sound plays because the rest started with sounds on
+J-F-phone-1205-05 | type 12 | member | 'Workout sounds' off, phone locked on a gym bench
+  s1 see: 'Rest is over' on the lock screen with the next set's name
+  s1 see: A buzz only
+  s1 not: Any sound that draws others' attention after the member chose quiet
+  s1 not: More than the next set's name and numbers on the lock screen
+J-F-phone-1210-01 | type 1 | member | Android 14 phone, notifications on, 'Alarms & reminders' off for MettleUp
+  s1 see: Row 'Rest alerts: May be late — tap to fix'
+  s1 see: Caption 'Tap to turn on "Alarms & reminders" in your phone’s settings, so "Rest is over" rings on time'
+  s1 not: The row hidden while rests can come late
+  s1 not: The row says 'On time'
+  s2 see: Android's 'Alarms & reminders' page for MettleUp
+  s2 not: Nothing opens
+  s2 not: Another app's page
+  s3 see: The row is gone
+  s3 not: The row still says 'May be late' after the fix
+J-F-phone-1210-02 | type 2 | member | Notifications for MettleUp blocked in Android settings
+  s1 see: Row 'Rest alerts: Off — notifications are blocked'
+  s1 see: Caption 'Tap to turn them on'
+  s1 not: No row while no rest alert can show
+  s2 see: Android's notification page for MettleUp
+  s2 not: A page that cannot turn them on
+J-F-phone-1210-03 | type 2 | member | The 'Rest is over' channel muted in Android settings (or by a cleaner app)
+  s1 see: Row 'Rest alerts: Silent — tap to fix'
+  s1 see: Caption 'Android muted "Rest is over" for MettleUp. Turn its sound back on'
+  s1 not: 'On time' while the channel is muted
+  s2 see: Android's page of the muted channel itself
+  s2 not: The page of a channel that is fine
+J-F-phone-1210-04 | type 2 | member | Android background restriction on for MettleUp
+  s1 see: Row 'Rest alerts: May be late — tap to fix'
+  s1 see: Caption 'Android is holding MettleUp back in the background. Allow it'
+  s1 not: No warning
+  s2 see: MettleUp's own Android app page
+  s2 not: Nothing opens
+J-F-phone-1210-05 | type 3 | member | Every alert setting allowed (or an iPhone)
+  s1 see: No 'Rest alerts' row at all
+  s1 not: A 'Rest alerts' row with an empty caption
+  s1 not: An error or a spinner
+J-F-phone-1210-06 | type 6 | member | All alerts work; the member then mutes 'Rest is over' in Android settings
+  s1 see: Row 'Rest alerts: Silent — tap to fix' appears without a restart
+  s1 not: The row only after the app is killed
+  s2 see: The row disappears
+  s2 not: The row stays after the fix
+J-F-phone-1204-01 | type 1 | member | Android phone, Settings > Rest timer and sounds, 'Workout sounds' on, 'Ring through Do Not Disturb' off
+  s1 see: Caption 'Rest is over still rings while Do Not Disturb is on'
+  s1 see: The switch shows on
+  s1 not: The switch shown on an iPhone
+  s2 see: 'Rest is over' rings with the chosen sound at alarm volume
+  s2 see: The watch buzzes
+  s2 not: Silence while the switch is on
+  s2 not: The sound only at media volume
+  s3 see: No sound from the phone
+  s3 see: No bell from the open app
+  s3 not: The alarm channel rings while the switch is off
+J-F-phone-1204-02 | type 2 | member | Switch on, Do Not Disturb on, MettleUp open on screen
+  s1 see: 'Rest is over' rings once through Do Not Disturb
+  s1 not: Two sounds (app bell and alert)
+  s1 not: Silence
+J-F-phone-1204-03 | type 3 | member | Switch off (the default), Do Not Disturb on
+  s1 see: 'Rest is over' shows without sound
+  s1 see: The watch buzz follows the phone's choice
+  s1 not: A sound through Do Not Disturb
+  s1 not: The app's own bell plays when the app opens
+J-F-phone-1204-04 | type 6 | member | A rest counting down, Do Not Disturb on, switch off
+  s1 see: The switch shows on
+  s1 not: The watch keeps the old choice until the next rest
+  s2 see: Phone rings through Do Not Disturb, the watch buzz gets through too
+  s2 not: Only the next rest follows the change
+J-F-phone-1204-05 | type 12 | member | Switch on, Do Not Disturb on, the phone on a shared table at night
+  s1 see: The alarm channel 'Rest is over, through Do Not Disturb' rings
+  s1 see: Lock screen shows 'Rest is over' and the next set
+  s1 not: The alarm channel used for anything other than 'Rest is over'
+  s1 not: The DND channel used while the switch is off
+J-F-phone-1203-01 | type 1 | member | Android phone, Settings > Rest timer and sounds, 'Workout sounds' on, sound 'MettleUp chime'
+  s1 see: Sheet 'Rest-over sound'
+  s1 see: 'The sound when your rest is over. The MettleUp chime is the default.'
+  s1 see: Choices 'MettleUp chime', 'Bell', 'Double beep', 'Whistle'
+  s1 not: A sheet with no current choice marked
+  s2 see: The bell plays at media volume
+  s2 see: 'Bell' is marked; the sheet stays open
+  s2 not: The sheet closes before the member can hear the others
+  s2 not: No sound
+  s3 see: 'Rest is over' rings with the bell
+  s3 see: The row shows 'Bell'
+  s3 not: The chime or the phone's default tone plays
+J-F-phone-1203-02 | type 2 | member | Sound 'Whistle' chosen, MettleUp open on screen during a rest
+  s1 see: The whistle plays once at notification volume
+  s1 not: A different sound than with the screen off
+  s1 not: Two sounds
+J-F-phone-1203-03 | type 3 | member | 'Workout sounds' off
+  s1 see: Footnote 'Workout sounds are off, so Rest is over only buzzes. Turn them on to hear this sound.'
+  s1 not: The row cannot be opened
+  s2 see: The double beep plays once as a preview
+  s2 see: 'Rest is over' only buzzes
+  s2 not: The double beep at the end of the rest while sounds are off
+J-F-phone-1203-04 | type 6 | member | Sound 'Whistle' chosen earlier
+  s1 see: 'MettleUp chime' marked
+  s1 not: The whistle still rings at the next rest
+  s2 see: The chime rings
+  s2 not: Two sound channels left side by side in Android settings for old choices
+J-F-phone-1211-01 | type 1 | member | Member of a gym that set its own colour, a workout running
+  s1 see: The live workout card tinted in the gym's colour
+  s1 not: MettleUp orange for a gym member with a colour
+  s1 not: Another gym's colour
+  s2 see: Rest card and 'Rest is over' in the gym's colour
+  s2 not: Orange because the app was closed
+J-F-phone-1211-02 | type 2 | member | Member with no gym
+  s1 see: Both cards in MettleUp orange
+  s1 not: A colour left from an earlier gym
+J-F-phone-1211-03 | type 3 | member | A gym colour that is not a valid colour code
+  s1 see: Cards in MettleUp orange
+  s1 not: A crash, a black or white card, or no card
+J-F-phone-1211-04 | type 6 | member | Member leaves the gym (or the gym changes its colour)
+  s1 see: Cards in the new colour, or orange after leaving
+  s1 not: The old colour kept for good
+  s1 not: The colour changing in the middle of a rest
+J-F-phone-1214-01 | type 1 | member | Member of a gym with its own colour, Wear OS watch with the MettleUp watch app
+  s1 see: The watch app opens drawn in the gym's colour (lightened if too dark for the black screen)
+  s1 not: MettleUp orange for a gym with a colour
+  s1 not: A colour too dark to read on the watch
+J-F-phone-1214-02 | type 2 | member | Gym with only a background tone and no colour of its own
+  s1 see: The watch stays MettleUp orange
+  s1 not: The background tone used as the watch colour
+J-F-phone-1214-03 | type 3 | member | Member with no gym
+  s1 see: The watch in MettleUp orange
+  s1 not: A blank or broken colour on the watch
+  s1 not: An earlier gym's colour
+J-F-phone-1214-04 | type 6 | member | Member leaves the gym between two workouts
+  s1 see: The watch back in MettleUp orange
+  s1 not: The old gym's colour kept on the watch
+  s1 not: The colour changing in the middle of a workout
+J-F-phone-1216-01 | type 1 | member | Android phone with a connected Wear OS watch that has no MettleUp watch app
+  s1 see: Row 'Your watch' with 'Install on watch'
+  s1 not: The row missing while a watch is connected
+  s1 not: 'Installed' while the app is missing
+  s2 see: 'Opening on your watch…' then 'Check your watch: its Play Store is open on MettleUp. Tap Install there.'
+  s2 not: A success line when the watch's Play Store never opened
+  s2 not: A wait longer than about 20 seconds
+  s3 see: Row 'Your watch' says 'Installed'
+  s3 not: 'Install on watch' still shown
+J-F-phone-1216-02 | type 2 | member | After the first finished workout, watch connected without the app
+  s1 see: Card 'MettleUp works on your watch too', 'See your rest timer and next set on your wrist.', buttons 'Install on watch' and 'Not now'
+  s1 not: The card on a phone with no watch
+  s2 see: The card goes
+  s2 not: The card back on the next visit
+J-F-phone-1216-03 | type 2 | member | Watch has an older MettleUp watch app
+  s1 see: Pop-up 'Your watch app has an update' with 'Update on watch'
+  s1 not: The pop-up over an open workout
+  s2 see: 'Check your watch'
+  s2 not: 'Updated' before the watch even opened its Play Store
+J-F-phone-1216-04 | type 3 | member | No watch connected (watch off or out of reach)
+  s1 see: No 'Your watch' install line
+  s1 not: 'Install on watch' that cannot work
+  s2 see: 'Your watch is not connected. Open Play Store on your watch and search MettleUp.'
+  s2 not: A crash or an endless spinner
+J-F-phone-1216-05 | type 6 | member | Watch app already installed
+  s1 see: 'MettleUp is already on your watch. When you start a workout, it opens on your watch too.'
+  s1 not: The watch's Play Store opened again for nothing
+J-F-phone-1217-01 | type 1 | member | Phone with a watch screen diary, Settings > Help and feedback
+  s1 see: Caption 'It helps us fix a watch screen that goes dark. It holds only the times your watch screen turned on, off or dim, and your watch's Battery Saver and screen settings.'
+  s1 not: The switch on by default
+  s2 see: The message is sent
+  s2 see: 'Your watch screen log was sent too.'
+  s2 not: The log sent without the switch
+  s2 not: The message lost because the log failed
+J-F-phone-1217-02 | type 2 | member | The feedback button on another screen
+  s1 see: 'Your watch screen log was sent too.'
+  s1 not: A different switch text or a log sent with the switch off
+J-F-phone-1217-03 | type 3 | member | The watch log cannot be read or the feedback box refuses it
+  s1 see: 'Your message was sent, but the watch screen log was not. Try again later.'
+  s1 not: 'Sent too' when the log failed
+  s1 not: The message itself not sent
+J-F-phone-1217-04 | type 6 | member | The switch left off (the default)
+  s1 see: The message is sent
+  s1 not: Any watch log in the feedback box
+J-F-phone-1217-05 | type 12 | member | Switch on, the member trusts the caption
+  s1 see: Only what the caption lists leaves the phone
+  s1 not: The watch app version, the update pop-up's last choice, the phone model or a sender id sent without the caption saying so
+  s1 not: Any watch name, workout or heart rate
+J-F-phone-1206-01 | type 1 | member | A workout running, MettleUp in the background (not closed), rest card on the lock screen
+  s1 see: The set is ticked in the workout
+  s1 see: 'Rest is over' (if up) goes
+  s1 see: The next rest or the live card follows
+  s1 not: The set ticked twice
+  s1 not: A different set ticked than the one the card names
+J-F-phone-1206-02 | type 2 | member | MettleUp swiped away, live workout card showing 'Complete set' for 'Bench Press, set 2'
+  s1 see: A rest card starts, naming the next set
+  s1 see: The live card moves on to the next set
+  s1 not: Nothing happens
+  s1 not: The workout clock stays paused after the tick
+  s2 see: Set 2 is ticked with the numbers the card showed
+  s2 not: The tick lost
+  s2 not: The tick saved twice
+J-F-phone-1206-03 | type 2 | member | 'Rest is over' showing with 'Complete set', phone locked
+  s1 see: The named set is ticked
+  s1 see: 'Rest is over' goes
+  s1 not: No button anywhere for two minutes after the rest
+J-F-phone-1206-04 | type 3 | member | MettleUp closed, the card names a set the phone cannot place (the last set, a set with no numbers, or a card over an hour old)
+  s1 see: Note 'Open MettleUp to save <set>'
+  s1 see: 'MettleUp was closed. Open it within 10 min to log this set.'
+  s1 not: A set ticked with numbers the member never saw
+  s1 not: A rest started for a workout left open days ago
+  s2 see: The set is ticked
+  s2 not: The tap lost although the app opened in time
+J-F-phone-1206-05 | type 6 | member | MettleUp closed, 'Complete set' tapped once already
+  s1 see: Nothing more happens
+  s1 not: The same set ticked twice
+  s1 not: A second rest started
+J-F-phone-1206-06 | type 12 | member | Phone locked on a gym bench, live card on the lock screen
+  s1 see: The set is ticked
+  s1 not: The lock screen showing more than the exercise, set and numbers
+  s1 not: Anything beyond the member's own workout reachable without unlocking
+J-F-phone-1209-01 | type 1 | member | A workout open in MettleUp, a rest running with about 2 min left, phone locked
+  s1 see: The rest card is back in the notification shade with 'Next: <exercise, set>', the countdown still running from the old end time, and 'Done', '+15 s', 'Skip'
+  s1 not: The rest card missing until MettleUp is opened
+  s1 not: The countdown starting again from the full rest length
+  s2 see: 'Rest is over' with sound and buzz, on the lock screen, with 'Complete set'
+  s2 not: No 'Rest is over' on the phone while the watch buzzes
+  s2 not: Two 'Rest is over' alerts for one rest
+  s3 see: The live workout card comes back with the next set and 'Complete set'
+  s3 not: No workout card at all after the restart
+  s3 not: A set logged without a tap
+J-F-phone-1209-02 | type 2 | member | A workout open, a rest running, Google Play updates MettleUp in the background
+  s1 see: The rest card is posted again with the same end time; the alarm is set again
+  s1 not: The rest card gone for good after the update
+  s1 not: A 'Rest is over' at once for a rest still running
+  s2 see: 'Rest is over' on time
+  s2 not: A silent rest end because the alarm was lost in the update
+J-F-phone-1209-03 | type 2 | member | Android 12+, 'Alarms & reminders' off for MettleUp, a rest running with the app in the background
+  s1 see: The running rest's alarm is set again as an exact alarm
+  s1 not: The member having to come back to MettleUp before this rest becomes exact
+  s2 see: 'Rest is over' on the second, not minutes late
+  s2 not: 'Ended N min ago' on a rest that should have been on time
+J-F-phone-1209-04 | type 3 | member | A workout open, a 90 s rest running
+  s1 see: No 'Rest is over' (the ended rest is forgotten quietly); the live workout card with 'Complete set' is back
+  s1 not: A late 'Rest is over' that rings mid-set
+  s1 not: A rest card counting below zero
+J-F-phone-1209-05 | type 6 | member | A workout started yesterday and never finished, its live card last updated over an hour ago
+  s1 see: No live workout card comes back (a workout left open for hours is not brought back)
+  s1 not: A stale card whose 'Complete set' logs a set and starts a rest days later
+  s2 see: The open workout as the app shows it; the app decides about its own card
+  s2 not: The open workout lost because of the restart
+J-F-phone-1209-06 | type 12 | member | A rest running, phone restarted, phone lying on a gym bench locked
+  s1 see: The rest card and later 'Rest is over' show the next exercise and set on the lock screen (public visibility)
+  s1 not: Anything beyond the exercise name and set on the lock screen (no body weight, no gym or member details)
+  s1 not: Any of it sent off the phone except to the member's own watch app
+J-F-phone-1209-07 | type 1 | the system | Phone finishes starting up; a rest was saved with an end time still in the future
+  s1 see: The rest card is posted again, the end alarm armed for the saved end time, the rest re-sent to the watch, the live card restored if kept within the last hour
+  s1 not: The receiver crashing and taking the app's start with it
+  s1 not: The alarm armed for a different time than the saved end
+J-F-phone-1209-08 | type 2 | the system | MettleUp has just been updated (package replaced), or the member allowed 'Alarms & reminders'
+  s1 see: The same recovery as after a restart; a 'Rest is over' still up is respected and the live card waits for it
+  s1 not: Two copies of the live card
+  s1 not: A second 'Rest is over' for the same rest
+  s2 see: Only a running rest's alarm is set again (exact now); nothing else changes
+  s2 not: A rest that already ended being alerted again
+J-F-phone-1209-09 | type 3 | the system | Phone starts up with no saved rest and no kept workout card
+  s1 see: Nothing is posted
+  s1 not: An empty rest card or an empty workout card
+  s1 not: An error notification
+J-F-phone-1209-10 | type 6 | the system | Phone starts up; the saved rest ended while the phone was off
+  s1 see: The saved rest is forgotten and its alarm removed; no alert is posted
+  s1 not: A late 'Rest is over'
+  s1 not: The forgotten rest coming back on the next app open
+J-F-phone-1200-01 | type 1 | member | A workout open in MettleUp, a set with a rest time
+  s1 see: A rest card in the notification shade: a countdown line ('2:53 left'), 'Next: <exercise, set>', buttons 'Done', '+15 s', 'Skip'; the live workout card goes down while it shows
+  s1 not: Two MettleUp workout notifications at once
+  s1 not: The card making a sound or buzzing at the rest start
+  s2 see: The countdown 15 s longer; the app's own timer shows the same end when opened
+  s2 not: The app and the card showing different end times
+  s2 not: The card jumping to the top with a sound
+  s3 see: The rest card goes; the live workout card comes back
+  s3 not: A 'Rest is over' later for the skipped rest
+J-F-phone-1200-02 | type 2 | member | A rest card in the shade, phone locked
+  s1 see: MettleUp opens on the open workout
+  s1 not: MettleUp opening on the home tab
+  s1 not: The rest being skipped by opening the app
+J-F-phone-1200-03 | type 2 | member | MettleUp swiped away from recents, live workout card in the shade
+  s1 see: The phone starts the rest on its own: rest card with countdown and 'Next: ...'
+  s1 not: No rest because the app's JS was not running
+  s1 not: The set ticked twice when the app is opened
+J-F-phone-1200-04 | type 3 | member | Notifications for MettleUp blocked in Android settings, a workout open
+  s1 see: No rest card; the in-app timer still runs and shows the rest when the app is opened
+  s1 not: A crash or an error pop-up
+  s1 not: The rest lost in the app
+  s2 see: Nothing happens (no rest running)
+  s2 not: A new rest started from nowhere
+J-F-phone-1200-05 | type 6 | member | A rest card in the shade
+  s1 see: The live workout card comes back with 'Complete set'; 'Rest is over' still comes at the end
+  s1 not: No notification left for the rest of the rest
+  s1 not: The end alert lost because the card was swiped
+  s2 see: The rest card says 'All sets done · Finish when ready' instead of a next set
+  s2 not: 'Next:' naming a set that does not exist
+J-F-phone-1200-06 | type 12 | member | A rest card in the shade, phone locked on a gym bench
+  s1 see: The countdown and 'Next: <exercise, set>' shown on the lock screen; the countdown channel never makes a sound
+  s1 not: The countdown channel making a sound
+  s1 not: Any gym or personal detail beyond the exercise and set
+J-F-phone-1207-01 | type 1 | member | A workout open, MettleUp swiped away from recents, a rest card showing 'Done' for a set the phone cannot tick on its own
+  s1 see: A quiet note: 'Open MettleUp to save <exercise, set>' with 'MettleUp was closed. Open it within 10 min to log this set.'; the live workout card goes down while it shows
+  s1 not: The set shown as saved when it was not
+  s1 not: A sound or watch buzz for the note
+  s2 see: MettleUp opens, the set is ticked, the note goes, the live workout card comes back
+  s2 not: The set ticked twice
+  s2 not: The note staying after the app took the tap
+J-F-phone-1207-02 | type 2 | member | MettleUp in the background, a rest card's Done for a set whose numbers are not filled in
+  s1 see: A note 'Open MettleUp to log <set>' with '<what is missing> — nothing was saved.'
+  s1 not: A set saved with empty numbers
+  s2 see: A note 'Open MettleUp to log your set' with 'That rest card was out of date, so nothing was saved.'
+  s2 not: A different set ticked than the card named
+J-F-phone-1207-03 | type 3 | member | The note 'Open MettleUp to save ...' showing
+  s1 see: The note has gone by itself; the set is not ticked silently at the late time
+  s1 not: A set logged with a time 10+ minutes after the tap without the member seeing it
+J-F-phone-1207-04 | type 6 | member | The note showing, live workout card down
+  s1 see: The live workout card comes back; the tap still waits for the app
+  s1 not: No MettleUp notification left at all
+  s1 not: The tap lost by the swipe
+  s2 see: Only the newest tap is kept
+  s2 not: Both taps ticking two sets
+J-F-phone-1207-05 | type 12 | member | The note showing, phone locked
+  s1 see: The note with the set name shows on the lock screen (public visibility)
+  s1 not: Anything but the exercise and set name
+  s1 not: The note sent to the watch with a buzz
+J-F-phone-1201-01 | type 1 | member | A workout open, a rest running, phone locked in a pocket
+  s1 see: 'Rest is over' with the chosen rest sound and a buzz, shown on the lock screen, text 'Next: <exercise, set>' (or 'Time for your next set'), button 'Complete set'
+  s1 not: A silent end
+  s1 not: Two alerts for one rest
+  s1 not: Only the watch buzzing
+  s2 see: The alert goes by itself; the live workout card comes back
+  s2 not: The alert staying until swiped and keeping the live card away
+J-F-phone-1201-02 | type 2 | member | A rest running with MettleUp on screen
+  s1 see: A softer 'Rest is over' at notification volume, gone after 60 s
+  s1 not: An alarm-volume ring while the member is looking at the app
+J-F-phone-1201-03 | type 2 | member | Do Not Disturb on, 'Ring through Do Not Disturb' on in MettleUp
+  s1 see: 'Rest is over' rings through Do Not Disturb on its own channel
+  s1 not: Silence because Do Not Disturb is on
+  s1 not: Ringing through DND when the switch is off
+J-F-phone-1201-04 | type 3 | member | A rest running
+  s1 see: No 'Rest is over' at the old end time
+  s1 not: A ghost 'Rest is over' for a skipped rest
+  s2 see: No alert at the original end; it comes 15 s later
+  s2 not: An alert at the old end and another at the new end
+J-F-phone-1201-05 | type 6 | member | 'Rest is over' showing
+  s1 see: It goes; the live workout card comes back
+  s1 not: The alert coming back
+  s2 see: The old 'Rest is over' goes when the new rest starts
+  s2 not: An old 'Rest is over' left beside the new rest card
+J-F-phone-1201-06 | type 2 | member | Phone asleep, 'Alarms & reminders' not allowed, alarm delivered late
+  s1 see: 'Rest is over' with 'Ended N min ago · Next: ...'
+  s1 not: No alert because it is late
+J-F-phone-1201-07 | type 12 | member | A rest ends with the phone locked on a gym bench
+  s1 see: The alert and next set on the lock screen; 'Workout sounds' off means it only buzzes
+  s1 not: A sound when the member turned workout sounds off
+  s1 not: Any detail beyond the next exercise and set
+J-F-phone-1213-01 | type 1 | member | MettleUp Plus, a workout open on the phone, the MettleUp watch app showing the workout
+  s1 see: The phone ticks that set, the rest starts on phone and watch, the phone shows the rest card
+  s1 not: A different set ticked than the watch named
+  s1 not: The set ticked twice
+  s2 see: The set ticked with the watch's numbers
+  s2 not: Numbers changed from what the watch showed
+J-F-phone-1213-02 | type 2 | member | A rest running, shown on the watch countdown
+  s1 see: The phone card and the app timer move 15 s later
+  s1 not: Watch and phone showing different end times
+  s2 see: The rest ends 15 s sooner, never less than a second from now
+  s2 not: A rest ending in the past and no alert
+  s3 see: The rest goes on phone and watch; the live workout card comes back on the phone
+  s3 not: A 'Rest is over' later for the skipped rest
+J-F-phone-1213-03 | type 2 | member | A rest running, the watch countdown showing 'Done'
+  s1 see: The set the countdown names is ticked on the phone
+  s1 not: The tap lost with no sign on the watch
+J-F-phone-1213-04 | type 3 | member | The watch sends a Done the phone cannot read (an older or broken message)
+  s1 see: The watch shows its button again at once with a note that it was not logged
+  s1 not: The watch hiding the button for 20 s as if the set were saved
+  s2 see: Nothing changes on the phone
+  s2 not: A new rest started
+J-F-phone-1213-05 | type 6 | member | MettleUp swiped away on the phone, workout open, watch connected
+  s1 see: The phone starts the rest itself, or shows 'Open MettleUp to save ...' when it cannot tick the set alone
+  s1 not: The tap ignored silently while the watch thinks it was saved
+  s2 see: The waiting tick applied once
+  s2 not: The tick applied twice or lost
+J-F-phone-1213-06 | type 12 | member | A phone paired with a watch
+  s1 see: Only the MettleUp watch app (same package and signing key) can send them to the phone
+  s1 not: Another app on the watch able to tick sets or skip rests
+  s1 not: Watch buttons working on the free plan where the watch app is a Plus feature
+J-F-phone-1212-01 | type 1 | member | MettleUp Plus, watch app installed and connected
+  s1 see: Within a few seconds the watch shows the exercise, the set line, last time's numbers, the goal and 'Complete set', in the gym's colour
+  s1 not: The watch stuck on an old workout
+  s1 not: Another exercise than the phone's
+  s2 see: The watch shows the rest countdown with the next set and buzzes at its end
+  s2 not: The watch countdown ending at a different time than the phone
+  s3 see: The watch shows 'Workout saved' for about 4 s, then no workout
+  s3 not: The watch still showing the workout
+J-F-phone-1212-02 | type 2 | member | Workout open, watch out of Bluetooth range
+  s1 see: The latest state arrives on the watch by itself (kept and retried)
+  s1 not: The watch showing an older set than the phone
+  s1 not: The watch never catching up until the app is reopened
+J-F-phone-1212-03 | type 3 | member | Free plan (no Plus and no gym plan), watch app installed
+  s1 see: The watch shows that it needs MettleUp Plus; no sets, no rest buzz on the watch; the phone's own rest timer still works
+  s1 not: The watch logging sets on the free plan
+  s1 not: The phone rest timer locked too
+J-F-phone-1212-04 | type 3 | member | A phone with no Wear OS support
+  s1 see: Nothing about a watch; sync pauses quietly
+  s1 not: An error message about a watch
+  s1 not: Battery drain from endless retries
+J-F-phone-1212-05 | type 6 | member | Workout open and shown on the watch
+  s1 see: The watch shows no workout, without 'Workout saved'
+  s1 not: 'Workout saved' on the watch for a discarded workout
+  s2 see: The watch countdown goes
+  s2 not: The watch buzzing later for the skipped rest
+J-F-phone-1212-06 | type 12 | member | Workout open with a watch connected
+  s1 see: Only to the member's own paired watch through the Wear Data Layer
+  s1 not: The workout sent to the gym or any server by this feature
+J-F-phone-1208-01 | type 1 | member | A workout open in MettleUp with an exercise picture
+  s1 see: A live workout card: exercise name, next set line, its picture, the workout time counting up ('42:15'), button 'Complete set'
+  s1 not: The card making a sound
+  s1 not: A blank picture box
+  s2 see: The set is ticked and the rest starts; the live card is replaced by the rest card
+  s2 not: Two workout notifications at once
+  s2 not: A different set ticked than the card named
+J-F-phone-1208-02 | type 2 | member | Live workout card showing, next set has nothing to save (no numbers)
+  s1 see: No 'Complete set' button; tapping the card opens MettleUp on the workout
+  s1 not: A 'Complete set' that saves an empty set
+J-F-phone-1208-03 | type 3 | member | Notifications for MettleUp blocked
+  s1 see: No card; the workout keeps going in the app
+  s1 not: A crash or a lost workout
+  s2 see: The time stands still and says 'Paused'
+  s2 not: The time still counting while paused
+J-F-phone-1208-04 | type 6 | member | Live card showing (Android 14+)
+  s1 see: It comes back
+  s1 not: The workout left with no card and no 'Complete set'
+  s2 see: The card goes and does not come back
+  s2 not: A card for a finished workout
+J-F-phone-1208-05 | type 12 | member | Live card showing, phone locked
+  s1 see: The exercise, set and time on the lock screen; never a sound; the card is not copied to a watch (local only)
+  s1 not: A sound from the live card
+  s1 not: Anything beyond the workout's exercise and set
+J-F-phone-1229-01 | type 1 | member | Settings, Health Connect page; MettleUp holds Health Connect access (sending on)
+  s1 see: A pop-up "Remove MettleUp's access to Health Connect?" saying workouts already sent stay in Health Connect, with 'Remove access' and 'Not now'
+  s1 not: Access removed without asking
+  s2 see: The button reads 'Removing…', then 'Removed. MettleUp can no longer use Health Connect. Health Connect may still list MettleUp until you close and reopen MettleUp. Workouts already sent stay there. To remove them, open Health Connect.'; sending, weight, steps and sleep all show off
+  s2 not: A switch still showing on
+  s2 not: Workouts waiting to be sent sent later anyway
+J-F-phone-1229-02 | type 2 | member | Settings, Health Connect page
+  s1 see: Android 14+: Health Connect's page for MettleUp; Health Connect missing or too old: its Play Store page
+  s1 not: Nothing happening without a word
+  s2 see: 'Couldn't open Health Connect. Open your phone's Settings → Health Connect.'
+  s2 not: A crash
+J-F-phone-1229-03 | type 3 | member | The pop-up "Remove MettleUp's access to Health Connect?" open
+  s1 see: The pop-up closes; nothing changes
+  s1 not: Access removed anyway
+  s2 see: 'Couldn't remove MettleUp's access. Open Health Connect, find MettleUp and turn off its access there.' in red; switches unchanged
+  s2 not: 'Removed' shown when it was not
+J-F-phone-1229-04 | type 3 | member | MettleUp holds no Health Connect access
+  s1 see: No "Stop and remove MettleUp's access" button
+  s1 not: A remove button that does nothing
+J-F-phone-1229-05 | type 6 | member | Access removed earlier
+  s1 see: Access works again; the remove button is back
+  s1 not: The app still treating access as removed after it was given again
+J-F-phone-1229-06 | type 12 | member | Access removed
+  s1 see: Workouts already sent stay in Health Connect; weigh-ins already added stay in body weight; Health Connect data never went to the gym or an AI
+  s1 not: Health Connect data having been sent to the gym
+  s1 not: The app reading weight, steps or sleep after removal

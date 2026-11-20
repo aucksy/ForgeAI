@@ -1,0 +1,45 @@
+# B-run-panel-ui-shell-a: 6 + 15 x panel / panel/ui-shell. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L6.1 | 6 | Offline and bad network on every write
+L6.2 | 6 | retries do not double-save
+L6.3 | 6 | outages of each outside service (Supabase, Cloudflare, Play, WhatsApp, AI): what the user sees
+L6.4 | 6 | backups exist and a restore was tested
+L6.5 | 6 | cron jobs that fail silently
+L6.6 | 6 | error logging (every "try again" logs why)
+L6.7 | 6 | Every recording or timer that runs over time (heart rate, rest timer, workout clock, sync) keeps working in every device state: screen on, dim / always-on, off, app in the background, watch off the wrist
+L6.8 | 6 | where cloud emulators cannot show it, prove it by reading the code
+L15.1 | 15 | For every S1/S2 failure type: would we know before a gym tells us?
+L15.2 | 15 | Error reports, crash reports, job failure alerts, a daily health line
+L15.3 | 15 | Also: product measurement: which sign-up, activation, day-30 and paid numbers exist, and which decisions are made blind
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1109 | live | What's new page, MettleUp HQ news in the bell, new-feature dots | apps/dashboard/src/crm/ui/WhatsNew.tsx:351
+F-panel-1121 | live | Workout offer: train N times get extra days, give or undo a reward, check a member's workout code | apps/dashboard/src/crm/ui/WorkoutCodeCheckSheet.tsx:18
+F-panel-1129 | live | Your numbers and Your growth: number tiles with the list behind each, month-by-month growth, one-page print report | apps/dashboard/src/crm/ui/BusinessGrowth.tsx:70
+F-panel-500 | live | Move around the admin app (side menu, phone bottom bar, More page, page links, one Refresh button) | apps/dashboard/src/crm/ui/AppShell.tsx:1
+F-panel-501 | live | This device: Dark or Light screen, English or Hinglish, put the admin app on the phone's home screen | apps/dashboard/src/crm/ui/ThemeToggle.tsx:1
+F-panel-502 | live | Offline front desk: keep working without internet, Offline banner, greyed-out buttons, sync when back | apps/dashboard/src/crm/ui/offline.tsx:1
+F-panel-503 | live | First run: welcome screen (sign in, create a gym, try it) and the 'your gym is ready' page with gym code, join link and  | apps/dashboard/src/crm/ui/Welcome.tsx:1
+F-panel-505 | live | Gym alerts: the bell's to-do list, 'Needs you' with a ring, and alerts on this device with the app closed (owner picks i | apps/dashboard/src/crm/ui/BellInbox.tsx:1
+F-panel-506 | live | What's new in the admin app, and the dots that mark a new feature in the menu | apps/dashboard/src/crm/ui/WhatsNew.tsx:351
+F-panel-508 | live | Today's to-do cards: approve members' pause and renew requests, confirm check-in mobile numbers, approve people who join | apps/dashboard/src/crm/ui/PlanRequestsCard.tsx:1
+F-panel-509 | live | Your numbers and Your growth: fees collected, new members, busiest hours, month-by-month growth and its printable report | apps/dashboard/src/crm/ui/OwnerNumbers.tsx:526
+F-panel-511 | live | Member ID card: print, share or save a member's card | apps/dashboard/src/crm/ui/MemberCardSheet.tsx:52
+F-panel-521 | live | Workout offer: check a member's workout code at the desk against the gym's check-ins | apps/dashboard/src/crm/ui/WorkoutCodeCheckSheet.tsx:18
+F-panel-535 | hidden | Pay MettleUp online and open MettleUp receipts | apps/dashboard/src/crm/ui/BillingOnline.tsx:65
+F-panel-536 | hidden | Stopped-paying line on Today: 7 extra days, then basic mode, then read-only, with Pay now for the owner | apps/dashboard/src/crm/ui/LapseBanner.tsx:30
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1109 | live | What's new page, MettleUp HQ news in the bell, new-feature dots | apps/dashboard/src/crm/ui/WhatsNew.tsx:351
+F-panel-1121 | live | Workout offer: train N times get extra days, give or undo a reward, check a member's workout code | apps/dashboard/src/crm/ui/WorkoutCodeCheckSheet.tsx:18
+F-panel-1129 | live | Your numbers and Your growth: number tiles with the list behind each, month-by-month growth, one-page print report | apps/dashboard/src/crm/ui/BusinessGrowth.tsx:70
+F-panel-500 | live | Move around the admin app (side menu, phone bottom bar, More page, page links, one Refresh button) | apps/dashboard/src/crm/ui/AppShell.tsx:1
+F-panel-501 | live | This device: Dark or Light screen, English or Hinglish, put the admin app on the phone's home screen | apps/dashboard/src/crm/ui/ThemeToggle.tsx:1
+F-panel-502 | live | Offline front desk: keep working without internet, Offline banner, greyed-out buttons, sync when back | apps/dashboard/src/crm/ui/offline.tsx:1
+F-panel-503 | live | First run: welcome screen (sign in, create a gym, try it) and the 'your gym is ready' page with gym code, join link and  | apps/dashboard/src/crm/ui/Welcome.tsx:1
+F-panel-505 | live | Gym alerts: the bell's to-do list, 'Needs you' with a ring, and alerts on this device with the app closed (owner picks i | apps/dashboard/src/crm/ui/BellInbox.tsx:1
+F-panel-506 | live | What's new in the admin app, and the dots that mark a new feature in the menu | apps/dashboard/src/crm/ui/WhatsNew.tsx:351
+F-panel-508 | live | Today's to-do cards: approve members' pause and renew requests, confirm check-in mobile numbers, approve people who join | apps/dashboard/src/crm/ui/PlanRequestsCard.tsx:1
+F-panel-509 | live | Your numbers and Your growth: fees collected, new members, busiest hours, month-by-month growth and its printable report | apps/dashboard/src/crm/ui/OwnerNumbers.tsx:526
+F-panel-511 | live | Member ID card: print, share or save a member's card | apps/dashboard/src/crm/ui/MemberCardSheet.tsx:52
+F-panel-521 | live | Workout offer: check a member's workout code at the desk against the gym's check-ins | apps/dashboard/src/crm/ui/WorkoutCodeCheckSheet.tsx:18
+F-panel-535 | hidden | Pay MettleUp online and open MettleUp receipts | apps/dashboard/src/crm/ui/BillingOnline.tsx:65
+F-panel-536 | hidden | Stopped-paying line on Today: 7 extra days, then basic mode, then read-only, with Pay now for the owner | apps/dashboard/src/crm/ui/LapseBanner.tsx:30

@@ -1,0 +1,510 @@
+# A8-server-hq-gate-workers-1: coverage of 62 Tier 1 journeys (9 features, from A5-server-hq-gate-workers-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-server-202 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 7 journey phrase(s)
+F-server-202 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 7 journey phrase(s)
+F-server-202 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 6 journey phrase(s)
+F-server-202 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 6 journey phrase(s)
+F-server-202 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 6 journey phrase(s)
+F-server-202 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 6 journey phrase(s)
+F-server-202 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | asserts 5 journey phrase(s)
+F-server-202 | apps/dashboard/test/crm/messages.test.ts | unit | 189 lines | asserts 5 journey phrase(s)
+F-server-202 | apps/dashboard/test/crm/retiredAiPack.test.ts | unit | 118 lines | imports the code, asserts 2 journey phrase(s)
+F-server-202 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 4 journey phrase(s)
+F-server-202 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-server-202 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | imports the code, asserts 1 journey phrase(s)
+F-server-203 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code, asserts 1 journey phrase(s)
+F-server-203 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | imports the code
+F-server-203 | apps/dashboard/test/crm/retiredAiPack.test.ts | unit | 118 lines | imports the code
+F-server-203 | deploy/hq/english.test.mjs | unit | 351 lines | imports the code
+F-server-203 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-203 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-203 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 2 journey phrase(s)
+F-server-203 | apps/dashboard/test/crm/ownerNumbers.test.ts | unit | 316 lines | asserts 2 journey phrase(s)
+F-server-203 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-server-203 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-server-203 | apps/dashboard/test/crm/assistant/messageLang.test.ts | unit | 175 lines | asserts 1 journey phrase(s)
+F-server-203 | apps/dashboard/test/crm/joinPay.test.ts | unit | 223 lines | asserts 1 journey phrase(s)
+F-server-204 | apps/mobile/qa/uat-rel-r336-update.yaml | maestro | 229 lines | asserts 5 journey phrase(s)
+F-server-204 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-server-204 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchVersionTest.kt | watch | 31 lines | asserts 4 journey phrase(s)
+F-server-204 | apps/mobile/qa/uat-rel-r452-help-replies.yaml | maestro | 182 lines | asserts 4 journey phrase(s)
+F-server-204 | apps/mobile/test/lib/updatePrompt.test.ts | unit | 214 lines | asserts 4 journey phrase(s)
+F-server-204 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code, asserts 1 journey phrase(s)
+F-server-204 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-server-204 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-server-204 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-server-204 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-server-204 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | imports the code
+F-server-204 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-server-205 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-server-205 | apps/mobile/qa/uat-rel-r452-help-replies.yaml | maestro | 182 lines | asserts 4 journey phrase(s)
+F-server-205 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | imports the code
+F-server-205 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 3 journey phrase(s)
+F-server-205 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 3 journey phrase(s)
+F-server-205 | apps/dashboard/test/crm/retiredAiPack.test.ts | unit | 118 lines | imports the code
+F-server-205 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-server-205 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 3 journey phrase(s)
+F-server-205 | deploy/hq/english.test.mjs | unit | 351 lines | imports the code
+F-server-205 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-205 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-205 | supabase/tests/0087_feedback_owner_desk.sql | db | 143 lines | asserts 3 journey phrase(s)
+F-server-208 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-server-208 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | imports the code
+F-server-208 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 3 journey phrase(s)
+F-server-208 | apps/dashboard/test/crm/retiredAiPack.test.ts | unit | 118 lines | imports the code
+F-server-208 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-server-208 | deploy/hq/english.test.mjs | unit | 351 lines | imports the code
+F-server-208 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-208 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-208 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 2 journey phrase(s)
+F-server-208 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 2 journey phrase(s)
+F-server-208 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-server-208 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 2 journey phrase(s)
+F-server-209 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 4 journey phrase(s)
+F-server-209 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 3 journey phrase(s)
+F-server-209 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 3 journey phrase(s)
+F-server-209 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 3 journey phrase(s)
+F-server-209 | apps/dashboard/test/crm/retiredAiPack.test.ts | unit | 118 lines | imports the code
+F-server-209 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-server-209 | deploy/hq/english.test.mjs | unit | 351 lines | imports the code
+F-server-209 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-209 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-209 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-server-209 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 2 journey phrase(s)
+F-server-209 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 2 journey phrase(s)
+F-server-211 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 4 journey phrase(s)
+F-server-211 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 4 journey phrase(s)
+F-server-211 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 3 journey phrase(s)
+F-server-211 | apps/dashboard/test/crm/retiredAiPack.test.ts | unit | 118 lines | imports the code
+F-server-211 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-server-211 | deploy/hq/english.test.mjs | unit | 351 lines | imports the code
+F-server-211 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-211 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-211 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 2 journey phrase(s)
+F-server-211 | apps/dashboard/e2e/pay-mettleup-uat.spec.mjs | e2e | 210 lines | asserts 2 journey phrase(s)
+F-server-211 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 2 journey phrase(s)
+F-server-211 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-server-212 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | imports the code, asserts 3 journey phrase(s)
+F-server-212 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 5 journey phrase(s)
+F-server-212 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-server-212 | apps/dashboard/test/crm/retiredAiPack.test.ts | unit | 118 lines | imports the code
+F-server-212 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-server-212 | deploy/hq/english.test.mjs | unit | 351 lines | imports the code
+F-server-212 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-212 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-212 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 2 journey phrase(s)
+F-server-212 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 2 journey phrase(s)
+F-server-212 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-server-212 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 2 journey phrase(s)
+F-server-213 | apps/dashboard/test/crm/messages.test.ts | unit | 189 lines | asserts 6 journey phrase(s)
+F-server-213 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 4 journey phrase(s)
+F-server-213 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | imports the code
+F-server-213 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 3 journey phrase(s)
+F-server-213 | apps/dashboard/test/crm/retiredAiPack.test.ts | unit | 118 lines | imports the code
+F-server-213 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-server-213 | deploy/hq/english.test.mjs | unit | 351 lines | imports the code
+F-server-213 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-213 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-213 | supabase/tests/0042_message_calm.sql | db | 150 lines | asserts 3 journey phrase(s)
+F-server-213 | apps/dashboard/e2e/member-messages-uat.spec.mjs | e2e | 236 lines | asserts 2 journey phrase(s)
+F-server-213 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 2 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-server-202-01 | type 1 | HQ admin | HQ open in the browser, signed in, several real gyms exist
+  s1 see: Heading 'All gyms' with the button 'Make a gym'
+  s1 see: Tiles 'Gyms', 'Members', 'Need a look'
+  s1 see: Line '<n> gyms. Tap a gym for more.'
+  s1 not: Test and demo gyms counted in the tiles while they are hidden
+  s1 not: An endless loading screen
+  s2 see: Line 'Showing 1 of <n> gyms.'
+  s2 see: The one gym row with code, status, members, check-ins and owner
+  s2 not: Rows of other gyms left in the table
+  s2 not: The count line still saying the full number
+  s3 see: That gym's HQ page opens
+  s3 not: Another gym opens
+  s3 not: The search is lost when coming back with ‹ All gyms
+J-F-server-202-02 | type 2 | HQ admin | All gyms page, some gyms are new or paused, one business has two branches
+  s1 see: The list scrolls to the table
+  s1 see: Line 'Showing <x> of <n> gyms.'
+  s1 see: 'Show' set to the same filter
+  s1 not: The tile number different from the rows shown
+  s2 see: Each business with '<n> branches' and members in registers and in the app
+  s2 see: Each branch a link to its HQ page
+  s2 not: A branch listed under the wrong business
+J-F-server-202-03 | type 3 | HQ admin | All gyms page while Cloudflare's small database cannot be read, then a search that matches nothing
+  s1 see: Warning 'Feedback, leads and AI use could not be read right now.'
+  s1 see: The gym rows still shown
+  s1 not: The whole page failing
+  s1 not: AI use shown as 0 as if it were true
+  s2 see: 'No gym matches.'
+  s2 see: Button 'Show all gyms'
+  s2 not: An empty table with no words
+  s3 see: Every gym back, search box empty, Show set to all
+  s3 not: The old filter still applied
+J-F-server-202-04 | type 6 | HQ admin | A gym started today shows as new and not checked
+  s1 see: The gym row says 'New, not checked yet' under its code
+  s1 see: Tile 'Need a look' counts it
+  s1 not: The new gym missing from the list
+  s2 see: The row now shows the active status
+  s2 see: 'Need a look' one lower
+  s2 not: The old status still shown after the page reloads
+J-F-server-202-05 | type 12 | HQ admin | All gyms page; a gym owner has not opened support access
+  s1 see: Gym name, code, member and check-in counts, takings this month, owner name and owner mobile
+  s1 not: Any member name, member mobile or receipt shown
+  s1 not: The list readable without the HQ sign-in
+  s2 see: The file has gym-level facts only; the Log gets one line first
+  s2 not: A file with member rows
+  s2 not: A download that leaves no Log line
+J-F-server-203-01 | type 1 | HQ admin | All gyms page, a working gym that used AI column matching this month
+  s1 see: '‹ All gyms' link, the gym name as heading with its status badge
+  s1 see: 'Gym code <code> · started <date>'
+  s1 not: Another gym's facts
+  s1 not: A blank page while one part is slow
+  s2 see: 'Members in the register', 'Members in the app', 'Check-ins, 7 days', 'Gym takings this month', 'Staff', 'Wrong sign-in codes, 24 h', 'Last desk activity'
+  s2 not: A tile showing NaN or undefined
+  s3 see: 'Last 30 days: <n> reads, about ₹<x>.'
+  s3 see: 'Reads a day for this gym' with 'Normal: <n>. 0 switches it off for this gym.'
+  s3 not: Assistant use mixed into the column-matching count
+  s4 see: The credits left, this month's assistant use and the daily allowance, and whether the web page is on
+  s4 not: A card that crashes the page when its database update is missing
+J-F-server-203-02 | type 2 | HQ admin | Payments page, a waiting payment from this gym
+  s1 see: The same gym page opens straight from the link
+  s1 not: The All gyms list opening instead
+  s1 not: A different gym opening
+J-F-server-203-03 | type 3 | HQ admin | A gym link with a broken id, then a gym whose AI use cannot be read
+  s1 see: An error in plain words; nothing else changes
+  s1 not: A page for some other gym
+  s1 not: A crash with a blank screen
+  s2 see: 'AI use could not be read right now.' in the AI card
+  s2 see: The rest of the page shown
+  s2 not: 'No AI use in the last 30 days.' shown as if true
+J-F-server-203-04 | type 6 | HQ admin | A gym that is new, not checked yet
+  s1 see: Badge 'New, not checked yet'
+  s1 see: Words 'New gyms start as “New, not checked yet” until you have looked at them'
+  s1 see: Button 'Mark as checked'
+  s1 not: The words calling this the free trial
+  s2 see: Page reloads with 'Marked as checked.'
+  s2 see: 'Mark as checked' gone; 'Pause the gym' still there
+  s2 not: The badge still showing the old status
+J-F-server-203-05 | type 12 | HQ admin | A gym whose owner has not opened support access
+  s1 see: Counts and gym facts, the owner's name and mobile
+  s1 see: No member list, no member names
+  s1 not: A member name, mobile or receipt shown outside a support window the owner opened
+  s2 see: Names, devices and addresses only inside an open support window
+  s2 not: Records readable without the owner's yes
+J-F-server-204-01 | type 1 | HQ admin | HQ open, signed in
+  s1 see: Heading 'System'
+  s1 see: Card 'Gym server storage' with '<x> MB of the free <y> MB' and a bar
+  s1 not: A bar wider than the card when over 100 %
+  s2 see: 'Gyms' with '<n> new this week, test gyms included'
+  s2 see: 'AI reads this month' with 'about ₹<x>, <n> failed'
+  s2 see: 'Feedback' '<n> new' and 'Leads' '<n> new'
+  s2 not: Last month's AI use counted in this month
+  s3 see: Table 'Version', 'Released', 'App downloads'
+  s3 not: A release listed twice
+  s3 not: Downloads of a test file counted
+J-F-server-204-02 | type 3 | HQ admin | GitHub limits HQ and Cloudflare's small database cannot be read
+  s1 see: 'Download counts are not available right now. GitHub limits how often HQ can ask; they come back by themselves.'
+  s1 see: Warning 'Feedback, leads and AI use could not be read right now.'
+  s1 not: The page failing as a whole
+  s1 not: Zero feedback shown as if true
+J-F-server-204-03 | type 6 | HQ admin | Before the first weekly Cloudflare check, then after a Monday check
+  s1 see: Only 'Checked every Monday. Needs you shows a line only when a day passes 60%.'
+  s1 not: A made-up busiest day before any check ran
+  s2 see: 'Busiest day of the week before <date>: <n> of the 100,000 requests allowed a day (<p>%), on <day>.'
+  s2 not: The old week still shown after a new check
+J-F-server-205-01 | type 1 | HQ admin | A member sent a help question the AI could not answer; HQ open
+  s1 see: Heading 'Feedback' with 'Show' set to 'Everything'
+  s1 see: The card flagged 'Needs reply' with time, 'Member app', 'gym <code>' and the screen
+  s1 see: 'AI answer:' and the AI line
+  s1 not: A message from one gym shown with another gym's code
+  s2 see: 'Sent. Their phone got a pop-up.' or 'Sent. They see it the next time they open the app.'
+  s2 see: Needs you count one lower
+  s2 not: The reply sent twice
+  s2 not: A pop-up to a phone that left no push address
+  s3 see: 'Saved.'
+  s3 not: The note shown to the member
+  s3 not: The status saved on another message
+J-F-server-205-02 | type 2 | HQ admin | Needs you shows help questions waiting
+  s1 see: Feedback opens with 'Show' set to 'Needs reply'
+  s1 see: Only cards flagged 'Needs reply'
+  s1 not: Messages already replied to in the list
+  s2 see: 'Rewritten. Nothing is sent yet: check it, change anything, then tap Send reply. Undo brings your own words back.'
+  s2 not: The rewritten text sent to the member before Send reply
+J-F-server-205-03 | type 3 | HQ admin | Feedback page, a help question card
+  s1 see: 'Fill in every box.'
+  s1 not: A one-letter reply saved and pushed
+  s2 see: 'No question is waiting for a reply.'
+  s2 not: An empty page with no words
+  s3 see: 'That gym or request is not there any more. The page was refreshed.'
+  s3 not: 'Saved.' for a change that was not made
+J-F-server-205-04 | type 6 | HQ admin | A plain feedback message with status new
+  s1 see: 'Saved.'
+  s1 see: Needs you new-feedback count one lower
+  s1 not: The count unchanged after the save
+  s2 see: 'Saved.'
+  s2 see: The count back up
+  s2 not: The message stuck as Bug
+  s3 see: The message under Spam
+  s3 not: A spam message still counted as waiting for a reply
+J-F-server-205-05 | type 12 | HQ admin | A member's help question with phone model and screen
+  s1 see: The text, app, device, screen and gym code the member sent
+  s1 see: No member name or mobile
+  s1 not: The message shown to the gym or its trainers through HQ
+  s1 not: The push address shown
+  s2 see: Only this one question and the draft go to Google; the Log keeps tokens and cost, not the words
+  s2 not: Other messages sent to Google
+  s2 not: The question text written into the Log
+J-F-server-208-01 | type 1 | HQ admin | One new lead and two help questions waiting; HQ open
+  s1 see: Heading 'Needs you'
+  s1 see: '3 things to do. Tap one to open it.'
+  s1 see: One line per kind, each with an arrow
+  s1 not: A count that differs from what the line opens
+  s1 not: Plain new feedback counted twice as a help question too
+  s2 see: The 'Leads' page opens
+  s2 not: A page with nothing new on it
+J-F-server-208-02 | type 2 | HQ admin | HQ open on another page in a background tab
+  s1 see: The number on the menu item and in the tab title ('(1) MettleUp HQ')
+  s1 not: The number only after a manual reload
+  s1 not: '99+' when there are fewer than 100
+J-F-server-208-03 | type 2 | HQ admin | Alerts turned on with 'Turn on alerts' and allowed by the browser
+  s1 see: A short sound and a browser pop-up
+  s1 not: A sound on every minute's check when nothing new came
+  s1 not: A pop-up with the member's words
+J-F-server-208-04 | type 3 | HQ admin | Nothing waits, then one part cannot be read
+  s1 see: Card 'All clear' with 'HQ checks again every minute.'
+  s1 not: A count left from before
+  s2 see: 'One part of this list could not be counted right now. The rest is up to date.'
+  s2 not: A zero shown as if nothing waits
+J-F-server-208-05 | type 6 | HQ admin | One new lead waiting
+  s1 see: 'Saved.'
+  s1 not: The lead still counted as new
+  s2 see: 'All clear' (or one fewer)
+  s2 see: Menu number hidden at 0
+  s2 not: The menu number still 1
+J-F-server-209-01 | type 1 | HQ admin | A gym owner sent a UPI reference for Pro monthly; the money is in the bank
+  s1 see: Heading 'Payments' with 'Show' on waiting
+  s1 see: Card: gym name · code · Open gym, amount, plan and reference
+  s1 not: Payments of other statuses mixed in
+  s2 see: Question ending 'Only confirm when the money is in the bank. Go ahead?'
+  s2 not: Confirmed with no question
+  s3 see: The page reloads without that card
+  s3 see: The gym's plan and paid-until moved on 1 month
+  s3 not: The plan moved on twice
+  s3 not: The free days of a trial lost
+J-F-server-209-02 | type 2 | HQ admin | Payments page
+  s1 see: Each payment with its outcome words
+  s1 not: Waiting payments in this list
+  s2 see: The gym's HQ page
+  s2 not: Another gym
+J-F-server-209-03 | type 3 | HQ admin | A waiting payment with no matching money in the bank
+  s1 see: A refusal asking for a reason (exact words unknown: the database decides)
+  s1 not: A rejection with no reason for the owner
+  s2 see: The card leaves the waiting list
+  s2 not: The gym's plan changed
+  s3 see: 'That payment is already confirmed or not confirmed. The page was refreshed.'
+  s3 not: The plan moved on after a rejection
+J-F-server-209-04 | type 6 | HQ admin | A payment HQ did not confirm earlier
+  s1 see: The rejected payment with its reason
+  s1 not: A Confirm button on a payment already handled
+  s2 see: A new waiting card for the same gym
+  s2 not: The old rejected payment turned back to waiting
+J-F-server-209-05 | type 12 | HQ admin | Payments page
+  s1 see: Gym name, code, amount, plan, reference; no member data
+  s1 not: The page open to anyone without the HQ sign-in
+  s2 see: The reason is the only HQ text the gym owner sees
+  s2 not: The log note ('Note for the log') shown to the owner
+J-F-server-209-06 | type 1 | gym owner | Owner signed in online, free trial running, MettleUp payment details set
+  s1 see: 'Pay for MettleUp by UPI or bank transfer, and see when your payment is confirmed.'
+  s1 see: Plans with prices and a UPI QR code
+  s1 not: A QR code with a wrong amount
+  s2 see: The UPI app shows MettleUp as payee and the amount
+  s2 not: Another payee name
+  s3 see: 'Sending…' then a line 'Waiting for confirmation' at the top
+  s3 not: The payment sent twice
+  s3 not: The plan changed before MettleUp confirms
+  s4 see: 'Confirmed: paid until <date>'
+  s4 see: '… Thank you!'
+  s4 not: The free days of the trial lost
+J-F-server-209-07 | type 2 | gym owner | The free trial is in its last 14 days
+  s1 see: The Pay MettleUp screen
+  s1 not: The price list opening instead
+J-F-server-209-08 | type 3 | gym owner | Front desk login; then the owner with 3 payments already waiting
+  s1 see: 'Only the gym owner can pay MettleUp'
+  s1 see: 'Sign in as the owner, with the gym online, to pay.'
+  s1 not: The pay form shown to the desk
+  s2 see: 'You have 3 payments waiting for confirmation. Wait for MettleUp to check them first.'
+  s2 not: A 4th waiting payment saved
+J-F-server-209-09 | type 6 | gym owner | A payment HQ did not confirm
+  s1 see: 'Not confirmed'
+  s1 see: '… Reason: <HQ reason>. Check the reference number and send it again, or message MettleUp.'
+  s1 not: 'Reason: not given' when HQ wrote one
+  s2 see: A new 'Waiting for confirmation' line above the old one
+  s2 not: The old line changed or removed
+J-F-server-209-10 | type 12 | gym owner | Owner sent a payment reference
+  s1 see: No payment list for the desk
+  s1 not: The desk seeing the amount and reference
+  s2 see: Only this gym's payments
+  s2 not: Another gym's payment
+J-F-server-211-01 | type 1 | HQ admin | Signed in to HQ less than 15 minutes ago; details not set yet
+  s1 see: The card open with 'Not set yet'
+  s1 see: 'Not set: gym owners see “Payment is not available yet” and no QR code. Fill these in to start taking payments.'
+  s1 not: The card folded with nothing set
+  s2 see: Question 'Change where gym owners send money?'
+  s2 not: Saved with no question
+  s3 see: 'Saved. Gym owners see the new details the next time they open Pay MettleUp.'
+  s3 not: The values written into the HQ Log
+  s3 not: Half the values saved
+J-F-server-211-02 | type 3 | HQ admin | Signed in to HQ more than 15 minutes ago
+  s1 see: 'For this, sign in again first (it must be within the last 15 minutes).'
+  s1 not: The new UPI ID saved
+  s1 not: The typed values lost before signing in again
+  s2 see: 'Payments need the database update 0060 (waiting for your yes).'
+  s2 not: A broken card
+J-F-server-211-03 | type 6 | HQ admin | Details already set
+  s1 see: Folded card 'Your payment details' with 'What gym owners pay to: UPI <id>'
+  s1 see: 'Last changed <date>.'
+  s1 not: The card open every day
+  s2 see: 'Saved. …'
+  s2 see: After reload a new Last changed date
+  s2 not: The old IFSC shown after the reload
+J-F-server-211-04 | type 12 | HQ admin | Details set
+  s1 see: 'Kept only in the gym server, never in the code. Any signed-in gym owner can read them, so a UPI ID without your mobile number is safer.'
+  s1 not: The account number written into the public code or the Log
+J-F-server-211-05 | type 1 | gym owner | Owner signed in online; MettleUp details set
+  s1 see: QR code 'UPI QR code to pay ₹<x> to MettleUp'
+  s1 see: 'UPI ID', 'Account name', 'Account number', 'IFSC'
+  s1 not: An old UPI ID
+  s1 not: A QR code without the amount
+J-F-server-211-06 | type 2 | gym owner | Trial banner in the last 14 days
+  s1 see: The same details and QR code
+  s1 not: A different UPI ID than on Settings
+J-F-server-211-07 | type 3 | gym owner | MettleUp has not set its details; then a front-desk login
+  s1 see: 'Payment is not available yet'
+  s1 see: No QR code
+  s1 not: A QR code with an empty UPI ID
+  s2 see: 'Only the gym owner can pay MettleUp'
+  s2 not: The bank details shown to the desk
+J-F-server-211-08 | type 6 | gym owner | Owner has Pay MettleUp open; HQ changes the UPI ID
+  s1 see: The old UPI ID still shown
+  s1 not: A payment to an ID MettleUp no longer uses with no hint
+  s2 see: The new UPI ID and a new QR code
+  s2 not: The old ID still shown after reopening
+J-F-server-212-01 | type 1 | HQ admin | A gym asked for a demo on the website today
+  s1 see: Heading 'Leads'
+  s1 see: 'Gyms that asked for a free demo on the website. Kept 12 months unless they become a customer.'
+  s1 see: Card: gym name · city · mobile as a call link, time, size, what they use today
+  s1 not: Leads older than the newest 300 silently missing
+  s2 see: The phone dialler with +91 and the number
+  s2 not: A wrong number
+  s3 see: 'Saved.'
+  s3 not: The note lost
+  s3 not: The status saved on another lead
+J-F-server-212-02 | type 2 | HQ admin | A lead that wants to start
+  s1 see: A form filled with the gym name and mobile
+  s1 not: A blank form
+  s2 see: The lead moves to 'Demo' with the note 'Gym made in HQ: <code>'
+  s2 not: An earlier note wiped
+  s2 not: A lead already Won pushed back to Demo
+J-F-server-212-03 | type 3 | HQ admin | A lead sent from the member app (gym name only, no mobile), and an empty list
+  s1 see: The card with the gym name and city
+  s1 see: No mobile, and no word that it came from the member app
+  s1 not: An empty call link that dials +91 only
+  s2 see: 'No leads yet.'
+  s2 not: A blank page
+J-F-server-212-04 | type 6 | HQ admin | A lead with status New
+  s1 see: 'Saved.' each time
+  s1 see: Needs you new-lead count down by one
+  s1 not: The lead still counted as new
+  s2 see: 'Saved.'
+  s2 not: A lost lead kept beyond 12 months
+J-F-server-212-05 | type 12 | HQ admin | Leads page
+  s1 see: Prospects' numbers, gym names and cities, only after the HQ sign-in
+  s1 see: Each view written to the Log
+  s1 not: The list open without the sign-in
+  s2 see: The nightly clean-up deletes it
+  s2 not: A lost or never-called lead kept past 12 months
+J-F-server-212-06 | type 1 | prospect | A gym owner on mettleup.fit, never sent the form
+  s1 see: 'Sending…' then 'Thank you! We will call you soon.'
+  s1 not: A success message for a save that failed
+  s1 not: The number sent anywhere but MettleUp
+J-F-server-212-07 | type 2 | prospect | A member shared the 'Recommend MettleUp to your gym' link
+  s1 see: 'Thank you! We will call you soon.'
+  s1 see: HQ sees the lead marked as from a member’s shared link
+  s1 not: The member's own number saved with the lead
+J-F-server-212-08 | type 3 | prospect | Website demo form
+  s1 see: 'Type a 10-digit mobile number.'
+  s1 not: A lead saved with a bad number
+  s2 see: 'You have sent too many demo requests today. Please try again tomorrow.'
+  s2 not: Every try saved
+J-F-server-212-09 | type 6 | prospect | The prospect already sent the form yesterday
+  s1 see: 'Thank you! We will call you soon.'
+  s1 not: An error for a second request
+  s2 see: One call, the team sees both requests
+  s2 not: Two calls because two rows look like two gyms
+J-F-server-212-10 | type 12 | prospect | Website demo form
+  s1 see: 'We use these details only to call you about a demo. If we don't work together they are deleted within 12 months. Never sold.'
+  s1 not: The number used for anything but the demo call
+  s2 see: The lead is deleted by the nightly clean-up
+  s2 not: The lead kept because it was marked Demo
+J-F-server-213-01 | type 1 | HQ admin | HQ open; a new feature is live for every gym
+  s1 see: Heading 'Messages'
+  s1 see: 'A message here goes to every gym. It shows in the bell at the top right of their admin app, within a minute. Never write one gym’s or one member’s details.'
+  s1 not: The old form values still in the boxes
+  s2 see: Question 'Send “<title>” to every gym now?'
+  s2 not: Sent with no question
+  s3 see: 'Sent (<n>)' list with the new card on top
+  s3 see: 'Button “<words>” opens /settings'
+  s3 not: The message sent twice
+  s3 not: Only some gyms getting it
+J-F-server-213-02 | type 2 | HQ admin | A message was sent with a mistake
+  s1 see: Question 'Take this message back? Gyms stop seeing it in their bell.'
+  s1 not: Taken back with no question
+  s2 see: The card moves under 'Taken back (<n>)' with the time it was taken back
+  s2 not: Gyms still seeing it after a minute
+J-F-server-213-03 | type 3 | HQ admin | Messages page
+  s1 see: 'Write a title (at least 3 letters).'
+  s1 not: A message saved
+  s2 see: 'A button needs both: words for the button, and an admin app page like /plans or an https:// address.'
+  s2 not: A button that opens nothing
+  s3 see: 'Messages need the database update (waiting for your yes).'
+  s3 not: A broken page
+J-F-server-213-04 | type 6 | HQ admin | One message sent
+  s1 see: 'Sent (0)' and 'Taken back (1)'
+  s1 not: The message still in Sent
+  s2 see: 'That gym or request is not there any more. The page was refreshed.'
+  s2 not: A second taken-back time saved
+J-F-server-213-05 | type 12 | HQ admin | Messages page
+  s1 see: The same words go to every gym
+  s1 not: One gym's or one member's details sent to all gyms
+  s2 see: The bell list is open without a sign-in, so anyone could read it
+  s2 not: Anything private in a message
+J-F-server-213-06 | type 1 | gym owner | Owner signed in to the admin app; HQ sent a message today with a button to /plans
+  s1 see: The message under 'From MettleUp' with its title and words
+  s1 not: The message under Your gym
+  s1 not: A message HQ took back
+  s2 see: The admin app page /plans opens
+  s2 not: A page outside the app for an app link
+J-F-server-213-07 | type 3 | gym owner | HQ sent nothing in the last 120 days
+  s1 see: No 'From MettleUp' line, only the gym's own lines or an empty bell
+  s1 not: An error in the bell
+  s1 not: Old messages shown again
+J-F-server-213-08 | type 6 | gym owner | A message is in the bell; HQ then takes it back
+  s1 see: The line leaves this person's list
+  s1 not: The line gone for everyone else too
+  s2 see: The message is not there
+  s2 not: The message still there after a reload
+J-F-server-213-09 | type 1 | staff | Front desk signed in to the admin app; HQ sent a message today with a button to /plans
+  s1 see: The message under 'From MettleUp' with its title and words
+  s1 not: The message under Your gym
+  s1 not: A message HQ took back
+  s2 see: The admin app page /plans opens
+  s2 not: A page outside the app for an app link
+J-F-server-213-10 | type 3 | staff | HQ sent nothing in the last 120 days
+  s1 see: No 'From MettleUp' line, only the gym's own lines or an empty bell
+  s1 not: An error in the bell
+  s1 not: Old messages shown again
+J-F-server-213-11 | type 6 | staff | A message is in the bell; HQ then takes it back
+  s1 see: The line leaves this person's list
+  s1 not: The line gone for everyone else too
+  s2 see: The message is not there
+  s2 not: The message still there after a reload

@@ -1,0 +1,1 @@
+{"id":"B-alerts-hq-app-b","step":"B-alerts","item":"B-alerts (Did it happen? (proof of every automatic action) + 1 more) x hq / hq/app: 4 items","needs":["CAL-score"],"checkpoint":"_work/B-alerts-hq-app-b.md","out_file":"_work/out/B-alerts-hq-app-b.jsonl","surface":"hq","area":"hq/app","lenses":["gap-3","gap-4"],"lens_items":["H3.1","H3.2","H4.1","H4.2"]}

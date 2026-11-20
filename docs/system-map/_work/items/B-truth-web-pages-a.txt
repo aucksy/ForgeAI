@@ -1,0 +1,32 @@
+# B-truth-web-pages-a: 2 + 17 x web / web/pages. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L2.1 | 2 | Every number shown (dues, counts, dates, streaks, records, credits) is recomputed independently and compared
+L2.2 | 2 | rounding
+L2.3 | 2 | time zone (IST)
+L2.4 | 2 | duplicates on double tap / two devices
+L2.5 | 2 | import and undo-import
+L2.6 | 2 | what happens to old data after every migration
+L2.7 | 2 | Also: AI answers (assistant, AI import, AI questions, coach): built only from that gym's real data
+L2.8 | 2 | Also: AI answers (assistant, AI import, AI questions, coach): what a wrong answer costs the owner
+L2.9 | 2 | Also: AI answers (assistant, AI import, AI questions, coach): what is sent to the AI company
+L17.1 | 17 | The same fact, word, colour, icon and rule is the same on panel, phone, watch, website and messages
+L17.2 | 17 | Trace every value a user enters on one device (watch, phone, panel) to every place that should hold it (the other device, the saved record, the server, Health Connect): it arrives unchanged and stays
+L17.3 | 17 | where a paired device cannot run in the cloud, trace it in the code
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-web-100 | live | Open the right site at each MettleUp address: old and www addresses redirect, mettleup.fit shows the member site, gyms.m | deploy/panel/hosts.js:110
+F-web-102 | behind switch | Gym-owner marketing site (gyms.mettleup.fit, /home): what MettleUp does for a gym, English or Hindi, try your gym's name | apps/dashboard/public/home/index.html:1
+F-web-104 | behind switch | Member marketing site (mettleup.fit, /member-site): the free workout app for phone and watch, English or Hindi, 'Send to | apps/dashboard/public/member-site/index.html:1
+F-web-113 | behind switch | A gym's own free web page (join.mettleup.fit/<gym>): plans, timings, address and maps links, facilities, photos, WhatsAp | deploy/panel/gymPageServe.js:341
+F-web-114 | behind switch | Ask the gym a question, or report a page, from the gym's web page | deploy/panel/gymPageServe.js:353
+F-web-115 | behind switch | AI helper chat on the gym's web page: answers from the page only, else 'I will ask the gym'; the visitor can leave a num | deploy/panel/gymPageServe.js:356
+F-web-138 | live | Install the admin app on the device and open it with no internet (service worker) | apps/dashboard/public/sw.js:1
+F-web-139 | live | Company and legal pages: About, Contact, Privacy, Terms, Refunds, Shipping and delivery, Data agreement for gyms, Delete | apps/dashboard/public/about.html:1
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-web-100 | live | Open the right site at each MettleUp address: old and www addresses redirect, mettleup.fit shows the member site, gyms.m | deploy/panel/hosts.js:110
+F-web-102 | behind switch | Gym-owner marketing site (gyms.mettleup.fit, /home): what MettleUp does for a gym, English or Hindi, try your gym's name | apps/dashboard/public/home/index.html:1
+F-web-104 | behind switch | Member marketing site (mettleup.fit, /member-site): the free workout app for phone and watch, English or Hindi, 'Send to | apps/dashboard/public/member-site/index.html:1
+F-web-113 | behind switch | A gym's own free web page (join.mettleup.fit/<gym>): plans, timings, address and maps links, facilities, photos, WhatsAp | deploy/panel/gymPageServe.js:341
+F-web-114 | behind switch | Ask the gym a question, or report a page, from the gym's web page | deploy/panel/gymPageServe.js:353
+F-web-115 | behind switch | AI helper chat on the gym's web page: answers from the page only, else 'I will ask the gym'; the visitor can leave a num | deploy/panel/gymPageServe.js:356
+F-web-138 | live | Install the admin app on the device and open it with no internet (service worker) | apps/dashboard/public/sw.js:1
+F-web-139 | live | Company and legal pages: About, Contact, Privacy, Terms, Refunds, Shipping and delivery, Data agreement for gyms, Delete | apps/dashboard/public/about.html:1

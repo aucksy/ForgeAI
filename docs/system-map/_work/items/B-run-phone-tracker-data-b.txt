@@ -1,0 +1,82 @@
+# B-run-phone-tracker-data-b: gap-8 x phone / phone/tracker-data. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H8.1 | gap-8 | By script first: docs/system-map/_tools/silent.mjs lists every catch block with file:line and three flags: logs? (calls a log, report or crash function inside), tells_user? (sets an error state, toast or alert inside), rethrows?
+H8.2 | gap-8 | Output _sources/silent.csv
+H8.3 | gap-8 | Helpers read ONLY the rows where all three are "no", plus every fallback value (?? null, || [], ?? 0) that sits in a file named in a journey that writes money, messages, alerts, sign-in or sync
+H8.4 | gap-8 | Everything else is counted in the grid as "filtered by script, N rows, not read" so the gap is visible
+H8.5 | gap-8 | For each: if this path runs, does the user (or owner, or HQ) learn anything?
+H8.6 | gap-8 | A silent path that hides a failed promise = finding
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-1000 | live | Fix a body-weight or measurement entry (edit, change its day, delete, Undo) and set a progress photo's date | apps/mobile/src/tracker/db/bodyEntries.ts:35
+F-phone-1001 | live | Log body measurements (one value per measurement per day) | apps/mobile/src/tracker/db/measurementRepo.ts:19
+F-phone-1002 | behind switch | demo copy of Log body measurements (pretend 13-week trend added by Load demo data) | apps/mobile/src/tracker/db/demoBody.ts:34
+F-phone-1003 | live | Create and edit my own exercise, with my own photo or video | apps/mobile/src/tracker/db/customExercise.ts:54
+F-phone-1004 | live | Merge a duplicate exercise into another, and hide library exercises I never use | apps/mobile/src/tracker/db/exerciseManage.ts:66
+F-phone-1005 | live | Log a live workout (sets with weight, reps, time, distance, set type, RPE) and pick it up again after the app closes | apps/mobile/src/tracker/store/activeWorkoutStore.ts:99
+F-phone-1006 | live | Previous values in a live workout (last time's numbers and the 'Previous: date, workout name' line; from any workout or  | apps/mobile/src/tracker/db/exerciseHistory.ts:174
+F-phone-1007 | behind switch | Targets: suggested weight and reps on each exercise card of a routine workout | apps/mobile/src/tracker/store/targetStore.ts:133
+F-phone-1008 | live | Per-exercise rest length, the note carried over from last time, and my bests for live record alerts | apps/mobile/src/tracker/db/exercisePrefs.ts:26
+F-phone-1009 | live | Rest timer between sets (default length, bell and buzz at zero, on-time alert ask, ring through Do Not Disturb, open the | apps/mobile/src/tracker/store/restTimerStore.ts:115
+F-phone-1010 | live | Start records fresh for one exercise from a chosen day | apps/mobile/src/tracker/db/recordStart.ts:40
+F-phone-1011 | live | Routine folders (create, rename, follow, reorder, delete, move a routine, folders made from a ready program, the plan bu | apps/mobile/src/tracker/db/folderRepo.ts:271
+F-phone-1012 | live | Routine editor (create, rename, copy, delete and reorder routines; add, swap, remove and reorder their exercises; save a | apps/mobile/src/tracker/db/routineRepo.ts:98
+F-phone-1013 | live | Plan builder (answer 5 steps, build my plan, leave exercises out; nothing saved until I follow it) | apps/mobile/src/tracker/store/planBuilderStore.ts:53
+F-phone-1014 | live | Import my workout history from Hevy or Strong (fast write, records worked out, no duplicates on a second import) | apps/mobile/src/tracker/db/importWrite.ts:265
+F-phone-1015 | live | Edit an already-logged workout (sets, date, time; records worked out again) | apps/mobile/src/tracker/db/sessionEdit.ts:75
+F-phone-1016 | live | Rename a workout, and show each workout's name on the exercise page's History tab | apps/mobile/src/tracker/db/workoutNames.ts:38
+F-phone-1017 | live | Photos on a workout (up to 4, kept on this phone only, not in the Drive backup) | apps/mobile/src/tracker/db/workoutPhotoRepo.ts:102
+F-phone-1018 | live | Browse workout history (recent workouts and workouts between two days, with their exercises, sets and volume) | apps/mobile/src/tracker/db/sessionDetails.ts:130
+F-phone-1019 | live | Recent exercises band at the top of the Add exercise picker, and when each exercise was last done | apps/mobile/src/tracker/db/recentExercises.ts:8
+F-phone-1020 | live | Profile photo, short bio and one link | apps/mobile/src/tracker/db/profileExtras.ts:65
+F-phone-1021 | live | How an exercise is logged and counted (weight and reps, time or distance; 'kg each' or 'as one'; body weight in volume) | apps/mobile/src/tracker/db/exerciseInfo.ts:147
+F-phone-1022 | behind switch | Muscle tips: a missing-muscle suggestion with 'Not now' (4 weeks), 'I skip this on purpose' and 'Bring back put-away tip | apps/mobile/src/tracker/store/muscleTipsStore.ts:82
+F-phone-1023 | live | Plates and bars: my gym's plates and bar for the plate calculator (one setup for kg, one for lb) | apps/mobile/src/tracker/store/plateSetupStore.ts:24
+F-phone-1024 | live | Workout settings kept on the phone (Track RPE, AI coach note, sounds and rest-over sound, body figure, weekly goal, Prev | apps/mobile/src/tracker/store/trackerPrefsStore.ts:240
+F-phone-1025 | live | Progress > Your lifts > 'Any exercise': pick an exercise to chart (forgotten after a restart) | apps/mobile/src/tracker/store/progressPickStore.ts:16
+## SILENT CATCH ROWS TO READ (kind,file,line,logs,tells_user,rethrows,text)
+catch,apps/mobile/src/tracker/db/dataStamp.ts,51,no,no,no,{ // An SQLite built without the pragma functions: the same two numbers in two reads. cons
+catch,apps/mobile/src/tracker/db/exerciseInfo.ts,56,no,no,no,{ return []; }
+catch,apps/mobile/src/tracker/db/exerciseManage.ts,41,no,no,no,{ return []; }
+catch,apps/mobile/src/tracker/db/folderRepo.ts,142,no,no,no,{ return {}; }
+catch,apps/mobile/src/tracker/db/folderRepo.ts,194,no,no,no,{ return []; }
+catch,apps/mobile/src/tracker/db/historyIndexes.ts,40,no,no,no,{ failed ??= e; }
+catch,apps/mobile/src/tracker/db/historyScope.ts,57,no,no,no,{ return true; }
+catch,apps/mobile/src/tracker/db/historyScope.ts,250,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/db/importKeys.ts,35,no,no,no,{ return {}; }
+catch,apps/mobile/src/tracker/db/importKeys.ts,56,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/db/routineRepo.ts,140,no,no,no,(() => 0)
+catch,apps/mobile/src/tracker/db/routineRepo.ts,219,no,no,no,{ // no profile yet — defaultRepRange falls back to 8–12 }
+catch,apps/mobile/src/tracker/db/sessionDetails.ts,95,no,no,no,{ return []; }
+catch,apps/mobile/src/tracker/db/sessionDetails.ts,196,no,no,no,{ // A database from before the counting column (never after start-up's upgrade): every co
+catch,apps/mobile/src/tracker/db/sessionEdit.ts,133,no,no,no,{ return { reconciled: false }; }
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,748,no,no,no,{ // No AppState (unit tests): nothing to listen to. }
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,858,no,no,no,{ return new Map(); }
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,909,no,no,no,{ return new Map(); }
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,926,no,no,no,{ return new Map(); }
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,970,no,no,no,(() => none<TrackerExercise>())
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,978,no,no,no,(() => none<number | null>())
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,981,no,no,no,(() => none<string | null>())
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,982,no,no,no,(() => none<PriorBests | null>())
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,1042,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,1057,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,1058,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,1059,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,1061,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,1219,no,no,no,{ // The screen loads them itself. }
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,1245,no,no,no,{ // No Targets yet: the screen loads them. }
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,1764,no,no,no,{ reconciled = false; }
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,1839,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,1850,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,1985,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,2028,no,no,no,(() => false)
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,2067,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,2328,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,2564,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/store/activeWorkoutStore.ts,2729,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/store/restTimerStore.ts,106,no,no,no,{ return true; }
+catch,apps/mobile/src/tracker/store/targetStore.ts,153,no,no,no,{ map = new Map(); }
+catch,apps/mobile/src/tracker/store/targetStore.ts,179,no,no,no,{ return new Map(); }
+## FALLBACK ROWS TO READ (files that write money, messages, alerts, sign-in or sync)
+(none)
+## FILTERED BY SCRIPT
+149 other rows of _sources/silent.csv in this area: not read (write this number in the H8 evidence)

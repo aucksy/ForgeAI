@@ -1,0 +1,695 @@
+# A8-phone-lib-core-2: coverage of 87 Tier 1 journeys (17 features, from A5-phone-lib-core-3, A5-phone-native-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-phone-1711 | apps/mobile/test/lib/safekeepNudge.test.ts | unit | 107 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-phone-1711 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 1 journey phrase(s)
+F-phone-1711 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 1 journey phrase(s)
+F-phone-1711 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 1 journey phrase(s)
+F-phone-1711 | apps/dashboard/e2e/trial.spec.mjs | e2e | 72 lines | asserts 1 journey phrase(s)
+F-phone-1711 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 1 journey phrase(s)
+F-phone-1724 | apps/mobile/test/tracker/phase3Numbers.test.ts | unit | 256 lines | imports the code, asserts 3 journey phrase(s)
+F-phone-1724 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-phone-1724 | apps/dashboard/test/crm/assistant/planExecute.test.ts | unit | 273 lines | asserts 1 journey phrase(s)
+F-phone-1724 | apps/mobile/qa/backup-m-after.yaml | maestro | 42 lines | asserts 1 journey phrase(s)
+F-phone-1724 | apps/mobile/qa/backup-m-photos-check.yaml | maestro | 81 lines | asserts 1 journey phrase(s)
+F-phone-1724 | apps/mobile/qa/backup-m-photos.yaml | maestro | 131 lines | asserts 1 journey phrase(s)
+F-phone-1724 | apps/mobile/qa/backup-m-record.yaml | maestro | 49 lines | asserts 1 journey phrase(s)
+F-phone-1724 | apps/mobile/qa/phase3-d.yaml | maestro | 763 lines | asserts 1 journey phrase(s)
+F-phone-1724 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-phone-1724 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-phone-1724 | apps/mobile/test/tracker/phase2Screens.test.ts | unit | 287 lines | asserts 1 journey phrase(s)
+F-phone-1724 | apps/mobile/test/tracker/r3Screens.test.ts | unit | 173 lines | asserts 1 journey phrase(s)
+F-phone-1725 | apps/mobile/test/ai/unitsCoach.test.ts | unit | 62 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-phone-1725 | apps/mobile/test/tracker/unitsScreens.test.ts | unit | 118 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-phone-1725 | apps/mobile/test/tracker/unitsTrackerText.test.ts | unit | 140 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-phone-1725 | apps/mobile/test/lib/memberWords.test.ts | unit | 278 lines | imports the code, asserts 2 journey phrase(s)
+F-phone-1725 | apps/mobile/test/db/finishFirstWorkoutReal.test.ts | unit | 69 lines | imports the code
+F-phone-1725 | apps/mobile/test/db/historyScopeReal.test.ts | unit | 352 lines | imports the code
+F-phone-1725 | apps/mobile/test/db/phase2ReviewReal.test.ts | unit | 195 lines | imports the code
+F-phone-1725 | apps/mobile/test/db/previousSourceReal.test.ts | unit | 154 lines | imports the code
+F-phone-1725 | apps/mobile/test/db/r138KgToBeat.test.ts | unit | 125 lines | imports the code
+F-phone-1725 | apps/mobile/test/db/t76CountingFinishReal.test.ts | unit | 122 lines | imports the code
+F-phone-1725 | apps/mobile/test/db/targetSettingsReal.test.ts | unit | 153 lines | imports the code
+F-phone-1725 | apps/mobile/test/db/targetsReal.test.ts | unit | 188 lines | imports the code
+F-phone-1707 | apps/dashboard/test/crm/freshness.test.ts | unit | 56 lines | asserts 9 journey phrase(s)
+F-phone-1707 | apps/mobile/test/lib/updatePrompt.test.ts | unit | 214 lines | imports the code, file name, asserts 4 journey phrase(s)
+F-phone-1707 | apps/mobile/qa/uat-rel-r336-update.yaml | maestro | 229 lines | asserts 5 journey phrase(s)
+F-phone-1707 | apps/mobile/qa/uat-rel-r440-popup-bars.yaml | maestro | 76 lines | asserts 4 journey phrase(s)
+F-phone-1707 | apps/mobile/qa/uat-rel-r401-whats-new.yaml | maestro | 96 lines | asserts 3 journey phrase(s)
+F-phone-1707 | apps/mobile/test/tracker/watchUpdateCard.test.ts | unit | 324 lines | asserts 3 journey phrase(s)
+F-phone-1707 | apps/dashboard/e2e/whatsnew.spec.mjs | e2e | 122 lines | asserts 2 journey phrase(s)
+F-phone-1707 | apps/dashboard/test/crm/machines/adms.test.ts | unit | 141 lines | asserts 2 journey phrase(s)
+F-phone-1707 | apps/mobile/qa/real-workout-w4.yaml | maestro | 228 lines | asserts 2 journey phrase(s)
+F-phone-1707 | apps/mobile/qa/store-b.yaml | maestro | 134 lines | asserts 2 journey phrase(s)
+F-phone-1707 | apps/mobile/qa/sub-uat-r344-bench.yaml | maestro | 92 lines | asserts 2 journey phrase(s)
+F-phone-1707 | apps/mobile/qa/sub-uat-r358-finish.yaml | maestro | 47 lines | asserts 2 journey phrase(s)
+F-phone-1718 | apps/mobile/test/lib/watchDiag.test.ts | unit | 336 lines | imports the code, file name
+F-phone-1718 | apps/mobile/test/tracker/watchUpdateCard.test.ts | unit | 324 lines | imports the code
+F-phone-1718 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 2 journey phrase(s)
+F-phone-1718 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-phone-1718 | apps/dashboard/e2e/feedback.spec.mjs | e2e | 34 lines | asserts 1 journey phrase(s)
+F-phone-1718 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 1 journey phrase(s)
+F-phone-1718 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 1 journey phrase(s)
+F-phone-1718 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 1 journey phrase(s)
+F-phone-1718 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-phone-1718 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | asserts 1 journey phrase(s)
+F-phone-1718 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 1 journey phrase(s)
+F-phone-1718 | apps/mobile/test/tracker/watchInstall.test.ts | unit | 159 lines | asserts 1 journey phrase(s)
+F-phone-1708 | apps/mobile/test/lib/whatsNew.test.ts | unit | 116 lines | imports the code, file name
+F-phone-1708 | apps/mobile/test/lib/newDots.test.ts | unit | 204 lines | imports the code
+F-phone-1708 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | imports the code
+F-phone-1708 | apps/mobile/test/shop/gymSections.test.ts | unit | 42 lines | imports the code
+F-phone-1708 | apps/mobile/test/tracker/f199ProgressInProfile.test.ts | unit | 267 lines | imports the code
+F-phone-1708 | apps/dashboard/e2e/whatsnew.spec.mjs | e2e | 122 lines | file name
+F-phone-1708 | apps/dashboard/test/crm/whatsNew.test.ts | unit | 208 lines | file name
+F-phone-1708 | deploy/panel/whatsNewFeed.test.mjs | unit | 70 lines | file name
+F-phone-1708 | apps/mobile/qa/uat-rel-r401-whats-new.yaml | maestro | 96 lines | asserts 1 journey phrase(s)
+F-phone-1708 | apps/mobile/qa/uat-rel-r440-popup-bars.yaml | maestro | 76 lines | asserts 1 journey phrase(s)
+F-phone-1708 | apps/mobile/test/lib/safekeepNudge.test.ts | unit | 107 lines | asserts 1 journey phrase(s)
+F-phone-1708 | apps/mobile/test/tracker/healthOnOff.test.ts | unit | 136 lines | asserts 1 journey phrase(s)
+F-phone-1712 | apps/mobile/test/shop/planEnds.test.ts | unit | 77 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1712 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | imports the code
+F-phone-1712 | apps/mobile/test/lib/safekeepNudge.test.ts | unit | 107 lines | imports the code
+F-phone-1712 | apps/mobile/test/tracker/watchInstall.test.ts | unit | 159 lines | imports the code
+F-phone-1712 | apps/mobile/test/lib/linkNotice.test.ts | unit | 14 lines | asserts 1 journey phrase(s)
+F-phone-1723 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-phone-1723 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-phone-1723 | apps/dashboard/test/crm/r448.test.ts | unit | 76 lines | asserts 3 journey phrase(s)
+F-phone-1723 | apps/mobile/qa/phase3-d.yaml | maestro | 763 lines | asserts 3 journey phrase(s)
+F-phone-1723 | apps/mobile/test/tracker/phase8cSameAnswers.test.ts | unit | 276 lines | imports the code
+F-phone-1723 | apps/mobile/test/tracker/switcherLine.test.ts | unit | 38 lines | asserts 3 journey phrase(s)
+F-phone-1723 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 2 journey phrase(s)
+F-phone-1723 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 2 journey phrase(s)
+F-phone-1723 | apps/dashboard/e2e/progress-trend-uat.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-phone-1723 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 2 journey phrase(s)
+F-phone-1723 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 2 journey phrase(s)
+F-phone-1723 | apps/hq/test/logic.test.mjs | unit | 446 lines | asserts 2 journey phrase(s)
+F-phone-1233 | apps/mobile/test/tracker/phase9Shortcuts.test.ts | unit | 85 lines | imports the code
+F-phone-1223 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-1223 | apps/mobile/test/shop/gymShortcut.test.ts | unit | 46 lines | file name, asserts 1 journey phrase(s)
+F-phone-1223 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-1223 | apps/mobile/test/tracker/phase9Shortcuts.test.ts | unit | 85 lines | imports the code
+F-phone-1223 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-phone-1223 | apps/mobile/modules/forge-phone/android/src/test/java/com/forgeai/phone/GymShortcutRenderTest.kt | native | 277 lines | file name
+F-phone-1223 | apps/mobile/modules/forge-phone/android/src/test/java/com/forgeai/phone/ShortcutArtTest.kt | native | 115 lines | file name
+F-phone-1223 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | asserts 2 journey phrase(s)
+F-phone-1223 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-phone-1223 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-phone-1223 | apps/dashboard/test/crm/gymPageEditor.test.ts | unit | 226 lines | asserts 1 journey phrase(s)
+F-phone-1223 | apps/dashboard/test/crm/headerLogo.test.ts | unit | 96 lines | asserts 1 journey phrase(s)
+F-phone-1225 | (no candidate found by the script)
+F-phone-1231 | apps/mobile/test/tracker/phase9Shortcuts.test.ts | unit | 85 lines | imports the code
+F-phone-1231 | apps/mobile/qa/uat-rel-r336-update.yaml | maestro | 229 lines | asserts 2 journey phrase(s)
+F-phone-1231 | apps/mobile/qa/uat-rel-r401-whats-new.yaml | maestro | 96 lines | asserts 2 journey phrase(s)
+F-phone-1231 | apps/mobile/qa/uat-rel-r440-popup-bars.yaml | maestro | 76 lines | asserts 2 journey phrase(s)
+F-phone-1231 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 2 journey phrase(s)
+F-phone-1231 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-phone-1231 | apps/dashboard/e2e/r579-uat.spec.mjs | e2e | 298 lines | asserts 1 journey phrase(s)
+F-phone-1231 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-phone-1231 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-phone-1231 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-phone-1231 | apps/dashboard/test/crm/setupCards.test.ts | unit | 17 lines | asserts 1 journey phrase(s)
+F-phone-1231 | apps/mobile/qa/real-workout-w1.yaml | maestro | 368 lines | asserts 1 journey phrase(s)
+F-phone-1230 | apps/mobile/test/tracker/phase4ImportsC.test.ts | unit | 443 lines | imports the code
+F-phone-1230 | apps/mobile/test/tracker/phase9Shortcuts.test.ts | unit | 85 lines | imports the code
+F-phone-1230 | apps/mobile/test/tracker/v0280.test.ts | unit | 91 lines | imports the code
+F-phone-1230 | apps/mobile/qa/uat-rel-f146-share-gym.yaml | maestro | 354 lines | file name
+F-phone-1230 | apps/mobile/test/components/ui/sharedPieces.test.ts | unit | 90 lines | file name
+F-phone-1230 | apps/mobile/test/shop/mateShare.test.ts | unit | 125 lines | file name
+F-phone-1230 | apps/mobile/test/shop/trainerShare.test.ts | unit | 155 lines | file name
+F-phone-1230 | apps/mobile/test/tracker/f146Share.test.ts | unit | 204 lines | file name
+F-phone-1230 | apps/mobile/test/tracker/phase3Share.test.ts | unit | 227 lines | file name
+F-phone-1230 | apps/mobile/test/tracker/shareFrame.test.ts | unit | 238 lines | file name
+F-phone-1230 | apps/mobile/test/tracker/shareMark.test.ts | unit | 96 lines | file name
+F-phone-1230 | apps/mobile/test/tracker/shareText.test.ts | unit | 447 lines | file name
+F-phone-1222 | apps/mobile/test/tracker/phase9Shortcuts.test.ts | unit | 85 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-phone-1222 | apps/mobile/test/tracker/r320Widgets.test.ts | unit | 119 lines | imports the code, file name
+F-phone-1222 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1222 | apps/mobile/test/tracker/phoneFeatures.test.ts | unit | 87 lines | imports the code
+F-phone-1222 | apps/mobile/test/tracker/phoneLook.test.ts | unit | 36 lines | imports the code
+F-phone-1222 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | imports the code
+F-phone-1222 | apps/mobile/test/tracker/todayPlan.test.ts | unit | 173 lines | imports the code
+F-phone-1222 | apps/mobile/qa/p2-pause-a.yaml | maestro | 64 lines | asserts 2 journey phrase(s)
+F-phone-1222 | apps/mobile/qa/sub-workout-fresh.yaml | maestro | 51 lines | asserts 2 journey phrase(s)
+F-phone-1222 | apps/mobile/qa/uat-rel-r358-c-real.yaml | maestro | 80 lines | asserts 2 journey phrase(s)
+F-phone-1222 | apps/mobile/qa/uat-v.yaml | maestro | 265 lines | asserts 2 journey phrase(s)
+F-phone-1222 | apps/mobile/qa/v0261-h1d.yaml | maestro | 121 lines | asserts 2 journey phrase(s)
+F-phone-1219 | apps/mobile/test/tracker/r320Widgets.test.ts | unit | 119 lines | imports the code, file name
+F-phone-1219 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1219 | apps/mobile/test/tracker/phase9Shortcuts.test.ts | unit | 85 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1219 | apps/mobile/qa/uat-v.yaml | maestro | 265 lines | asserts 3 journey phrase(s)
+F-phone-1219 | apps/mobile/test/tracker/phoneFeatures.test.ts | unit | 87 lines | imports the code
+F-phone-1219 | apps/mobile/test/tracker/phoneLook.test.ts | unit | 36 lines | imports the code
+F-phone-1219 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | imports the code
+F-phone-1219 | apps/mobile/test/tracker/todayPlan.test.ts | unit | 173 lines | imports the code
+F-phone-1219 | apps/mobile/qa/p2-pause-a.yaml | maestro | 64 lines | asserts 2 journey phrase(s)
+F-phone-1219 | apps/mobile/qa/phase6-link.yaml | maestro | 30 lines | asserts 2 journey phrase(s)
+F-phone-1219 | apps/mobile/qa/phase7-bigtext.yaml | maestro | 326 lines | asserts 2 journey phrase(s)
+F-phone-1219 | apps/mobile/qa/redesign-r.yaml | maestro | 1131 lines | asserts 2 journey phrase(s)
+F-phone-1220 | apps/mobile/test/tracker/r320Widgets.test.ts | unit | 119 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-phone-1220 | apps/dashboard/test/crm/challengesHinglish.test.ts | unit | 108 lines | asserts 3 journey phrase(s)
+F-phone-1220 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | asserts 3 journey phrase(s)
+F-phone-1220 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | imports the code
+F-phone-1220 | apps/mobile/test/tracker/phase9Shortcuts.test.ts | unit | 85 lines | imports the code
+F-phone-1220 | apps/mobile/test/tracker/phoneFeatures.test.ts | unit | 87 lines | imports the code
+F-phone-1220 | apps/mobile/test/tracker/phoneLook.test.ts | unit | 36 lines | imports the code
+F-phone-1220 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | imports the code
+F-phone-1220 | apps/mobile/test/tracker/todayPlan.test.ts | unit | 173 lines | imports the code
+F-phone-1220 | apps/dashboard/e2e/r579-uat.spec.mjs | e2e | 298 lines | asserts 2 journey phrase(s)
+F-phone-1220 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | asserts 2 journey phrase(s)
+F-phone-1220 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 2 journey phrase(s)
+F-phone-1202 | apps/mobile/modules/forge-rest/android/src/test/java/com/forgeai/rest/AlertRingTest.kt | native | 155 lines | file name
+F-phone-1202 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 1 journey phrase(s)
+F-phone-1202 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 1 journey phrase(s)
+F-phone-1202 | apps/mobile/test/tracker/watchBridge.test.ts | unit | 153 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-phone-1711-01 | type 1 | member | Member not signed in, this build can sign in, 3 of their own workouts finished, no other notice waiting today
+  s1 see: 'Your workouts are only on this phone. Sign in with Google and MettleUp keeps them safe in your account.'
+  s1 see: 'Sign in to keep them safe'
+  s1 see: 'Hide for 30 days'
+  s1 not: The card shows a second notice card at the same time
+  s1 not: The card mentions Google Drive
+  s2 see: Settings, Backup and restore page
+  s2 not: Two copies of the page open after a fast double tap
+  s2 not: The card's tap does nothing
+  s3 see: The card is gone
+  s3 not: The card still says the workouts are only on this phone after sign-in
+J-F-phone-1711-02 | type 3 | member | Members who must not get the card: 2 own workouts plus the demo workouts; a signed-in member with 40 workouts; a build that cannot sign in
+  s1 see: No safekeep card; Up next as usual
+  s1 not: The demo's workouts counted toward the 3
+  s2 see: No safekeep card
+  s2 not: The card tells a signed-in member their workouts are only on this phone
+  s3 see: No safekeep card
+  s3 not: A button that leads to a sign-in that cannot work
+J-F-phone-1711-03 | type 6 | member | Card showing (not signed in, 5 own workouts)
+  s1 see: The card is gone
+  s1 not: The card comes back on the next visit to the tab
+  s1 not: Another offer card (watch app, backups) appears in its place the same day
+  s2 see: No safekeep card
+  s2 not: The card back before 30 days
+  s3 see: 'Your workouts are only on this phone. Sign in with Google and MettleUp keeps them safe in your account.'
+  s3 not: The card never comes back after the 30 days
+  s4 see: Card gone while signed in; back after signing out (unless hidden)
+  s4 not: The card stays hidden for ever after one sign-in
+J-F-phone-1711-04 | type 12 | member | Member not signed in, 3 own workouts
+  s1 see: 'Your workouts are only on this phone. Sign in with Google and MettleUp keeps them safe in your account.'
+  s1 not: The count or the card is sent off the phone
+  s1 not: The card hides from a member whose workouts really are only on the phone, without them tapping Hide
+J-F-phone-1724-01 | type 1 | member | Member trained at least once in each of the last 3 weeks (Monday to Sunday), including this week
+  s1 see: Card 'Streak' with '3', 'weeks', 'in a row'
+  s1 see: Card 'Rest days' with days since the last workout
+  s1 not: A day-based streak
+  s1 not: '3 week'
+  s2 see: The same 3 weeks in a row
+  s2 not: A different streak number on another screen
+J-F-phone-1724-02 | type 3 | member | Brand-new member with no workouts, and a member whose last workout was 3 weeks ago
+  s1 see: 'Streak' '0' 'weeks' 'in a row'
+  s1 see: 'Rest days' '—' 'no workouts yet'
+  s1 not: NaN, a minus number or a blank card
+  s2 see: 'Streak' '0'
+  s2 not: The old streak still shown as alive
+J-F-phone-1724-03 | type 6 | member | Member with workouts last week, none yet this week
+  s1 see: The streak still counts last week's run (alive while this week is empty)
+  s1 not: The streak drops to 0 before this week is over
+  s2 see: The streak goes up by one
+  s2 not: The streak counts two workouts in one week as two weeks
+  s3 see: The streak goes back down
+  s3 not: A streak that still counts the deleted workout
+J-F-phone-1724-04 | type 2 | member | Member with a 5-week run, at the end of the year
+  s1 see: Tile 'Longest streak' '5' 'weeks'
+  s1 not: A longest streak that disagrees with the weeks-in-a-row rule
+J-F-phone-1725-01 | type 1 | member | Member on 'kg, km', past workouts with 62.5 kg sets
+  s1 see: Page 'Units'
+  s1 see: Chips 'kg, km' (chosen) and 'lb, miles'
+  s1 not: No chip shown as chosen
+  s2 see: 'lb, miles' chosen
+  s2 not: The choice needs an app restart
+  s3 see: '137.8 lb' for the 62.5 kg set
+  s3 see: 'lb lifted' totals
+  s3 see: Runs in miles; rowing still in metres
+  s3 not: A kg number with the word lb
+  s3 not: A stored weight changed
+  s4 see: '135 lb' shown back
+  s4 not: '134.9 lb' or another drift after saving
+J-F-phone-1725-02 | type 2 | member | Member's phone set to English (India); a total of 228,288 kg lifted
+  s1 see: Total grouped the Indian way: '2,28,288 kg'
+  s1 not: Devanagari digits
+  s1 not: A '.' used as a thousands mark
+  s2 see: '228,288 kg'
+  s2 not: Indian grouping on a non-Indian phone
+J-F-phone-1725-03 | type 3 | member | Member on 'lb, miles'
+  s1 see: Nothing changes
+  s1 not: The choice flips back or an error shows
+  s2 see: The usual empty-set handling; no unit error
+  s2 not: A NaN or 'undefined lb' shown
+J-F-phone-1725-04 | type 6 | member | Member who switched to 'lb, miles' and logged a week in pounds
+  s1 see: Every weight back in kg with the same values as before the switch
+  s1 not: Weights changed by the round trip
+  s1 not: A screen still showing lb
+J-F-phone-1707-01 | type 1 | member | Google Play copy, a newer version is out, no workout open, first launch since it came out
+  s1 see: Full screen 'A new MettleUp is here'
+  s1 see: Small orange 'Version 0.80.0 is ready' (or 'A new version is ready')
+  s1 see: Up to 3 lines of what is new
+  s1 see: 'It downloads while you keep using the app. Your workouts stay safe.'
+  s1 see: 'Update now'
+  s1 see: 'Later'
+  s1 not: The full screen during a workout
+  s1 not: No way to close it
+  s2 see: Google's update box
+  s2 not: Two Google boxes after a double tap
+  s3 see: Orange line on the Workout tab: 'Downloading the new version. Keep using the app.'
+  s3 not: The app blocked while it downloads
+  s4 see: 'The new version is ready to install'
+  s4 see: 'Restart now'
+  s4 not: The restart asked during a workout
+  s5 see: The app reopens on the new version
+  s5 not: A workout lost by the restart
+J-F-phone-1707-02 | type 2 | member | Copy installed from the GitHub file, a newer version out
+  s1 see: 'A new MettleUp is here'
+  s1 see: 'Tap "Update now" to download the file, then open it to install. Your workouts stay safe.'
+  s1 not: The Google Play wording on a GitHub copy
+  s2 see: The new file opens to download
+  s2 not: Google Play opened for a GitHub copy
+J-F-phone-1707-03 | type 2 | member | The full screen was closed with 'Later'
+  s1 see: Orange line 'A new version of MettleUp is ready'
+  s1 see: 'Update'
+  s1 see: 'What's new'
+  s1 not: No way to update after 'Later'
+  s2 see: This version's lines open in the bar; the link reads 'Hide what's new'
+  s2 not: The lines of the installed version instead of the new one
+J-F-phone-1707-04 | type 2 | member | Member 3 versions behind
+  s1 see: 'You are 3 versions behind'
+  s1 see: 'And the changes from 2 earlier updates.'
+  s1 not: '1 earlier updates'
+  s2 see: The full screen again on the 3rd launch
+  s2 not: It returning on every launch
+  s2 not: It waiting for the 7th launch while far behind
+J-F-phone-1707-05 | type 3 | member | A newer version is out
+  s1 see: No full screen; the workout as it was
+  s1 not: The full screen over the workout
+  s2 see: The full screen closes; the orange line stays
+  s2 not: The full screen reopening straight away
+  s3 see: The Google Play page for MettleUp opens
+  s3 not: Nothing happens after the tap
+  s4 see: No full screen, no error
+  s4 not: An error message about updates
+  s5 see: No update prompt
+  s5 not: An offer of the Android file or Google Play
+J-F-phone-1707-06 | type 6 | member | The full screen was closed with 'Later' today
+  s1 see: Only the orange line
+  s1 not: The full screen twice within 24 hours
+  s2 see: The full screen again
+  s2 not: It never coming back
+  s2 not: It coming back on every launch
+  s3 see: The full screen on the next launch, for the new version
+  s3 not: The old version's count carried over
+  s4 see: 'The new version is ready. It installs after your workout.' with no Restart
+  s4 not: A restart offered during the workout
+J-F-phone-1718-01 | type 1 | member | Member with the MettleUp watch app, a watch screen diary on the phone, online
+  s1 see: Page 'Help and feedback'
+  s1 see: Switch 'Add my watch's screen log' with the caption about screen times and Battery Saver
+  s1 not: The switch already on
+  s2 see: 'Send' busy
+  s2 see: A note that the message was sent and 'Your watch screen log was sent too.'
+  s2 see: The switch back off
+  s2 not: The log sent before the message
+  s2 not: Two copies after a double tap
+J-F-phone-1718-02 | type 2 | member | Same member, on any screen
+  s1 see: 'Your watch screen log was sent too.'
+  s1 not: The switch missing from the floating button's sheet when the diary exists
+J-F-phone-1718-03 | type 3 | member | Members for whom the log cannot go
+  s1 see: No watch log switch
+  s1 not: A switch that sends nothing
+  s2 see: 'Send' greyed out
+  s2 not: The log sent on its own
+  s3 see: 'Your message was sent, but the watch screen log was not. Try again later.'
+  s3 not: 'sent too' for a log that failed
+  s4 see: The message's own failure words; no log note
+  s4 not: A log sent after the message failed
+J-F-phone-1718-04 | type 6 | member | Switch shown
+  s1 see: Only the message is sent
+  s1 not: The log sent with the switch off
+  s2 see: The switch is off again
+  s2 not: The log sent again without the member switching it on
+J-F-phone-1718-05 | type 12 | member | Member sends the log
+  s1 see: Caption: 'It holds only the times your watch screen turned on, off or dim, and your watch's Battery Saver and screen settings.'
+  s1 not: The watch name, a workout's content, heart rate or the gym code in the log
+  s1 not: Anything else beyond what the caption names sent without saying so
+J-F-phone-1708-01 | type 1 | member | Member updated from 0.78.0 to 0.79.0, no update waiting, first open
+  s1 see: Card 'New in this version (0.79.0)'
+  s1 see: The version's lines, some with a button like 'Open the Gym tab'
+  s1 see: 'Got it'
+  s1 see: 'See earlier updates'
+  s1 not: The card on a fresh install
+  s1 not: Two notice cards at once
+  s2 see: The 2 updates before this one in the card
+  s2 see: 'Hide earlier updates'
+  s2 not: Updates newer than the installed version
+  s3 see: The card is gone
+  s3 not: The card back on the next open of the same version
+J-F-phone-1708-02 | type 2 | member | Member after 'Got it'
+  s1 see: Page 'What's new'
+  s1 see: 'What changed in the last 3 updates. Tap a button to try a change.'
+  s1 see: The last 3 updates, newest first
+  s1 not: Updates from a newer version than installed
+  s1 not: An empty page with no words
+  s2 see: That setting opens
+  s2 not: A button that leads nowhere
+J-F-phone-1708-03 | type 2 | member | Member updated to 0.79.0 from the card's view
+  s1 see: The Gym tab opens
+  s1 see: The card does not come back
+  s1 not: The card stays and repeats after the jump
+J-F-phone-1708-04 | type 3 | member | Cases where the card must not show
+  s1 see: No What's new card
+  s1 not: News on a first install
+  s2 see: The orange update line, no What's new card
+  s2 not: A What's new about the older installed version
+  s3 see: No What's new card
+  s3 not: The same lines twice
+J-F-phone-1708-05 | type 6 | member | Member closed What's new for 0.78.0, then updated to 0.79.0 the same day
+  s1 see: The 0.79.0 card shows at once
+  s1 not: It waits until tomorrow like other notices
+  s2 see: The card is gone; other offer cards wait until tomorrow
+  s2 not: The card back after reopening the app
+J-F-phone-1712-01 | type 1 | member | Member with two offers waiting: the watch app offer and the safekeep card
+  s1 see: Only the watch app offer card above Up next
+  s1 not: Both cards stacked
+  s1 not: Start pushed below the fold
+  s2 see: No notice card
+  s2 not: The safekeep card appearing at once
+  s3 see: The safekeep card
+  s3 not: Nothing for ever
+J-F-phone-1712-02 | type 2 | member | Member taps a gym link that did not work
+  s1 see: 'That link didn't work' card first
+  s1 not: The link's answer held back because another notice was closed today
+J-F-phone-1712-03 | type 3 | member | Member with no notice wanted
+  s1 see: No notice card; Up next as usual
+  s1 not: An empty card frame
+J-F-phone-1712-04 | type 6 | member | Member closed a notice today; a 'Your plan ends on Friday' notice is due
+  s1 see: 'Your plan ends on Friday' shows (facts never wait)
+  s1 not: The plan-end fact hidden until tomorrow
+  s2 see: No offer cards until tomorrow
+  s2 not: A closed notice flashing up before the saved day is read
+J-F-phone-1723-01 | type 1 | member | Member with key lifts logged over 6 months and a body weight entered
+  s1 see: Page 'Charts'
+  s1 see: 'Last 7 days'
+  s1 see: 'Sets per muscle group'
+  s1 see: 'Muscle distribution'
+  s1 see: 'Main exercises'
+  s1 see: 'Records'
+  s1 see: 'Strength score' with a number '/100' and a line
+  s1 not: NaN or a blank chart for a member with data
+  s2 see: The score and the date of that point
+  s2 not: A score above 100 or below 0
+J-F-phone-1723-02 | type 2 | member | Member opens one exercise
+  s1 see: That exercise's page with its best set, estimated 1-rep max, average weight and reps and a progress chart
+  s1 not: A best set that is not the heaviest set
+  s1 not: Stats from another exercise
+J-F-phone-1723-03 | type 3 | member | Member with no workouts, and one with workouts but no body weight
+  s1 see: 'No workouts yet'
+  s1 see: 'Your charts show here once you finish a workout.'
+  s1 not: Empty charts with zeros
+  s2 see: Strength score empty state with 'Add body weight'
+  s2 not: A strength score made up without body weight
+  s3 see: The 'charts' limit explanation and a way to Plus
+  s3 not: Older charts shown free beyond the promise, or a silent no-op
+  s4 see: 'Try again' load error
+  s4 not: Every chart saying 'No data yet' as if nothing was logged
+J-F-phone-1723-04 | type 6 | member | Member on Charts
+  s1 see: The new workout counted
+  s1 not: Old numbers until the app restarts
+  s2 see: The numbers go back down
+  s2 not: The deleted workout still counted
+J-F-phone-1233-01 | type 1 | member | Android 13+ phone, member joined a branded (Pro) gym with a logo, app open once since joining
+  s1 see: A plain start-up screen with no MettleUp logo
+  s1 see: Then the gym's logo and colours
+  s1 not: The MettleUp logo flashes before the gym's logo
+  s1 not: Another gym's logo
+  s2 see: The app in the gym's look
+  s2 not: The start-up screen stays on the plain screen and the app never opens
+J-F-phone-1233-02 | type 2 | member | Android 13+ phone, member LEAVES the branded gym (or the gym drops to Starter, so branding is off)
+  s1 see: MettleUp's own start-up screen with its logo
+  s1 not: A plain start-up screen with no logo for a member in no gym
+  s2 see: MettleUp's own look
+  s2 not: The old gym's logo or colours
+J-F-phone-1233-03 | type 3 | member | Phone on Android 12 or older, member in a branded gym
+  s1 see: MettleUp's own start-up screen (the phone cannot change it)
+  s1 see: Then the gym's look
+  s1 not: A crash
+  s1 not: An error message about the start-up screen
+J-F-phone-1233-04 | type 6 | member | Android 13+ phone, member switched from a branded gym to an unbranded one and back
+  s1 see: MettleUp's start-up screen
+  s1 not: The plain screen while no gym logo follows
+  s2 see: The plain start-up screen, then the gym's logo
+  s2 not: The start-up screen stuck on the first choice made
+J-F-phone-1223-01 | type 1 | member | Member just joined a gym with a logo; phone's home screen takes shortcuts
+  s1 see: Android's own question "Add to home screen?" with the gym's logo
+  s1 not: A shortcut placed without Android asking
+  s1 not: A broken or blank icon
+  s2 see: The gym's logo on the home screen with the gym's name (cut to 25 letters)
+  s2 not: The MettleUp icon removed
+  s2 not: Another gym's name
+  s3 see: MettleUp opens
+  s3 not: A second copy of the app opens
+  s3 not: An error
+J-F-phone-1223-02 | type 2 | member | Member already in the gym; opened Settings, Your gym
+  s1 see: Android's "Add to home screen?" question
+  s1 not: Nothing happens
+  s1 not: A second shortcut when one is already there
+  s2 see: "<gym> is already on your home screen. Its picture is up to date."
+  s2 not: A second shortcut
+J-F-phone-1223-03 | type 3 | member | Member's phone offline, or the gym logo cannot be downloaded
+  s1 see: "Couldn't get <gym>'s logo. Check the internet and try again."
+  s1 not: A shortcut with a blank picture
+  s1 not: The app freezing while it waits
+J-F-phone-1223-04 | type 3 | member | Phone whose home screen cannot take shortcuts (or Android older than 8)
+  s1 see: No "Gym logo on my home screen" row
+  s1 not: A row that does nothing when tapped
+  s2 see: No shortcut row
+  s2 not: A shortcut drawn without the gym's logo
+J-F-phone-1223-05 | type 6 | member | Shortcut on the home screen; member leaves the gym, then joins again
+  s1 see: The shortcut greyed out with "You left <gym>. Open MettleUp from its own icon."
+  s1 not: The shortcut still opens the app as the old gym
+  s2 see: The shortcut works again
+  s2 not: A second shortcut
+  s3 see: The shortcut redrawn with the new logo, nothing asked
+  s3 not: The old logo kept
+  s3 not: Android's add question shown again
+J-F-phone-1223-06 | type 12 | member | Shortcut on the home screen of a shared or unlocked phone
+  s1 see: Only the gym's logo and name
+  s1 not: The member's name, plan or workouts on the shortcut
+  s2 see: The shortcut greyed out with a plain line
+  s2 not: The gym's logo still opening the app as if still a member
+J-F-phone-1225-01 | type 1 | member | Android 14+ phone, member on Health Connect's permission screen for MettleUp
+  s1 see: The browser opens on mettleup.fit/privacy.html
+  s1 not: MettleUp's home screen opens instead of the policy
+  s1 not: A blank screen left behind
+  s2 see: Health Connect's permission screen again
+  s2 not: A see-through screen stuck over Health Connect
+J-F-phone-1225-02 | type 2 | member | Android 13 or older phone with the Health Connect app, MettleUp's permission screen
+  s1 see: The browser opens on mettleup.fit/privacy.html
+  s1 not: The app's home screen opens
+  s1 not: Nothing happens
+J-F-phone-1225-03 | type 3 | member | Phone with no browser installed (or the browser disabled)
+  s1 see: Health Connect's screen stays as it was
+  s1 not: A crash of MettleUp
+  s1 not: A see-through screen that blocks taps
+J-F-phone-1225-04 | type 6 | member | Member opened the policy once, came back, opened it again
+  s1 see: The policy again in the browser
+  s1 not: A second MettleUp screen in Recents
+  s1 not: MettleUp opening its own home screen
+J-F-phone-1225-05 | type 12 | member | Member reads the policy from Health Connect's link
+  s1 see: Words that Health Connect data never goes to the gym, to advertisers or to any AI
+  s1 not: A different policy from the one in the Play Console
+  s1 not: A page that does not mention Health Connect
+J-F-phone-1231-01 | type 1 | member | App installed from Google Play, a newer version is on Play, no workout open
+  s1 see: Pop-up "A new MettleUp is here"
+  s1 see: "It downloads while you keep using the app. Your workouts stay safe."
+  s1 see: Buttons "Update now" and "Later"
+  s1 not: The GitHub download card on a Play copy
+  s2 see: The pop-up closes; the app keeps working while it downloads
+  s2 not: The app blocked while downloading
+  s2 not: A second Google box
+  s3 see: "The new version is ready to install"
+  s3 see: "Restart now"
+  s3 not: The restart sheet during an open workout
+  s4 see: The app restarts into the new version
+  s4 not: Workouts lost after the restart
+  s4 not: The old version still running
+J-F-phone-1231-02 | type 2 | member | Download finished while the app was in the background for over 60 s
+  s1 see: The new version, installed quietly
+  s1 not: The install while a workout is open
+  s1 not: A lost workout draft
+J-F-phone-1231-03 | type 3 | member | Member taps "Update now" then says no in Google's box
+  s1 see: The pop-up closes
+  s1 not: The pop-up returning at once
+  s1 not: The Play store page opening as if Google failed
+  s2 see: The MettleUp page on Google Play opens
+  s2 not: Nothing happens
+  s2 not: An error with code words
+J-F-phone-1231-04 | type 3 | member | Copy installed from GitHub or by cable, not from Play
+  s1 see: No Play update pop-up (the GitHub card handles it)
+  s1 not: Google's update box
+  s1 not: A crash
+J-F-phone-1231-05 | type 6 | member | Workout open when the download finishes
+  s1 see: No restart sheet while the workout is open
+  s1 not: The app restarting mid-workout
+  s2 see: The restart can be done now
+  s2 not: The downloaded update forgotten (card stuck on Downloading)
+J-F-phone-1230-01 | type 1 | member | Member exported workouts from Hevy as a .csv; MettleUp installed but closed
+  s1 see: MettleUp opens on the Import screen with the file already chosen
+  s1 not: MettleUp's home screen with no import
+  s1 not: The file asked for again
+  s2 see: The workouts shown to import
+  s2 not: The same share imported twice
+  s3 see: The app where it was left
+  s3 not: The import starting again from the old share
+J-F-phone-1230-02 | type 2 | member | MettleUp already open; member shares a Strong .xlsx from another app
+  s1 see: The Import screen opens with the file, read as a spreadsheet
+  s1 not: The file read as text (garbled)
+  s1 not: Nothing happens
+J-F-phone-1230-03 | type 3 | member | Member shares a file over 50 MB
+  s1 see: Import screen: "That file is too big to import (over 50 MB). Export again from Hevy or Strong and share the new file."
+  s1 not: A crash
+  s1 not: Nothing happens
+  s1 not: Phone storage filled by a half copy
+J-F-phone-1230-04 | type 3 | member | Sharing app gives no access to the file
+  s1 see: "MettleUp couldn't open that file. Share it again, or tap "Choose file" and pick it here."
+  s1 not: A silent blank import screen
+J-F-phone-1230-05 | type 6 | member | Member shares a file, imports, then shares the same file again on purpose
+  s1 see: The Import screen again with the file
+  s1 not: The share ignored as already taken
+  s2 see: The choice to replace or keep the workouts already there
+  s2 not: Every workout doubled with no warning
+J-F-phone-1222-01 | type 1 | member | Member with a plan, today's routine not done, no workout open
+  s1 see: "Start <today's routine>" and "Log body weight"
+  s1 not: Another member's or an old routine name
+  s1 not: More than two shortcuts
+  s2 see: Today's routine starts in one tap
+  s2 not: Two workouts started
+  s2 not: A workout started by a link without the widget key
+  s3 see: "Resume workout"
+  s3 not: "Start" while a workout is open
+J-F-phone-1222-02 | type 2 | member | Member wants to log body weight
+  s1 see: Measures open on Body weight
+  s1 not: The home screen with no Measures
+  s1 not: A weight saved without the member typing it
+J-F-phone-1222-03 | type 2 | member | Member dragged "Start" onto the home screen as its own icon
+  s1 see: It starts that day's routine (kept up to date)
+  s1 not: Yesterday's routine
+  s1 not: A dead icon
+J-F-phone-1222-04 | type 3 | member | Member with no plan
+  s1 see: The Workout tab
+  s1 not: A workout started with an empty routine
+  s1 not: An error
+J-F-phone-1222-05 | type 6 | member | Member erases all data in Settings
+  s1 see: No MettleUp shortcuts
+  s1 not: "Start <old routine>" still shown
+  s2 see: Android says it is disabled
+  s2 not: The old routine started
+  s3 see: Shortcuts come back and work
+  s3 not: Shortcuts stuck disabled
+J-F-phone-1222-06 | type 12 | member | Phone handed to someone else, home screen visible
+  s1 see: Only the routine's name and "Log body weight"
+  s1 not: The member's body weight or past weights shown in the shortcut
+J-F-phone-1219-01 | type 1 | member | Member with a plan adds the "Today" widget
+  s1 see: Today's routine name, its line, up to two "what to beat" lines, and "Start"
+  s1 not: "Open MettleUp to see your workout" when the app has data
+  s1 not: Another day's routine
+  s2 see: Today's routine starts in one tap
+  s2 not: Two workouts
+  s2 not: The Workout tab with nothing started
+  s3 see: "Workout in progress" and "Resume"
+  s3 not: "Start" while a workout is open
+  s4 see: Today closed or the next routine
+  s4 not: "Resume" for a finished workout
+J-F-phone-1219-02 | type 2 | member | Member adds the "This week" widget
+  s1 see: Days trained this week as filled marks, today ringed, a count line
+  s1 not: A trained day left empty
+  s1 not: Days from last week
+  s2 see: The Profile with its chart and workouts
+  s2 not: The removed History tab
+J-F-phone-1219-03 | type 2 | member | Member opens the widget hint in the app on a launcher that cannot add widgets
+  s1 see: "Your home screen can't add it from here. Long-press your home screen → Widgets → MettleUp."
+  s1 not: A button that does nothing
+J-F-phone-1219-04 | type 3 | member | New member with no data, or a widget added before the app was opened
+  s1 see: Today: "Open MettleUp to see your workout" and "Open"
+  s1 see: This week: "Open MettleUp to update"
+  s1 not: A blank widget
+  s1 not: A wrong count such as 0/0
+J-F-phone-1219-05 | type 6 | member | Phone not opened for a few days, widget on the home screen
+  s1 see: The new day's routine without opening the app
+  s1 not: Yesterday's routine
+  s2 see: A fresh week, no days filled
+  s2 not: Last week's days still filled
+  s3 see: Widgets back to "Open MettleUp"
+  s3 not: Old routine or what-to-beat weights still shown
+J-F-phone-1219-06 | type 12 | member | Phone lying unlocked, home screen visible to others
+  s1 see: Routine name, what to beat (lift and weight)
+  s1 not: Body weight, photos or the member's name
+  s2 see: A workout starts on the member's phone
+  s2 not: A workout started from a link that lacks the widget's key
+J-F-phone-1220-01 | type 1 | member | Member in a gym with enough check-ins adds "Gym right now"
+  s1 see: The gym's name, a busy word, a line, "as of 18:05", "Check in"
+  s1 not: Who is at the gym
+  s1 not: A reading over 30 minutes old called "now"
+  s2 see: The check-in scanner opens
+  s2 not: The Gym tab with no scanner
+  s2 not: A check-in made without scanning
+J-F-phone-1220-02 | type 2 | member | Member in no gym adds the widget
+  s1 see: "No gym yet", "Join your gym in the app to see how busy it is", "Join your gym"
+  s1 not: Another gym's name
+  s2 see: The Gym tab to join
+  s2 not: The scanner
+J-F-phone-1220-03 | type 3 | member | Gym too new (too few check-ins) or the gym could not be read
+  s1 see: "Not known yet", "Open the Gym tab in MettleUp to see how busy it is"
+  s1 not: "Quiet" made up with no data
+  s1 not: A blank widget
+J-F-phone-1220-04 | type 6 | member | Widget showed a fresh reading; phone left for an hour without opening the app
+  s1 see: "Check again", "Open MettleUp to see how busy it is now", "Last checked 18:05"
+  s1 not: The old word still shown as now
+  s2 see: A fresh reading with "as of"
+  s2 not: The widget stuck on Check again
+  s3 see: "No gym yet"
+  s3 not: The old gym's busy word
+J-F-phone-1220-05 | type 12 | member | Member reads the widget
+  s1 see: How busy the gym is; a head count only from 5 people
+  s1 not: Names or faces of who came
+  s1 not: A count under 5 that could point to a person
+J-F-phone-1202-01 | type 1 | member | OPPO / OnePlus phone that took MettleUp's sound away; phone on ring; rest timer running; screen off
+  s1 see: "Rest is over" notification
+  s1 see: The member's own rest sound plays once
+  s1 not: Silence on a phone in ring mode
+  s1 not: Two sounds at once
+  s2 see: The message in the list
+  s2 see: The phone's own notification sound once
+  s2 not: No sound at all
+  s2 not: The sound twice
+J-F-phone-1202-02 | type 3 | member | Member turned "Workout sounds" off, or the phone is on vibrate or silent
+  s1 see: "Rest is over" with a buzz only
+  s1 not: A sound played by the app
+J-F-phone-1202-03 | type 3 | member | Do Not Disturb on, "Ring through Do Not Disturb" off
+  s1 see: Notifications shown silently
+  s1 not: A sound through Do Not Disturb
+J-F-phone-1202-04 | type 6 | member | Member set a sound for the channel themselves in Android settings, then picks "None"
+  s1 see: No app sound (member's choice kept)
+  s1 not: The app playing a sound the member turned off
+  s2 see: The rest sound rings as an alarm
+  s2 not: Silence
+J-F-phone-1202-05 | type 12 | member | Gym message arrives on a phone near other people
+  s1 see: Only the phone's notification sound
+  s1 not: The message read aloud
+  s1 not: A sound when the member muted alerts
+J-F-phone-1202-06 | type 1 | the system | A gym message is posted on "Messages from your gym" on an OPPO phone whose channel lost its sound
+  s1 see: The phone's notification sound plays once
+  s1 not: A second ring within 4 seconds from the push task and the in-app post
+J-F-phone-1202-07 | type 3 | the system | Pixel / Samsung phone that kept the channel sound
+  s1 see: The channel rings by itself; the app adds nothing
+  s1 not: Two sounds
+J-F-phone-1202-08 | type 3 | the system | Gym message during an open workout with the app in front (quiet channel)
+  s1 see: No ring
+  s1 not: A sound during the workout
+J-F-phone-1202-09 | type 6 | the system | Notifications turned off for MettleUp, then back on
+  s1 see: No ring
+  s1 not: A sound with no notification
+  s2 see: One ring if the channel is still muted
+  s2 not: The ring blocked forever

@@ -1,0 +1,607 @@
+# A8-server-database-3-1: coverage of 107 Tier 1 journeys (9 features, from A5-server-database-3-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-server-504 | supabase/tests/0065_trainer_schedule.sql | db | 123 lines | file name
+F-server-505 | supabase/tests/0066_purge_qa_gyms.sql | db | 49 lines | file name
+F-server-506 | apps/dashboard/e2e/terms.spec.mjs | e2e | 149 lines | asserts 5 journey phrase(s)
+F-server-506 | apps/dashboard/test/crm/gymWod.test.ts | unit | 144 lines | asserts 1 journey phrase(s)
+F-server-506 | apps/dashboard/test/crm/terms.test.ts | unit | 75 lines | asserts 1 journey phrase(s)
+F-server-506 | apps/mobile/test/shop/joinAgreement.test.ts | unit | 136 lines | asserts 1 journey phrase(s)
+F-server-506 | deploy/panel/help.test.mjs | unit | 215 lines | asserts 1 journey phrase(s)
+F-server-507 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-server-507 | supabase/tests/0068_member_find_gym.sql | db | 159 lines | file name
+F-server-507 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-server-507 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-server-507 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-server-507 | apps/dashboard/e2e/r534-training-progress-uat.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-server-507 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-server-507 | apps/dashboard/e2e/whatsapp-verify-uat.spec.mjs | e2e | 324 lines | asserts 1 journey phrase(s)
+F-server-507 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | asserts 1 journey phrase(s)
+F-server-507 | apps/dashboard/test/crm/planRequests.test.ts | unit | 239 lines | asserts 1 journey phrase(s)
+F-server-507 | apps/mobile/test/db/finishReal.test.ts | unit | 104 lines | asserts 1 journey phrase(s)
+F-server-507 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-server-508 | apps/dashboard/e2e/member-messages-uat.spec.mjs | e2e | 236 lines | asserts 6 journey phrase(s)
+F-server-508 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 5 journey phrase(s)
+F-server-508 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-server-508 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 3 journey phrase(s)
+F-server-508 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 3 journey phrase(s)
+F-server-508 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 3 journey phrase(s)
+F-server-508 | apps/dashboard/e2e/bell-inbox-uat.spec.mjs | e2e | 401 lines | asserts 2 journey phrase(s)
+F-server-508 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 2 journey phrase(s)
+F-server-508 | supabase/tests/0069_member_messages.sql | db | 186 lines | file name
+F-server-508 | supabase/tests/0087_feedback_owner_desk.sql | db | 143 lines | file name
+F-server-508 | supabase/tests/0096_message_recipient.sql | db | 222 lines | asserts 2 journey phrase(s)
+F-server-508 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-server-510 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-server-510 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 3 journey phrase(s)
+F-server-510 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 2 journey phrase(s)
+F-server-510 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 2 journey phrase(s)
+F-server-510 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-server-510 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 2 journey phrase(s)
+F-server-510 | apps/dashboard/e2e/entry-uat.spec.mjs | e2e | 187 lines | asserts 2 journey phrase(s)
+F-server-510 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 2 journey phrase(s)
+F-server-510 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 2 journey phrase(s)
+F-server-510 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 2 journey phrase(s)
+F-server-510 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 2 journey phrase(s)
+F-server-510 | supabase/tests/0070_member_plus_lock.sql | db | 71 lines | file name
+F-server-511 | apps/dashboard/test/crm/pricesOneSource.test.ts | unit | 187 lines | imports the code, asserts 3 journey phrase(s)
+F-server-511 | apps/dashboard/test/crm/assistant/screenWords.test.ts | unit | 188 lines | asserts 4 journey phrase(s)
+F-server-511 | apps/dashboard/e2e/gyms-site-uat.spec.mjs | e2e | 242 lines | asserts 3 journey phrase(s)
+F-server-511 | supabase/tests/0071_ai_assistant.sql | db | 241 lines | file name, asserts 1 journey phrase(s)
+F-server-511 | apps/dashboard/e2e/assistant-uat.spec.mjs | e2e | 822 lines | asserts 2 journey phrase(s)
+F-server-511 | apps/mobile/test/theme/plans.test.ts | unit | 123 lines | asserts 2 journey phrase(s)
+F-server-511 | apps/dashboard/e2e/ai-questions-uat.spec.mjs | e2e | 434 lines | asserts 1 journey phrase(s)
+F-server-511 | apps/dashboard/e2e/pagechat-uat.spec.mjs | e2e | 272 lines | asserts 1 journey phrase(s)
+F-server-511 | apps/dashboard/e2e/pay-mettleup-uat.spec.mjs | e2e | 210 lines | asserts 1 journey phrase(s)
+F-server-511 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-server-511 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-server-511 | apps/dashboard/test/crm/pageChat.test.ts | unit | 118 lines | asserts 1 journey phrase(s)
+F-server-514 | apps/dashboard/e2e/assistant-uat.spec.mjs | e2e | 822 lines | asserts 2 journey phrase(s)
+F-server-514 | apps/dashboard/e2e/r532-uat.spec.mjs | e2e | 143 lines | asserts 2 journey phrase(s)
+F-server-514 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-server-514 | supabase/tests/0073_member_push_more.sql | db | 147 lines | file name
+F-server-514 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-server-514 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 1 journey phrase(s)
+F-server-514 | apps/dashboard/e2e/pay-mettleup-uat.spec.mjs | e2e | 210 lines | asserts 1 journey phrase(s)
+F-server-514 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-server-514 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-server-514 | apps/dashboard/test/crm/plans.test.ts | unit | 45 lines | asserts 1 journey phrase(s)
+F-server-514 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-server-514 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-server-515 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 5 journey phrase(s)
+F-server-515 | apps/dashboard/e2e/member-messages-uat.spec.mjs | e2e | 236 lines | asserts 3 journey phrase(s)
+F-server-515 | apps/mobile/test/shop/r505AskPlan.test.ts | unit | 134 lines | asserts 3 journey phrase(s)
+F-server-515 | supabase/tests/0086_member_questions_words.sql | db | 50 lines | file name, asserts 1 journey phrase(s)
+F-server-515 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 2 journey phrase(s)
+F-server-515 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 2 journey phrase(s)
+F-server-515 | apps/mobile/qa/uat-rel-14-pass-member.yaml | maestro | 132 lines | asserts 2 journey phrase(s)
+F-server-515 | apps/mobile/test/lib/helpHistory.test.ts | unit | 207 lines | asserts 2 journey phrase(s)
+F-server-515 | apps/mobile/test/shop/askTrainer.test.ts | unit | 257 lines | asserts 2 journey phrase(s)
+F-server-515 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 2 journey phrase(s)
+F-server-515 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-server-515 | apps/mobile/test/tracker/r72HealthSend.test.ts | unit | 52 lines | asserts 2 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-server-504-01 | type 1 | owner | Admin app, Trainers page, one ticked trainer with working hours set, a member on the gym list
+  s1 see: This week, Monday to Sunday, with each ticked trainer, what they teach and their hours
+  s1 see: Each member's count of classes booked from now on
+  s1 not: A trainer from another gym or a removed staff member in the list
+  s1 not: Bookings of another week mixed in
+  s2 see: The class in the week at 7:00 to 8:00 with the name of who booked it
+  s2 not: Two classes after one press
+  s2 not: A class saved outside the trainer's hours without asking first
+  s3 see: The slot is free again and the member's count of classes ahead goes down by one
+  s3 not: The cancelled class still counted or still shown in the week
+J-F-server-504-02 | type 2 | owner | Admin app, Trainers page, a ticked trainer with no page yet
+  s1 see: The trainer's page with the teaching line (at most 80 letters), the hours and the photo
+  s1 not: A photo over 100 KB or not a JPEG saved
+  s1 not: Overlapping hours kept as two shifts
+  s2 see: The new hours, the same photo
+  s2 not: The photo removed because it was not sent again
+J-F-server-504-03 | type 3 | owner | Admin app, Trainers page, a trainer with a class tomorrow at 7:00 am
+  s1 see: A refusal that says the trainer is busy then
+  s1 not: A second class saved over the first
+  s2 see: A refusal for a time in the past
+  s2 see: A refusal for a day too far ahead
+  s2 not: A class saved in the past or more than 31 days ahead
+  s3 see: A question first: the time is outside the trainer's hours
+  s3 not: A class saved outside the hours with no question
+J-F-server-504-04 | type 6 | owner | Admin app, Trainers page, a class that started 10 minutes ago
+  s1 see: The class leaves the week
+  s1 not: A refusal for the owner
+  s2 see: A word that the class is no longer there
+  s2 not: Two cancel records or an error with no words
+J-F-server-504-05 | type 12 | owner | Admin app, Trainers page, a trainer page with a photo
+  s1 see: Only this gym's trainers, photos and bookings each time
+  s1 not: Another gym's trainer photo, member or booking
+  s1 not: The member's phone or money shown on a booking
+J-F-server-504-06 | type 1 | staff | Admin app signed in as front desk, Trainers page, a ticked trainer with free time tomorrow
+  s1 see: The week with every ticked trainer and their bookings
+  s1 not: A Save button on a trainer's page for the desk
+  s2 see: The class in the week with the desk person's name as who booked it
+  s2 not: Two classes after one press
+  s2 not: The class under another trainer
+J-F-server-504-07 | type 3 | staff | Admin app as front desk, Trainers page, a class that started 5 minutes ago
+  s1 see: A word that only the owner can change it
+  s1 not: The page saved
+  s2 see: A word that only the owner can cancel it now
+  s2 not: The class cancelled
+  s3 see: A refusal that the member is not on the list
+  s3 not: A class for a member who is not on the list
+J-F-server-504-08 | type 6 | staff | Admin app as front desk, a class tomorrow
+  s1 see: The slot is free and the count of classes ahead goes down
+  s1 not: The class still in the week
+  s2 see: A new class in that slot
+  s2 not: A refusal because of the cancelled class
+J-F-server-504-09 | type 1 | trainer | Admin app signed in as a ticked trainer, Trainers page
+  s1 see: The week with every trainer's classes, own classes among them
+  s1 not: A trainer who was removed still listed
+  s2 see: The class under their own name with them as who booked it
+  s2 not: A class saved during another class of theirs
+J-F-server-504-10 | type 2 | trainer | Admin app as a trainer, own trainer page
+  s1 see: Their page with the new words and hours
+  s1 not: Another trainer's page changed
+J-F-server-504-11 | type 3 | trainer | Admin app as a trainer, another trainer's page
+  s1 see: A word that only the owner can change it
+  s1 not: The other trainer's page changed
+  s2 see: A refusal that the member is busy then
+  s2 not: Two classes for one member at once
+J-F-server-504-12 | type 6 | trainer | Admin app as a trainer, a class of theirs that started 15 minutes ago and one tomorrow
+  s1 see: The class leaves the week
+  s1 not: A refusal for a class that has not started
+  s2 see: A word that only the owner can cancel it now
+  s2 not: The class cancelled
+J-F-server-504-13 | type 12 | trainer | Admin app as a trainer, the week with another trainer's classes
+  s1 see: The other trainer's classes and the member names booked
+  s1 not: A member's phone, fees or body numbers on a booking
+  s1 not: Bookings of another gym
+J-F-server-505-01 | type 1 | system | Night: the HQ Worker runs its nightly clean-up; three gyms named "QA journeys 1..3" were made 2 days ago by a phone test run
+  s1 see: The three QA gyms and all their rows are gone
+  s1 see: One HQ log line lists their codes and names and the count 3
+  s1 not: A QA gym made less than 1 day ago deleted
+  s1 not: The client gym DAB8DE touched
+J-F-server-505-02 | type 3 | system | Gyms named "Qa Fitness", "QAFit", "QA Fitness Studio" (a real paying gym, 3 months old) and a QA gym made 2 hours ago
+  s1 see: "Qa Fitness", "QAFit" and the 2-hour-old QA gym stay
+  s1 not: A real gym whose owner named it "QA ..." deleted with its members and money records
+  s1 not: A gym deleted only because of its name
+  s2 see: A refusal
+  s2 not: Any gym deleted
+J-F-server-505-03 | type 6 | system | 150 QA gyms older than 1 day are waiting
+  s1 see: The oldest 100 are deleted; the HQ log says 100
+  s1 not: More than 100 deleted in one night
+  s2 see: The other 50 are deleted
+  s2 not: A gym deleted twice in the log, or one left behind for ever
+J-F-server-505-04 | type 12 | system | A QA gym whose test members, check-ins and terms acceptance rows exist
+  s1 see: Every row of that gym goes with it, the terms acceptance rows included
+  s1 not: Rows of the deleted gym left behind
+  s1 not: The HQ log listing member names or phones
+J-F-server-506-01 | type 1 | owner | Admin app, the owner signs in; the gym accepted the 2026-10-24 terms only
+  s1 see: Card "Before you go on"
+  s1 see: "We updated the MettleUp terms and the data agreement on 10 Nov 2026. Please read them and accept the new version..."
+  s1 not: The panel opening behind the card
+  s1 not: The front desk asked instead of the owner
+  s2 see: "Saving…" then the panel opens
+  s2 not: The card coming back at the next sign-in
+  s2 not: Two acceptance records
+J-F-server-506-02 | type 2 | owner | Admin app, Create my gym online, a new owner
+  s1 see: The new gym opens with no second terms card
+  s1 not: The terms card shown again at the first sign-in
+  s1 not: The gym made without the acceptance record
+J-F-server-506-03 | type 3 | owner | Admin app, the terms card on screen
+  s1 see: "Tick the box first. Then tap “Agree and continue”."
+  s1 not: The acceptance saved without the tick
+  s2 see: A refusal; the card stays
+  s2 not: A made-up version saved as accepted
+  s3 see: No terms card for the desk
+  s3 not: The desk accepting for the owner
+J-F-server-506-04 | type 6 | owner | The owner accepted 2026-11-10 on the laptop
+  s1 see: No terms card
+  s1 not: The card asked again for the same version
+  s2 see: No way to change or delete it
+  s2 not: The acceptance record changed or removed by any app
+J-F-server-506-05 | type 12 | owner | Admin app, Settings, Your data, after accepting
+  s1 see: "You accepted the terms on ... (version 2026-11-10)"
+  s1 not: Another gym's acceptance
+  s1 not: A raw IP address shown or kept
+J-F-server-507-01 | type 1 | member | Member app, Gym tab, not in a gym; the gym list has this number and first name with a plan running today
+  s1 see: "Send the message in WhatsApp"
+  s1 see: WhatsApp opens with a short message to MettleUp
+  s1 not: The search run on a typed number before it is proven
+  s2 see: "Looking for your gym..." then "You are a member of {gym}" and "Your plan runs until {date}."
+  s2 not: A plan price, dues or visits shown
+  s2 not: A gym where the plan ended
+  s3 see: The member is in the gym; the number is linked to the gym's list
+  s3 not: A desk check still asked for the same number
+J-F-server-507-02 | type 2 | member | Member app, first start, phone number sign-in
+  s1 see: The gym found for that number and first name, ready to join
+  s1 not: A different gym's member shown
+  s1 not: The number used for anything but finding the gym
+J-F-server-507-03 | type 3 | member | Member app, Find my gym
+  s1 see: "We did not find your gym"
+  s1 see: "We look only for a plan that runs today, under the number and first name your gym has for you."
+  s1 not: The gym shown for a wrong name
+  s2 see: "Too many searches with this check. Tap Start again."
+  s2 not: A sixth answer
+  s3 see: "The message came from a different number. Send it from the WhatsApp of the number you typed."
+  s3 not: The check passed for the typed number
+J-F-server-507-04 | type 6 | member | Member app, gym found and joined, the same check used once to link
+  s1 see: The member is linked; a waiting desk request for this member is closed as "Number checked"
+  s1 not: The desk request still waiting
+  s2 see: "The check ran out of time. Tap Start again."
+  s2 not: A second link with a used proof
+J-F-server-507-05 | type 12 | member | A number that once belonged to someone else, now held by a new person with another first name
+  s1 see: "We did not find your gym"
+  s1 not: The old holder's gym shown
+  s1 not: Any gym found from a typed number that was never proven
+  s2 see: The share menu with a message about MettleUp
+  s2 see: "If you type your gym’s name and city, the MettleUp team may contact your gym. We never share your number."
+  s2 not: The member's number sent in the lead
+J-F-server-507-06 | type 1 | pass member | Member app, Gym tab, not in a gym; the gym list has this number and first name, coming on a pass
+  s1 see: "You are a member of {gym}"
+  s1 see: "You train there on a pass."
+  s1 not: A plan end date made up for a pass
+  s2 see: The member is in the gym and linked
+  s2 not: The pass company's name or dues shown to the member
+J-F-server-507-07 | type 2 | pass member | Member app, first start, phone number sign-in, a pass member
+  s1 see: The gym found with "You train there on a pass."
+  s1 not: Not found only because there is no plan
+J-F-server-507-08 | type 3 | pass member | Member app, Find my gym, a pass member the gym archived
+  s1 see: "We did not find your gym"
+  s1 not: An archived or deleted list entry shown as a gym
+  s2 see: "Type your first name, as your gym has it."
+  s2 not: A search with no name
+J-F-server-507-09 | type 6 | pass member | Member app, a pass member joined but typed a different first name in the app than the gym list has
+  s1 see: A word that the name does not match the gym's list
+  s1 not: The number linked to someone else on the list
+  s2 see: The link goes through
+  s2 not: The first proof used up by the refused try
+J-F-server-507-10 | type 12 | pass member | Member app, Find my gym, a pass member
+  s1 see: "Your number is checked once and is not kept for this."
+  s1 see: "We only show you your own gym."
+  s1 not: The member's number kept in the search log
+J-F-server-508-01 | type 1 | member | Member app, Gym tab, a member of a gym that has Message your gym
+  s1 see: "Sent. When your gym replies, you will see it below."
+  s1 see: "Not seen by your gym yet. Waiting for a reply."
+  s1 not: The message sent twice
+  s1 not: The message sent to a trainer when The gym was picked
+  s2 see: "Seen by your gym. Waiting for a reply."
+  s2 not: "Seen" before anyone at the gym opened it
+  s3 see: A phone pop-up "Reply to your message: ..."
+  s3 see: "Your gym replied. Tap to read it." on the Gym tab
+  s3 see: Only the first name of who replied
+  s3 not: The full name or role of the staff member
+  s3 not: No pop-up while "Messages from my gym" is on
+J-F-server-508-02 | type 2 | member | Member app, Message your gym, Feedback
+  s1 see: "Sent without your name" on the message
+  s1 see: "Your gym can still reply here, but it will not see who sent it."
+  s1 not: The member's name, phone or list id shown to anyone at the gym
+J-F-server-508-03 | type 3 | member | Member app, Message your gym
+  s1 see: "Only feedback can be sent without your name."
+  s1 not: A complaint saved without the name
+  s2 see: "Please type your message first."
+  s2 not: An empty message saved
+  s3 see: "You have sent a lot of messages today. Please try again tomorrow."
+  s3 not: The sixth message saved
+  s4 see: "Messages to your gym are paused for now. Please ask at the front desk."
+  s4 not: A message saved to a paused gym
+J-F-server-508-04 | type 6 | member | Member app, a message the gym replied to
+  s1 see: "Your gym marked this as done. Write back if you need more help."
+  s1 not: The thread hidden from the member
+  s2 see: The thread waits for the gym again
+  s2 not: The new line lost because the thread was done
+  s3 see: The messages are gone
+  s3 not: The gym still reading the member's messages after they left
+J-F-server-508-05 | type 12 | member | Member app, Message your gym, before sending
+  s1 see: "The owner and front desk at {gym} read your feedback. Your trainers do not see it."
+  s1 see: "Only the owner of {gym} reads your complaint. The front desk and trainers do not see it."
+  s1 not: A trainer reading feedback or a complaint
+  s1 not: MettleUp staff named as readers of gym feedback
+J-F-server-508-06 | type 1 | owner | Admin app as the owner, Member messages, one question waiting
+  s1 see: "Waiting for a reply" with the member's first name and "To: Gym owner"
+  s1 not: A thread of a member who left the gym
+  s2 see: "Reply sent."
+  s2 see: "The member has not opened your reply yet."
+  s2 not: The reply saved twice
+  s2 not: No pop-up queued for the member
+  s3 see: "Marked as done by {name}... If the member writes again, it moves back to Waiting for a reply."
+  s3 not: The thread deleted
+J-F-server-508-07 | type 2 | owner | Admin app as the owner, a new complaint
+  s1 see: Member messages opens on the complaint
+  s1 not: The complaint shown to the desk or trainers
+J-F-server-508-08 | type 3 | owner | Admin app as the owner, Member messages
+  s1 see: "This message is no longer here, so nothing was sent or changed. The member may have left the gym."
+  s1 not: A reply saved for a member who left
+  s2 see: "Please type a reply (up to ... letters)."
+  s2 not: An empty reply saved
+  s3 see: "This conversation is full. The member can send a new message."
+  s3 not: A 51st line
+J-F-server-508-09 | type 6 | owner | Admin app as the owner, a thread marked done
+  s1 see: The thread back under Waiting for a reply
+  s1 not: The done line still shown
+  s2 see: The thread back in Waiting for a reply
+  s2 not: The new line hidden because the thread was done
+J-F-server-508-10 | type 12 | owner | Admin app as the owner, a feedback sent without the name
+  s1 see: "A member (name hidden)"
+  s1 see: "The member sent this without their name. You can still reply here."
+  s1 not: The member's name, phone, app id or list id anywhere on the page or in the alert
+J-F-server-508-11 | type 1 | staff | Admin app as front desk (not ticked Trainer), Member messages, a question to "Gym admin"
+  s1 see: The question under "Waiting for a reply" with "To: Gym admin"
+  s1 not: A complaint sent only to the owner
+  s2 see: "Reply sent." then the done line with the desk person's first name
+  s2 not: The owner's name as who replied
+J-F-server-508-12 | type 2 | staff | Admin app as front desk, a new feedback
+  s1 see: Member messages opens on the feedback
+  s1 not: A bell line for a complaint sent only to the owner
+J-F-server-508-13 | type 3 | staff | Admin app as front desk, a complaint the member sent to the owner only
+  s1 see: No such thread
+  s1 see: "Messages a member sent only to the owner or to a trainer are not shown here..."
+  s1 not: The complaint listed or counted
+  s2 see: "This message is no longer here..."
+  s2 not: A reply saved
+J-F-server-508-14 | type 6 | staff | Admin app as front desk, a feedback marked done by the owner
+  s1 see: The done line with the owner's name
+  s1 not: The thread still under Waiting
+  s2 see: The thread back under Waiting
+  s2 not: The owner's done record kept as well
+J-F-server-508-15 | type 12 | staff | Admin app as front desk, Member messages page
+  s1 see: "Messages a member sent only to the owner or to a trainer are not shown here. Complaints show here only when the member picked "Gym admin"."
+  s1 not: A complaint to the owner shown to the desk
+J-F-server-508-16 | type 1 | trainer | Admin app as a ticked trainer, a question a member sent to this trainer
+  s1 see: The question with "To: {trainer name}"
+  s1 not: Feedback or complaints listed
+  s1 not: Questions sent to another trainer
+  s2 see: "Reply sent."
+  s2 not: The reply signed with another person's name
+J-F-server-508-17 | type 2 | trainer | Admin app as a trainer, a new question to them
+  s1 see: Member messages opens on it
+  s1 not: A bell line for feedback
+J-F-server-508-18 | type 3 | trainer | Admin app as a trainer, a feedback exists at the gym
+  s1 see: No Feedback button
+  s1 see: "Feedback and complaints never go to trainers, so they are not shown here..."
+  s1 not: The feedback listed, counted or alerted
+  s2 see: "This message is no longer here..."
+  s2 not: A reply saved
+J-F-server-508-19 | type 6 | trainer | Admin app as a trainer, a question they answered
+  s1 see: The question back under Waiting
+  s1 not: The member's new line lost
+J-F-server-508-20 | type 12 | trainer | Admin app as a trainer who is also the owner
+  s1 see: Feedback and complaints shown, because this person is the owner
+  s1 not: The owner losing feedback because they are also ticked Trainer
+J-F-server-510-01 | type 1 | owner | Admin app as the owner, Settings, card "Free MettleUp Plus for your members", the switch at its default (on)
+  s1 see: "Free MettleUp Plus for your members"
+  s1 see: The box "Lock the paid features when a member’s plan ends" ticked
+  s1 not: The box unticked when the gym never changed it
+  s2 see: "Saved. Members keep the paid features after their plan ends."
+  s2 see: A line with who changed it and when
+  s2 not: The save lost after a refresh
+J-F-server-510-02 | type 3 | owner | Admin app as the owner, the card open, no internet
+  s1 see: An error line; the box shows the saved value again
+  s1 not: "Saved." for a save that did not reach the server
+J-F-server-510-03 | type 6 | owner | Admin app as the owner, the switch was turned off yesterday
+  s1 see: "Saved. Paid features lock 7 days after a member’s plan ends."
+  s1 not: The old off value shown after a refresh
+J-F-server-510-04 | type 12 | owner | Admin app as the owner, the card
+  s1 see: Only the paid extras are named (watch app, older charts, suggested weights, calculators, more own exercises)
+  s1 not: Any word that the member's workouts or history get locked
+J-F-server-510-05 | type 1 | staff | Admin app as front desk, Settings, the Plus card
+  s1 see: "On: paid features lock 7 days after a member’s plan ends."
+  s1 see: "Only the owner can change this."
+  s1 not: A box the desk can change
+J-F-server-510-06 | type 3 | staff | An older admin app that still shows a Save to the desk
+  s1 see: A word that only the owner can change this
+  s1 not: The switch changed by the desk
+J-F-server-510-07 | type 6 | staff | Admin app as front desk, the owner just turned the switch off
+  s1 see: "Off: members keep the paid features after their plan ends."
+  s1 not: The old on line
+J-F-server-510-08 | type 1 | member | Member app, in a gym with the switch on, plan ended 8 days ago
+  s1 see: The paid extra locked with a word to renew
+  s1 see: Own workouts, history, routines and records all there
+  s1 not: Own data locked
+  s1 not: The extra still free when the gym's switch is on
+J-F-server-510-09 | type 2 | member | Member app, in a gym with the switch off, plan ended 8 days ago
+  s1 see: The extra still works
+  s1 not: The extra locked
+J-F-server-510-10 | type 3 | member | Member app of a member who left the gym
+  s1 see: The app treats the member as no longer in that gym; the gym's switch is not used
+  s1 not: The member who left treated as in the gym
+J-F-server-510-11 | type 6 | member | Member app, extras locked after the plan ended
+  s1 see: The extras unlocked again
+  s1 not: Still locked after the renewal shows in the app
+  s2 see: The extras unlocked at the next check
+  s2 not: Still locked with the switch off
+J-F-server-510-12 | type 12 | member | Member app, extras locked
+  s1 see: Everything the member saved
+  s1 not: Any own data hidden by the lock
+J-F-server-511-01 | type 1 | owner | Admin app as the owner, AI Assistant opened for the first time, gym on a yearly Pro plan
+  s1 see: Sheet "AI credits"
+  s1 see: "Starter credits" +20 and "Free credits for this month" +100
+  s1 not: The starter credits given twice
+  s1 not: Free credits for a trial or monthly plan
+  s2 see: The message sent; the balance goes down by 1
+  s2 not: A credit taken for the question itself
+  s2 not: Two credits taken for one task
+  s3 see: The task done, 1 credit
+  s3 not: The task shown as drafted
+J-F-server-511-02 | type 2 | owner | Admin app as the owner, AI Assistant, plans switched on
+  s1 see: "Workout plan saved" costs 3 credits; the balance goes down by 3
+  s1 not: 1 credit or 6 credits taken
+J-F-server-511-03 | type 3 | owner | Admin app, AI Assistant, 0 credits left
+  s1 see: "You have no AI credits left. Ask MettleUp for credits to send this."
+  s1 not: The message sent with no credit
+  s1 not: A balance below 0
+  s2 see: No wallet for the desk
+  s2 not: The desk spending the owner's credits
+J-F-server-511-04 | type 6 | owner | Admin app, a task whose credit was spent and then failed half way
+  s1 see: "Credits given back" in the list; the balance back up
+  s1 not: The credit given back twice
+  s1 not: The task still shown as done
+  s2 see: Next month "Unused free credits ended" and the new month's free credits
+  s2 not: Last month's free credits carried over
+  s2 not: Bought credits taken away
+J-F-server-511-05 | type 12 | owner | Admin app, AI Assistant history with tasks naming members
+  s1 see: Tasks older than 400 days gone; their credits still counted
+  s1 not: The request words still kept after 400 days
+  s1 not: Another gym's tasks
+J-F-server-511-06 | type 1 | HQ admin | HQ app, a gym's page, AI credits
+  s1 see: Balance, this month's spent, tasks done, added and free given, the last 20 lines
+  s1 not: Another gym's figures
+  s2 see: The balance up by 50, the note in the list
+  s2 see: One HQ log line with who added it
+  s2 not: Credits added with no note
+  s2 not: Two lines after one press
+J-F-server-511-07 | type 2 | HQ admin | HQ app, a gym paid for a pack of 150 credits
+  s1 see: "Credits bought" +150 on the owner's sheet
+  s1 not: A purchase with a minus amount
+J-F-server-511-08 | type 3 | HQ admin | HQ app, a gym with 10 credits
+  s1 see: A refusal: not enough credits
+  s1 not: A balance below 0
+  s2 see: A refusal
+  s2 not: The amount saved
+  s3 see: A refusal that the gym is gone
+  s3 not: A credit line for a gym that does not exist
+J-F-server-511-09 | type 6 | HQ admin | HQ app, 50 credits added by mistake
+  s1 see: The balance back down; both lines in the list
+  s1 not: The first line deleted instead of a new minus line
+J-F-server-511-10 | type 12 | HQ admin | HQ app, a gym's AI wallet
+  s1 see: Each spend's note (the first words of the owner's request, which can name a member)
+  s1 not: Notes kept after 400 days
+  s1 not: The wallet opened with the public app key
+J-F-server-511-11 | type 1 | system | Night: the HQ Worker runs after the nightly clean-up
+  s1 see: Requests older than 400 days deleted for every gym; spend notes older than 400 days cleared; credit amounts kept
+  s1 not: A credit amount deleted
+  s1 not: Only gyms that still use the assistant cleaned
+J-F-server-511-12 | type 2 | system | First wallet read of a new India month, a yearly Starter gym
+  s1 see: "Free credits for this month" +50 once
+  s1 not: Free credits added twice from two tabs
+J-F-server-511-13 | type 3 | system | The purge function is called with the public app key
+  s1 see: A refusal
+  s1 not: Any task deleted
+J-F-server-511-14 | type 6 | system | A gym whose yearly plan ran out last month with 20 free credits unused
+  s1 see: "Unused free credits ended" -20 dated last month; no new free credits
+  s1 not: The 20 still in the balance
+  s1 not: Bought credits taken
+J-F-server-511-15 | type 12 | system | A spend 401 days old
+  s1 see: The spend line stays with its amount and no note
+  s1 not: The request's words still kept
+J-F-server-514-01 | type 1 | member | Member app with "Messages from my gym" on; the desk sends a new workout plan to this member
+  s1 see: Phone pop-up "New workout plan from your gym: {plan name}. Tap to see it on the Workout tab."
+  s1 not: No pop-up
+  s1 not: A pop-up to a member the plan is not for
+  s2 see: The Workout tab opens
+  s2 not: A blank screen or the wrong tab
+J-F-server-514-02 | type 2 | member | Member app; the desk saves body measurements for this member
+  s1 see: Pop-up "Your gym saved your body measurements from {day}. Tap to see them."
+  s1 not: A body number in the pop-up
+  s2 see: Measurements opens
+  s2 not: Another member's measurements
+J-F-server-514-03 | type 3 | member | Member app with "Messages from my gym" off; a new diet plan is sent
+  s1 see: No pop-up; the plan is in the app
+  s1 not: A pop-up while the setting is off
+  s1 not: The plan not saved because pop-ups are off
+  s2 see: No pop-up
+  s2 not: A pop-up for a withdrawn plan
+J-F-server-514-04 | type 6 | member | Member app; a diet plan the member already has
+  s1 see: No pop-up
+  s1 not: A second pop-up for the same plan
+  s2 see: Pop-up "Your gym changed your diet plan: {name}. Tap to see your meals."
+  s2 not: A "New diet plan" line for a change
+J-F-server-514-05 | type 12 | member | A member whose number is on two list entries of the gym
+  s1 see: No pop-up to the phone (the number is shared)
+  s1 not: The plan name of one person pushed to another person's phone
+  s1 not: A fee amount, body number or another name in any pop-up
+J-F-server-514-06 | type 1 | system | The desk asked a member to pay a fee online; the HQ Worker reads new fee requests every minute
+  s1 see: One note for each app member linked to that list entry: "Your gym asked you to pay for {label}. Tap to pay in the app."
+  s1 not: The amount in the note
+  s1 not: A note to a member of another gym
+J-F-server-514-07 | type 2 | system | The desk makes a new challenge
+  s1 see: One note to every live member with pop-ups on: "New challenge at your gym: {title}, {start} to {end}..."
+  s1 not: A note for a challenge that already ended
+  s1 not: A note to a member who left
+J-F-server-514-08 | type 3 | system | The HQ Worker hands a bad list (an item with no id, a wrong gym id)
+  s1 see: The bad items skipped, the good ones made
+  s1 not: The whole list refused because of one bad item
+  s2 see: A refusal
+  s2 not: A note made
+J-F-server-514-09 | type 6 | system | The same fee request handed twice
+  s1 see: No second note
+  s1 not: Two pop-ups for one request
+J-F-server-514-10 | type 12 | system | A body measurement saved for a list entry with a name that differs from the app member
+  s1 see: No note
+  s1 not: A note to a phone whose first name does not match
+J-F-server-515-01 | type 1 | member | Member app, Gym tab, a member whose gym plan covers today
+  s1 see: Title "Ask about your workout"
+  s1 see: "Who should answer?" with "Any trainer or the owner" and the trainers
+  s1 not: The row locked for a member with a running plan
+  s2 see: "Sent. The reply will show on this page."
+  s2 see: "Waiting for a reply. You can ask a new question once this one is answered."
+  s2 not: The question sent twice
+  s3 see: "Your gym replied" with the answer
+  s3 not: "Your replied"
+J-F-server-515-02 | type 2 | member | Member app, Message your gym page with both sides open
+  s1 see: The question as a "Workout question" in the one list
+  s1 not: The question sent to the gym's message list instead
+J-F-server-515-03 | type 3 | member | Member app, a member whose plan ended yesterday
+  s1 see: ""Ask about your workout" is for members with a running plan." and "Renew my plan"
+  s1 not: A send box
+  s2 see: "... Your question was not sent."
+  s2 not: The question saved
+  s3 see: "You already have a question waiting. Wait for the reply, or take it back first."
+  s3 not: Two open questions
+J-F-server-515-04 | type 6 | member | Member app, a question waiting for a reply
+  s1 see: "You took this question back."
+  s1 not: The trainer still asked to reply
+  s2 see: The new question waiting
+  s2 not: A refusal because of the taken-back one
+J-F-server-515-05 | type 12 | member | Member app, picking who answers
+  s1 see: "Only the person you pick sees your question. "Any trainer or the owner" sends it to every trainer and the gym owner."
+  s1 not: The desk reading a question to one trainer
+J-F-server-515-06 | type 1 | pass member | Member app, Gym tab, a member who comes on a pass (FITPASS)
+  s1 see: ""Ask about your workout" is for members with a running plan."
+  s1 not: A send box for a pass member
+J-F-server-515-07 | type 3 | pass member | An older member app that still shows the send box to a pass member who also has an old gym plan running
+  s1 see: ""Ask about your workout" is for members with a running plan. Your question was not sent."
+  s1 not: The question saved because the old plan is still running
+J-F-server-515-08 | type 6 | pass member | A pass member who asked before the rule, with an old answered question
+  s1 see: "Your questions" with the old question and its reply
+  s1 not: Old questions hidden
+  s2 see: The send box opens
+  s2 not: Still locked with a running gym plan and no pass
+J-F-server-515-09 | type 1 | trainer | Admin app as the trainer, "Member questions", a question to this trainer
+  s1 see: "Waiting for your reply" with the question
+  s1 not: Questions to another trainer
+  s2 see: "Sending…" then "Reply sent."
+  s2 not: The reply saved twice
+  s2 not: The member not told
+J-F-server-515-10 | type 2 | trainer | Admin app as the trainer, a new question
+  s1 see: Member questions opens
+  s1 not: The old words "asked a trainer a question"
+J-F-server-515-11 | type 3 | trainer | Admin app as the trainer, a question the member took back
+  s1 see: "The member took this question back."
+  s1 not: A reply saved
+  s2 see: A word to type a reply
+  s2 not: An empty reply saved
+J-F-server-515-12 | type 6 | trainer | Admin app as the trainer, a question with no reply for 14 days
+  s1 see: "Closed with no reply after 14 days." under "Answered and closed"
+  s1 not: The question still waiting
+J-F-server-515-13 | type 12 | trainer | Admin app as a trainer, a question the member sent to another trainer
+  s1 see: Not listed, no alert
+  s1 not: The question shown to a trainer it was not sent to
+J-F-server-515-14 | type 1 | owner | Admin app as the owner, "Member questions", a question to any trainer or the owner
+  s1 see: "Waiting for your reply" with the question
+  s1 not: Questions of another gym
+  s2 see: "Sending…" then "Reply sent."
+  s2 not: The reply saved twice
+  s2 not: The member not told
+J-F-server-515-15 | type 2 | owner | Admin app as the owner, a new question
+  s1 see: Member questions opens
+  s1 not: The old words "asked a trainer a question"
+J-F-server-515-16 | type 3 | owner | Admin app as the owner, a question the member took back
+  s1 see: "The member took this question back."
+  s1 not: A reply saved
+  s2 see: A word to type a reply
+  s2 not: An empty reply saved
+J-F-server-515-17 | type 6 | owner | Admin app as the owner, a question with no reply for 14 days
+  s1 see: "Closed with no reply after 14 days." under "Answered and closed"
+  s1 not: The question still waiting
+J-F-server-515-18 | type 12 | owner | Admin app signed in with the gym's owner key (no owner on the staff list)
+  s1 see: The member reads "Your gym replied"
+  s1 not: "Your replied"
+  s1 not: The owner's full name to the member

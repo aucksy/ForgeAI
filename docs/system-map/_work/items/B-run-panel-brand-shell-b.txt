@@ -1,0 +1,25 @@
+# B-run-panel-brand-shell-b: gap-8 x panel / panel/brand-shell. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H8.1 | gap-8 | By script first: docs/system-map/_tools/silent.mjs lists every catch block with file:line and three flags: logs? (calls a log, report or crash function inside), tells_user? (sets an error state, toast or alert inside), rethrows?
+H8.2 | gap-8 | Output _sources/silent.csv
+H8.3 | gap-8 | Helpers read ONLY the rows where all three are "no", plus every fallback value (?? null, || [], ?? 0) that sits in a file named in a journey that writes money, messages, alerts, sign-in or sync
+H8.4 | gap-8 | Everything else is counted in the grid as "filtered by script, N rows, not read" so the gap is visible
+H8.5 | gap-8 | For each: if this path runs, does the user (or owner, or HQ) learn anything?
+H8.6 | gap-8 | A silent path that hides a failed promise = finding
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1105 | live | Branding: gym logo and colours for the member app, logo upload, remove logo background, phone and shortcut preview | apps/dashboard/src/crm/brand/BrandingScreen.tsx:41
+F-panel-3101 | live | Branding: suggest a gym colour from the uploaded logo | apps/dashboard/src/crm/brand/brandLogic.ts:141
+## SILENT CATCH ROWS TO READ (kind,file,line,logs,tells_user,rethrows,text)
+catch,apps/dashboard/src/components/Dashboard.tsx,27,no,no,no,{ // clipboard blocked — ignore  the code is visible anyway }
+catch,apps/dashboard/src/crm/brand/BrandingScreen.tsx,104,no,no,no,{ setLoad({ state: 'error'  message: handleErrorRef.current(e) }); }
+catch,apps/dashboard/src/crm/brand/headerLogo.ts,69,no,no,no,{ // quiet: a damaged entry only costs the first moment of the logo: the server's answer r
+catch,apps/dashboard/src/crm/brand/headerLogo.ts,92,no,no,no,{ // quiet: a full or blocked storage: the logo still shows now  it just loads again next 
+catch,apps/dashboard/src/crm/brand/logoUpload.ts,24,no,no,no,{ // Fall through to <img> (SVG logos  older browsers). }
+catch,apps/dashboard/src/crm/crashReport.ts,39,no,no,no,{ return { message: String(reason)  stack: '' }; // quiet: an unprintable value is describ
+catch,apps/dashboard/src/crm/store.tsx,295,no,no,no,{ // quiet: offline for a moment; the next tick tries again  the bar says so  a save says 
+catch,apps/dashboard/src/theme.ts,75,no,no,no,{ // quiet: storage blocked (private window); dark is the default. return 'dark'; }
+catch,apps/dashboard/src/theme.ts,97,no,no,no,{ // quiet: a private window cannot save it; the choice still lasts until the page closes.
+## FALLBACK ROWS TO READ (files that write money, messages, alerts, sign-in or sync)
+(none)
+## FILTERED BY SCRIPT
+79 other rows of _sources/silent.csv in this area: not read (write this number in the H8 evidence)

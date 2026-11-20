@@ -1,0 +1,690 @@
+# A8-panel-screens-2-3: coverage of 70 Tier 1 journeys (10 features, from A5-panel-screens-2-3). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-322 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | file name, asserts 13 journey phrase(s)
+F-panel-322 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 11 journey phrase(s)
+F-panel-322 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 9 journey phrase(s)
+F-panel-322 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 8 journey phrase(s)
+F-panel-322 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 7 journey phrase(s)
+F-panel-322 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 7 journey phrase(s)
+F-panel-322 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 7 journey phrase(s)
+F-panel-322 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 6 journey phrase(s)
+F-panel-322 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 6 journey phrase(s)
+F-panel-322 | apps/dashboard/e2e/online.spec.mjs | e2e | 163 lines | asserts 6 journey phrase(s)
+F-panel-322 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-panel-322 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 5 journey phrase(s)
+F-panel-324 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 6 journey phrase(s)
+F-panel-324 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 6 journey phrase(s)
+F-panel-324 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 3 journey phrase(s)
+F-panel-324 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-324 | apps/dashboard/e2e/hq-webpage-uat.spec.mjs | e2e | 166 lines | asserts 1 journey phrase(s)
+F-panel-324 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-324 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 1 journey phrase(s)
+F-panel-324 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 1 journey phrase(s)
+F-panel-324 | apps/dashboard/test/crm/installSteps.test.ts | unit | 43 lines | asserts 1 journey phrase(s)
+F-panel-324 | apps/dashboard/test/crm/navNames.test.ts | unit | 61 lines | asserts 1 journey phrase(s)
+F-panel-324 | apps/dashboard/test/crm/ownerOnboarding.test.ts | unit | 115 lines | asserts 1 journey phrase(s)
+F-panel-324 | apps/dashboard/test/crm/sheets.test.ts | unit | 122 lines | asserts 1 journey phrase(s)
+F-panel-325 | apps/dashboard/e2e/r608-uat.spec.mjs | e2e | 208 lines | asserts 5 journey phrase(s)
+F-panel-325 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 4 journey phrase(s)
+F-panel-325 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 4 journey phrase(s)
+F-panel-325 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 3 journey phrase(s)
+F-panel-325 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 3 journey phrase(s)
+F-panel-325 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | imports the code
+F-panel-325 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 2 journey phrase(s)
+F-panel-325 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 2 journey phrase(s)
+F-panel-325 | apps/dashboard/e2e/today-fit-uat.spec.mjs | e2e | 176 lines | file name
+F-panel-325 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | file name
+F-panel-325 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | asserts 2 journey phrase(s)
+F-panel-325 | apps/dashboard/test/crm/assistant/awayIdea.test.ts | unit | 316 lines | asserts 2 journey phrase(s)
+F-panel-326 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-panel-326 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-panel-326 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-panel-326 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-panel-326 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 3 journey phrase(s)
+F-panel-326 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-panel-326 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-panel-326 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-panel-326 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | imports the code
+F-panel-326 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 3 journey phrase(s)
+F-panel-326 | apps/mobile/test/tracker/switcherLine.test.ts | unit | 38 lines | asserts 3 journey phrase(s)
+F-panel-326 | supabase/tests/0039_gym_busy.sql | db | 167 lines | asserts 3 journey phrase(s)
+F-panel-327 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | imports the code
+F-panel-327 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 2 journey phrase(s)
+F-panel-327 | apps/dashboard/e2e/r608-uat.spec.mjs | e2e | 208 lines | asserts 2 journey phrase(s)
+F-panel-327 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 2 journey phrase(s)
+F-panel-327 | apps/dashboard/e2e/today-fit-uat.spec.mjs | e2e | 176 lines | file name
+F-panel-327 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | file name
+F-panel-327 | apps/dashboard/test/crm/assistant/todayApiVoice.test.ts | unit | 165 lines | file name
+F-panel-327 | apps/mobile/qa/uat-rel-r366-b-today.yaml | maestro | 61 lines | file name
+F-panel-327 | apps/mobile/test/db/todayReal.test.ts | unit | 200 lines | file name
+F-panel-327 | apps/mobile/test/tracker/lib/todayGoal.test.ts | unit | 130 lines | file name
+F-panel-327 | apps/mobile/test/tracker/todayPlan.test.ts | unit | 173 lines | file name
+F-panel-327 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-328 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | imports the code
+F-panel-328 | apps/dashboard/e2e/today-fit-uat.spec.mjs | e2e | 176 lines | file name
+F-panel-328 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | file name
+F-panel-328 | apps/dashboard/test/crm/assistant/todayApiVoice.test.ts | unit | 165 lines | file name
+F-panel-328 | apps/mobile/qa/uat-rel-r366-b-today.yaml | maestro | 61 lines | file name
+F-panel-328 | apps/mobile/test/db/todayReal.test.ts | unit | 200 lines | file name
+F-panel-328 | apps/mobile/test/tracker/lib/todayGoal.test.ts | unit | 130 lines | file name
+F-panel-328 | apps/mobile/test/tracker/todayPlan.test.ts | unit | 173 lines | file name
+F-panel-328 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-328 | apps/dashboard/e2e/r534-training-progress-uat.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-panel-328 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-panel-328 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 1 journey phrase(s)
+F-panel-330 | apps/dashboard/e2e/trainers-uat.spec.mjs | e2e | 282 lines | file name, asserts 12 journey phrase(s)
+F-panel-330 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 9 journey phrase(s)
+F-panel-330 | supabase/tests/0087_feedback_owner_desk.sql | db | 143 lines | asserts 6 journey phrase(s)
+F-panel-330 | apps/dashboard/test/crm/trainerSchedule.test.ts | unit | 278 lines | file name, asserts 3 journey phrase(s)
+F-panel-330 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 5 journey phrase(s)
+F-panel-330 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 5 journey phrase(s)
+F-panel-330 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-panel-330 | supabase/tests/0050_trainer_view.sql | db | 213 lines | asserts 5 journey phrase(s)
+F-panel-330 | supabase/tests/0053_ask_trainer_and_progress.sql | db | 232 lines | asserts 5 journey phrase(s)
+F-panel-330 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 4 journey phrase(s)
+F-panel-330 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 4 journey phrase(s)
+F-panel-330 | apps/mobile/test/shop/trainerShare.test.ts | unit | 155 lines | file name, asserts 2 journey phrase(s)
+F-panel-331 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 9 journey phrase(s)
+F-panel-331 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 9 journey phrase(s)
+F-panel-331 | apps/dashboard/e2e/trainers-uat.spec.mjs | e2e | 282 lines | file name, asserts 6 journey phrase(s)
+F-panel-331 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 8 journey phrase(s)
+F-panel-331 | supabase/tests/0037_leaderboard.sql | db | 548 lines | asserts 8 journey phrase(s)
+F-panel-331 | supabase/tests/0053_ask_trainer_and_progress.sql | db | 232 lines | asserts 8 journey phrase(s)
+F-panel-331 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 7 journey phrase(s)
+F-panel-331 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 7 journey phrase(s)
+F-panel-331 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 7 journey phrase(s)
+F-panel-331 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 7 journey phrase(s)
+F-panel-331 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 7 journey phrase(s)
+F-panel-331 | supabase/tests/0038_member_push.sql | db | 169 lines | asserts 7 journey phrase(s)
+F-panel-332 | apps/dashboard/e2e/trainers-uat.spec.mjs | e2e | 282 lines | file name, asserts 1 journey phrase(s)
+F-panel-332 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 2 journey phrase(s)
+F-panel-332 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 2 journey phrase(s)
+F-panel-332 | apps/dashboard/test/crm/needsYou.test.ts | unit | 54 lines | asserts 2 journey phrase(s)
+F-panel-332 | apps/dashboard/test/crm/trainerSchedule.test.ts | unit | 278 lines | file name
+F-panel-332 | apps/mobile/test/shop/trainerShare.test.ts | unit | 155 lines | file name
+F-panel-332 | apps/mobile/test/shop/trainerSince.test.ts | unit | 100 lines | file name
+F-panel-332 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 2 journey phrase(s)
+F-panel-332 | apps/dashboard/e2e/aiimport.spec.mjs | e2e | 169 lines | asserts 1 journey phrase(s)
+F-panel-332 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-panel-332 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-panel-332 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-panel-333 | apps/dashboard/e2e/trainers-uat.spec.mjs | e2e | 282 lines | file name, asserts 4 journey phrase(s)
+F-panel-333 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-panel-333 | apps/dashboard/test/crm/trainerSchedule.test.ts | unit | 278 lines | file name, asserts 2 journey phrase(s)
+F-panel-333 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-panel-333 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-panel-333 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-panel-333 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-panel-333 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-panel-333 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-panel-333 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 3 journey phrase(s)
+F-panel-333 | apps/mobile/test/tracker/switcherLine.test.ts | unit | 38 lines | asserts 3 journey phrase(s)
+F-panel-333 | supabase/tests/0039_gym_busy.sql | db | 167 lines | asserts 3 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-322-01 | type 1 | owner | Settings, tab Sign-in & data; the gym is saved in this browser only (not online, not the demo)
+  s1 see: Subtitle 'Your sign-in, staff, backups and your gym’s records'
+  s1 see: The sign-in card first, then a card 'Download a backup', then a card 'Your gym’s records'
+  s1 see: In 'Your gym’s records': a line counting the records and 'Set up <date>.'
+  s1 see: 'Saved in this browser only. Put your gym online (above) to keep it safe and open it anywhere.'
+  s1 see: Buttons 'Import members from Excel', 'Load demo gym', 'Erase and start fresh'
+  s1 not: The words 'Saved online' for a gym that is not online
+  s1 not: 'Offline copy on this device' or 'Danger zone' shown for a browser-only gym
+  s2 see: 'Download every member, plan, payment and check-in as an Excel file. Keep it on your phone or computer. We suggest once a month.'
+  s2 see: After the tap: 'Downloaded: an Excel file and a full copy.' and the last-download line changes
+  s2 not: The success words when no file was made
+  s2 not: A file that misses members, payments or check-ins of this gym
+  s3 see: The import page opens
+  s3 not: The button looks usable with no internet and then fails without a word
+J-F-panel-322-02 | type 2 | owner | Other kind: the gym is online; Settings, tab Sign-in & data
+  s1 see: 'Saved online. Safe if a phone or computer breaks. The same on every phone or computer you sign in on.'
+  s1 see: 'MettleUp support can look at your records only if you let them. To let them, or to see when they looked, open Help and feedback → MettleUp access'
+  s1 see: A block 'Offline copy on this device' with the button 'Clear offline copy'
+  s1 see: A red line 'Danger zone: this can’t be undone'
+  s1 not: 'Load demo gym', 'Erase and start fresh', 'Start over with a new demo gym' or 'Disconnect the shop' offered for online records
+  s2 see: With nothing waiting: 'Clear the offline copy on this device? Nothing is deleted from your gym’s records online.'
+  s2 see: Buttons 'Yes, clear it' and 'Keep it'
+  s2 see: With unsent desk work waiting: the question in red, naming what would be lost
+  s2 not: The copy cleared on the first tap, before the question
+  s2 not: Unsent money on this device cleared with the calm, non-red question
+  s3 see: 'Offline copy cleared. Your gym’s records online are safe. A fresh copy downloads while this device is online.'
+  s3 not: Any member, payment or check-in removed from the gym’s records online
+  s3 not: The done words when the clearing failed
+J-F-panel-322-03 | type 2 | owner | Other kind: a demo gym with its shop, in this browser; Settings, tab Sign-in & data
+  s1 see: 'Saved in this browser only. A demo gym is never put online.'
+  s1 see: A third red button 'Start over with a new demo gym'
+  s1 not: 'Disconnect the shop' offered for a demo gym
+  s1 not: A way to put the demo gym online from this card
+  s2 see: Sheet 'Start over with a new demo gym?'
+  s2 see: Red box 'This replaces everything in this browser: <n> members, <n> payments and <n> check-ins. You can’t undo this.'
+  s2 see: 'This browser forgets this demo gym and its shop (gym code <code>). You go back to the first screen. There, Start demo makes a new gym with a new code.'
+  s2 see: Buttons 'Cancel' and 'Start over'
+  s2 not: Counts in the red box that differ from the records line on the card
+  s3 see: The first (welcome) screen of the admin app
+  s3 not: The old demo gym or its gym code still shown after the tap
+  s3 not: A real gym in this browser wiped by this button
+J-F-panel-322-04 | type 2 | owner | Other kind: a real gym saved in this browser that turned the shop on; Settings, tab Sign-in & data
+  s1 see: Sheet 'Disconnect the shop?'
+  s1 see: 'Your members, plans, payments and check-ins stay as they are. This browser stops showing shop orders and products. You can’t manage gym code <code> from here any more. You also can’t reach members who already joined from this admin app.'
+  s1 see: No red 'This replaces everything' box
+  s1 see: Buttons 'Cancel' and 'Disconnect'
+  s1 not: The red erase warning shown for a step that erases nothing
+  s2 see: Note 'Shop disconnected. Your members and payments are still here.'
+  s2 see: The members, payments and check-in counts on the card unchanged
+  s2 not: Any member, plan, payment or check-in removed
+  s2 not: 'Start over with a new demo gym' offered to a real gym
+J-F-panel-322-05 | type 3 | owner | Settings, tab Sign-in & data; the gym is saved in this browser only and has members
+  s1 see: Sheet 'Erase everything?'
+  s1 see: Red box 'This replaces everything in this browser: <n> members, <n> payments and <n> check-ins. You can’t undo this.'
+  s1 see: 'You will be left with an empty gym: no members, no plans, no payments.'
+  s1 see: Buttons 'Cancel' and 'Erase everything'
+  s1 not: Anything erased before the red button is pressed
+  s2 see: The sheet closes; the records line on the card is the same as before
+  s2 not: A member, payment or check-in gone after Cancel
+  s3 see: 'Could not make the file. Try again.' in red
+  s3 not: 'Downloaded: an Excel file and a full copy.' when nothing was saved
+  s3 not: The last-download line moved to now
+J-F-panel-322-06 | type 6 | owner | Settings, tab Sign-in & data; a browser-only gym with unsaved edits typed in the gym details boxes on the Gym tab
+  s1 see: 'This makes a sample gym with about 128 members, their payments and check-ins. Use it to show someone the app. Don’t use it on a gym with real members.'
+  s1 see: Note 'Demo gym loaded.'
+  s1 see: The records line now counts the demo gym
+  s1 not: The old gym’s UPI ID or name left in the gym details boxes of the demo gym
+  s1 not: Members of the old gym mixed into the demo gym
+  s2 see: Note 'Started fresh.'
+  s2 see: The records line shows an empty gym; the gym keeps its saved name
+  s2 not: Being thrown back to the welcome screen
+  s2 not: The gym renamed to a name that was typed but never saved
+  s2 not: Demo members left behind
+  s3 see: No wall of zero tiles; the gym code card and the shop card
+  s3 not: Yesterday’s demo numbers still on Today
+J-F-panel-322-07 | type 12 | owner | Privacy and promise: who can reach the backup, the erase buttons and the support-access line
+  s1 see: 'MettleUp support can look at your records only if you let them.' with a link to Help and feedback → MettleUp access
+  s1 not: The line shown to a front-desk login
+  s1 not: The line shown for a gym that is not online
+  s2 see: Subtitle 'Screen colours, app and your sign-in'
+  s2 see: Cards 'Dark or light', 'Members' with 'Import members from Excel', the sign-in card, the install card and the alerts card
+  s2 not: 'Download a backup', 'Clear offline copy', 'Danger zone', 'Load demo gym' or 'Erase and start fresh' on a staff screen
+  s3 see: An Excel file and a full copy saved on this phone or computer only
+  s3 not: The file sent anywhere by itself
+  s3 not: Another gym’s rows in the file
+J-F-panel-324-01 | type 1 | owner | Menu, 'Set up your gym'; a new gym with some steps still to do
+  s1 see: Title 'Set up your gym'
+  s1 see: Subtitle 'Finish these steps and your gym is ready for members.'
+  s1 see: A green ring and '<done> of <total> done'
+  s1 see: A numbered list: each step has a title, a hint line and '›'; a done step has '✓' and a struck-through title
+  s1 not: The same steps list shown on Today as well
+  s1 not: A count of done steps larger than the total
+  s2 see: The screen where that step is done opens
+  s2 see: A slim bar with 'Next step: <title>' and 'Back to the list'
+  s2 not: The step opens a screen that has nothing to do with it
+  s3 see: The step now shows '✓', its title struck through; the count went up by one and the ring is fuller
+  s3 not: The step still open after the work was done
+  s3 not: Two steps ticked for one piece of work
+  s4 see: 'All done. Your gym is ready for members.' in green
+  s4 not: 'Move this page to the bottom of the menu' still offered after all is done
+J-F-panel-324-02 | type 2 | owner | Other kind: a step that the app cannot tick by itself (it shows 'Mark done')
+  s1 see: The step shows '✓' and a struck-through title; 'Mark done' is gone from that row; the count goes up by one
+  s1 not: The step ticked when only its title was tapped (that opens the screen instead)
+  s1 not: No way to see that 'Mark done' is a button
+  s2 see: The step is still ticked
+  s2 not: The tick gone after a refresh
+J-F-panel-324-03 | type 3 | owner | Negative: a gym that is not online, and a login that is not the owner
+  s1 see: The list without the step about people finding and joining the gym online; the total is smaller
+  s1 not: A step that cannot be done for a gym that is not online
+  s1 not: A total that counts a step not in the list
+  s2 see: unknown: the page is closed to this role (permissions.ts:127) and the list draws nothing for a non-owner (GetStartedCard.tsx:221); the refusal words were not read
+  s2 not: The owner’s set-up steps shown to staff
+  s2 not: A blank page with a title and nothing else
+J-F-panel-324-04 | type 6 | owner | State: the page moved to the bottom of the menu, and back
+  s1 see: Before the tap: the line 'You can still open it from Your gym in the menu.'
+  s1 see: After: the link reads 'Show this page at the top of the menu again'; the steps stay on the page
+  s1 not: The steps or their ticks lost
+  s1 not: The page gone from the menu altogether
+  s2 see: The link reads 'Move this page to the bottom of the menu' again
+  s2 not: A tick changed by moving the page
+  s3 see: The step stays done; there is no button to un-mark it (GetStartedCard.tsx:271)
+  s3 not: A done step going back to not done by itself
+J-F-panel-325-01 | type 1 | owner | Today, the first screen after sign-in; a gym with members, payments and check-ins
+  s1 see: Title 'Today' with today’s date under it
+  s1 see: One line about the plan: the trial line, or the renew reminder, or the plan-ended line (only one of the three)
+  s1 see: Tiles: 'Today's collection' (under it 'This month <amount>'), 'Active members' ('With a running plan'), 'Ending today' ('Last day of their plan'), 'Ending in 1-3 days' ('Renew them now'), 'Ending in 4-7 days' ('Remind them this week'), 'Ending in 8-15 days' ('Coming up'), 'Expired' ('<n> in the last <days> days'), 'Fees due' ('<n> members'), 'Birthdays today' ('Send a wish'), 'Came in today' ('Open the register'), 'Enquiries to call' ('Follow-ups due')
+  s1 not: A voided payment counted in 'Today's collection' or 'This month'
+  s1 not: The dues of an archived member dropped from 'Fees due'
+  s1 not: Two of the three plan lines at once
+  s2 see: The members list filtered to plans ending in 1 to 3 days
+  s2 not: A list whose count differs from the number on the tile
+  s3 see: 'Talk to these members' (at most 6, each '<plan> · ends <day>' or '<plan> · expired <day>', link 'See all')
+  s3 see: 'Money to collect' (the 6 largest dues, each '<amount> due', link 'See all')
+  s3 see: 'Losing the habit' (at most 6, link 'See all')
+  s3 not: A member who left long ago in 'Talk to these members'
+  s3 not: A member with nothing due in 'Money to collect'
+  s4 see: That member’s page
+  s4 not: Another member’s page
+J-F-panel-325-02 | type 2 | owner | Other entry: a Monday; the card 'Last week at your gym' on Today
+  s1 see: Card 'Last week at your gym'
+  s1 see: 'Send last week’s money, plans sold and check-ins to yourself or your partner on WhatsApp.'
+  s1 see: Button 'Share on WhatsApp'
+  s1 not: The card on any other day of the week
+  s1 not: The card for a login that may not see money totals
+  s2 see: WhatsApp opens in a new tab with last week’s numbers typed in, and asks who to send it to
+  s2 not: The summary sent to anyone without the owner choosing a chat and pressing send
+  s2 not: This week’s or today’s numbers in a 'last week' message
+J-F-panel-325-03 | type 2 | owner | Other entry: the card 'Came in today with an ended plan or fees due'
+  s1 see: Card 'Came in today with an ended plan or fees due'
+  s1 see: 'They checked in today. Ask them to renew or pay before they leave.'
+  s1 see: At most 5 rows: name and 'Plan ended <date>', 'No plan bought' or 'No running plan today', and '<amount> due' when they owe
+  s1 see: With more than 5: '<n> more in the register.'
+  s1 not: A member with a running plan and nothing due on this card
+  s1 not: The card left empty on screen when nobody fits (it should not show at all)
+  s2 see: The ready WhatsApp message sheet for that member: the fees message when they owe, the plan-ended message otherwise
+  s2 not: A message sent before the owner presses send
+  s2 not: The fees message for a member who owes nothing
+J-F-panel-325-04 | type 3 | owner | Negative: a brand-new gym with no member, sale, payment, check-in or enquiry
+  s1 see: Title 'Today' and the date
+  s1 see: The gym code card and the shop card
+  s1 see: No number tiles, no lists, no 'Your numbers'
+  s1 not: A wall of tiles that all say 0
+  s1 not: The set-up steps list (it lives on 'Set up your gym')
+  s2 see: The tiles and the three lists appear
+  s2 see: 'Nobody to follow up' with 'No plans are ending soon, and no plan ended in the last <days> days.'
+  s2 see: 'Everyone has paid' with 'No member has dues.'
+  s2 see: 'Start checking members in' with 'After a few days of check-ins, this fills in by itself.'
+  s2 not: 'Everybody is training' while the register was never used
+  s2 not: NaN or a blank where a number should be
+J-F-panel-325-05 | type 6 | owner | State: the numbers follow what was done, and what was undone
+  s1 see: 'Today's collection' is higher by that amount; 'Fees due' is lower; the member left 'Money to collect' if nothing is due any more
+  s1 not: The payment counted twice
+  s1 not: The old due amount still shown
+  s2 see: 'Today's collection' and 'This month' are back down; the member is back in 'Money to collect'
+  s2 not: Cancelled money still counted as collected
+  s3 see: 'Fees due' still includes that member’s amount
+  s3 not: The gym’s money owed going down because a member was archived
+  s4 see: 'Came in today' goes up by one, then back
+  s4 not: A check-in that was undone still counted
+J-F-panel-325-06 | type 12 | owner | Privacy and promise: what Today shows, and what leaves the admin app
+  s1 see: Members’ names, plan end days and amounts due; the gym’s money totals
+  s1 not: Members of another gym or branch that is not the open one
+  s2 see: The owner’s own WhatsApp with the week’s totals; no member names or phone numbers in the text
+  s2 not: The gym’s totals sent by MettleUp itself to anyone
+  s2 not: Member phone numbers inside the summary text
+J-F-panel-325-07 | type 1 | staff | Today, signed in as a front-desk person; a gym with members, payments and check-ins
+  s1 see: Title 'Today' and the date
+  s1 see: Tiles 'Active members', 'Ending today', 'Ending in 1-3 days', 'Ending in 4-7 days', 'Ending in 8-15 days', 'Expired', 'Birthdays today', 'Came in today', 'Enquiries to call'
+  s1 not: The tile 'Today's collection' or 'This month <amount>'
+  s1 not: The tile 'Fees due' with the gym’s total
+  s2 see: The attendance register
+  s2 not: A money page
+  s3 see: 'Talk to these members', 'Money to collect' (each person’s own '<amount> due') and 'Losing the habit'
+  s3 not: A sum of all dues anywhere on the staff screen
+J-F-panel-325-08 | type 2 | staff | Other entry: the card 'Came in today with an ended plan or fees due', as front desk
+  s1 see: Card 'Came in today with an ended plan or fees due' with each person’s 'Plan ended <date>' and '<amount> due'
+  s1 not: A total of money due across the rows
+  s2 see: The ready WhatsApp message sheet for that member
+  s2 not: A message sent before the desk presses send
+J-F-panel-325-09 | type 3 | staff | Negative: what a front-desk login is refused on Today
+  s1 see: No card 'Last week at your gym'
+  s1 not: Last week’s money shown or shareable by a front-desk login
+  s2 see: unknown: front desk gets only the dues tab of the money pages (permissions.ts:140); the words shown were not read
+  s2 not: Today’s or this month’s collection total shown to front desk
+J-F-panel-325-10 | type 6 | staff | State: the people counts follow the desk’s work
+  s1 see: 'Came in today' is higher by one
+  s1 not: The same member counted twice for one day
+  s2 see: 'Expired' is lower by one and 'Active members' higher by one; the member left 'Talk to these members'
+  s2 not: The renewed member still listed as expired
+J-F-panel-325-11 | type 12 | staff | Privacy and promise: 'Never sees money totals.'
+  s1 see: People counts and each person’s own due amount only
+  s1 not: 'Today's collection', 'This month <amount>', the 'Fees due' total, or the week summary with money
+  s1 not: A money figure inside 'Your numbers' (the money-owed number is the owner’s)
+J-F-panel-326-01 | type 1 | owner | Today, scrolled to 'Your numbers'; a gym on a pack that includes it, with records
+  s1 see: Five numbers, each with a small trend line: plans ending ('Plans ending in the next <n> days'), money owed ('<n> members · <change words>'), members who stopped coming, new members, and the busiest hour ('Busiest hour · <per day words>')
+  s1 not: 'Part of the Pro pack' for a gym that has this feature
+  s1 not: A number that disagrees with the tile of the same meaning above
+  s2 see: unknown: the chooser’s words were not read; every number, sub-line and trend redraws for the new days
+  s2 not: One number left on the old range
+  s2 not: The chosen range forgotten on the next visit
+  s3 see: The list behind that number, for the same days
+  s3 not: A list for a different range than the one picked
+J-F-panel-326-02 | type 3 | owner | Negative: plan gate closed (gym on Starter once the plan gate is on), and a gym that never used the register
+  s1 see: A card 'Part of the Pro pack'
+  s1 see: 'Your numbers (fees collected, new members, busiest hours) come with the Pro pack.'
+  s1 see: 'Your gym is on Starter. To move to Pro, open Help and feedback in the menu and write: Move us to Pro.'
+  s1 not: The five numbers shown anyway
+  s1 not: A buy button that takes money here
+  s2 see: '–' with 'Check members in to see this' for stopped-coming and for the busiest hour
+  s2 not: '0 members stopped coming' when there is no attendance to read
+  s2 not: NaN
+  s3 see: No 'Your numbers' section and no Pro card (both sit inside the part shown only when the gym has records)
+  s3 not: A row of empty charts
+J-F-panel-326-03 | type 6 | owner | State: the chosen range is remembered; the gate switching
+  s1 see: The same range still picked
+  s1 not: The range back to the default without a word
+  s2 see: The five numbers in place of the 'Part of the Pro pack' card
+  s2 not: The Pro card still shown after the move
+  s2 not: Numbers that start from zero as if history was lost
+J-F-panel-326-04 | type 1 | staff | Today as front desk, scrolled to 'Your numbers'; the gym has the feature
+  s1 see: The people numbers with their trend lines: plans ending, stopped coming, new members, busiest hour
+  s1 not: The money-owed number or any amount in rupees
+  s2 see: The list behind it
+  s2 not: The money-owed list opened by a front-desk login (permissions.ts:121)
+J-F-panel-326-05 | type 3 | staff | Negative: plan gate closed, seen by front desk
+  s1 see: The card 'Part of the Pro pack' with 'Your numbers (fees collected, new members, busiest hours) come with the Pro pack.' and 'Your gym is on Starter. To move to Pro, open Help and feedback in the menu and write: Move us to Pro.'
+  s1 not: The numbers shown to staff while hidden from the owner
+  s1 not: Words that tell front desk to buy or pay
+J-F-panel-326-06 | type 6 | staff | State: the desk’s check-ins feed the numbers
+  s1 see: First '–' and 'Check members in to see this'; later a busiest hour and a stopped-coming count
+  s1 not: A busiest hour invented from no check-ins
+J-F-panel-326-07 | type 12 | staff | Privacy and promise: 'Never sees money totals.' inside 'Your numbers'
+  s1 see: Four people numbers; no money-owed number
+  s1 not: A rupee figure, or a trend line of money, on the staff screen
+J-F-panel-327-01 | type 1 | owner | Today; three members have a birthday today and five plans end this week
+  s1 see: Card 'Messages to send'
+  s1 see: Row '3 birthdays today' with the button 'Send wishes'
+  s1 see: Row '5 plans end this week' with the button 'Remind them'
+  s1 not: '1 birthdays today' for one member
+  s1 not: A row with a count of 0
+  s2 see: The Messages page with the ready birthday message and the birthday group already picked
+  s2 not: A wish sent before the owner presses send
+  s2 not: A group other than today’s birthdays picked
+  s3 see: The Messages page with the ready plan-ending message and that group picked
+  s3 not: Members whose plan is not ending in the group
+J-F-panel-327-02 | type 2 | owner | Other entry: the 'Workout offer' card (online gym, members reached an offer’s target)
+  s1 see: Card 'Workout offer'
+  s1 see: '2 rewards to give' with the button 'Give'
+  s1 not: '1 rewards to give' for one
+  s1 not: The card with '0 rewards to give'
+  s2 see: The workout offer page with the people to reward
+  s2 not: Free days given by the tap on Today itself
+J-F-panel-327-03 | type 2 | owner | Other kind: the automatic birthday wish is switched on
+  s1 see: Row '1 member gets no automatic birthday wish today' with 'Send wishes'
+  s1 not: '4 birthdays today' (that would wish three people twice)
+  s1 not: The row at all when the automatic wish reaches everyone
+  s2 see: No birthday row yet
+  s2 not: A full birthday count that drops a second later
+J-F-panel-327-04 | type 3 | owner | Negative: nobody to message, and a gym that is not online
+  s1 see: No card 'Messages to send'
+  s1 not: An empty card with a title and no rows
+  s2 see: No card 'Workout offer'
+  s2 not: A rewards count asked from the server for a gym that is not online
+  s3 see: No card 'Workout offer'; the app stops asking
+  s3 not: An error on Today because the offers answer is missing
+J-F-panel-327-05 | type 6 | owner | State: the reward count after the rewards are given
+  s1 see: Within about a minute the card 'Workout offer' is gone
+  s1 not: '2 rewards to give' still shown long after both were given
+  s1 not: A reward that can be given twice from the stale count
+  s2 see: unknown: the birthday count is worked out from birthdays alone (Today.tsx:548), so whether the row goes away after sending was not seen
+  s2 not: A second wish sent to the same members by tapping the row again without any warning
+J-F-panel-327-06 | type 1 | staff | Today as front desk; online gym; one earned reward waits
+  s1 see: Card 'Workout offer' with '1 reward to give' and the button 'Give'
+  s1 not: '1 rewards to give'
+  s2 see: The workout offer page (open to front desk)
+  s2 not: A refusal page: the button must not lead front desk to a page it may not open
+J-F-panel-327-07 | type 3 | staff | Negative: message nudges are the owner’s
+  s1 see: No card 'Messages to send'
+  s1 not: 'Send wishes' or 'Remind them' shown to a login that may not open Messages
+J-F-panel-327-08 | type 6 | staff | State: the reward count after the desk gives the reward
+  s1 see: Within about a minute the card 'Workout offer' is gone
+  s1 not: The card still asking for a reward already given
+J-F-panel-328-01 | type 1 | owner | Today, the list 'Talk to these members' with at least one member
+  s1 see: A new tab: WhatsApp opens a chat with that member’s number, with an empty message box
+  s1 see: Hovering the link first shows 'WhatsApp <the member’s phone number>'
+  s1 not: Any message sent by itself
+  s1 not: A chat with another member’s number
+  s1 not: Today replaced by WhatsApp in the same tab
+  s2 see: Today exactly as it was
+  s2 not: The member marked as messaged or moved off the list
+J-F-panel-328-02 | type 2 | owner | Other kind: the rows of 'Money to collect' and of 'Losing the habit'
+  s1 see: WhatsApp opens a chat with that member; the message box is empty (no fees text is filled in from here)
+  s1 not: An amount or a pay link sent without the user typing it
+  s2 see: WhatsApp opens a chat with that member; the message box is empty
+  s2 not: A chat with the wrong member
+J-F-panel-328-03 | type 3 | owner | Negative: a member whose saved phone number is empty or not a full number
+  s1 see: unknown: the link is built from the digits of the saved number with no check (Today.tsx:653); what WhatsApp shows for an empty or short number was not driven
+  s1 not: A chat opened with a stranger’s number
+  s1 not: A dead link with no word to the user
+J-F-panel-328-04 | type 6 | owner | State: the link keeps nothing
+  s1 see: The same empty chat again; Today unchanged both times
+  s1 not: A record in the admin app that a message was sent
+  s1 not: The row greyed out or removed
+J-F-panel-328-05 | type 12 | owner | Privacy and promise: a member’s phone number leaves the admin app for WhatsApp
+  s1 see: Only that one member’s phone number, in the link; the user’s own WhatsApp account does the talking
+  s1 not: The member’s name, dues or plan passed in the link
+  s1 not: Other members’ numbers passed
+  s1 not: The admin app’s address passed on to WhatsApp as the referring page
+J-F-panel-328-06 | type 1 | staff | Today, the list 'Talk to these members' with at least one member
+  s1 see: A new tab: WhatsApp opens a chat with that member’s number, with an empty message box
+  s1 see: Hovering the link first shows 'WhatsApp <the member’s phone number>'
+  s1 not: Any message sent by itself
+  s1 not: A chat with another member’s number
+  s1 not: Today replaced by WhatsApp in the same tab
+  s2 see: Today exactly as it was
+  s2 not: The member marked as messaged or moved off the list
+J-F-panel-328-07 | type 2 | staff | Other kind: the rows of 'Money to collect' and of 'Losing the habit'
+  s1 see: WhatsApp opens a chat with that member; the message box is empty (no fees text is filled in from here)
+  s1 not: An amount or a pay link sent without the user typing it
+  s2 see: WhatsApp opens a chat with that member; the message box is empty
+  s2 not: A chat with the wrong member
+J-F-panel-328-08 | type 3 | staff | Negative: a member whose saved phone number is empty or not a full number
+  s1 see: unknown: the link is built from the digits of the saved number with no check (Today.tsx:653); what WhatsApp shows for an empty or short number was not driven
+  s1 not: A chat opened with a stranger’s number
+  s1 not: A dead link with no word to the user
+J-F-panel-328-09 | type 6 | staff | State: the link keeps nothing
+  s1 see: The same empty chat again; Today unchanged both times
+  s1 not: A record in the admin app that a message was sent
+  s1 not: The row greyed out or removed
+J-F-panel-328-10 | type 12 | staff | Privacy and promise: a member’s phone number leaves the admin app for WhatsApp
+  s1 see: Only that one member’s phone number, in the link; the user’s own WhatsApp account does the talking
+  s1 not: The member’s name, dues or plan passed in the link
+  s1 not: Other members’ numbers passed
+  s1 not: The admin app’s address passed on to WhatsApp as the referring page
+J-F-panel-330-01 | type 1 | unknown | Menu More, Trainers; the gym is online, its server has trainer pages, two staff carry the Trainer tick
+  s1 see: Title 'Trainers', subtitle 'Your trainers, their hours, and personal-training bookings'
+  s1 see: One card per trainer: photo or initials, name, 'Teaches: <words>' or 'What they teach is not added yet', 'Today: <hours>' (or 'Working hours not set', or 'Day off'), '<n> personal-training members', button 'Open page'
+  s1 not: A staff person without the Trainer tick shown as a trainer
+  s1 not: '1 personal-training members'
+  s2 see: Buttons 'Last week' and 'Next week'
+  s2 see: Seven day chips, each with its number of bookings
+  s2 see: '<Day>: <bookings words>. Tap a free time to book.'
+  s2 see: A grid: 'Time' down the side, one column per trainer; cells say 'Free', a member’s name (booked), 'Off', or are striped (already over)
+  s2 see: A key: 'Free to book', 'Booked', 'Not working', 'Already over'
+  s2 see: Button 'Book personal training'
+  s2 not: A time already past shown as 'Free' for today
+  s2 not: A day chip cut off or hidden at the edge on a phone
+  s2 not: A booking drawn in the wrong trainer’s column
+  s3 see: Title = the trainer’s name, subtitle 'Trainer', button 'All trainers'
+  s3 see: 'Working hours' with one row per day
+  s3 see: 'Personal-training members' with '<classes left> · <booked>' per member, or the no-members words
+  s3 see: 'Bookings this week' (or 'No bookings this week.') and the button 'Book with <name>'
+  s3 not: Another trainer’s members or bookings on this page
+J-F-panel-330-02 | type 2 | unknown | Other entry: the week buttons of the calendar (Trainers.tsx:378)
+  s1 see: The title changes to 'Personal training, week of <date>'
+  s1 see: A third button 'This week'
+  s1 see: The first day of that week is picked; its grid shows
+  s1 not: Bookings of this week left in next week’s grid
+  s1 not: A day picked that is not in the shown week
+  s2 see: Last week’s days; every cell without a booking is striped 'Already over'
+  s2 not: A 'Free' cell that can be tapped in a past week
+  s3 see: Today picked again, title 'Personal training this week'
+  s3 not: The grid stuck on the other week
+J-F-panel-330-03 | type 2 | unknown | Other entry: a trainer’s page opened straight from its address (Trainers.tsx:792)
+  s1 see: That trainer’s page with hours, members and this week’s bookings
+  s1 not: The list of all trainers instead
+  s1 not: A blank page while loading with no 'Loading…'
+  s2 see: That member’s page
+  s2 not: A member of another gym
+J-F-panel-330-04 | type 3 | unknown | Negative: the screen cannot show trainers
+  s1 see: 'Trainer pages are not ready for your gym yet'
+  s1 see: 'MettleUp has not switched on trainer pages and personal-training bookings for your gym yet. Nothing you do here is saved. Message MettleUp on WhatsApp if you want it for your gym.'
+  s1 not: A calendar that looks usable but saves nothing
+  s1 not: A 'Try again' button that can never help
+  s2 see: 'Trainer pages need your gym online'
+  s2 see: 'Put your gym online first (Settings → Sign-in & data).'
+  s2 not: An endless 'Loading…'
+  s3 see: 'Could not load your trainers', the reason in plain words, and 'Try again'
+  s3 not: A raw error code
+  s3 not: An empty trainers list presented as the truth
+  s4 see: 'No trainers yet'
+  s4 see: Owner: 'Open Staff & sign-in and tick "Trainer" next to each trainer. They show here with their own page.' and the button 'Open Staff & sign-in'
+  s4 see: Not the owner: 'The gym owner picks the trainers in Staff & sign-in. They show here with their own page.' and no button
+  s4 not: The 'Open Staff & sign-in' button for someone who may not open it
+J-F-panel-330-05 | type 6 | unknown | State: a trainer loses the Trainer tick
+  s1 see: 'This trainer is not on your list any more'
+  s1 see: 'The owner may have taken off their Trainer tick.'
+  s1 not: The old page with an Edit button for a person who is no longer a trainer
+  s2 see: The person is gone from the cards and from the grid’s columns
+  s2 not: unknown risk to check: that person’s future bookings left where nobody can see or cancel them
+  s3 see: The trainer is back with the same 'Teaches' words, hours and photo as before
+  s3 not: A page that lost its hours or photo
+J-F-panel-330-06 | type 12 | unknown | Privacy and promise: who sees a trainer’s page and the members on it
+  s1 see: The trainer’s photo, what they teach, hours, their personal-training members by name with classes left, and the week’s bookings
+  s1 see: No 'Edit page' button
+  s1 not: 'Edit page' for someone who is neither the owner nor that trainer
+  s1 not: Members’ phone numbers on this page
+  s2 see: The same page with 'Edit page'
+  s2 not: 'Edit page' on another trainer’s page
+J-F-panel-331-01 | type 1 | unknown | Trainers, 'Personal training this week'; a member has personal-training classes left; a trainer has a free slot later today
+  s1 see: Sheet 'Book personal training'
+  s1 see: Under 'Member': a search box 'Search name' and the members who have classes left, each with their classes-left words
+  s1 see: 'Trainer', 'Day', 'Start time' and 'How long' already set from the cell
+  s1 see: '<trainer>, <Day>: <working hours>'
+  s1 see: 'Booking does not use up a class. Tap "Mark session" on the member’s page when they come.'
+  s1 not: A different trainer, day or time than the tapped cell
+  s1 not: Archived members in the list
+  s2 see: The member’s name, a pill with the classes left, how many are already booked, and 'Change member'
+  s2 not: Classes left that differ from the member’s own page
+  s3 see: The button reads 'Booking…' and cannot be pressed again
+  s3 see: The sheet closes; note 'Booked: <member> with <trainer>, <day>, <from–to>.'
+  s3 see: The grid shows the member’s name in those half-hour rows; the day chip count is one higher
+  s3 not: Two bookings from one tap
+  s3 not: A class used up by booking
+  s3 not: The 'Booked' note when the server refused
+J-F-panel-331-02 | type 2 | unknown | Other entry: the button 'Book personal training' under the grid, and 'Book with <name>' on a trainer’s page
+  s1 see: The same sheet with the first trainer, today (or the picked later day), and 'Start time' on 'Pick a time'
+  s1 not: A past day preset when a past day is picked in the grid
+  s2 see: The sheet with that trainer preset, today when this week is shown, 'Pick a time'
+  s2 not: When a past week is shown on the trainer’s page: a 'Day' list that holds only a day already over, so no booking can be made (seen in the code: Trainers.tsx:902 with 548-549; see the finding)
+  s3 see: Note 'Booked: <member> with <trainer>, <day>, <from–to>.'
+  s3 not: A booking on a day the sheet did not show
+J-F-panel-331-03 | type 2 | unknown | Other kind: a time outside the trainer’s working hours ('Book anyway', Trainers.tsx:609)
+  s1 see: Red box 'This is outside <trainer>’s working hours. Press "Book anyway" if <trainer> agreed.'
+  s1 see: The main button now reads 'Book anyway'
+  s1 not: The booking saved without the question
+  s1 not: The question for a trainer whose hours are not set (every time is open)
+  s2 see: Note 'Booked: <member> with <trainer>, <day>, <from–to>.'; the name shows in the grid
+  s2 not: 'Book anyway' still armed after the time or trainer was changed to one inside the hours
+J-F-panel-331-04 | type 3 | unknown | Negative: every refusal of the booking sheet
+  s1 see: 'Pick the member first.'
+  s1 see: 'Pick a start time.'
+  s1 not: A booking with no member or no time
+  s2 see: 'This time has already passed. Pick a time later than now.'
+  s2 see: 'You can book at most 31 days ahead.'
+  s2 not: A booking in the past
+  s3 see: '<name> has no personal-training classes left. Sell a personal-training plan first.'
+  s3 see: 'All <n> of <name>’s personal-training classes left are already booked. Sell more first, or cancel a booking.'
+  s3 not: More bookings ahead than classes left
+  s4 see: '<trainer> already has <member> at <time>. Pick another time.'
+  s4 see: '<member> is already booked at <time> that day. Pick another time.'
+  s4 not: Two members in one trainer’s slot
+  s4 not: One member with two trainers at once
+  s5 see: 'No member with this name.'
+  s5 see: 'No member has personal-training classes left. Search by name to find anyone.'
+  s5 not: An empty list with no words
+J-F-panel-331-05 | type 6 | unknown | State: booked, cancelled, booked again
+  s1 see: The slot reads 'Free' again; the day chip count is one lower
+  s1 not: The cancelled booking still counted against the member’s classes left to book
+  s2 see: Note 'Booked: …' and the name back in the grid
+  s2 not: '<member> is already booked at <time> that day' because of the cancelled booking
+  s3 see: The sheet closes; the grid is unchanged
+  s3 not: A booking saved by Cancel
+J-F-panel-331-06 | type 12 | unknown | Privacy and promise: what a booking stores and who sees it
+  s1 see: 'Booked by <name>' of the person who booked; the member’s name and classes left
+  s1 not: A booking with no trace of who made it
+  s1 not: The member’s phone number on the booking
+  s2 see: unknown: whether the member sees the booking in the app was not read
+  s2 not: Another member’s booking shown to this member
+J-F-panel-332-01 | type 1 | unknown | Trainers, the day grid; a booking later today
+  s1 see: Sheet '<member> with <trainer>'
+  s1 see: '<day>, <from–to>'
+  s1 see: The member’s classes-left words
+  s1 see: 'Booked by <name>'
+  s1 see: Buttons 'Cancel booking' (red), 'Close' and 'Open member'
+  s1 not: Another booking’s details
+  s1 not: 'Did they come? Tap "Mark session" …' before the booking has started
+  s2 see: The button reads 'Cancelling…'
+  s2 see: The sheet closes; note 'Booking cancelled.'
+  s2 see: The cell reads 'Free' again
+  s2 not: A class taken from the member by cancelling
+  s2 not: The booking still in the grid after the note
+J-F-panel-332-02 | type 2 | unknown | Other entry: a row of 'Bookings this week' on a trainer’s page, then 'Open member'
+  s1 see: The same sheet '<member> with <trainer>'
+  s1 not: A booking of another trainer
+  s2 see: That member’s page, where 'Mark session' lives
+  s2 not: Another member’s page
+J-F-panel-332-03 | type 3 | unknown | Negative: a booking that has started, opened by someone who is not the owner; and a failed cancel
+  s1 see: No 'Cancel booking' button
+  s1 see: 'This booking has started, so only the gym owner can cancel it.'
+  s1 see: 'Did they come? Tap "Mark session" on the member’s page.'
+  s1 not: 'Cancel booking' offered to a non-owner after the start
+  s2 see: 'Cancel booking' is there
+  s2 not: The owner told that only the owner can cancel
+  s3 see: A red box with the reason in plain words; the sheet stays open; the button is usable again
+  s3 not: 'Booking cancelled.' when it was not
+  s3 not: A raw error code
+J-F-panel-332-04 | type 6 | unknown | State: the same booking before and after its start time; after cancelling
+  s1 see: First 'Cancel booking'; within a minute the button goes and 'This booking has started, so only the gym owner can cancel it.' shows
+  s1 not: A cancel that still goes through from the old button after the start
+  s2 see: Gone from the grid and from the trainer’s 'Bookings this week'; the member’s booked count is one lower
+  s2 not: A way to open the cancelled booking and cancel it twice
+J-F-panel-332-05 | type 12 | unknown | Privacy and promise: 'This booking has started, so only the gym owner can cancel it.'
+  s1 see: No way on screen
+  s1 not: The server accepting the cancel from a non-owner after the start (the server side was not read)
+  s2 see: Member name, classes left, who booked
+  s2 not: The member’s phone number, dues or plan price in the booking sheet
+J-F-panel-333-01 | type 1 | unknown | A trainer’s page, signed in as the gym owner
+  s1 see: Sheet 'Edit <name>’s page'
+  s1 see: 'Photo' with 'Add a photo' (or 'Change photo' and 'Remove photo')
+  s1 see: 'What they teach' with the example 'Weight loss, strength, yoga' and 'Members and the desk see this. At most 80 letters.'
+  s1 see: 'Working days' with seven day buttons
+  s1 see: 'Shift starts', 'Shift ends', 'Second shift starts', 'Second shift ends' (each from 'Not set' and 5:00 am to 11:00 pm in half hours)
+  s1 see: 'The second shift is optional. With no day ticked, every time can be booked.'
+  s1 not: The saved values missing from the form
+  s2 see: The new photo in the round preview
+  s2 not: The photo saved before 'Save page' is pressed
+  s3 see: The button reads 'Saving…'
+  s3 see: The sheet closes; note 'Saved <name>’s page.'
+  s3 see: The page shows 'Teaches: <words>', the new photo, the two shifts on six days and 'Day off' on Sunday
+  s3 not: The note when the save failed
+  s3 not: Hours on a day that was not ticked
+J-F-panel-333-02 | type 2 | unknown | Other kind: the trainer edits their own page
+  s1 see: Note 'Saved <name>’s page.' and the new hours
+  s1 not: 'Edit page' missing on the trainer’s own page
+  s2 see: No 'Edit page'
+  s2 not: A save of someone else’s page accepted from this login (the server side was not read)
+J-F-panel-333-03 | type 2 | unknown | Other kind: a trainer whose saved hours differ from day to day
+  s1 see: The note reads 'Saving sets these same hours on every day you ticked.'
+  s1 not: The usual note, with no warning that the per-day hours will be replaced
+  s2 see: Note 'Saved <name>’s page.'; every ticked day now has the same hours
+  s2 not: The different hours replaced with no word before the save
+J-F-panel-333-04 | type 3 | unknown | Negative: wrong hours, a bad photo, a person who may not edit
+  s1 see: 'Pick the start and end time of the shift.'
+  s1 not: A working day saved with no hours
+  s2 see: 'Pick the start and end time of each shift.'
+  s2 not: A shift with one end saved
+  s3 see: 'This photo could not be used. Pick a JPG or PNG photo.' (or the picture tool’s own reason)
+  s3 not: The old photo removed by the failed pick
+  s4 see: The hint 'At most 80 letters.'; the saved words stop at 80 letters (Trainers.tsx:993)
+  s4 not: The words cut with no hint at all
+  s4 not: A save refused with a raw error
+  s5 see: No 'Edit page' button
+  s5 not: An edit sheet reachable by this login
+J-F-panel-333-05 | type 6 | unknown | State: photo removed, hours cleared, edit dropped
+  s1 see: The page and the trainer card show initials in place of the photo
+  s1 not: The old photo back after a reload
+  s2 see: Every day reads 'Working hours not set'; every time can be booked with no outside-hours question
+  s2 not: Every day read as 'Day off' (that would block nothing but says the wrong thing)
+  s3 see: The sheet closes; the page is unchanged; opening the sheet again shows the saved values
+  s3 not: The dropped changes saved
+  s3 not: The dropped photo shown on the page
+J-F-panel-333-06 | type 12 | unknown | Privacy and promise: a trainer’s photo and words are shown to members and the desk
+  s1 see: 'Members and the desk see this. At most 80 letters.'
+  s1 not: A photo or words shown to members with no word about it on the edit sheet
+  s2 see: Initials everywhere
+  s2 not: The removed photo still kept or still shown to members

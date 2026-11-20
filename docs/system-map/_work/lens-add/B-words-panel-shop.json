@@ -1,0 +1,1 @@
+{"id":"B-words-panel-shop","step":"B-words","item":"B-words (Language and words + 1 more) x panel / panel/shop: 3 items","needs":["CAL-score"],"checkpoint":"_work/B-words-panel-shop.md","out_file":"_work/out/B-words-panel-shop.jsonl","surface":"panel","area":"panel/shop","lenses":["10","gap-10"],"lens_items":["L10.1","H10.1","H10.2"]}

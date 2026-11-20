@@ -1,0 +1,16 @@
+# B-time-panel-brand-shell: 13 + 20 + gap-7 x panel / panel/brand-shell. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L13.1 | 13 | Fresh install, update over every older version still in use, data migration on update, sideload vs Play package, watch and phone on different versions, panel cache after deploy (old page still open)
+L20.1 | 20 | Trial end, plan end, gym pauses or closes, member leaves and returns, staff leaves (access removed), owner changes phone, year end, leap day, app not opened for 6 months
+H7.1 | gap-7 | Every new flow that fixes something only for NEW installs or NEW members (e.g. the phone sign-in shows only on new installs): what happens to existing users?
+H7.2 | gap-7 | Is there a path for them?
+H7.3 | gap-7 | None = finding
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1105 | live | Branding: gym logo and colours for the member app, logo upload, remove logo background, phone and shortcut preview | apps/dashboard/src/crm/brand/BrandingScreen.tsx:41
+F-panel-3101 | live | Branding: suggest a gym colour from the uploaded logo | apps/dashboard/src/crm/brand/brandLogic.ts:141
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1105 | live | Branding: gym logo and colours for the member app, logo upload, remove logo background, phone and shortcut preview | apps/dashboard/src/crm/brand/BrandingScreen.tsx:41
+F-panel-3101 | live | Branding: suggest a gym colour from the uploaded logo | apps/dashboard/src/crm/brand/brandLogic.ts:141
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1105 | live | Branding: gym logo and colours for the member app, logo upload, remove logo background, phone and shortcut preview | apps/dashboard/src/crm/brand/BrandingScreen.tsx:41
+F-panel-3101 | live | Branding: suggest a gym colour from the uploaded logo | apps/dashboard/src/crm/brand/brandLogic.ts:141

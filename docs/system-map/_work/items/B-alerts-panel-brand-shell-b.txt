@@ -1,0 +1,12 @@
+# B-alerts-panel-brand-shell-b: gap-3 + gap-4 x panel / panel/brand-shell. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H3.1 | gap-3 | Every automatic send, reminder, push, digest, job: is there a record the owner (or HQ) can open that says it went, to whom, when, and why not when it did not?
+H3.2 | gap-3 | An automatic action with no record and no "why not" = finding (S2 when the owner believes it ran)
+H4.1 | gap-4 | Find every pair of features that act on the same people or the same event (manual message vs automatic reminder; AI idea vs Today nudge; bell vs Today vs push; desk link vs phone proof)
+H4.2 | gap-4 | Check they agree: no double message, no suggestion to do what the system already did, the same count in both places, "done" in one is "done" in the other
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1105 | live | Branding: gym logo and colours for the member app, logo upload, remove logo background, phone and shortcut preview | apps/dashboard/src/crm/brand/BrandingScreen.tsx:41
+F-panel-3101 | live | Branding: suggest a gym colour from the uploaded logo | apps/dashboard/src/crm/brand/brandLogic.ts:141
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1105 | live | Branding: gym logo and colours for the member app, logo upload, remove logo background, phone and shortcut preview | apps/dashboard/src/crm/brand/BrandingScreen.tsx:41
+F-panel-3101 | live | Branding: suggest a gym colour from the uploaded logo | apps/dashboard/src/crm/brand/brandLogic.ts:141

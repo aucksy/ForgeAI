@@ -1,0 +1,1 @@
+{"id":"CAL-score","step":"coord","item":"coordinator only: C4 score found/partly/missed per seed in calibration/RESULT.md; C5 rewrite a hunt and re-run a missed seed (at most 2 re-runs); then hunts may run on today's code","needs":["CAL-1","CAL-2","CAL-3","CAL-4"],"checkpoint":"-","out_file":"calibration/RESULT.md"}

@@ -1,0 +1,61 @@
+# L14-phone-screens-2: 14 x phone / phone/screens-2. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L14.1 | 14 | How a gym is set up, moved (data import), helped (support window), billed, and offboarded
+L14.2 | 14 | what the owner (you) does each day
+L14.3 | 14 | help articles match the screens
+L14.4 | 14 | every "contact us" path reaches someone
+L14.5 | 14 | Also: keys, accounts and the one-person risk: every account, domain, signing key and token: who holds it, when it expires, what breaks if the laptop is lost, is there a written way back in
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-105 | live | Statistics: last 7 days, sets per muscle, muscle distribution, main exercises, strength score | apps/mobile/src/app/stats.tsx:71
+F-phone-107 | live | Records list by month, and pick any exercise to see its trend | apps/mobile/src/app/records.tsx:23
+F-phone-108 | live | Monthly report and year in review, with a share picture | apps/mobile/src/app/report/[period].tsx:353
+F-phone-112 | live | Progress photos: add, view, re-date, save to gallery, compare two side by side | apps/mobile/src/app/photos/index.tsx:82
+F-phone-118 | behind switch | MettleUp Plus page (where you stand, what is free and paid, prices, buy through Google Play in test mode) | apps/mobile/src/app/plus.tsx:34
+F-phone-122 | live | Find a plan: ready programs, follow one or keep it in your routines | apps/mobile/src/app/programs/index.tsx:54
+F-phone-123 | live | Build a plan from your answers (goal, days, equipment, sore areas, exercises to leave out) | apps/mobile/src/app/plan/build.tsx:73
+F-phone-124 | live | Routines: guided first routine, edit a routine, add an exercise to it, preview it | apps/mobile/src/app/routines/[id].tsx:82
+F-phone-125 | live | See today's workout before starting it, and start or resume it from the home-screen widget link | apps/mobile/src/app/today.tsx:42
+F-phone-126 | live | Log a live workout (sets, add or swap exercises, minimise, discard) and the finish summary with photos | apps/mobile/src/app/session/active.tsx:100
+F-phone-127 | live | A saved workout's page: details, photos, share, repeat, save as routine, edit, delete | apps/mobile/src/app/session/[id].tsx:68
+F-phone-128 | hidden | Muscles ready today, and a quick workout for the time you have | apps/mobile/src/app/ready.tsx:40
+F-phone-129 | live | Settings home (6 groups of rows) and More workout choices | apps/mobile/src/app/settings/index.tsx:135
+F-phone-130 | live | Workout settings: weekly goal, rest timer and sounds, how the next weight is picked, plates and bars, previous numbers,  | apps/mobile/src/app/settings/weekly-goal.tsx:4
+F-phone-131 | live | Your data: backup and restore, download my data, save as a spreadsheet, bring back a Google Drive backup, this phone's b | apps/mobile/src/app/settings/backup.tsx:30
+F-phone-132 | live | Ask an AI about your workouts (share a 4-week summary to any AI app) | apps/mobile/src/app/settings/ask-ai.tsx:20
+F-phone-133 | live | Help and feedback (type or speak, your questions and replies), What's new, About and Credits | apps/mobile/src/app/settings/feedback.tsx:25
+F-phone-134 | live | Your gym in Settings: gym logo on the home screen, leave the gym, what my gym can see (name on the leaderboard) | apps/mobile/src/app/settings/gym.tsx:25
+F-phone-135 | live | App preferences: light or dark, units, workout reminders and reminders from my gym | apps/mobile/src/app/settings/look.tsx:25
+F-phone-136 | live | Phone and watch: send workouts to health apps, install or open the watch app, home-screen widgets | apps/mobile/src/app/settings/health.tsx:4
+F-phone-138 | behind switch | Gym shop: a product's page, the bag (place an order, pay at the desk), my orders | apps/mobile/src/app/shop/[id].tsx:2
+F-phone-139 | live | Message your gym or ask a trainer, gym messages inbox, the diet plan the trainer sent | apps/mobile/src/app/shop/message.tsx:5
+F-phone-200 | live | Progress photos: add from camera or gallery, view and zoom, change the date, save to phone gallery, compare two, share b | apps/mobile/src/app/photos/index.tsx:82
+F-phone-201 | live | Build a plan: answer goal, level, days, equipment, sore areas, leave out exercises, then save or save and follow the pla | apps/mobile/src/app/plan/build.tsx:73
+F-phone-202 | live | Find a plan: browse ready programs (full gym, dumbbells, home), open one, follow it or save it to my routines | apps/mobile/src/app/programs/index.tsx:54
+F-phone-203 | live | Pick any exercise to see its lift trend (Your lifts, Any exercise) | apps/mobile/src/app/progress/pick-lift.tsx:13
+F-phone-204 | live | Monthly report and year in review: numbers, coach note, change against the period before, records, muscles, favourites,  | apps/mobile/src/app/report/[period].tsx:353
+F-phone-205 | live | Edit a routine: rename, add, reorder, swap or remove exercises, sets, warm-ups, rest, supersets, notes, share, move fold | apps/mobile/src/app/routines/[id].tsx:82
+F-phone-206 | live | Guided first routine: name a folder, name a routine, pick exercises, check and save (with Skip) | apps/mobile/src/app/routines/first.tsx:56
+F-phone-207 | live | Routine preview: read a routine's exercises, sets, rest and notes, then Start or Edit | apps/mobile/src/app/routines/view/[id].tsx:67
+F-phone-208 | live | Log a live workout: log sets, rest timer, minimise, add or swap exercises mid-workout, undo, discard, finish | apps/mobile/src/app/session/active.tsx:100
+F-phone-209 | live | Workout summary after Finish: time, sets, kg lifted against last time, records, add photos, update the routine, share | apps/mobile/src/app/session/finish.tsx:102
+F-phone-210 | live | A saved workout's page: stats, sets, photos, share as picture or text, save as routine, repeat, edit, delete | apps/mobile/src/app/session/[id].tsx:68
+F-phone-211 | live | Start or resume a workout from the home-screen Today widget (link forgeai://workout/start) | apps/mobile/src/app/workout/start.tsx:77
+F-phone-212 | live | Settings home: one page of six groups (You, Workouts, Your gym, Phone and watch, Your data, Help), each row showing how  | apps/mobile/src/app/settings/index.tsx:135
+F-phone-213 | live | Workout settings: rest timer and sounds, weekly goal, plates and bars, rate how hard each set felt, more workout choices | apps/mobile/src/app/settings/rest.tsx:9
+F-phone-214 | live | Units (kg and km, or lb and miles) and Light or dark (same as phone, light, dark) | apps/mobile/src/app/settings/units.tsx:19
+F-phone-215 | live | Reminders: workout reminder days and time, and with a gym joined, reminders and messages from my gym on or off | apps/mobile/src/app/settings/notifications.tsx:11
+F-phone-216 | behind switch | AI coach settings: provider, model, keys and voice (page sends you to Settings while the coach is switched off) | apps/mobile/src/app/settings/coach.tsx:34
+F-phone-217 | live | Your gym settings: gym logo on my home screen, leave my gym, and What my gym can see (name on leaderboard, gym mates see | apps/mobile/src/app/settings/gym.tsx:28
+F-phone-218 | live | Phone and watch: install or open MettleUp on my watch, send workouts to health apps, home-screen widgets | apps/mobile/src/app/settings/watch.tsx:44
+F-phone-219 | live | Backup and restore: MettleUp account backup, Download my data, Restore from a backup file, bring back an old Google Driv | apps/mobile/src/app/settings/backup.tsx:37
+F-phone-220 | live | Take my data out: save history and measurements as a spreadsheet, and share a text of my last 4 weeks to an AI app | apps/mobile/src/app/settings/export.tsx:8
+F-phone-221 | live | Bring in from Hevy or Strong: past workouts from an export file (replace or merge) and routines from a Hevy share link ( | apps/mobile/src/app/settings/import.tsx:8
+F-phone-222 | live | Erase or start over: remove the demo data, or erase everything | apps/mobile/src/app/settings/data.tsx:4
+F-phone-223 | live | Help and feedback: type or speak a message to MettleUp, add my watch's screen log, see my questions and the answers, flo | apps/mobile/src/app/settings/feedback.tsx:1
+F-phone-224 | live | What's new (last 3 updates, each with a try-it button) and About (credits, app version) | apps/mobile/src/app/settings/news.tsx:14
+F-phone-226 | behind switch | Gym shop: a product's page, the bag, place an order (pay at the desk), my orders with status and cancel | apps/mobile/src/app/shop/[id].tsx:2
+F-phone-227 | live | Gym messages: the inbox of messages from my gym, Message your gym (question, feedback, complaint), and ask a trainer abo | apps/mobile/src/app/shop/inbox.tsx:2
+F-phone-228 | behind switch | Diet plan from my gym's trainer (read-only) | apps/mobile/src/app/shop/diet.tsx:2
+F-phone-229 | live | Gym timings: open or closed now, the week's hours, special days, the gym's note | apps/mobile/src/app/shop/hours.tsx:2
+F-phone-230 | behind switch | A gym mate's shared workouts, opened from the gym leaderboard | apps/mobile/src/app/shop/mate/[id].tsx:2
+F-phone-239 | behind switch | MettleUp Plus (free and paid parts, three prices, buy through Google Play in test mode) and Find my gym (prove my number | apps/mobile/src/app/plus.tsx:42

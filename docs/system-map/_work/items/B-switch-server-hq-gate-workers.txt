@@ -1,0 +1,85 @@
+# B-switch-server-hq-gate-workers: gap-1 + gap-6 x server / server/hq-gate-workers. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H1.1 | gap-1 | List every setting, switch, plan gate, status and automation (from features.json + entities.json)
+H1.2 | gap-1 | For EACH one, list every other feature whose result it SHOULD change (the AI ideas, Today, counts, badges, reminders, messages, help, exports, the phone app)
+H1.3 | gap-1 | Then check in code that each of those really reads it
+H1.4 | gap-1 | A should-read with no read = finding
+H6.1 | gap-6 | For every field a feature depends on (birthday, phone, check-in phone, app link, plan dates, trainer, batch): how many Crispy Curves rows have it filled?
+H6.2 | gap-6 | Is there a screen that asks for it at the right moment?
+H6.3 | gap-6 | A feature that depends on a field most rows lack = finding
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-server-200 | live | Sign in to HQ with the owner's Google account (or Cloudflare Access), and sign out | deploy/hq/worker.js:134
+F-server-201 | live | Install HQ on a phone and see "You're offline" (install files served without sign-in) | deploy/hq/worker.js:67
+F-server-202 | live | See every gym in one list (groups, plan, AI use this month and today, new feedback count) | deploy/hq/api.js:206
+F-server-203 | live | Open one gym's HQ page (gym facts, 30 days of AI use, AI credits, assistant use and allowance, web page switch) | deploy/hq/api.js:225
+F-server-204 | live | System page: whole-system totals, feedback and lead counts, AI cost this month, member-app release downloads | deploy/hq/api.js:242
+F-server-205 | live | Read feedback and help questions from members and gyms, and sort each one (bug, idea, question, praise, spam, done) | deploy/hq/api.js:251
+F-server-206 | live | Reply to a help question; the person's phone gets "The MettleUp team replied" | deploy/hq/api.js:395
+F-server-207 | behind switch | English helper: Gemini rewrites the owner's rough reply before he sends it, and shows this month's rough cost | deploy/hq/api.js:322
+F-server-208 | live | "Needs you" counts on HQ: new leads, new feedback, help questions waiting, new gyms to check, payments waiting, payments | deploy/hq/api.js:259
+F-server-209 | live | Confirm or reject what a gym owner says he paid MettleUp by UPI or bank transfer (confirm moves the gym's plan on) | deploy/hq/api.js:304
+F-server-210 | behind switch | Payments to check: online payments that were taken but did not become a plan; mark each refunded or applied by hand | deploy/hq/api.js:310
+F-server-211 | live | Set MettleUp's own payment details (UPI ID, bank account) that gym owners see on Pay MettleUp; needs a sign-in from the  | deploy/hq/api.js:316
+F-server-212 | live | Leads from the website: see the list and move each lead on (new, called, demo, won, lost) with a note | deploy/hq/api.js:327
+F-server-213 | live | Send a message to every gym's admin app (shown in its bell), list sent ones and remove one | deploy/hq/api.js:333
+F-server-214 | live | HQ audit log: every HQ action is written down, and the owner can read the list (all gyms or one gym) | deploy/hq/api.js:344
+F-server-215 | live | Export the gym list as a CSV file (the download is written to the audit log first) | deploy/hq/api.js:496
+F-server-216 | live | Delete requests: write one down, tick its steps, and delete a whole gym with its pictures (typed code, fresh sign-in) | deploy/hq/api.js:356
+F-server-217 | live | Support access to one gym's data: open it for some minutes with a reason (fresh sign-in), read the gym's records, see wh | deploy/hq/api.js:649
+F-server-218 | live | Suspend a gym or make it active again, with a reason | deploy/hq/api.js:455
+F-server-219 | live | Set a gym's free-trial end date and its MettleUp plan (plan, monthly / yearly / lifetime, paid until) | deploy/hq/api.js:461
+F-server-220 | live | Create a new gym from HQ (gym name, owner name, phone), optionally from a lead, which then moves to "demo" | deploy/hq/api.js:503
+F-server-221 | live | Give a gym owner a new sign-in code (fresh sign-in) and sign everyone of a gym out | deploy/hq/api.js:540
+F-server-222 | live | Add AI credits to a gym (a pack it paid for, or a gift) or take credits back, with a note | deploy/hq/api.js:597
+F-server-223 | behind switch | Switch one gym's public web page off or back on from HQ | deploy/hq/api.js:613
+F-server-224 | live | Set one gym's daily AI limits: AI requests a day, and the AI Assistant's requests and spoken minutes a day (0 = off) | deploy/hq/api.js:624
+F-server-225 | behind switch | Gym owner buys a MettleUp plan online: a payment link is made, and the payment company's call turns the payment into a p | deploy/hq/billing.js:383
+F-server-226 | behind switch | Nightly billing jobs: plans that ran out are downgraded, plan-end reminders are listed (the message is a stub that sends | deploy/hq/billing.js:411
+F-server-227 | live | Nightly backup of all gym data (kept 7 days), and a public "did last night's backup work" answer for the watch | deploy/hq/backup.js:69
+F-server-228 | live | Nightly clean-up: old feedback, old leads without a deal, old AI usage, old logs, the tests' own QA gyms, AI Assistant r | deploy/hq/worker.js:184
+F-server-229 | behind switch | Weekly Cloudflare free-limit check (Mondays): one warning line on HQ when the busiest day passed 60% or 80% of the daily | deploy/hq/usage.js:91
+F-server-230 | behind switch | Pop-ups on members' phones: the gym's messages, new offers, a trainer's or the gym's reply to a question, and the member | deploy/hq/push.js:298
+F-server-231 | live | The desk's "please pay" fee request reaches the member's phone (each new request becomes one note for the member) | deploy/hq/payFeed.js:52
+F-server-232 | behind switch | "Asha paid online" alert: what a member paid online becomes an alert for the gym's admin app | deploy/hq/payFeed.js:115
+F-server-233 | behind switch | Gym alerts reach the staff's browsers with the admin app closed: urgent ones at once, the rest as a daily or weekly summ | deploy/hq/panelPush.js:114
+F-server-234 | behind switch | Direct-read record: every 10 minutes, reads made with the database owner login are copied to the gym server so gym owner | deploy/hq/readLog.js:226
+F-server-235 | hidden | Entry machines (eSSL / ZKTeco) send their punches to MettleUp at /iclock/ (gate Worker: written, NOT deployed, its addre | deploy/gate/worker.ts:24
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-server-200 | live | Sign in to HQ with the owner's Google account (or Cloudflare Access), and sign out | deploy/hq/worker.js:134
+F-server-201 | live | Install HQ on a phone and see "You're offline" (install files served without sign-in) | deploy/hq/worker.js:67
+F-server-202 | live | See every gym in one list (groups, plan, AI use this month and today, new feedback count) | deploy/hq/api.js:206
+F-server-203 | live | Open one gym's HQ page (gym facts, 30 days of AI use, AI credits, assistant use and allowance, web page switch) | deploy/hq/api.js:225
+F-server-204 | live | System page: whole-system totals, feedback and lead counts, AI cost this month, member-app release downloads | deploy/hq/api.js:242
+F-server-205 | live | Read feedback and help questions from members and gyms, and sort each one (bug, idea, question, praise, spam, done) | deploy/hq/api.js:251
+F-server-206 | live | Reply to a help question; the person's phone gets "The MettleUp team replied" | deploy/hq/api.js:395
+F-server-207 | behind switch | English helper: Gemini rewrites the owner's rough reply before he sends it, and shows this month's rough cost | deploy/hq/api.js:322
+F-server-208 | live | "Needs you" counts on HQ: new leads, new feedback, help questions waiting, new gyms to check, payments waiting, payments | deploy/hq/api.js:259
+F-server-209 | live | Confirm or reject what a gym owner says he paid MettleUp by UPI or bank transfer (confirm moves the gym's plan on) | deploy/hq/api.js:304
+F-server-210 | behind switch | Payments to check: online payments that were taken but did not become a plan; mark each refunded or applied by hand | deploy/hq/api.js:310
+F-server-211 | live | Set MettleUp's own payment details (UPI ID, bank account) that gym owners see on Pay MettleUp; needs a sign-in from the  | deploy/hq/api.js:316
+F-server-212 | live | Leads from the website: see the list and move each lead on (new, called, demo, won, lost) with a note | deploy/hq/api.js:327
+F-server-213 | live | Send a message to every gym's admin app (shown in its bell), list sent ones and remove one | deploy/hq/api.js:333
+F-server-214 | live | HQ audit log: every HQ action is written down, and the owner can read the list (all gyms or one gym) | deploy/hq/api.js:344
+F-server-215 | live | Export the gym list as a CSV file (the download is written to the audit log first) | deploy/hq/api.js:496
+F-server-216 | live | Delete requests: write one down, tick its steps, and delete a whole gym with its pictures (typed code, fresh sign-in) | deploy/hq/api.js:356
+F-server-217 | live | Support access to one gym's data: open it for some minutes with a reason (fresh sign-in), read the gym's records, see wh | deploy/hq/api.js:649
+F-server-218 | live | Suspend a gym or make it active again, with a reason | deploy/hq/api.js:455
+F-server-219 | live | Set a gym's free-trial end date and its MettleUp plan (plan, monthly / yearly / lifetime, paid until) | deploy/hq/api.js:461
+F-server-220 | live | Create a new gym from HQ (gym name, owner name, phone), optionally from a lead, which then moves to "demo" | deploy/hq/api.js:503
+F-server-221 | live | Give a gym owner a new sign-in code (fresh sign-in) and sign everyone of a gym out | deploy/hq/api.js:540
+F-server-222 | live | Add AI credits to a gym (a pack it paid for, or a gift) or take credits back, with a note | deploy/hq/api.js:597
+F-server-223 | behind switch | Switch one gym's public web page off or back on from HQ | deploy/hq/api.js:613
+F-server-224 | live | Set one gym's daily AI limits: AI requests a day, and the AI Assistant's requests and spoken minutes a day (0 = off) | deploy/hq/api.js:624
+F-server-225 | behind switch | Gym owner buys a MettleUp plan online: a payment link is made, and the payment company's call turns the payment into a p | deploy/hq/billing.js:383
+F-server-226 | behind switch | Nightly billing jobs: plans that ran out are downgraded, plan-end reminders are listed (the message is a stub that sends | deploy/hq/billing.js:411
+F-server-227 | live | Nightly backup of all gym data (kept 7 days), and a public "did last night's backup work" answer for the watch | deploy/hq/backup.js:69
+F-server-228 | live | Nightly clean-up: old feedback, old leads without a deal, old AI usage, old logs, the tests' own QA gyms, AI Assistant r | deploy/hq/worker.js:184
+F-server-229 | behind switch | Weekly Cloudflare free-limit check (Mondays): one warning line on HQ when the busiest day passed 60% or 80% of the daily | deploy/hq/usage.js:91
+F-server-230 | behind switch | Pop-ups on members' phones: the gym's messages, new offers, a trainer's or the gym's reply to a question, and the member | deploy/hq/push.js:298
+F-server-231 | live | The desk's "please pay" fee request reaches the member's phone (each new request becomes one note for the member) | deploy/hq/payFeed.js:52
+F-server-232 | behind switch | "Asha paid online" alert: what a member paid online becomes an alert for the gym's admin app | deploy/hq/payFeed.js:115
+F-server-233 | behind switch | Gym alerts reach the staff's browsers with the admin app closed: urgent ones at once, the rest as a daily or weekly summ | deploy/hq/panelPush.js:114
+F-server-234 | behind switch | Direct-read record: every 10 minutes, reads made with the database owner login are copied to the gym server so gym owner | deploy/hq/readLog.js:226
+F-server-235 | hidden | Entry machines (eSSL / ZKTeco) send their punches to MettleUp at /iclock/ (gate Worker: written, NOT deployed, its addre | deploy/gate/worker.ts:24
+## MACHINE FILES (docs/system-map/_sources/machine/)
+field-fill.csv: MISSING (items that need it = could-not-check)

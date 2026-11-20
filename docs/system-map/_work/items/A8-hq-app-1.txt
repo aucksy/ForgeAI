@@ -1,0 +1,698 @@
+# A8-hq-app-1: coverage of 86 Tier 1 journeys (17 features, from A5-hq-app-1, A5-hq-app-2). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-hq-103 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-103 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-hq-103 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-hq-103 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 1 journey phrase(s)
+F-hq-103 | apps/dashboard/e2e/r495-uat.spec.mjs | e2e | 303 lines | asserts 1 journey phrase(s)
+F-hq-103 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 1 journey phrase(s)
+F-hq-103 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 1 journey phrase(s)
+F-hq-104 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-104 | apps/dashboard/e2e/demo-showcase-uat.spec.mjs | e2e | 181 lines | asserts 1 journey phrase(s)
+F-hq-104 | apps/dashboard/e2e/demo.spec.mjs | e2e | 142 lines | asserts 1 journey phrase(s)
+F-hq-105 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code, asserts 1 journey phrase(s)
+F-hq-105 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 2 journey phrase(s)
+F-hq-105 | apps/mobile/test/theme/plans.test.ts | unit | 123 lines | asserts 2 journey phrase(s)
+F-hq-105 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-hq-105 | apps/dashboard/e2e/pay-mettleup-uat.spec.mjs | e2e | 210 lines | asserts 1 journey phrase(s)
+F-hq-105 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-hq-105 | apps/dashboard/test/crm/navNames.test.ts | unit | 61 lines | asserts 1 journey phrase(s)
+F-hq-105 | apps/dashboard/test/crm/ownerOnboarding.test.ts | unit | 115 lines | asserts 1 journey phrase(s)
+F-hq-105 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-hq-105 | apps/dashboard/test/crm/sheets.test.ts | unit | 122 lines | asserts 1 journey phrase(s)
+F-hq-105 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-hq-105 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 1 journey phrase(s)
+F-hq-106 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-106 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 1 journey phrase(s)
+F-hq-106 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 1 journey phrase(s)
+F-hq-106 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-hq-106 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-hq-106 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-hq-106 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-hq-106 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-hq-107 | supabase/tests/0060_pay_mettleup.sql | db | 317 lines | asserts 5 journey phrase(s)
+F-hq-107 | supabase/tests/0080_gym_page.sql | db | 269 lines | asserts 5 journey phrase(s)
+F-hq-107 | supabase/tests/0083_ai_members.sql | db | 180 lines | asserts 5 journey phrase(s)
+F-hq-107 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 4 journey phrase(s)
+F-hq-107 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code, asserts 1 journey phrase(s)
+F-hq-107 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 4 journey phrase(s)
+F-hq-107 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-hq-107 | supabase/tests/0098_alerts_done_and_read.sql | db | 375 lines | asserts 4 journey phrase(s)
+F-hq-107 | supabase/tests/0050_trainer_view.sql | db | 213 lines | asserts 3 journey phrase(s)
+F-hq-107 | supabase/tests/0053_ask_trainer_and_progress.sql | db | 232 lines | asserts 3 journey phrase(s)
+F-hq-107 | supabase/tests/0063_gym_checkout.sql | db | 350 lines | asserts 3 journey phrase(s)
+F-hq-107 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 3 journey phrase(s)
+F-hq-108 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-108 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 1 journey phrase(s)
+F-hq-108 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 1 journey phrase(s)
+F-hq-108 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | asserts 1 journey phrase(s)
+F-hq-108 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | asserts 1 journey phrase(s)
+F-hq-108 | apps/dashboard/test/crm/joinPay.test.ts | unit | 223 lines | asserts 1 journey phrase(s)
+F-hq-108 | apps/dashboard/test/crm/ownerNumbers.test.ts | unit | 316 lines | asserts 1 journey phrase(s)
+F-hq-108 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/SelfDimTest.kt | watch | 234 lines | asserts 1 journey phrase(s)
+F-hq-108 | apps/mobile/qa/phase3-d.yaml | maestro | 763 lines | asserts 1 journey phrase(s)
+F-hq-108 | apps/mobile/qa/phase7-bigtext.yaml | maestro | 326 lines | asserts 1 journey phrase(s)
+F-hq-108 | apps/mobile/qa/store-c.yaml | maestro | 130 lines | asserts 1 journey phrase(s)
+F-hq-108 | apps/mobile/qa/uat-rel-f199-profile-progress.yaml | maestro | 425 lines | asserts 1 journey phrase(s)
+F-hq-111 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-111 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-hq-111 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/SelfDimTest.kt | watch | 234 lines | asserts 1 journey phrase(s)
+F-hq-111 | deploy/hq/readLog.test.mjs | unit | 152 lines | asserts 1 journey phrase(s)
+F-hq-111 | deploy/panel/assistCatalogue.test.mjs | unit | 184 lines | asserts 1 journey phrase(s)
+F-hq-112 | supabase/tests/0060_pay_mettleup.sql | db | 317 lines | asserts 5 journey phrase(s)
+F-hq-112 | supabase/tests/0083_ai_members.sql | db | 180 lines | asserts 5 journey phrase(s)
+F-hq-112 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 4 journey phrase(s)
+F-hq-112 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 4 journey phrase(s)
+F-hq-112 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 4 journey phrase(s)
+F-hq-112 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-hq-112 | supabase/tests/0080_gym_page.sql | db | 269 lines | asserts 4 journey phrase(s)
+F-hq-112 | supabase/tests/0098_alerts_done_and_read.sql | db | 375 lines | asserts 4 journey phrase(s)
+F-hq-112 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-112 | supabase/tests/0050_trainer_view.sql | db | 213 lines | asserts 3 journey phrase(s)
+F-hq-112 | supabase/tests/0053_ask_trainer_and_progress.sql | db | 232 lines | asserts 3 journey phrase(s)
+F-hq-112 | supabase/tests/0063_gym_checkout.sql | db | 350 lines | asserts 3 journey phrase(s)
+F-hq-113 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-113 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 2 journey phrase(s)
+F-hq-113 | apps/dashboard/test/crm/installSteps.test.ts | unit | 43 lines | asserts 1 journey phrase(s)
+F-hq-113 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | asserts 1 journey phrase(s)
+F-hq-114 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-114 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 1 journey phrase(s)
+F-hq-114 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-hq-114 | apps/dashboard/test/crm/assistant/messageLang.test.ts | unit | 175 lines | asserts 1 journey phrase(s)
+F-hq-114 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | asserts 1 journey phrase(s)
+F-hq-114 | apps/dashboard/test/crm/gymReports.test.ts | unit | 140 lines | asserts 1 journey phrase(s)
+F-hq-114 | apps/dashboard/test/crm/ownerNumbers.test.ts | unit | 316 lines | asserts 1 journey phrase(s)
+F-hq-114 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | asserts 1 journey phrase(s)
+F-hq-114 | apps/dashboard/test/crm/planRequests.test.ts | unit | 239 lines | asserts 1 journey phrase(s)
+F-hq-114 | apps/dashboard/test/crm/plusLock.test.ts | unit | 92 lines | asserts 1 journey phrase(s)
+F-hq-114 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 1 journey phrase(s)
+F-hq-114 | apps/mobile/modules/forge-rest/android/src/test/java/com/forgeai/rest/WearWireTest.kt | native | 459 lines | asserts 1 journey phrase(s)
+F-hq-119 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-119 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 1 journey phrase(s)
+F-hq-119 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 1 journey phrase(s)
+F-hq-119 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | asserts 1 journey phrase(s)
+F-hq-119 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | asserts 1 journey phrase(s)
+F-hq-119 | apps/dashboard/test/crm/ownerNumbers.test.ts | unit | 316 lines | asserts 1 journey phrase(s)
+F-hq-119 | apps/mobile/qa/phase3-d.yaml | maestro | 763 lines | asserts 1 journey phrase(s)
+F-hq-119 | apps/mobile/qa/phase7-bigtext.yaml | maestro | 326 lines | asserts 1 journey phrase(s)
+F-hq-119 | apps/mobile/qa/store-c.yaml | maestro | 130 lines | asserts 1 journey phrase(s)
+F-hq-119 | apps/mobile/qa/uat-rel-f199-profile-progress.yaml | maestro | 425 lines | asserts 1 journey phrase(s)
+F-hq-119 | apps/mobile/qa/uat-rel-look.yaml | maestro | 246 lines | asserts 1 journey phrase(s)
+F-hq-119 | apps/mobile/qa/uat-rel-r404-bar-charts.yaml | maestro | 181 lines | asserts 1 journey phrase(s)
+F-hq-117 | apps/dashboard/e2e/hq-webpage-uat.spec.mjs | e2e | 166 lines | asserts 6 journey phrase(s)
+F-hq-117 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-117 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 2 journey phrase(s)
+F-hq-117 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-hq-117 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | asserts 2 journey phrase(s)
+F-hq-117 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-hq-117 | apps/dashboard/e2e/pagechat-uat.spec.mjs | e2e | 272 lines | asserts 1 journey phrase(s)
+F-hq-117 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 1 journey phrase(s)
+F-hq-117 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-hq-117 | apps/dashboard/test/crm/assistant/messageLang.test.ts | unit | 175 lines | asserts 1 journey phrase(s)
+F-hq-117 | apps/dashboard/test/crm/assistant/screenWords.test.ts | unit | 188 lines | asserts 1 journey phrase(s)
+F-hq-117 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-hq-118 | apps/dashboard/test/crm/hqAccess.test.ts | unit | 81 lines | asserts 5 journey phrase(s)
+F-hq-118 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 4 journey phrase(s)
+F-hq-118 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code, asserts 1 journey phrase(s)
+F-hq-118 | deploy/panel/helpArticles.test.mjs | unit | 156 lines | asserts 3 journey phrase(s)
+F-hq-118 | supabase/tests/0064_billing_checks.sql | db | 133 lines | asserts 3 journey phrase(s)
+F-hq-118 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 2 journey phrase(s)
+F-hq-118 | apps/dashboard/e2e/bell-inbox-uat.spec.mjs | e2e | 401 lines | asserts 1 journey phrase(s)
+F-hq-118 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-hq-118 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-hq-118 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 1 journey phrase(s)
+F-hq-118 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 1 journey phrase(s)
+F-hq-118 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 1 journey phrase(s)
+F-hq-120 | apps/mobile/qa/uat-rel-r452-help-replies.yaml | maestro | 182 lines | asserts 4 journey phrase(s)
+F-hq-120 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-120 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 3 journey phrase(s)
+F-hq-120 | supabase/tests/0087_feedback_owner_desk.sql | db | 143 lines | asserts 3 journey phrase(s)
+F-hq-120 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 2 journey phrase(s)
+F-hq-120 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 2 journey phrase(s)
+F-hq-120 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 2 journey phrase(s)
+F-hq-120 | supabase/tests/0076_panel_web_push.sql | db | 209 lines | asserts 2 journey phrase(s)
+F-hq-120 | supabase/tests/0096_message_recipient.sql | db | 222 lines | asserts 2 journey phrase(s)
+F-hq-120 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 1 journey phrase(s)
+F-hq-120 | apps/dashboard/e2e/member-messages-uat.spec.mjs | e2e | 236 lines | asserts 1 journey phrase(s)
+F-hq-120 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 1 journey phrase(s)
+F-hq-122 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-hq-122 | apps/mobile/qa/uat-rel-r452-help-replies.yaml | maestro | 182 lines | asserts 4 journey phrase(s)
+F-hq-122 | apps/dashboard/e2e/entry-uat.spec.mjs | e2e | 187 lines | asserts 3 journey phrase(s)
+F-hq-122 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 3 journey phrase(s)
+F-hq-122 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 3 journey phrase(s)
+F-hq-122 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-122 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 3 journey phrase(s)
+F-hq-122 | supabase/tests/0087_feedback_owner_desk.sql | db | 143 lines | asserts 3 journey phrase(s)
+F-hq-122 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 2 journey phrase(s)
+F-hq-122 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 2 journey phrase(s)
+F-hq-122 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-hq-122 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 2 journey phrase(s)
+F-hq-123 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-123 | apps/dashboard/e2e/bell-inbox-uat.spec.mjs | e2e | 401 lines | asserts 1 journey phrase(s)
+F-hq-123 | apps/dashboard/e2e/member-messages-uat.spec.mjs | e2e | 236 lines | asserts 1 journey phrase(s)
+F-hq-123 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 1 journey phrase(s)
+F-hq-123 | apps/dashboard/e2e/pagechat-uat.spec.mjs | e2e | 272 lines | asserts 1 journey phrase(s)
+F-hq-123 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 1 journey phrase(s)
+F-hq-123 | apps/dashboard/e2e/r450-uat.spec.mjs | e2e | 331 lines | asserts 1 journey phrase(s)
+F-hq-123 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 1 journey phrase(s)
+F-hq-123 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 1 journey phrase(s)
+F-hq-123 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-hq-123 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-hq-123 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-hq-102 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-102 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 1 journey phrase(s)
+F-hq-102 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-hq-102 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-hq-102 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-hq-102 | apps/dashboard/test/crm/setupCards.test.ts | unit | 17 lines | asserts 1 journey phrase(s)
+F-hq-102 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-hq-102 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-hq-102 | apps/mobile/test/db/finishReal.test.ts | unit | 104 lines | asserts 1 journey phrase(s)
+F-hq-102 | apps/mobile/test/tracker/phase2ReviewFixes.test.ts | unit | 287 lines | asserts 1 journey phrase(s)
+F-hq-102 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-hq-103-01 | type 1 | HQ admin | HQ open on any page; the read log pulls have failed for over an hour
+  s1 see: Red line on top: 'Read log is not working since <time>: <reason>. Supabase keeps its logs only about a day, so direct looks at gym data are not being recorded. Fix it today.'
+  s1 not: The page shown with no warning while the read log is failing
+  s2 see: The same red line on top of that page too
+  s2 not: The warning only on the first page
+  s3 see: The red line goes away by itself
+  s3 not: A red line that stays after the read log works again
+  s3 not: A reload needed to clear it
+J-F-hq-103-02 | type 2 | HQ admin | HQ open; no logs key saved
+  s1 see: Grey line on top: 'Read log is off: no logs key saved.'
+  s1 not: A red alarm for a switched-off read log
+  s1 not: The line counted in the Needs you number
+J-F-hq-103-03 | type 2 | HQ admin | HQ open; the Supabase logs key ends within the renew window
+  s1 see: Amber line: 'The logs key ends on <date>. In Supabase, make a new “Logs read” token for the MettleUp project and paste it into Add a key as SUPABASE_LOGS_TOKEN. Then tell Claude its end date.'
+  s1 not: 'ends' after the end date has passed (it must say 'ended')
+J-F-hq-103-04 | type 3 | HQ admin | HQ open; the read log is failing; then a page fails to load (no internet or a server error)
+  s1 see: A plain error note in place of the page
+  s1 not: The read-log warning disappearing from the top while the read log is still failing
+  s1 not: A blank page
+  s2 see: The last warning stays as it was
+  s2 not: An error pop-up every minute
+  s2 not: The warning cleared as if all is fine
+J-F-hq-103-05 | type 6 | HQ admin | Read log working, then failing, then fixed
+  s1 see: No warning yet
+  s1 not: A red line after a single failed pull
+  s2 see: Red line 'Read log is not working since <time>...'
+  s2 not: A start time that moves each minute
+  s3 see: No line on top
+  s3 not: The red line left on screen
+J-F-hq-103-06 | type 12 | HQ admin | HQ admin reads the warning
+  s1 see: Only the read log state and its reason; no gym name, no member data
+  s1 not: Gym or member data in the warning
+  s2 see: The words say direct looks at gym data are not being recorded
+  s2 not: The promise that every look is recorded silently broken for more than a day with no warning
+J-F-hq-104-01 | type 1 | HQ admin | Signed in to HQ, several real gyms exist, the database has update 0030
+  s1 see: Heading 'All gyms' with button 'Make a gym'
+  s1 see: Tiles: Gyms, Members, Free trials ending in N days, Trial ended, not paid, Paying, Need a look
+  s1 see: Table: Gym, Free trial or plan, Members, Check-ins 7 / 30 days, Gym takings this month, Last desk activity, Owner
+  s1 not: Test and demo gyms in the list or in the totals
+  s1 not: A member name or number anywhere
+  s2 see: 'Showing N of M gyms.' and only the matching rows
+  s2 not: A gym that matches left out
+  s2 not: The count line still saying the full total
+  s3 see: Rows in the new order
+  s3 not: Search text lost when the order changes
+  s4 see: That gym's page
+  s4 not: Another gym's page
+  s4 not: A tap on the owner's mobile opening the gym instead of calling
+J-F-hq-104-02 | type 2 | HQ admin | All gyms open; some gyms need a look
+  s1 see: The 'Show' box set to that filter, the table scrolled into view, 'Showing N of M gyms.'
+  s1 not: A count on the tile that differs from the rows shown
+J-F-hq-104-03 | type 2 | HQ admin | All gyms open; test and demo gyms exist
+  s1 see: The QA, test-mobile and demo gyms added to the rows and the tiles
+  s1 not: Test gyms counted in the totals while the tick is off
+  s2 see: Back to real gyms only
+  s2 not: Search and filter reset by the tick
+J-F-hq-104-04 | type 3 | HQ admin | All gyms open
+  s1 see: 'No gym matches.' and a button 'Show all gyms'
+  s1 not: An empty table with no words
+  s1 not: An error
+  s2 see: Search and filter cleared; every real gym listed
+  s2 not: The old search text left in the box
+  s3 see: 'No real gyms yet. The test and demo gyms are hidden.' or 'No gyms yet.'
+  s3 not: NaN or blank tiles
+J-F-hq-104-05 | type 6 | HQ admin | Database before update 0030, then after it
+  s1 see: A warning note that the free-trial part needs the database update; no trial tiles, column, filters or sort
+  s1 not: Trial tiles showing zero as if true
+  s2 see: Its row says Paused and 'Need a look' counts it
+  s2 not: The old status kept from before
+  s3 see: Trial tiles, column and filters appear
+  s3 not: A trial filter picked earlier left on with no box to change it
+J-F-hq-104-06 | type 12 | HQ admin | HQ admin looks at every gym
+  s1 see: Footer: 'Counts and gym-level facts only. Member names and numbers are never shown in HQ; they stay behind support access, which the gym owner sees.'
+  s1 see: Owner name and mobile per gym (MettleUp's business contact)
+  s1 not: A member name, member phone or member row anywhere on the page
+J-F-hq-105-01 | type 1 | HQ admin | All gyms open; one gym business has 2 branches
+  s1 see: Card 'Gyms with branches (1)'
+  s1 see: '<business> · 2 branches · X members in the registers, Y in the app'
+  s1 see: Each branch: name link, gym code, 'receipts B2/…' when set, 'N members (M in app)'
+  s1 see: '2 branches: the first at full price, the others at half, so Starter ₹1,498 or Pro ₹2,248 a month for all of them. Information only: nothing is billed here.'
+  s1 not: Member totals that differ from the sum of the branches
+  s1 not: Any wording that suggests HQ charges here
+  s2 see: That branch's gym page with 'Branch 2 of 2 · <business>'
+  s2 not: The first branch's page opened for the second
+J-F-hq-105-02 | type 2 | HQ admin | All gyms table; a gym is a branch of a business
+  s1 see: 'Branch 1 of 3 · <business>' under the gym name
+  s1 not: A branch line on a gym that has only one branch
+J-F-hq-105-03 | type 3 | HQ admin | No business has 2 or more branches
+  s1 see: No 'Gyms with branches' card at all
+  s1 not: An empty card or '0 branches'
+  s1 not: A one-branch business shown as a group
+J-F-hq-105-04 | type 6 | HQ admin | A business adds a third branch in the admin app
+  s1 see: '3 branches' and the price line 'Starter ₹2,497 or Pro ₹2,997'
+  s1 not: The old count of 2 or the old price kept
+  s2 see: The card unchanged (it lists every branch)
+  s2 not: The card counts changing with the tick while the table does
+J-F-hq-105-05 | type 12 | HQ admin | HQ admin reads a business with branches
+  s1 see: Counts and gym codes only
+  s1 not: A member name or phone in the card
+  s1 not: A price shown as a charge
+J-F-hq-106-01 | type 1 | HQ admin | All gyms open showing 12 real gyms
+  s1 see: The button busy, then a file mettleup-gyms-<India date>.csv downloads
+  s1 see: 'Downloaded 12 gyms (mettleup-gyms-<date>.csv). It has owners’ names and mobiles: keep it private.'
+  s1 not: A file before the export is written to the HQ log
+  s1 not: A member name or number in the file
+  s2 see: Columns: Gym name, Gym code, Owner name, Owner mobile, Started, Status, Free trial ends, Plan, Billing, Paid until, Members in the register, Members in the app; Hindi names readable
+  s2 not: A cell starting with = run as a formula
+  s2 not: Garbled Hindi letters
+J-F-hq-106-02 | type 2 | HQ admin | All gyms filtered (search or a tile) with the test gyms ticked on
+  s1 see: Only the rows shown, test gyms included
+  s1 see: The log row notes the filter and that test gyms were in it
+  s1 not: Rows hidden by the search exported anyway
+J-F-hq-106-03 | type 3 | HQ admin | All gyms with a search that matches nothing
+  s1 see: 'No gyms in the list to export.'
+  s1 not: An empty file downloaded
+  s1 not: A log row for an export that never happened
+  s2 see: A plain error note
+  s2 not: The file downloaded without the log row
+J-F-hq-106-04 | type 6 | HQ admin | An export was just done
+  s1 see: A second file with the new rows and a second log row
+  s1 not: The first file's rows reused
+  s1 not: One log row for two files
+J-F-hq-106-05 | type 12 | HQ admin | HQ admin exports owner contacts
+  s1 see: 'It has owners’ names and mobiles: keep it private.'
+  s1 not: A member's name or number in the file
+  s1 not: An export with no HQ log row
+J-F-hq-107-01 | type 1 | HQ admin | All gyms open
+  s1 see: Card 'Make a gym' with Gym name, Owner’s name, Owner’s mobile ('10 digits')
+  s1 not: The form opening with another gym's values
+  s2 see: 'Gym made: <name>, gym code <code>.'
+  s2 see: 'The owner’s sign-in code (works once, for 30 minutes):' and the code
+  s2 see: 'Send it on WhatsApp. It is not kept anywhere: copy it now.'
+  s2 not: Two gyms made from one click
+  s2 not: The mobile cut to the wrong 10 digits
+  s3 see: ' Copied.'; the message reads 'MettleUp: your sign-in code for <gym> is <code>. Open the MettleUp admin app, type your mobile number and this code. It works once, for 30 minutes.'
+  s3 not: A message sent by HQ on its own
+J-F-hq-107-02 | type 2 | HQ admin | Leads page, a lead that asked for a demo
+  s1 see: Card 'Make a gym for this lead' with the gym name and mobile filled in
+  s1 not: Another lead's details
+  s2 see: The code card as for a gym made by hand
+  s2 see: The lead moves to demo with the note 'Gym made in HQ: <code>'
+  s2 not: A lead already further on moved back to demo
+J-F-hq-107-03 | type 3 | HQ admin | Make a gym card open
+  s1 see: A plain error that the mobile is wrong
+  s1 not: A gym made with a bad mobile
+  s2 see: A plain error that a box is empty
+  s2 not: A gym with no name
+J-F-hq-107-04 | type 6 | HQ admin | A gym was just made by hand
+  s1 see: The new gym listed as checked (Active), not 'New, not checked yet'
+  s1 not: The new gym missing until a reload of the server
+  s2 see: The admin app refuses the old code; HQ must make a new one from the gym page
+  s2 not: An old code still working
+  s2 not: A used code working twice
+J-F-hq-107-05 | type 12 | HQ admin | Code card on screen
+  s1 see: The code shown once, 'It is not kept anywhere'
+  s1 not: The code written into the HQ log
+  s1 not: The code shown again after a reload
+J-F-hq-108-01 | type 1 | HQ admin | All gyms open
+  s1 see: '‹ All gyms' link, gym name and status badge, 'Gym code X · started <date>'
+  s1 see: Tiles: Members in the register, Members in the app, Check-ins, 7 days, Gym takings this month, Receipts cancelled this month, Shop orders, 30 days, Staff, Wrong sign-in codes, 24 h, Last desk activity
+  s1 see: Card 'Owner' with name and a call link
+  s1 see: Card 'What HQ did here'
+  s1 not: A member name or number
+  s1 not: Another gym's counts
+  s2 see: 'Times only. Names, devices and addresses show only while support access is open.' and 'Last 7 days: ...' counts
+  s2 not: Names, devices or addresses while support access is closed
+  s3 see: The list with the same search and filter
+  s3 not: The search lost
+J-F-hq-108-02 | type 2 | HQ admin | Needs you or Payments page, a line with 'Open gym'
+  s1 see: That gym's page (address #gym/<id>)
+  s1 not: The All gyms list instead
+J-F-hq-108-03 | type 2 | HQ admin | A gym whose owner asked to delete it
+  s1 see: Amber card 'Delete asked <date>: day N of 30.' with link 'Open delete requests'
+  s1 not: No notice while a delete request is open
+  s1 not: A day count past 30 with no alarm
+J-F-hq-108-04 | type 3 | HQ admin | HQ open
+  s1 see: A plain error note
+  s1 not: Another gym's page
+  s1 not: A blank page
+  s2 see: The All gyms list
+  s2 not: An error that breaks the menu
+  s3 see: 'No owner on the list.' and 'Nothing yet.'
+  s3 not: NaN in a tile
+J-F-hq-108-05 | type 6 | HQ admin | Gym page open
+  s1 see: The page reloads with 'The gym is paused.' and a new line in 'What HQ did here'
+  s1 not: The old status badge kept
+  s2 see: 'Support access is open, so names, devices and addresses show (the gym owner sees this look).'
+  s2 not: Details still shown after support access closes
+J-F-hq-108-06 | type 12 | HQ admin | HQ admin reads one gym
+  s1 see: Totals only; wrong sign-in codes counted
+  s1 not: A member name, phone or receipt line
+  s2 see: Times only
+  s2 not: Staff names or addresses without the owner's open window
+J-F-hq-111-01 | type 1 | HQ admin | Gym page of a new gym marked 'New, not checked yet'
+  s1 see: 'Marked as checked.' and the badge changes
+  s1 not: The free trial changed (this is not the trial)
+  s2 see: Question 'Pause <gym>? Nobody at the gym can add or change anything until you un-pause it.'
+  s2 see: Then 'The gym is paused.'
+  s2 not: A pause without the question
+  s2 not: Records deleted or hidden from the gym
+  s3 see: 'The gym is working again.'
+  s3 not: The gym still read-only after the message
+J-F-hq-111-02 | type 3 | HQ admin | Gym page, Status card
+  s1 see: 'Write a reason (at least a few words).'
+  s1 not: The gym paused with no reason
+  s2 see: Nothing changes
+  s2 not: A pause after Cancel
+J-F-hq-111-03 | type 6 | HQ admin | A new gym, still 'New, not checked yet'
+  s1 see: 'The gym is paused.'
+  s1 not: The pause refused for an unchecked gym
+  s2 see: 'The gym is working again.'
+  s2 not: The gym shown as checked when nobody checked it
+  s2 not: 'Mark as checked' gone for a gym never checked
+J-F-hq-111-04 | type 12 | HQ admin | Pausing a gym
+  s1 see: 'Pausing makes the gym read-only: staff can sign in, look and download, but cannot add or change anything. Members keep their app.'
+  s1 not: Records deleted or export blocked because of a pause
+  s1 not: The reason hidden from the HQ log
+J-F-hq-112-01 | type 1 | HQ admin | Gym page of a gym with one owner; HQ signed in within 15 minutes; owner called on the gym's number
+  s1 see: 'For <owner>, <mobile>.' and 'The owner’s sign-in code (works once, for 30 minutes):' with the code
+  s1 not: A code without the tick
+  s1 not: A code for another person of the gym
+  s2 see: ' Copied.'
+  s2 not: HQ sending a message on its own
+J-F-hq-112-02 | type 2 | HQ admin | Gym with two owners
+  s1 see: The code card for the picked owner
+  s1 not: The code made for the first owner instead
+J-F-hq-112-03 | type 3 | HQ admin | Owner lost their sign-in card
+  s1 see: A plain refusal
+  s1 not: A code made without the call
+  s2 see: A note to sign in again and a button 'Sign in again'
+  s2 not: A code made on an old sign-in
+J-F-hq-112-04 | type 6 | HQ admin | A new code was made
+  s1 see: The owner is asked to set a new PIN; the old PIN no longer works
+  s1 not: The old PIN still working
+  s2 see: The admin app refuses it
+  s2 not: A used code working twice
+J-F-hq-112-05 | type 12 | HQ admin | Code card on screen
+  s1 see: The code shown once
+  s1 not: The code in the HQ log or shown again after a reload
+  s1 not: A code given without the call the promise names
+J-F-hq-113-01 | type 1 | HQ admin | Gym page; the gym has 3 signed-in devices
+  s1 see: Question 'Sign every phone and computer of <gym> out now?'
+  s1 see: Then '3 devices signed out.'
+  s1 not: Devices of another gym signed out
+  s1 not: A sign-out without the question
+J-F-hq-113-02 | type 2 | HQ admin | A gym that still has an old browser key
+  s1 see: 'N devices signed out. This gym also has an old browser key; tell Claude.'
+  s1 not: The old key left with no word
+J-F-hq-113-03 | type 3 | HQ admin | Gym page, sign-out card
+  s1 see: Nothing changes
+  s1 not: A sign-out after Cancel
+  s2 see: '0 devices signed out.'
+  s2 not: An error or a wrong count
+J-F-hq-113-04 | type 6 | HQ admin | The gym was just signed out everywhere
+  s1 see: The Staff tile says 0 devices signed in
+  s1 see: 'What HQ did here' has the sign-out with its reason
+  s1 not: The old device count
+  s2 see: The sign-in screen; they sign in again with a new code
+  s2 not: A device still working
+J-F-hq-113-05 | type 12 | HQ admin | Sign-out done
+  s1 see: A count only, and the reason in 'What HQ did here'
+  s1 not: Device names, staff names or addresses shown without support access
+J-F-hq-114-01 | type 1 | HQ admin | HQ, a gym page of a gym that used AI column matching in the last 30 days
+  s1 see: Heading 'AI column matching'
+  s1 see: Line 'Last 30 days: <n> reads, about ₹<x>.'
+  s1 see: Box 'Reads a day for this gym' with the hint 'Normal: 20. 0 switches it off for this gym.'
+  s1 not: Another gym's AI use shown
+  s1 not: A cost of NaN or a negative number
+  s2 see: 'Saved: 50 a day.'
+  s2 not: The limit saved for another gym
+  s2 not: A success line when the save failed
+  s3 see: The box still shows 50
+  s3 not: The box back at the normal number after a reload
+J-F-hq-114-02 | type 2 | HQ admin | Gym page of a gym with its own AI limit of 50
+  s1 see: 'Back to normal: 20 a day.'
+  s1 see: The box now shows 20
+  s1 not: The own limit still kept on the server
+  s1 not: The box left at 50 after the line says normal
+J-F-hq-114-03 | type 3 | HQ admin | Gym page, AI column matching card
+  s1 see: 'Something in the form is missing or wrong.'
+  s1 not: 500 saved
+  s1 not: A success line
+  s2 see: 'AI use could not be read right now.'
+  s2 not: AI use shown as none, as if it were true
+  s2 not: The whole gym page failing
+  s3 see: 'Saved: 0 a day.'
+  s3 not: AI matching still running for this gym on its next import
+J-F-hq-114-04 | type 6 | HQ admin | Gym page of a gym with no AI use, normal limit
+  s1 see: 'No AI use in the last 30 days.'
+  s1 see: The box shows the normal number or is empty
+  s1 not: A cost line of ₹0 for no reads
+  s2 see: 'Saved: 0 a day.' then 'Back to normal: 20 a day.'
+  s2 not: The gym left switched off after Back to normal
+J-F-hq-114-05 | type 12 | HQ admin | Gym page, AI column matching card
+  s1 see: Only counts and rupees of AI reads for this gym
+  s1 not: A member name, phone or column contents of the imported file shown in HQ
+J-F-hq-119-01 | type 1 | HQ admin | Gym page of a gym with sign-ins in the last 7 days, support access closed
+  s1 see: 'Times only. Names, devices and addresses show only while support access is open.'
+  s1 see: 'Last 7 days: Signed in: <n> · Wrong code: <n> ...'
+  s1 see: One row per event with the time and what happened
+  s1 not: A name, device or address column while access is closed
+  s1 not: Rows of another gym
+J-F-hq-119-02 | type 2 | HQ admin | Gym page of a gym whose support access is open
+  s1 see: 'Support access is open, so names, devices and addresses show (the gym owner sees this look).'
+  s1 see: Columns Who, Device and From filled in
+  s1 not: Names shown after the access window has ended
+  s1 not: The look not shown to the gym owner
+J-F-hq-119-03 | type 3 | HQ admin | Gym page of a brand-new gym with no sign-ins
+  s1 see: 'Nothing yet.'
+  s1 not: An empty table with no words
+  s1 not: An error
+  s2 see: An error line under the button in plain words
+  s2 not: The old list kept as if it were fresh
+  s2 not: An endless busy button
+J-F-hq-119-04 | type 6 | HQ admin | Gym page with support access open, history shown in detail
+  s1 see: 'Times only. Names, devices and addresses show only while support access is open.'
+  s1 see: The Who, Device and From columns gone
+  s1 not: Names, devices or addresses still shown after the close
+J-F-hq-119-05 | type 12 | HQ admin | Gym page, support access closed
+  s1 see: Times and what happened only
+  s1 not: A staff name, a device or an IP address while access is closed
+  s1 not: Rows older than the kept 7 days shown as if kept longer
+J-F-hq-117-01 | type 1 | HQ admin | Gym page of a gym whose web page is on and published, pages live for all gyms
+  s1 see: 'On. <gym> can make its free web page, and it is a step in Set up your gym.'
+  s1 see: 'Published at join.mettleup.fit/<slug>.'
+  s1 see: Button 'Switch the web page off'
+  s1 not: The state of another gym
+  s1 not: No button
+  s2 see: Question 'Switch off the web page of <gym>? Visitors will not see it, and the owner will not see “Your web page”. The join link still works.'
+  s2 see: 'The web page of <gym> is switched off.'
+  s2 see: 'Off. <gym>’s web page does not open ...'
+  s2 not: The page still opening for visitors
+  s2 not: The join link stopping
+  s2 not: The note lost from the log
+J-F-hq-117-02 | type 2 | HQ admin | Gym page of a gym whose web page is off
+  s1 see: 'The web page of <gym> is switched on.'
+  s1 see: 'On. ...'
+  s1 not: A confirm question for switching on
+  s1 not: The page still hidden for visitors
+J-F-hq-117-03 | type 3 | HQ admin | Gym page before the 0090 database update, or pages off for every gym
+  s1 see: 'The web page switch for one gym needs the database update 0090 (waiting for your yes).'
+  s1 see: No switch button
+  s1 not: A switch button that fails when tapped
+  s2 see: Warning 'Gym web pages are switched off for every gym until you approve the page words.'
+  s2 not: The card saying the page is live when no gym page opens
+  s3 see: Nothing changes
+  s3 not: The page switched off after Cancel
+J-F-hq-117-04 | type 6 | HQ admin | Gym whose owner has not made a page yet
+  s1 see: 'The owner has not made the page yet.'
+  s1 see: 'Off. ...' then 'On. ...'
+  s1 not: A draft page published by switching on
+  s1 not: The owner's page words deleted by switching off
+J-F-hq-118-01 | type 1 | HQ admin | Gym page, support access closed, signed in to HQ within the last 15 minutes
+  s1 see: 'Closed. Normally the gym opens it (Settings → Your data → “Let MettleUp support look”). Open it yourself only in an emergency ...'
+  s1 see: Boxes 'Reason', 'What happened', 'For how long' (15, 30 or 60 minutes)
+  s1 not: A choice longer than 60 minutes
+  s2 see: Question 'Open support access in an emergency? It is read-only, it ends by itself, and the gym owner sees it with your reason.'
+  s2 see: Card 'Support access is open': 'Opened by MettleUp (emergency), until <time>. Read-only. The gym owner sees every look.'
+  s2 not: Access open without a reason
+  s2 not: An end time later than 60 minutes
+  s3 see: 'Members (<n>)' with a read-only table
+  s3 see: 'Receipts (<n>)'
+  s3 not: Any edit or delete button
+  s3 not: Records of another gym
+  s3 not: The look missing from the gym owner's list
+  s4 see: The card back to 'Support access' closed
+  s4 not: Records still readable after closing
+J-F-hq-118-02 | type 2 | HQ admin | The gym owner opened support access from the admin app
+  s1 see: 'Opened by the gym, until <time>. Read-only. The gym owner sees every look.'
+  s1 see: The record buttons
+  s1 not: The emergency form shown while access is open
+  s2 see: 'Check-ins (<n>)' or 'None.'
+  s2 not: More than 200 rows drawn with no word that there are more
+J-F-hq-118-03 | type 3 | HQ admin | Gym page, support access closed
+  s1 see: A plain error under the button
+  s1 not: Access opened with no reason written
+  s2 see: 'For this, sign in again first (it must be within the last 15 minutes).'
+  s2 not: Access opened on an old sign-in
+  s3 see: A refusal in plain words
+  s3 not: Records shown after the window ended
+J-F-hq-118-04 | type 6 | HQ admin | Support access open by HQ for 15 minutes
+  s1 see: The closed card 'Support access' with the emergency form
+  s1 not: The open card still shown after the end time
+  s2 see: The closed card
+  s2 see: 'What HQ did here' lists both openings
+  s2 not: A second open window left running
+J-F-hq-118-05 | type 12 | HQ admin | Support access open
+  s1 see: Member records, read-only
+  s1 not: The look not written where the gym owner can see it
+  s1 not: Aadhaar or PAN shown
+  s2 see: Each look with time and reason
+  s2 not: A look missing from the owner's list
+J-F-hq-120-01 | type 1 | HQ admin | HQ open, menu System
+  s1 see: Heading 'System'
+  s1 see: 'Gym server storage': '<n> MB of the free <n> MB' with a bar
+  s1 see: Tiles 'Gyms', 'Members in registers', 'Members in the app', 'Devices signed in', 'AI reads this month', 'Feedback', 'Leads'
+  s1 see: Card 'Member app downloads' with Version, Released, App downloads
+  s1 see: Card 'Cloudflare free limit'
+  s1 not: A tile with NaN or undefined
+  s1 not: A bar wider than the card
+J-F-hq-120-02 | type 2 | HQ admin | Needs you shows the line 'Cloudflare free limit: on <day> our apps used ...'
+  s1 see: The System page opens
+  s1 see: Card 'Cloudflare free limit' with 'Busiest day of the week before <date>: <n> of the 1,00,000 requests allowed a day (<pct>%), on <day>.'
+  s1 not: Another page opens
+  s1 not: A different figure than the Needs you line
+J-F-hq-120-03 | type 3 | HQ admin | System page while GitHub or the small database cannot be read
+  s1 see: 'Download counts are not available right now. GitHub limits how often HQ can ask; they come back by themselves.'
+  s1 see: 'Feedback, leads and AI use could not be read right now.'
+  s1 not: The AI, Feedback and Leads tiles shown as 0
+  s1 not: The whole page failing
+  s2 see: The card with only the muted line about Mondays
+  s2 not: undefined or NaN in the Cloudflare card
+J-F-hq-120-04 | type 6 | HQ admin | Storage passes 80% of the free limit
+  s1 see: The bar drawn in the bad colour
+  s1 not: The bar in the normal colour past 80%
+  s2 see: The bar back in the normal colour
+  s2 not: The old figure still shown
+J-F-hq-120-05 | type 12 | HQ admin | System page
+  s1 see: Totals only, test gyms included
+  s1 not: A gym name, member name or phone number on the System page
+J-F-hq-122-01 | type 1 | HQ admin | HQ, menu Feedback, messages from both apps exist
+  s1 see: Heading 'Feedback' with 'Show: Everything'
+  s1 see: 'What members and gyms sent from the apps, with the AI’s answer. “Needs reply”: the AI could not help them. ...'
+  s1 see: Each card: '<time> · Member app <version> · gym <code> · <screen>', the message, 'AI answer:' and a line such as 'Answered by AI from the help pages. They tapped “Yes, it helped”.'
+  s1 not: Messages of only one app
+  s1 not: An AI line that says it helped when they tapped No
+  s2 see: 'Saved.'
+  s2 not: The status of another message changed
+  s2 not: The note shown to the person who sent it
+J-F-hq-122-02 | type 2 | HQ admin | HQ, a link '#feedback/needs-reply' or the Needs you line for questions waiting
+  s1 see: 'Show' set to 'Needs reply'
+  s1 see: Only cards with the red flag 'Needs reply'
+  s1 not: Cards that do not need a reply
+  s1 not: The filter box showing Everything
+  s2 see: The address changes to #feedback/idea
+  s2 see: Only Idea cards
+  s2 not: Old cards left on the page
+J-F-hq-122-03 | type 3 | HQ admin | Feedback page with a filter that matches nothing, or the small database not connected
+  s1 see: 'No question is waiting for a reply.'
+  s1 not: An empty page with no words
+  s2 see: 'Nothing here.'
+  s2 not: An error
+  s3 see: 'Feedback, leads and AI use are not connected yet.'
+  s3 not: An endless loading screen
+J-F-hq-122-04 | type 6 | HQ admin | A message with status New
+  s1 see: The card under Done
+  s1 see: The Needs you number one lower if it was counted
+  s1 not: The card still under New
+  s2 see: 'Saved.'
+  s2 see: The card under New again
+  s2 not: The private note lost by changing the status
+J-F-hq-122-05 | type 12 | HQ admin | Feedback page
+  s1 see: Placeholder 'Note (only you see it)'
+  s1 not: The note shown in the member or admin app
+  s1 not: Messages of every gym visible to anyone but HQ
+J-F-hq-123-01 | type 1 | HQ admin | Feedback page, a help question the AI could not answer, from a phone that left a push address
+  s1 see: Box 'Reply' with the hint 'Their phone also gets a pop-up: “The MettleUp team replied”.'
+  s1 not: No reply box on a help question
+  s2 see: 'Sent. Their phone got a pop-up.'
+  s2 see: The box emptied
+  s2 not: The reply sent to another person
+  s2 not: A second pop-up for the same reply
+  s3 see: Pop-up 'The MettleUp team replied to your question. Tap to read it.'
+  s3 see: The reply under their question
+  s3 not: The reply missing in the app
+J-F-hq-123-02 | type 2 | HQ admin | A help question card, the Gemini key is on
+  s1 see: 'Rewritten. Nothing is sent yet: check it, change anything, then tap Send reply. Undo brings your own words back.'
+  s1 see: 'English helper (Gemini) this month: about ₹<x> for <n> rewrites.'
+  s1 not: Anything sent to the person
+  s2 see: 'Your own words are back.'
+  s2 see: 'Sent. They see it the next time they open the app.'
+  s2 not: The rewritten words sent after Undo
+J-F-hq-123-03 | type 3 | HQ admin | A help question card
+  s1 see: 'Fill in every box.'
+  s1 not: An empty reply sent
+  s2 see: 'Type your reply first, then tap Rewrite.'
+  s2 not: A call to Gemini
+  s3 see: Button 'Add the Gemini key first', greyed out
+  s3 not: A Rewrite button that fails
+  s4 see: No reply box
+  s4 not: A reply box that sends to nobody
+J-F-hq-123-04 | type 6 | HQ admin | A question that already has one reply
+  s1 see: 'Your reply, <time>:' with the first reply
+  s1 see: Box label 'Send another reply (it shows under the one above, in order)'
+  s1 not: The first reply hidden
+  s2 see: 'Your reply 1' and 'Your reply 2' in order
+  s2 see: The Needs reply flag gone
+  s2 not: The first reply replaced when the 0014 update is applied
+  s2 not: The card still flagged Needs reply
+J-F-hq-123-05 | type 12 | HQ admin | A help question card
+  s1 see: Only this one question and the draft go to Google
+  s1 not: Other messages, the gym name or the person's phone sent to Google
+  s2 see: Only the person who asked sees it in their app
+  s2 not: The reply shown to another member or to the gym
+J-F-hq-102-01 | type 1 | HQ admin | HQ open on Needs you, browser notifications not asked yet
+  s1 see: 'Alerts are on.'
+  s1 see: A short sound
+  s1 not: The browser asking on page load without a tap
+  s2 see: Within a minute a short sound and the pop-up 'MettleUp HQ: needs you' with the new line
+  s2 see: The number on the menu and in the tab title goes up
+  s2 not: A pop-up for something that is not new
+  s2 not: Two pop-ups for one new thing
+  s3 see: The HQ tab comes to the front on the matching page
+  s3 not: A wrong page opens
+J-F-hq-102-02 | type 2 | HQ admin | HQ open on another page, alerts on, a new help question arrives
+  s1 see: A short sound and the pop-up
+  s1 see: The menu number goes up
+  s1 not: The page being typed in reloaded
+J-F-hq-102-03 | type 3 | HQ admin | Notifications blocked, or the user tapped Block when asked
+  s1 see: 'Alerts stay off. You can still see the number on the menu.'
+  s1 not: A sound or pop-up afterwards
+  s2 see: 'Alerts are blocked in this browser. Allow notifications for this site in the browser’s settings to get them.'
+  s2 not: The Turn on alerts button shown again
+  s3 see: The number on the menu goes up, no sound
+  s3 not: A sound plays even though alerts are off
+J-F-hq-102-04 | type 6 | HQ admin | Alerts on, one new lead waiting
+  s1 see: The number goes down at the next check
+  s1 not: A sound when a number goes down
+  s2 see: One sound and one pop-up
+  s2 not: No sound because the number had gone down and up again
+  s3 see: No alert on the first check after a reload
+  s3 not: A pop-up for everything already waiting on every reload
+J-F-hq-102-05 | type 12 | HQ admin | Alerts on, laptop screen shared or locked
+  s1 see: The pop-up 'MettleUp HQ: needs you' with the line words
+  s1 not: A member name, phone number or message text in the pop-up

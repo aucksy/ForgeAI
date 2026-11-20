@@ -1,0 +1,1 @@
+{"id":"H5-server-panel-worker","step":"H5","item":"hunt 5 (Built vs live (deploy state)) x server / server/panel-worker: 4 items","needs":["CAL-score","M2-machine-pass"],"checkpoint":"_work/H5-server-panel-worker.md","out_file":"_work/out/H5-server-panel-worker.jsonl","surface":"server","area":"server/panel-worker","lenses":["gap-5"],"lens_items":["H5.1","H5.2","H5.3","H5.4"]}

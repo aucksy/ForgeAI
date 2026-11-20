@@ -1,0 +1,23 @@
+# B-truth-server-ci-workflows-b: gap-9 x server / server/ci-workflows. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H9.1 | gap-9 | For each fact a user sees (count of alerts, dues, plan end, birthdays today, members using the app): list every place it shows (panel, Today, AI, bell, push, phone app, HQ, export) and compare the values on the Crispy Curves data and the ugly data pack
+H9.2 | gap-9 | Any difference = finding
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-server-600 | live | Outage alarm: every 10 minutes check the website, admin app, HQ and gym server answer; open a GitHub issue labelled outa | .github/workflows/watch.yml:12
+F-server-601 | live | WhatsApp sign-in code set-up: register MettleUp's WhatsApp number, show the number's and the login_code template's statu | .github/workflows/whatsapp-setup.yml:17
+F-server-602 | live | Checks on every push: phone-test file lints, typecheck and unit tests (phone app in 3 time zones, admin panel, panel Wor | .github/workflows/ci.yml:9
+F-server-603 | live | Database checks on every push: every migration applied to a fresh local database, function lint, security check and feat | .github/workflows/ci.yml:220
+F-server-604 | live | Razorpay test-mode check against the real Razorpay API (pushes to main and hand-started runs only) | .github/workflows/ci.yml:254
+F-server-605 | live | Make exercise demo clips and exercise pictures in the cloud (Blender) and publish the clips to the exercise-clips releas | .github/workflows/exercise-clips.yml:7
+F-server-607 | hidden | iPhone app build on a simulator with first-screen pictures (paused by the owner on 5 Nov 2026: hand-started only, no sig | .github/workflows/ios.yml:12
+F-server-610 | live | Update the Play store listing: replace the store pictures in order, optionally the title and descriptions, from the comm | .github/workflows/play-listing.yml:10
+F-server-611 | live | Send a release to Google Play testing tracks: phone app and watch app, with the What's new notes; never production (star | .github/workflows/play-upload.yml:25
+F-server-612 | live | Phone conditions test: upgrade from the previous release, no internet, flaky link, app killed, Doze, exact alarm denied  | .github/workflows/qa-conditions.yml:37
+F-server-613 | live | Phone test on a cloud Android emulator (the release gate): build once, canary + affected parts + shards with fail-fast,  | .github/workflows/qa-device.yml:31
+F-server-614 | live | Cross-role journeys test: member app + admin app + live server on the run's own fresh gyms (orders, cancels, messages, c | .github/workflows/qa-journeys.yml:19
+F-server-615 | live | Build and release the phone app and watch app on a version tag: phone gate, tests, signing with key rotation, release ch | .github/workflows/release-apk.yml:49
+F-server-616 | live | Take the Play Store app pictures on a cloud phone (hand-started; uploads pictures only, not a test) | .github/workflows/store-shots.yml:9
+F-server-617 | behind switch | Robot crawl of a released app on real phones in Firebase Test Lab (advisory; stops green with nothing tested unless the  | .github/workflows/test-lab.yml:17
+F-server-619 | live | Record the watch app demo video for Google Play's foreground-service form, from the released watch app on a Wear OS emul | .github/workflows/watch-video.yml:10
+F-server-620 | live | Watch app build and checks on pushes that touch the watch: unit tests, rendered watch screens, same-signer and signing d | .github/workflows/wear-build.yml:17
+F-server-621 | live | WhatsApp probe: one test message (plain text and/or the login_code template) to the owner's own phone, to learn what Met | .github/workflows/whatsapp-probe.yml:13

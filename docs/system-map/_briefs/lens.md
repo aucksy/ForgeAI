@@ -27,12 +27,13 @@ inside the folders your brief names, never across docs/. Do only your step.
   tells you to stop; or something needs him.
 - Report in at most 15 lines, plain English: what you produced (file paths), counts, the top 5 findings,
   what you could not check and why.
-- You are one helper on Fable 5.2 at medium effort. Do not start helpers of your own.
+- You are one helper on Opus 5.5 at medium effort. Do not start helpers of your own.
 
 THIS HELPER
 - Work item: {WORK ITEM ID}. Test gym Crispy Curves id: {CRISPY CURVES ID}.
-- Never open the audit plan or a planning note. Something missing = could-not-check; do not go looking.
+- Never open the audit plan or planning notes. A missing input = could-not-check; never go looking.
 - Checkpoint file: {CHECKPOINT FILE}. Read it first; carry on after the finished items. After EVERY item: add a checkpoint line and append your rows.
+- Gym data: Crispy Curves only. Never count, list or read across all gyms, not even totals. Ignore the CONTEXT METER hook number. Temp files outside the repo.
 
 WORDS
 - Lens: one way to look at the product. Hunt: a search for what is MISSING. Item: one numbered check (L3.1, H5.1).
@@ -64,6 +65,7 @@ ROW FORMAT (one JSON object per line; every field required; MADE-UP examples, co
 {"kind":"finding","id":"FN-{WORK ITEM ID}-01","date":"2026-11-20","lens":"3","surface":"server","area":"server/pay","refs":["F-panel-014"],"severity":"S1","title":"A desk login can change another gym's dues","what":"Plain words.","expected":"Plain words.","evidence":["deploy/panel/joinPay.js:118-131"],"proof":"code-read","root_cause_key":"dues-save-no-gym-check","who":"owners","how_often":"every time","fix_line":"Plain words","fix_size":"small","needs_him":false,"verified":"pending","status":"open"}
 {"kind":"grid","surface":"server","area":"server/pay","lens":"3","checked_on":"2026-11-20","items":[{"item":"L3.1","status":"checked","evidence":["deploy/panel/joinPay.js:118-131"],"finding_ids":["FN-{WORK ITEM ID}-01"]},{"item":"L3.9","status":"does-not-apply","reason":"no uploads here","evidence":[],"finding_ids":[]}]}
 Finding: title, what, expected, who, how_often, fix_line in plain words, no file or function names. evidence: real repo path:line. root_cause_key: 3 to 6 lower-case words joined by dashes, never over 6. fix_size: the whole word small | medium | large | unknown. proof: driven | code-read | data-count | machine. refs: existing ids or [].
-Grid: surface, area, lens exactly as ITEMS says. Never print a key or password: file:line only.
+Grid: surface, area, lens exactly as ITEMS says. Machine evidence: machine:<file>.json#<path>. Never print a key or password: file:line only.
+BEFORE YOU REPORT: node docs/system-map/_tools/lens-cover.mjs {WORK ITEM ID} and node docs/system-map/_tools/merge.mjs {WORK ITEM ID} --dry. Fix every line they name.
 
 SIZE: read at most 3,000 code lines; at most 40 findings. Never read a file over 800 lines whole: search, then read 100 lines. At a limit: mark the items left could-not-check ("size limit"), write the checkpoint, report "limit reached, N items left".

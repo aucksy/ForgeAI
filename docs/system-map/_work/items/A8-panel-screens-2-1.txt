@@ -1,0 +1,843 @@
+# A8-panel-screens-2-1: coverage of 90 Tier 1 journeys (10 features, from A5-panel-screens-2-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-300 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | file name, asserts 10 journey phrase(s)
+F-panel-300 | apps/dashboard/e2e/member-messages-uat.spec.mjs | e2e | 236 lines | asserts 10 journey phrase(s)
+F-panel-300 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | asserts 9 journey phrase(s)
+F-panel-300 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 8 journey phrase(s)
+F-panel-300 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 8 journey phrase(s)
+F-panel-300 | apps/dashboard/e2e/ai-questions-uat.spec.mjs | e2e | 434 lines | asserts 6 journey phrase(s)
+F-panel-300 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 6 journey phrase(s)
+F-panel-300 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 5 journey phrase(s)
+F-panel-300 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 5 journey phrase(s)
+F-panel-300 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 4 journey phrase(s)
+F-panel-300 | apps/mobile/qa/uat-rel-r452-help-replies.yaml | maestro | 182 lines | asserts 4 journey phrase(s)
+F-panel-300 | supabase/tests/0087_feedback_owner_desk.sql | db | 143 lines | asserts 4 journey phrase(s)
+F-panel-301 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 10 journey phrase(s)
+F-panel-301 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 8 journey phrase(s)
+F-panel-301 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 8 journey phrase(s)
+F-panel-301 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 8 journey phrase(s)
+F-panel-301 | supabase/tests/0037_leaderboard.sql | db | 548 lines | asserts 8 journey phrase(s)
+F-panel-301 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 7 journey phrase(s)
+F-panel-301 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 7 journey phrase(s)
+F-panel-301 | supabase/tests/0038_member_push.sql | db | 169 lines | asserts 7 journey phrase(s)
+F-panel-301 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 7 journey phrase(s)
+F-panel-301 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 6 journey phrase(s)
+F-panel-301 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 6 journey phrase(s)
+F-panel-301 | apps/dashboard/e2e/demo-showcase-uat.spec.mjs | e2e | 181 lines | asserts 6 journey phrase(s)
+F-panel-302 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 2 journey phrase(s)
+F-panel-302 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 2 journey phrase(s)
+F-panel-302 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 2 journey phrase(s)
+F-panel-302 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 2 journey phrase(s)
+F-panel-302 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-302 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-panel-302 | apps/dashboard/e2e/tapcards.spec.mjs | e2e | 36 lines | asserts 2 journey phrase(s)
+F-panel-302 | apps/dashboard/test/crm/importMembers.test.ts | unit | 575 lines | file name
+F-panel-302 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | asserts 2 journey phrase(s)
+F-panel-302 | apps/dashboard/test/crm/members.test.ts | unit | 336 lines | file name
+F-panel-302 | apps/dashboard/test/crm/membership.test.ts | unit | 446 lines | file name
+F-panel-302 | apps/dashboard/test/crm/passMembers.test.ts | unit | 199 lines | file name
+F-panel-303 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 11 journey phrase(s)
+F-panel-303 | apps/dashboard/e2e/messages.spec.mjs | e2e | 191 lines | file name, asserts 6 journey phrase(s)
+F-panel-303 | apps/dashboard/test/crm/messages.test.ts | unit | 189 lines | file name, asserts 6 journey phrase(s)
+F-panel-303 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 5 journey phrase(s)
+F-panel-303 | apps/dashboard/e2e/member-messages-uat.spec.mjs | e2e | 236 lines | file name, asserts 2 journey phrase(s)
+F-panel-303 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 4 journey phrase(s)
+F-panel-303 | supabase/tests/0042_message_calm.sql | db | 150 lines | asserts 4 journey phrase(s)
+F-panel-303 | supabase/tests/0069_member_messages.sql | db | 186 lines | file name, asserts 2 journey phrase(s)
+F-panel-303 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 3 journey phrase(s)
+F-panel-303 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-panel-303 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | file name, asserts 1 journey phrase(s)
+F-panel-303 | supabase/tests/0038_member_push.sql | db | 169 lines | asserts 3 journey phrase(s)
+F-panel-304 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 10 journey phrase(s)
+F-panel-304 | apps/dashboard/test/crm/messages.test.ts | unit | 189 lines | file name, asserts 6 journey phrase(s)
+F-panel-304 | apps/mobile/test/tracker/engine/aiSummary.test.ts | unit | 87 lines | asserts 6 journey phrase(s)
+F-panel-304 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 5 journey phrase(s)
+F-panel-304 | apps/mobile/test/tracker/phase3Review.test.ts | unit | 235 lines | asserts 5 journey phrase(s)
+F-panel-304 | apps/dashboard/e2e/member-messages-uat.spec.mjs | e2e | 236 lines | file name, asserts 2 journey phrase(s)
+F-panel-304 | apps/dashboard/e2e/messages.spec.mjs | e2e | 191 lines | file name, asserts 2 journey phrase(s)
+F-panel-304 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 4 journey phrase(s)
+F-panel-304 | apps/mobile/qa/uat-rel-r404-bar-charts.yaml | maestro | 181 lines | asserts 4 journey phrase(s)
+F-panel-304 | apps/mobile/qa/v0270-i.yaml | maestro | 614 lines | asserts 4 journey phrase(s)
+F-panel-304 | apps/mobile/test/shop/boardWords.test.ts | unit | 148 lines | asserts 4 journey phrase(s)
+F-panel-304 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 4 journey phrase(s)
+F-panel-305 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 9 journey phrase(s)
+F-panel-305 | apps/dashboard/test/crm/messages.test.ts | unit | 189 lines | file name, asserts 6 journey phrase(s)
+F-panel-305 | apps/dashboard/e2e/member-messages-uat.spec.mjs | e2e | 236 lines | file name, asserts 2 journey phrase(s)
+F-panel-305 | apps/dashboard/e2e/messages.spec.mjs | e2e | 191 lines | file name, asserts 2 journey phrase(s)
+F-panel-305 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 4 journey phrase(s)
+F-panel-305 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 4 journey phrase(s)
+F-panel-305 | supabase/tests/0069_member_messages.sql | db | 186 lines | file name, asserts 2 journey phrase(s)
+F-panel-305 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 3 journey phrase(s)
+F-panel-305 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | file name, asserts 1 journey phrase(s)
+F-panel-305 | supabase/tests/0042_message_calm.sql | db | 150 lines | asserts 3 journey phrase(s)
+F-panel-305 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 2 journey phrase(s)
+F-panel-305 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-306 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 6 journey phrase(s)
+F-panel-306 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 5 journey phrase(s)
+F-panel-306 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 4 journey phrase(s)
+F-panel-306 | supabase/tests/0063_gym_checkout.sql | db | 350 lines | asserts 4 journey phrase(s)
+F-panel-306 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 3 journey phrase(s)
+F-panel-306 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 3 journey phrase(s)
+F-panel-306 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-panel-306 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 3 journey phrase(s)
+F-panel-306 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 3 journey phrase(s)
+F-panel-306 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 2 journey phrase(s)
+F-panel-306 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 2 journey phrase(s)
+F-panel-306 | apps/dashboard/e2e/pay-mettleup-uat.spec.mjs | e2e | 210 lines | asserts 2 journey phrase(s)
+F-panel-307 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 11 journey phrase(s)
+F-panel-307 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 11 journey phrase(s)
+F-panel-307 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 10 journey phrase(s)
+F-panel-307 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 9 journey phrase(s)
+F-panel-307 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 8 journey phrase(s)
+F-panel-307 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 8 journey phrase(s)
+F-panel-307 | supabase/tests/0037_leaderboard.sql | db | 548 lines | asserts 8 journey phrase(s)
+F-panel-307 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 7 journey phrase(s)
+F-panel-307 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 7 journey phrase(s)
+F-panel-307 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 7 journey phrase(s)
+F-panel-307 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | file name, asserts 5 journey phrase(s)
+F-panel-307 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 7 journey phrase(s)
+F-panel-308 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 11 journey phrase(s)
+F-panel-308 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 10 journey phrase(s)
+F-panel-308 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 10 journey phrase(s)
+F-panel-308 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 9 journey phrase(s)
+F-panel-308 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 9 journey phrase(s)
+F-panel-308 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 8 journey phrase(s)
+F-panel-308 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 8 journey phrase(s)
+F-panel-308 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 8 journey phrase(s)
+F-panel-308 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 8 journey phrase(s)
+F-panel-308 | supabase/tests/0037_leaderboard.sql | db | 548 lines | asserts 8 journey phrase(s)
+F-panel-308 | supabase/tests/0053_ask_trainer_and_progress.sql | db | 232 lines | asserts 8 journey phrase(s)
+F-panel-308 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 7 journey phrase(s)
+F-panel-310 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 7 journey phrase(s)
+F-panel-310 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 7 journey phrase(s)
+F-panel-310 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 5 journey phrase(s)
+F-panel-310 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 5 journey phrase(s)
+F-panel-310 | apps/dashboard/e2e/assistant-uat.spec.mjs | e2e | 822 lines | asserts 4 journey phrase(s)
+F-panel-310 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 4 journey phrase(s)
+F-panel-310 | apps/dashboard/e2e/hq-webpage-uat.spec.mjs | e2e | 166 lines | asserts 4 journey phrase(s)
+F-panel-310 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 4 journey phrase(s)
+F-panel-310 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 4 journey phrase(s)
+F-panel-310 | apps/dashboard/test/crm/demoGym.test.ts | unit | 109 lines | asserts 4 journey phrase(s)
+F-panel-310 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 4 journey phrase(s)
+F-panel-310 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-300-01 | type 1 | owner | Menu row 'Member messages' with a waiting number; the gym's server has the member-messages part; one question is waiting
+  s1 see: Title 'Member messages'
+  s1 see: Line 'Members write to you from "Message your gym" on the Gym tab of their app. Your reply shows in their app, and on their phone if notifications are on.'
+  s1 see: Chips under 'Show': 'All · 1 waiting', 'Questions · 1 waiting', 'Feedback'
+  s1 see: Heading 'Waiting for a reply (1)'
+  s1 see: A card with the member's name (a link to their page), a pill 'Question', 'To: Gym owner' when the member picked it, and their mobile number
+  s1 see: Line at the foot: 'Messages are deleted 180 days after the last one in a conversation, or as soon as the member leaves the gym.'
+  s1 not: The longest-waiting message is not first
+  s1 not: A message of another gym is listed
+  s1 not: An endless 'Loading…'
+  s2 see: Hint 'The member reads it in their app and can write back.' followed by '<n> of 1000 letters'
+  s2 not: 'Send reply' can be pressed with only spaces typed
+  s2 not: Letters after the 1000th are kept and sent
+  s3 see: The button reads 'Sending…' and both buttons are greyed
+  s3 see: Then 'Reply sent.' in green on the card
+  s3 see: The card now sits under 'Replied', with a line '<staff name> replied · <when>'
+  s3 see: The waiting number in the menu goes down by one
+  s3 not: Two reply lines after a fast double tap
+  s3 not: 'Reply sent.' shown when the save failed
+  s3 not: The typed reply still in the box after it was sent
+  s4 see: The card moves under 'Done' with a green line saying who marked it done and when
+  s4 see: The button now reads 'Mark as not done'
+  s4 not: The conversation is deleted
+  s4 not: The member is told it was closed
+J-F-panel-300-02 | type 2 | owner | Today has a line about a new complaint; its link is the address /member-messages/complaint
+  s1 see: 'Member messages' opens with the chip 'Complaints' already picked
+  s1 see: Only complaints are listed, each with a red pill 'Complaint'
+  s1 not: The page opens on 'All' so the owner must hunt for the complaint
+  s1 not: The 'Complaints' chip shows when the gym has no complaint at all
+  s2 see: Every type again, under 'Waiting for a reply', 'Replied' and 'Done'
+  s2 not: A count on a chip that differs from the cards under it
+J-F-panel-300-03 | type 2 | owner | A member sent feedback without their name (another kind of message)
+  s1 see: Name shown as 'A member (name hidden)' with a green pill 'Feedback'
+  s1 see: Line 'The member sent this without their name. You can still reply here.'
+  s1 see: Each of the member's lines is headed 'The member · <when>'
+  s1 not: The member's name, mobile number or a link to their page anywhere on the card
+  s2 see: 'Reply sent.'; the card moves to 'Replied'
+  s2 not: The reply reveals who the member is to the gym
+J-F-panel-300-04 | type 3 | owner | 'Member messages' is open; one conversation is from a member who has since left the gym
+  s1 see: 'Send reply' stays greyed
+  s1 not: An empty reply is sent
+  s2 see: A red message at the top of the page (not on the card)
+  s2 see: The list is read again and that conversation is gone
+  s2 see: The menu's waiting number is counted again
+  s2 not: The reply looks sent
+  s2 not: The red message vanishes with the card so nothing explains what happened
+  s3 see: No reply box and no 'Send reply'; a short note says why (exact words not read)
+  s3 see: 'Mark as done' is still there
+  s3 not: A reply box that then fails on send
+  s4 see: A card saying it is not switched on (exact words not read)
+  s4 see: No 'Member messages' row in the menu
+  s4 not: A raw server error
+  s4 not: An endless 'Loading…'
+J-F-panel-300-05 | type 6 | owner | A conversation the owner already answered sits under 'Replied'
+  s1 see: It moves to 'Done' with who marked it and when
+  s1 not: It stays counted as waiting
+  s2 see: It goes back to 'Replied' (or to 'Waiting for a reply' if the member wrote last)
+  s2 see: The done line is gone
+  s2 not: The earlier lines of the conversation are lost
+  s3 see: Within about a minute the menu's waiting number goes up and the page reads the list again by itself
+  s3 see: The card is back under 'Waiting for a reply' with the new line
+  s3 not: A reply being typed on another card is wiped by the re-read
+  s3 not: The page jumps to the top
+  s4 see: A line under the card saying the member has read it (exact words not read)
+  s4 not: 'Read' shown before the member opened it
+J-F-panel-300-06 | type 12 | owner | The gym has questions, feedback and a complaint from different members
+  s1 see: All three types, each with its pill
+  s1 see: 'To: Gym owner', 'To: Gym admin' or 'To: <trainer name>' beside the pill when the member picked who should read it
+  s1 see: The 180-day line at the foot of the page
+  s1 not: A conversation older than 180 days since its last line
+  s1 not: Conversations of a member who has left the gym
+  s1 not: A member's name on feedback sent without a name
+J-F-panel-300-07 | type 1 | staff | Front desk person signed in; a member's question sent to 'Gym admin' is waiting
+  s1 see: Title 'Member messages'
+  s1 see: Note 'Messages a member sent only to the owner or to a trainer are not shown here. Complaints show here only when the member picked "Gym admin".'
+  s1 see: The question under 'Waiting for a reply (1)' with 'To: Gym admin'
+  s1 not: A message the member sent only to the owner
+  s1 not: A complaint the member did not send to 'Gym admin'
+  s2 see: 'Sending…', then 'Reply sent.'
+  s2 see: A line '<desk person's name> replied · <when>' on the card, now under 'Replied'
+  s2 not: The reply signed with the owner's name
+  s2 not: Two replies from a double tap
+J-F-panel-300-08 | type 3 | staff | Front desk person; the gym has complaints sent to the owner only
+  s1 see: The page opens on 'All'
+  s1 see: No chip 'Complaints' unless a member sent a complaint to 'Gym admin'
+  s1 see: The staff note about what is not shown
+  s1 not: Any owner-only complaint, its count, or its member's name
+  s1 not: A waiting number in the menu that counts messages this person cannot see
+  s2 see: 'Send reply' greyed
+  s2 not: An empty reply sent
+J-F-panel-300-09 | type 6 | staff | A feedback message the desk answered is under 'Replied'
+  s1 see: Card under 'Done', line with the desk person's name and when
+  s1 not: The owner's page still shows it as waiting after a refresh
+  s2 see: Card back under 'Replied'
+  s2 not: Lines of the conversation lost
+J-F-panel-300-10 | type 12 | staff | Front desk person; a member sent feedback without their name and another sent a complaint to the owner
+  s1 see: The feedback as 'A member (name hidden)' with no mobile number
+  s1 see: No trace of the owner-only complaint
+  s1 not: The hidden name shown to the desk
+  s1 not: The complaint reachable by changing the address or the filter
+J-F-panel-300-11 | type 1 | trainer | A front desk person with the Trainer tick; a member sent a question to this trainer by name
+  s1 see: Note 'Feedback and complaints never go to trainers, so they are not shown here. Neither are questions a member sent only to the owner or another trainer.'
+  s1 see: Chips 'All' and 'Questions' only
+  s1 see: The question with 'To: <this trainer's name>'
+  s1 not: A chip 'Feedback' or 'Complaints'
+  s1 not: A question sent to another trainer
+  s2 see: 'Reply sent.'; line '<trainer's name> replied · <when>'
+  s2 not: Two replies from a double tap
+  s2 not: The reply going to a different member
+J-F-panel-300-12 | type 3 | trainer | Trainer; the gym has feedback and complaints
+  s1 see: The page opens on 'All' with questions only
+  s1 see: The trainer note
+  s1 not: Feedback or a complaint, its count, or its sender
+  s1 not: A menu number that counts feedback or complaints
+  s2 see: 'No messages yet. Members find "Message your gym" on the Gym tab of their app.' plus the trainer note
+  s2 not: A blank page
+J-F-panel-300-13 | type 6 | trainer | Trainer; a question this trainer answered is under 'Replied'
+  s1 see: Card moves to 'Done' with the trainer's name, then back to 'Replied'
+  s1 not: The question shown as done to the member's trainer but waiting for the owner after a refresh
+J-F-panel-300-14 | type 12 | trainer | Trainer; members wrote to the owner, to the desk and to another trainer
+  s1 see: Only questions sent to this trainer or to nobody in particular (exact server rule not read here)
+  s1 not: Another trainer's questions
+  s1 not: Feedback, complaints, or the name of a member who wrote them
+J-F-panel-301-01 | type 1 | owner | Signed in as owner; the gym has members, some expired, some with dues
+  s1 see: Title 'Members' with '<n> members' under it
+  s1 see: Tabs 'All members' and 'Joined in the app'
+  s1 see: Buttons '+ Add member' and 'Import from Excel'
+  s1 see: Search box 'Search name or mobile number'
+  s1 see: Chips with counts: 'All', 'Expired', 'Expiring', 'Active', 'Has dues', 'No membership', 'Archived'
+  s1 see: On a laptop a table with 'Member', 'Status', 'Plan', 'Expires', 'Last visit', 'Dues'; on a phone one card per member
+  s1 not: A chip count that differs from the rows it shows
+  s1 not: Archived members in the 'All' list
+  s1 not: Members who need attention not first
+  s2 see: Only matching members stay
+  s2 not: A member who matches by mobile number is missed
+  s3 see: Every member who owes money, archived ones too
+  s3 see: Each with the amount due in the warning colour
+  s3 see: A button 'WhatsApp all <n>, one by one'
+  s3 not: An archived member who owes money left out
+  s3 not: A fully paid member listed
+  s4 see: That member's own page
+  s4 not: Another member's page
+J-F-panel-301-02 | type 2 | owner | Today (home) screen; the owner taps a tile such as the expiring-this-week tile
+  s1 see: 'Members' opens with one extra chip named like the tile, picked, with the count of the list
+  s1 see: The same members the tile counted
+  s1 not: A list whose length differs from the tile's number
+  s1 not: 'No members yet' when the tile's list is only empty
+  s2 see: The tile's chip disappears; the full list shows
+  s2 not: The tile filter still applied without a chip showing it
+J-F-panel-301-03 | type 2 | owner | Members list; a new person is at the desk
+  s1 see: The add-member form opens over the list (its fields are another feature)
+  s1 not: The list behind losing its search and filter
+  s2 see: The new member's own page opens
+  s2 not: Two members after a double tap on save
+  s2 not: The member missing from 'All' when going back
+J-F-panel-301-04 | type 2 | owner | Members list; the gym has its register in an Excel sheet
+  s1 see: The import page opens (another feature)
+  s1 not: The button working with no internet and then failing on the next page
+J-F-panel-301-05 | type 2 | owner | Members list filtered to 'Expired' (other kinds: 'Has dues', a birthday tile, 'Expiring')
+  s1 see: A sheet titled '<kind of message> · one by one'
+  s1 see: '1 of <n>: <member name>' and '0 sent so far'
+  s1 see: '· <k> without a full mobile number left out' when some numbers are not complete
+  s1 see: A language picker and a box 'Message (you can change it)' with the words ready
+  s1 not: A message sent without the owner tapping send in WhatsApp
+  s1 not: A member with a broken number opening WhatsApp on a wrong number
+  s2 see: The owner's own WhatsApp opens with that member's chat and the words typed
+  s2 see: Back in the admin app the line shows '· sent' and '1 sent so far'; the button 'Skip' now reads 'Next'
+  s2 not: Another member's name or amount in the words
+  s3 see: The sheet closes; the list is as before
+  s3 not: A person skipped because someone paid while the sheet was open
+  s3 not: The same person offered twice
+J-F-panel-301-06 | type 3 | owner | Members list with members
+  s1 see: 'Nobody matches that'
+  s1 see: 'Try part of a name, or the last four digits of their mobile number.'
+  s1 see: Button 'Show all members'
+  s1 not: 'No members yet'
+  s1 not: A button to add the first member
+  s2 see: Search cleared, batch back to all, chip 'All' picked, the full list
+  s2 not: One of the three filters left on
+  s3 see: 'Nobody matches that' with 'Nobody on the list fits this filter right now.'
+  s3 not: The 'WhatsApp all' button with 0
+  s3 not: 'No members yet'
+  s4 see: 'Nobody in this batch fits this filter. Pick “All batches” to see everyone.'
+  s4 not: A batch option showing a count that is not what a tap shows
+J-F-panel-301-07 | type 6 | owner | A brand-new gym with no member; later a member is archived
+  s1 see: '0 members' under the title
+  s1 see: 'No members yet' with 'Add your first member. Then you can sell them a membership.'
+  s1 see: Buttons '+ Add member' and 'Import from Excel' in the card
+  s1 not: A blank table
+  s1 not: An error
+  s2 see: '1 member' under the title; one row
+  s2 not: '1 members'
+  s3 see: Gone from 'All'; counted under 'Archived'; still under 'Has dues' if they owe money
+  s3 not: The member's dues dropping out of the 'Has dues' count
+  s4 see: Back in 'All' with the same plan, dues and last visit
+  s4 not: Lost payments or visits
+J-F-panel-301-08 | type 12 | owner | Members list with mobile numbers and dues on show
+  s1 see: Each member's mobile number and due amount on the list
+  s1 see: Messages go only from the owner's own WhatsApp, one tap each
+  s1 not: A member of another gym or branch in the list
+  s1 not: A message sent by the app itself
+  s1 not: A pass member (FITPASS, cultpass) shown as owing money
+J-F-panel-301-09 | type 1 | staff | Front desk person signed in; a member walks up to the desk
+  s1 see: The same page as the owner: title, tabs, '+ Add member', 'Import from Excel', search, chips, the list with each member's dues
+  s1 not: Gym money totals anywhere on this page
+  s1 not: Archived members in 'All'
+  s2 see: The member's row
+  s2 not: No result for a number saved with +91 in front
+  s3 see: Their own page
+  s3 not: A page of another member
+J-F-panel-301-10 | type 2 | staff | Front desk; a walk-in wants to join
+  s1 see: The new member's page
+  s1 not: Two members after a double tap
+  s1 not: More than name and mobile number forced on the desk
+J-F-panel-301-11 | type 2 | staff | Front desk; the list is filtered to 'Has dues'
+  s1 see: The desk person's own WhatsApp opens with the words typed; '1 sent so far'
+  s1 not: A message sent without a tap in WhatsApp
+  s1 not: Archived members who owe money silently left out of the count on the button
+J-F-panel-301-12 | type 3 | staff | Front desk; searching for someone not in the list
+  s1 see: 'Nobody matches that' and 'Try part of a name, or the last four digits of their mobile number.'
+  s1 see: 'Show all members'
+  s1 not: 'No members yet'
+  s2 see: The button shows it needs internet (exact look not read)
+  s2 not: An import started that cannot finish
+J-F-panel-301-13 | type 6 | staff | Front desk; a member's plan ended yesterday and they renew at the desk
+  s1 see: The member now under 'Active'; counts on 'Expired' and 'Active' each moved by one
+  s1 not: The member in both lists
+  s1 not: Old counts until the page is reloaded
+J-F-panel-301-14 | type 12 | staff | Front desk signed in on the desk's shared computer
+  s1 see: Each member's mobile number, plan, last visit and own due amount
+  s1 not: The gym's total collections or total dues
+  s1 not: Members of another gym
+J-F-panel-302-01 | type 1 | owner | Members page; the gym's records are online and some members joined in the MettleUp app
+  s1 see: Under the title: 'Who has the MettleUp app on their phone'
+  s1 see: No '+ Add member' or 'Import from Excel' buttons on this tab
+  s1 see: Line 'Members who joined your gym in the MettleUp app with gym code <code>.'
+  s1 see: One card per app member: name, 'Joined <how long ago> · last seen <how long ago>', and on the right '<n> orders' or 'No orders yet' over '<amount> paid for shop orders' or 'No shop orders paid yet'
+  s1 not: A member of another gym
+  s1 not: Membership fees counted in 'paid for shop orders'
+  s1 not: An endless 'Loading…'
+  s2 see: That member's own page
+  s2 not: The add form for someone already in the list
+  s2 not: Another member with a similar number
+J-F-panel-302-02 | type 2 | owner | 'Joined in the app' tab; one app member is not in the gym's member list yet (the other kind of row)
+  s1 see: 'Not in your member list yet. Tap to add them.' under their name
+  s1 not: The line on a member who is in the list under the same number
+  s2 see: The add-member form opens with the name and the mobile number already filled in
+  s2 not: An empty form to retype
+  s2 not: A mobile number with a wrong or doubled country code
+  s3 see: The new member's page; back on the tab the line 'Not in your member list yet' is gone for them
+  s3 not: Two members for one person
+J-F-panel-302-03 | type 3 | owner | The gym is online but nobody has joined in the app; or the gym's records are not online yet
+  s1 see: 'Nobody has joined in the app yet'
+  s1 see: 'Ask members to open the MettleUp app and join with gym code <code>. They show up here at once.'
+  s1 not: A blank list
+  s1 not: A wrong or empty gym code
+  s2 see: A card about the gym code and going online (exact words not read)
+  s2 not: An error
+  s2 not: A list from an earlier sign-in
+  s3 see: A red message in plain words; the earlier list stays if there was one
+  s3 not: 'Nobody has joined in the app yet' shown for a failed read
+J-F-panel-302-04 | type 6 | owner | The tab is open on the owner's screen
+  s1 see: Their card appears within about a minute without a reload
+  s1 not: The card needing a sign-out to appear
+  s1 not: The page jumping while it refreshes
+  s2 see: Their card goes at the next refresh
+  s2 not: A left member still listed with 'last seen'
+  s3 see: The list is read again
+  s3 not: An old list from the first visit
+J-F-panel-302-05 | type 12 | owner | 'Joined in the app' tab
+  s1 see: Name, when they joined, when their app was last seen, how many shop orders and what they paid for them
+  s1 not: What the member trained, their body weight or photos
+  s1 not: Members who use the app but joined another gym
+J-F-panel-302-06 | type 1 | staff | Front desk signed in; a member says they have installed the app
+  s1 see: The same list as the owner sees, with the gym code line
+  s1 not: Gym money totals
+  s1 not: An error because the desk is not the owner
+  s2 see: Their own page when they are in the list; else the add form with name and number filled in
+  s2 not: A second member made for someone already in the list
+J-F-panel-302-07 | type 3 | staff | Front desk; nobody has joined yet
+  s1 see: 'Nobody has joined in the app yet' with the gym code to tell members
+  s1 not: A blank page
+  s1 not: 'Loading…' that never ends
+J-F-panel-302-08 | type 6 | staff | Front desk; a member joined in the app but typed a different mobile number than the one in the list
+  s1 see: 'Not in your member list yet. Tap to add them.' although the person is a member
+  s1 not: The two silently joined under the wrong person
+  s2 see: The line is gone; a tap now opens their page
+  s2 not: The line staying until the next sign-in
+J-F-panel-302-09 | type 12 | staff | Front desk on a shared computer
+  s1 see: Names, join time, last-seen time and shop spend of app members
+  s1 not: Workout data of a member
+  s1 not: The amount a member paid for shop orders summed into a gym total
+J-F-panel-303-01 | type 1 | owner | Owner signed in; the gym is online and several members have the app; the menu row 'Messages & offers'
+  s1 see: Title 'Messages & offers' with 'Messages, offers and wishes for your members, in the app and on WhatsApp'
+  s1 see: Tabs 'Messages', 'Workout offer', 'Reminders'
+  s1 see: A picker 'Kind of message' and a row of ready messages
+  s1 not: The page opening on 'Workout offer' for an owner
+  s2 see: A preview of how it looks in the member's inbox
+  s2 see: Letter counts for title and message
+  s2 see: Each group named with its number of members
+  s2 not: A title or message longer than allowed accepted without a word
+  s2 not: A group count that differs from who gets it
+  s3 see: A line such as 'Goes to <n> members in the app. Send now?' with 'Yes, send' and 'Not yet'
+  s3 not: The message sent on the first tap with no question
+  s4 see: 'Sending…', then a note 'Sent to <n> members in the app.'
+  s4 see: A green pill 'Sent in the app' in place of the button
+  s4 see: The message on top of 'Sent in the app' with its kind, how long ago, and how many members have seen it
+  s4 not: The message sent twice
+  s4 not: A member outside the group getting it
+  s4 not: 'Sent' shown when the server refused it
+J-F-panel-303-02 | type 2 | owner | Today shows a nudge such as '3 birthdays today'
+  s1 see: 'Messages & offers' opens with the birthday wish and its group already picked
+  s1 not: An empty page to start from
+  s1 not: The wish aimed at every member
+  s2 see: The page starts again with that message picked
+  s2 not: Words of the earlier message left in the boxes
+J-F-panel-303-03 | type 2 | owner | Messages & offers with a message ready; some of the group do not have the app (the WhatsApp way)
+  s1 see: Chips 'Send on WhatsApp to': 'Not in the app <n>' and 'Whole group <n>'
+  s1 see: Button 'WhatsApp one by one (<n>)'
+  s1 see: 'Opens your own WhatsApp with the words typed in. It costs nothing.'
+  s1 not: The button live with 0 people
+  s1 not: A member with the app counted under 'Not in the app'
+  s2 see: A sheet that opens the owner's own WhatsApp for one member at a time
+  s2 see: Afterwards '<k> of <n> done on WhatsApp for this message.'
+  s2 not: A WhatsApp sent by the app itself
+  s2 not: Two people with one shared number both messaged when one per number was meant
+J-F-panel-303-04 | type 2 | owner | Messages & offers; the owner wants the message to go out tomorrow morning (a timed message)
+  s1 see: The chosen day and time in words
+  s1 not: A time in the past accepted
+  s1 not: 'Send in the app' live while the time is not valid
+  s2 see: 'Goes to every member in the app on <when>. Send then?' and then 'Goes out <when> to <n> members in the app.'
+  s2 see: Pill 'Timed in the app'; in the list 'Goes out <when> · <n> members' with a 'Cancel' button
+  s2 not: The message arriving on phones now
+  s2 not: A time shown without the day
+J-F-panel-303-05 | type 3 | owner | Messages & offers; edge cases of sending
+  s1 see: 'No member has the app yet. Members who join in the next 14 days will see it. Send now?'
+  s1 not: 'Goes to 0 members'
+  s1 not: The send refused with no reason
+  s2 see: 'Send in the app' greyed; the WhatsApp button is the main one
+  s2 not: A message sent to nobody and listed as sent
+  s3 see: A line in the warning colour saying why (exact words not read); 'Send in the app' greyed
+  s3 not: An extra message slipping through
+  s4 see: A red message; the 'Sent in the app' list is read again so a message that did go is shown
+  s4 not: The owner sending the same message a second time because the first looked failed
+J-F-panel-303-06 | type 6 | owner | A message was sent in the app an hour ago; another is timed for tomorrow
+  s1 see: A browser question 'Take back “<title>”? It is removed from every member’s inbox.'
+  s1 not: The message removed with no question
+  s2 see: The card dims and gets a red pill 'Taken back'; no 'Take back' button any more
+  s2 not: The message still in members' inboxes
+  s2 not: The card gone from the list
+  s3 see: Red pill 'Cancelled'
+  s3 not: The message still going out at its time
+  s3 not: The question saying it is removed from inboxes it never reached
+  s4 see: The pill 'Sent in the app' goes and 'Send in the app' is back
+  s4 not: The changed message blocked as already sent
+J-F-panel-303-07 | type 12 | owner | Owner sending the second and third message of a day to one plan's members
+  s1 see: When the app can only send to everyone: 'Goes to all <n> members in the app, not only this group. Send now?'
+  s1 see: Before a later message of the day: a line saying it arrives without a phone pop-up
+  s1 not: A message for one group reaching others without the owner being told
+  s1 not: Another member's name or amount inside a member's message
+  s2 see: Pills 'To a group' and 'No phone pop-up' where they apply; '<n> members' and how many have seen it
+  s2 not: The names of who has not read it shown as a shaming list
+J-F-panel-304-01 | type 1 | owner | Owner; the gym is on Pro and online; no workout offer is running
+  s1 see: 'Start a workout offer' with boxes 'Workouts', 'Within (days of joining)', 'Reward (extra days)', 'Members can join until'
+  s1 see: 'Check-ins that count': 'Desk and QR poster' or 'Desk only'
+  s1 see: 'How the days are given': 'I give them (the desk gives with one tap)' or 'Give the days by themselves when a member qualifies'
+  s1 see: 'What members see' with a preview headed 'OFFER'
+  s1 not: A start form while an offer is already running
+  s2 see: 'Starting…', then the note 'Offer started. Members see it in the MettleUp app now.'
+  s2 see: The offer's card in place of the form, with 'Nobody has joined yet. Members join from the Gym tab in the MettleUp app.'
+  s2 not: Two offers from a double tap
+  s2 not: A number outside the allowed range accepted
+  s3 see: 'Giving…', then '<n> days added for <name>. New last day: <date>.'
+  s3 see: A green line on the member's row saying the reward was given, and a 'Take back' button
+  s3 not: The days added twice
+  s3 not: The new last day worked out from the wrong membership
+J-F-panel-304-02 | type 2 | owner | An offer is running in the 'I give them' way (the other way of giving)
+  s1 see: The note 'The days are now given by themselves.'
+  s1 not: Members who were already ready left waiting for ever
+  s2 see: The note 'The desk now gives the days with one tap.'
+  s2 not: Days already given taken back
+J-F-panel-304-03 | type 3 | owner | Owner of a gym on Starter, or a gym whose records are not online
+  s1 see: A card 'Part of the Pro pack'
+  s1 see: 'Giving extra membership days to members who work out often comes with the Pro pack.'
+  s1 see: 'Your gym is on Starter. To move to Pro, open Help and feedback in the menu and write: Move us to Pro.'
+  s1 not: The start form
+  s1 not: An offer that was running before still giving days with no way to see it
+  s2 see: 'Workout offers need your gym online' with a line pointing to Settings → Staff & sign-in
+  s2 not: An error
+  s3 see: The hint with the allowed range; 'Start offer' greyed
+  s3 not: An offer nobody can ever finish
+J-F-panel-304-04 | type 6 | owner | An offer is running; one member was given the reward
+  s1 see: A browser question 'Take back the <n> reward days from <name>? Their plan's last day goes back.'
+  s1 not: The days removed with no question
+  s2 see: 'Reward taken back. Last day: <date>.'; the row says who took it back
+  s2 not: The member's last day unchanged
+  s2 not: More days removed than were given
+  s3 see: '<name> already has the reward.' with the last day
+  s3 not: A second set of days
+  s4 see: 'Offer stopped. Members already in can still finish.'; the start form is back above the stopped offer
+  s4 not: Members already in losing their progress
+  s4 not: The offer still shown as open in the member app
+J-F-panel-304-05 | type 12 | owner | An offer with members in it; one of them was later removed from the member list
+  s1 see: Each member by name with how far they are and a status pill
+  s1 see: 'A member (removed)' for the one no longer in the list
+  s1 not: What a member did in a workout: exercises, weights, sets, body weight or photos
+  s1 not: The removed member's name
+J-F-panel-304-06 | type 1 | staff | Front desk signed in; the owner started an offer in the 'I give them' way; a member has reached the target
+  s1 see: Title 'Workout offer' with 'Rewards for members who train'
+  s1 see: Tabs 'Workout offer' and 'Reminders' only
+  s1 see: The offer card with the member marked ready
+  s1 not: A tab 'Messages'
+  s1 not: The start form
+  s1 not: 'Stop offer' or the choice of how days are given
+  s2 see: 'Giving…', then '<n> days added for <name>. New last day: <date>.'
+  s2 not: The days given twice
+  s2 not: A 'Take back' button for the desk
+J-F-panel-304-07 | type 2 | staff | Front desk; opens the address of the owner's page (/messages), for example from a bookmark
+  s1 see: The 'Workout offer' section, not the message form
+  s1 not: The owner's message form or the list of sent messages
+J-F-panel-304-08 | type 3 | staff | Front desk; no offer is running, or the gym is on Starter
+  s1 see: 'No workout offer running' and 'The owner starts one in Messages & offers.'
+  s1 not: A start form the desk cannot use
+  s2 see: 'Part of the Pro pack' and the line telling how to move to Pro
+  s2 not: A menu row that leads to a dead end with no words
+  s3 see: The green given line; no button
+  s3 not: 'Take back' for the desk
+J-F-panel-304-09 | type 6 | staff | Front desk; the desk gave a reward and the owner later took it back
+  s1 see: The member's row with 'Taken back by <owner's name>.'
+  s1 not: The row still green as given
+  s2 see: Whether the desk may give again is the server's rule (not read): the button shows only when allowed
+  s2 not: The desk giving back days the owner removed without the owner knowing
+J-F-panel-304-10 | type 12 | staff | Front desk on the offer page
+  s1 see: Members' names, progress and status
+  s1 not: Workout details of a member
+  s1 not: The owner's messages to members
+J-F-panel-305-01 | type 1 | owner | Owner; the gym is online and its server has the reminders part
+  s1 see: A card 'Automatic reminders': 'Members with the MettleUp app get these on their phone at 9:30 am, never more than one a day. Their phone sets them, so they cost nothing. Members can turn them off in the app.'
+  s1 see: '<k> of <n> on · the usual ones' until someone changes them
+  s1 see: One row per reminder with a switch, and a days box where it has days
+  s1 not: 'Only the owner can change these.' shown to the owner
+  s1 not: Switches greyed for the owner
+  s2 see: Buttons 'Save changes' and 'Undo changes' appear live
+  s2 not: The change taking effect before saving
+  s3 see: 'Saving…', then the note "Saved. Members' phones pick this up the next time they open MettleUp."
+  s3 see: '· last changed by <owner's name>' on the top card
+  s3 not: The switches jumping back to the old values
+  s3 not: Members getting the switched-off reminder after they next open the app
+J-F-panel-305-02 | type 2 | owner | Owner follows a link straight to the address /messages/reminders
+  s1 see: 'Messages & offers' with the tab 'Reminders' picked and the reminders list
+  s1 not: The message form
+  s1 not: A sign-in loop
+J-F-panel-305-03 | type 3 | owner | Reminders tab with wrong input, or a gym that cannot use it yet
+  s1 see: A red line under that row; 'Save changes' greyed
+  s1 not: The wrong days saved
+  s1 not: The error shown for a reminder that is switched off
+  s2 see: 'Automatic reminders need your gym online' with a line pointing to Settings → Staff & sign-in
+  s2 not: Switches that save nowhere
+  s3 see: 'Automatic reminders are not switched on for your gym yet.'
+  s3 see: 'Until then, members with the MettleUp app get the usual ones: plan ends in 7 and 3 days, ends today, plan ended, welcome, and workout offer days added.'
+  s3 not: A raw server error
+  s4 see: A red message; the changes stay on screen to try again
+  s4 not: The 'Saved' note
+J-F-panel-305-04 | type 6 | owner | Reminders tab, the usual settings saved
+  s1 see: Both rows back to the saved values; 'Save changes' greyed again
+  s1 not: One row left changed
+  s2 see: '<k> of <n> on' goes up, then down; 'last changed by' stays
+  s2 not: The count on the card differing from the switches
+  s3 see: The page leaves; on coming back the saved values show
+  s3 not: A half-saved change
+  s3 not: Members getting the unsaved setting
+J-F-panel-305-05 | type 12 | owner | Owner reading what members will get
+  s1 see: That members get at most one a day at 9:30 am and can turn them off in their app
+  s1 not: A reminder going to a member who turned reminders off
+  s1 not: Two reminders on one day
+  s1 not: A 'we miss you' reminder that reads as an offer
+J-F-panel-305-06 | type 1 | staff | Front desk signed in; a member asks why they got a reminder
+  s1 see: Title 'Automatic reminders' with 'What members get on their phone by themselves'
+  s1 see: The same list as the owner, with 'Only the owner can change these.'
+  s1 see: '<k> of <n> on' and who last changed them
+  s1 not: 'Save changes' or 'Undo changes'
+  s1 not: A tab 'Messages'
+J-F-panel-305-07 | type 3 | staff | Front desk on the Reminders tab
+  s1 see: Nothing changes: every switch and box is greyed
+  s1 not: A switch that moves and looks saved
+  s1 not: A change sent to the server
+J-F-panel-305-08 | type 6 | staff | Front desk has the tab open while the owner saves a change on another device
+  s1 see: The old values until the tab is opened again (there is no refresh by itself)
+  s1 not: A mix of old and new values
+  s2 see: The owner's new values and '· last changed by <owner's name>'
+  s2 not: '· the usual ones' after a change was saved
+J-F-panel-306-01 | type 1 | owner | Owner of a real, online gym that has paid MettleUp; Settings → Pay MettleUp → 'Your receipts'
+  s1 see: Title 'Receipt' with the receipt number under it
+  s1 see: Button 'Back to Pay MettleUp'
+  s1 see: 'Loading…' for a moment
+  s1 not: A receipt of another gym
+  s2 see: MettleUp's business name on top, its legal name and address when the server has them, the word 'Receipt'
+  s2 see: Lines 'Receipt number', 'Date', 'Gym' (name and gym code), 'Plan', 'Period', 'Amount paid' with paise, 'Paid by' with the reference
+  s2 see: A tax line at the foot
+  s2 not: An amount that differs from what the gym paid
+  s2 not: A period that does not match the plan bought
+  s2 not: An empty legal name line
+  s3 see: The browser's print box, showing only the receipt
+  s3 not: The page header, the menu or the button printed on the paper
+  s3 not: A dark background on the paper
+J-F-panel-306-02 | type 3 | owner | Owner; a receipt address that is wrong, or opened where it cannot load
+  s1 see: 'Receipt not found'
+  s1 see: 'Open it again from Settings, Pay MettleUp, Your receipts.'
+  s1 see: 'Back to Pay MettleUp' still there
+  s1 not: Another gym's receipt
+  s1 not: No 'Print or save as PDF' button offered for nothing
+  s2 see: Today the same 'Receipt not found' words (see the finding)
+  s2 not: The owner believing the receipt does not exist
+  s3 see: 'Receipt not found' (no receipt is asked for)
+  s3 not: A real receipt shown to the desk or in the demo
+J-F-panel-306-03 | type 6 | owner | Owner opened a receipt last month
+  s1 see: The same number, date, amount and period as before
+  s1 not: A receipt whose figures changed after it was issued
+  s2 see: The Pay MettleUp page with the list of receipts
+  s2 not: A blank page
+  s3 see: The receipt again, loaded fresh
+  s3 not: A stale 'Loading…'
+J-F-panel-306-04 | type 12 | owner | An owner with two gyms, or someone who guesses a receipt number
+  s1 see: 'Receipt not found'
+  s1 not: Any line of the other gym's receipt: name, amount or reference
+  s2 see: The gym's name and code and what was paid; MettleUp's legal name only when the server holds one
+  s2 not: A personal name or address typed into the app's own code
+  s2 not: The owner's mobile number on the paper
+J-F-panel-307-01 | type 1 | owner | Owner; the gym took payments this month by cash and UPI
+  s1 see: Title 'Money' with 'Every rupee that came in'
+  s1 see: Tabs 'Collections' and 'Dues'
+  s1 see: 'Period' chips: 'Today', 'Last 7 days', 'This month' (picked), 'Last month', 'This financial year', 'Custom'
+  s1 see: Tiles 'Collected' (with '<n> receipts'), 'Average receipt', 'Largest receipt', 'Cancelled' (with '<n> not counted')
+  s1 see: 'How it came in' with one bar per method
+  s1 not: 'Collected' differing from the sum of the receipts listed below
+  s1 not: Cancelled money inside 'Collected'
+  s2 see: A line with the period, and any method, 'Taken by' and search in use
+  s2 see: Boxes 'Search' ('Receipt no, name, mobile or reference'), 'Method', and 'Taken by' when receipts carry who took them
+  s2 see: A tick box 'Show cancelled receipts'
+  s2 see: A table 'Date', 'Receipt', 'Member', 'For', 'Method', 'Amount', 'Actions' (cards on a phone)
+  s2 not: A receipt outside the period
+  s2 not: The tiles keeping the old total after a filter is picked
+  s3 see: Only that person's receipts; the tiles and bars follow
+  s3 not: Tiles still showing everyone's money above one person's list
+  s4 see: A file named with the gym, 'collections' and the two dates is saved
+  s4 see: A note 'Exported <n> receipts.'
+  s4 not: Rows in the file that are not on screen
+  s4 not: Amounts in the file that do not add up to 'Collected'
+  s4 not: Mobile numbers turned into scientific notation in Excel
+J-F-panel-307-02 | type 2 | owner | Today (home) screen; the owner taps the 'Today's collection' tile
+  s1 see: 'Money' opens on 'Collections' with the period 'Today' picked
+  s1 not: 'This month' picked, so the number differs from the tile
+  s1 not: Yesterday's late receipts counted as today
+J-F-panel-307-03 | type 2 | owner | Collections; the desk entered a payment by mistake (cancelling a receipt)
+  s1 see: A sheet 'Cancel this receipt?' with a box for the reason
+  s1 not: The receipt cancelled on the first tap
+  s2 see: 'Cancelling…', then the note 'Receipt cancelled. The amount is back in their dues.' (or 'Receipt cancelled.' when nothing goes back)
+  s2 see: 'Collected' goes down by that amount; 'Cancelled' goes up by it and its count by one; the receipt leaves the list
+  s2 not: The money still in 'Collected'
+  s2 not: The member still shown as paid
+  s2 not: The receipt deleted with no trace
+  s3 see: The cancelled receipt is back in the list, marked as cancelled
+  s3 not: Its amount added to the total again
+J-F-panel-307-04 | type 3 | owner | Collections with nothing to show or wrong input
+  s1 see: Tiles at zero
+  s1 see: 'Nothing collected in this period' under 'How it came in'
+  s1 see: 'No receipts here' with 'Nothing matches this period and these filters.'
+  s1 see: 'Download Excel file' greyed
+  s1 not: 'NaN' or a dash in 'Average receipt'
+  s1 not: An empty file downloaded
+  s2 see: The page keeps working, falling back to today for the empty date
+  s2 not: A blank page
+  s2 not: A crash while a date is half typed
+  s3 see: 'Cancel receipt' greyed; on trying, 'Write a short reason, so it is clear later.'
+  s3 not: A receipt cancelled without a reason
+  s4 see: 'No receipts here'
+  s4 not: The tiles still showing the whole period's money
+J-F-panel-307-05 | type 6 | owner | A receipt was cancelled yesterday
+  s1 see: The receipt hidden; counted under 'Cancelled'
+  s1 not: It counted in 'Collected' again
+  s2 see: It appears, then hides; the tiles do not move
+  s2 not: The total changing with the tick box
+  s3 see: None
+  s3 not: A receipt cancelled twice, putting the due back twice
+  s4 see: Cancelled money in its own column, not in the amount column
+  s4 not: A file whose amount column no longer adds up to 'Collected'
+J-F-panel-307-06 | type 12 | owner | The gym has an owner and a front desk person
+  s1 see: Only the dues list: no 'Collections' tab, no totals
+  s1 not: Collections reachable by typing /money or /money/today
+  s2 see: A file with members' names, mobile numbers and what they paid, saved on this device only
+  s2 not: The file sent anywhere by the app
+J-F-panel-308-01 | type 1 | owner | Owner; several members owe money, some for more than a month
+  s1 see: 'All money still due to the gym' under the title
+  s1 see: Tile 'Total due' with '<n> members', and one tile per age group with its amount and number of unpaid memberships
+  s1 see: 'Who has dues' with chips 'All <n>' and one per age group, each with the number of people in it
+  s1 not: A chip count that differs from the rows it shows
+  s1 not: An archived member's due left out of 'Total due'
+  s2 see: Only those people; 'Total due' now shows their sum with '<k> of <n> members shown'
+  s2 not: 'Total due' still showing everyone above a shorter list
+  s3 see: The collect-payment sheet for that member (its fields are another feature)
+  s3 not: The sheet opening for another member
+  s3 not: An amount of zero when dues exist
+  s4 see: A note 'Payment saved.'
+  s4 see: The member's due is smaller, or the member leaves the list when fully paid; tiles and chips follow
+  s4 not: The old due still listed
+  s4 not: Two payments from a double tap
+J-F-panel-308-02 | type 2 | owner | Dues tab; the owner wants the list for the accountant (the export)
+  s1 see: A file named with the gym, 'dues' and today's date
+  s1 see: Columns 'Member', 'Mobile', 'Batch', 'Membership', 'PT sessions used', 'Trainer', 'Started', 'Days due', 'Age', 'Amount due (INR)', 'Archived'
+  s1 see: A note 'Exported <n> dues.'
+  s1 not: Dues in the file that the picked age group does not show
+  s1 not: An amount column that does not add up to 'Total due'
+J-F-panel-308-03 | type 3 | owner | Dues tab in its empty and broken cases
+  s1 see: 'No dues' with 'Every membership is fully paid.' and a button 'Open Members'
+  s1 not: Tiles full of zeros
+  s1 not: A member with a zero-price plan listed
+  s2 see: 'Nothing in this age group'
+  s2 not: 'No dues'
+  s3 see: A red line 'That member could not be opened. Try reloading the page.'
+  s3 not: An empty collect sheet
+J-F-panel-308-04 | type 6 | owner | A member owes for two memberships
+  s1 see: The member once, in the age group of the older due, with both amounts added
+  s1 see: A line 'A member with more than one unpaid membership is listed once, in the group of the oldest one.'
+  s1 not: The member twice
+  s2 see: Still listed with what is left
+  s2 not: Shown as fully paid
+  s3 see: The full due again
+  s3 not: The due lost
+  s4 see: Still listed, with a pill 'Archived'
+  s4 not: The due dropping off the list and the total
+J-F-panel-308-05 | type 12 | owner | The gym has pass members (FITPASS, cultpass) and normal members
+  s1 see: Only members with an unpaid membership
+  s1 not: A pass member shown as owing
+  s1 not: A member of another branch
+J-F-panel-308-06 | type 1 | staff | Front desk signed in; a member who owes fees is at the desk
+  s1 see: Title 'Money' with 'Who still has fees to pay'
+  s1 see: No tabs: the dues list straight away
+  s1 see: 'Who has dues' with the age chips and, per person, their own amount and a 'Collect' button
+  s1 not: 'Total due' or any age tile with gym money
+  s1 not: 'Download Excel file'
+  s1 not: A 'Collections' tab
+  s2 see: A note 'Payment saved.'; the member's due shrinks or the member leaves the list
+  s2 not: A double payment
+  s2 not: The amount landing on another member
+J-F-panel-308-07 | type 3 | staff | Front desk tries to reach the owner's money pages
+  s1 see: The dues list, same as before
+  s1 not: Collections, totals, charts or the export
+  s2 see: 'No dues' with 'Every membership is fully paid.' and 'Open Members'
+  s2 not: A blank page
+J-F-panel-308-08 | type 6 | staff | Front desk; a member pays half now and the rest next week
+  s1 see: The member still listed with the remaining half
+  s1 not: The member gone from the list
+  s2 see: The member leaves the list; the chip counts drop by one
+  s2 not: An old count on the chips
+J-F-panel-308-09 | type 12 | staff | Front desk on a shared screen at the counter
+  s1 see: Each person's own due, name and age of the due
+  s1 not: The gym's total due, collections, or a file with every member's mobile number
+  s1 not: Dues of another gym
+J-F-panel-310-01 | type 1 | owner | Owner on a phone; the bottom bar shows 'More'; some set-up steps are left; enquiries are due and a member message is waiting
+  s1 see: Title 'More'
+  s1 see: On top the row 'Set up your gym' ('Finish these steps and your gym is ready for members.') with a ring and '<done> of <total>'
+  s1 see: Rows in groups, each with a name and a short hint: 'Enquiries', 'Member messages', 'Invite members', 'Plans', 'Shop', 'Expenses', 'Your growth', 'Trainers', 'Workout plans', 'Diet plans', 'Challenges', 'Messages & offers', 'Branding', 'Gym timings', 'Staff & sign-in', 'Settings', "What's new", 'Help and feedback'
+  s1 see: Orange number badges on 'Enquiries', 'Member messages' and 'Shop' when something waits
+  s1 not: Members, Visits or Money repeated here
+  s1 not: A badge showing 0
+  s1 not: A page that has no row anywhere on a phone
+  s2 see: The Plans page
+  s2 not: Another page
+  s2 not: Two pages opened by a double tap
+J-F-panel-310-02 | type 3 | owner | Owner of a gym whose server lacks some newer parts, with one branch
+  s1 see: No 'AI Assistant' row until the server answers for it
+  s1 see: No 'Member messages' row until the server has that part
+  s1 see: No 'Your web page' row, no 'All branches' row
+  s1 not: A row that opens a page saying it is not switched on
+  s1 not: An empty group heading with no rows under it
+J-F-panel-310-03 | type 6 | owner | Owner works through the waiting items
+  s1 see: 'Set up your gym' is no longer on top: it sits at the end of the gym group with no ring
+  s1 not: The ring still showing an unfinished count
+  s1 not: The row gone altogether
+  s2 see: No badge on 'Member messages'
+  s2 not: The old number until sign-out
+  s3 see: A small dot beside the row that leads to it, gone after the page was opened
+  s3 not: The dot on every row
+J-F-panel-310-04 | type 1 | staff | Front desk person on a phone
+  s1 see: Rows worded for the desk: 'Workout offer' ('Give members the rewards they earned'), 'Gym timings' ('When the gym is open'), 'Staff & sign-in' ('Your PIN, and signing out'), 'Settings' ('Screen colours, app, sign-in'), 'Challenges' ('Who has reached the goal')
+  s1 see: Badges on 'Enquiries', 'Member messages' and 'Shop'
+  s1 not: 'Expenses'
+  s1 not: 'AI Assistant'
+  s1 not: Owner wording such as 'Who can open this admin app, and your PIN'
+  s2 see: The workout offer page
+  s2 not: The owner's message form
+J-F-panel-310-05 | type 3 | staff | Front desk without the Trainer tick; gym on Starter
+  s1 see: No 'Training progress' and no 'Member questions' rows
+  s1 see: No 'Expenses', no 'All branches', no 'AI Assistant'
+  s1 not: A row that opens a page the desk is then refused
+  s1 not: The 'Workout offer' row leading to a page with no words on a Starter gym
+J-F-panel-310-06 | type 6 | staff | Front desk; a new shop order comes in while the phone is in hand
+  s1 see: A badge on 'Shop' with the number of new orders
+  s1 not: No badge until the app is restarted
+  s2 see: The badge is lower or gone
+  s2 not: The old number
+J-F-panel-310-07 | type 1 | trainer | A staff person with the Trainer tick, on a phone; the gym's server has the trainer view and member questions
+  s1 see: 'Training progress' with 'Your members’ workout progress'
+  s1 see: 'Member questions' with a badge when a question is open
+  s1 see: The other desk rows
+  s1 not: The owner's hint 'Members’ workout progress, and their trainer'
+  s1 not: 'Expenses'
+  s2 see: The questions page
+  s2 not: 'Member messages' opened instead
+J-F-panel-310-08 | type 3 | trainer | Trainer at a gym whose server has no trainer view or no questions part yet
+  s1 see: No 'Training progress' row without the trainer view
+  s1 see: No 'Member questions' row until the server answers the count
+  s1 not: A 'Member questions' row with an empty badge that opens an error
+J-F-panel-310-09 | type 6 | trainer | Trainer with two open questions
+  s1 see: Badge 2 on 'Member questions'
+  s1 not: Questions meant for another trainer in the count
+  s2 see: Badge 1
+  s2 not: Badge 2 until sign-out
+  s3 see: The two trainer rows are gone
+  s3 not: Rows that open pages the person may no longer use

@@ -1,0 +1,1 @@
+{"id":"B-truth-web-pages-b","step":"B-truth","item":"B-truth (Same fact, every place) x web / web/pages: 2 items","needs":["CAL-score"],"checkpoint":"_work/B-truth-web-pages-b.md","out_file":"_work/out/B-truth-web-pages-b.jsonl","surface":"web","area":"web/pages","lenses":["gap-9"],"lens_items":["H9.1","H9.2"]}

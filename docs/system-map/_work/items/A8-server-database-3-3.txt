@@ -1,0 +1,611 @@
+# A8-server-database-3-3: coverage of 140 Tier 1 journeys (10 features, from A5-server-database-3-2). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-server-517 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 2 journey phrase(s)
+F-server-517 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 2 journey phrase(s)
+F-server-517 | apps/dashboard/test/crm/signin.test.ts | unit | 146 lines | asserts 2 journey phrase(s)
+F-server-517 | supabase/tests/0076_panel_web_push.sql | db | 209 lines | file name
+F-server-517 | supabase/tests/0095_test_alert.sql | db | 175 lines | file name
+F-server-517 | supabase/tests/0096_message_recipient.sql | db | 222 lines | asserts 2 journey phrase(s)
+F-server-517 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-server-517 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 1 journey phrase(s)
+F-server-517 | apps/dashboard/e2e/r450-uat.spec.mjs | e2e | 331 lines | asserts 1 journey phrase(s)
+F-server-517 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-server-517 | apps/dashboard/e2e/r534-training-progress-uat.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-server-517 | apps/dashboard/e2e/signin.spec.mjs | e2e | 82 lines | asserts 1 journey phrase(s)
+F-server-522 | apps/dashboard/test/crm/staffJobs.test.ts | unit | 115 lines | asserts 3 journey phrase(s)
+F-server-522 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 2 journey phrase(s)
+F-server-522 | supabase/tests/0079_staff_job_title.sql | db | 86 lines | file name
+F-server-513 | supabase/tests/0083_ai_members.sql | db | 180 lines | file name
+F-server-513 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-server-513 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-server-513 | apps/dashboard/test/crm/navNames.test.ts | unit | 61 lines | asserts 1 journey phrase(s)
+F-server-513 | apps/dashboard/test/crm/ownerOnboarding.test.ts | unit | 115 lines | asserts 1 journey phrase(s)
+F-server-513 | apps/dashboard/test/crm/sheets.test.ts | unit | 122 lines | asserts 1 journey phrase(s)
+F-server-513 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-server-513 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 1 journey phrase(s)
+F-server-513 | deploy/panel/helpPages.test.mjs | unit | 109 lines | asserts 1 journey phrase(s)
+F-server-528 | supabase/tests/0084_progress_year.sql | db | 117 lines | file name
+F-server-529 | supabase/tests/0085_friend_known_number.sql | db | 138 lines | file name
+F-server-529 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | asserts 1 journey phrase(s)
+F-server-529 | apps/dashboard/test/crm/referrals.test.ts | unit | 133 lines | asserts 1 journey phrase(s)
+F-server-519 | supabase/tests/0077_self_join.sql | db | 175 lines | file name
+F-server-519 | supabase/tests/0088_join_trial.sql | db | 168 lines | file name
+F-server-519 | supabase/tests/0089_trial_alert_words.sql | db | 167 lines | file name
+F-server-526 | apps/dashboard/e2e/hq-webpage-uat.spec.mjs | e2e | 166 lines | asserts 3 journey phrase(s)
+F-server-526 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | asserts 2 journey phrase(s)
+F-server-526 | supabase/tests/0090_gym_page_switch.sql | db | 93 lines | file name
+F-server-526 | apps/dashboard/e2e/pagechat-uat.spec.mjs | e2e | 272 lines | asserts 1 journey phrase(s)
+F-server-526 | apps/dashboard/test/crm/gymPageEditor.test.ts | unit | 226 lines | asserts 1 journey phrase(s)
+F-server-526 | supabase/tests/0080_gym_page.sql | db | 269 lines | asserts 1 journey phrase(s)
+F-server-532 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 9 journey phrase(s)
+F-server-532 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 9 journey phrase(s)
+F-server-532 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 8 journey phrase(s)
+F-server-532 | supabase/tests/0037_leaderboard.sql | db | 548 lines | asserts 8 journey phrase(s)
+F-server-532 | supabase/tests/0053_ask_trainer_and_progress.sql | db | 232 lines | asserts 8 journey phrase(s)
+F-server-532 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 7 journey phrase(s)
+F-server-532 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 7 journey phrase(s)
+F-server-532 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 7 journey phrase(s)
+F-server-532 | supabase/tests/0038_member_push.sql | db | 169 lines | asserts 7 journey phrase(s)
+F-server-532 | supabase/tests/0050_trainer_view.sql | db | 213 lines | asserts 7 journey phrase(s)
+F-server-532 | supabase/tests/0087_feedback_owner_desk.sql | db | 143 lines | asserts 7 journey phrase(s)
+F-server-532 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 6 journey phrase(s)
+F-server-518 | supabase/tests/0095_test_alert.sql | db | 175 lines | file name
+F-server-518 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-server-518 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-server-518 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-server-518 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-server-518 | apps/dashboard/test/crm/navNames.test.ts | unit | 61 lines | asserts 1 journey phrase(s)
+F-server-518 | apps/dashboard/test/crm/ownerOnboarding.test.ts | unit | 115 lines | asserts 1 journey phrase(s)
+F-server-518 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-server-518 | apps/dashboard/test/crm/setupCards.test.ts | unit | 17 lines | asserts 1 journey phrase(s)
+F-server-518 | apps/dashboard/test/crm/sheets.test.ts | unit | 122 lines | asserts 1 journey phrase(s)
+F-server-518 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-server-518 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-server-509 | supabase/tests/0096_message_recipient.sql | db | 222 lines | file name, asserts 2 journey phrase(s)
+F-server-509 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 2 journey phrase(s)
+F-server-509 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 2 journey phrase(s)
+F-server-509 | apps/dashboard/test/crm/signin.test.ts | unit | 146 lines | asserts 2 journey phrase(s)
+F-server-509 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 1 journey phrase(s)
+F-server-509 | apps/dashboard/e2e/r450-uat.spec.mjs | e2e | 331 lines | asserts 1 journey phrase(s)
+F-server-509 | apps/dashboard/e2e/r534-training-progress-uat.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-server-509 | apps/dashboard/e2e/signin.spec.mjs | e2e | 82 lines | asserts 1 journey phrase(s)
+F-server-509 | apps/dashboard/test/crm/assistant/answer.test.ts | unit | 191 lines | asserts 1 journey phrase(s)
+F-server-509 | apps/dashboard/test/crm/gymState.test.ts | unit | 78 lines | asserts 1 journey phrase(s)
+F-server-509 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-server-509 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-server-517-01 | type 1 | owner | Admin app, Settings, card "Alerts from your members", this browser has alerts off
+  s1 see: Alerts shown as on for this device
+  s1 not: Another browser of the gym turned on or off
+  s1 not: Alerts shown as on when the address was not saved
+  s2 see: The card keeps Daily summary at 11:00 am after a reload
+  s2 not: A summary sent twice for the same day after the change
+  s2 not: The setting saved for another gym
+J-F-server-517-02 | type 2 | owner | Alerts card, alerts on for this browser, setting Daily summary
+  s1 see: The card shows instant
+  s1 not: Alerts still held for the daily summary
+  s2 see: A browser pop-up "MettleUp: news from your members" with the alert line
+  s2 not: The pop-up shows a member phone number
+  s2 not: The same alert pops up twice
+J-F-server-517-03 | type 3 | owner | Alerts card, alerts off; the browser blocks notifications or sends a bad address
+  s1 see: Alerts stay off with a plain word why
+  s1 not: Alerts shown as on
+  s1 not: A browser address saved without its keys
+  s2 see: The save is refused and the old setting stays
+  s2 not: A half-saved setting
+  s2 not: A summary sent at a wrong time
+J-F-server-517-04 | type 6 | owner | Alerts card, alerts on for this browser
+  s1 see: Alerts shown as off for this device
+  s1 not: Other browsers of the gym turned off
+  s1 not: More pop-ups reach this browser
+  s2 see: Alerts shown as on; the next alert pops up once
+  s2 not: Old alerts from while it was off all pop up at once
+J-F-server-517-05 | type 12 | owner | Owner, desk and a trainer each turned alerts on in their own browser
+  s1 see: Only the owner browser shows the pop-up
+  s1 not: The trainer or the desk browser shows the complaint
+  s1 not: The pop-up carries the member phone number
+J-F-server-517-06 | type 1 | staff | Desk person signed in to the admin app, Settings, "Alerts from your members"
+  s1 see: Alerts shown as on for this device
+  s1 see: The gym setting shown read-only
+  s1 not: The desk able to change instant, daily or weekly
+  s1 not: The owner browser turned off
+J-F-server-517-07 | type 3 | staff | Desk person on the alerts card
+  s1 see: The change is refused: only the owner may change it
+  s1 not: The gym setting changed by the desk
+J-F-server-517-08 | type 6 | staff | Desk person has alerts on; the owner then removes the person
+  s1 see: No pop-up reaches the removed person browser
+  s1 not: A removed person still gets member news
+J-F-server-517-09 | type 12 | staff | Desk browser with alerts on
+  s1 see: Only the "Gym admin" complaint pops up on the desk browser
+  s1 not: The complaint to "Gym owner" pops up for the desk
+J-F-server-517-10 | type 1 | trainer | Trainer signed in to the admin app, Settings, "Alerts from your members"
+  s1 see: Alerts shown as on for this device
+  s1 not: The trainer able to change the summary setting
+J-F-server-517-11 | type 3 | trainer | Trainer browser with alerts on
+  s1 see: The change is refused: only the owner may change it
+  s1 not: The gym setting changed by a trainer
+J-F-server-517-12 | type 6 | trainer | Trainer browser with alerts on
+  s1 see: No pop-up on this browser; the question is in the list
+  s1 not: A pop-up after alerts were turned off
+J-F-server-517-13 | type 12 | trainer | Trainer browser with alerts on
+  s1 see: No pop-up on the trainer browser
+  s1 not: Feedback or a complaint reaching a trainer
+J-F-server-517-14 | type 1 | system | HQ Worker run each minute; a gym has an urgent alert and two browsers that may see it
+  s1 see: Two pushes come back, one per browser, and the alert is marked sent at once
+  s1 not: The same alert handed out on the next run
+  s1 not: A push for a browser whose sign-in ended
+J-F-server-517-15 | type 2 | system | A gym on Daily summary at 11:00 am with three waiting alerts
+  s1 see: Each browser gets one push "3 new updates from your members. Open the admin app to see them."
+  s1 see: All three alerts marked digest
+  s1 not: A push to a browser that may see none of the three
+J-F-server-517-16 | type 3 | system | Alerts waiting longer than 6 hours (instant) or 8 days (summary)
+  s1 see: The old alerts are marked late and never sent
+  s1 not: A stale alert popping up hours later
+  s1 not: Anyone but the HQ service calling the job
+J-F-server-517-17 | type 6 | system | A summary slot already taken by an earlier run
+  s1 see: claimed false and nothing sent
+  s1 not: A second summary for the same slot
+  s2 see: The address is dropped
+  s2 not: The dead address tried again every minute
+J-F-server-517-18 | type 12 | system | A gym with an owner browser and a trainer browser
+  s1 see: Only browsers whose person may see the alert get it
+  s1 not: The push body carrying a phone number
+  s1 not: A trainer browser getting a complaint
+J-F-server-522-01 | type 1 | owner | Admin app, Settings, Staff & sign-in
+  s1 see: The person row shows "Manager"
+  s1 not: The person gets owner access
+  s1 not: The job saved with extra spaces
+  s2 see: Same desk access as any Staff
+  s2 not: Owner-only screens open for a typed job
+J-F-server-522-02 | type 2 | owner | Staff & sign-in, an existing desk person with no job
+  s1 see: The row shows "Cleaner"
+  s1 not: A second person row made
+  s2 see: The Trainer tick is set; no typed job needed
+  s2 not: The trainer shown as Other
+J-F-server-522-03 | type 3 | owner | Staff & sign-in
+  s1 see: A message that the job is too long; nothing saved
+  s1 not: The job cut without a word
+  s2 see: Refused: the owner is always "Owner"
+  s2 not: The owner row changed
+  s3 see: Refused: only the owner may
+  s3 not: A job saved by the desk
+J-F-server-522-04 | type 6 | owner | A desk person with the job "Manager"
+  s1 see: The row shows no job
+  s1 not: An empty job shown as a blank chip
+  s2 see: Refused: person is gone
+  s2 not: A removed person brought back
+J-F-server-522-05 | type 12 | owner | Staff & sign-in list
+  s1 see: Only the owner sees the list; the job only shows next to the name
+  s1 not: The job changing what the person can do
+  s1 not: Members seeing staff phone numbers
+J-F-server-513-01 | type 1 | owner | Admin app, AI Assistant, credits at the top
+  s1 see: The switch on, the limit 30, and this month: answers and credits used
+  s1 not: Owner or staff questions shown as using credits
+  s1 not: The limit saved for another gym
+J-F-server-513-02 | type 2 | owner | Members used this month limit
+  s1 see: One alert: "Members have used this month's AI answers. Until 1 Dec, they get help pages instead. To give them more, open AI Assistant and tap your credits at the top."
+  s1 not: The same alert again for the next member this month
+  s1 not: An alert when the owner set the limit to 0
+  s2 see: AI Assistant opens
+  s2 not: A blank page
+J-F-server-513-03 | type 3 | owner | Credits sheet
+  s1 see: Refused; the old limit stays
+  s1 not: 501 saved
+  s1 not: The switch flipped by the failed save
+  s2 see: Refused: owner only
+  s2 not: The desk changing the members limit
+J-F-server-513-04 | type 6 | owner | Switch on, members asking questions
+  s1 see: Switch shows off
+  s1 not: Members still getting AI answers
+  s2 see: Members get AI answers again; used count unchanged
+  s2 not: This month count reset by the switch
+J-F-server-513-05 | type 12 | owner | Credits sheet
+  s1 see: Counts only: answers and credits this month
+  s1 not: Member names or question words shown in the counts
+J-F-server-513-06 | type 1 | member | Member app, gym help, the gym switch on and credits left
+  s1 see: An AI answer
+  s1 not: Any word about credits shown to the member
+  s1 not: Another member question counted
+J-F-server-513-07 | type 3 | member | Member app, the owner switched AI answers off (or the month limit is reached, or the day limit)
+  s1 see: An answer from the help pages instead
+  s1 not: An error
+  s1 not: A credit taken
+  s1 not: Words telling the member about the gym credits
+J-F-server-513-08 | type 6 | member | Member asked a question and the AI did not answer
+  s1 see: The question does not count
+  s1 not: The member day count used up by a failed answer
+  s1 not: A slot given back twice
+J-F-server-513-09 | type 12 | member | Member asks a question
+  s1 see: An answer for the member only
+  s1 not: The question words shown to the owner in the counts
+  s1 not: Credit words shown to the member
+J-F-server-528-01 | type 1 | member | Member app, Settings, Your gym, "Share my workouts with my trainers" on, a year of workouts
+  s1 see: Sharing stays on
+  s1 not: Notes, photos or body weight sent
+  s1 not: Workouts older than 366 days kept
+J-F-server-528-02 | type 2 | member | An older member app (3 months only)
+  s1 see: Sharing stays on; the gym sees 3 months
+  s1 not: The older app refused
+J-F-server-528-03 | type 3 | member | Gym paused by MettleUp, or a share past the size limit
+  s1 see: Nothing kept; sharing does not claim success
+  s1 not: A half-saved year
+  s1 not: A broken summary shown to the gym
+J-F-server-528-04 | type 6 | member | Sharing on
+  s1 see: Sharing off
+  s1 not: The trainer still seeing the workouts
+  s2 see: The next share sends the year again
+  s2 not: Old deleted data coming back by itself
+J-F-server-528-05 | type 12 | member | Sharing on, the member has a trainer
+  s1 see: Only the assigned trainer and the owner
+  s1 not: Other trainers or the desk seeing the workouts
+  s1 not: Body weight or notes shared
+J-F-server-528-06 | type 1 | trainer | Admin app, My members, a member assigned to this trainer shares
+  s1 see: A line graph of up to 12 months
+  s1 not: Only 3 months for a member on a new app
+  s1 not: Another trainer member listed
+J-F-server-528-07 | type 2 | trainer | Member page in the admin app
+  s1 see: The same year of workouts
+  s1 not: Two different graphs for the same member
+J-F-server-528-08 | type 3 | trainer | A member not assigned to this trainer
+  s1 see: Not shown
+  s1 not: Workouts of another trainer member
+J-F-server-528-09 | type 6 | trainer | Member turns sharing off or leaves the gym
+  s1 see: The member is gone from progress
+  s1 not: Old workouts still shown
+J-F-server-528-10 | type 12 | trainer | Trainer progress screen
+  s1 see: Only own members, only workout names, best weights, reps and sets
+  s1 not: Notes, photos, body weight
+  s1 not: Members not assigned
+J-F-server-528-11 | type 1 | owner | Admin app, Training progress, members who share
+  s1 see: A line graph of up to 12 months
+  s1 not: A member who does not share listed
+J-F-server-528-12 | type 2 | owner | Member page
+  s1 see: The same year
+  s1 not: Different numbers from the progress screen
+J-F-server-528-13 | type 3 | owner | A member who never turned sharing on
+  s1 see: Not listed
+  s1 not: Empty graph that looks like no training
+J-F-server-528-14 | type 6 | owner | A sharing member shares nothing new for 90 days
+  s1 see: The member gone
+  s1 not: Stale workouts kept forever
+J-F-server-528-15 | type 12 | owner | Training progress
+  s1 see: The owner and the assigned trainer only
+  s1 not: The desk seeing members workouts
+J-F-server-529-01 | type 1 | prospect | A friend opens a member invite link; the number is new to the gym
+  s1 see: A sent message
+  s1 not: The page saying whether the number is known
+  s1 not: Details sent to another gym
+J-F-server-529-02 | type 2 | prospect | The friend number is already an open enquiry at the gym
+  s1 see: The same sent message
+  s1 not: A second enquiry made for the same number
+  s1 not: A hint that the gym already knows the number
+J-F-server-529-03 | type 3 | prospect | Invite form
+  s1 see: A plain error on the box
+  s1 not: The form saying sent
+  s2 see: Too many today
+  s2 not: A 6th note or alert for the gym
+J-F-server-529-04 | type 6 | prospect | Form already sent today for a known enquiry
+  s1 see: Sent
+  s1 not: A second note or alert the same day
+J-F-server-529-05 | type 12 | prospect | Invite form
+  s1 see: Sent, nothing else
+  s1 not: The member name or status shown to the friend
+J-F-server-529-06 | type 1 | member | Member app, Bring a friend, the friend is already on the gym list
+  s1 see: Nothing new for the member
+  s1 not: A free-day reward for a friend who is already a member
+J-F-server-529-07 | type 3 | member | Member puts own number into the friend form
+  s1 see: Sent
+  s1 not: A note, an alert or an enquiry made
+J-F-server-529-08 | type 6 | member | The member left the gym
+  s1 see: The invite is not found
+  s1 not: The gym rung by a former member link
+J-F-server-529-09 | type 12 | member | Member checks Bring a friend
+  s1 see: Only how many friends joined
+  s1 not: The friend number or enquiry state shown
+J-F-server-529-10 | type 1 | owner | Admin app open; a member invite brings a friend already in Enquiries
+  s1 see: "Asha invited Ravi to your gym. Ravi already asked about joining: call them from Enquiries today."
+  s1 not: The friend phone number in the alert
+  s2 see: "Invited again by Asha Rao, best time to train: Evening" on the row; follow-up today
+  s2 not: An overdue follow-up moved later
+  s2 not: A duplicate enquiry
+J-F-server-529-11 | type 2 | owner | A member invite brings a friend who is already a member
+  s1 see: That member page opens
+  s1 not: A new enquiry made for a member
+  s1 not: The member record changed
+J-F-server-529-12 | type 3 | owner | Gym paused by MettleUp
+  s1 see: No alert and no note
+  s1 not: A paused gym rung
+J-F-server-529-13 | type 6 | owner | An enquiry with a note; the desk closes it
+  s1 see: A new open enquiry with the friend details
+  s1 not: The note added to the closed enquiry silently
+J-F-server-529-14 | type 12 | owner | Alert in the bell
+  s1 see: First names only
+  s1 not: Phone numbers in the alert
+  s1 not: The friend told that the gym knew them
+J-F-server-529-15 | type 1 | staff | Admin app open; a member invite brings a friend already in Enquiries
+  s1 see: "Asha invited Ravi to your gym. Ravi already asked about joining: call them from Enquiries today."
+  s1 not: The friend phone number in the alert
+  s2 see: "Invited again by Asha Rao, best time to train: Evening" on the row; follow-up today
+  s2 not: An overdue follow-up moved later
+  s2 not: A duplicate enquiry
+J-F-server-529-16 | type 2 | staff | A member invite brings a friend who is already a member
+  s1 see: That member page opens
+  s1 not: A new enquiry made for a member
+  s1 not: The member record changed
+J-F-server-529-17 | type 3 | staff | Gym paused by MettleUp
+  s1 see: No alert and no note
+  s1 not: A paused gym rung
+J-F-server-529-18 | type 6 | staff | An enquiry with a note; the desk closes it
+  s1 see: A new open enquiry with the friend details
+  s1 not: The note added to the closed enquiry silently
+J-F-server-529-19 | type 12 | staff | Alert in the bell
+  s1 see: First names only
+  s1 not: Phone numbers in the alert
+  s1 not: The friend told that the gym knew them
+J-F-server-519-01 | type 1 | prospect | A new person opens the gym join link /m/<code>
+  s1 see: A done page with the plan and start day; pay at the desk
+  s1 not: The number asked again after the proof
+  s1 not: Two enquiries for one send
+J-F-server-519-02 | type 2 | prospect | The gym offers a free trial
+  s1 see: Trial days with start and end
+  s1 not: A price shown for a trial
+J-F-server-519-03 | type 3 | prospect | Join form
+  s1 see: Bad date
+  s1 not: Saved
+  s2 see: Already a member, or one trial per number
+  s2 not: A second trial
+  s3 see: Closed
+  s3 not: A request the gym cannot act on
+J-F-server-519-04 | type 6 | prospect | An open enquiry with this number exists
+  s1 see: Done page
+  s1 not: A second enquiry for the same number
+J-F-server-519-05 | type 12 | prospect | Join form sent
+  s1 see: First name, plan and dates only
+  s1 not: The number or an amount in the alert
+J-F-server-519-06 | type 1 | owner | Admin app open; a person joins online
+  s1 see: "Ravi asked to join your gym online (Monthly, from 21 Nov). Make them a member on Today."
+  s1 not: The number or an amount in the alert
+  s2 see: The Add member form with their details
+  s2 not: A member made before they pay
+J-F-server-519-07 | type 2 | owner | A person starts a free trial online
+  s1 see: "Ravi started a free 7-day trial online, from 21 Nov to 27 Nov. Please let them in until 27 Nov. If they join, make them a member from Today."
+  s1 not: The trial shown as a member
+J-F-server-519-08 | type 3 | owner | Gym paused, or the plan lacks adding members
+  s1 see: Nothing arrives
+  s1 not: A request arrives that cannot be made a member
+J-F-server-519-09 | type 6 | owner | A Joined online request
+  s1 see: The request leaves Joined online
+  s1 not: The request still waiting after Make member
+J-F-server-519-10 | type 12 | owner | Enquiries row of an online join
+  s1 see: Name, plan, start day, Pays at the desk
+  s1 not: Consent times or the proof shown to the desk
+J-F-server-519-11 | type 1 | staff | Admin app open; a person joins online
+  s1 see: "Ravi asked to join your gym online (Monthly, from 21 Nov). Make them a member on Today."
+  s1 not: The number or an amount in the alert
+  s2 see: The Add member form with their details
+  s2 not: A member made before they pay
+J-F-server-519-12 | type 2 | staff | A person starts a free trial online
+  s1 see: "Ravi started a free 7-day trial online, from 21 Nov to 27 Nov. Please let them in until 27 Nov. If they join, make them a member from Today."
+  s1 not: The trial shown as a member
+J-F-server-519-13 | type 3 | staff | Gym paused, or the plan lacks adding members
+  s1 see: Nothing arrives
+  s1 not: A request arrives that cannot be made a member
+J-F-server-519-14 | type 6 | staff | A Joined online request
+  s1 see: The request leaves Joined online
+  s1 not: The request still waiting after Make member
+J-F-server-519-15 | type 12 | staff | Enquiries row of an online join
+  s1 see: Name, plan, start day, Pays at the desk
+  s1 not: Consent times or the proof shown to the desk
+J-F-server-526-01 | type 1 | HQ admin | HQ app, one gym, Web page switch on
+  s1 see: Web page off for this gym
+  s1 not: Other gyms switched off
+  s1 not: The gym page words or photos deleted
+J-F-server-526-02 | type 3 | HQ admin | HQ app
+  s1 see: Gone; nothing changed
+  s1 not: A row for a missing gym
+  s2 see: Refused before any change
+  s2 not: An unlogged change
+J-F-server-526-03 | type 6 | HQ admin | Web page off for a gym
+  s1 see: Web page on; the page shows as it was
+  s1 not: The page lost its words or photos
+J-F-server-526-04 | type 12 | HQ admin | HQ gym screen
+  s1 see: Page on or off, its link, published, hidden by HQ
+  s1 not: Gym member data shown by this switch
+J-F-server-526-05 | type 1 | owner | Admin app, gym web page on (default)
+  s1 see: The page editor
+  s1 not: The part missing for a gym HQ never switched
+J-F-server-526-06 | type 2 | owner | Get started list
+  s1 see: The web page screen
+  s1 not: A dead step
+J-F-server-526-07 | type 3 | owner | HQ switched this gym page off
+  s1 see: No "Your web page" and no web page set-up step
+  s1 not: An error screen
+  s1 not: The public page still opens
+  s2 see: Not here
+  s2 not: The page content
+J-F-server-526-08 | type 6 | owner | Page was off; HQ turns it on
+  s1 see: "Your web page" back with all saved words and photos
+  s1 not: A blank page to start again
+J-F-server-526-09 | type 12 | owner | Page off
+  s1 see: Join online still works
+  s1 not: Join link closed by the page switch
+J-F-server-532-01 | type 1 | member | Member app first screen
+  s1 see: The gym with "member" and the plan end day
+  s1 not: A gym where this number is not known
+  s1 not: Price, dues or visits shown
+  s2 see: The app opens as a member
+  s2 not: The wrong role
+J-F-server-532-02 | type 2 | member | Number known at two gyms
+  s1 see: Both gyms listed, one line each
+  s1 not: The same gym twice
+J-F-server-532-03 | type 3 | member | Plan ended, or first name differs
+  s1 see: No gym found
+  s1 not: The old holder gym for a recycled number
+  s2 see: Too many
+  s2 not: A sixth search
+J-F-server-532-04 | type 6 | member | Member renews after the plan ended
+  s1 see: The gym is found
+  s1 not: Still not found after renewal
+J-F-server-532-05 | type 12 | member | Check the number
+  s1 see: Gym name, colours, role, plan end
+  s1 not: Other people of the gym
+  s1 not: Anything shown before the number is proved
+J-F-server-532-06 | type 1 | pass member | Member app first screen
+  s1 see: The gym with a pass
+  s1 not: A gym where this number is not known
+  s1 not: Price, dues or visits shown
+  s2 see: The app opens as a pass member
+  s2 not: The wrong role
+J-F-server-532-07 | type 3 | pass member | No first name typed
+  s1 see: No member gym found
+  s1 not: A pass gym found by number alone
+J-F-server-532-08 | type 6 | pass member | Pass taken off the member
+  s1 see: Not found unless a plan runs today
+  s1 not: Found by an old pass
+J-F-server-532-09 | type 12 | pass member | Check the number
+  s1 see: Only that a pass exists
+  s1 not: The pass company details
+J-F-server-532-10 | type 1 | owner | Member app first screen
+  s1 see: The gym with "owner"
+  s1 not: A gym where this number is not known
+  s1 not: Price, dues or visits shown
+  s2 see: The app opens as the owner
+  s2 not: The wrong role
+J-F-server-532-11 | type 3 | owner | Gym paused by MettleUp
+  s1 see: The paused gym is not listed
+  s1 not: A paused gym listed
+J-F-server-532-12 | type 6 | owner | Owner is also a member of the same gym
+  s1 see: One line: owner
+  s1 not: Two lines for one gym
+J-F-server-532-13 | type 12 | owner | Check the number
+  s1 see: Only gym and role
+  s1 not: Staff list or member list returned
+J-F-server-532-14 | type 1 | staff | Member app first screen
+  s1 see: The gym with "desk"
+  s1 not: A gym where this number is not known
+  s1 not: Price, dues or visits shown
+  s2 see: The app opens as the desk
+  s2 not: The wrong role
+J-F-server-532-15 | type 3 | staff | Person removed from the gym
+  s1 see: That gym not listed
+  s1 not: A removed person finding the gym
+J-F-server-532-16 | type 6 | staff | The owner ticks the person as Trainer
+  s1 see: Role shows trainer
+  s1 not: The old role
+J-F-server-532-17 | type 12 | staff | Check the number
+  s1 see: Gym and role only
+  s1 not: Other staff names or numbers
+J-F-server-532-18 | type 1 | trainer | Member app first screen
+  s1 see: The gym with "trainer"
+  s1 not: A gym where this number is not known
+  s1 not: Price, dues or visits shown
+  s2 see: The app opens as the trainer
+  s2 not: The wrong role
+J-F-server-532-19 | type 3 | trainer | Person removed from the gym
+  s1 see: That gym not listed
+  s1 not: A removed person finding the gym
+J-F-server-532-20 | type 6 | trainer | The owner takes the Trainer tick off
+  s1 see: Role shows desk
+  s1 not: The old role
+J-F-server-532-21 | type 12 | trainer | Check the number
+  s1 see: Gym and role only
+  s1 not: Other staff names or numbers
+J-F-server-518-01 | type 1 | owner | Admin app, Settings, "Alerts from your members", alerts on for this device
+  s1 see: Within about a minute a pop-up "MettleUp: test alert" saying "Alerts work on this device. Alerts from your members will look like this."
+  s1 not: The test reaching other browsers
+  s2 see: "It showed on this device at 7:41 pm"
+  s2 not: The test in the bell or a count
+J-F-server-518-02 | type 3 | owner | Alerts off for this device, or a test just sent
+  s1 see: Turn alerts on first, or wait the seconds shown
+  s1 not: A second test inside a minute
+  s1 not: A test sent to a browser that is off
+J-F-server-518-03 | type 6 | owner | A test sent, the browser blocked the pop-up
+  s1 see: Not shown yet
+  s1 not: Shown when it was not
+J-F-server-518-04 | type 12 | owner | Test sent
+  s1 see: Nothing on them
+  s1 not: A test on another person browser
+J-F-server-518-05 | type 1 | staff | Admin app, Settings, "Alerts from your members", alerts on for this device
+  s1 see: Within about a minute a pop-up "MettleUp: test alert" saying "Alerts work on this device. Alerts from your members will look like this."
+  s1 not: The test reaching other browsers
+  s2 see: "It showed on this device at 7:41 pm"
+  s2 not: The test in the bell or a count
+J-F-server-518-06 | type 3 | staff | Alerts off for this device, or a test just sent
+  s1 see: Turn alerts on first, or wait the seconds shown
+  s1 not: A second test inside a minute
+  s1 not: A test sent to a browser that is off
+J-F-server-518-07 | type 6 | staff | A test sent, the browser blocked the pop-up
+  s1 see: Not shown yet
+  s1 not: Shown when it was not
+J-F-server-518-08 | type 12 | staff | Test sent
+  s1 see: Nothing on them
+  s1 not: A test on another person browser
+J-F-server-518-09 | type 1 | trainer | Admin app, Settings, "Alerts from your members", alerts on for this device
+  s1 see: Within about a minute a pop-up "MettleUp: test alert" saying "Alerts work on this device. Alerts from your members will look like this."
+  s1 not: The test reaching other browsers
+  s2 see: "It showed on this device at 7:41 pm"
+  s2 not: The test in the bell or a count
+J-F-server-518-10 | type 3 | trainer | Alerts off for this device, or a test just sent
+  s1 see: Turn alerts on first, or wait the seconds shown
+  s1 not: A second test inside a minute
+  s1 not: A test sent to a browser that is off
+J-F-server-518-11 | type 6 | trainer | A test sent, the browser blocked the pop-up
+  s1 see: Not shown yet
+  s1 not: Shown when it was not
+J-F-server-518-12 | type 12 | trainer | Test sent
+  s1 see: Nothing on them
+  s1 not: A test on another person browser
+J-F-server-509-01 | type 1 | member | Member app, Gym tab, Message your gym, Question
+  s1 see: The message shows it went to that trainer
+  s1 not: The trainer phone shown
+  s1 not: The message sent to everyone
+J-F-server-509-02 | type 2 | member | Message your gym, Complaint
+  s1 see: Sent to the owner and front desk
+  s1 not: Trainers getting the complaint
+J-F-server-509-03 | type 3 | member | Message your gym
+  s1 see: Only feedback can be sent without the name
+  s1 not: An anonymous complaint saved
+  s2 see: That trainer is not available
+  s2 not: A message to a removed person
+J-F-server-509-04 | type 6 | member | A question sent to a trainer
+  s1 see: The reply and the done mark
+  s1 not: The thread lost its recipient
+J-F-server-509-05 | type 12 | member | Message your gym
+  s1 see: "Only the owner and front desk at {gym} read your feedback."
+  s1 not: A trainer reading a complaint
+J-F-server-509-06 | type 1 | owner | Admin app, Member messages
+  s1 see: Every message with who it went to
+  s1 not: A message missing
+J-F-server-509-07 | type 3 | owner | A question went to a trainer
+  s1 see: No alert for it
+  s1 not: An owner alert for a trainer question
+J-F-server-509-08 | type 6 | owner | A message waiting
+  s1 see: Done
+  s1 not: Still waiting
+J-F-server-509-09 | type 12 | owner | Member messages
+  s1 see: Only the owner
+  s1 not: The desk or a trainer
+J-F-server-509-10 | type 1 | staff | Desk person, Member messages
+  s1 see: Feedback and complaints sent to "Gym admin"
+  s1 not: Complaints to "Gym owner"
+J-F-server-509-11 | type 3 | staff | A complaint to "Gym owner"
+  s1 see: Not shown
+  s1 not: Shown
+J-F-server-509-12 | type 6 | staff | A "Gym admin" message
+  s1 see: Done for the owner too
+  s1 not: Still waiting for the owner
+J-F-server-509-13 | type 12 | staff | A question to a trainer
+  s1 see: Not shown to the desk
+  s1 not: Shown
+J-F-server-509-14 | type 1 | trainer | Trainer, a member sends this trainer a question
+  s1 see: "sent you a question" and the message
+  s1 not: Questions to other trainers
+J-F-server-509-15 | type 3 | trainer | Feedback or a complaint arrives
+  s1 see: Not shown
+  s1 not: Shown
+J-F-server-509-16 | type 6 | trainer | Trainer removed by the owner
+  s1 see: Owner only
+  s1 not: Removed trainer still sees it
+J-F-server-509-17 | type 12 | trainer | Trainer list
+  s1 see: Only own questions
+  s1 not: Complaints about this trainer

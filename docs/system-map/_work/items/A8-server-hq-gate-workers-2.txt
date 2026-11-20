@@ -1,0 +1,427 @@
+# A8-server-hq-gate-workers-2: coverage of 72 Tier 1 journeys (8 features, from A5-server-hq-gate-workers-2). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-server-214 | apps/mobile/test/tracker/statisticsAudit.test.ts | unit | 90 lines | asserts 4 journey phrase(s)
+F-server-214 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 3 journey phrase(s)
+F-server-214 | apps/dashboard/test/crm/retiredAiPack.test.ts | unit | 118 lines | imports the code
+F-server-214 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-server-214 | deploy/hq/english.test.mjs | unit | 351 lines | imports the code
+F-server-214 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-214 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-214 | supabase/tests/0098_alerts_done_and_read.sql | db | 375 lines | asserts 3 journey phrase(s)
+F-server-214 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 2 journey phrase(s)
+F-server-214 | apps/mobile/test/cloud/undoRestore.test.ts | unit | 143 lines | asserts 2 journey phrase(s)
+F-server-214 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 2 journey phrase(s)
+F-server-214 | supabase/tests/0030_plans_and_trials.sql | db | 136 lines | asserts 2 journey phrase(s)
+F-server-216 | apps/mobile/test/shop/gymHours.test.ts | unit | 201 lines | asserts 7 journey phrase(s)
+F-server-216 | apps/dashboard/test/crm/assistant/messageDay.test.ts | unit | 114 lines | asserts 5 journey phrase(s)
+F-server-216 | apps/dashboard/test/crm/messageTemplates.test.ts | unit | 246 lines | asserts 4 journey phrase(s)
+F-server-216 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | imports the code
+F-server-216 | apps/dashboard/test/crm/retiredAiPack.test.ts | unit | 118 lines | imports the code
+F-server-216 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-server-216 | apps/mobile/test/shop/gymBusy.test.ts | unit | 209 lines | asserts 3 journey phrase(s)
+F-server-216 | apps/mobile/test/shop/gymTimings.test.ts | unit | 61 lines | asserts 3 journey phrase(s)
+F-server-216 | deploy/hq/english.test.mjs | unit | 351 lines | imports the code
+F-server-216 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-216 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-216 | deploy/hq/push.test.mjs | unit | 382 lines | asserts 3 journey phrase(s)
+F-server-206 | apps/dashboard/test/crm/invite.test.ts | unit | 105 lines | asserts 7 journey phrase(s)
+F-server-206 | deploy/panel/hosts.test.mjs | unit | 291 lines | asserts 7 journey phrase(s)
+F-server-206 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 6 journey phrase(s)
+F-server-206 | apps/mobile/qa/uat-rel-r461-plus.yaml | maestro | 365 lines | asserts 6 journey phrase(s)
+F-server-206 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code, asserts 3 journey phrase(s)
+F-server-206 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 5 journey phrase(s)
+F-server-206 | apps/dashboard/e2e/pay-mettleup-uat.spec.mjs | e2e | 210 lines | asserts 5 journey phrase(s)
+F-server-206 | apps/dashboard/test/crm/hqAccess.test.ts | unit | 81 lines | asserts 5 journey phrase(s)
+F-server-206 | apps/dashboard/test/crm/payMettleUp.test.ts | unit | 236 lines | asserts 5 journey phrase(s)
+F-server-206 | deploy/hq/english.test.mjs | unit | 351 lines | imports the code, asserts 2 journey phrase(s)
+F-server-206 | deploy/hq/push.test.mjs | unit | 382 lines | imports the code, file name
+F-server-206 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 4 journey phrase(s)
+F-server-218 | apps/dashboard/test/crm/retiredAiPack.test.ts | unit | 118 lines | imports the code
+F-server-218 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-server-218 | deploy/hq/english.test.mjs | unit | 351 lines | imports the code
+F-server-218 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-218 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-218 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-server-218 | apps/dashboard/test/crm/assistant/screenWords.test.ts | unit | 188 lines | asserts 1 journey phrase(s)
+F-server-218 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/SelfDimTest.kt | watch | 234 lines | asserts 1 journey phrase(s)
+F-server-219 | apps/dashboard/test/crm/retiredAiPack.test.ts | unit | 118 lines | imports the code
+F-server-219 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-server-219 | deploy/hq/english.test.mjs | unit | 351 lines | imports the code
+F-server-219 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-219 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-219 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-server-219 | apps/dashboard/e2e/trial.spec.mjs | e2e | 72 lines | asserts 1 journey phrase(s)
+F-server-219 | apps/dashboard/test/crm/joinPay.test.ts | unit | 223 lines | asserts 1 journey phrase(s)
+F-server-219 | apps/mobile/test/shop/trainerShare.test.ts | unit | 155 lines | asserts 1 journey phrase(s)
+F-server-215 | apps/dashboard/test/crm/retiredAiPack.test.ts | unit | 118 lines | imports the code
+F-server-215 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-server-215 | deploy/hq/english.test.mjs | unit | 351 lines | imports the code
+F-server-215 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-215 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-215 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 1 journey phrase(s)
+F-server-215 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 1 journey phrase(s)
+F-server-215 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-server-215 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-server-215 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-server-215 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-server-215 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-server-220 | supabase/tests/0060_pay_mettleup.sql | db | 317 lines | asserts 5 journey phrase(s)
+F-server-220 | supabase/tests/0083_ai_members.sql | db | 180 lines | asserts 5 journey phrase(s)
+F-server-220 | supabase/tests/0098_alerts_done_and_read.sql | db | 375 lines | asserts 5 journey phrase(s)
+F-server-220 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 4 journey phrase(s)
+F-server-220 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 4 journey phrase(s)
+F-server-220 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-server-220 | supabase/tests/0080_gym_page.sql | db | 269 lines | asserts 4 journey phrase(s)
+F-server-220 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | imports the code
+F-server-220 | apps/dashboard/test/crm/retiredAiPack.test.ts | unit | 118 lines | imports the code
+F-server-220 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-server-220 | deploy/hq/english.test.mjs | unit | 351 lines | imports the code
+F-server-220 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-221 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 5 journey phrase(s)
+F-server-221 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 3 journey phrase(s)
+F-server-221 | apps/dashboard/test/crm/retiredAiPack.test.ts | unit | 118 lines | imports the code
+F-server-221 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-server-221 | deploy/hq/english.test.mjs | unit | 351 lines | imports the code
+F-server-221 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-221 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-221 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-server-221 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 2 journey phrase(s)
+F-server-221 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 2 journey phrase(s)
+F-server-221 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-server-221 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 2 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-server-214-01 | type 1 | HQ admin | HQ signed in, any page
+  s1 see: Title "Log"
+  s1 see: Line "Everything done in HQ, and every look at a gym. Nobody can change or delete a line. Kept 2 years."
+  s1 see: Columns When, What, Gym, Reason, Who, From, newest first
+  s1 not: A line missing for an action just done
+  s1 not: A member name or mobile in any line
+  s2 see: The next 100 older lines added under the first ones
+  s2 see: "That is everything." when fewer than 100 came back
+  s2 not: The same lines shown twice
+  s2 not: "Show older" offered when there is nothing older
+J-F-server-214-02 | type 2 | HQ admin | All gyms list, one gym opened
+  s1 see: Card "What HQ did here" with date, action and reason of each HQ action on this gym
+  s1 see: "Nothing yet." for a gym HQ never touched
+  s1 not: Another gym's actions in this card
+J-F-server-214-03 | type 3 | HQ admin | Not signed in to HQ, or a broken address
+  s1 see: The HQ sign-in, no log lines
+  s1 not: Any audit line shown to someone not signed in to HQ
+  s2 see: The newest 100 lines, as if no "before" was given
+  s2 not: An error page
+  s2 not: An empty list that hides the log
+J-F-server-214-04 | type 6 | HQ admin | A gym open in HQ
+  s1 see: A new top line for the pause, with the gym name, the reason and the HQ email
+  s1 not: The pause saved with no log line
+  s2 see: The same line, unchanged, plus a line for each look at the log
+  s2 not: A line edited or removed
+  s2 not: The look at the log itself left unrecorded
+J-F-server-214-05 | type 12 | HQ admin | HQ Log page
+  s1 see: HQ email and network address of each action, only inside HQ
+  s1 not: A member name, mobile or record in any line
+  s1 not: The log open to anyone without the HQ sign-in
+  s2 see: HQ actions on their own gym with the reason (pause, plan, trial, sign-out, new code)
+  s2 not: Another gym's actions
+  s2 not: HQ emails or addresses of other gyms
+J-F-server-216-01 | type 1 | HQ admin | A gym sent "Send delete request" from its admin app
+  s1 see: Line "The privacy notice promises a delete within 30 days. Each step is written in the log."
+  s1 see: Card under "New from the admin app" with the request text and a not-checked warning
+  s1 not: The request hidden because it came from a desk login
+  s2 see: The request under "Open (1)": "Asked <date> · day 1 of 30 · 29 days left"
+  s2 not: Two requests written for one admin-app message
+  s3 see: Both steps ticked with their times
+  s3 not: A step ticked with no log line
+  s4 see: "Deleted <gym>. Checked <n> tables: nothing left. Pictures removed: <n>. Now tell the gym it is done."
+  s4 not: Any row of the gym left in a gym table
+  s4 not: Pictures of the gym left in storage while the note says the pictures were removed
+J-F-server-216-02 | type 2 | HQ admin | A member erase asked by phone
+  s1 see: An open card "erase a member: mobile ending 4321"
+  s1 not: A member request saved with no way to find the member
+  s2 see: The request under "Closed" as "done <date>"
+  s2 not: "Delete the gym for ever" offered on a member request
+J-F-server-216-03 | type 3 | HQ admin | An open gym request
+  s1 see: "That is not this gym’s code. Nothing was deleted."
+  s1 not: Any row deleted
+  s1 not: The refusal missing from the log
+  s2 see: "First remind them to download their data and tick “Reminded”."
+  s2 not: The gym deleted before the reminder
+  s3 see: "For this, sign in again first (it must be within the last 15 minutes)."
+  s3 not: The delete done on an old sign-in
+J-F-server-216-04 | type 6 | HQ admin | An open request the gym no longer wants
+  s1 see: The request moves under "Closed (n)" as "cancelled <date>"
+  s1 not: The cancel saved without a reason
+  s2 see: "That request is already closed."
+  s2 not: A closed request reopened or the gym deleted
+J-F-server-216-05 | type 12 | HQ admin | A gym just deleted
+  s1 see: HQ's request, log and access-log times keep the gym id and name; names and devices in the access log are emptied
+  s1 not: Members, payments, check-ins, shop orders or pictures of the gym kept anywhere
+  s1 not: The gym's web page photos left in storage
+J-F-server-216-06 | type 1 | gym owner | Admin app, Settings, Danger zone, gym online
+  s1 see: Sheet "Delete your gym from MettleUp?" with "Download your data first. Then we delete every member, payment, check-in and shop order of this gym from our server within 30 days, and call you on the gym’s number to confirm before we do. This cannot be undone."
+  s1 not: Anything deleted at this tap
+  s2 see: "Request sent. We will call you on the gym’s number before anything is deleted."
+  s2 not: A success line when the message did not reach MettleUp
+  s3 see: The gym is gone within 30 days; the admin app no longer opens it
+  s3 not: A delete with no call to the gym's own number
+J-F-server-216-07 | type 2 | gym owner | The owner asks by email or phone instead of the app
+  s1 see: MettleUp calls the gym's own number back before deleting
+  s1 not: The request lost because it did not come from the app
+J-F-server-216-08 | type 3 | gym owner | A desk person, or a gym not online
+  s1 see: The same sent line; HQ sees it as not checked
+  s1 not: The gym deleted before MettleUp calls the owner on the gym's number
+  s2 see: No "Delete our gym from MettleUp" button
+  s2 not: A request sent for a gym with nothing on the server
+J-F-server-216-09 | type 6 | gym owner | The owner changes their mind
+  s1 see: The request is cancelled; the gym keeps working
+  s1 not: The gym deleted after the owner said no
+  s2 see: A new request is written down
+  s2 not: The old cancelled request blocking a new one
+J-F-server-216-10 | type 12 | gym owner | The owner sent a delete request
+  s1 see: Gym name, gym code, gym phone and who asked, sent only to MettleUp
+  s1 not: The request text seen by members or other gyms
+  s2 see: Every member, payment, check-in and shop order of the gym deleted within 30 days
+  s2 not: Gym records or photos still kept after 30 days
+J-F-server-216-11 | type 1 | member | A member wants their details erased from the gym's records
+  s1 see: MettleUp writes it down as "Erase one member"
+  s1 not: The ask forgotten
+  s2 see: The member's details gone from the gym's register; receipts stay as the law keeps them
+  s2 not: The member still findable by name or mobile in the gym's register
+J-F-server-216-12 | type 3 | member | The erase request written down with gaps
+  s1 see: "Fill in every box."
+  s1 not: A member request saved that nobody can act on
+  s2 see: "First call the gym’s own number and tick “Called”."
+  s2 not: The request closed with the member not erased
+J-F-server-216-13 | type 6 | member | The member's whole gym is deleted
+  s1 see: The member keeps every workout and their history on the phone
+  s1 not: The member's own workouts lost because the gym was deleted
+J-F-server-216-14 | type 12 | member | A member erase in progress
+  s1 see: The look is recorded and the gym owner can see it
+  s1 not: HQ seeing member names outside a recorded support window
+J-F-server-206-01 | type 1 | HQ admin | HQ "Feedback", show "Needs reply"
+  s1 see: Hint "Their phone also gets a pop-up: “The MettleUp team replied”." when the phone left a push address
+  s1 not: A reply box on a message that did not come from the help box
+  s2 see: "Sent. Their phone got a pop-up."
+  s2 see: The reply shown under "Your reply"
+  s2 not: The reply saved twice
+  s2 not: The message still counted under "Needs reply"
+J-F-server-206-02 | type 2 | HQ admin | A draft reply in the box
+  s1 see: The rewritten words in the box before sending; nothing sent until "Send reply"
+  s1 not: The draft sent to the person by "Rewrite"
+  s2 see: Label "Send another reply (it shows under the one above, in order)"; "Your reply 1", "Your reply 2"
+  s2 not: The first reply lost
+J-F-server-206-03 | type 3 | HQ admin | A help question open
+  s1 see: "Fill in every box."
+  s1 not: An empty reply saved or a pop-up sent
+  s2 see: "Feedback, leads and AI use are not connected yet."
+  s2 not: A success line
+J-F-server-206-04 | type 6 | HQ admin | A question already answered
+  s1 see: "Sent. They see it the next time they open the app." (the pop-up was used once)
+  s1 not: A second pop-up for the same question
+  s1 not: "Sent. Their phone got a pop-up." when no pop-up went
+J-F-server-206-05 | type 12 | HQ admin | Reply sent
+  s1 see: Only the person who asked sees the reply; the pop-up says only "The MettleUp team replied to your question. Tap to read it."; the log keeps the length, not the words
+  s1 not: The reply words on the lock screen
+  s1 not: The question or reply in the HQ log
+  s1 not: Another question sent to Google by "Rewrite"
+J-F-server-206-06 | type 1 | member | Member asked a question in Help and feedback; the AI could not help
+  s1 see: Title "MettleUp", "The MettleUp team replied to your question. Tap to read it."
+  s1 not: The pop-up before the reply is saved
+  s2 see: Help and feedback opens with the reply under the question
+  s2 not: A blank or other screen opened
+J-F-server-206-07 | type 2 | member | No pop-up (notifications off or no push address)
+  s1 see: A red dot on the round chat button; the reply in Help and feedback
+  s1 not: The reply never shown
+J-F-server-206-08 | type 3 | member | The member sent plain feedback, not a help question
+  s1 see: No reply box in HQ, so no reply and no pop-up
+  s1 not: A pop-up with no reply behind it
+J-F-server-206-09 | type 6 | member | A reply already read
+  s1 see: It shows under the first reply, in order
+  s1 not: A second pop-up
+  s1 not: The first reply replaced without a word in newer apps
+J-F-server-206-10 | type 12 | member | Reply waiting
+  s1 see: Only "The MettleUp team replied to your question. Tap to read it."
+  s1 not: The question or reply words on the lock screen
+  s1 not: The reply shown to the gym or another member
+J-F-server-206-11 | type 1 | gym owner | Owner asked a question in the admin app's help box
+  s1 see: The reply in the admin app's help area next time it is opened
+  s1 not: The reply shown to another gym
+J-F-server-206-12 | type 3 | gym owner | HQ replies before the reply columns exist
+  s1 see: HQ sees "Replies need the database update (waiting for your yes)."; the owner sees no reply
+  s1 not: A half-saved reply shown to the owner
+J-F-server-206-13 | type 6 | gym owner | A reply already read
+  s1 see: The new reply under the first
+  s1 not: The first reply gone without a word
+J-F-server-206-14 | type 12 | gym owner | Reply shown in the admin app
+  s1 see: Only what the gym's own login may see
+  s1 not: Another gym's question or reply
+J-F-server-218-01 | type 1 | HQ admin | A working gym open in HQ
+  s1 see: "Pausing makes the gym read-only: staff can sign in, look and download, but cannot add or change anything. Members keep their app."
+  s1 not: The pause button with no warning
+  s2 see: "The gym is paused."
+  s2 not: The gym's records deleted or hidden
+  s2 not: Members locked out of their own app
+J-F-server-218-02 | type 2 | HQ admin | A new gym shown as "New, not checked yet"
+  s1 see: "Marked as checked."
+  s1 not: The free trial changed by this
+J-F-server-218-03 | type 3 | HQ admin | A gym open in HQ
+  s1 see: "Write a reason (at least a few words)."
+  s1 not: The gym paused with no reason
+  s2 see: "That gym or request is not there any more. The page was refreshed."
+  s2 not: An error with no words
+J-F-server-218-04 | type 6 | HQ admin | A paused gym
+  s1 see: "The gym is working again."
+  s1 see: A log line for the restore
+  s1 not: The gym left read-only
+J-F-server-218-05 | type 12 | HQ admin | A gym just paused
+  s1 see: The pause with its reason
+  s1 not: The reason shown to members or other gyms
+J-F-server-219-01 | type 1 | HQ admin | A gym open in HQ, card "Free trial and plan"
+  s1 see: "Free trial: started <date>, ends <date>."
+  s1 see: "Nothing is locked when the free trial ends: members keep their app and the gym keeps its records."
+  s1 not: A wrong end date
+  s2 see: "Saved: the free trial now ends <date>."
+  s2 not: A trial past 6 months from its start
+J-F-server-219-02 | type 2 | HQ admin | The gym paid
+  s1 see: "Saved: the plan is set."
+  s1 see: "Plan: <plan>"
+  s1 not: A paid-until date saved for lifetime
+J-F-server-219-03 | type 3 | HQ admin | Wrong values
+  s1 see: "Write a reason (at least a few words)."
+  s1 not: A change with no reason
+  s2 see: "That is longer than a free trial can be (6 months from its start). Pick an earlier date."
+  s2 not: The longer trial saved
+  s3 see: "Pick the date the payment covers until." / "That date is too far ahead (3 years at most)."
+  s3 not: The plan saved
+J-F-server-219-04 | type 6 | HQ admin | A gym with a plan
+  s1 see: "Saved: no plan (back on the free trial)."
+  s1 not: The gym's records locked or deleted
+  s2 see: "This free trial is already as long as it can be."
+  s2 not: A pick list that offers a longer date
+J-F-server-219-05 | type 12 | HQ admin | Trial or plan just changed
+  s1 see: The new trial end or plan, and the change with its reason in the MettleUp access list
+  s1 not: The reason or plan shown to members
+J-F-server-215-01 | type 1 | HQ admin | HQ "All gyms"
+  s1 see: A file "mettleup-gyms-<India date>.csv" downloads
+  s1 see: "Downloaded <n> gyms (<file name>). It has owners’ names and mobiles: keep it private."
+  s1 not: The file downloaded before the export is written in the log
+  s2 see: Columns Gym name, Gym code, Owner name, Owner mobile, Started, Status, Free trial ends, Plan, Billing, Paid until, Members in the register, Members in the app; Hindi names readable
+  s2 not: A cell run as a formula
+  s2 not: Any member name or mobile
+J-F-server-215-02 | type 2 | HQ admin | The list filtered or with test gyms shown
+  s1 see: Only the gyms the list shows; the log notes the filter and whether test gyms were in
+  s1 not: Gyms hidden by the filter in the file
+J-F-server-215-03 | type 3 | HQ admin | Nothing to export, or the log not reachable
+  s1 see: "No gyms in the list to export."
+  s1 not: An empty file downloaded
+  s2 see: An error; no file
+  s2 not: A file downloaded without a log line
+J-F-server-215-04 | type 6 | HQ admin | One export done
+  s1 see: A second log line and a file of the same name
+  s1 not: The second export left out of the log
+J-F-server-215-05 | type 12 | HQ admin | A file downloaded
+  s1 see: Owner names and mobiles on the laptop only; counts of members, never their names
+  s1 not: Member names, mobiles or payments in the file
+J-F-server-220-01 | type 1 | HQ admin | HQ "All gyms"
+  s1 see: Card "Make a gym"
+  s1 not: "+91 98765 43210" cut before it is cleaned
+  s2 see: "Gym made: <gym>, gym code <code>."
+  s2 see: "The owner’s sign-in code (works once, for 30 minutes):" with the code, "Copy the message"
+  s2 not: Two gyms made by one press
+J-F-server-220-02 | type 2 | HQ admin | HQ "Leads", a new lead
+  s1 see: Card "Make a gym for this lead" with the gym name and mobile filled in
+  s1 not: Another lead's details filled in
+  s2 see: The code card; the lead moves to "demo" with the note "Gym made in HQ: <code>"
+  s2 not: A lead already past "called" moved back to "demo"
+J-F-server-220-03 | type 3 | HQ admin | Wrong input
+  s1 see: "Type a 10-digit mobile number."
+  s1 not: A gym made with a bad mobile
+  s2 see: "Fill in every box."
+  s2 not: A gym with no name
+J-F-server-220-04 | type 6 | HQ admin | A gym just made
+  s1 see: A clear word that this gym exists already
+  s1 not: A second gym with the same owner made with no warning
+  s2 see: The new gym, active
+  s2 not: The new gym missing from the list
+J-F-server-220-05 | type 12 | HQ admin | The code card
+  s1 see: "Send it on WhatsApp. It is not kept anywhere: copy it now."
+  s1 see: The log keeps only the last 4 digits of the owner's mobile
+  s1 not: The code readable later in HQ or in the log
+  s1 not: The full mobile in the log
+J-F-server-220-06 | type 1 | prospect | A gym that left a demo request on the landing page
+  s1 see: "MettleUp: your sign-in code for <gym> is <code>. Open the MettleUp admin app, type your mobile number and this code. It works once, for 30 minutes."
+  s1 not: Another gym's name in the message
+  s2 see: The new gym's admin app, signed in as owner
+  s2 not: A sign-in to a gym of another owner
+J-F-server-220-07 | type 2 | prospect | A gym owner who called MettleUp without a lead
+  s1 see: The same WhatsApp and sign-in
+  s1 not: A lead needed before a gym can be made
+J-F-server-220-08 | type 3 | prospect | The code is late or used
+  s1 see: A refusal; ask MettleUp for a new code
+  s1 not: A sign-in with an old code
+J-F-server-220-09 | type 6 | prospect | The lead after the gym is made
+  s1 see: Status "demo"
+  s1 not: The lead still "new", so it is called again
+J-F-server-220-10 | type 12 | prospect | The prospect's mobile
+  s1 see: Stored as the owner's sign-in number; used to call back about MettleUp
+  s1 not: The mobile shown to members
+J-F-server-221-01 | type 1 | HQ admin | A gym open in HQ, card "Owner lost their sign-in", HQ signed in within 15 minutes
+  s1 see: "Call the gym’s own number first. ... The owner’s old PIN stops working; they set a new one after signing in with this code."
+  s1 not: A code made without the tick
+  s2 see: The code card "For <owner>, <mobile>." with "Copy the message"
+  s2 not: The owner's old PIN still working
+J-F-server-221-02 | type 2 | HQ admin | Card "Sign the gym out everywhere"
+  s1 see: "<n> devices signed out."
+  s1 see: " This gym also has an old browser key; tell Claude." when one exists
+  s1 not: A device of another gym signed out
+J-F-server-221-03 | type 3 | HQ admin | Wrong order or limits
+  s1 see: "Tick that you called the gym’s own number first."
+  s1 not: A code made
+  s2 see: "For this, sign in again first (it must be within the last 15 minutes)."
+  s2 not: A code made
+  s3 see: "Too many codes for this gym in the last hour. Wait a little."
+  s3 not: A sixth code
+J-F-server-221-04 | type 6 | HQ admin | Sign-out with no reason, then with one
+  s1 see: "Write a reason (at least a few words)."
+  s1 not: Devices signed out with no reason
+  s2 see: "<n> devices signed out."; a second press says "0 devices signed out."
+  s2 not: A count that includes devices already signed out
+J-F-server-221-05 | type 12 | HQ admin | A code just made
+  s1 see: The code is not kept: "It is not kept anywhere: copy it now."; the log keeps the last 4 mobile digits and the reason
+  s1 not: The code in the log
+  s1 not: The code sent to anyone but the owner on the gym's number
+J-F-server-221-06 | type 1 | gym owner | The owner lost their PIN or phone and called MettleUp
+  s1 see: A WhatsApp with the new sign-in code
+  s1 not: A code sent to the number that called in, if it is not the gym's
+  s2 see: The admin app open; the new PIN works
+  s2 not: The old PIN still working
+J-F-server-221-07 | type 2 | gym owner | The owner reports a lost phone
+  s1 see: The lost phone's admin app goes to the sign-in screen on its next call
+  s1 not: The lost phone still able to change records
+  s2 see: The admin app open
+  s2 not: The owner locked out for good
+J-F-server-221-08 | type 3 | gym owner | Old sign-in after a reset
+  s1 see: A refusal
+  s1 not: The old PIN accepted
+  s2 see: A refusal
+  s2 not: The code accepted
+J-F-server-221-09 | type 6 | gym owner | Signed in on a laptop when HQ signs the gym out
+  s1 see: The sign-in screen
+  s1 not: The save done on an ended session
+  s1 not: Typed work lost without a word
+J-F-server-221-10 | type 12 | gym owner | A reset done
+  s1 see: "reset owner sign-in" or "sign out" with the reason
+  s1 not: The code shown there
+J-F-server-221-11 | type 1 | staff | A desk person signed in when HQ signs the gym out everywhere
+  s1 see: The sign-in screen
+  s1 not: The save done on an ended session
+  s2 see: The admin app open
+  s2 not: The desk person locked out with no way back
+J-F-server-221-12 | type 3 | staff | A desk person asks MettleUp for a code
+  s1 see: HQ can only make a code for the owner; the owner adds desk people
+  s1 not: A desk person given an owner code
+J-F-server-221-13 | type 6 | staff | After sign-out everywhere
+  s1 see: The sign-in screen once; after signing in, normal work
+  s1 not: A loop back to sign-in after a good sign-in
+J-F-server-221-14 | type 12 | staff | After a sign-out
+  s1 see: No HQ reason shown to desk people
+  s1 not: The owner's new code shown to a desk person

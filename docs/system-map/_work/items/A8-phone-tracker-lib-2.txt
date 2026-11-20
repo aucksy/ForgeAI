@@ -1,0 +1,767 @@
+# A8-phone-tracker-lib-2: coverage of 87 Tier 1 journeys (17 features, from A5-phone-tracker-lib-3, A5-phone-tracker-lib-4). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-phone-1108 | apps/mobile/test/tracker/compareTiles.test.ts | unit | 24 lines | imports the code, file name
+F-phone-1108 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1108 | apps/mobile/qa/phase3-d.yaml | maestro | 763 lines | asserts 2 journey phrase(s)
+F-phone-1108 | apps/mobile/test/tracker/engine/badges.test.ts | unit | 205 lines | asserts 2 journey phrase(s)
+F-phone-1108 | apps/mobile/test/tracker/healthReadF55.test.ts | unit | 393 lines | asserts 2 journey phrase(s)
+F-phone-1108 | apps/mobile/test/tracker/phase3Share.test.ts | unit | 227 lines | asserts 2 journey phrase(s)
+F-phone-1108 | apps/dashboard/e2e/demo-showcase-uat.spec.mjs | e2e | 181 lines | asserts 1 journey phrase(s)
+F-phone-1108 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 1 journey phrase(s)
+F-phone-1108 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 1 journey phrase(s)
+F-phone-1108 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-phone-1108 | apps/dashboard/test/crm/expenses.test.ts | unit | 128 lines | asserts 1 journey phrase(s)
+F-phone-1108 | apps/dashboard/test/crm/whatsapp.test.ts | unit | 192 lines | asserts 1 journey phrase(s)
+F-phone-1122 | apps/mobile/qa/uat-v.yaml | maestro | 265 lines | asserts 3 journey phrase(s)
+F-phone-1122 | apps/mobile/test/tracker/r145ResumeScroll.test.ts | unit | 30 lines | imports the code
+F-phone-1122 | apps/mobile/qa/p2-pause-a.yaml | maestro | 64 lines | asserts 2 journey phrase(s)
+F-phone-1122 | apps/mobile/qa/phase6-link.yaml | maestro | 30 lines | asserts 2 journey phrase(s)
+F-phone-1122 | apps/mobile/qa/phase7-bigtext.yaml | maestro | 326 lines | asserts 2 journey phrase(s)
+F-phone-1122 | apps/mobile/qa/redesign-r.yaml | maestro | 1131 lines | asserts 2 journey phrase(s)
+F-phone-1122 | apps/mobile/qa/sub-workout-fresh.yaml | maestro | 51 lines | asserts 2 journey phrase(s)
+F-phone-1122 | apps/mobile/qa/uat-f3.yaml | maestro | 87 lines | asserts 2 journey phrase(s)
+F-phone-1122 | apps/mobile/qa/uat-f4.yaml | maestro | 93 lines | asserts 2 journey phrase(s)
+F-phone-1122 | apps/mobile/qa/uat-rel-r358-c-real.yaml | maestro | 80 lines | asserts 2 journey phrase(s)
+F-phone-1122 | apps/mobile/qa/v0261-h1d.yaml | maestro | 121 lines | asserts 2 journey phrase(s)
+F-phone-1122 | apps/mobile/qa/v0371-h3a.yaml | maestro | 48 lines | asserts 2 journey phrase(s)
+F-phone-1123 | apps/mobile/test/tracker/rpeTick.test.ts | unit | 43 lines | imports the code, file name
+F-phone-1123 | apps/mobile/test/tracker/batch2Screens.test.ts | unit | 184 lines | imports the code
+F-phone-1123 | apps/mobile/test/tracker/releaseReviewFixes.test.ts | unit | 70 lines | imports the code
+F-phone-1123 | apps/mobile/test/tracker/workoutPhase1.test.ts | unit | 271 lines | imports the code
+F-phone-1124 | apps/mobile/test/tracker/lib/selectAllOnTap.test.ts | unit | 101 lines | imports the code, file name
+F-phone-1118 | apps/mobile/test/tracker/r454OneGreenRule.test.ts | unit | 148 lines | asserts 4 journey phrase(s)
+F-phone-1118 | apps/mobile/test/tracker/r454RepFloor.test.ts | unit | 533 lines | asserts 4 journey phrase(s)
+F-phone-1118 | apps/mobile/test/tracker/t76UnitTotals.test.ts | unit | 113 lines | asserts 4 journey phrase(s)
+F-phone-1118 | apps/dashboard/test/crm/pt.test.ts | unit | 231 lines | asserts 3 journey phrase(s)
+F-phone-1118 | apps/mobile/qa/uat-rel-3-goals.yaml | maestro | 112 lines | asserts 3 journey phrase(s)
+F-phone-1118 | apps/mobile/qa/uat-rel-4-workout.yaml | maestro | 223 lines | asserts 3 journey phrase(s)
+F-phone-1118 | apps/mobile/test/tracker/r498GreenLine.test.ts | unit | 132 lines | asserts 3 journey phrase(s)
+F-phone-1118 | apps/mobile/test/tracker/r146ReachedNotBeaten.test.ts | unit | 49 lines | asserts 2 journey phrase(s)
+F-phone-1118 | apps/mobile/test/tracker/r350SimpleRule.test.ts | unit | 252 lines | asserts 2 journey phrase(s)
+F-phone-1118 | apps/mobile/test/tracker/r576TargetBox.test.ts | unit | 417 lines | asserts 2 journey phrase(s)
+F-phone-1118 | supabase/tests/0035_trainer_measurements_diet.sql | db | 227 lines | asserts 2 journey phrase(s)
+F-phone-1118 | supabase/tests/0043_member_photos.sql | db | 135 lines | asserts 2 journey phrase(s)
+F-phone-1125 | apps/mobile/qa/real-workout-w3.yaml | maestro | 282 lines | asserts 2 journey phrase(s)
+F-phone-1125 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-phone-1125 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-phone-1125 | apps/mobile/test/tracker/engine/readiness.test.ts | unit | 133 lines | asserts 1 journey phrase(s)
+F-phone-1125 | apps/mobile/test/tracker/phase2PacketE.test.ts | unit | 288 lines | asserts 1 journey phrase(s)
+F-phone-1125 | apps/mobile/test/tracker/phase4RoutinesPure.test.ts | unit | 164 lines | asserts 1 journey phrase(s)
+F-phone-1126 | apps/mobile/test/tracker/lib/todayGoal.test.ts | unit | 130 lines | imports the code, file name, asserts 5 journey phrase(s)
+F-phone-1126 | apps/mobile/test/tracker/f199ProgressInProfile.test.ts | unit | 267 lines | imports the code, asserts 2 journey phrase(s)
+F-phone-1126 | apps/mobile/test/tracker/r499NextGoal.test.ts | unit | 329 lines | imports the code, asserts 2 journey phrase(s)
+F-phone-1126 | apps/mobile/test/tracker/r454OneGreenRule.test.ts | unit | 148 lines | asserts 4 journey phrase(s)
+F-phone-1126 | apps/mobile/test/tracker/r454RepFloor.test.ts | unit | 533 lines | asserts 4 journey phrase(s)
+F-phone-1126 | apps/mobile/test/tracker/t76UnitTotals.test.ts | unit | 113 lines | asserts 4 journey phrase(s)
+F-phone-1126 | apps/dashboard/test/crm/pt.test.ts | unit | 231 lines | asserts 3 journey phrase(s)
+F-phone-1126 | apps/mobile/test/tracker/r498GreenLine.test.ts | unit | 132 lines | asserts 3 journey phrase(s)
+F-phone-1126 | apps/mobile/qa/uat-rel-3-goals.yaml | maestro | 112 lines | asserts 2 journey phrase(s)
+F-phone-1126 | apps/mobile/qa/uat-rel-4-workout.yaml | maestro | 223 lines | asserts 2 journey phrase(s)
+F-phone-1126 | apps/mobile/test/tracker/r146ReachedNotBeaten.test.ts | unit | 49 lines | asserts 2 journey phrase(s)
+F-phone-1126 | apps/mobile/test/tracker/r350SimpleRule.test.ts | unit | 252 lines | asserts 2 journey phrase(s)
+F-phone-1113 | apps/mobile/test/tracker/upNext.test.ts | unit | 199 lines | imports the code, file name, asserts 5 journey phrase(s)
+F-phone-1113 | apps/mobile/test/tracker/freshEyes5Nov.test.ts | unit | 36 lines | imports the code, asserts 4 journey phrase(s)
+F-phone-1113 | apps/mobile/test/tracker/todayPlan.test.ts | unit | 173 lines | imports the code, asserts 3 journey phrase(s)
+F-phone-1113 | apps/mobile/qa/phase7-bigtext.yaml | maestro | 326 lines | asserts 3 journey phrase(s)
+F-phone-1113 | apps/mobile/qa/uat-v.yaml | maestro | 265 lines | asserts 3 journey phrase(s)
+F-phone-1113 | apps/mobile/qa/v0280-j.yaml | maestro | 427 lines | asserts 3 journey phrase(s)
+F-phone-1113 | apps/mobile/test/db/upNextReal.test.ts | unit | 180 lines | file name, asserts 1 journey phrase(s)
+F-phone-1113 | apps/mobile/test/tracker/homeStart.test.ts | unit | 124 lines | asserts 3 journey phrase(s)
+F-phone-1113 | apps/mobile/test/tracker/phase2PacketE.test.ts | unit | 288 lines | asserts 3 journey phrase(s)
+F-phone-1113 | apps/mobile/test/tracker/routineRebuild.test.ts | unit | 261 lines | imports the code
+F-phone-1113 | apps/mobile/test/tracker/v0281.test.ts | unit | 194 lines | imports the code
+F-phone-1113 | apps/mobile/qa/audit3-n.yaml | maestro | 301 lines | asserts 2 journey phrase(s)
+F-phone-1127 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-1127 | apps/dashboard/test/crm/r448.test.ts | unit | 76 lines | asserts 5 journey phrase(s)
+F-phone-1127 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 4 journey phrase(s)
+F-phone-1127 | apps/dashboard/test/crm/machines/pretendMachine.test.ts | unit | 216 lines | asserts 3 journey phrase(s)
+F-phone-1127 | apps/dashboard/e2e/gymdata.spec.mjs | e2e | 52 lines | asserts 2 journey phrase(s)
+F-phone-1127 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-phone-1127 | apps/dashboard/test/crm/machines/adms.test.ts | unit | 141 lines | asserts 2 journey phrase(s)
+F-phone-1127 | apps/mobile/qa/audit3-n.yaml | maestro | 301 lines | asserts 2 journey phrase(s)
+F-phone-1127 | apps/mobile/qa/sub-uat-r576-routine.yaml | maestro | 59 lines | asserts 2 journey phrase(s)
+F-phone-1127 | apps/mobile/qa/uat-h.yaml | maestro | 430 lines | asserts 2 journey phrase(s)
+F-phone-1127 | apps/mobile/qa/uat-r.yaml | maestro | 368 lines | asserts 2 journey phrase(s)
+F-phone-1127 | apps/mobile/qa/uat-rel-1-seed.yaml | maestro | 237 lines | asserts 2 journey phrase(s)
+F-phone-1128 | apps/mobile/test/tracker/workoutCompare.test.ts | unit | 125 lines | imports the code, file name, asserts 3 journey phrase(s)
+F-phone-1128 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 6 journey phrase(s)
+F-phone-1128 | supabase/tests/0043_member_photos.sql | db | 135 lines | asserts 5 journey phrase(s)
+F-phone-1128 | apps/mobile/test/tracker/r454OneGreenRule.test.ts | unit | 148 lines | asserts 4 journey phrase(s)
+F-phone-1128 | apps/mobile/test/tracker/r454RepFloor.test.ts | unit | 533 lines | asserts 4 journey phrase(s)
+F-phone-1128 | apps/mobile/test/tracker/t76UnitTotals.test.ts | unit | 113 lines | asserts 4 journey phrase(s)
+F-phone-1128 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-phone-1128 | supabase/tests/0045_report_requests.sql | db | 238 lines | asserts 4 journey phrase(s)
+F-phone-1128 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-phone-1128 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-phone-1128 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-phone-1128 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-phone-1112 | apps/mobile/test/tracker/workoutTabR4.test.ts | unit | 280 lines | imports the code, file name, asserts 9 journey phrase(s)
+F-phone-1112 | apps/dashboard/test/crm/r448.test.ts | unit | 76 lines | asserts 5 journey phrase(s)
+F-phone-1112 | apps/mobile/test/tracker/muscleTipsRoutines.test.ts | unit | 525 lines | asserts 5 journey phrase(s)
+F-phone-1112 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-phone-1112 | apps/mobile/test/onboarding/welcomeStart.test.ts | unit | 55 lines | asserts 4 journey phrase(s)
+F-phone-1112 | apps/mobile/test/tracker/switcherLine.test.ts | unit | 38 lines | asserts 4 journey phrase(s)
+F-phone-1112 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-phone-1112 | supabase/tests/0045_report_requests.sql | db | 238 lines | asserts 4 journey phrase(s)
+F-phone-1112 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-phone-1112 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-phone-1112 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-phone-1112 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-phone-1129 | apps/mobile/test/tracker/todayPlan.test.ts | unit | 173 lines | imports the code, asserts 3 journey phrase(s)
+F-phone-1129 | apps/mobile/test/tracker/historyExport.test.ts | unit | 414 lines | asserts 2 journey phrase(s)
+F-phone-1129 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | asserts 2 journey phrase(s)
+F-phone-1129 | apps/dashboard/e2e/whatsnew.spec.mjs | e2e | 122 lines | asserts 1 journey phrase(s)
+F-phone-1129 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-phone-1129 | apps/dashboard/test/crm/crashReport.test.ts | unit | 52 lines | asserts 1 journey phrase(s)
+F-phone-1129 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-phone-1129 | apps/dashboard/test/crm/moveStart.test.ts | unit | 131 lines | asserts 1 journey phrase(s)
+F-phone-1129 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-phone-1129 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-phone-1129 | apps/mobile/test/cloud/cloudCopy.test.ts | unit | 548 lines | asserts 1 journey phrase(s)
+F-phone-1129 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-phone-1134 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-1134 | apps/mobile/test/tracker/statisticsAudit.test.ts | unit | 90 lines | asserts 4 journey phrase(s)
+F-phone-1134 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 3 journey phrase(s)
+F-phone-1134 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-1134 | apps/mobile/test/tracker/f146Share.test.ts | unit | 204 lines | imports the code
+F-phone-1134 | apps/mobile/test/tracker/previews.test.ts | unit | 264 lines | imports the code
+F-phone-1134 | supabase/tests/0098_alerts_done_and_read.sql | db | 375 lines | asserts 3 journey phrase(s)
+F-phone-1134 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 2 journey phrase(s)
+F-phone-1134 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 2 journey phrase(s)
+F-phone-1134 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-phone-1134 | apps/dashboard/test/crm/ownerNumbers.test.ts | unit | 316 lines | asserts 2 journey phrase(s)
+F-phone-1134 | apps/mobile/qa/phase3-d.yaml | maestro | 763 lines | asserts 2 journey phrase(s)
+F-phone-1131 | apps/mobile/test/tracker/f146Share.test.ts | unit | 204 lines | imports the code, asserts 3 journey phrase(s)
+F-phone-1131 | apps/mobile/test/tracker/shareFrame.test.ts | unit | 238 lines | imports the code, file name
+F-phone-1131 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-phone-1131 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-phone-1131 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-phone-1131 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-phone-1131 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-phone-1131 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-phone-1131 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-phone-1131 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 3 journey phrase(s)
+F-phone-1131 | apps/mobile/qa/uat-rel-f146-share-gym.yaml | maestro | 354 lines | asserts 3 journey phrase(s)
+F-phone-1131 | apps/mobile/test/tracker/previews.test.ts | unit | 264 lines | imports the code
+F-phone-1132 | apps/mobile/test/tracker/f146Share.test.ts | unit | 204 lines | imports the code, asserts 4 journey phrase(s)
+F-phone-1132 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-phone-1132 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 5 journey phrase(s)
+F-phone-1132 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 5 journey phrase(s)
+F-phone-1132 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-phone-1132 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 4 journey phrase(s)
+F-phone-1132 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 4 journey phrase(s)
+F-phone-1132 | apps/mobile/qa/invite-e.yaml | maestro | 81 lines | asserts 4 journey phrase(s)
+F-phone-1132 | apps/mobile/qa/sub-uat-f194-choose.yaml | maestro | 31 lines | asserts 4 journey phrase(s)
+F-phone-1132 | apps/mobile/test/onboarding/welcomeIntro.test.ts | unit | 355 lines | asserts 4 journey phrase(s)
+F-phone-1132 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-phone-1132 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-phone-1133 | apps/mobile/test/tracker/phase3Share.test.ts | unit | 227 lines | imports the code, asserts 2 journey phrase(s)
+F-phone-1133 | apps/mobile/test/tracker/f146Share.test.ts | unit | 204 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1133 | apps/mobile/test/tracker/previews.test.ts | unit | 264 lines | imports the code
+F-phone-1133 | apps/mobile/test/tracker/shareFrame.test.ts | unit | 238 lines | imports the code
+F-phone-1133 | apps/mobile/test/tracker/unitsTrackerText.test.ts | unit | 140 lines | imports the code
+F-phone-1133 | apps/mobile/test/tracker/v0251.test.ts | unit | 377 lines | imports the code
+F-phone-1133 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 2 journey phrase(s)
+F-phone-1133 | apps/mobile/qa/phase3-d.yaml | maestro | 763 lines | asserts 2 journey phrase(s)
+F-phone-1133 | apps/mobile/test/lib/memberWords.test.ts | unit | 278 lines | asserts 2 journey phrase(s)
+F-phone-1133 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-phone-1133 | apps/mobile/test/tracker/engine/badges.test.ts | unit | 205 lines | asserts 2 journey phrase(s)
+F-phone-1133 | apps/mobile/test/tracker/healthReadF55.test.ts | unit | 393 lines | asserts 2 journey phrase(s)
+F-phone-1130 | apps/mobile/test/tracker/phase3Share.test.ts | unit | 227 lines | imports the code, asserts 4 journey phrase(s)
+F-phone-1130 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-phone-1130 | apps/mobile/test/tracker/r147KgHero.test.ts | unit | 137 lines | imports the code, asserts 3 journey phrase(s)
+F-phone-1130 | apps/mobile/test/tracker/finishFlow.test.ts | unit | 268 lines | asserts 5 journey phrase(s)
+F-phone-1130 | apps/mobile/test/tracker/auditPhase5Body.test.ts | unit | 469 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1130 | apps/mobile/test/tracker/f146Share.test.ts | unit | 204 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1130 | apps/mobile/test/tracker/phase3PhoneReview.test.ts | unit | 357 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1130 | apps/mobile/test/tracker/v0251.test.ts | unit | 377 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1130 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/BrandColourTest.kt | watch | 84 lines | file name, asserts 1 journey phrase(s)
+F-phone-1130 | apps/mobile/qa/brand-welcome.yaml | maestro | 149 lines | file name, asserts 1 journey phrase(s)
+F-phone-1130 | apps/mobile/qa/store-b.yaml | maestro | 134 lines | asserts 3 journey phrase(s)
+F-phone-1130 | apps/mobile/qa/uat-rel-r358-b-switch.yaml | maestro | 71 lines | asserts 3 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-phone-1108-01 | type 1 | member | Profile tab, 'Your progress' block; the member trained in September and October 2026; today is 24 October 2026
+  s1 see: Rows Charts, Exercises, Records, Body
+  s1 see: A row 'September 2026' with 'Monthly report' under it
+  s1 see: A row '2026 so far' with 'Year in review' under it
+  s1 not: October shown as a finished month
+  s1 not: A report row for a month with no workouts
+  s2 see: The month page: '<n> workouts' and 'September 2026'
+  s2 see: Section 'Against August' with three cards: Workouts, Kg lifted, Sets, each with its change
+  s2 not: The three numbers in different sizes
+  s2 not: A number such as '2,28,288' broken over two lines
+  s2 not: A second report page opened by a fast second tap
+J-F-phone-1108-02 | type 2 | member | Profile tab in January 2027; the member trained in December 2026 and January 2027
+  s1 see: 'December 2026' (Monthly report)
+  s1 see: '2027 so far' (Year in review)
+  s1 see: '2026 in review' (Year in review)
+  s1 not: Only one year row in January
+  s1 not: January 2027 shown as finished
+  s2 see: The year page for 2026
+  s2 not: The 2027 page opening instead
+  s2 not: An empty year page for a year with workouts
+J-F-phone-1108-03 | type 3 | member | Profile tab of a member with no workouts at all
+  s1 see: Charts, Exercises, Records and Body rows
+  s1 see: The line 'Your monthly report and year in review show here after your first workout.'
+  s1 not: A report row that opens an empty report
+  s1 not: A spinner that never ends
+J-F-phone-1108-04 | type 6 | member | A new member who first trained this month (October 2026)
+  s1 see: A row 'October 2026 so far' (Monthly report)
+  s1 not: 'October 2026' without 'so far' while the month is still running
+  s2 see: The month page with '<n> workouts' and 'October so far'
+  s2 see: No 'Against September' cards (the month is not finished)
+  s2 not: Against cards comparing a half month with a full one
+  s3 see: The row now reads 'October 2026' (finished)
+  s3 not: The row still saying 'so far'
+  s3 not: November shown with no workouts
+J-F-phone-1122-01 | type 1 | member | A workout open: exercise 1 all ticked, exercise 2 with one unticked set, exercise 3 untouched
+  s1 see: Up next card 'Workout in progress' with 'Resume workout'
+  s1 not: The open workout lost
+  s2 see: The workout screen scrolled so exercise 2 is in view
+  s2 not: The screen opening at the top of the list
+  s2 not: Exercise 3 brought into view instead
+J-F-phone-1122-02 | type 2 | member | Same open workout; the member is on another tab
+  s1 see: The workout screen with exercise 2 in view
+  s1 not: The list at the top
+  s1 not: A second workout screen stacked
+J-F-phone-1122-03 | type 2 | member | Same open workout; the phone is locked
+  s1 see: The workout screen with exercise 2 in view
+  s1 not: The app opening on the Workout tab instead
+  s1 not: The list at the top
+J-F-phone-1122-04 | type 3 | member | A workout just started: exercise 1 has unticked sets
+  s1 see: The workout screen at the top, exercise 1 in view
+  s1 not: A jump down the list
+  s2 see: The workout screen at the top
+  s2 not: A jump to the last card
+  s2 not: An error
+J-F-phone-1122-05 | type 6 | member | A workout where exercises 1 to 3 are all ticked
+  s1 see: Exercise 3 with one unticked set
+  s1 not: The untick lost on leaving
+  s2 see: Exercise 3 in view
+  s2 not: The top of the list
+  s2 not: Exercise 1 in view
+J-F-phone-1123-01 | type 1 | member | 'Track RPE' on; Bench Press set 1 has 60 kg and 8 reps typed, not ticked
+  s1 see: Sheet 'How hard was it? (RPE)'
+  s1 see: Rows 10 down to 6, each with words such as '2 more reps left' for 8
+  s1 not: The set type choices mixed into the sheet
+  s1 not: The set ticked before a value is picked
+  s2 see: The sheet slides away, then the set's tick turns green with a short pop
+  s2 see: The rest timer starts
+  s2 see: The RPE cell shows 8 in its colour
+  s2 not: The tick done while the sheet still covers it
+  s2 not: A second tap on the tick needed to start the rest
+  s2 not: The typed 60 kg x 8 changed
+J-F-phone-1123-02 | type 2 | member | 'Track RPE' on; set 2 is already ticked
+  s1 see: The sheet closes; the cell shows 9 ('1 more rep left')
+  s1 see: The set stays ticked
+  s1 not: The set unticked
+  s1 not: A second rest timer started
+  s2 see: The cell is empty again; the set stays ticked
+  s2 not: 'Clear RPE' shown on a set with no RPE
+  s2 not: The set unticked
+J-F-phone-1123-03 | type 3 | member | 'Track RPE' on; a new exercise, set 1 has no weight and no grey hint
+  s1 see: The sheet closes; the RPE is kept
+  s1 see: The row says what is missing and puts the cursor in the weight box
+  s1 not: The set ticked with an empty weight
+  s1 not: The sheet closing with nothing said
+J-F-phone-1123-04 | type 6 | member | 'Track RPE' on; set 3 has numbers typed, not ticked
+  s1 see: The set ticked once and stays ticked
+  s1 not: The set unticked by the late automatic tick
+  s1 not: Two rest timers
+  s2 see: The tick shown without its pop again
+  s2 not: The pop played again on a set ticked long ago
+J-F-phone-1124-01 | type 1 | member | Open workout; set 1 weight box shows 13
+  s1 see: The keyboard opens with '13' selected
+  s1 not: The cursor placed after '1'
+  s2 see: '18' is selected at once
+  s2 not: The cursor left where the finger landed
+  s3 see: The box shows 8
+  s3 not: '188' or '818'
+  s3 not: The first digit swallowed
+J-F-phone-1124-02 | type 2 | member | Open workout; the weight box has the cursor and shows 13; the member closed the keyboard with Back
+  s1 see: The keyboard opens with '13' selected
+  s1 not: The cursor at the end of 13
+  s2 see: The box shows 8
+  s2 not: 183 saved
+J-F-phone-1124-03 | type 3 | member | Open workout; an empty reps box with the keyboard open
+  s1 see: The cursor in the empty box
+  s1 not: An error
+  s1 not: The app closing
+  s2 see: The box shows 100
+  s2 not: '00' (a digit swallowed by a late select)
+J-F-phone-1124-04 | type 6 | member | Open workout; weight box of set 2 shows 40
+  s1 see: '42' selected in the weight box
+  s1 not: '40' shown again
+  s1 not: The cursor in the middle of 42
+J-F-phone-1118-01 | type 1 | member | Settings target choice 'Ask me'; Bench Press stuck at 45 kg for 3 workouts; a new workout with Bench Press, nothing ticked
+  s1 see: 'Stuck at 45 kg for 3 workouts. A lighter weight with more reps builds about the same muscle. Try 40 kg this time instead of 45 kg?'
+  s1 see: Buttons 'Try 40 kg' and 'Stay at 45 kg'
+  s1 not: The weight already lowered before an answer
+  s1 not: The words 'volume', 'PR' or 'session'
+  s2 see: The card closes; the open sets hint 40 kg and their rep goals
+  s2 see: One line saying why the target is lower
+  s2 not: The 45 kg plan kept after Try
+  s2 not: No reason given for the lower weight
+J-F-phone-1118-02 | type 2 | member | Same stuck Bench Press, nothing ticked
+  s1 see: The card closes; the target stays 45 kg
+  s1 not: The weight lowered anyway
+  s1 not: The card back on the next workout
+J-F-phone-1118-03 | type 2 | member | 'Ask me'; dumbbell press counted each, stuck at 20 kg each
+  s1 see: 'Try <lighter> kg each this time instead of 20 kg each?' and buttons with 'each'
+  s1 not: 'each' missing from one of the two buttons
+J-F-phone-1118-04 | type 3 | member | 'Ask me'; Bench Press stuck; the member ticks set 1 before answering
+  s1 see: The step-back card is gone
+  s1 not: The card still asking after a set is done
+J-F-phone-1118-05 | type 6 | member | 'Ask me'; the member tapped 'Try 40 kg' this morning
+  s1 see: Bench Press target still 40 kg; no card
+  s1 not: The card asking again
+  s1 not: The target back to 45 kg
+  s2 see: The answer applies as the rules say; after 'Stay' the card stays hidden until 4 more stuck workouts
+  s2 not: The card on every workout after Stay
+J-F-phone-1125-01 | type 1 | member | Open workout with Bench Press and Row, no superset yet
+  s1 see: Sheet 'Superset', 'Exercises done back to back, resting after the round.'
+  s1 see: Row 'Superset with Row'
+  s1 not: A choice that makes a superset of one exercise
+  s2 see: Both cards show the badge 'Superset A'
+  s2 not: Only one card with the badge
+  s3 see: The summary shows 'Superset A' on both exercises
+  s3 not: The group lost on saving
+J-F-phone-1125-02 | type 2 | member | A saved workout with Superset A and Superset B
+  s1 see: Badges 'Superset A' and 'Superset B' on their exercises
+  s1 not: Numbers 1 and 2 in place of letters
+  s2 see: 'superset A' tags in the text
+  s2 not: The tag missing
+J-F-phone-1125-03 | type 3 | member | Open workout with only one exercise
+  s1 see: 'Add another exercise to the workout to make a superset with it.'
+  s1 not: An empty sheet
+  s1 not: A lone 'Superset A' badge
+J-F-phone-1125-04 | type 6 | member | Open workout where Bench Press and Row are 'Superset A'
+  s1 see: Neither card shows a badge any more
+  s1 not: Bench Press left with a lone 'Superset A' badge
+J-F-phone-1126-01 | type 1 | member | Profile tab, chart chip 'Kg lifted'; Up next is Push A, done before
+  s1 see: 'Next: Push A. 3,780 kg to lift. 1,840 kg more than previous (1,940 kg).'
+  s1 not: A number and its 'kg' split over two lines
+  s1 not: The words 'volume', 'session', 'today' or 'last time'
+  s1 not: A goal compared with a different set of exercises
+  s2 see: The Workout tab
+  s2 not: Two Workout screens opened by a fast double tap
+J-F-phone-1126-02 | type 2 | member | Profile tab, chart chip 'Duration'; Push A done before
+  s1 see: 'Next: Push A. It took 52 min the previous time.'
+  s1 not: A kilo figure under the Duration chip
+J-F-phone-1126-03 | type 3 | member | Profile tab, chip 'Kg lifted'; Up next is a routine never done before
+  s1 see: '... kg to lift. Your first time doing this workout.' or, with no kilos yet, 'Finish this workout once to see your goal here.'
+  s1 not: '0 kg to lift'
+  s1 not: A comparison with nothing
+  s2 see: No Next line
+  s2 not: A total reps goal
+  s3 see: No Next line
+  s3 not: 'Next: your workout' with no workout
+J-F-phone-1126-04 | type 6 | member | Push A done before; the plan now has a new exercise and 2 more sets; then an easy week starts
+  s1 see: The goal line, then 'Not counted: 1 exercise that is new to you or uses a different weight each set. The plan has 2 more sets than previous.'
+  s1 not: The new exercise counted on one side only
+  s2 see: 'This is an easy week, so the goal is lower.'
+  s2 not: A lower goal with no reason
+J-F-phone-1113-01 | type 1 | member | Workout tab; routines in 'Push Pull Legs'; Up next is Pull 1; weekly goal 4 set; the member trained on 2 days this week
+  s1 see: Card 'Up next: Pull 1'
+  s1 see: 'from Push Pull Legs · 6 exercises · Lat Pulldown first'
+  s1 see: 'This week: 2 of 4 workouts'
+  s1 see: Buttons 'Start' and 'See exercises'
+  s1 not: A routine other than the one Start starts
+  s1 not: 'from From Hevy' for an imported folder
+  s1 not: Two workouts done on one day counted as one workout
+  s2 see: The workout screen with Pull 1's exercises
+  s2 not: Two workout screens after a double tap
+  s2 not: A different routine started
+J-F-phone-1113-02 | type 2 | member | Workout tab with a workout open (Pull 1, 3 sets done)
+  s1 see: 'Workout in progress'
+  s1 see: 'Pull 1 · 3 sets done · 1 exercise'
+  s1 see: Button 'Resume workout' and red 'Discard workout'
+  s1 not: The Up next routine shown while a workout is open
+  s2 see: The open workout
+  s2 not: A new empty workout
+J-F-phone-1113-03 | type 2 | member | Workout tab; Up next is Pull 1
+  s1 see: The routine preview with every exercise, then Start
+  s1 not: The workout starting at once
+  s1 not: Two previews after a double tap
+J-F-phone-1113-04 | type 2 | member | Workout tab after Push 1 was done today
+  s1 see: 'Done: Push 1' with a tick
+  s1 see: 'Next: Pull 1'
+  s1 see: Buttons 'Start Pull 1' and 'See exercises'
+  s1 not: 'Up next: Push 1' again the same day
+J-F-phone-1113-05 | type 2 | member | A brand-new app: no workout ever, no demo, nothing open
+  s1 see: Card 'Coming from Hevy or Strong?' with 'From Hevy' and 'From Strong'
+  s1 not: The offer shown on demo data or once a workout exists
+  s2 see: The import screen for Hevy
+  s2 not: The Strong import opening
+J-F-phone-1113-06 | type 3 | member | Workout tab with a workout open
+  s1 see: Pop-up 'Discard workout?' 'Your in-progress workout will be deleted.' with 'Discard' and 'Keep'
+  s1 not: The workout deleted without asking
+  s2 see: The card still 'Workout in progress'
+  s2 not: The workout gone after Keep
+  s3 see: The shared words and 'Open your routines'
+  s3 not: A Start button for an empty routine
+J-F-phone-1113-07 | type 6 | member | The member is editing a saved workout and left the edit open
+  s1 see: 'Editing a workout'
+  s1 see: 'You have unsaved changes to a saved workout.'
+  s1 see: 'Resume editing' and red 'Discard changes'
+  s1 not: 'Workout in progress' for an edit
+  s2 see: Pop-up 'Discard changes?' 'Your edits will be thrown away. The saved workout stays as it was.'
+  s2 see: Afterwards the saved workout as it was, and the Up next card
+  s2 not: The saved workout deleted
+  s2 not: The edits saved
+J-F-phone-1127-01 | type 1 | member | Profile, a saved workout 'Push 1' opened on its page; no workout open
+  s1 see: 'Save as routine', 'Repeat workout', 'Edit workout', 'Delete workout'
+  s1 not: A different list than the Profile card's menu
+  s2 see: The workout screen with Push 1's exercises
+  s2 not: A draft workout overwritten without asking
+  s2 not: Two workout screens
+J-F-phone-1127-02 | type 2 | member | Profile, Workouts feed; a card's menu
+  s1 see: 'Share as a picture', 'Share as text', 'Save as routine', 'Repeat workout', 'Edit workout', 'Delete workout'
+  s1 not: Old sets from an earlier open used after an edit
+  s2 see: Sheet 'Where should the routine go?'
+  s2 see: Then 'Saved as a routine' 'It is in My routines. Your plan has not changed.' with 'Open routine' and 'Done'
+  s2 not: The routine saved into the followed plan without saying so
+J-F-phone-1127-03 | type 2 | member | Saved workout page; no workout open
+  s1 see: The workout opens for editing; or 'Can't edit this one' with the reason when it cannot be shown faithfully
+  s1 not: Sets merged away silently on save
+J-F-phone-1127-04 | type 3 | member | A workout is already open; the member taps 'Repeat workout' on another saved workout
+  s1 see: Pop-up 'A workout is already open' with Resume, or discard it and start this one
+  s1 not: The open workout replaced without asking
+  s2 see: 'Could not delete this workout. It is still here. Please try again.'
+  s2 not: A success for a delete that failed
+  s2 not: 'failed' for a delete that worked
+J-F-phone-1127-05 | type 6 | member | Profile feed with workout 'Legs 1'
+  s1 see: Pop-up 'Delete this workout?' 'This removes the workout and its sets.' with 'Delete'
+  s1 not: Deleted without asking
+  s2 see: 'Legs 1' gone from the feed
+  s2 not: The card still in the feed
+  s2 not: Records still counting it after they catch up
+  s3 see: 'Couldn’t open this workout. It may have been deleted.'
+  s3 not: Repeat or Edit of a deleted workout
+J-F-phone-1127-06 | type 12 | member | A signed-in member with a cloud copy of workouts
+  s1 see: The workout gone on the phone
+  s1 not: The workout still kept in the cloud copy
+  s2 see: The deleted workout not there
+  s2 not: The deleted workout back after a restore
+J-F-phone-1128-01 | type 1 | member | A member finishes a routine they have done before (same exercises, some heavier, one with fewer sets)
+  s1 see: The comparison line against the last time of this routine
+  s1 see: 'See each exercise (n)' under the line, with a chevron on the right
+  s1 not: No comparison when a previous workout of the routine exists
+  s1 not: The words 'volume', 'PR' or 'session'
+  s2 see: 'Hide exercises'; the chevron turns
+  s2 see: A 'Mostly <exercise>: 2 sets fewer.' line when the total moved 5% or more
+  s2 see: One row per exercise with '+8%' in green or '-20%' in grey, and a reason such as '2.5 kg heavier' or '2 sets fewer'
+  s2 not: A down row shown in red
+  s2 not: A reason that points the other way from the row (a down row saying 'heavier')
+  s2 not: Warm-up sets counted in the kg
+  s3 see: The list closes; 'See each exercise (n)' again
+  s3 not: The list stuck open
+  s3 not: The rows changed by opening and closing
+J-F-phone-1128-02 | type 2 | member | Finish screen with a comparison line that opens the compared workout
+  s1 see: The saved workout the line compares with, its day and exercises
+  s1 not: A different workout from the one the line names
+  s1 not: The finish screen's own workout lost or unsaved
+  s2 see: The finish screen again, with the same line
+  s2 not: A second copy of today's workout
+  s2 not: The comparison worked out again against another workout
+J-F-phone-1128-03 | type 2 | member | Another kind: a body-weight workout (pull-ups, plank) logged with no kilos, done before
+  s1 see: Rows measured by reps (or by sets for a hold) such as '+20%' with '3 more reps'
+  s1 see: 'same' when the reps are within 5%
+  s1 not: Every body-weight row reading 'same' because the kg are zero
+  s1 not: A 'kg heavier' reason for a move with no weight
+J-F-phone-1128-04 | type 3 | member | First time this routine is done, or the Counting of an exercise changed since last time
+  s1 see: No 'See each exercise' list; today's total is the number to beat next time
+  s1 not: A comparison against an unrelated workout
+  s1 not: A list of rows all marked 'new' with no line above them
+  s2 see: No 'more than last time' or 'Lighter than last time' comparison at all
+  s2 not: '+340 kg more than last time' for the same work
+  s2 not: A sleep or protein hint under a comparison that was not fair
+J-F-phone-1128-05 | type 3 | member | A planned easy week workout
+  s1 see: The note without the per-exercise list
+  s1 not: Every exercise shown as down with a reason like '2 sets fewer' as if it were a failure
+J-F-phone-1128-06 | type 6 | member | Today adds a new exercise and leaves out one from last time
+  s1 see: The new exercise tagged 'new' with 'Not in that workout'
+  s1 see: The left-out exercise at the end, tagged 'not done' with 'Not done this time'
+  s1 not: The left-out exercise missing from the list
+  s1 not: A percent shown for a new or a left-out exercise
+  s2 see: Both rows with a percent again
+  s2 not: The exercise still marked 'new' or 'not done'
+J-F-phone-1112-01 | type 1 | member | Workout tab, a member with two folders, one followed ('Push Pull Legs'), and routines in each
+  s1 see: 'Routines' heading with 'New routine'
+  s1 see: 'Push Pull Legs (6)' open, tagged 'Following'; the other folder shut
+  s1 see: Each routine card: name, a grey line of its exercises, the 'Next' tag on the routine Up next names, 'Start routine'
+  s1 not: Two routines tagged 'Next'
+  s1 not: A 'Following' tag on a folder the member does not follow
+  s1 not: The followed folder anywhere but first
+  s2 see: It opens and shows its routine cards
+  s2 not: Another folder shutting by itself
+  s2 not: The open or shut choice forgotten after leaving the tab
+  s3 see: The routine one place lower at once
+  s3 not: The routine jumping to another folder
+  s3 not: The new order lost after reopening the app
+  s4 see: A question which folder it goes in, with 'My routines' offered first
+  s4 not: The new routine put into the followed plan without asking
+J-F-phone-1112-02 | type 2 | member | Another way in: a folder's ... menu
+  s1 see: 'Rename folder', 'Add new routine', 'Share folder', 'Move folder up' / 'Move folder down' where it can move, 'Easy weeks...' with On or Off, 'Follow this plan', 'Delete folder' in red
+  s1 not: 'Move folder up' on a folder that is already at the top
+  s1 not: 'Share folder' on an empty folder
+  s2 see: The folder opens and moves first, tagged 'Following'
+  s2 not: Two folders tagged 'Following'
+  s2 not: Up next still naming a routine of the old plan
+J-F-phone-1112-03 | type 2 | member | Another way in: a routine's 'Move to folder...'
+  s1 see: A list of every other folder
+  s1 not: The folder it is already in offered as a target
+  s2 see: The routine in the picked folder; both folder counts change
+  s2 not: The routine shown in both folders
+  s2 not: The count in '(n)' not matching the cards
+J-F-phone-1112-04 | type 3 | member | A move that is not possible, an empty routine, and a save that fails
+  s1 see: No 'Move up' row
+  s1 not: 'Move up' shown and doing nothing
+  s2 see: No 'Move folder up' or 'Move folder down'
+  s2 not: The followed folder moved below another
+  s3 see: The routine's edit page opens instead of a workout
+  s3 not: An empty workout started
+  s4 see: 'Could not save the new order'
+  s4 not: The new order shown as saved when it was not
+J-F-phone-1112-05 | type 6 | member | Delete a folder, delete a routine, and stop following
+  s1 see: 'Delete 'Push Pull Legs' folder?' with 'It'll be gone forever. Its 6 routines go too. Your workout history stays. You stop following this plan.'
+  s1 see: 'Delete' in red
+  s1 not: The folder deleted before 'Delete' is tapped
+  s1 not: Workout history deleted with the folder
+  s2 see: 'Delete '<name>'?' with 'The routine and its exercise list go. Your workout history stays.'
+  s2 see: The card gone
+  s2 not: Past workouts of that routine gone from History
+  s3 see: 'Stop following '<name>'?' with 'Up next then comes from the routine you did last...'
+  s3 see: The 'Following' tag gone
+  s3 not: Up next still reading the old plan's rotation
+J-F-phone-1129-01 | type 1 | member | A saved workout named 'Push 1' with the note 'Felt strong, shoulder ok'
+  s1 see: Page title 'Push 1'
+  s1 see: Under the Time / Kg lifted / Sets / Records row, the note 'Felt strong, shoulder ok' exactly as typed
+  s1 not: The note cut, reworded or missing
+  s1 not: The day type shown in place of the saved name
+  s2 see: The phone share sheet with text starting 'Here is my workout from MettleUp...', 'Workout: Push 1', and a 'Workout notes' part with the note
+  s2 not: The note missing from the text
+  s2 not: Blank lines or odd line breaks inside the note
+J-F-phone-1129-02 | type 2 | member | Another kind: an imported Hevy workout whose note starts with its own title
+  s1 see: Title 'Leg Day'
+  s1 see: Note 'Squats felt heavy' only
+  s1 not: 'Leg Day' shown twice (title and first note line)
+  s1 not: The rest of the note lost
+J-F-phone-1129-03 | type 2 | member | Another way in: the finish screen's 'Text' share button, and the History list menu
+  s1 see: The share sheet with the same workout text and notes
+  s1 not: Different notes from the workout page
+  s1 not: The share sheet opening twice
+  s2 see: The same text for that workout
+  s2 not: Another workout's notes in the text
+J-F-phone-1129-04 | type 3 | member | A workout with no note, or a note of only spaces and blank lines
+  s1 see: No note line at all under the stats
+  s1 not: An empty grey box or a blank gap
+  s1 not: The word 'null' or 'undefined'
+  s2 see: No 'Workout notes' part in the text
+  s2 not: A 'Workout notes' heading with nothing under it
+J-F-phone-1129-05 | type 6 | member | The member edits the workout's name or note after saving
+  s1 see: The new note
+  s1 not: The old note still shown
+  s1 not: The new note's first line hidden because it matches the name by chance without saying so
+  s2 see: No note line
+  s2 not: The old note coming back
+J-F-phone-1129-06 | type 12 | member | Who sees the notes: the member shares the workout as text
+  s1 see: The text holds the notes the member wrote, sent only where the member picks
+  s1 not: Notes sent to the gym, a trainer or MettleUp by this action
+  s1 not: Body weight in the text
+J-F-phone-1134-01 | type 1 | member | Progress photos screen with photos from 6 Aug 2026 and 29 Oct 2026
+  s1 see: Sheet 'Share before and after' with 'Put two of your progress photos side by side in one picture.'
+  s1 see: 'Before' tile with the first photo ever, 'After' tile with the latest
+  s1 see: 'The older photo is Before. Tap Before or After to pick another photo.'
+  s1 see: A grey placeholder until the copies are ready, and 'Share picture' greyed
+  s1 not: 'Share picture' tappable before the photos are ready
+  s1 not: The newer photo on the Before side
+  s2 see: Title '12 weeks apart', 'Before and after', the two photos tagged 'Before' and 'After', '6 Aug 2026' and '29 Oct 2026' under them
+  s2 not: Body weight, a measurement or any number about the body on the picture
+  s2 not: A day without its year
+  s3 see: The phone share sheet with one PNG
+  s3 not: A picture with a photo left blank
+  s3 not: The photos sent anywhere before Share is tapped
+J-F-phone-1134-02 | type 2 | member | Another way in: pick a different pair
+  s1 see: 'Tap a photo for After' and a row of every progress photo with its day
+  s1 not: Photos of another member
+  s1 not: The row missing photos
+  s2 see: The pair put back in time order: the older is Before, the title says how far apart they are
+  s2 not: 'Before' on the newer photo
+  s2 not: A minus gap such as '-3 weeks apart'
+J-F-phone-1134-03 | type 3 | member | Fewer than two photos, or a photo that cannot be opened
+  s1 see: No before/after sheet with an empty slot
+  s1 not: A sheet with one photo twice
+  s1 not: A crash
+  s2 see: 'Couldn't open one of these photos. Pick another one.'
+  s2 see: 'Share picture' stays greyed
+  s2 not: A picture shared with a blank box
+  s2 not: An endless placeholder with no words
+  s3 see: 'Could not make the picture' with 'Something went wrong. Please try again.'
+  s3 not: A PNG saved without the photo
+  s3 not: The button left spinning
+J-F-phone-1134-04 | type 6 | member | Pick the photo that is already in the other place, then close and reopen
+  s1 see: The two swap places
+  s1 not: The same photo in both places
+  s1 not: 'Before' on the newer photo while the screen says 'The older photo is Before.'
+  s2 see: The first photo and the latest again
+  s2 not: The share-sized copies still kept on the phone after closing
+J-F-phone-1134-05 | type 12 | member | Who can see the photos
+  s1 see: Nothing sent anywhere; the copies are deleted on close
+  s1 not: A photo uploaded to MettleUp, the gym or a trainer
+  s1 not: A copy left behind of a photo later deleted
+  s2 see: Only the one PNG goes to the app the member picks
+  s2 not: Body weight or measurements on the picture
+J-F-phone-1131-01 | type 1 | member | Finish screen of a saved workout, share sheet never opened before
+  s1 see: Sheet 'Share as a picture' with 'Send it to WhatsApp, Instagram or any app.'
+  s1 see: The preview, 'Size' with 'Post' picked, 'Background' with 'Dark' picked
+  s1 not: A preview that does not match the picked choices
+  s1 not: 'Story' or 'See-through' picked on a first open
+  s2 see: The same card in the middle of a taller 9:16 frame, not stretched; a faint glow at the bottom
+  s2 not: The card stretched or cut
+  s2 not: A new number on the picture that the Post did not have
+  s3 see: The card with no background, white words with a soft shadow, the photos and the MettleUp mark in their own colours
+  s3 see: The note 'It has no background, so you can place it on a photo or an Instagram story.'
+  s3 not: Dark words left on a see-through picture
+  s3 not: A dark box left behind the numbers
+  s4 see: The share sheet with a PNG named like 'mettleup-workout-<day>-story-clear'
+  s4 not: A PNG with a black background for See-through
+  s4 not: A Post-sized PNG when Story was picked
+J-F-phone-1131-02 | type 2 | member | Another kind: the same choices on the before/after picture and the monthly report picture
+  s1 see: The photos keep their own look; only the words turn white
+  s1 not: A progress photo made see-through or dimmed
+  s2 see: 'Story' and 'See-through' already picked (the choice is remembered)
+  s2 not: The choice forgotten between pictures
+J-F-phone-1131-03 | type 3 | member | No app can take the picture, or the drawing fails
+  s1 see: 'Sharing is not available' with 'This phone has no app to share the picture with.'
+  s1 not: A silent tap
+  s1 not: The button left spinning
+  s2 see: 'Could not make the picture' with 'Something went wrong. Please try again.'
+  s2 not: The button spinning forever
+  s2 not: Two share sheets after trying again
+J-F-phone-1131-04 | type 6 | member | Switch the choices on, then back, then reopen
+  s1 see: 'Story' and 'See-through' still picked
+  s1 not: The choices back to Post and Dark by themselves
+  s2 see: The picture exactly as before any change
+  s2 not: A glow or shadow left from the other choices
+J-F-phone-1131-05 | type 12 | member | What the picture can give away
+  s1 see: The same words and numbers in every variant
+  s1 see: 'The picture never shows your name, your gym or your body weight.' (or the gym version)
+  s1 not: A number added in one variant that could be divided back to body weight
+  s1 not: The member's name on the picture
+J-F-phone-1132-01 | type 1 | member | A member of a Pro gym with a logo opens a share picture
+  s1 see: The gym's logo (its own shape, not stretched) and the gym's name at the top left, in place of the MettleUp name
+  s1 see: 'Logged with' and the MettleUp mark small at the foot
+  s1 see: 'Your gym' with 'Show' picked
+  s1 not: Another gym's logo or name
+  s1 not: A logo stretched or squeezed
+  s1 not: The gym's name running into the words on the right
+  s2 see: 'The picture shows your gym. It never shows your name or body weight.'
+  s2 not: The member's name or body weight on the picture
+  s3 see: The PNG with the logo drawn in it
+  s3 not: A PNG with an empty space where the logo was
+J-F-phone-1132-02 | type 2 | member | Another kind: a Starter gym (no logo), or a logo that will not load
+  s1 see: The gym's name alone at the top left; 'Logged with' MettleUp at the foot
+  s1 not: A broken-picture mark
+  s1 not: An empty gap for a logo
+  s2 see: 'Your gym's logo did not load' with 'The picture now shows your gym's name only. Tap Share picture again.'
+  s2 see: The preview now shows the name only
+  s2 not: A PNG saved without the logo and no word
+  s2 not: The same failure on every tap
+J-F-phone-1132-03 | type 3 | member | A member not in a gym
+  s1 see: No 'Your gym' choice; the MettleUp name at the top, as before
+  s1 see: 'The picture never shows your name, your gym or your body weight.'
+  s1 not: An empty gym name or a stand-in like 'Your gym' on the picture
+  s1 not: A 'Your gym' choice with nothing behind it
+J-F-phone-1132-04 | type 6 | member | Hide the gym, then show it again
+  s1 see: The picture without the gym, the MettleUp name at the top
+  s1 see: 'The picture never shows your name, your gym or your body weight.'
+  s1 not: The gym still on the saved PNG
+  s2 see: 'Hide' still picked
+  s2 not: The gym back by itself
+  s3 see: The gym's logo and name again
+  s3 not: The logo missing after it was shown before
+J-F-phone-1132-05 | type 12 | member | Who can see the gym on the picture
+  s1 see: Only the gym's name and logo (the gym's public brand) added; no number added
+  s1 not: The member's name, phone number or body weight
+  s1 not: A number added with the gym that could be divided back to body weight
+J-F-phone-1133-01 | type 1 | member | Monthly report of a finished month with 12 workouts on 10 days, all timed
+  s1 see: Picture with 'Monthly report', the month's title, '12 workouts · 10 days trained'
+  s1 see: Four boxes: TIME, KG LIFTED, SETS, LIFTS UP
+  s1 see: The month as a calendar starting Monday, trained days filled in orange
+  s1 see: 'MOST TRAINED' with up to 3 exercises and their sets
+  s1 not: '1 days' or '1 workouts'
+  s1 not: Body weight counted in KG LIFTED
+  s1 not: A trained day missing from the calendar or a day in the wrong weekday column
+  s2 see: The share sheet with the PNG
+  s2 not: A picture of another month
+J-F-phone-1133-02 | type 2 | member | Another kind: the year in review
+  s1 see: 'Year in review', '<year> in review' (or '<year> so far'), the workouts and days line
+  s1 see: HOURS (or TIME under an hour), KG LIFTED, SETS, LIFTS UP
+  s1 see: 12 month bars J to D, the busiest one brighter
+  s1 see: 'HIGHLIGHTS': 'Favourite: <exercise>', 'Busiest month · 9 workouts', 'Longest streak', 'Biggest gain'
+  s1 not: 'HOURS 0' for a short year
+  s1 not: A busiest month with no count beside it
+J-F-phone-1133-03 | type 2 | member | Another way in: the Profile tab's share of this month
+  s1 see: '<Month> so far' on the picture for a month not yet over
+  s1 not: The month called complete before it ends
+  s1 not: A second sheet opening on a fast second tap
+J-F-phone-1133-04 | type 3 | member | A month with no workouts, or a month of only pull-ups, or logged by chat with no length
+  s1 see: No share icon on the report
+  s1 not: A picture of zeros
+  s1 not: 'KG LIFTED 0'
+  s2 see: 'REPS' in the second box, or 'DISTANCE' for runs, or 'WORKOUTS'
+  s2 not: 'KG LIFTED 0'
+  s3 see: '12 workouts, 10 timed · ...'
+  s3 not: The time read as the whole month's
+  s4 see: 'Could not make the picture' with 'Something went wrong. Please try again.'
+  s4 not: An endless spinner
+J-F-phone-1133-05 | type 6 | member | A month in progress, then finished
+  s1 see: '<Month> so far'
+  s1 not: The full month title
+  s2 see: The full month title; the last day filled; counts up by one
+  s2 not: 'so far' still on a finished month
+  s2 not: The last day's workout missing
+J-F-phone-1133-06 | type 12 | member | What the report picture can give away
+  s1 see: Only workouts, days, time, kg or reps, sets, lifts up, exercise names
+  s1 see: The line 'The picture never shows your name, your gym or your body weight.' (or the gym version)
+  s1 not: Body weight, measurements or a body weight chart
+  s1 not: A pair of numbers that divide back to body weight
+J-F-phone-1130-01 | type 1 | member | Finish screen of a 'Push Day' workout: 1h 04m, bench and dumbbells, one new record, heavier than last time
+  s1 see: Sheet 'Share as a picture'
+  s1 see: Picture: MettleUp name (or the gym) top left, 'Tue, 6 Oct 2026' top right, 'Push Day', 'Workout complete · +45 kg more than previous'
+  s1 see: TIME '1h 04m', KG LIFTED, SETS, RECORDS boxes
+  s1 see: Front and back body drawing with worked muscles lit
+  s1 see: 'NEW RECORD' with the exercise and e.g. 'Heaviest weight 85 kg'
+  s1 see: Up to 4 rows like '3 × Bench Press' with the best set '85 kg × 8', then '+ 2 more exercises'
+  s1 not: The member's name or body weight
+  s1 not: Warm-up sets counted in SETS or the best set
+  s1 not: A number cut in a box (numbers shrink, never cut)
+  s2 see: The phone share sheet with one PNG 'mettleup-workout-<day>'
+  s2 not: A PNG with the body drawing or logo missing
+  s2 not: A second share sheet
+J-F-phone-1130-02 | type 2 | member | Another way in: a saved workout's page or the History list menu
+  s1 see: The same picture for that workout, with its own day
+  s1 not: Today's date on an older workout
+  s1 not: The '+ kg more than previous' line from another workout
+J-F-phone-1130-03 | type 2 | member | Another kind: a body-weight or cardio workout
+  s1 see: 'REPS' in the second box, best sets like '10 reps' or '+10 kg × 6'
+  s1 not: 'KG LIFTED' holding body-weight kilos
+  s1 not: A 'Best workout' kilo record that has body weight in it
+  s2 see: 'DISTANCE' or 'TIME' in the second box; 'MUSCLES WORKED' only when there are muscles
+  s2 not: 'KG LIFTED 0'
+  s2 not: An empty heading with nothing under it
+J-F-phone-1130-04 | type 3 | member | An empty workout, a workout with no length, or a drawing that fails
+  s1 see: '—' in TIME
+  s1 not: '0m' or 'NaN'
+  s2 see: 'Could not make the picture' with 'Something went wrong. Please try again.'
+  s2 not: The button spinning forever
+J-F-phone-1130-05 | type 6 | member | Many records, some printed and some not, and a workout beaten then not beaten
+  s1 see: 'NEW RECORDS', as many blocks as fit, then 'and 3 more'
+  s1 not: RECORDS box and the printed list disagreeing with no 'and N more'
+  s2 see: 'Workout complete' alone
+  s2 not: 'Lighter than previous' or a minus on the picture
+J-F-phone-1130-06 | type 12 | member | What the workout picture can give away
+  s1 see: Only workout facts; 'It never shows your name or body weight.'
+  s1 not: '+155 kg more than previous' that is two pull-ups times the member's body weight, beside 'KG LIFTED' that leaves body weight out
+  s1 not: Any number that divides back to body weight

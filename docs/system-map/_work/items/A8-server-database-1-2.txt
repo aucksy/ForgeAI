@@ -1,0 +1,527 @@
+# A8-server-database-1-2: coverage of 81 Tier 1 journeys (9 features, from A5-server-database-1-2). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-server-318 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | asserts 5 journey phrase(s)
+F-server-318 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-server-318 | apps/mobile/test/tracker/phase2ReviewFixes.test.ts | unit | 287 lines | asserts 2 journey phrase(s)
+F-server-318 | supabase/tests/0015_qr_checkin.sql | db | 198 lines | file name
+F-server-318 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-server-318 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-server-318 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 1 journey phrase(s)
+F-server-318 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-server-318 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 1 journey phrase(s)
+F-server-318 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 1 journey phrase(s)
+F-server-318 | apps/dashboard/e2e/offline.spec.mjs | e2e | 74 lines | asserts 1 journey phrase(s)
+F-server-318 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 1 journey phrase(s)
+F-server-317 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | asserts 3 journey phrase(s)
+F-server-317 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 2 journey phrase(s)
+F-server-317 | apps/mobile/test/store/restoreImpact.test.ts | unit | 24 lines | asserts 2 journey phrase(s)
+F-server-317 | supabase/tests/0017_undo_import.sql | db | 86 lines | file name
+F-server-317 | supabase/tests/0030_plans_and_trials.sql | db | 136 lines | asserts 2 journey phrase(s)
+F-server-317 | supabase/tests/0031_branches.sql | db | 352 lines | asserts 2 journey phrase(s)
+F-server-317 | supabase/tests/0032_member_cloud.sql | db | 217 lines | asserts 2 journey phrase(s)
+F-server-317 | supabase/tests/0036_gym_timings.sql | db | 161 lines | asserts 2 journey phrase(s)
+F-server-317 | supabase/tests/0043_member_photos.sql | db | 135 lines | asserts 2 journey phrase(s)
+F-server-317 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 2 journey phrase(s)
+F-server-317 | supabase/tests/0045_report_requests.sql | db | 238 lines | asserts 2 journey phrase(s)
+F-server-317 | supabase/tests/0053_ask_trainer_and_progress.sql | db | 232 lines | asserts 2 journey phrase(s)
+F-server-303 | supabase/tests/0018_staff_and_owner_rules.sql | db | 307 lines | file name
+F-server-303 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-server-307 | supabase/tests/0018_staff_and_owner_rules.sql | db | 307 lines | file name
+F-server-307 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-server-315 | supabase/tests/0019_staff_discount_and_taker.sql | db | 123 lines | file name
+F-server-315 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 1 journey phrase(s)
+F-server-315 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-server-315 | supabase/tests/0026_hq_access.sql | db | 201 lines | asserts 1 journey phrase(s)
+F-server-306 | apps/dashboard/test/crm/brand.test.ts | unit | 145 lines | imports the code
+F-server-306 | apps/mobile/test/shop/gymBrandContract.test.ts | unit | 106 lines | imports the code
+F-server-306 | supabase/tests/0020_gym_side_retries.sql | db | 146 lines | file name
+F-server-306 | supabase/tests/0025_workout_offer.sql | db | 305 lines | file name
+F-server-306 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-server-306 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-server-306 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-server-306 | apps/dashboard/test/crm/messages.test.ts | unit | 189 lines | asserts 1 journey phrase(s)
+F-server-306 | apps/dashboard/test/crm/navNames.test.ts | unit | 61 lines | asserts 1 journey phrase(s)
+F-server-306 | apps/dashboard/test/crm/ownerOnboarding.test.ts | unit | 115 lines | asserts 1 journey phrase(s)
+F-server-306 | apps/dashboard/test/crm/sheets.test.ts | unit | 122 lines | asserts 1 journey phrase(s)
+F-server-306 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-server-316 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-server-316 | supabase/tests/0021_receipt_rules.sql | db | 245 lines | file name
+F-server-316 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-server-316 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-server-316 | apps/dashboard/e2e/fonts.spec.mjs | e2e | 44 lines | asserts 1 journey phrase(s)
+F-server-316 | apps/dashboard/e2e/gymdata.spec.mjs | e2e | 52 lines | asserts 1 journey phrase(s)
+F-server-316 | apps/dashboard/e2e/hq-webpage-uat.spec.mjs | e2e | 166 lines | asserts 1 journey phrase(s)
+F-server-316 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 1 journey phrase(s)
+F-server-316 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 1 journey phrase(s)
+F-server-316 | apps/dashboard/e2e/r532-uat.spec.mjs | e2e | 143 lines | asserts 1 journey phrase(s)
+F-server-316 | apps/dashboard/e2e/r573-uat.spec.mjs | e2e | 218 lines | asserts 1 journey phrase(s)
+F-server-316 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 1 journey phrase(s)
+F-server-319 | apps/dashboard/e2e/pay-mettleup-uat.spec.mjs | e2e | 210 lines | asserts 4 journey phrase(s)
+F-server-319 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 3 journey phrase(s)
+F-server-319 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 3 journey phrase(s)
+F-server-319 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 3 journey phrase(s)
+F-server-319 | apps/mobile/test/shop/membership.test.ts | unit | 154 lines | asserts 3 journey phrase(s)
+F-server-319 | apps/dashboard/test/crm/auditC7.test.ts | unit | 333 lines | asserts 2 journey phrase(s)
+F-server-319 | apps/dashboard/test/crm/billing.test.ts | unit | 168 lines | asserts 2 journey phrase(s)
+F-server-319 | apps/dashboard/test/crm/passMembers.test.ts | unit | 199 lines | asserts 2 journey phrase(s)
+F-server-319 | apps/mobile/test/onboarding/welcomeHero.test.ts | unit | 53 lines | asserts 2 journey phrase(s)
+F-server-319 | apps/mobile/test/onboarding/welcomeIntro.test.ts | unit | 355 lines | asserts 2 journey phrase(s)
+F-server-319 | apps/mobile/test/shop/autoReminders.test.ts | unit | 395 lines | asserts 2 journey phrase(s)
+F-server-319 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-server-314 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 2 journey phrase(s)
+F-server-314 | supabase/tests/0024_workout_plans.sql | db | 135 lines | file name
+F-server-314 | supabase/tests/0028_hq_breakglass_and_logs.sql | db | 165 lines | file name
+F-server-314 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 1 journey phrase(s)
+F-server-314 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 1 journey phrase(s)
+F-server-314 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-server-318-01 | type 1 | member | Member app joined to Crispy Curves; the desk has already confirmed this phone's mobile number; member is at the gym with a live plan
+  s1 see: Screen 'Check in at Crispy Curves'
+  s1 see: 'Tap Check in when you are at the gym.'
+  s1 not: Another gym's name on the screen
+  s1 not: A number asked for again after the desk confirmed it
+  s2 see: 'You're checked in at 6:42 pm' with the member's first name
+  s2 not: Two visit rows for the same member on the same day
+  s2 not: The visit dated on another day than today in India
+  s3 see: The visit listed with a small 'App' tag after the next pull
+  s3 not: The visit missing from the register
+  s3 not: The visit shown twice
+J-F-server-318-02 | type 2 | member | Member app, Gym tab, desk has confirmed the number
+  s1 see: A scanner opens inside MettleUp
+  s1 not: The phone camera app opened instead with no way back to MettleUp
+  s2 see: 'You're checked in' with the time
+  s2 not: A second visit made because the poster was scanned twice
+J-F-server-318-03 | type 2 | member | Member of a gym with branches; the plan is marked for every branch; member is at another branch of the same business
+  s1 see: 'You're checked in' with the branch's name
+  s1 not: 'You're not a member of this gym in the app.' for a plan that covers every branch
+  s1 not: The visit written to a gym of another business
+  s2 see: A refusal naming the branch; no visit written
+  s2 not: A visit written at the branch
+J-F-server-318-04 | type 3 | member | First check-in: the app has no mobile number for this member yet
+  s1 see: 'Type the mobile number your gym has for you. The app asks only once.'
+  s1 not: A check-in made with no number
+  s2 see: 'That isn't a 10-digit mobile number. Check it and try again.'
+  s2 not: The short number saved
+  s3 see: 'First check-in: go to the front desk and ask them to confirm your mobile number. When they say it is done, tap Check in below. You do this only once.'
+  s3 not: The member's first name or plan shown before the desk confirms
+  s3 not: 'You're checked in' before the desk confirms
+  s4 see: 'The gym doesn't have your mobile number yet. Ask the desk to add ... then scan again.'
+  s4 not: A visit written
+  s5 see: 'Too many numbers were tried today. Check in at the desk, and ask them to check your mobile number.'
+  s5 not: A fourth number checked against the list
+J-F-server-318-05 | type 3 | member | Member joined gym A in the app, scans the poster of an unrelated gym B
+  s1 see: 'You're not a member of gym B in the app.'
+  s1 not: A visit written in gym A or gym B
+  s1 not: Gym B's member names shown
+  s2 see: 'Too many tries in a minute. Wait a minute, then scan again.'
+  s2 not: The 11th try reaching the gym's list
+J-F-server-318-06 | type 6 | member | Member already checked in today at the desk
+  s1 see: 'You're checked in at' the time the desk recorded
+  s1 not: A second visit row for today
+  s2 see: 'You're checked in' with the new time; the register shows the visit again with the 'App' tag
+  s2 not: The taken-back visit still hidden after the new scan
+  s3 see: A check-in that says the plan has ended and to see the desk
+  s3 not: A plain 'You're checked in' with no word that the plan ended
+  s3 not: No visit recorded
+J-F-server-318-07 | type 12 | member | Someone types another person's mobile number at check-in
+  s1 see: The desk-check message only, with no name and no plan
+  s1 not: The other member's first name, plan, trainer or measurements shown
+  s1 not: The phone linked to that member without the desk
+  s2 see: The next scan asks for a number again
+  s2 not: The request approved by itself
+  s3 see: 'The gym doesn't have your mobile number yet...' with the typed number
+  s3 not: More than 3 different numbers tried a day by one member
+J-F-server-317-01 | type 1 | owner | Admin app, Members, Import page; a wrong Excel file was imported today into Crispy Curves
+  s1 see: The import listed with its date and an 'Undo this import' button
+  s1 not: Imports of another branch mixed into this list
+  s2 see: The members, plans, memberships and receipts that import made are gone from the lists
+  s2 not: A member typed in by hand removed
+  s2 not: A receipt removed with no line in the receipt history
+  s3 see: Totals lowered by the undone receipts
+  s3 not: Undone receipts still counted as money in
+J-F-server-317-02 | type 2 | owner | Import ended with members saved but not all their plans and payments
+  s1 see: 'Members are saved, but not all their plans and payments. ... Tap “Undo this import” below. Then import the same file again, so every payment comes in only once.'
+  s1 not: A message with no way to take the half import back
+  s2 see: The half import removed
+  s2 not: Records of an earlier good import removed
+  s3 see: That branch's own 'Past imports' list with its undo button
+  s3 not: The undo run against the wrong branch
+J-F-server-317-03 | type 3 | owner | An old or tampered admin app asks the server to delete a member who was typed in by hand
+  s1 see: The save refused (server answer INVALID); the member stays
+  s1 not: The hand-typed member deleted
+  s1 not: The refusal sent again and again
+  s2 see: 'Only an owner can do this.'
+  s2 not: The imported member deleted by the front desk
+J-F-server-317-04 | type 6 | owner | An import was undone
+  s1 see: Members, plans and payments come back once each
+  s1 not: Payments counted twice
+  s1 not: The old undone records shown again beside the new ones
+  s2 see: 'Only an owner can do this.'
+  s2 not: An undone receipt brought back by the front desk
+J-F-server-317-05 | type 12 | owner | An import was undone
+  s1 see: A line for each undone receipt: when, who, 'removed'
+  s1 not: The front desk able to open the history
+  s2 see: unknown: the server keeps the taken-back rows with their data (marked deleted); no screen says so
+  s2 not: Aadhaar or PAN numbers among the kept data
+J-F-server-303-01 | type 1 | owner | Admin app, Shop, a product with no photo
+  s1 see: The photo shown in the product sheet
+  s1 not: A photo over 3 MB sent after shrinking
+  s2 see: The product shows its photo in the shop list
+  s2 not: Another gym's product changed
+  s2 not: The photo saved on a product that was deleted meanwhile without a word
+  s3 see: The product with its photo
+  s3 not: The old drawn picture still shown after a refresh
+J-F-server-303-02 | type 2 | owner | Admin app, Shop, adding a NEW product
+  s1 see: The new product with its photo in one save
+  s1 not: The product saved and the photo lost
+  s2 see: The new photo; every other field unchanged
+  s2 not: Price, stock or options changed by the photo change
+J-F-server-303-03 | type 3 | owner | Admin app, Shop, product sheet
+  s1 see: 'That file isn’t a photo. Pick a JPEG or PNG picture.'
+  s1 not: The file uploaded
+  s2 see: 'That photo is too big to use (over 40 MB). Pick a smaller one.'
+  s2 not: The app freezing
+  s3 see: A wait message for the 51st (server answer BUSY)
+  s3 not: A raw database message
+  s4 see: 'That photo link can’t be used. Upload the photo again from this screen.'
+  s4 not: The outside link saved
+J-F-server-303-04 | type 6 | owner | A product with a photo
+  s1 see: The new photo in the panel and the member app
+  s1 not: The old photo still shown to members
+  s2 see: The product's drawn stand-in picture
+  s2 not: A broken-picture mark
+  s3 see: The product gone from the member app, still in the panel
+  s3 not: The product deleted
+J-F-server-303-05 | type 12 | owner | Owner uploads a product photo
+  s1 see: The photo in the shop
+  s1 not: A photo of a member or a document accepted with no word that shop photos are public
+  s2 see: The photo opens (the shop photo store is public by design)
+  s2 not: Any private gym data reachable from the link
+J-F-server-303-06 | type 1 | staff | Admin app signed in as front desk, Shop
+  s1 see: Products and orders; no photo or edit buttons on products
+  s1 not: An 'add photo' button that fails after the pick
+  s2 see: The order marked collected
+  s2 not: The order list hidden from the front desk
+J-F-server-303-07 | type 3 | staff | An old admin app on a front-desk sign-in still shows the photo button
+  s1 see: 'Only an owner can do this.'
+  s1 not: The photo uploaded or the product changed
+  s1 not: The refusal sent again on every sync
+J-F-server-303-08 | type 6 | staff | The owner changes a product photo while the front desk has Shop open
+  s1 see: The new photo
+  s1 not: The old photo kept until sign-out
+J-F-server-307-01 | type 1 | owner | Admin app, Settings, Branding, no branding yet
+  s1 see: The preview in the chosen colours
+  s1 not: Colours lost before Save
+  s2 see: The logo in the preview, and how it looks as an icon on a member's home screen
+  s2 not: Another gym's logo
+  s3 see: The branding saved
+  s3 not: A raw database message
+  s4 see: The gym's name and colours
+  s4 not: The old MettleUp look after a fresh open
+J-F-server-307-02 | type 2 | owner | Branding page, logo on a plain white box
+  s1 see: Both logos side by side; the box taken off
+  s1 not: The logo cut into
+  s2 see: The suggested colour picked
+  s2 not: A colour that is not a colour code saved
+J-F-server-307-03 | type 3 | owner | Branding page
+  s1 see: 'That logo is over 1 MB. Pick a smaller one.'
+  s1 not: The big file uploaded
+  s2 see: 'That kind of file can’t be used. Pick a PNG or JPEG picture.'
+  s2 not: The file saved
+  s3 see: 'One of the colours isn’t a colour code. Pick it again.'
+  s3 not: The bad colour saved
+  s4 see: 'Only an owner can do this.'
+  s4 not: The branding changed by the front desk
+J-F-server-307-04 | type 6 | owner | Branding saved
+  s1 see: The member app back to the MettleUp look
+  s1 not: A broken-picture mark where the logo was
+  s2 see: Members see the new look on their next open
+  s2 not: Members stuck on the old look
+J-F-server-307-05 | type 12 | owner | Logo uploaded
+  s1 see: The gym's logo at the top next to the gym's name
+  s1 not: The front desk able to change it
+  s2 see: The logo opens (the logo store is public)
+  s2 not: Anything but the logo reachable
+J-F-server-307-06 | type 1 | member | Member app, joining a branded gym
+  s1 see: The app changes to the gym's name and colours
+  s1 not: The MettleUp look kept after joining a branded gym
+  s2 see: The same gym look on launch
+  s2 not: Another gym's look
+J-F-server-307-07 | type 2 | member | First screen of a fresh app install with a gym code
+  s1 see: The gym's look
+  s1 not: The gym's logo missing where it is set
+  s2 see: The gym's logo as the icon
+  s2 not: A blank icon
+J-F-server-307-08 | type 3 | member | Member joins a gym that set no branding
+  s1 see: The MettleUp look with the gym's name
+  s1 not: Blank colours, a broken-picture mark, or white text on white
+J-F-server-307-09 | type 6 | member | Member of a branded gym
+  s1 see: The new colour
+  s1 not: The old colour kept for good
+  s2 see: The MettleUp look again
+  s2 not: The left gym's logo or colours still shown
+J-F-server-315-01 | type 1 | staff | Admin app signed in as front desk, a member with no plan, plan listed at Rs 1,000 with a joining fee
+  s1 see: The plan saved
+  s1 not: A refusal for a 10% discount
+  s2 see: The receipt on the Money list with 'Taken by' and the desk person's name
+  s2 not: Another person's name as the taker
+  s2 not: No taker shown
+J-F-server-315-02 | type 2 | staff | Front desk, a member renewing (already had a plan); a PT pack bought
+  s1 see: The renewal saved
+  s1 not: A refusal for skipping the joining fee on a renewal
+  s2 see: The session marked, then removed
+  s2 not: A refusal to take back today's session
+J-F-server-315-03 | type 3 | staff | Front desk, plan listed at Rs 1,000
+  s1 see: 'The front desk can give at most 10% off. The lowest price is ₹900. Ask the owner for a bigger discount.'
+  s1 not: The plan saved at Rs 850
+  s2 see: 'Only an owner can do this.'
+  s2 not: The plan saved
+  s2 not: The refused save sent again on every sync
+  s3 see: 'Only an owner can do this.'
+  s3 not: The plan, expense or gym details saved
+J-F-server-315-04 | type 3 | staff | Front desk, a saved receipt and an active membership
+  s1 see: 'Only an owner can do this.'
+  s1 not: The receipt cancelled
+  s2 see: 'Only an owner can do this.'
+  s2 not: The membership changed
+  s3 see: 'The front desk can date a payment at most 31 days back. Ask the owner to enter older payments.'
+  s3 not: The payment saved
+J-F-server-315-05 | type 6 | staff | Front desk, a PT pack of 4 sessions with 4 marked
+  s1 see: A refusal
+  s1 not: Five sessions on a 4-session pack
+  s2 see: A refusal
+  s2 not: Yesterday's session removed by the front desk
+  s3 see: A refusal
+  s3 not: A session on a cancelled pack
+J-F-server-315-06 | type 12 | staff | Two desk people share the counter
+  s1 see: 'Taken by' A's name
+  s1 not: B's name or 'Owner' on A's receipt
+  s2 see: Still A's name (the server stamps it)
+  s2 not: B's name kept
+J-F-server-315-07 | type 1 | owner | Admin app signed in as owner
+  s1 see: The plan saved
+  s1 not: The 10% limit applied to the owner
+  s2 see: 'Taken by' the owner's name
+  s2 not: A blank taker when the panel named one
+J-F-server-315-08 | type 2 | owner | Owner, Money list with receipts from several people
+  s1 see: Only that person's receipts
+  s1 not: Receipts with no taker shown as the owner's
+J-F-server-315-09 | type 3 | owner | Owner, a receipt the front desk took
+  s1 see: The original taker kept
+  s1 not: The taker changed after saving
+  s2 see: The record saved as written, with no stamp
+  s2 not: The old key's record shown as taken by the owner
+J-F-server-315-10 | type 6 | owner | Owner, a saved receipt and membership
+  s1 see: The receipt shown as cancelled; the taker unchanged
+  s1 not: The taker removed by the cancel
+  s2 see: The membership cancelled
+  s2 not: A refusal for the owner
+J-F-server-315-11 | type 12 | owner | Owner reviews who took money
+  s1 see: 'Taken by' with the person's name
+  s1 not: A member able to see who took the money
+  s2 see: The same Money list without cancel buttons
+  s2 not: The front desk able to cancel
+J-F-server-306-01 | type 1 | member | Member app, Gym tab, not in a gym; has Crispy Curves' gym code
+  s1 see: The Gym tab with the gym's name
+  s1 not: A second member made for one join
+  s1 not: Another gym joined
+  s2 see: The same gym loaded on launch
+  s2 not: The join lost
+J-F-server-306-02 | type 2 | member | Fresh install; the gym sent the app link and code on WhatsApp
+  s1 see: The gym's name
+  s1 not: The code typed again by hand when it came in the link
+  s2 see: The new name
+  s2 not: An empty name saved
+J-F-server-306-03 | type 3 | member | Member app, join screen
+  s1 see: A plain message that the code is wrong (server answer INVALID_CODE)
+  s1 not: A raw database message
+  s2 see: A plain message to type a name (server answer EMPTY)
+  s2 not: A member with no name
+  s3 see: A wait message (server answer BUSY)
+  s3 not: The join lost with no word
+J-F-server-306-04 | type 6 | member | Member in a gym, on a weak network
+  s1 see: One member on the gym's list
+  s1 not: Two copies of the member
+  s2 see: The app out of the gym
+  s2 not: The old key still working
+  s3 see: A fresh member, the mobile number asked again at check-in
+  s3 not: The old phone number still linked
+J-F-server-306-05 | type 12 | member | Member typed a mobile number at check-in and the desk has not confirmed it yet
+  s1 see: The app out of the gym
+  s1 not: The mobile number kept anywhere in the gym's records
+  s1 not: The gym still seeing a request with the number
+  s2 see: No request from the member who left
+  s2 not: The left member's typed mobile number shown
+J-F-server-306-06 | type 1 | owner | Admin app as owner, a gym with app members
+  s1 see: Each member's name, phone, join date, last seen, orders and money spent
+  s1 not: Members who left still listed
+  s1 not: Members of another gym
+J-F-server-306-07 | type 2 | owner | Admin app, a member's page
+  s1 see: WhatsApp with the app link and the gym code
+  s1 not: Another gym's code
+J-F-server-306-08 | type 3 | owner | Admin app, a gym with no app members
+  s1 see: 'No app members yet'
+  s1 not: A blank list or an error
+J-F-server-306-09 | type 6 | owner | An app member leaves the gym
+  s1 see: The member gone from the list
+  s1 not: The member still counted in who a message goes to
+  s2 see: One row for that member
+  s2 not: Two rows for one member
+J-F-server-306-10 | type 12 | owner | Owner looks at app members
+  s1 see: The number the member gave (not checked by a code)
+  s1 not: A left member's number
+  s2 see: Only members still in the gym
+  s2 not: A left member's typed number
+J-F-server-306-11 | type 1 | staff | Admin app signed in as front desk
+  s1 see: The same list the owner sees, with phone numbers
+  s1 not: Members of another gym
+J-F-server-306-12 | type 3 | staff | Front desk, app members list
+  s1 see: 'Only an owner can do this.'
+  s1 not: The message sent by the front desk
+J-F-server-306-13 | type 6 | staff | An app member leaves
+  s1 see: The member gone
+  s1 not: The left member still shown
+J-F-server-306-14 | type 12 | staff | Front desk sees app members
+  s1 see: Phone numbers and money spent for each app member
+  s1 not: A left member's number
+J-F-server-316-01 | type 1 | owner | Admin app as owner, a member owing Rs 1,000 on a plan
+  s1 see: The receipt with its number on the Money list
+  s1 not: A receipt with no number
+  s1 not: A duplicate number
+  s2 see: No history line yet (nothing changed)
+  s2 not: The front desk able to open it
+J-F-server-316-02 | type 2 | owner | Owner, a receipt that was cancelled earlier
+  s1 see: When, who and what changed, with the old and new values
+  s1 not: History of another gym
+  s2 see: The imported receipt saved
+  s2 not: The import refused as over the due
+J-F-server-316-03 | type 3 | owner | Owner, collect-fee sheet, membership owes Rs 400
+  s1 see: 'That is more than this membership still owes. Reload the page to see what is due.'
+  s1 not: The receipt saved
+  s2 see: 'This receipt number is already used. Reload the page and try again.'
+  s2 not: Two live receipts with one number
+  s3 see: 'Pick the date you got this money. It can’t be in the future.'
+  s3 not: A future receipt
+  s4 see: 'A saved receipt can’t be changed. Cancel it and make a new one.'
+  s4 not: The amount changed
+J-F-server-316-04 | type 6 | owner | Owner, a saved receipt
+  s1 see: 'Write why this receipt is cancelled (at least 3 letters).'
+  s1 not: The receipt cancelled with a 2-letter reason
+  s2 see: The receipt shown as cancelled; one history line
+  s2 not: No history line
+  s3 see: 'A saved receipt can’t be changed. Cancel it and make a new one.'
+  s3 not: The receipt live again
+J-F-server-316-05 | type 12 | owner | Owner reads the receipt history
+  s1 see: Who changed each receipt, by name, and changes made straight in the database as 'Database'
+  s1 not: The front desk or a member able to read it
+J-F-server-316-06 | type 1 | staff | Front desk, a member owing a fee
+  s1 see: The receipt with a number and 'Taken by' the desk person
+  s1 not: A receipt over the due
+J-F-server-316-07 | type 3 | staff | Front desk, collect-fee sheet
+  s1 see: 'The front desk can date a payment at most 31 days back. Ask the owner to enter older payments.'
+  s1 not: The payment saved
+  s2 see: A refusal
+  s2 not: A zero receipt
+J-F-server-316-08 | type 6 | staff | Front desk, a saved receipt
+  s1 see: 'Only an owner can do this.'
+  s1 not: The receipt cancelled
+  s2 see: A refusal
+  s2 not: The receipt changed
+J-F-server-316-09 | type 12 | staff | Front desk tries to read the receipt history
+  s1 see: 'Only an owner can do this.'
+  s1 not: The history shown to the front desk
+J-F-server-319-01 | type 1 | member | Member app, desk confirmed the number, first name matches the gym's list, plan active
+  s1 see: The plan name as the title, the end date and days left, PT sessions used of bought, visits this month
+  s1 not: Any price, payment or due shown
+  s1 not: Another member's plan
+  s2 see: The workout days
+  s2 not: A plan that ended shown as active
+J-F-server-319-02 | type 2 | member | Members of other kinds
+  s1 see: 'FITPASS member'
+  s1 not: 'No plan yet'
+  s2 see: The current plan, and the next one with 'Starts' and its date
+  s2 not: The next plan hidden
+  s3 see: 'Your plan has ended', 'Renew at the desk to keep training.'
+  s3 not: Days left below zero
+J-F-server-319-03 | type 3 | member | Member app, My membership, no match yet
+  s1 see: 'Check in once to link your membership'
+  s1 not: A plan shown
+  s2 see: 'Ask the desk to check your name'
+  s2 not: That person's plan
+  s3 see: 'Your number is shared'
+  s3 not: One of the two plans
+  s4 see: 'Your gym has a different number'
+  s4 not: An old plan
+  s5 see: 'Not available yet'
+  s5 not: An error
+J-F-server-319-04 | type 6 | member | Member with no plan
+  s1 see: 'No plan yet' and 'has no plan for you on record. Ask the desk.'
+  s1 not: A blank card
+  s2 see: The new plan
+  s2 not: The old 'No plan yet'
+  s3 see: The plan gone
+  s3 not: The cancelled plan shown as active
+J-F-server-319-05 | type 12 | member | Someone typed another person's number at check-in
+  s1 see: 'Check in once to link your membership' until the desk confirms
+  s1 not: The other person's plan, dates or trainer
+  s2 see: Only the member's own plan, with no money
+  s2 not: Prices, payments or dues
+J-F-server-314-01 | type 1 | owner | Owner signed in on a laptop and a phone, Crispy Curves
+  s1 see: Both saved
+  s1 not: A record lost on the way
+  s2 see: The new member and plan
+  s2 not: The phone saving its old copy over the laptop's
+J-F-server-314-02 | type 2 | owner | Owner signs in on a new device
+  s1 see: Every member, plan, receipt, check-in, enquiry and expense of the gym
+  s1 not: Records of another gym
+  s1 not: Deleted rows shown
+  s2 see: A line saying who pulled the whole copy, from where
+  s2 not: No line for the whole-copy pull
+J-F-server-314-03 | type 3 | owner | Owner's device saves while another device saved first
+  s1 see: The change kept, put on top of the other device's work after a re-pull
+  s1 not: The other device's change lost
+  s1 not: A raw 'STALE' message
+  s2 see: A refusal
+  s2 not: Part of the batch saved
+J-F-server-314-04 | type 6 | owner | Owner's device, a save whose answer was lost
+  s1 see: The same version back; one copy of each record
+  s1 not: Records saved twice
+  s2 see: The check-in gone on every device after their next pull
+  s2 not: The taken-back check-in still shown elsewhere
+J-F-server-314-05 | type 12 | owner | Owner asks who can see the gym's records
+  s1 see: Only totals, unless the owner opens a support window
+  s1 not: A member's name or number seen by MettleUp without a window
+  s2 see: Every whole-copy pull with the person and place
+  s2 not: Pulls missing
+J-F-server-314-06 | type 1 | staff | Front desk signed in on the desk PC; owner on a phone
+  s1 see: The visit in the register
+  s1 not: The visit lost
+  s2 see: The same visit
+  s2 not: Two visits for one check-in
+J-F-server-314-07 | type 3 | staff | Front desk, an old panel offers to add an expense
+  s1 see: 'Only an owner can do this.'
+  s1 not: The expense saved
+  s1 not: The refused save sent again on every sync
+J-F-server-314-08 | type 6 | staff | Front desk, a check-in made by mistake
+  s1 see: The check-in gone
+  s1 not: A member or receipt deleted by the front desk
+J-F-server-314-09 | type 12 | staff | Front desk signs in on a new device
+  s1 see: The gym's records needed at the desk
+  s1 not: unknown: the whole copy (expenses and every receipt) reaches the desk device; no rule says the desk may not see expenses
+  s2 see: The desk person's whole-copy pull
+  s2 not: The pull missing
+J-F-server-314-10 | type 1 | trainer | Trainer signed in (a front-desk sign-in ticked as trainer)
+  s1 see: The plan saved with the trainer's name as maker
+  s1 not: Another name as maker
+  s2 see: Routines 'From Crispy Curves · <trainer>'
+  s2 not: The plan sent to members not picked
+J-F-server-314-11 | type 3 | trainer | Trainer sign-in
+  s1 see: 'Only an owner can do this.'
+  s1 not: The price changed
+J-F-server-314-12 | type 6 | trainer | Trainer, a workout plan already sent
+  s1 see: The plan hidden from members
+  s1 not: The plan deleted from the gym's records
+  s1 not: Members still seeing it after their next load
+J-F-server-314-13 | type 12 | trainer | Trainer signs in on their phone
+  s1 see: The members and plans needed for training
+  s1 not: unknown: the whole gym copy, with expenses and every receipt, reaches the trainer's phone

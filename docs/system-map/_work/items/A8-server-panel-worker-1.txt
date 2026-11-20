@@ -1,0 +1,519 @@
+# A8-server-panel-worker-1: coverage of 118 Tier 1 journeys (8 features, from A5-server-panel-worker-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-server-100 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code, file name
+F-server-100 | apps/dashboard/e2e/move.spec.mjs | e2e | 141 lines | imports the code
+F-server-100 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 3 journey phrase(s)
+F-server-100 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-100 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-server-100 | deploy/panel/gymPage.test.mjs | unit | 328 lines | imports the code
+F-server-100 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-server-100 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-server-100 | apps/dashboard/test/crm/oneLink.test.ts | unit | 61 lines | asserts 2 journey phrase(s)
+F-server-100 | apps/dashboard/test/crm/selfJoin.test.ts | unit | 174 lines | asserts 2 journey phrase(s)
+F-server-100 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 1 journey phrase(s)
+F-server-100 | apps/dashboard/test/crm/planRequests.test.ts | unit | 239 lines | asserts 1 journey phrase(s)
+F-server-126 | deploy/panel/joinPay.test.mjs | unit | 374 lines | imports the code
+F-server-126 | deploy/panel/pay.test.mjs | unit | 393 lines | imports the code
+F-server-126 | deploy/panel/payAngles.test.mjs | unit | 1374 lines | imports the code
+F-server-126 | deploy/panel/payBudget.test.mjs | unit | 554 lines | imports the code
+F-server-126 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 1 journey phrase(s)
+F-server-126 | apps/dashboard/test/crm/getStarted.test.ts | unit | 99 lines | asserts 1 journey phrase(s)
+F-server-126 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | asserts 1 journey phrase(s)
+F-server-126 | supabase/tests/0075_gym_alerts.sql | db | 150 lines | asserts 1 journey phrase(s)
+F-server-128 | deploy/panel/joinPay.test.mjs | unit | 374 lines | imports the code
+F-server-128 | deploy/panel/pay.test.mjs | unit | 393 lines | imports the code
+F-server-128 | deploy/panel/payAngles.test.mjs | unit | 1374 lines | imports the code
+F-server-128 | deploy/panel/payBudget.test.mjs | unit | 554 lines | imports the code
+F-server-128 | apps/mobile/test/db/finishReal.test.ts | unit | 104 lines | asserts 1 journey phrase(s)
+F-server-128 | apps/mobile/test/tracker/phase2ReviewFixes.test.ts | unit | 287 lines | asserts 1 journey phrase(s)
+F-server-128 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 1 journey phrase(s)
+F-server-134 | deploy/panel/phoneInbound.test.mjs | unit | 355 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-server-134 | deploy/panel/phoneCode.test.mjs | unit | 313 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-server-134 | deploy/panel/assistCredits.test.mjs | unit | 115 lines | imports the code
+F-server-134 | deploy/panel/helpCredits.test.mjs | unit | 163 lines | imports the code
+F-server-134 | deploy/panel/mobileRule.test.mjs | unit | 51 lines | imports the code
+F-server-134 | deploy/panel/pageChat.test.mjs | unit | 354 lines | imports the code
+F-server-134 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 2 journey phrase(s)
+F-server-134 | apps/dashboard/e2e/whatsapp-verify-uat.spec.mjs | e2e | 324 lines | asserts 2 journey phrase(s)
+F-server-134 | apps/dashboard/test/crm/phoneInbound.test.ts | unit | 96 lines | file name
+F-server-134 | apps/dashboard/e2e/feedback.spec.mjs | e2e | 34 lines | asserts 1 journey phrase(s)
+F-server-134 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-server-134 | apps/dashboard/e2e/r534-training-progress-uat.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-server-103 | deploy/panel/proxy.test.mjs | unit | 99 lines | imports the code, file name
+F-server-103 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-103 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-server-103 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-server-103 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-server-103 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-server-103 | deploy/hq/readLogAlert.test.mjs | unit | 265 lines | asserts 1 journey phrase(s)
+F-server-103 | supabase/tests/0036_gym_timings.sql | db | 161 lines | asserts 1 journey phrase(s)
+F-server-103 | supabase/tests/0046_gym_pack.sql | db | 73 lines | asserts 1 journey phrase(s)
+F-server-103 | supabase/tests/0063_gym_checkout.sql | db | 350 lines | asserts 1 journey phrase(s)
+F-server-103 | supabase/tests/0071_ai_assistant.sql | db | 241 lines | asserts 1 journey phrase(s)
+F-server-103 | supabase/tests/0092_member_join_day.sql | db | 106 lines | asserts 1 journey phrase(s)
+F-server-123 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code, file name
+F-server-123 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | asserts 3 journey phrase(s)
+F-server-123 | deploy/panel/helpPages.test.mjs | unit | 109 lines | imports the code
+F-server-123 | deploy/panel/pageChat.test.mjs | unit | 354 lines | imports the code
+F-server-123 | apps/dashboard/test/crm/assistant/allowance.test.ts | unit | 54 lines | asserts 2 journey phrase(s)
+F-server-123 | deploy/panel/assist.test.mjs | unit | 473 lines | asserts 1 journey phrase(s)
+F-server-123 | deploy/panel/helpCredits.test.mjs | unit | 163 lines | asserts 1 journey phrase(s)
+F-server-101 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code, file name
+F-server-101 | apps/dashboard/e2e/move.spec.mjs | e2e | 141 lines | imports the code
+F-server-101 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-101 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-server-101 | deploy/panel/gymPage.test.mjs | unit | 328 lines | imports the code
+F-server-101 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-server-101 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-server-101 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-server-101 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-server-101 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-server-101 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-server-101 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-server-102 | deploy/panel/proxy.test.mjs | unit | 99 lines | imports the code, file name
+F-server-102 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-102 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-server-102 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-server-102 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-server-102 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-server-102 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-server-102 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-server-102 | deploy/hq/readLogAlert.test.mjs | unit | 265 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-server-100-01 | type 1 | prospect | Phone browser, no MettleUp account, LANDING live
+  s1 see: The MettleUp member page (the phone and watch app page)
+  s1 not: The admin app sign-in page
+  s1 not: A redirect loop
+  s2 see: Moved to gyms.mettleup.fit/?ref=ad, the gym-owner landing page
+  s2 not: The ?ref=ad part dropped
+  s2 not: A Not found page
+J-F-server-100-02 | type 2 | prospect | Phone browser, an old or www address typed
+  s1 see: Moved (301) to https://mettleup.fit with the same path; the privacy page opens
+  s1 not: A Cloudflare error page
+  s1 not: The path lost on the move
+J-F-server-100-03 | type 3 | prospect | Phone browser
+  s1 see: Moved to app.mettleup.fit/api/unknown, which answers the plain words "Not found"
+  s1 not: The admin app page served at an /api address
+  s1 not: A 500 error or a stack trace
+J-F-server-100-04 | type 6 | prospect | LANDING switched to off (the old kill switch), then back to live
+  s1 see: Sent on to https://app.mettleup.fit/
+  s1 not: The member page still shown while off
+  s1 not: An error page
+  s2 see: The member page again
+  s2 not: A cached redirect to the admin app that sticks
+J-F-server-100-05 | type 12 | prospect | gyms.mettleup.fit landing page, the free demo form
+  s1 see: The form's own thank-you answer
+  s1 not: The form sent anywhere but MettleUp's own /api/lead
+  s1 not: The lead shown to any gym
+J-F-server-100-06 | type 1 | gym owner | Laptop browser, owner looking for gym software
+  s1 see: The gym-owner landing page
+  s1 not: The member page
+  s1 not: The admin app
+  s2 see: The form's thank-you answer
+  s2 not: A Not found answer while LANDING is live
+J-F-server-100-07 | type 2 | gym owner | An old bookmark of the gym page
+  s1 see: Moved to gyms.mettleup.fit/, the gym-owner landing page
+  s1 not: The old /home page served on the wrong address
+  s1 not: A loop between the two addresses
+J-F-server-100-08 | type 3 | gym owner | Laptop browser
+  s1 see: Moved to app.mettleup.fit/api/xyz, which answers "Not found"
+  s1 not: The landing page served as an /api answer
+  s1 not: A 500 error
+J-F-server-100-09 | type 6 | gym owner | MOVE switched to off
+  s1 see: The old address shows the gym page as it always did, no move
+  s1 not: Moved to gyms.mettleup.fit while MOVE is off
+J-F-server-100-10 | type 1 | staff | Desk laptop, admin app, JOIN_HOST empty
+  s1 see: The admin app
+  s1 not: A redirect away from app.mettleup.fit
+  s2 see: The link starts with https://app.mettleup.fit
+  s2 not: A join.mettleup.fit link while JOIN_HOST is empty
+  s2 not: No link at all when /api/links fails
+J-F-server-100-11 | type 2 | staff | A printed poster with the old address
+  s1 see: The check-in page opens on the old address as before
+  s1 not: Moved away so the poster stops working
+  s1 not: Not found
+J-F-server-100-12 | type 3 | staff | Desk laptop
+  s1 see: "Not found" (404)
+  s1 not: The admin app page returned as the answer
+  s1 not: A 500 error
+J-F-server-100-13 | type 6 | staff | JOIN_HOST set to join.mettleup.fit, later emptied again
+  s1 see: The link starts with https://join.mettleup.fit (within 5 minutes, the answer is cached 300 s)
+  s1 not: An app.mettleup.fit link for more than 5 minutes after the change
+  s2 see: Links start with https://app.mettleup.fit again
+  s2 not: join.mettleup.fit links kept forever
+J-F-server-100-14 | type 1 | member | Member app, bring-a-friend invite
+  s1 see: A link app.mettleup.fit/f/CODE
+  s1 not: A link to a host that does not serve the invite page
+  s2 see: The friend invite page
+  s2 not: The admin app sign-in page
+J-F-server-100-15 | type 2 | member | JOIN_HOST is join.mettleup.fit
+  s1 see: The same invite page, served from join.mettleup.fit
+  s1 not: The gym-page "not here" answer for an invite path
+J-F-server-100-16 | type 3 | member | Anyone types a non-join path on the join host
+  s1 see: Handled as a gym page path (off while GYM_PAGES is off), never the gym server
+  s1 not: The gym server answers through join.mettleup.fit
+  s1 not: The admin app sign-in served there
+J-F-server-100-17 | type 6 | member | JOIN_HOST emptied after links were sent
+  s1 see: The invite page still opens
+  s1 not: Old links broken when the switch is emptied
+J-F-server-100-18 | type 12 | member | A friend opens a member's invite on join.mettleup.fit
+  s1 see: Only the invite, "Become a member" page, their forms and the privacy page answer
+  s1 not: A sign-in page, /sb, /j or /c served on the join host
+J-F-server-100-19 | type 1 | system | A form POST to an old address
+  s1 see: A 308 move to https://mettleup.fit/api/lead, still a POST
+  s1 not: A 301 that turns the POST into a GET and drops the form
+J-F-server-100-20 | type 3 | system | Any host
+  s1 see: "Not found" (404)
+  s1 not: The static app file served for an /api address
+J-F-server-100-21 | type 6 | system | LANDING off
+  s1 see: "Not found" (404), nothing saved
+  s1 not: A lead saved while the page is hidden
+J-F-server-126-01 | type 1 | gym owner | Desk money sheet, a member with Rs 1,500 due, Razorpay connected, PAY_LIVE off (test mode)
+  s1 see: A payment request with the company link and the gym's UPI QR
+  s1 see: Marked as test mode
+  s1 not: Two open links for the same due
+  s1 not: Real money moved while in test mode
+  s2 see: Status paid, from the company's own answer
+  s2 not: Paid shown before the company says so
+  s3 see: The payment leaves the list once recorded
+  s3 not: Two receipts for one payment
+  s3 not: A test-mode shop payment listed as paid online
+J-F-server-126-02 | type 2 | gym owner | Desk money sheet, no payment company connected, the gym's UPI ID saved
+  s1 see: The request saved as paid by UPI with the receipt number
+  s1 not: A company link asked for
+  s1 not: The amount changed from what was paid
+J-F-server-126-03 | type 2 | gym owner | An open link exists; the member pays cash at the desk instead
+  s1 see: Open links for that due closed here and at the company
+  s1 not: The old link still payable
+  s1 not: Cash taken when the link was paid a moment ago (the desk is told "paid online")
+J-F-server-126-04 | type 3 | gym owner | Desk money sheet
+  s1 see: Refused (BAD_AMOUNT) both times
+  s1 not: A request saved
+  s1 not: A link made at the company
+J-F-server-126-05 | type 6 | gym owner | A link was paid a moment ago and refunded at the company before Approve
+  s1 see: The request stays paid (the company is asked first)
+  s1 not: A real payment hidden by Cancel
+  s2 see: "This payment was refunded at the payment company, so no receipt was made."
+  s2 not: A receipt made for a refunded payment
+J-F-server-126-06 | type 12 | gym owner | Owner of gym A holds the id of a request of gym B
+  s1 see: "NOT_FOUND"
+  s1 not: Gym B's request, amount or member shown
+  s1 not: Gym B's request changed
+J-F-server-126-07 | type 1 | staff | Front desk, staff key, the owner saved the gym UPI ID
+  s1 see: The request shows the gym's saved UPI ID and payee
+  s1 not: A UPI ID typed by the staff used instead of the gym's
+  s2 see: The receipt made once
+  s2 not: A second receipt for the same payment
+J-F-server-126-08 | type 2 | staff | Two desks open the "paid online" list
+  s1 see: Told it is taken
+  s1 not: Both desks make a receipt
+J-F-server-126-09 | type 3 | staff | A paid-online payment this desk did not claim
+  s1 see: Refused (NOT_CLAIMED)
+  s1 not: The payment marked recorded
+J-F-server-126-10 | type 6 | staff | A desk claimed a payment and closed the app
+  s1 see: The claim goes to the new desk
+  s1 not: The payment stuck as taken for ever
+J-F-server-126-11 | type 12 | staff | Staff key of gym A, request id of gym B
+  s1 see: "NOT_FOUND"
+  s1 not: Gym B's request shown
+J-F-server-128-01 | type 1 | member | Member app, the gym asked Rs 1,500 for the membership, "Take payments in the member app" on
+  s1 see: The due with its amount and a way to pay (company page or the gym's UPI)
+  s1 not: Another member's request
+  s1 not: Requests older than 30 days mixed in
+  s2 see: Paid, once the company says so
+  s2 not: Paid shown before the company confirms
+  s2 not: A second payment asked for
+J-F-server-128-02 | type 2 | member | Member app shop, an order of Rs 600 not yet collected
+  s1 see: A request labelled "Order <number>" for the order's own total
+  s1 not: An amount typed by the app used instead of the order total
+  s1 not: Two live links after the order total changed
+J-F-server-128-03 | type 3 | member | Member app shop
+  s1 see: Refused (NOT_FOUND)
+  s1 not: A payment link made for it
+J-F-server-128-04 | type 6 | member | The owner turns "Take payments in the member app" off
+  s1 see: The amount and label still show; no QR, UPI link or payment page; pay at the desk
+  s1 not: A payment page still offered
+  s1 not: The due hidden
+  s2 see: A new link made when looked at
+  s2 not: An expired link offered again
+J-F-server-128-05 | type 12 | member | Member holds another member's request id
+  s1 see: "NOT_FOUND"
+  s1 not: The other member's amount, label or status
+  s1 not: Payment ids of other people
+J-F-server-134-01 | type 1 | gym owner | Sign-in page, Forgot PIN, "Verify with WhatsApp"
+  s1 see: WhatsApp opens with "MettleUp code 123456. After you send this, go back to the MettleUp page."
+  s1 not: A code sent by us (a paid send)
+  s1 not: The code shown for a number other than the one typed
+  s2 see: "Checking your message…", then verified; choose a new PIN
+  s2 see: WhatsApp reply: "Your phone number is successfully verified for MettleUp. Go back to the MettleUp page to finish."
+  s2 not: Verified when the message came from another number
+J-F-server-134-02 | type 2 | gym owner | Sign-in page, "Set up a new gym"
+  s1 see: Verified; set-up carries on
+  s1 not: A Forgot PIN proof accepted for set-up
+J-F-server-134-03 | type 3 | gym owner | Waiting for the message
+  s1 see: The page says wrong number and keeps waiting; after 5 wrong messages it stops (too many)
+  s1 not: Verified
+  s1 not: The other phone's number shown
+  s2 see: Refused (BAD_PHONE)
+  s2 not: WhatsApp opened with a code
+J-F-server-134-04 | type 6 | gym owner | A code is waiting; the owner taps Verify again
+  s1 see: Not verified; the reply asks to send the message without changes
+  s1 not: The old code still works
+  s2 see: Expired
+  s2 not: Verified later from a stale code
+J-F-server-134-05 | type 12 | gym owner | Verified number
+  s1 see: Verified, with no proof the second time
+  s1 not: The proof handed out twice
+  s1 not: The number kept stored after the proof is given
+J-F-server-134-06 | type 1 | staff | Sign-in page, Forgot PIN
+  s1 see: Verified; choose a new PIN
+  s1 not: Verified for a number that is not this staff person's
+J-F-server-134-07 | type 3 | staff | Waiting for the message
+  s1 see: The page shows a "no code" hint
+  s1 see: Reply: "We could not find your MettleUp code in this message. Go back to the MettleUp page, tap "Open WhatsApp again" and send the message without changes."
+  s1 not: Verified
+  s1 not: The message text logged
+J-F-server-134-08 | type 6 | staff | Verified
+  s1 see: Verified without a second proof
+  s1 not: A second proof for the same tap
+J-F-server-134-09 | type 1 | member | Member app, "Find my gym by my number"
+  s1 see: WhatsApp opens with "MettleUp code 123456. After you send this, go back to the MettleUp app."
+  s1 not: The words say "page" for the app
+  s2 see: Verified
+  s2 see: Reply: "Your phone number is successfully verified for MettleUp. Go back to the MettleUp app to finish."
+  s2 not: A code sent to the member by us
+J-F-server-134-10 | type 3 | member | Member app
+  s1 see: Refused (BAD_PHONE)
+  s1 not: WhatsApp opened with a code
+J-F-server-134-11 | type 6 | member | A check is waiting; the member sends an edited message with no code
+  s1 see: The app shows a "no code" hint
+  s1 see: WhatsApp reply tells them what to do next in the app
+  s1 not: Reply tells an app user to "Go back to the MettleUp page" and tap "Open WhatsApp again"
+  s1 not: Verified
+J-F-server-134-12 | type 12 | member | Member verified
+  s1 see: Only keyed hashes of the number and code; the number sealed until the proof is handed out, then emptied
+  s1 not: The plain number or code in D1 or the logs (only the last 2 digits)
+J-F-server-134-13 | type 1 | prospect | "Become a member" page app.mettleup.fit/m/CODE on a phone
+  s1 see: WhatsApp opens with the code and "go back to the MettleUp page"
+  s1 not: A paid send to the visitor
+  s2 see: Verified; the join form carries on
+  s2 not: Verified from another number
+J-F-server-134-14 | type 2 | prospect | JOIN_HOST set: the page on join.mettleup.fit/m/CODE
+  s1 see: The same check works there (allowed path)
+  s1 not: "Not here" for the phone-code calls on the join host
+J-F-server-134-15 | type 3 | prospect | A bot fills the hidden "website" box
+  s1 see: A normal-looking answer; its status says expired
+  s1 not: A row stored or a WhatsApp reply for the bot
+J-F-server-134-16 | type 6 | prospect | Waiting for 10 minutes
+  s1 see: Expired; the visitor starts again
+  s1 not: Verified from an expired code
+J-F-server-134-17 | type 12 | prospect | Visitor verified
+  s1 see: The proof is handed out once and the stored number emptied
+  s1 not: The number kept after the proof
+  s1 not: The number in logs
+J-F-server-103-01 | type 1 | gym owner | Messages & offers, members with MettleUp 0.59.0 or newer
+  s1 see: Members' phones pop up within seconds, even with the app closed
+  s1 not: The pop-up waits for HQ's next minute
+  s1 not: The send fails because HQ could not be told
+J-F-server-103-02 | type 2 | gym owner | Messages & offers
+  s1 see: Members get the pop-up at once
+  s1 not: No pop-up for an offer
+J-F-server-103-03 | type 2 | gym owner | Member questions
+  s1 see: The member gets the reply pop-up at once
+  s1 not: The reply waits a minute
+J-F-server-103-04 | type 3 | gym owner | Messages & offers
+  s1 see: The send error; no pop-up asked for
+  s1 not: HQ told to send for a failed save
+J-F-server-103-05 | type 6 | gym owner | HQ cannot be reached
+  s1 see: The message is saved; pop-ups go at HQ's next minute
+  s1 not: The send shown as failed
+  s1 not: The message lost
+J-F-server-103-06 | type 1 | staff | Messages & offers, staff signed in
+  s1 see: Pop-ups at once
+  s1 not: A delay of a minute
+J-F-server-103-07 | type 2 | staff | Member questions
+  s1 see: The member's pop-up at once
+  s1 not: No pop-up
+J-F-server-103-08 | type 3 | staff | The proxy address failed, the app fell back to the direct gym server address
+  s1 see: Saved; the pop-up comes at HQ's next minute
+  s1 not: The message lost
+  s1 not: A second send to force the pop-up
+J-F-server-103-09 | type 6 | staff | Two offers started one after another
+  s1 see: Each pops up once
+  s1 not: One offer popped twice
+J-F-server-103-10 | type 1 | member | Phone with gym messages on, app closed
+  s1 see: A pop-up within seconds
+  s1 not: A pop-up from another gym
+  s1 not: A minute's wait
+J-F-server-103-11 | type 2 | member | Member asked a question
+  s1 see: A pop-up with the gym's reply; tapping it opens the reply
+  s1 not: No pop-up
+J-F-server-103-12 | type 3 | member | Member app older than 0.59.0
+  s1 see: No phone pop-up; the message is in the app
+  s1 not: A crash
+  s1 not: The message missing
+J-F-server-103-13 | type 6 | member | The gym sends its 4th message of the day
+  s1 see: The message arrives in the app without a pop-up
+  s1 not: A pop-up for every message
+J-F-server-103-14 | type 12 | member | Two gyms send messages
+  s1 see: Only the member's own gym's pop-ups
+  s1 not: Another gym's message
+J-F-server-103-15 | type 1 | system | A proxied POST
+  s1 see: HQ's /push/run asked in the background; the app gets the gym server's answer unchanged
+  s1 not: The answer delayed or changed by the kick
+J-F-server-103-16 | type 3 | system | Other calls
+  s1 see: No kick
+  s1 not: HQ asked for every call
+J-F-server-103-17 | type 6 | system | HQ answers an error
+  s1 see: A warning logged; the app's answer unchanged
+  s1 not: The admin app shown an error
+J-F-server-123-01 | type 1 | gym owner | AI Assistant, AI_CREDITS_CHARGE on, credits left
+  s1 see: The answer; credits unchanged (owner questions are free with a daily limit)
+  s1 not: A credit taken for the owner's question
+J-F-server-123-02 | type 2 | gym owner | The admin app help box
+  s1 see: The AI answer; counted as an owner question, no credit
+  s1 not: A credit taken
+J-F-server-123-03 | type 3 | gym owner | AI Assistant, today's question limit used
+  s1 see: "You have used today's AI questions. Your credits are safe. Ask again tomorrow."
+  s1 not: The AI asked
+  s1 not: A credit taken
+J-F-server-123-04 | type 6 | gym owner | The AI fails to answer
+  s1 see: The failure; the question is given back
+  s1 not: The question counted against today's limit
+J-F-server-123-05 | type 12 | gym owner | Owner asks the assistant
+  s1 see: The answer
+  s1 not: The owner's key logged, saved or sent to Claude
+J-F-server-123-06 | type 1 | staff | Admin app help box, staff signed in
+  s1 see: The AI answer; no credit taken
+  s1 not: A credit taken
+J-F-server-123-07 | type 3 | staff | Staff daily limit used
+  s1 see: An answer from the help pages with a line saying why the AI was not asked
+  s1 not: The AI asked
+  s1 not: A credit taken
+J-F-server-123-08 | type 6 | staff | AI_CREDITS_CHARGE switched off
+  s1 see: Answered as before; nothing counted
+  s1 not: A question counted while charging is off
+J-F-server-123-09 | type 1 | member | Member app help box, the gym has credits, "AI answers for members" on
+  s1 see: The AI answer; 10 answers use 1 of the gym's credits
+  s1 not: A credit per answer
+  s1 not: The member charged
+J-F-server-123-10 | type 3 | member | The gym has no AI credits
+  s1 see: An answer from the help pages, the AI not asked
+  s1 not: The AI asked
+  s1 not: An error with no answer
+J-F-server-123-11 | type 6 | member | The owner turns "AI answers for members" off, or the month limit is reached
+  s1 see: An answer from the help pages
+  s1 not: A credit taken while off
+J-F-server-123-12 | type 12 | member | Member asks
+  s1 see: The answer
+  s1 not: The member key logged, saved or sent to Claude
+J-F-server-123-13 | type 1 | prospect | A gym web page with the AI helper on (GYM_PAGES and PAGE_AI live; both off today)
+  s1 see: An answer from what is on the page; 10 answers use 1 gym credit
+  s1 not: An answer not on the page
+J-F-server-123-14 | type 3 | prospect | The visitor asked 3 times today
+  s1 see: No AI answer; saved for the gym to reply
+  s1 not: The AI asked over the limit
+J-F-server-123-15 | type 6 | prospect | PAGE_AI off (today)
+  s1 see: No chat box
+  s1 not: A chat box that never answers
+J-F-server-123-16 | type 1 | system | AI_CREDITS_CHARGE on, the signing secret set
+  s1 see: The gym server takes one question and answers ok
+  s1 not: The AI called before the take answers
+J-F-server-123-17 | type 3 | system | The signing secret differs from the gym server's
+  s1 see: Not counted (signature refused), logged, answered as before
+  s1 not: A credit taken without a valid signature
+J-F-server-123-18 | type 6 | system | The AI fails and giving the question back fails too
+  s1 see: A warning logged; the question stays counted
+  s1 not: An error shown for the give-back
+J-F-server-101-01 | type 1 | gym owner | Admin app on forgeai.aakashpahuja.in, nothing waiting to be sent, MOVE on
+  s1 see: A question to move to app.mettleup.fit
+  s1 not: A move while unsent work is waiting
+  s2 see: "Opening MettleUp… Tap here if nothing happens", then the admin app on app.mettleup.fit, still signed in
+  s2 not: Asked to sign in again
+  s2 not: A sign-in already on app.mettleup.fit written over
+J-F-server-101-02 | type 2 | gym owner | The owner was on Members with a filter
+  s1 see: Opens /members with the same filter on the new address
+  s1 not: Sent to the home page instead
+J-F-server-101-03 | type 3 | gym owner | A hand-over with a bad "to" address
+  s1 see: Opens "/" on app.mettleup.fit
+  s1 not: Sent to another site
+  s1 not: An /api address opened
+J-F-server-101-04 | type 6 | gym owner | MOVE off
+  s1 see: No move question; the desk stays
+  s1 not: Moved anyway
+J-F-server-101-05 | type 12 | gym owner | Another website posts a hand-over form
+  s1 see: Sent to the sign-in page, nothing written
+  s1 not: A desk signed in to someone else's gym
+J-F-server-101-06 | type 1 | staff | Desk on the old address
+  s1 see: Signed in on app.mettleup.fit
+  s1 not: Asked to sign in again
+J-F-server-101-07 | type 3 | staff | The hand-over sent to the old address itself
+  s1 see: "Not found"
+  s1 not: A hand-over page on the old address
+J-F-server-101-08 | type 6 | staff | The desk is already signed in on app.mettleup.fit
+  s1 see: The new address keeps its own sign-in
+  s1 not: The newer sign-in written over by the old one
+J-F-server-101-09 | type 1 | system | A GET to the hand-over address
+  s1 see: Sent to "/" (303)
+  s1 not: A page that writes keys
+J-F-server-101-10 | type 3 | system | A hand-over with odd letters in the sign-in
+  s1 see: Sent to "/", nothing written
+  s1 not: The odd text placed in the page
+J-F-server-101-11 | type 6 | system | MOVE turned off then on
+  s1 see: move false while off, true with to https://app.mettleup.fit when on
+  s1 not: A cached answer (it is no-store)
+J-F-server-102-01 | type 1 | gym owner | Admin app on app.mettleup.fit
+  s1 see: The member list from the gym server
+  s1 not: Cookies of our site sent to Supabase
+  s1 not: A cached old answer
+J-F-server-102-02 | type 2 | gym owner | An old desk on forgeai.aakashpahuja.in
+  s1 see: The same list through the old address /sb
+  s1 not: Not found
+J-F-server-102-03 | type 3 | gym owner | Supabase does not answer
+  s1 see: "The gym server could not be reached. Try again."; the app uses the direct address for a while
+  s1 not: The same save sent twice
+J-F-server-102-04 | type 6 | gym owner | Indian networks block supabase.co
+  s1 see: Everything works through our own address
+  s1 not: The app stuck on a direct supabase.co call
+J-F-server-102-05 | type 12 | gym owner | A gym server answer passes through
+  s1 see: It never runs as a page on app.mettleup.fit (sandbox, no sniffing)
+  s1 not: A page from the gym server able to read the desk's sign-in
+J-F-server-102-06 | type 1 | staff | Front desk
+  s1 see: Saved through /sb
+  s1 not: Saved twice
+J-F-server-102-07 | type 3 | staff | A Cloudflare error page (no proxy stamp)
+  s1 see: The app uses the direct address
+  s1 not: The error page read as the gym server's answer
+J-F-server-102-08 | type 6 | staff | The proxy works again
+  s1 see: The app goes back to our own address after a while
+  s1 not: Stuck on the direct address for ever
+J-F-server-102-09 | type 1 | trainer | Trainer signed in
+  s1 see: The list through /sb
+  s1 not: Members of other trainers shown because of the proxy
+J-F-server-102-10 | type 3 | trainer | Supabase down
+  s1 see: "The gym server could not be reached. Try again."
+  s1 not: A blank list shown as if empty
+J-F-server-102-11 | type 6 | trainer | supabase.co blocked
+  s1 see: It still loads through our address
+  s1 not: The app stuck
+J-F-server-102-12 | type 1 | member | Member app
+  s1 see: Read through /sb
+  s1 not: Another member's data
+J-F-server-102-13 | type 2 | member | An old phone app that uses forgeai.aakashpahuja.in/sb
+  s1 see: It still works
+  s1 not: Not found on the old address
+J-F-server-102-14 | type 3 | member | Supabase down
+  s1 see: The try-again words; the app falls back
+  s1 not: A crash
+J-F-server-102-15 | type 6 | member | supabase.co blocked
+  s1 see: Works through our address
+  s1 not: Stuck
+J-F-server-102-16 | type 1 | system | A request to /sb/rest/v1/...
+  s1 see: Supabase's answer with the X-Forge-Proxy stamp
+  s1 not: Host, cookie or Cloudflare headers passed on
+J-F-server-102-17 | type 3 | system | A request to /sbx/...
+  s1 see: Not passed to Supabase
+  s1 not: A /sbx path proxied
+J-F-server-102-18 | type 6 | system | A WebSocket upgrade
+  s1 see: The same request goes through
+  s1 not: A broken upgrade

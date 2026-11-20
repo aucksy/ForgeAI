@@ -1,0 +1,30 @@
+# L19-panel-forms: 19 x panel / panel/forms. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L19.1 | 19 | A member, staff or outsider trying to cheat: fake check-ins, editing dues, scraping join links, spamming enquiries, using a gym's AI credits, sharing a Pro feature
+L19.2 | 19 | Also: AI injection: can text typed by a member or lead steer the AI
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-400 | live | Change the start date of a plan that has not started yet (the last day moves by the same days) | apps/dashboard/src/crm/ui/forms/ChangeStartSheet.tsx:17
+F-panel-401 | live | Collect a payment against a member's dues (full or part, cash/UPI/other, reference, date received) | apps/dashboard/src/crm/ui/forms/CollectPaymentSheet.tsx:33
+F-panel-402 | behind switch | Take the money online from the collect or sell sheet (UPI QR, payment link; the receipt saves itself when paid) | apps/dashboard/src/crm/ui/forms/CollectPaymentSheet.tsx:83
+F-panel-403 | live | Close open online payment links before the desk takes the same due another way (no double payment) | apps/dashboard/src/crm/ui/forms/CollectPaymentSheet.tsx:129
+F-panel-404 | live | Freeze a membership or add extra days (medical, travel, other, gift; 1 to 365 days; works on an ended plan and a PT pack | apps/dashboard/src/crm/ui/forms/ExtendMembershipSheet.tsx:37
+F-panel-405 | live | Give extra days as a reward (sheet opens on Gift with the reward days, from the workout offer) | apps/dashboard/src/crm/ui/forms/ExtendMembershipSheet.tsx:41
+F-panel-406 | live | Add a member (name and mobile needed; batch, joining date, gender, birthday, email, address, emergency contact, notes op | apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx:60
+F-panel-407 | live | Edit a member's details (never changes archived state or photo) | apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx:156
+F-panel-408 | live | Add a member from an enquiry or the "Become a member" page with name, mobile and gender filled in already | apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx:69
+F-panel-409 | behind switch | Take a member photo with the desk camera while adding a member | apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx:105
+F-panel-410 | live | Put a member in a batch (tap a batch already in use, None, or type a new one) | apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx:332
+F-panel-411 | live | Mark a member as "Comes with a pass" (FITPASS, cultpass or another company): no plan, no dues | apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx:339
+F-panel-412 | behind switch | Let a member train at every branch | apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx:96
+F-panel-413 | live | Mobile number already used: say who has it, and bring back an archived member or open their page | apps/dashboard/src/crm/ui/forms/MemberFormSheet.tsx:172
+F-panel-414 | live | Sell a membership (pick plan, start date, price or discount, joining fee, money received now, notes) | apps/dashboard/src/crm/ui/forms/SellMembershipSheet.tsx:34
+F-panel-415 | live | Renew a membership (starts the day after the current plan ends; joining fee not charged twice) | apps/dashboard/src/crm/ui/forms/SellMembershipSheet.tsx:78
+F-panel-416 | live | Sell or renew a personal training (PT) pack alongside the gym plan | apps/dashboard/src/crm/ui/forms/SellMembershipSheet.tsx:42
+F-panel-417 | live | Take part payment at the sale and leave the rest as dues | apps/dashboard/src/crm/ui/forms/SellMembershipSheet.tsx:327
+F-panel-418 | live | Ask once before saving a sale with an unusual price or start date | apps/dashboard/src/crm/ui/forms/SellMembershipSheet.tsx:145
+F-panel-419 | live | Front desk limits on money: at most 10% off a plan, joining fee as listed, payment date at most 31 days back and never a | apps/dashboard/src/crm/ui/forms/SellMembershipSheet.tsx:123
+F-panel-420 | live | Receipt records who took the money | apps/dashboard/src/crm/ui/forms/CollectPaymentSheet.tsx:48
+F-panel-421 | live | Keep taking payments when the internet goes (the device gets its own receipt series; a retry never makes a second receip | apps/dashboard/src/crm/ui/forms/CollectPaymentSheet.tsx:46
+F-panel-422 | live | No plans yet: the sell sheet tells the owner to add a plan, and staff to ask the owner | apps/dashboard/src/crm/ui/forms/SellMembershipSheet.tsx:178
+F-panel-423 | live | Cancel (void) a receipt with a written reason; the amount goes back onto the member's dues unless the plan is cancelled | apps/dashboard/src/crm/ui/forms/VoidPaymentSheet.tsx:24
+F-panel-512 | live | Sell or renew a membership, freeze or add extra days, change a future start date, cancel a membership | apps/dashboard/src/crm/ui/forms/SellMembershipSheet.tsx:34

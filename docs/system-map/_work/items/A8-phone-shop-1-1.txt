@@ -1,0 +1,848 @@
+# A8-phone-shop-1-1: coverage of 106 Tier 1 journeys (10 features, from A5-phone-shop-1-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-phone-327 | apps/mobile/test/shop/bringFriend.test.ts | unit | 104 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-phone-327 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 3 journey phrase(s)
+F-phone-327 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | asserts 2 journey phrase(s)
+F-phone-327 | apps/dashboard/e2e/terms.spec.mjs | e2e | 149 lines | asserts 2 journey phrase(s)
+F-phone-327 | apps/mobile/qa/uat-rel-f147-bring-friend.yaml | maestro | 56 lines | asserts 2 journey phrase(s)
+F-phone-327 | apps/dashboard/e2e/demo.spec.mjs | e2e | 142 lines | asserts 1 journey phrase(s)
+F-phone-327 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-phone-327 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-phone-327 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 1 journey phrase(s)
+F-phone-327 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-phone-327 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 1 journey phrase(s)
+F-phone-327 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-phone-308 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | imports the code, file name, asserts 7 journey phrase(s)
+F-phone-308 | apps/mobile/qa/xc-2b-checkin-offline.yaml | maestro | 16 lines | file name, asserts 2 journey phrase(s)
+F-phone-308 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-308 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 3 journey phrase(s)
+F-phone-308 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 3 journey phrase(s)
+F-phone-308 | apps/dashboard/test/crm/challengesHinglish.test.ts | unit | 108 lines | asserts 3 journey phrase(s)
+F-phone-308 | apps/dashboard/test/crm/checkin.test.ts | unit | 137 lines | file name, asserts 1 journey phrase(s)
+F-phone-308 | apps/mobile/qa/uat-rel-7-gym-checkin.yaml | maestro | 53 lines | file name, asserts 1 journey phrase(s)
+F-phone-308 | apps/mobile/qa/xc-2b-checkin-again.yaml | maestro | 14 lines | file name, asserts 1 journey phrase(s)
+F-phone-308 | apps/mobile/qa/xj-4-checkin.yaml | maestro | 31 lines | file name, asserts 1 journey phrase(s)
+F-phone-308 | apps/mobile/qa/xj-5-checkin.yaml | maestro | 29 lines | file name, asserts 1 journey phrase(s)
+F-phone-308 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | imports the code
+F-phone-318 | apps/mobile/test/shop/gymBusy.test.ts | unit | 209 lines | asserts 10 journey phrase(s)
+F-phone-318 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-phone-318 | apps/mobile/test/tracker/r320Widgets.test.ts | unit | 119 lines | asserts 2 journey phrase(s)
+F-phone-318 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-phone-318 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-phone-318 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-phone-318 | apps/dashboard/e2e/timings.spec.mjs | e2e | 130 lines | asserts 1 journey phrase(s)
+F-phone-318 | deploy/hq/push.test.mjs | unit | 382 lines | asserts 1 journey phrase(s)
+F-phone-318 | deploy/hq/readLogAlert.test.mjs | unit | 265 lines | asserts 1 journey phrase(s)
+F-phone-318 | scripts/watch/watch.test.mjs | unit | 159 lines | asserts 1 journey phrase(s)
+F-phone-330 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 6 journey phrase(s)
+F-phone-330 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 5 journey phrase(s)
+F-phone-330 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 4 journey phrase(s)
+F-phone-330 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 4 journey phrase(s)
+F-phone-330 | apps/mobile/qa/sub-uat-f194-choose.yaml | maestro | 31 lines | asserts 4 journey phrase(s)
+F-phone-330 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 4 journey phrase(s)
+F-phone-330 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-phone-330 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 3 journey phrase(s)
+F-phone-330 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 3 journey phrase(s)
+F-phone-330 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 3 journey phrase(s)
+F-phone-330 | apps/dashboard/test/crm/r448.test.ts | unit | 76 lines | asserts 3 journey phrase(s)
+F-phone-330 | apps/dashboard/test/crm/webPush.test.ts | unit | 317 lines | asserts 3 journey phrase(s)
+F-phone-317 | apps/mobile/test/shop/gymHours.test.ts | unit | 201 lines | asserts 12 journey phrase(s)
+F-phone-317 | apps/dashboard/test/crm/assistant/messageDay.test.ts | unit | 114 lines | asserts 5 journey phrase(s)
+F-phone-317 | apps/dashboard/e2e/timings.spec.mjs | e2e | 130 lines | asserts 4 journey phrase(s)
+F-phone-317 | apps/dashboard/test/crm/messageTemplates.test.ts | unit | 246 lines | asserts 4 journey phrase(s)
+F-phone-317 | apps/dashboard/test/crm/gymTimings.test.ts | unit | 125 lines | asserts 3 journey phrase(s)
+F-phone-317 | apps/mobile/test/shop/gymBusy.test.ts | unit | 209 lines | asserts 3 journey phrase(s)
+F-phone-317 | apps/mobile/test/shop/gymTimings.test.ts | unit | 61 lines | asserts 3 journey phrase(s)
+F-phone-317 | apps/dashboard/e2e/messages.spec.mjs | e2e | 191 lines | asserts 2 journey phrase(s)
+F-phone-317 | apps/dashboard/e2e/whatsnew.spec.mjs | e2e | 122 lines | asserts 2 journey phrase(s)
+F-phone-317 | deploy/hq/push.test.mjs | unit | 382 lines | asserts 2 journey phrase(s)
+F-phone-317 | supabase/tests/0054_member_alerts.sql | db | 139 lines | asserts 2 journey phrase(s)
+F-phone-317 | supabase/tests/0068_member_find_gym.sql | db | 159 lines | asserts 2 journey phrase(s)
+F-phone-311 | apps/mobile/qa/uat-rel-6-member.yaml | maestro | 153 lines | asserts 2 journey phrase(s)
+F-phone-311 | apps/mobile/test/onboarding/welcomeUat.test.ts | unit | 90 lines | asserts 2 journey phrase(s)
+F-phone-311 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-phone-311 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-phone-311 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-phone-311 | apps/dashboard/e2e/offline.spec.mjs | e2e | 74 lines | asserts 1 journey phrase(s)
+F-phone-311 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 1 journey phrase(s)
+F-phone-311 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-phone-311 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-phone-311 | apps/dashboard/e2e/r579-uat.spec.mjs | e2e | 298 lines | asserts 1 journey phrase(s)
+F-phone-311 | apps/dashboard/e2e/workoutcode.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-phone-311 | apps/dashboard/test/crm/local.test.ts | unit | 1070 lines | asserts 1 journey phrase(s)
+F-phone-315 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-315 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-phone-315 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-phone-315 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-315 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | asserts 3 journey phrase(s)
+F-phone-315 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 2 journey phrase(s)
+F-phone-315 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 2 journey phrase(s)
+F-phone-315 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-phone-315 | apps/mobile/test/db/workoutPhotosReal.test.ts | unit | 327 lines | asserts 2 journey phrase(s)
+F-phone-315 | apps/mobile/test/onboarding/eraseLeftBehind.test.ts | unit | 59 lines | asserts 2 journey phrase(s)
+F-phone-315 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 2 journey phrase(s)
+F-phone-315 | apps/mobile/test/onboarding/startup.test.ts | unit | 185 lines | asserts 2 journey phrase(s)
+F-phone-320 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | asserts 10 journey phrase(s)
+F-phone-320 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 10 journey phrase(s)
+F-phone-320 | apps/dashboard/e2e/ai-questions-uat.spec.mjs | e2e | 434 lines | asserts 6 journey phrase(s)
+F-phone-320 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 6 journey phrase(s)
+F-phone-320 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 6 journey phrase(s)
+F-phone-320 | supabase/tests/0087_feedback_owner_desk.sql | db | 143 lines | asserts 6 journey phrase(s)
+F-phone-320 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 5 journey phrase(s)
+F-phone-320 | supabase/tests/0096_message_recipient.sql | db | 222 lines | asserts 5 journey phrase(s)
+F-phone-320 | apps/mobile/qa/uat-rel-r452-help-replies.yaml | maestro | 182 lines | asserts 4 journey phrase(s)
+F-phone-320 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-phone-320 | supabase/tests/0078_ai_questions.sql | db | 198 lines | asserts 4 journey phrase(s)
+F-phone-320 | supabase/tests/0094_page_chat.sql | db | 200 lines | asserts 4 journey phrase(s)
+F-phone-323 | apps/dashboard/test/crm/messages.test.ts | unit | 189 lines | asserts 8 journey phrase(s)
+F-phone-323 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 4 journey phrase(s)
+F-phone-323 | apps/dashboard/test/crm/assistant/messageDay.test.ts | unit | 114 lines | asserts 4 journey phrase(s)
+F-phone-323 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 4 journey phrase(s)
+F-phone-323 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 4 journey phrase(s)
+F-phone-323 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 3 journey phrase(s)
+F-phone-323 | apps/mobile/qa/invite-e.yaml | maestro | 81 lines | asserts 3 journey phrase(s)
+F-phone-323 | apps/mobile/test/shop/askReplyAlerts.test.ts | unit | 226 lines | imports the code
+F-phone-323 | apps/mobile/test/shop/boardNameChoice.test.ts | unit | 79 lines | imports the code
+F-phone-323 | apps/mobile/test/shop/c6LeavePending.test.ts | unit | 104 lines | imports the code
+F-phone-323 | apps/mobile/test/shop/c6OrderOnce.test.ts | unit | 208 lines | imports the code
+F-phone-323 | apps/mobile/test/shop/c6S3.test.ts | unit | 187 lines | imports the code
+F-phone-310 | apps/dashboard/e2e/hq-webpage-uat.spec.mjs | e2e | 166 lines | asserts 9 journey phrase(s)
+F-phone-310 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | imports the code, asserts 5 journey phrase(s)
+F-phone-310 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-phone-310 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 4 journey phrase(s)
+F-phone-310 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 4 journey phrase(s)
+F-phone-310 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-310 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-phone-310 | apps/mobile/test/shop/askReplyAlerts.test.ts | unit | 226 lines | imports the code
+F-phone-310 | apps/mobile/test/shop/boardNameChoice.test.ts | unit | 79 lines | imports the code
+F-phone-310 | apps/mobile/test/shop/c6LeavePending.test.ts | unit | 104 lines | imports the code
+F-phone-310 | apps/mobile/test/shop/c6OrderOnce.test.ts | unit | 208 lines | imports the code
+F-phone-310 | apps/mobile/test/shop/c6S3.test.ts | unit | 187 lines | imports the code
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-phone-327-01 | type 1 | member | Gym tab, My gym part, linked to a gym whose server has 0056, online
+  s1 see: Card titled 'Bring a friend'
+  s1 see: 'Send a friend a link to your gym. They leave their number, and the gym calls them.'
+  s1 see: 'When a friend joins, your gym can add 7 free days to your plan.' (only when the gym gives free days)
+  s1 see: 'Friends who joined: 0'
+  s1 not: A free-days line when the gym gives no free days
+  s2 see: The phone's share menu
+  s2 not: The app opens a screen of its own instead of the share menu
+  s2 not: Nothing happens with no word
+  s3 see: Message 'Come and train with me at <gym>! Leave your name and number on this page, and the gym will call you: https://app.mettleup.fit/f/<8-letter code>' (join.mettleup.fit once the Worker says so)
+  s3 not: Another member's code in the link
+  s3 not: 'my gym' in place of the gym's real name when the name is known
+  s4 see: Nothing new on the phone yet
+  s4 not: The friend's name or number shown to the member
+  s5 see: 'Friends who joined: 1'
+  s5 not: The count staying at 0 after the gym marked the friend joined
+  s5 not: A count that includes friends who only left a number
+J-F-phone-327-02 | type 2 | member | Gym tab, Bring a friend card showing 'Friends who joined: 0'; meanwhile the desk marks a referred friend as joined
+  s1 see: The spinner, then 'Friends who joined: 1'
+  s1 not: The card asking the server only on first open and never again on a pull
+  s2 see: 'Friends who joined: 1' still
+  s2 not: The count going back to 0
+J-F-phone-327-03 | type 3 | member | Gym tab, the member has left the gym, or the gym is paused (member_friend_invite refuses)
+  s1 see: No 'Bring a friend' card at all
+  s1 not: A card with a link that leads a friend to a gym the member left
+  s1 not: An error box about the invite
+J-F-phone-327-04 | type 3 | member | Gym tab, the gym's server does not have 0056 yet (store build)
+  s1 see: No 'Bring a friend' card
+  s1 not: The test-build line 'Test build: made-up numbers…' in a store build
+  s1 not: A card with code QATEST23
+  s2 see: Still no card, and no new ask to the server for the rest of the app's life
+  s2 not: A spinner that never ends
+J-F-phone-327-05 | type 6 | member | Gym tab, card showing 'Friends who joined: 1'
+  s1 see: The 'Bring a friend' card disappears
+  s1 not: The old card and link left on screen after the server refused
+  s1 not: The share button still sending the old link
+  s2 see: The card is back with the same code and the true count
+  s2 not: A new code that breaks links already sent
+  s2 not: The count reset to 0
+J-F-phone-327-06 | type 12 | member | Two friends joined through the member's link
+  s1 see: 'Friends who joined: 2' and nothing else about them
+  s1 not: The friends' names, numbers or join dates
+  s1 not: Friends of another member counted in
+  s2 see: The message holds only the gym name and the link
+  s2 not: The member's phone number or name inside the link or message
+J-F-phone-327-07 | type 1 | pass member | Gym tab, My gym part, linked to a gym whose server has 0056, online ; the member's plan is a pass (FITPASS / cultpass)
+  s1 see: Card titled 'Bring a friend'
+  s1 see: 'Send a friend a link to your gym. They leave their number, and the gym calls them.'
+  s1 see: 'Friends who joined: 0'
+  s1 not: A free-days line for a pass member, who has no plan to add days to
+  s2 see: The phone's share menu
+  s2 not: The app opens a screen of its own instead of the share menu
+  s2 not: Nothing happens with no word
+  s3 see: Message 'Come and train with me at <gym>! Leave your name and number on this page, and the gym will call you: https://app.mettleup.fit/f/<8-letter code>' (join.mettleup.fit once the Worker says so)
+  s3 not: Another member's code in the link
+  s3 not: 'my gym' in place of the gym's real name when the name is known
+  s4 see: Nothing new on the phone yet
+  s4 not: The friend's name or number shown to the member
+  s5 see: 'Friends who joined: 1'
+  s5 not: The count staying at 0 after the gym marked the friend joined
+  s5 not: A count that includes friends who only left a number
+J-F-phone-327-08 | type 3 | pass member | Gym tab, the member has left the gym, or the gym is paused (member_friend_invite refuses)
+  s1 see: No 'Bring a friend' card at all
+  s1 not: A card with a link that leads a friend to a gym the member left
+  s1 not: An error box about the invite
+J-F-phone-327-09 | type 3 | pass member | Gym tab, the gym's server does not have 0056 yet (store build)
+  s1 see: No 'Bring a friend' card
+  s1 not: The test-build line 'Test build: made-up numbers…' in a store build
+  s1 not: A card with code QATEST23
+  s2 see: Still no card, and no new ask to the server for the rest of the app's life
+  s2 not: A spinner that never ends
+J-F-phone-327-10 | type 6 | pass member | Gym tab, card showing 'Friends who joined: 1'
+  s1 see: The 'Bring a friend' card disappears
+  s1 not: The old card and link left on screen after the server refused
+  s1 not: The share button still sending the old link
+  s2 see: The card is back with the same code and the true count
+  s2 not: A new code that breaks links already sent
+  s2 not: The count reset to 0
+J-F-phone-327-11 | type 12 | pass member | Two friends joined through the member's link
+  s1 see: 'Friends who joined: 2' and nothing else about them
+  s1 not: The friends' names, numbers or join dates
+  s1 not: Friends of another member counted in
+  s2 see: The message holds only the gym name and the link
+  s2 not: The member's phone number or name inside the link or message
+J-F-phone-308-01 | type 1 | member | Phone joined to the gym as a member of the gym, number already matched; at the desk, the gym's check-in poster
+  s1 see: The app opens on 'Check in at <gym>'
+  s1 see: 'Tap Check in when you are at the gym.'
+  s1 see: Buttons 'Check in' and 'Not now'
+  s1 not: The member checked in just by opening the link
+  s1 not: A browser page instead of the app
+  s2 see: 'Checking you in at <gym>…'
+  s2 see: Then 'You're checked in at 6:42 pm'
+  s2 see: 'Checked in at <gym> as <name>. Have a good workout.'
+  s2 not: Two visits recorded for one tap
+  s2 not: 'Your gym membership is not active today. Please see the desk.' for a plan that covers today
+  s3 see: The workout opens in place of the check-in
+  s3 not: Back returning to a stale 'Start Push' card
+  s3 not: The app closing on Back when opened cold from the poster
+J-F-phone-308-02 | type 2 | member | Gym tab, My gym part, at the desk
+  s1 see: MettleUp's own scanner
+  s1 not: A row that does nothing when the camera is refused
+  s2 see: 'Check in at <gym>' with the 'Check in' button
+  s2 not: A check-in at another gym's poster with no word
+  s3 see: 'You're checked in at <time>'
+  s3 not: The scanner staying open after the check-in
+J-F-phone-308-03 | type 2 | member | First check-in ever: the gym has no number matched to this phone
+  s1 see: 'Type the mobile number your gym has for you. The app asks only once.'
+  s1 see: Box 'Your mobile number', placeholder '98290 12345'
+  s1 not: Asked again on the next visit after a good check-in
+  s2 see: 'First check-in: go to the front desk and ask them to confirm your mobile number. When they say it is done, tap Check in below. You do this only once.'
+  s2 not: The member checked in before the desk confirms the number
+  s3 see: 'You're checked in at <time>'
+  s3 not: The number asked for a third time
+J-F-phone-308-04 | type 3 | member | Phone joined to another gym, scanning this gym's poster
+  s1 see: 'Finding your gym…'
+  s1 see: 'Check in at <poster gym>'
+  s1 see: 'This phone is joined to <my gym>, not <poster gym>. Join <poster gym> in the app first, then scan again.'
+  s1 see: Buttons 'Join this gym' and 'Not now'
+  s1 not: A check-in at a gym the member does not belong to
+  s1 not: The phone silently switched to the poster's gym
+  s2 see: The Gym tab of the member's own gym
+  s2 not: The app closing
+J-F-phone-308-05 | type 3 | member | First check-in, the number typed is wrong or short
+  s1 see: A red line asking for a valid mobile number, the box kept
+  s1 not: A call to the server with 5 digits
+  s1 not: The typed digits wiped
+  s2 see: 'Too many numbers were tried today. Check in at the desk, and ask them to check your mobile number.'
+  s2 not: Unlimited guesses at other members' numbers
+J-F-phone-308-06 | type 6 | member | Already checked in today
+  s1 see: 'You're checked in at <first time>'
+  s1 see: 'You were already checked in at <gym> today. Nothing more to do.'
+  s1 not: A second visit counted for today
+  s1 not: The time of the second scan shown as the check-in time
+  s2 see: The Gym tab
+  s2 not: The check-in screen opening again on its own
+J-F-phone-308-07 | type 12 | member | A friend forwards the poster link into a WhatsApp group; the member opens it at home
+  s1 see: 'Check in at <gym>' and 'Tap Check in when you are at the gym.'
+  s1 not: A check-in recorded just by opening the link
+  s1 not: Another member's name on the screen
+  s2 see: The Gym tab; no visit recorded
+  s2 not: A visit recorded for the day
+J-F-phone-308-08 | type 1 | pass member | Phone joined to the gym as a pass member (FITPASS / cultpass) of the gym, number already matched; at the desk, the gym's check-in poster
+  s1 see: The app opens on 'Check in at <gym>'
+  s1 see: 'Tap Check in when you are at the gym.'
+  s1 see: Buttons 'Check in' and 'Not now'
+  s1 not: The member checked in just by opening the link
+  s1 not: A browser page instead of the app
+  s2 see: 'Checking you in at <gym>…'
+  s2 see: Then 'You're checked in at 6:42 pm'
+  s2 see: 'Checked in at <gym> as <name>. Have a good workout.'
+  s2 not: Two visits recorded for one tap
+  s2 not: 'Your gym membership is not active today. Please see the desk.' for a pass that covers today
+  s3 see: The workout opens in place of the check-in
+  s3 not: Back returning to a stale 'Start Push' card
+  s3 not: The app closing on Back when opened cold from the poster
+J-F-phone-308-09 | type 3 | pass member | Phone joined to another gym, scanning this gym's poster
+  s1 see: 'Finding your gym…'
+  s1 see: 'Check in at <poster gym>'
+  s1 see: 'This phone is joined to <my gym>, not <poster gym>. Join <poster gym> in the app first, then scan again.'
+  s1 see: Buttons 'Join this gym' and 'Not now'
+  s1 not: A check-in at a gym the member does not belong to
+  s1 not: The phone silently switched to the poster's gym
+  s2 see: The Gym tab of the member's own gym
+  s2 not: The app closing
+J-F-phone-308-10 | type 3 | pass member | First check-in, the number typed is wrong or short
+  s1 see: A red line asking for a valid mobile number, the box kept
+  s1 not: A call to the server with 5 digits
+  s1 not: The typed digits wiped
+  s2 see: 'Too many numbers were tried today. Check in at the desk, and ask them to check your mobile number.'
+  s2 not: Unlimited guesses at other members' numbers
+J-F-phone-308-11 | type 6 | pass member | Already checked in today
+  s1 see: 'You're checked in at <first time>'
+  s1 see: 'You were already checked in at <gym> today. Nothing more to do.'
+  s1 not: A second visit counted for today
+  s1 not: The time of the second scan shown as the check-in time
+  s2 see: The Gym tab
+  s2 not: The check-in screen opening again on its own
+J-F-phone-308-12 | type 12 | pass member | A friend forwards the poster link into a WhatsApp group; the member opens it at home
+  s1 see: 'Check in at <gym>' and 'Tap Check in when you are at the gym.'
+  s1 not: A check-in recorded just by opening the link
+  s1 not: Another member's name on the screen
+  s2 see: The Gym tab; no visit recorded
+  s2 not: A visit recorded for the day
+J-F-phone-318-01 | type 1 | member | Gym tab, My gym part; the gym's server has 0039 and enough timed check-ins; the gym is open (Tuesday 6 pm IST)
+  s1 see: Card 'How busy the gym is'
+  s1 see: 'Busier than usual right now' (or 'Quiet right now' / 'About as busy as usual')
+  s1 see: 'About 15 people checked in during the last 90 minutes'
+  s1 not: A count shown when fewer than 5 checked in
+  s1 not: A name or photo of anyone who checked in
+  s2 see: Day chips starting with today
+  s2 see: Bars per hour, the bar for now in the gym colour
+  s2 see: Hour words at both ends, such as '6 am' and '10 pm'
+  s2 not: A bar for now on the wrong hour (phone clock not India time)
+  s3 see: 'Quietest later today: 2 pm to 4 pm'
+  s3 see: 'From check-ins at your gym over the last 8 weeks. No names are shown.'
+  s3 not: A quiet time earlier than now offered for today
+J-F-phone-318-02 | type 2 | member | Busy card on screen, today chip picked
+  s1 see: Bars for Saturday
+  s1 see: 'Quietest on Sat: 11 am to 1 pm'
+  s1 not: The bar for 'now' lit on a day that is not today
+  s1 not: 'later today' words on another day
+  s2 see: The card asked again at once and redrawn
+  s2 not: The picked day lost with no reason
+J-F-phone-318-03 | type 3 | member | The gym's server has no 0039, or the gym has few timed check-ins
+  s1 see: No 'How busy the gym is' card at all
+  s1 not: An error box
+  s1 not: A card with empty bars or 'About 0 people'
+J-F-phone-318-04 | type 3 | member | The gym's hours say it is closed right now (a holiday set by the gym)
+  s1 see: 'Closed right now'
+  s1 see: No 'About … people' line
+  s1 see: 'Your gym is closed today.' for a day closed all day
+  s1 not: 'Busier than usual right now' while the gym is closed
+  s1 not: A quiet time offered later on a closed day
+J-F-phone-318-05 | type 6 | member | Busy card showing 'Quiet right now' at 5:58 pm
+  s1 see: The bar for now moves to the 6 pm bar within a minute
+  s1 not: The 'now' bar stuck on 5 pm
+  s2 see: The level read again from the server
+  s2 not: The level kept from an hour ago with no refresh
+  s2 not: The card flashing away and back
+J-F-phone-318-06 | type 12 | member | Busy card on screen
+  s1 see: Only levels, counts and hours
+  s1 see: 'No names are shown.'
+  s1 not: Who checked in, their names, photos or times
+  s1 not: Another gym's numbers
+J-F-phone-318-07 | type 1 | pass member | Gym tab, My gym part; the gym's server has 0039 and enough timed check-ins; the gym is open (Tuesday 6 pm IST)
+  s1 see: Card 'How busy the gym is'
+  s1 see: 'Busier than usual right now' (or 'Quiet right now' / 'About as busy as usual')
+  s1 see: 'About 15 people checked in during the last 90 minutes'
+  s1 not: A count shown when fewer than 5 checked in
+  s1 not: A name or photo of anyone who checked in
+  s2 see: Day chips starting with today
+  s2 see: Bars per hour, the bar for now in the gym colour
+  s2 see: Hour words at both ends, such as '6 am' and '10 pm'
+  s2 not: A bar for now on the wrong hour (phone clock not India time)
+  s3 see: 'Quietest later today: 2 pm to 4 pm'
+  s3 see: 'From check-ins at your gym over the last 8 weeks. No names are shown.'
+  s3 not: A quiet time earlier than now offered for today
+J-F-phone-318-08 | type 3 | pass member | The gym's server has no 0039, or the gym has few timed check-ins
+  s1 see: No 'How busy the gym is' card at all
+  s1 not: An error box
+  s1 not: A card with empty bars or 'About 0 people'
+J-F-phone-318-09 | type 3 | pass member | The gym's hours say it is closed right now (a holiday set by the gym)
+  s1 see: 'Closed right now'
+  s1 see: No 'About … people' line
+  s1 see: 'Your gym is closed today.' for a day closed all day
+  s1 not: 'Busier than usual right now' while the gym is closed
+  s1 not: A quiet time offered later on a closed day
+J-F-phone-318-10 | type 6 | pass member | Busy card showing 'Quiet right now' at 5:58 pm
+  s1 see: The bar for now moves to the 6 pm bar within a minute
+  s1 not: The 'now' bar stuck on 5 pm
+  s2 see: The level read again from the server
+  s2 not: The level kept from an hour ago with no refresh
+  s2 not: The card flashing away and back
+J-F-phone-318-11 | type 12 | pass member | Busy card on screen
+  s1 see: Only levels, counts and hours
+  s1 see: 'No names are shown.'
+  s1 not: Who checked in, their names, photos or times
+  s1 not: Another gym's numbers
+J-F-phone-330-01 | type 1 | member | Joined to a gym that uploaded a logo and colours in Branding; Gym tab
+  s1 see: The gym's logo, 56 dp high, in its own shape with a thin border
+  s1 see: The gym's name next to it in the gym's heading style, up to 2 lines
+  s1 see: 'Your gym' under the name ('Pay at the desk' when the gym's shop is on)
+  s1 not: The logo squeezed into a circle or cropped
+  s1 not: Another gym's logo or name
+  s2 see: The logo full size on a dark screen
+  s2 see: The gym's name under it
+  s2 see: A close X at the top right
+  s2 not: The logo cut at the edges
+  s2 not: The page behind showing through the logo
+  s3 see: The Gym tab as it was
+  s3 not: The app going back a screen or closing on Back
+J-F-phone-330-02 | type 2 | member | Joined to a gym with only colours set (no logo)
+  s1 see: A small dot in the gym colour and the gym's name
+  s1 see: 'Your gym' under it
+  s1 not: An empty grey box where a logo would be
+  s1 not: A tap target that opens an empty viewer
+  s2 see: Nothing opens
+  s2 not: A full-size viewer with no picture
+J-F-phone-330-03 | type 3 | member | Gym logo link broken (file deleted or no internet on first open, nothing cached)
+  s1 see: The small dot and the gym's name
+  s1 see: Nothing to tap
+  s1 not: A broken-picture mark
+  s1 not: A tappable box that opens an empty dark screen
+J-F-phone-330-04 | type 3 | member | Gym not branded at all (no logo, no colours)
+  s1 see: No big header; the gym's name and tagline in the normal screen title
+  s1 not: Both the header and the title showing the name twice
+  s1 not: A blank gap at the top
+J-F-phone-330-05 | type 6 | member | The gym changes its logo in Branding while the member has the app open
+  s1 see: The new logo in the header
+  s1 not: The old logo kept for days
+  s1 not: Old and new logos mixed between tabs
+  s2 see: The new logo full size
+  s2 not: The old logo in the full-size viewer from the disk cache
+J-F-phone-330-06 | type 12 | member | Phone switched from gym A to gym B
+  s1 see: Gym B's name; gym A's logo is not drawn while the look is still gym A's
+  s1 not: Gym A's logo or name over gym B's tab
+J-F-phone-330-07 | type 1 | pass member | Joined to a gym that uploaded a logo and colours in Branding; Gym tab
+  s1 see: The gym's logo, 56 dp high, in its own shape with a thin border
+  s1 see: The gym's name next to it in the gym's heading style, up to 2 lines
+  s1 see: 'Your gym' under the name ('Pay at the desk' when the gym's shop is on)
+  s1 not: The logo squeezed into a circle or cropped
+  s1 not: Another gym's logo or name
+  s2 see: The logo full size on a dark screen
+  s2 see: The gym's name under it
+  s2 see: A close X at the top right
+  s2 not: The logo cut at the edges
+  s2 not: The page behind showing through the logo
+  s3 see: The Gym tab as it was
+  s3 not: The app going back a screen or closing on Back
+J-F-phone-330-08 | type 3 | pass member | Gym logo link broken (file deleted or no internet on first open, nothing cached)
+  s1 see: The small dot and the gym's name
+  s1 see: Nothing to tap
+  s1 not: A broken-picture mark
+  s1 not: A tappable box that opens an empty dark screen
+J-F-phone-330-09 | type 3 | pass member | Gym not branded at all (no logo, no colours)
+  s1 see: No big header; the gym's name and tagline in the normal screen title
+  s1 not: Both the header and the title showing the name twice
+  s1 not: A blank gap at the top
+J-F-phone-330-10 | type 6 | pass member | The gym changes its logo in Branding while the member has the app open
+  s1 see: The new logo in the header
+  s1 not: The old logo kept for days
+  s1 not: Old and new logos mixed between tabs
+  s2 see: The new logo full size
+  s2 not: The old logo in the full-size viewer from the disk cache
+J-F-phone-330-11 | type 12 | pass member | Phone switched from gym A to gym B
+  s1 see: Gym B's name; gym A's logo is not drawn while the look is still gym A's
+  s1 not: Gym A's logo or name over gym B's tab
+J-F-phone-317-01 | type 1 | member | Joined gym has set its hours in the admin app; Gym tab, Tuesday 7 pm IST
+  s1 see: Row 'Open now · closes 10:00 pm' with a clock icon, and a special day this week under it such as 'Closed Sun 8 Nov · Diwali'
+  s1 not: The row in the phone's own time zone instead of India time
+  s1 not: 'Open now' while the gym's hours say closed
+  s2 see: Screen 'Gym timings'
+  s2 see: 'Open now · closes 10:00 pm'
+  s2 see: '<gym> · India time'
+  s2 see: The gym's note, such as 'Ladies batch 11 am to 12 pm'
+  s2 not: 'No timings yet' for a gym that has set hours
+  s3 see: Monday to Sunday, today marked 'Today' in the gym colour
+  s3 see: 'Closed' days in grey
+  s3 see: This week's special days under their day
+  s3 not: Today marked on the wrong day
+  s3 not: A special day of next week put into this week
+  s4 see: The special days coming up in plain words
+  s4 not: A past special day still listed
+J-F-phone-317-02 | type 2 | member | Gym timings screen open, the gym has just changed its hours in the admin app
+  s1 see: The new hours at once
+  s1 not: The old hours kept for 10 minutes after a pull
+  s2 see: The Gym tab with the row showing the new hours
+  s2 not: The app closing (Back goes to the Gym tab)
+J-F-phone-317-03 | type 3 | member | Joined gym has never set its hours
+  s1 see: No hours row at all
+  s1 not: An empty row or 'Closed now' for a gym with no hours
+  s2 see: 'No timings yet'
+  s2 see: '<gym> hasn't added its opening times in MettleUp yet. Ask at the desk.'
+  s2 not: An endless 'Loading…'
+J-F-phone-317-04 | type 3 | member | Phone not joined to any gym opens the timings link
+  s1 see: The Gym tab's not-joined screen (GymOnly)
+  s1 not: Another gym's hours
+  s1 not: A crash
+J-F-phone-317-05 | type 6 | member | Gym timings screen open at 9:59 pm, gym closes at 10:00 pm
+  s1 see: Within 30 seconds 'Closed now · opens 5:00 am tomorrow'
+  s1 not: 'Open now' kept after closing time
+  s2 see: The kept copy at once
+  s2 not: 'No timings yet' offline after the first answer
+J-F-phone-317-06 | type 12 | member | Gym timings screen
+  s1 see: Only the gym's own hours, note and special days
+  s1 not: Another branch's or gym's hours
+  s1 not: Staff names or member data
+J-F-phone-317-07 | type 1 | pass member | Joined gym has set its hours in the admin app; Gym tab, Tuesday 7 pm IST
+  s1 see: Row 'Open now · closes 10:00 pm' with a clock icon, and a special day this week under it such as 'Closed Sun 8 Nov · Diwali'
+  s1 not: The row in the phone's own time zone instead of India time
+  s1 not: 'Open now' while the gym's hours say closed
+  s2 see: Screen 'Gym timings'
+  s2 see: 'Open now · closes 10:00 pm'
+  s2 see: '<gym> · India time'
+  s2 see: The gym's note, such as 'Ladies batch 11 am to 12 pm'
+  s2 not: 'No timings yet' for a gym that has set hours
+  s3 see: Monday to Sunday, today marked 'Today' in the gym colour
+  s3 see: 'Closed' days in grey
+  s3 see: This week's special days under their day
+  s3 not: Today marked on the wrong day
+  s3 not: A special day of next week put into this week
+  s4 see: The special days coming up in plain words
+  s4 not: A past special day still listed
+J-F-phone-317-08 | type 3 | pass member | Joined gym has never set its hours
+  s1 see: No hours row at all
+  s1 not: An empty row or 'Closed now' for a gym with no hours
+  s2 see: 'No timings yet'
+  s2 see: '<gym> hasn't added its opening times in MettleUp yet. Ask at the desk.'
+  s2 not: An endless 'Loading…'
+J-F-phone-317-09 | type 3 | pass member | Phone not joined to any gym opens the timings link
+  s1 see: The Gym tab's not-joined screen (GymOnly)
+  s1 not: Another gym's hours
+  s1 not: A crash
+J-F-phone-317-10 | type 6 | pass member | Gym timings screen open at 9:59 pm, gym closes at 10:00 pm
+  s1 see: Within 30 seconds 'Closed now · opens 5:00 am tomorrow'
+  s1 not: 'Open now' kept after closing time
+  s2 see: The kept copy at once
+  s2 not: 'No timings yet' offline after the first answer
+J-F-phone-317-11 | type 12 | pass member | Gym timings screen
+  s1 see: Only the gym's own hours, note and special days
+  s1 not: Another branch's or gym's hours
+  s1 not: Staff names or member data
+J-F-phone-311-01 | type 1 | member | Phone joined to no gym; a join link with a code that matches no gym (https://…/j/ZZZZ99)
+  s1 see: Heading 'We couldn't find this gym'
+  s1 see: 'No gym has the code ZZZZ99, so scan the poster at your gym or type your gym's code again.'
+  s1 see: Buttons 'Scan the poster' and 'Type a gym code'
+  s1 not: A blank page or an endless 'Finding your gym…'
+  s1 not: The word 'link' in the words
+  s1 not: A made-up gym shown
+  s2 see: The Gym tab's code box
+  s2 not: Back returning to the not-found page (replace, not push)
+  s3 see: The gym's join screen
+  s3 not: The wrong code kept in the box
+J-F-phone-311-02 | type 2 | member | A check-in poster link whose code matches no gym (a gym that closed, a typo)
+  s1 see: 'We couldn't find this gym'
+  s1 see: 'No gym has the code <code>, …'
+  s1 see: 'Scan the poster' and 'Type a gym code'
+  s1 not: 'Check in at …' with a Check in button for a gym that does not exist
+  s2 see: MettleUp's own scanner
+  s2 not: The phone's camera app instead
+J-F-phone-311-03 | type 2 | member | A forgeai://c/ link with no code at all
+  s1 see: 'We couldn't find this gym'
+  s1 see: 'Scan the poster at your gym, or type your gym's code.'
+  s1 not: 'No gym has the code null'
+J-F-phone-311-04 | type 3 | member | Phone already joined to a gym, opens a join link with an unknown code
+  s1 see: 'We couldn't find this gym'
+  s1 see: Buttons 'Scan the poster' and 'Close'
+  s1 not: A 'Type a gym code' button that leads to a Gym tab with no code box
+  s1 not: The phone unlinked from its gym
+  s2 see: The member's own Gym tab
+  s2 not: The app closing
+J-F-phone-311-05 | type 6 | member | The not-found page from a join link
+  s1 see: The screen before the link (the not-found page is gone)
+  s1 not: The not-found page coming back on every Back
+  s2 see: That gym's join or check-in screen
+  s2 not: The not-found page for a good code
+J-F-phone-315-01 | type 1 | member | The desk tapped 'Request workout report' on this member's page; the gym's server has 0045; Gym tab online
+  s1 see: 'Send your report to the gym?'
+  s1 see: '<gym> wants a copy of your workouts from <join date>, the day you joined: exercises, sets, weights, reps and your notes. The gym owner and desk can see it. …'
+  s1 see: Buttons 'Yes, send it' and 'No'
+  s1 see: 'Want your own copy? Go to Settings and save all your workouts.'
+  s1 not: The ask shown on an offline (kept) plan card
+  s1 not: Workouts from before the join date offered
+  s2 see: 'Sending your report…' and the button busy
+  s2 not: Two reports sent for one ask
+  s2 not: The report sent to another gym
+  s3 see: 'Report sent to the gym.' in green; the ask is gone
+  s3 not: 'Report sent' when the file did not reach the gym
+J-F-phone-315-02 | type 2 | member | The yes reached the gym but the file was lost on the way (internet dropped after step 1)
+  s1 see: The same ask, the main button now 'Try again'
+  s1 not: The ask gone with no report at the gym
+  s1 not: A second yes recorded
+  s2 see: 'Report sent to the gym.'
+  s2 not: The phone asking the member to agree a second time
+J-F-phone-315-03 | type 3 | member | The ask is waiting; the member does not want to share
+  s1 see: 'OK. Nothing was sent to the gym.'
+  s1 not: Any workout data sent
+  s1 not: The ask coming back on the next visit
+J-F-phone-315-04 | type 3 | member | The ask is waiting; no internet
+  s1 see: 'Couldn't send it. Check your internet and try again.' in red
+  s1 not: 'Report sent to the gym.'
+  s1 not: The buttons left disabled
+  s2 see: A plain line that the request is gone, and the card reads the request again
+  s2 not: A report sent for a cancelled ask
+J-F-phone-315-05 | type 6 | member | Report sent earlier today
+  s1 see: No ask on the plan card
+  s1 not: The same ask again, inviting a second report
+  s2 see: The ask shows again with the join date
+  s2 not: The old 'Report sent to the gym.' line kept instead
+J-F-phone-315-06 | type 12 | member | Ask waiting from the member's own gym
+  s1 see: Who sees it: 'The gym owner and desk can see it.'; what goes: workouts from the join date
+  s1 not: Workouts before the join date in the file
+  s1 not: Body weight or photos in the file
+  s2 see: Sent to this gym only
+  s2 not: The file reaching any other gym or person
+  s2 not: A file sent without a tap
+J-F-phone-315-07 | type 1 | pass member | The desk tapped 'Request workout report' on this member's page; the gym's server has 0045; Gym tab online
+  s1 see: 'Send your report to the gym?'
+  s1 see: '<gym> wants a copy of your workouts from <join date>, the day you joined: exercises, sets, weights, reps and your notes. The gym owner and desk can see it. …'
+  s1 see: Buttons 'Yes, send it' and 'No'
+  s1 see: 'Want your own copy? Go to Settings and save all your workouts.'
+  s1 not: The ask shown on an offline (kept) plan card
+  s1 not: Workouts from before the join date offered
+  s2 see: 'Sending your report…' and the button busy
+  s2 not: Two reports sent for one ask
+  s2 not: The report sent to another gym
+  s3 see: 'Report sent to the gym.' in green; the ask is gone
+  s3 not: 'Report sent' when the file did not reach the gym
+J-F-phone-315-08 | type 3 | pass member | The ask is waiting; the member does not want to share
+  s1 see: 'OK. Nothing was sent to the gym.'
+  s1 not: Any workout data sent
+  s1 not: The ask coming back on the next visit
+J-F-phone-315-09 | type 3 | pass member | The ask is waiting; no internet
+  s1 see: 'Couldn't send it. Check your internet and try again.' in red
+  s1 not: 'Report sent to the gym.'
+  s1 not: The buttons left disabled
+  s2 see: A plain line that the request is gone, and the card reads the request again
+  s2 not: A report sent for a cancelled ask
+J-F-phone-315-10 | type 6 | pass member | Report sent earlier today
+  s1 see: No ask on the plan card
+  s1 not: The same ask again, inviting a second report
+  s2 see: The ask shows again with the join date
+  s2 not: The old 'Report sent to the gym.' line kept instead
+J-F-phone-315-11 | type 12 | pass member | Ask waiting from the member's own gym
+  s1 see: Who sees it: 'The gym owner and desk can see it.'; what goes: workouts from the join date
+  s1 not: Workouts before the join date in the file
+  s1 not: Body weight or photos in the file
+  s2 see: Sent to this gym only
+  s2 not: The file reaching any other gym or person
+  s2 not: A file sent without a tap
+J-F-phone-320-01 | type 1 | member | Gym tab, My gym part; the gym's server has 0069; online
+  s1 see: Page 'Message your gym'
+  s1 see: 'What is it about?' with 'Question', 'Feedback', 'Complaint'
+  s1 see: 'The owner, front desk and trainers at <gym> read your question.'
+  s1 not: The 'A trainer' choice for a member whose plan has ended
+  s2 see: 'Sent. When your gym replies, you will see it below.'
+  s2 see: The message at the top of 'Your messages' with 'Not seen by your gym yet. Waiting for a reply.'
+  s2 not: The message sent twice
+  s2 not: The typed words lost on a failed send
+  s3 see: A red count '1' on the row and 'Your gym replied. Tap to read it.'
+  s3 not: No count after a reply
+  s3 not: A count for a reply already read
+  s4 see: The reply under the question, '<name> from your gym'; the red count goes
+  s4 not: The count staying after the page was opened
+J-F-phone-320-02 | type 2 | member | Message your gym page open
+  s1 see: 'Only the owner of <gym> reads your complaint. The front desk and trainers do not see it.'
+  s1 not: The complaint reaching a trainer, even when picked under a trainer
+  s2 see: 'Your gym can still reply here, but it will not see who sent it.'
+  s2 see: The sent line tagged 'Sent without your name'
+  s2 not: The member's name or number shown to the gym on anonymous feedback
+J-F-phone-320-03 | type 2 | member | A gym reply's push notification
+  s1 see: The 'Message your gym' page with the reply
+  s1 not: The Gym tab home instead of the page
+  s1 not: A trainer's page for a gym reply
+J-F-phone-320-04 | type 2 | member | Gym server has 0096; the member wants a trainer to answer
+  s1 see: 'Only the person you pick sees your question.'
+  s1 not: The question seen by every trainer
+  s2 see: 'Sent. …' and the question in the list
+  s2 not: The question sent to the owner instead
+J-F-phone-320-05 | type 3 | member | Message your gym page
+  s1 see: A red line asking to write something
+  s1 not: An empty message sent
+  s2 see: The counter '1000 of 1000 letters' and the text stopped there
+  s2 not: 1,200 letters sent, or cut with no word
+  s3 see: 'Only feedback can be sent without your name.' when tried
+  s3 not: A question or complaint sent without the name
+J-F-phone-320-06 | type 3 | member | The gym's server has no 0069 (and no trainer side)
+  s1 see: No 'Message your gym' row
+  s1 not: A row that leads to a page that cannot send
+J-F-phone-320-07 | type 6 | member | A question was sent and the gym replied and marked it done
+  s1 see: The reply under the question
+  s1 see: 'Your gym marked this as done. Write back if you need more help.'
+  s1 not: The thread lost after done
+  s2 see: The thread back to 'Not seen by your gym yet. Waiting for a reply.'
+  s2 not: A new thread with the old one hidden
+  s2 not: The red count coming back for the member's own words
+J-F-phone-320-08 | type 12 | member | Message your gym page, sending feedback
+  s1 see: 'Only the owner and front desk at <gym> read your feedback. Your trainers do not see it.'
+  s1 not: A trainer able to read the feedback in their app
+  s1 not: MettleUp HQ reading the message
+  s2 see: The message and replies are deleted after 180 days (privacy notice)
+  s2 not: Messages kept forever
+J-F-phone-320-09 | type 1 | pass member | Gym tab, My gym part; the gym's server has 0069; online
+  s1 see: Page 'Message your gym'
+  s1 see: 'What is it about?' with 'Question', 'Feedback', 'Complaint'
+  s1 see: 'The owner, front desk and trainers at <gym> read your question.'
+  s1 not: The 'A trainer' choice for a pass member (no plan)
+  s2 see: 'Sent. When your gym replies, you will see it below.'
+  s2 see: The message at the top of 'Your messages' with 'Not seen by your gym yet. Waiting for a reply.'
+  s2 not: The message sent twice
+  s2 not: The typed words lost on a failed send
+  s3 see: A red count '1' on the row and 'Your gym replied. Tap to read it.'
+  s3 not: No count after a reply
+  s3 not: A count for a reply already read
+  s4 see: The reply under the question, '<name> from your gym'; the red count goes
+  s4 not: The count staying after the page was opened
+J-F-phone-320-10 | type 2 | pass member | Message your gym page open
+  s1 see: 'Only the owner of <gym> reads your complaint. The front desk and trainers do not see it.'
+  s1 not: The complaint reaching a trainer, even when picked under a trainer
+  s2 see: 'Your gym can still reply here, but it will not see who sent it.'
+  s2 see: The sent line tagged 'Sent without your name'
+  s2 not: The member's name or number shown to the gym on anonymous feedback
+J-F-phone-320-11 | type 3 | pass member | Message your gym page
+  s1 see: A red line asking to write something
+  s1 not: An empty message sent
+  s2 see: The counter '1000 of 1000 letters' and the text stopped there
+  s2 not: 1,200 letters sent, or cut with no word
+  s3 see: 'Only feedback can be sent without your name.' when tried
+  s3 not: A question or complaint sent without the name
+J-F-phone-320-12 | type 3 | pass member | The gym's server has no 0069 (and no trainer side)
+  s1 see: No 'Message your gym' row
+  s1 not: A row that leads to a page that cannot send
+J-F-phone-320-13 | type 6 | pass member | A question was sent and the gym replied and marked it done
+  s1 see: The reply under the question
+  s1 see: 'Your gym marked this as done. Write back if you need more help.'
+  s1 not: The thread lost after done
+  s2 see: The thread back to 'Not seen by your gym yet. Waiting for a reply.'
+  s2 not: A new thread with the old one hidden
+  s2 not: The red count coming back for the member's own words
+J-F-phone-320-14 | type 12 | pass member | Message your gym page, sending feedback
+  s1 see: 'Only the owner and front desk at <gym> read your feedback. Your trainers do not see it.'
+  s1 not: A trainer able to read the feedback in their app
+  s1 not: MettleUp HQ reading the message
+  s2 see: The message and replies are deleted after 180 days (privacy notice)
+  s2 not: Messages kept forever
+J-F-phone-323-01 | type 1 | member | Joined gym sent 'Gym closed on Diwali' and an offer; bell on the Gym tab shows 2
+  s1 see: Page 'Messages', 'From <gym>'
+  s1 see: Newest first: a card 'Gym closed' in the gym colour, its title and body, '2 h ago'
+  s1 not: Oldest message on top
+  s1 not: Another gym's messages
+  s2 see: Kind word on each card: 'Gym closed', 'New timings', 'Offer', 'Event' or 'Reminder'
+  s2 not: A withdrawn message still shown
+  s3 see: The Gym tab, the bell's number gone
+  s3 not: The bell still at 2 after the page was opened
+J-F-phone-323-02 | type 2 | member | A gym message arrives as a push notification
+  s1 see: The 'Messages' page with the new message on top
+  s1 not: The app opening on Workout with no message
+J-F-phone-323-03 | type 2 | member | Messages page open; the gym sends a new message
+  s1 see: The new message at the top
+  s1 not: The page needing a restart to show it
+J-F-phone-323-04 | type 3 | member | The gym has never sent a message
+  s1 see: 'No messages yet'
+  s1 see: 'When your gym sends news — a holiday, new timings, an offer — it shows here.'
+  s1 not: A blank page or an endless spinner
+J-F-phone-323-05 | type 3 | member | No internet, messages read before
+  s1 see: 'No internet — showing the last messages.'
+  s1 see: The kept messages
+  s1 not: The kept list wiped
+  s1 not: 'No messages yet' when messages were shown before
+J-F-phone-323-06 | type 6 | member | Two unseen messages; offline
+  s1 see: Both shown and marked seen on the phone; the bell clears
+  s1 not: The bell coming back after restart
+  s2 see: The 'seen' is sent to the gym once (the panel's 'seen by' count goes up by one)
+  s2 not: The seen never reaching the gym
+  s2 not: Seen sent twice and counted twice
+  s3 see: It disappears from the page on the next refresh
+  s3 not: A withdrawn message still listed
+J-F-phone-323-07 | type 12 | member | Gym sent a message to a group (to_group) that does not include this member
+  s1 see: Only messages sent to everyone or to this member's group
+  s1 not: A message meant for another group
+  s1 not: Who else saw the message
+J-F-phone-323-08 | type 1 | pass member | Joined gym sent 'Gym closed on Diwali' and an offer; bell on the Gym tab shows 2
+  s1 see: Page 'Messages', 'From <gym>'
+  s1 see: Newest first: a card 'Gym closed' in the gym colour, its title and body, '2 h ago'
+  s1 not: Oldest message on top
+  s1 not: Another gym's messages
+  s2 see: Kind word on each card: 'Gym closed', 'New timings', 'Offer', 'Event' or 'Reminder'
+  s2 not: A withdrawn message still shown
+  s3 see: The Gym tab, the bell's number gone
+  s3 not: The bell still at 2 after the page was opened
+J-F-phone-323-09 | type 3 | pass member | The gym has never sent a message
+  s1 see: 'No messages yet'
+  s1 see: 'When your gym sends news — a holiday, new timings, an offer — it shows here.'
+  s1 not: A blank page or an endless spinner
+J-F-phone-323-10 | type 3 | pass member | No internet, messages read before
+  s1 see: 'No internet — showing the last messages.'
+  s1 see: The kept messages
+  s1 not: The kept list wiped
+  s1 not: 'No messages yet' when messages were shown before
+J-F-phone-323-11 | type 6 | pass member | Two unseen messages; offline
+  s1 see: Both shown and marked seen on the phone; the bell clears
+  s1 not: The bell coming back after restart
+  s2 see: The 'seen' is sent to the gym once (the panel's 'seen by' count goes up by one)
+  s2 not: The seen never reaching the gym
+  s2 not: Seen sent twice and counted twice
+  s3 see: It disappears from the page on the next refresh
+  s3 not: A withdrawn message still listed
+J-F-phone-323-12 | type 12 | pass member | Gym sent a message to a group (to_group) that does not include this member
+  s1 see: Only messages sent to everyone or to this member's group
+  s1 not: A message meant for another group
+  s1 not: Who else saw the message
+J-F-phone-310-01 | type 1 | member | Phone in no gym; the gym's invite link https://…/j/RAMS01 opened from WhatsApp
+  s1 see: Screen 'Join your gym', 'Finding your gym…'
+  s1 see: Then the gym's logo (or its first letter) and name as the heading, 'Gym code RAMS01'
+  s1 see: 'Join to see your membership and your gym's messages here. Your workouts stay on this phone.'
+  s1 see: 'Your gym sees how many workouts you log and the weight you lift, for challenges. Other members see your name only if you switch it on.'
+  s1 not: The member joined just by opening the link
+  s1 not: Another gym's name
+  s2 see: The profile name, editable, up to 70 letters
+  s2 not: An empty box when the profile has a name
+  s3 see: A tick in the box; 'Terms' and 'Privacy notice' links beside it
+  s3 not: The box ticked already
+  s4 see: The button busy, then the Gym tab of the new gym with the membership card
+  s4 not: Two members made at the desk for one tap
+  s4 not: The name sent before the box was ticked
+J-F-phone-310-02 | type 2 | member | Phone already joined to gym A; opens gym B's invite link
+  s1 see: Gym B's logo and name
+  s1 see: 'You're in <A> now. Switching takes you out of <A> on this phone.'
+  s1 see: Button 'Switch to this gym'
+  s1 not: The switch done by opening the link
+  s2 see: A question about the open order before it is cancelled
+  s2 not: Gym A's order cancelled with no question
+  s3 see: Gym B's Gym tab; gym A let go after B's join worked
+  s3 not: The phone in no gym at all when B's join fails
+  s3 not: Still listed as an app member at gym A after the switch
+J-F-phone-310-03 | type 2 | member | The check-in poster opened by a phone in no gym; 'Join this gym' tapped there
+  s1 see: Straight back to 'Check in at <gym>', not the Gym tab
+  s1 not: The member left on the Gym tab having to scan again
+J-F-phone-310-04 | type 3 | member | Phone in no gym on the join screen
+  s1 see: 'Please tick the box above. You need to be 18 or older and agree to the terms and privacy notice.'
+  s1 not: Anything sent to the gym
+  s1 not: The terms tick saved as agreed
+  s2 see: A red line asking for a name
+  s2 not: A member with an empty name at the desk
+J-F-phone-310-05 | type 3 | member | Join link of a gym that has turned the member app off, or no internet
+  s1 see: A plain error and 'Try again'
+  s1 not: 'We couldn't find this gym' for a good code that could not be checked
+  s2 see: The gym's name and the join form
+  s2 not: A stuck spinner
+J-F-phone-310-06 | type 6 | member | Phone already in this gym opens its own invite link
+  s1 see: 'You're already in <gym>. Nothing to do.'
+  s1 see: Button 'Open your gym'
+  s1 not: A second join of the same gym
+  s1 not: A 'Switch' button for the gym the member is in
+J-F-phone-310-07 | type 6 | member | Join answer lost (internet dropped after the tap)
+  s1 see: A plain line that it could not join
+  s1 not: 'Joined' shown with no gym
+  s2 see: The gym tab; the desk's list has ONE new member
+  s2 not: Two app members with the same name at the desk
+  s3 see: Joined; the old join id is not reused
+  s3 not: The join refused because of an old id
+J-F-phone-310-08 | type 12 | member | Gym's server has the trainer view (0050)
+  s1 see: 'Your gym and your trainer see your workouts, so they can help you progress.' above the button
+  s1 not: Sharing with trainers started without this line shown
+  s2 see: Sharing with trainers on, as the line said; Settings, What my gym can see shows it
+  s2 not: Workouts shared with another gym
+  s2 not: The name shown to other members on the leaderboard before the member switches it on

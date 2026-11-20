@@ -1,0 +1,84 @@
+# B-alerts-phone-tracker-services-2-b: gap-3 + gap-4 x phone / phone/tracker-services-2. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H3.1 | gap-3 | Every automatic send, reminder, push, digest, job: is there a record the owner (or HQ) can open that says it went, to whom, when, and why not when it did not?
+H3.2 | gap-3 | An automatic action with no record and no "why not" = finding (S2 when the owner believes it ran)
+H4.1 | gap-4 | Find every pair of features that act on the same people or the same event (manual message vs automatic reminder; AI idea vs Today nudge; bell vs Today vs push; desk link vs phone proof)
+H4.2 | gap-4 | Check they agree: no double message, no suggestion to do what the system already did, the same count in both places, "done" in one is "done" in the other
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-600 | live | Plate calculator and warm-up set calculator (which plates to load, kg or lb) | apps/mobile/src/tracker/services/plateMath.ts:119
+F-phone-601 | live | Profile photo (camera, gallery, remove; kept on this phone) | apps/mobile/src/tracker/services/profilePhoto.ts:1
+F-phone-602 | live | Profile tab: header counts, history chart, workouts feed and the Next goal line | apps/mobile/src/tracker/services/profileService.ts:1
+F-phone-603 | live | Progress photos (take or pick, compare two, private on the phone) | apps/mobile/src/tracker/services/progressPhotos.ts:1
+F-phone-604 | live | Progress page top: this week vs your usual, Your lifts, body map muscle sets | apps/mobile/src/tracker/services/progressTop.ts:1
+F-phone-605 | hidden | Quick workout (the app picks exercises and starts it) | apps/mobile/src/tracker/services/quickWorkoutService.ts:1
+F-phone-606 | live | Which muscles are ready today | apps/mobile/src/tracker/services/readinessService.ts:15
+F-phone-607 | live | Personal records (found from logged sets, one wording everywhere, hidden when meaningless) | apps/mobile/src/tracker/services/recordsService.ts:1
+F-phone-609 | live | Monthly report and year in review | apps/mobile/src/tracker/services/reportsService.ts:1
+F-phone-610 | live | Statistics screen | apps/mobile/src/tracker/services/statisticsService.ts:1
+F-phone-611 | live | Kg lifted (volume) shown the same way on every screen | apps/mobile/src/tracker/services/volumeService.ts:1
+F-phone-612 | live | Strength level on the exercise page (compare with everyone, men or women) | apps/mobile/src/tracker/services/strengthLevelData.ts:1
+F-phone-613 | live | Rest timer (starts when a set is ticked; per-exercise length; supersets rest per round) | apps/mobile/src/tracker/services/restRules.ts:1
+F-phone-614 | live | "Rest is over" alert on the phone, lock screen and watch, and the check that Android will let it arrive on time (Rest al | apps/mobile/src/tracker/services/workoutAlerts.ts:112
+F-phone-615 | live | Rest card with Done, +15 s and Skip (log the next set from the shade, lock screen or watch without opening the app) | apps/mobile/src/tracker/services/restCard.ts:418
+F-phone-616 | live | Workout sounds and pick your rest-over sound (bell on rest over, chime on a record) | apps/mobile/src/tracker/services/workoutSounds.ts:85
+F-phone-617 | live | "Workout in progress" card in the phone's shade and on the lock screen | apps/mobile/src/tracker/services/workoutAlerts.ts:122
+F-phone-618 | live | "Update routine?" after a workout that changed its routine | apps/mobile/src/tracker/services/routineOffer.ts:1
+F-phone-619 | live | "Save as routine" on the finish screen (first empty workout, no routines yet) | apps/mobile/src/tracker/services/saveFirstRoutine.ts:12
+F-phone-620 | live | Import routines from Hevy or Strong: rebuilt from the workout export, saved as a From Hevy / From Strong folder, copied  | apps/mobile/src/tracker/services/routineRebuild.ts:1
+F-phone-621 | live | Import routines from a Hevy share link (read in a hidden in-app browser) | apps/mobile/src/tracker/services/routineLink.ts:1
+F-phone-622 | live | Share routines as text or a file, and import a routine file | apps/mobile/src/tracker/services/routineShare.ts:18
+F-phone-623 | live | Import workout history from Strong, and the welcome screen's "Coming from Hevy or Strong?" shortcut to the import | apps/mobile/src/tracker/services/strongImport.ts:1
+F-phone-624 | live | Move a saved workout to another day or time (edit workout) | apps/mobile/src/tracker/services/sessionTiming.ts:1
+F-phone-625 | live | Entry bar above the keyboard in a live workout (plus / minus steps, Copy to sets below) | apps/mobile/src/tracker/services/setEntry.ts:1
+F-phone-626 | live | Tick a set: saves exactly what the row shows, asks about a likely typo, then says a record or "on last time" line | apps/mobile/src/tracker/services/setTick.ts:1
+F-phone-627 | live | Share as text (a workout, a month or a year, to paste into any AI chat; never gives away body weight) | apps/mobile/src/tracker/services/shareText.ts:1
+F-phone-628 | live | Settings: Weight jumps and Rep range (how the suggested targets grow) | apps/mobile/src/tracker/services/targetChoices.ts:1
+F-phone-629 | live | Today / Up next: the one answer for which workout is next (Workout tab card, Today page, reminders, widgets), days train | apps/mobile/src/tracker/services/todayService.ts:1
+F-phone-630 | live | Start a workout (Start button starts the routine shown; resume or discard when one is already open; no double open) | apps/mobile/src/tracker/services/todayStart.ts:1
+F-phone-631 | live | Watch app opens when a workout starts on the phone | apps/mobile/src/tracker/services/watchOpen.ts:35
+F-phone-632 | live | Install the watch app from the phone (card after the first workout, card at workout start, Your watch row in Settings) | apps/mobile/src/tracker/services/watchInstall.ts:44
+F-phone-633 | live | "Your watch app has an update" pop-up (Update on watch, Later for a day) | apps/mobile/src/tracker/services/watchUpdate.ts:176
+F-phone-635 | live | Delete a saved workout (says truthfully whether it was deleted) | apps/mobile/src/tracker/services/workoutDelete.ts:1
+F-phone-636 | live | Saved workout page (time, kg lifted, sets, records, muscle split, each set) | apps/mobile/src/tracker/services/workoutDetail.ts:1
+F-phone-637 | live | Workout tab: folders and routines list | apps/mobile/src/tracker/services/workoutFolders.ts:1
+F-phone-638 | live | Live workout: move exercises up or down, supersets move as one block, swap an exercise after a tick; pause and resume th | apps/mobile/src/tracker/services/workoutOrder.ts:1
+F-phone-639 | live | Photos on a workout (up to 4, private on the phone) and "Watch your trainer" video links from the gym's plans and workou | apps/mobile/src/tracker/services/workoutPhotos.ts:1
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-600 | live | Plate calculator and warm-up set calculator (which plates to load, kg or lb) | apps/mobile/src/tracker/services/plateMath.ts:119
+F-phone-601 | live | Profile photo (camera, gallery, remove; kept on this phone) | apps/mobile/src/tracker/services/profilePhoto.ts:1
+F-phone-602 | live | Profile tab: header counts, history chart, workouts feed and the Next goal line | apps/mobile/src/tracker/services/profileService.ts:1
+F-phone-603 | live | Progress photos (take or pick, compare two, private on the phone) | apps/mobile/src/tracker/services/progressPhotos.ts:1
+F-phone-604 | live | Progress page top: this week vs your usual, Your lifts, body map muscle sets | apps/mobile/src/tracker/services/progressTop.ts:1
+F-phone-605 | hidden | Quick workout (the app picks exercises and starts it) | apps/mobile/src/tracker/services/quickWorkoutService.ts:1
+F-phone-606 | live | Which muscles are ready today | apps/mobile/src/tracker/services/readinessService.ts:15
+F-phone-607 | live | Personal records (found from logged sets, one wording everywhere, hidden when meaningless) | apps/mobile/src/tracker/services/recordsService.ts:1
+F-phone-609 | live | Monthly report and year in review | apps/mobile/src/tracker/services/reportsService.ts:1
+F-phone-610 | live | Statistics screen | apps/mobile/src/tracker/services/statisticsService.ts:1
+F-phone-611 | live | Kg lifted (volume) shown the same way on every screen | apps/mobile/src/tracker/services/volumeService.ts:1
+F-phone-612 | live | Strength level on the exercise page (compare with everyone, men or women) | apps/mobile/src/tracker/services/strengthLevelData.ts:1
+F-phone-613 | live | Rest timer (starts when a set is ticked; per-exercise length; supersets rest per round) | apps/mobile/src/tracker/services/restRules.ts:1
+F-phone-614 | live | "Rest is over" alert on the phone, lock screen and watch, and the check that Android will let it arrive on time (Rest al | apps/mobile/src/tracker/services/workoutAlerts.ts:112
+F-phone-615 | live | Rest card with Done, +15 s and Skip (log the next set from the shade, lock screen or watch without opening the app) | apps/mobile/src/tracker/services/restCard.ts:418
+F-phone-616 | live | Workout sounds and pick your rest-over sound (bell on rest over, chime on a record) | apps/mobile/src/tracker/services/workoutSounds.ts:85
+F-phone-617 | live | "Workout in progress" card in the phone's shade and on the lock screen | apps/mobile/src/tracker/services/workoutAlerts.ts:122
+F-phone-618 | live | "Update routine?" after a workout that changed its routine | apps/mobile/src/tracker/services/routineOffer.ts:1
+F-phone-619 | live | "Save as routine" on the finish screen (first empty workout, no routines yet) | apps/mobile/src/tracker/services/saveFirstRoutine.ts:12
+F-phone-620 | live | Import routines from Hevy or Strong: rebuilt from the workout export, saved as a From Hevy / From Strong folder, copied  | apps/mobile/src/tracker/services/routineRebuild.ts:1
+F-phone-621 | live | Import routines from a Hevy share link (read in a hidden in-app browser) | apps/mobile/src/tracker/services/routineLink.ts:1
+F-phone-622 | live | Share routines as text or a file, and import a routine file | apps/mobile/src/tracker/services/routineShare.ts:18
+F-phone-623 | live | Import workout history from Strong, and the welcome screen's "Coming from Hevy or Strong?" shortcut to the import | apps/mobile/src/tracker/services/strongImport.ts:1
+F-phone-624 | live | Move a saved workout to another day or time (edit workout) | apps/mobile/src/tracker/services/sessionTiming.ts:1
+F-phone-625 | live | Entry bar above the keyboard in a live workout (plus / minus steps, Copy to sets below) | apps/mobile/src/tracker/services/setEntry.ts:1
+F-phone-626 | live | Tick a set: saves exactly what the row shows, asks about a likely typo, then says a record or "on last time" line | apps/mobile/src/tracker/services/setTick.ts:1
+F-phone-627 | live | Share as text (a workout, a month or a year, to paste into any AI chat; never gives away body weight) | apps/mobile/src/tracker/services/shareText.ts:1
+F-phone-628 | live | Settings: Weight jumps and Rep range (how the suggested targets grow) | apps/mobile/src/tracker/services/targetChoices.ts:1
+F-phone-629 | live | Today / Up next: the one answer for which workout is next (Workout tab card, Today page, reminders, widgets), days train | apps/mobile/src/tracker/services/todayService.ts:1
+F-phone-630 | live | Start a workout (Start button starts the routine shown; resume or discard when one is already open; no double open) | apps/mobile/src/tracker/services/todayStart.ts:1
+F-phone-631 | live | Watch app opens when a workout starts on the phone | apps/mobile/src/tracker/services/watchOpen.ts:35
+F-phone-632 | live | Install the watch app from the phone (card after the first workout, card at workout start, Your watch row in Settings) | apps/mobile/src/tracker/services/watchInstall.ts:44
+F-phone-633 | live | "Your watch app has an update" pop-up (Update on watch, Later for a day) | apps/mobile/src/tracker/services/watchUpdate.ts:176
+F-phone-635 | live | Delete a saved workout (says truthfully whether it was deleted) | apps/mobile/src/tracker/services/workoutDelete.ts:1
+F-phone-636 | live | Saved workout page (time, kg lifted, sets, records, muscle split, each set) | apps/mobile/src/tracker/services/workoutDetail.ts:1
+F-phone-637 | live | Workout tab: folders and routines list | apps/mobile/src/tracker/services/workoutFolders.ts:1
+F-phone-638 | live | Live workout: move exercises up or down, supersets move as one block, swap an exercise after a tick; pause and resume th | apps/mobile/src/tracker/services/workoutOrder.ts:1
+F-phone-639 | live | Photos on a workout (up to 4, private on the phone) and "Watch your trainer" video links from the gym's plans and workou | apps/mobile/src/tracker/services/workoutPhotos.ts:1

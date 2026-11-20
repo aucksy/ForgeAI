@@ -1,0 +1,92 @@
+# B-alerts-panel-shop-b: gap-3 + gap-4 x panel / panel/shop. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H3.1 | gap-3 | Every automatic send, reminder, push, digest, job: is there a record the owner (or HQ) can open that says it went, to whom, when, and why not when it did not?
+H3.2 | gap-3 | An automatic action with no record and no "why not" = finding (S2 when the owner believes it ran)
+H4.1 | gap-4 | Find every pair of features that act on the same people or the same event (manual message vs automatic reminder; AI idea vs Today nudge; bell vs Today vs push; desk link vs phone proof)
+H4.2 | gap-4 | Check they agree: no double message, no suggestion to do what the system already did, the same count in both places, "done" in one is "done" in the other
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1108 | live | Alerts: bell inbox, latest from your members, alerts on this device with the app closed (web push), alert timing setting | apps/dashboard/src/crm/shop/alertsApi.ts:27
+F-panel-1115 | live | Visits: attendance register, members at risk with WhatsApp nudge, check-in QR poster, pass visits per pass company | apps/dashboard/src/crm/shop/CheckInQrScreen.tsx:27
+F-panel-1117 | behind switch | Invite and join online: invite link and QR poster, one link per gym, 'Become a member' page readiness, free trial for ne | apps/dashboard/src/crm/shop/InviteScreen.tsx:33
+F-panel-1119 | live | Shop: products, stock, photos, orders from the member app, cancel an order, today's shop card | apps/dashboard/src/crm/shop/ShopScreen.tsx:65
+F-panel-800 | live | See member app shop orders, mark ready or collected, cancel an order | apps/dashboard/src/crm/shop/ShopScreen.tsx:65
+F-panel-801 | live | Shop products: add, edit, price, choices, stock, hide, delete | apps/dashboard/src/crm/shop/ProductSheet.tsx:44
+F-panel-802 | live | Product photo upload (shrunk in the browser; the same uploader also serves gym page photos) | apps/dashboard/src/crm/shop/photoUpload.ts:96
+F-panel-803 | live | Shop card on Today: orders waiting and shop money today | apps/dashboard/src/crm/shop/ShopTodayCard.tsx:1
+F-panel-804 | live | Start a demo gym / turn on the member app for a gym (this browser holds the gym key) | apps/dashboard/src/crm/shop/api.ts:68
+F-panel-805 | live | Gym look in the member app (colour, background, logo, heading style) | apps/dashboard/src/crm/shop/api.ts:90
+F-panel-806 | live | Rename the gym | apps/dashboard/src/crm/shop/api.ts:95
+F-panel-807 | live | App members list: who joined the gym from the app | apps/dashboard/src/crm/shop/AppMembers.tsx:1
+F-panel-808 | live | Messages & offers: send a ready or own message to app members, sent list, withdraw | apps/dashboard/src/crm/shop/MessagesSection.tsx:1
+F-panel-809 | behind switch | Workout offer: train N times, get extra days; give or take back the reward | apps/dashboard/src/crm/shop/OffersSection.tsx:1
+F-panel-810 | behind switch | Automatic reminders: one switch per reminder (plan ends, birthday, welcome); also feeds the automatic birthday wish on T | apps/dashboard/src/crm/shop/AutoRemindersSection.tsx:1
+F-panel-811 | live | Invite members: gym join code, invite link, send on WhatsApp, copy, front-desk QR poster | apps/dashboard/src/crm/shop/InviteScreen.tsx:33
+F-panel-812 | behind switch | Join online: the gym one link / "Become a member" link, its WhatsApp message and poster | apps/dashboard/src/crm/shop/invite.ts:79
+F-panel-813 | behind switch | Free trial for new people joining online (Off, 1, 3 or 7 days) | apps/dashboard/src/crm/shop/JoinTrialCard.tsx:1
+F-panel-814 | live | Check-in QR poster: print or download "Scan to check in" | apps/dashboard/src/crm/shop/CheckInQrScreen.tsx:27
+F-panel-815 | behind switch | Gym alerts: Needs you / Latest from your members list, mark read, opened, remove | apps/dashboard/src/crm/shop/alertsApi.ts:27
+F-panel-816 | behind switch | MettleUp billing for the gym: plan, receipts, checkout | apps/dashboard/src/crm/shop/billingApi.ts:17
+F-panel-817 | behind switch | Member body measurements taken by the trainer | apps/dashboard/src/crm/shop/bodyApi.ts:14
+F-panel-818 | behind switch | Diet plans for a member: save, withdraw | apps/dashboard/src/crm/shop/bodyApi.ts:30
+F-panel-819 | behind switch | Challenges and leaderboard: create, cancel, hide a member on the board, confirm the reward | apps/dashboard/src/crm/shop/challengesApi.ts:21
+F-panel-820 | behind switch | Entry machines (door devices): list, add, remove, member numbers, queue commands | apps/dashboard/src/crm/shop/entryMachinesApi.ts:100
+F-panel-821 | behind switch | Bring a friend: count on the Settings card | apps/dashboard/src/crm/shop/friendApi.ts:41
+F-panel-822 | behind switch | Workout reports the gym asks a member for: request, list, open the file | apps/dashboard/src/crm/shop/gymReportApi.ts:35
+F-panel-823 | behind switch | Busy machines: switch and machine list | apps/dashboard/src/crm/shop/machinesApi.ts:33
+F-panel-824 | behind switch | Member messages: waiting count, read, reply, mark as done | apps/dashboard/src/crm/shop/memberMessagesApi.ts:47
+F-panel-825 | behind switch | Member photo taken at the desk: show, save, remove | apps/dashboard/src/crm/shop/memberPhotoApi.ts:89
+F-panel-826 | behind switch | Pay MettleUp: see what the gym owes and report a payment | apps/dashboard/src/crm/shop/payMettleUpApi.ts:14
+F-panel-827 | behind switch | Numbers to confirm: approve or refuse a member phone link | apps/dashboard/src/crm/shop/phoneLinkApi.ts:36
+F-panel-828 | behind switch | Pause / renew requests from the member app: list and decide | apps/dashboard/src/crm/shop/planRequestApi.ts:39
+F-panel-829 | behind switch | MettleUp Plus lock: the gym owner switch for members | apps/dashboard/src/crm/shop/plusLockApi.ts:27
+F-panel-830 | behind switch | Ask a trainer: members questions, count, answer | apps/dashboard/src/crm/shop/questionsApi.ts:48
+F-panel-831 | behind switch | A member live Progress card on the member page | apps/dashboard/src/crm/shop/questionsApi.ts:92
+F-panel-832 | behind switch | Gym opening hours: see and save | apps/dashboard/src/crm/shop/timingsApi.ts:14
+F-panel-833 | behind switch | Trainers see their members progress: Trainer tick on staff, assign a member to a trainer | apps/dashboard/src/crm/shop/trainerApi.ts:49
+F-panel-834 | behind switch | Trainer pages and personal-training bookings: profile, hours, book, cancel | apps/dashboard/src/crm/shop/trainerScheduleApi.ts:31
+F-panel-835 | behind switch | Alert settings: when the gym alerts come | apps/dashboard/src/crm/shop/webPushApi.ts:52
+F-panel-836 | behind switch | Alerts in this browser with the admin app closed (web push on/off) and send a test alert | apps/dashboard/src/crm/shop/webPushApi.ts:106
+F-panel-837 | behind switch | Workout of the day (and form video links): set or clear a day | apps/dashboard/src/crm/shop/wodApi.ts:35
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1108 | live | Alerts: bell inbox, latest from your members, alerts on this device with the app closed (web push), alert timing setting | apps/dashboard/src/crm/shop/alertsApi.ts:27
+F-panel-1115 | live | Visits: attendance register, members at risk with WhatsApp nudge, check-in QR poster, pass visits per pass company | apps/dashboard/src/crm/shop/CheckInQrScreen.tsx:27
+F-panel-1117 | behind switch | Invite and join online: invite link and QR poster, one link per gym, 'Become a member' page readiness, free trial for ne | apps/dashboard/src/crm/shop/InviteScreen.tsx:33
+F-panel-1119 | live | Shop: products, stock, photos, orders from the member app, cancel an order, today's shop card | apps/dashboard/src/crm/shop/ShopScreen.tsx:65
+F-panel-800 | live | See member app shop orders, mark ready or collected, cancel an order | apps/dashboard/src/crm/shop/ShopScreen.tsx:65
+F-panel-801 | live | Shop products: add, edit, price, choices, stock, hide, delete | apps/dashboard/src/crm/shop/ProductSheet.tsx:44
+F-panel-802 | live | Product photo upload (shrunk in the browser; the same uploader also serves gym page photos) | apps/dashboard/src/crm/shop/photoUpload.ts:96
+F-panel-803 | live | Shop card on Today: orders waiting and shop money today | apps/dashboard/src/crm/shop/ShopTodayCard.tsx:1
+F-panel-804 | live | Start a demo gym / turn on the member app for a gym (this browser holds the gym key) | apps/dashboard/src/crm/shop/api.ts:68
+F-panel-805 | live | Gym look in the member app (colour, background, logo, heading style) | apps/dashboard/src/crm/shop/api.ts:90
+F-panel-806 | live | Rename the gym | apps/dashboard/src/crm/shop/api.ts:95
+F-panel-807 | live | App members list: who joined the gym from the app | apps/dashboard/src/crm/shop/AppMembers.tsx:1
+F-panel-808 | live | Messages & offers: send a ready or own message to app members, sent list, withdraw | apps/dashboard/src/crm/shop/MessagesSection.tsx:1
+F-panel-809 | behind switch | Workout offer: train N times, get extra days; give or take back the reward | apps/dashboard/src/crm/shop/OffersSection.tsx:1
+F-panel-810 | behind switch | Automatic reminders: one switch per reminder (plan ends, birthday, welcome); also feeds the automatic birthday wish on T | apps/dashboard/src/crm/shop/AutoRemindersSection.tsx:1
+F-panel-811 | live | Invite members: gym join code, invite link, send on WhatsApp, copy, front-desk QR poster | apps/dashboard/src/crm/shop/InviteScreen.tsx:33
+F-panel-812 | behind switch | Join online: the gym one link / "Become a member" link, its WhatsApp message and poster | apps/dashboard/src/crm/shop/invite.ts:79
+F-panel-813 | behind switch | Free trial for new people joining online (Off, 1, 3 or 7 days) | apps/dashboard/src/crm/shop/JoinTrialCard.tsx:1
+F-panel-814 | live | Check-in QR poster: print or download "Scan to check in" | apps/dashboard/src/crm/shop/CheckInQrScreen.tsx:27
+F-panel-815 | behind switch | Gym alerts: Needs you / Latest from your members list, mark read, opened, remove | apps/dashboard/src/crm/shop/alertsApi.ts:27
+F-panel-816 | behind switch | MettleUp billing for the gym: plan, receipts, checkout | apps/dashboard/src/crm/shop/billingApi.ts:17
+F-panel-817 | behind switch | Member body measurements taken by the trainer | apps/dashboard/src/crm/shop/bodyApi.ts:14
+F-panel-818 | behind switch | Diet plans for a member: save, withdraw | apps/dashboard/src/crm/shop/bodyApi.ts:30
+F-panel-819 | behind switch | Challenges and leaderboard: create, cancel, hide a member on the board, confirm the reward | apps/dashboard/src/crm/shop/challengesApi.ts:21
+F-panel-820 | behind switch | Entry machines (door devices): list, add, remove, member numbers, queue commands | apps/dashboard/src/crm/shop/entryMachinesApi.ts:100
+F-panel-821 | behind switch | Bring a friend: count on the Settings card | apps/dashboard/src/crm/shop/friendApi.ts:41
+F-panel-822 | behind switch | Workout reports the gym asks a member for: request, list, open the file | apps/dashboard/src/crm/shop/gymReportApi.ts:35
+F-panel-823 | behind switch | Busy machines: switch and machine list | apps/dashboard/src/crm/shop/machinesApi.ts:33
+F-panel-824 | behind switch | Member messages: waiting count, read, reply, mark as done | apps/dashboard/src/crm/shop/memberMessagesApi.ts:47
+F-panel-825 | behind switch | Member photo taken at the desk: show, save, remove | apps/dashboard/src/crm/shop/memberPhotoApi.ts:89
+F-panel-826 | behind switch | Pay MettleUp: see what the gym owes and report a payment | apps/dashboard/src/crm/shop/payMettleUpApi.ts:14
+F-panel-827 | behind switch | Numbers to confirm: approve or refuse a member phone link | apps/dashboard/src/crm/shop/phoneLinkApi.ts:36
+F-panel-828 | behind switch | Pause / renew requests from the member app: list and decide | apps/dashboard/src/crm/shop/planRequestApi.ts:39
+F-panel-829 | behind switch | MettleUp Plus lock: the gym owner switch for members | apps/dashboard/src/crm/shop/plusLockApi.ts:27
+F-panel-830 | behind switch | Ask a trainer: members questions, count, answer | apps/dashboard/src/crm/shop/questionsApi.ts:48
+F-panel-831 | behind switch | A member live Progress card on the member page | apps/dashboard/src/crm/shop/questionsApi.ts:92
+F-panel-832 | behind switch | Gym opening hours: see and save | apps/dashboard/src/crm/shop/timingsApi.ts:14
+F-panel-833 | behind switch | Trainers see their members progress: Trainer tick on staff, assign a member to a trainer | apps/dashboard/src/crm/shop/trainerApi.ts:49
+F-panel-834 | behind switch | Trainer pages and personal-training bookings: profile, hours, book, cancel | apps/dashboard/src/crm/shop/trainerScheduleApi.ts:31
+F-panel-835 | behind switch | Alert settings: when the gym alerts come | apps/dashboard/src/crm/shop/webPushApi.ts:52
+F-panel-836 | behind switch | Alerts in this browser with the admin app closed (web push on/off) and send a test alert | apps/dashboard/src/crm/shop/webPushApi.ts:106
+F-panel-837 | behind switch | Workout of the day (and form video links): set or clear a day | apps/dashboard/src/crm/shop/wodApi.ts:35

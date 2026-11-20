@@ -1,0 +1,375 @@
+# A8-watch-app-1: coverage of 55 Tier 1 journeys (10 features, from A5-watch-app-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-watch-115 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/AmbientDiagStoreTest.kt | watch | 48 lines | file name
+F-watch-115 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/AmbientDiagTest.kt | watch | 96 lines | file name
+F-watch-115 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-watch-115 | apps/mobile/test/lib/helpHistory.test.ts | unit | 207 lines | asserts 1 journey phrase(s)
+F-watch-115 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-watch-115 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-watch-115 | apps/mobile/test/shop/offerActions.test.ts | unit | 189 lines | asserts 1 journey phrase(s)
+F-watch-115 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 1 journey phrase(s)
+F-watch-115 | apps/mobile/test/tracker/watchInstall.test.ts | unit | 159 lines | asserts 1 journey phrase(s)
+F-watch-115 | deploy/panel/helpPages.test.mjs | unit | 109 lines | asserts 1 journey phrase(s)
+F-watch-104 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 1 journey phrase(s)
+F-watch-104 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 1 journey phrase(s)
+F-watch-104 | apps/mobile/test/tracker/watchBridge.test.ts | unit | 153 lines | asserts 1 journey phrase(s)
+F-watch-117 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/BrandColourTest.kt | watch | 84 lines | file name
+F-watch-117 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WorkoutLiveTest.kt | watch | 51 lines | file name
+F-watch-117 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WorkoutStartedTest.kt | watch | 36 lines | file name
+F-watch-117 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 1 journey phrase(s)
+F-watch-117 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 1 journey phrase(s)
+F-watch-117 | apps/mobile/test/tracker/watchBridge.test.ts | unit | 153 lines | asserts 1 journey phrase(s)
+F-watch-119 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/BridgingTest.kt | watch | 33 lines | file name
+F-watch-119 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 1 journey phrase(s)
+F-watch-119 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 1 journey phrase(s)
+F-watch-119 | apps/mobile/test/tracker/watchBridge.test.ts | unit | 153 lines | asserts 1 journey phrase(s)
+F-watch-116 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 2 journey phrase(s)
+F-watch-116 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-watch-116 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-watch-116 | apps/dashboard/test/crm/joinPay.test.ts | unit | 223 lines | asserts 1 journey phrase(s)
+F-watch-116 | apps/dashboard/test/crm/progressTrend.test.ts | unit | 245 lines | asserts 1 journey phrase(s)
+F-watch-116 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-watch-116 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/NextSetTextTest.kt | watch | 47 lines | asserts 1 journey phrase(s)
+F-watch-116 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchNextExerciseTest.kt | watch | 74 lines | asserts 1 journey phrase(s)
+F-watch-116 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-watch-116 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-watch-116 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-watch-116 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-watch-110 | (no candidate found by the script)
+F-watch-106 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLogRenderTest.kt | watch | 282 lines | file name
+F-watch-106 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLogTest.kt | watch | 303 lines | file name
+F-watch-106 | apps/mobile/test/tracker/watchLogging.test.ts | unit | 141 lines | file name
+F-watch-106 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 1 journey phrase(s)
+F-watch-106 | apps/mobile/test/db/workoutPhotosReal.test.ts | unit | 327 lines | asserts 1 journey phrase(s)
+F-watch-106 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 1 journey phrase(s)
+F-watch-106 | apps/mobile/test/tracker/phoneFeatures.test.ts | unit | 87 lines | asserts 1 journey phrase(s)
+F-watch-106 | apps/mobile/test/tracker/watchBridge.test.ts | unit | 153 lines | asserts 1 journey phrase(s)
+F-watch-100 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | file name, asserts 7 journey phrase(s)
+F-watch-100 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchScreensRenderTest.kt | watch | 336 lines | file name
+F-watch-100 | apps/mobile/test/onboarding/welcomeIntro.test.ts | unit | 355 lines | asserts 2 journey phrase(s)
+F-watch-100 | apps/mobile/test/tracker/liveCard.test.ts | unit | 146 lines | asserts 2 journey phrase(s)
+F-watch-100 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 2 journey phrase(s)
+F-watch-100 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-watch-100 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 1 journey phrase(s)
+F-watch-100 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-watch-100 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 1 journey phrase(s)
+F-watch-100 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-watch-100 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 1 journey phrase(s)
+F-watch-100 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-watch-102 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-watch-102 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-watch-102 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-watch-102 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-watch-102 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-watch-102 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-watch-102 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-watch-102 | apps/mobile/test/tracker/switcherLine.test.ts | unit | 38 lines | asserts 3 journey phrase(s)
+F-watch-102 | supabase/tests/0039_gym_busy.sql | db | 167 lines | asserts 3 journey phrase(s)
+F-watch-102 | supabase/tests/0043_member_photos.sql | db | 135 lines | asserts 3 journey phrase(s)
+F-watch-102 | supabase/tests/0045_report_requests.sql | db | 238 lines | asserts 3 journey phrase(s)
+F-watch-102 | supabase/tests/0054_member_alerts.sql | db | 139 lines | asserts 3 journey phrase(s)
+F-watch-103 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/NextSetTextTest.kt | watch | 47 lines | asserts 3 journey phrase(s)
+F-watch-103 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 2 journey phrase(s)
+F-watch-103 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchScreensRenderTest.kt | watch | 336 lines | file name
+F-watch-103 | apps/dashboard/test/crm/progressTrend.test.ts | unit | 245 lines | asserts 1 journey phrase(s)
+F-watch-103 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchNextExerciseTest.kt | watch | 74 lines | asserts 1 journey phrase(s)
+F-watch-103 | apps/mobile/test/tracker/editDraft.test.ts | unit | 330 lines | asserts 1 journey phrase(s)
+F-watch-103 | apps/mobile/test/tracker/liveCard.test.ts | unit | 146 lines | asserts 1 journey phrase(s)
+F-watch-103 | apps/mobile/test/tracker/machineInUse.test.ts | unit | 257 lines | asserts 1 journey phrase(s)
+F-watch-103 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 1 journey phrase(s)
+F-watch-103 | apps/mobile/test/tracker/phase3Share.test.ts | unit | 227 lines | asserts 1 journey phrase(s)
+F-watch-103 | apps/mobile/test/tracker/watchBridge.test.ts | unit | 153 lines | asserts 1 journey phrase(s)
+F-watch-103 | apps/mobile/test/tracker/watchNextExercise.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-watch-115-01 | type 1 | member | Phone's Help and feedback open, watch connected, the watch app used during a workout today
+  s1 see: The phone asks the watch for its screen log
+  s1 see: The watch answers within a second or two (urgent send)
+  s1 not: The phone waits for the watch's next routine sync
+  s1 not: The log is taken without the member ticking the box
+  s2 see: The message goes with the watch's screen log attached
+  s2 not: The log holds heart rate, weights or exercise names
+  s2 not: The message is lost because the watch did not answer
+J-F-watch-115-02 | type 3 | member | Phone's Help and feedback open; the watch is out of Bluetooth range, or the watch app was never opened
+  s1 see: unknown: the phone's words when the watch does not answer are outside this area's code
+  s1 see: The watch side sends an empty log when it has none
+  s1 not: An old log from another watch is attached
+  s1 not: The message cannot be sent because the watch did not answer
+J-F-watch-115-03 | type 6 | member | The member used the watch over three workouts
+  s1 see: The watch keeps only its newest 150 log lines
+  s1 not: The log grows without end and slows the watch
+  s1 not: A line is cut in the middle
+  s2 see: The newest lines (about the last two workouts), oldest first
+  s2 not: Lines from the first workout reported as today's
+  s2 not: The lines out of time order
+J-F-watch-115-04 | type 12 | member | The member ticks "Add my watch's screen log"
+  s1 see: Caption: "It holds only the times your watch screen turned on, off or dim, and your watch's Battery Saver and screen settings."
+  s1 see: The log's lines: screen on/off/dim times, Battery Saver, always-on and theatre settings, idle state, and whether a workout was open
+  s1 not: Heart rate, set numbers, exercise names or the gym's name in the log
+  s1 not: The log reaching anyone without the member's Send
+J-F-watch-115-05 | type 1 | HQ admin | HQ app open on the feedback list; a member sent a message with the watch's screen log
+  s1 see: The message, and the watch log lines such as "11-12 18:04:10.120 stop ambient=0 workout=1 ..."
+  s1 not: Lines from another member's watch
+  s1 not: The log cut so the last lines are missing
+J-F-watch-115-06 | type 3 | HQ admin | HQ app open on a feedback message sent without the watch log
+  s1 see: The message with no watch log part
+  s1 not: An empty log block that looks like a watch with no screen events
+  s1 not: An error in place of the message
+J-F-watch-115-07 | type 6 | HQ admin | The same member sent two feedback messages with the watch log a week apart
+  s1 see: Each message shows the log as it was when that message was sent
+  s1 not: The newer log written over the older message's log
+J-F-watch-115-08 | type 12 | HQ admin | HQ admin reads a watch log
+  s1 see: Only HQ reads the watch log
+  s1 not: The gym's owner or staff see the member's watch log
+  s1 not: The log shows anything beyond screen and power states and times
+J-F-watch-104-01 | type 1 | member | A 90-second rest running on the watch, the "Rest" card counting down on the watch face
+  s1 see: After start-up the watch face shows "Rest" counting down from the time really left
+  s1 not: The countdown starts again from 90 seconds
+  s1 not: No countdown and no alarm after the restart
+  s2 see: One buzz and the "Rest is over" card at the rest's end
+  s2 not: Two buzzes
+  s2 not: No buzz
+J-F-watch-104-02 | type 2 | member | A rest running; the watch app updates from Play mid-rest
+  s1 see: The countdown card back after the update
+  s1 see: One buzz at the rest's end
+  s1 not: The alarm lost by the update, so no buzz
+  s1 not: A crash on the first start of the new version
+J-F-watch-104-03 | type 2 | member | A rest running; the watch's "Alarms & reminders" was off, so the end alarm was inexact
+  s1 see: The rest's alarm is set again, now on the second
+  s1 not: A second alarm, so two buzzes
+  s1 not: The rest ending early
+J-F-watch-104-04 | type 3 | member | A 60-second rest running; the watch restarts and takes 2 minutes to come back
+  s1 see: No buzz and no card: the lost rest is dropped quietly
+  s1 not: A late buzz in the middle of the next set
+  s1 not: A countdown stuck at 0:00
+J-F-watch-104-05 | type 6 | member | A rest that ends while the watch app is being updated (it ends 2 seconds before the app starts again)
+  s1 see: Either a buzz and "Rest is over", or the rest cleared
+  s1 not: A rest that stays saved as running with no alarm and no card (neither restored nor dropped)
+  s1 not: A buzz only much later, when the app is opened
+J-F-watch-104-06 | type 1 | the system | The watch finishes starting up with a rest saved that ends in 40 seconds
+  s1 see: The rest's alarm set again for the same end time
+  s1 see: The countdown card shown again
+  s1 see: The phone's alert copy settings applied again
+  s1 see: This app's version written for the phone
+  s1 not: The rest's end time changed
+  s1 not: A buzz at start-up
+J-F-watch-104-07 | type 3 | the system | The watch starts up with no rest saved
+  s1 see: Nothing about rests changes
+  s1 not: A countdown or a buzz with no rest
+  s1 not: An alarm set for time zero
+J-F-watch-104-08 | type 6 | the system | The rest was skipped on the phone just before the watch restarted
+  s1 see: No rest is restored (the skip already cleared it)
+  s1 not: The skipped rest coming back
+  s2 see: Nothing is set again; no app version is written for this signal
+  s2 not: A rest alarm with no rest
+J-F-watch-117-01 | type 1 | member | Member of a gym whose colour is dark navy; a workout started on the phone
+  s1 see: The ring and words in a lighter blue that is easy to read on black
+  s1 not: Navy that cannot be read on black
+  s1 not: MettleUp orange for a gym member
+  s2 see: "Rest is over" fills the round screen with that blue, black words on it
+  s2 see: The "Rest is over" card tinted the same blue
+  s2 not: White words on a light colour
+  s2 not: The corners of a round watch painted
+J-F-watch-117-02 | type 2 | member | A member with no gym (or an older phone app that sends no colour)
+  s1 see: The watch in MettleUp orange
+  s1 not: A grey or black accent
+  s1 not: Another gym's colour
+J-F-watch-117-03 | type 3 | member | The gym's colour arrives broken ("red", "#FFF" or empty)
+  s1 see: MettleUp orange
+  s1 not: A crash
+  s1 not: A black ring on the black screen
+J-F-watch-117-04 | type 6 | member | The member leaves the gym, or joins another gym
+  s1 see: The last colour the phone sent (kept after the workout)
+  s1 not: A blank or black accent
+  s2 see: Orange without a gym, or the new gym's colour
+  s2 not: The old gym's colour after the first workout item arrives
+J-F-watch-119-01 | type 1 | member | Watch app may post notifications; a workout open on the phone
+  s1 see: One "Rest" countdown card on the watch, the watch app's own, with Done / +15 s / Skip
+  s1 not: The phone's rest card copied to the watch as well
+  s1 not: A buzz at every rest start
+  s2 see: One buzz from the watch
+  s2 not: Two buzzes (the watch's own and the phone's copied "Rest is over")
+J-F-watch-119-02 | type 2 | member | The watch app's notifications are refused in the watch's Settings
+  s1 see: The phone's own rest countdown card copied to the watch
+  s1 not: No countdown anywhere on the watch
+  s2 see: One buzz from the watch app (it needs no notification permission)
+  s2 see: No "Rest is over" card on the watch
+  s2 not: No buzz
+  s2 not: The phone's "Rest is over" copied as a second buzz
+J-F-watch-119-03 | type 3 | member | Pixel Watch; the phone's screen is on in the member's hand at the rest's end
+  s1 see: The watch's own buzz still comes
+  s1 not: Nothing felt because the copied phone alert is muted while the phone is in use
+J-F-watch-119-04 | type 6 | member | Notifications for the watch app were refused, then allowed again
+  s1 see: Only the watch app's own countdown card (the phone's copy stops)
+  s1 not: Two countdown cards
+  s1 not: The phone's copy still coming after the next phone item
+J-F-watch-119-05 | type 1 | the system | The watch app may post notifications; a phone item arrives
+  s1 see: The copy settings set once to leave out the phone's "Rest is over" and rest card
+  s1 not: The settings set again on every item when nothing changed
+J-F-watch-119-06 | type 3 | the system | The watch system refuses the copy settings
+  s1 see: A log line; the settings are tried again on the next phone item
+  s1 not: The failed settings stored as applied, so they are never tried again
+J-F-watch-119-07 | type 6 | the system | The watch app was updated from an older version that used the older settings name
+  s1 see: The new copy settings applied once
+  s1 not: The old settings kept because the stored name matched
+J-F-watch-116-01 | type 1 | member | Watch app closed; the member starts a workout on the phone
+  s1 see: A "Workout started" card with one buzz: "Tap to open MettleUp"
+  s1 not: Two cards or two buzzes
+  s1 not: No card while the app is closed
+  s2 see: The app opens on the next set: "Next: Set 1 of 4 · Bench Press"
+  s2 not: "Start a workout on your phone" while a workout is open
+  s3 see: The rest countdown on the watch within a few seconds
+  s3 not: The watch stuck on the old set
+J-F-watch-116-02 | type 2 | member | The watch app installed (or reinstalled) in the middle of a workout
+  s1 see: The open workout and a running rest read from what the phone already holds
+  s1 not: "Start a workout on your phone" until the next set is logged
+J-F-watch-116-03 | type 3 | member | A phone item arrives again late (re-delivered), or a rest arrives over a minute after its end (watch was away)
+  s1 see: The newer state stays
+  s1 see: No buzz for a rest that ended long ago
+  s1 not: An older set or rest put back over a newer one
+  s1 not: A buzz in the middle of the next set
+J-F-watch-116-04 | type 6 | member | A workout open on the watch
+  s1 see: "Workout saved" "Well done. See the details on your phone." for about 4 seconds, then "Start a workout on your phone"
+  s1 not: A rest still buzzing after the workout ended
+  s1 not: "Workout saved" for a discarded workout
+  s2 see: Straight back to "Start a workout on your phone"; any rest and "Rest is over" gone
+  s2 not: A "Rest is over" card left for 2 minutes
+J-F-watch-116-05 | type 1 | the system | Watch app closed; the phone writes a rest item (start, end, next set, Ring through Do Not Disturb)
+  s1 see: The rest saved on the watch, its end alarm set and the countdown card shown
+  s1 not: The item dropped because the app was closed
+  s1 not: The rest saved twice
+J-F-watch-116-06 | type 3 | the system | An item from the phone under another path, or one that cannot be read
+  s1 see: It is skipped and a line is logged
+  s1 not: A crash of the listener
+  s1 not: A rest or workout changed by it
+J-F-watch-116-07 | type 6 | the system | A rest running on the watch
+  s1 see: The rest, its alarm and its card go; no buzz
+  s1 not: A buzz for a skipped rest
+  s2 see: One buzz now; the watch's alarm does not buzz again
+  s2 not: Two buzzes for the same rest
+J-F-watch-110-01 | type 1 | member | First launch of the watch app with a workout open
+  s1 see: The next first-launch screen
+  s1 not: The question asked again on the next open
+  s2 see: "♥ —" at first, then "♥ 132" within seconds
+  s2 not: A number when the watch has no reading yet
+  s3 see: The heart line goes; the sensor stops
+  s3 not: The sensor left running while dimmed
+J-F-watch-110-02 | type 2 | member | Heart rate allowed; a workout open with watch logging on
+  s1 see: The same "♥ 132" line
+  s1 not: A different number from the rest timer screen
+J-F-watch-110-03 | type 3 | member | First launch; the member taps Not now on "Heart rate" (or the watch has no heart sensor)
+  s1 see: No heart line; the column re-centres
+  s1 not: "♥ —" shown for ever
+  s1 not: The heart-rate question popping up mid-workout
+J-F-watch-110-04 | type 6 | member | Heart rate showing "♥ 132" during a rest
+  s1 see: The number goes ("♥ —") or a word that the watch is off the wrist
+  s1 not: The last number "♥ 132" staying on as if it were live
+  s2 see: The sensor stops
+  s2 not: The sensor still running with no workout
+J-F-watch-110-05 | type 12 | member | Heart rate shown on the watch during a workout
+  s1 see: The reading shows only on this watch
+  s1 not: The heart rate sent to the phone, the gym or MettleUp
+  s1 not: The heart rate in the screen log sent with feedback
+J-F-watch-106-01 | type 1 | member | Workout open on the phone with watch logging; next set Bench Press 62.5 kg × 8
+  s1 see: Next-set screen: the name, "Set 2 of 4", pills "62.5" and "8", and the first time "Tap a number, then turn the dial"
+  s1 not: Pills with "—" when the phone sent numbers
+  s2 see: "Turn the dial · 1 rep steps"
+  s2 see: Reps 10, one light tick per step
+  s2 not: Two ticks for one step
+  s2 not: Reps below 1
+  s3 see: "How hard was it?" "6 easy · 10 max" when the phone asks for effort, else the set goes at once
+  s3 not: The set sent twice
+  s4 see: The rest timer starts on the watch at once
+  s4 see: "Saved" for about 2 seconds when the phone confirms
+  s4 not: "Saved" before the phone confirmed
+  s4 not: No rest because the phone was slow
+J-F-watch-106-02 | type 2 | member | Next-set screen showing; nothing tapped
+  s1 see: The reps change at once (the dial works with nothing tapped)
+  s1 not: The screen's first dial turn after waking from dim changing a number
+  s2 see: The set goes with the new reps
+  s2 not: The old reps sent
+J-F-watch-106-03 | type 3 | member | Next-set screen; the phone is out of range (or cannot read the set)
+  s1 see: The rest still starts on the watch
+  s1 see: "Not saved" with "Log this set on your phone" and OK (within 10 seconds when the phone says nothing)
+  s1 not: "Saved" for a set the phone never got
+  s1 not: No word at all
+  s2 see: unknown: Done does nothing when reps are needed and empty; no word is shown (seen in code)
+  s2 not: An empty set sent to the phone
+J-F-watch-106-04 | type 6 | member | Last set of an exercise on the next-set screen
+  s1 see: One set sent
+  s1 not: Two sets saved on the phone
+  s2 see: "Rest is over" about 5 seconds, then the exercise-done screen, then the next exercise
+  s2 not: A blank screen after "Rest is over"
+J-F-watch-100-01 | type 1 | member | Watch app just installed, phone connected with MettleUp, no workout open
+  s1 see: "Heart rate" "1 of 2" with Allow and Not now
+  s1 not: A blank screen
+  s2 see: "Turn on Alarms & reminders so your watch buzzes on time." with "Open settings"
+  s2 not: The same screen back unchanged after Allow
+  s3 see: "Start a workout on your phone" and "Open MettleUp on your phone. Your rest timer shows up here."
+  s3 not: "Phone not connected" while the phone is connected
+J-F-watch-100-02 | type 2 | member | A workout open on the phone, a rest running
+  s1 see: The rest timer with the time left and the next set
+  s1 not: "Start a workout on your phone"
+  s2 see: "Workout saved" "Well done. See the details on your phone." for about 4 seconds
+  s2 not: A jump straight to "Start a workout on your phone"
+J-F-watch-100-03 | type 3 | member | Phone's Bluetooth off, or a phone without MettleUp
+  s1 see: "Phone not connected" "Keep your phone near you with Bluetooth on." within a few seconds
+  s1 see: Or "Get MettleUp on your phone" "Your watch needs the MettleUp app on your phone." with "Open on phone"
+  s1 not: "Start a workout on your phone" when the phone cannot be reached
+  s2 see: "Look at your phone to install MettleUp." or "Your phone did not answer. Try again."
+  s2 not: Nothing happens
+J-F-watch-100-04 | type 6 | member | A rest running with the app open
+  s1 see: "Rest is over" with the time since, "−0:12", counting up
+  s1 not: The rest timer stuck at 0:00
+  s2 see: The between-rests screen with the next set
+  s2 not: "Rest is over" staying after the set was logged
+  s3 see: The first-launch questions not asked again
+  s3 not: "Heart rate" "1 of 2" on every open
+J-F-watch-102-01 | type 1 | member | Watch app notifications allowed; a workout open on the phone
+  s1 see: The watch face shows "Rest 1:23" counting down
+  s1 see: Card "Rest" with "Next: Set 3 of 5 · Bench Press" and buttons Done, +15 s, Skip
+  s1 not: The countdown counting up
+  s1 not: A buzz when the rest starts
+  s2 see: The countdown 15 seconds longer within a few seconds
+  s2 not: The phone's rest and the watch's different
+  s3 see: The card goes; the phone's rest ends
+  s3 not: A "Rest is over" buzz after Skip
+J-F-watch-102-02 | type 2 | member | A rest running; the card shows Done
+  s1 see: The phone ticks the set the rest leads to; the next rest or set arrives
+  s1 not: The card's Done ticking a different set
+  s2 see: The watch app opens on the rest timer
+  s2 not: Nothing opens
+J-F-watch-102-03 | type 3 | member | A rest running; the phone is out of range
+  s1 see: "Phone not reachable"
+  s1 not: The countdown changed on the watch only, without a word
+  s2 see: "Not saved. Log this set on your phone"
+  s2 not: The member left believing the set was saved
+J-F-watch-102-04 | type 6 | member | A rest running with its card
+  s1 see: The countdown card goes; "Rest is over" comes
+  s1 not: The countdown card left on the watch face
+  s2 see: The card and its alarm go
+  s2 not: A buzz after the workout was discarded
+J-F-watch-103-01 | type 1 | member | A rest running; watch app notifications allowed; the app open on the rest timer
+  s1 see: One strong buzz (long, pause, short)
+  s1 see: The round screen filled with the gym's colour: "Rest is over" and "−0:00" counting up
+  s1 not: Two buzzes
+  s1 not: No buzz while the phone is in use
+  s2 see: Card "Rest is over" with "Next: Set 3 of 5 · Bench Press" (or "Time for your next set"); no button on it
+  s2 not: A "Complete set" button that the code no longer has (the feature's name still says it)
+  s3 see: The card goes by itself
+  s3 not: The card staying for the rest of the day
+J-F-watch-103-02 | type 2 | member | "Ring through Do Not Disturb" on in the phone app; the watch in Do Not Disturb
+  s1 see: The buzz gets through Do Not Disturb
+  s1 not: Silence while the switch is on
+  s2 see: No buzz while Do Not Disturb is on
+  s2 not: A buzz through Do Not Disturb with the switch off
+J-F-watch-103-03 | type 3 | member | The watch app's notifications refused
+  s1 see: The buzz still comes
+  s1 see: The app screen shows "Rest is over"; no card
+  s1 not: No buzz at all
+J-F-watch-103-04 | type 6 | member | "Rest is over" showing
+  s1 see: The screen moves to the next set
+  s1 not: "Rest is over" staying after the set was logged
+  s2 see: The old "Rest is over" card goes
+  s2 not: Two cards on the watch face
+  s3 see: "Rest is over" goes
+  s3 not: The card staying 2 minutes after the workout ended

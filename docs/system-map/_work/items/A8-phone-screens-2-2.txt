@@ -1,0 +1,530 @@
+# A8-phone-screens-2-2: coverage of 66 Tier 1 journeys (8 features, from A5-phone-screens-2-3). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-phone-219 | apps/mobile/test/onboarding/welcomeStart.test.ts | unit | 55 lines | asserts 6 journey phrase(s)
+F-phone-219 | apps/mobile/qa/uat-rel-11-backup.yaml | maestro | 118 lines | file name, asserts 3 journey phrase(s)
+F-phone-219 | apps/mobile/qa/uat-bk.yaml | maestro | 229 lines | asserts 4 journey phrase(s)
+F-phone-219 | apps/mobile/qa/uat-e.yaml | maestro | 267 lines | asserts 4 journey phrase(s)
+F-phone-219 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 3 journey phrase(s)
+F-phone-219 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 3 journey phrase(s)
+F-phone-219 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 3 journey phrase(s)
+F-phone-219 | apps/mobile/qa/backup-m-photos-check.yaml | maestro | 81 lines | file name, asserts 1 journey phrase(s)
+F-phone-219 | apps/mobile/qa/backup-m-photos.yaml | maestro | 131 lines | file name, asserts 1 journey phrase(s)
+F-phone-219 | apps/mobile/qa/sub-settings-open.yaml | maestro | 62 lines | asserts 3 journey phrase(s)
+F-phone-219 | apps/mobile/qa/sub-uat-r482-restore.yaml | maestro | 117 lines | asserts 3 journey phrase(s)
+F-phone-219 | apps/mobile/test/lib/safekeepNudge.test.ts | unit | 107 lines | asserts 3 journey phrase(s)
+F-phone-222 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 10 journey phrase(s)
+F-phone-222 | apps/dashboard/e2e/gymdata.spec.mjs | e2e | 52 lines | file name, asserts 1 journey phrase(s)
+F-phone-222 | apps/mobile/qa/uat-rel-10-r319.yaml | maestro | 190 lines | asserts 3 journey phrase(s)
+F-phone-222 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-phone-222 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-phone-222 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 2 journey phrase(s)
+F-phone-222 | apps/dashboard/test/crm/auditC7.test.ts | unit | 333 lines | asserts 2 journey phrase(s)
+F-phone-222 | apps/mobile/qa/xj-2-order-cancel.yaml | maestro | 34 lines | asserts 2 journey phrase(s)
+F-phone-222 | apps/mobile/test/onboarding/dataActions.test.ts | unit | 504 lines | file name
+F-phone-222 | apps/mobile/test/onboarding/eraseLeftBehind.test.ts | unit | 59 lines | asserts 2 journey phrase(s)
+F-phone-222 | apps/mobile/test/onboarding/saveDataFile.test.ts | unit | 122 lines | file name
+F-phone-222 | apps/mobile/test/shop/gym.test.ts | unit | 480 lines | asserts 2 journey phrase(s)
+F-phone-220 | apps/mobile/qa/uat-rel-f61-ask-ai.yaml | maestro | 76 lines | file name, asserts 2 journey phrase(s)
+F-phone-220 | apps/dashboard/test/crm/gymExport.test.ts | unit | 48 lines | file name
+F-phone-220 | apps/mobile/test/tracker/historyExport.test.ts | unit | 414 lines | file name
+F-phone-220 | apps/mobile/test/tracker/importExportPhase8.test.ts | unit | 305 lines | file name
+F-phone-220 | apps/mobile/test/tracker/measurementsExport.test.ts | unit | 162 lines | file name
+F-phone-220 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-phone-220 | apps/mobile/qa/uat-rel-f198-dots.yaml | maestro | 328 lines | asserts 1 journey phrase(s)
+F-phone-220 | apps/mobile/test/cloud/backupWords.test.ts | unit | 88 lines | asserts 1 journey phrase(s)
+F-phone-220 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-phone-220 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-phone-220 | apps/mobile/test/tracker/engine/aiSummary.test.ts | unit | 87 lines | asserts 1 journey phrase(s)
+F-phone-220 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | asserts 1 journey phrase(s)
+F-phone-223 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-223 | apps/dashboard/e2e/r608-uat.spec.mjs | e2e | 208 lines | asserts 4 journey phrase(s)
+F-phone-223 | apps/mobile/qa/uat-rel-r452-help-replies.yaml | maestro | 182 lines | asserts 4 journey phrase(s)
+F-phone-223 | apps/dashboard/e2e/feedback.spec.mjs | e2e | 34 lines | file name, asserts 1 journey phrase(s)
+F-phone-223 | apps/mobile/test/lib/helpHistory.test.ts | unit | 207 lines | asserts 3 journey phrase(s)
+F-phone-223 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-223 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 2 journey phrase(s)
+F-phone-223 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 2 journey phrase(s)
+F-phone-223 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-phone-223 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 2 journey phrase(s)
+F-phone-223 | apps/dashboard/test/crm/feedback.test.ts | unit | 91 lines | file name
+F-phone-223 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 2 journey phrase(s)
+F-phone-217 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 8 journey phrase(s)
+F-phone-217 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 8 journey phrase(s)
+F-phone-217 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 6 journey phrase(s)
+F-phone-217 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 5 journey phrase(s)
+F-phone-217 | supabase/tests/0037_leaderboard.sql | db | 548 lines | asserts 5 journey phrase(s)
+F-phone-217 | apps/dashboard/e2e/friend-live-uat.spec.mjs | e2e | 262 lines | asserts 4 journey phrase(s)
+F-phone-217 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 4 journey phrase(s)
+F-phone-217 | apps/dashboard/e2e/r579-uat.spec.mjs | e2e | 298 lines | asserts 4 journey phrase(s)
+F-phone-217 | apps/mobile/qa/invite-e.yaml | maestro | 81 lines | asserts 4 journey phrase(s)
+F-phone-217 | apps/mobile/qa/sub-uat-f194-choose.yaml | maestro | 31 lines | asserts 4 journey phrase(s)
+F-phone-217 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 4 journey phrase(s)
+F-phone-217 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-phone-221 | apps/mobile/test/tracker/r319ImportEraseCharts.test.ts | unit | 136 lines | file name, asserts 8 journey phrase(s)
+F-phone-221 | apps/mobile/qa/v0270-i.yaml | maestro | 614 lines | asserts 8 journey phrase(s)
+F-phone-221 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 8 journey phrase(s)
+F-phone-221 | apps/mobile/qa/uat-e.yaml | maestro | 267 lines | asserts 6 journey phrase(s)
+F-phone-221 | apps/mobile/test/tracker/engine/aiSummary.test.ts | unit | 87 lines | asserts 6 journey phrase(s)
+F-phone-221 | apps/mobile/test/tracker/phase3Review.test.ts | unit | 235 lines | asserts 6 journey phrase(s)
+F-phone-221 | apps/mobile/test/tracker/phase4ImportsC.test.ts | unit | 443 lines | file name, asserts 4 journey phrase(s)
+F-phone-221 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | asserts 6 journey phrase(s)
+F-phone-221 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-221 | apps/mobile/qa/phase1-a.yaml | maestro | 320 lines | asserts 5 journey phrase(s)
+F-phone-221 | apps/mobile/qa/real-workout-w1.yaml | maestro | 368 lines | asserts 5 journey phrase(s)
+F-phone-221 | apps/mobile/qa/store-a.yaml | maestro | 219 lines | asserts 5 journey phrase(s)
+F-phone-212 | apps/mobile/qa/uat-rel-r461-plus.yaml | maestro | 365 lines | asserts 8 journey phrase(s)
+F-phone-212 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | imports the code, asserts 4 journey phrase(s)
+F-phone-212 | apps/mobile/test/tracker/r319ImportEraseCharts.test.ts | unit | 136 lines | asserts 7 journey phrase(s)
+F-phone-212 | apps/mobile/test/tracker/watchInstall.test.ts | unit | 159 lines | imports the code, asserts 4 journey phrase(s)
+F-phone-212 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 6 journey phrase(s)
+F-phone-212 | apps/mobile/test/onboarding/welcomeIntro.test.ts | unit | 355 lines | asserts 6 journey phrase(s)
+F-phone-212 | apps/mobile/test/tracker/engine/aiSummary.test.ts | unit | 87 lines | asserts 6 journey phrase(s)
+F-phone-212 | apps/mobile/test/tracker/redesignR5.test.ts | unit | 276 lines | imports the code, asserts 3 journey phrase(s)
+F-phone-212 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 5 journey phrase(s)
+F-phone-212 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-phone-212 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 5 journey phrase(s)
+F-phone-212 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 5 journey phrase(s)
+F-phone-224 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | asserts 8 journey phrase(s)
+F-phone-224 | apps/dashboard/test/crm/assistant/screenWords.test.ts | unit | 188 lines | asserts 7 journey phrase(s)
+F-phone-224 | apps/dashboard/test/crm/invite.test.ts | unit | 105 lines | asserts 7 journey phrase(s)
+F-phone-224 | apps/dashboard/test/crm/pricesOneSource.test.ts | unit | 187 lines | asserts 7 journey phrase(s)
+F-phone-224 | deploy/panel/hosts.test.mjs | unit | 291 lines | asserts 7 journey phrase(s)
+F-phone-224 | apps/dashboard/e2e/gyms-site-uat.spec.mjs | e2e | 242 lines | asserts 6 journey phrase(s)
+F-phone-224 | apps/mobile/qa/uat-rel-r461-plus.yaml | maestro | 365 lines | asserts 6 journey phrase(s)
+F-phone-224 | supabase/tests/0078_ai_questions.sql | db | 198 lines | asserts 6 journey phrase(s)
+F-phone-224 | apps/dashboard/e2e/ai-questions-uat.spec.mjs | e2e | 434 lines | asserts 5 journey phrase(s)
+F-phone-224 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 5 journey phrase(s)
+F-phone-224 | apps/dashboard/e2e/pay-mettleup-uat.spec.mjs | e2e | 210 lines | asserts 5 journey phrase(s)
+F-phone-224 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 5 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-phone-219-01 | type 1 | member | Settings, a member not signed in, with some workouts on the phone
+  s1 see: Title 'Backup and restore'
+  s1 see: Card 'Keep your workouts on MettleUp' with 'Sign in with Google to keep your workouts safe...'
+  s1 see: 'Only you can see what is saved. Your gym cannot. Progress photos stay on this phone.'
+  s1 see: Rows 'Download my data' and 'Restore from a backup'
+  s1 not: A second backup choice (Google Drive backup) offered as a way to back up
+  s2 see: The box shown ticked
+  s2 not: The box asked again on every visit after it was ticked once
+  s3 see: Google's account picker, then back on the card
+  s3 not: Google sign-in opening before the box is ticked
+  s3 not: Two sign-ins started by a second tap while busy
+  s4 see: 'Signed in as <email>'
+  s4 see: 'Your workouts are saved to your MettleUp account automatically. Last saved: <date>, <time>.' or 'Your workouts will be saved on MettleUp in a moment.'
+  s4 see: Buttons 'Bring back my workouts', 'Sign out', 'Delete my account'
+  s4 not: A 'Last saved' time for a copy that was never made
+  s4 not: Progress photos sent to the account
+J-F-phone-219-02 | type 2 | member | Backup and restore page, a member with workouts and photos
+  s1 see: Title 'Download my data'
+  s1 see: 'One file with your workouts, routines in their order, your own exercises, ... photos, profile and settings.'
+  s1 see: 'Your phone number and your gym membership are never in the file.'
+  s1 not: The page called a backup that replaces the account
+  s2 see: The button shows 'Saving 3 of 40 photos...' while it works
+  s2 see: The share sheet titled 'Download my data'
+  s2 not: The button tappable twice making two files
+  s3 see: 'Saved <file name> (<size>): <n> workouts and <n> photos.'
+  s3 not: A success line when sharing is not available on the phone
+  s3 not: The phone number or gym membership inside the file
+J-F-phone-219-03 | type 2 | member | Backup and restore page, a member with a backup file saved earlier (also from the old ForgeAI app)
+  s1 see: Title 'Restore from a backup'
+  s1 see: What is inside the file, before anything changes
+  s1 see: Buttons 'Replace everything on this phone', 'Add to what's here', 'Choose another file'
+  s1 not: Anything on the phone changed just by picking the file
+  s2 see: Question 'Delete <n> workouts first?' with 'A copy is kept while you stay on this screen, so you can undo.'
+  s2 not: Workouts deleted with no question when the phone has workouts
+  s3 see: 'Putting back your workouts and routines...'
+  s3 see: 'Restored <n> workouts, <n> routines, <n> measurements and <n> photos.'
+  s3 see: Button 'Undo restore'
+  s3 not: Half the workouts replaced when the restore fails
+  s3 not: Health Connect shown as on without the member turning it on again
+J-F-phone-219-04 | type 2 | member | Restore from a backup, file picked, phone already has workouts
+  s1 see: 'Restored <n> workouts ... <n> workouts were already here, so they were left out.'
+  s1 not: A workout already on the phone added a second time
+  s1 not: The phone's settings replaced by the file's settings
+J-F-phone-219-05 | type 2 | member | Backup and restore page on a build where Google Drive is set up, a member with an old Drive backup
+  s1 see: Title 'Google Drive backup'
+  s1 see: A way to bring an old Drive backup to this phone only
+  s1 not: Any button that backs up to Drive again
+  s1 not: The link shown on a build without Drive set up
+J-F-phone-219-06 | type 2 | member | New phone, a member signed in to the MettleUp account
+  s1 see: '<n> workouts brought back to this phone.' or 'Everything was already on this phone.'
+  s1 not: Workouts brought back twice by a second tap
+  s1 not: Another person's workouts brought to this phone
+J-F-phone-219-07 | type 2 | member | Cloud test only: the unlinked Android phone-backup page opened by its link
+  s1 see: Title 'This phone's backup'
+  s1 see: The workout count and 'Include photos in my backup'
+  s1 not: A Settings row that leads a member to this page
+J-F-phone-219-08 | type 3 | member | Restore from a backup page
+  s1 see: A red line saying why the file cannot be opened
+  s1 see: Still the 'Choose backup file' button
+  s1 not: Anything on the phone changed
+  s1 not: A crash or an endless spinner
+  s2 see: 'Finish your workout first: finish or discard the workout in progress, then restore.'
+  s2 not: The workout in progress replaced or lost
+J-F-phone-219-09 | type 3 | member | Download my data, the phone holds only the sample member's demo data, or nothing at all
+  s1 see: 'This is the sample member's made-up data, so there is nothing of yours to back up.'
+  s1 not: A file of made-up data handed to the share sheet
+  s2 see: 'Nothing to back up yet. Log a workout or make a routine first.'
+  s2 not: An empty file shared
+  s2 not: An error message
+J-F-phone-219-10 | type 3 | member | Backup and restore card, the box not ticked
+  s1 see: A red line under the button asking to tick the box
+  s1 not: Google sign-in opening
+  s1 not: The account made without the terms agreed
+J-F-phone-219-11 | type 6 | member | Restore from a backup, a restore just finished
+  s1 see: 'Putting this phone back...'
+  s1 see: 'Done. This phone is back to how it was before the restore.'
+  s1 not: Workouts from the backup left behind after undo
+  s1 not: Undo offered a second time after it ran
+  s2 see: No 'Undo restore' button any more
+  s2 not: An undo that brings back an old copy after leaving the screen without saying so
+J-F-phone-219-12 | type 6 | member | Backup and restore card, signed in
+  s1 see: Question 'Delete your MettleUp account?' with 'This deletes your account and everything saved on MettleUp's server. The workouts on this phone stay.'
+  s1 see: Red button 'Delete account'
+  s1 not: The account deleted with no question
+  s2 see: 'Your account and everything saved on MettleUp are deleted. Your workouts are still on this phone.' (or the gym sign-in kept wording)
+  s2 see: The card back to 'Continue with Google'
+  s2 not: Workouts on the phone deleted
+  s2 not: The cloud copy still there after the deleted message
+  s3 see: The card shows 'Continue with Google' again
+  s3 not: Workouts removed from the phone on sign-out
+J-F-phone-219-13 | type 12 | member | Backup and restore, signed in, a member who trains at a gym
+  s1 see: 'Only you can see what is saved. Your gym cannot. Progress photos stay on this phone.'
+  s1 not: The gym panel showing the member's saved copy
+  s1 not: Progress photos uploaded to the account copy
+  s2 see: The file holds workouts and photos but no phone number and no gym membership
+  s2 not: The phone number or gym membership inside the file
+J-F-phone-222-01 | type 1 | member | Settings, a member not signed in to a MettleUp account, with own workouts and a gym joined
+  s1 see: Title 'Erase or start over'
+  s1 see: Red link 'Erase all data'
+  s1 see: 'Deletes everything on this phone and starts over from the welcome screen.'
+  s1 see: 'Your training is stored on this phone.'
+  s1 not: The erase starting just by opening the page
+  s2 see: Question 'Erase all data?' naming what goes: 'Every workout, record, routine, body entry, photo and video, your gym link, and your settings. This phone goes back to new.' and the gym the member leaves
+  s2 see: Red button 'Erase everything'
+  s2 not: The gym not named when the member is in one
+  s3 see: 'Erasing...' on the link
+  s3 see: The welcome screen
+  s3 not: Some workouts left on the phone with no word
+  s3 not: Landing back on the Settings page after the welcome
+J-F-phone-222-02 | type 2 | member | Erase or start over, a member signed in to a MettleUp account
+  s1 see: Heading 'What do you want to erase?'
+  s1 see: 'Your workouts are on this phone and saved in your MettleUp account.'
+  s1 see: Buttons 'Erase this phone only', 'Erase this phone and delete my MettleUp account', 'Cancel'
+  s1 not: One question that erases both without a choice
+  s2 see: The welcome screen
+  s2 see: Later sign-in brings the saved copy back ('Your saved copy on MettleUp stays.')
+  s2 not: The MettleUp account copy deleted
+J-F-phone-222-03 | type 2 | member | Erase or start over, a member signed in, online
+  s1 see: Question 'Erase this phone and delete your account?' with what goes
+  s1 see: Red button 'Erase and delete'
+  s1 not: The account deleted before this last question
+  s2 see: The welcome screen
+  s2 not: The phone erased while the account delete failed
+  s2 not: The account copy still on the server
+J-F-phone-222-04 | type 2 | member | A phone showing the sample member (demo data loaded)
+  s1 see: Badge 'Demo data loaded'
+  s1 see: Red link 'Remove demo data'
+  s1 see: 'This app is showing a sample member, not your training. Workouts you logged yourself stay.'
+  s1 not: No way to remove the demo
+  s2 see: 'Removing...'
+  s2 see: The Workout tab without the sample member's workouts
+  s2 not: Workouts the member logged themselves removed
+J-F-phone-222-05 | type 3 | member | Erase or start over, signed in, the internet off
+  s1 see: 'Could not delete your MettleUp account, so nothing was erased. Check your internet and try again.'
+  s1 see: Still on the Erase or start over page with every workout
+  s1 not: An empty phone with a full account
+  s1 not: A success buzz
+J-F-phone-222-06 | type 3 | member | Erase or start over, a member who changes their mind
+  s1 see: The page as before, nothing erased
+  s1 not: Any workout or setting erased
+  s2 see: The page as before
+  s2 not: Demo data loaded without 'Replace with demo' being tapped
+  s2 not: The hidden switch described anywhere a member reads
+J-F-phone-222-07 | type 6 | member | Erase or start over, an erase that could not remove one part
+  s1 see: A red line naming what was left behind
+  s1 see: Button 'Start over anyway'
+  s1 not: A success buzz while something was left
+  s1 not: The welcome screen with the old data still there
+  s2 see: The welcome screen, then the Workout tab
+  s2 not: Old workouts shown after starting over
+J-F-phone-222-08 | type 6 | member | Demo loaded, then removed
+  s1 see: No 'Demo data loaded' badge
+  s1 see: Only 'Erase all data'
+  s1 not: The badge still shown after the demo is gone
+  s1 not: The sample member back after reopening the app
+J-F-phone-222-09 | type 12 | member | Erase or start over, a member in a gym and signed in
+  s1 see: The gym the member leaves named in the question
+  s1 see: 'Your backup file in Google Drive stays. Delete it in Google Drive if you want it gone.' when Drive was used
+  s1 not: The member left still listed as an app member at the gym with no word
+  s1 not: An account delete promised when only the phone is erased
+J-F-phone-220-01 | type 1 | member | Settings, a member with logged workouts
+  s1 see: Title 'Save as a spreadsheet'
+  s1 see: Buttons 'Save my history' and 'Save my measurements'
+  s1 see: 'Every workout and set in one file (Hevy's format)...'
+  s1 not: A blank page
+  s2 see: 'Saving...' on the button
+  s2 see: The phone's share sheet with the file
+  s2 not: Two files or two share sheets from one tap
+  s3 see: A success buzz; the file opens in a spreadsheet with every workout and set
+  s3 not: Sets missing from the file
+  s3 not: Weights in the wrong unit without saying which
+J-F-phone-220-02 | type 2 | member | Save as a spreadsheet, a member with body weight and measurements
+  s1 see: 'Saving...'
+  s1 see: The share sheet with one file, a row per day: body weight, body fat and body measurements
+  s1 not: The sample member's made-up measurements saved
+  s1 not: Trainer measurements from the gym missing without a word
+J-F-phone-220-03 | type 2 | member | Settings, a member with workouts in the last 4 weeks
+  s1 see: Title 'Ask an AI'
+  s1 see: 'Get advice on your training from an AI app you already use, like ChatGPT or Gemini...'
+  s1 see: 'MettleUp sends nothing. You choose where the text goes. Your name, phone number and body weight are left out.'
+  s1 see: Button 'Share to an AI app' and 'The text you will share' with the text
+  s1 not: The member's name, phone number or body weight in the text
+  s2 see: The share sheet, then the AI app with the text and a question at the end
+  s2 not: MettleUp sending the text anywhere by itself
+  s2 not: Two share sheets from a double tap
+J-F-phone-220-04 | type 3 | member | A new member with no workouts and no measurements
+  s1 see: 'Nothing to save yet — log a workout first.'
+  s1 not: An empty file shared
+  s1 not: An error
+  s2 see: A plain line that there is nothing to save
+  s2 not: An empty file shared
+  s3 see: 'No workouts in the last 4 weeks'
+  s3 see: 'Log a workout, then come back here to ask an AI about it.'
+  s3 not: A 'Share to an AI app' button that shares an empty text
+J-F-phone-220-05 | type 3 | member | Save as a spreadsheet on a phone without a share app
+  s1 see: 'Sharing isn't available on this phone, so the file couldn't be handed over.'
+  s1 not: A success buzz
+J-F-phone-220-06 | type 6 | member | Ask an AI page open, the member changes units
+  s1 see: The text read again, now in lb
+  s1 not: The old kg text still shown
+  s2 see: The new workout in the text
+  s2 not: The text from before the workout
+J-F-phone-220-07 | type 12 | member | Ask an AI and the spreadsheets, a member in a gym
+  s1 see: No name, phone number or body weight in the text
+  s1 not: The gym name or the member's phone number in the text
+  s1 not: Anything sent to MettleUp or the gym
+  s2 see: A file that holds only the member's own workouts
+  s2 not: Another member's workouts in the file
+J-F-phone-223-01 | type 1 | member | Settings, a member in a gym, online
+  s1 see: Title 'Help and feedback'
+  s1 see: 'Ask a question and get an answer at once. Or tell us what works, what is hard, or what you want next. Tap Speak and talk, or type.'
+  s1 see: A box 'Type here, or tap Speak'
+  s1 see: 'Send' greyed out while the box is empty
+  s1 not: Send tappable with an empty box
+  s2 see: 'Sending. The answer usually takes a few seconds.'
+  s2 see: The box empties
+  s2 not: Two messages from a double tap
+  s2 not: The typed text lost when sending fails
+  s3 see: The question with a 'Quick answer' marked 'automatic' and 'Answer written by AI from our help pages.'
+  s3 see: 'Did this solve it?' with 'Yes' and 'No'
+  s3 not: An answer to another member's question
+  s3 not: No answer and no 'Waiting for the answer' line
+J-F-phone-223-02 | type 2 | member | Help and feedback, the member prefers to talk
+  s1 see: The spoken words typed into the box
+  s1 see: After sending: the question in 'Your questions'
+  s1 not: The message sent as typed when it was spoken (input lost)
+  s1 not: Sending before the member taps Send
+J-F-phone-223-03 | type 2 | member | Any screen, the round feedback button showing
+  s1 see: 'Ask about this screen and get an answer at once, or tell us what is wrong here.'
+  s1 see: 'To turn off this round button: Settings → "Help and feedback".'
+  s1 not: The message saved against the wrong screen
+J-F-phone-223-04 | type 2 | member | Help and feedback, a member with a MettleUp watch log on the phone
+  s1 see: 'Thanks! We read every message. Your watch screen log was sent too.' (or only the watch line after an answer)
+  s1 see: The switch turns itself off after sending
+  s1 not: The log sent without the switch on
+  s1 not: A success line when the log failed: must say 'Your message was sent, but the watch screen log was not. Try again later.'
+J-F-phone-223-05 | type 3 | member | Help and feedback with the internet off
+  s1 see: 'Couldn't send. Check your internet and try again. Your message is still here.'
+  s1 see: The text still in the box
+  s1 not: The box emptied
+  s1 not: 'Thanks! We read every message.' shown
+  s2 see: 'Send' stays greyed out
+  s2 not: An empty message sent
+J-F-phone-223-06 | type 3 | member | Help and feedback, a member with no gym
+  s1 see: 'Thanks! We read every message.' or an answer; 'The MettleUp team will reply here.' under the question
+  s1 not: A gym's AI credits spent for a member with no gym
+  s1 not: An error because there is no gym key
+J-F-phone-223-07 | type 6 | member | Your questions, a question sent earlier
+  s1 see: 'You said this did not solve it. The MettleUp team will reply here.'
+  s1 not: The question gone from the list
+  s2 see: 'Reply from the MettleUp team' with a 'New' badge
+  s2 not: The reply shown on another member's phone
+  s2 not: The 'New' badge staying after it was read
+J-F-phone-223-08 | type 6 | member | Help and feedback, the floating button switch
+  s1 see: The round button gone from every screen
+  s1 not: The button back after reopening the app
+  s2 see: The round button back
+  s2 not: The switch on but no button
+J-F-phone-223-09 | type 12 | member | Help and feedback, a member in a gym
+  s1 see: Only the member and the MettleUp team see the question and its answers
+  s1 not: The gym owner seeing the member's question text
+  s1 not: The gym's member key sent to the AI or saved
+J-F-phone-217-01 | type 1 | member | A member who joined a gym with the leaderboard on, online
+  s1 see: Title 'What my gym can see'
+  s1 see: 'Your gym's staff see how many workouts you did and how much weight you lifted each day, with your name...'
+  s1 see: Switch 'Show my name on my gym's leaderboard', off
+  s1 not: The switch on before the member turned it on
+  s2 see: The switch on
+  s2 see: Back on Settings the row sub reads 'Your name shows on the leaderboard'
+  s2 not: The change lost when the internet is off: it must be kept and sent later
+  s3 see: The member's first name and the first letter of the last name
+  s3 not: The full last name or phone number shown to other members
+  s3 not: 'A member' still shown after the gym has heard the change
+J-F-phone-217-02 | type 2 | member | What my gym can see, the gym server holds shared workouts
+  s1 see: The switch on
+  s1 see: 'Gym mates can open your workouts only while 'Show my name on my gym's leaderboard' is on.'
+  s1 not: Gym mates able to open the workouts while the name switch is off
+  s2 see: Gym mates can tap the name to see the bio and up to 30 workouts from the last 60 days
+  s2 not: Photos, body weight, notes or the phone number shared
+J-F-phone-217-03 | type 2 | member | What my gym can see, the gym has Busy machines on
+  s1 see: 'If your gym turns on Busy machines, the app sends which of the gym's machines you used, and the day and hour. Your gym sees only totals, never your name.'
+  s1 see: Switch 'Share which machines I use', on
+  s1 not: The old intro 'MettleUp never sends which exercises you did' shown while machines are shared
+  s2 see: 'Off: the app sends nothing about the machines you use.'
+  s2 not: Machine use sent after the switch is off
+J-F-phone-217-04 | type 2 | member | What my gym can see, the gym server has the trainer view and the owner picked a trainer
+  s1 see: Switch 'Share my workouts with my trainers', on
+  s1 see: 'Your trainer: <first name>'
+  s1 see: Button 'Ask my trainer for help' (or 'Ask a trainer' on newer gym servers)
+  s1 not: A trainer card on a gym server without the trainer view
+  s2 see: 'Sent. Your trainer will get in touch.'
+  s2 not: Two requests from a double tap
+J-F-phone-217-05 | type 2 | member | Settings, a member in a gym with a logo, on Android
+  s1 see: The phone's add-to-home-screen question, then a line saying it was added
+  s1 not: Another gym's logo
+  s1 not: A second shortcut from a double tap
+  s2 see: A question before leaving
+  s2 not: Leaving with no question
+J-F-phone-217-06 | type 3 | member | What my gym can see, the gym's leaderboard not answered yet (gym leaderboard off, or offline)
+  s1 see: 'Your gym's leaderboard is not switched on yet.'
+  s1 not: Switches that seem to work but are never sent
+J-F-phone-217-07 | type 3 | member | A member with no gym
+  s1 see: The Gym tab's 'Join your gym' screen
+  s1 not: An empty Your gym page
+  s1 not: Another gym's name
+J-F-phone-217-08 | type 3 | member | What my gym can see with the internet off
+  s1 see: 'Could not send. Check your internet and try again.'
+  s1 not: 'Sent' shown for a request that failed
+J-F-phone-217-09 | type 6 | member | What my gym can see, sharing on
+  s1 see: The switch off
+  s1 not: The shared workouts still on the gym after the gym has heard the change
+  s2 see: The switch off; no 'Ask my trainer for help'
+  s2 not: The weekly summary still with the gym
+  s3 see: Settings 'Your gym' shows 'Join your gym'
+  s3 not: Leaderboard numbers, trainer summary, machine use or shared workouts kept at the gym
+J-F-phone-217-10 | type 12 | member | A member in a gym with every gym feature on
+  s1 see: What staff see (workouts and kg per day, with the name), what members see ('A member' unless the name is on), what trainers see (weekly summary or workouts since joining, up to 12 months), and that body weight, photos and notes are never sent
+  s1 not: Anything sent that a caption says is never sent
+  s1 not: The trainer view switch on by default with no caption saying so
+  s2 see: Only the data the captions name
+  s2 not: Body weight, photos or notes in the panel
+J-F-phone-221-01 | type 1 | member | Settings, a member moving from Hevy with a Hevy export file on the phone
+  s1 see: Title 'Bring in from Hevy or Strong'
+  s1 see: 'Bring in your workouts from another app'
+  s1 see: 'Which app are you moving from?' with 'Hevy' ('Your workout file, or a link to a shared routine.') and 'Strong'
+  s1 see: 'Your file is read on your phone. Nothing is uploaded.'
+  s1 not: The file uploaded anywhere
+  s2 see: Title 'Import from Hevy' with the export steps
+  s2 see: Button 'Choose Hevy file'
+  s2 not: The Strong steps shown for Hevy
+  s3 see: 'Reading...' then a preview: 'Workouts', 'Sets', 'Exercises', 'Date range' with years
+  s3 not: Rows dropped without a 'Rows left out' line
+  s4 see: 'Workouts added', 'Sets logged', 'New exercises created'
+  s4 see: Buttons 'Bring my routines in' and 'Done'
+  s4 not: A workout already here added again
+  s4 not: Weights in the wrong unit
+J-F-phone-221-02 | type 2 | member | Bring in from Hevy or Strong, a member moving from Strong
+  s1 see: Title 'Import from Strong'
+  s1 see: For an older file: '<exercise> <weight> — kg or lb?' with 'Kilograms and km' and 'Pounds and miles', none chosen
+  s1 not: kg or lb chosen for the member
+  s2 see: Routines built from the file
+  s2 not: Routines in the wrong order or missing sets
+J-F-phone-221-03 | type 2 | member | Import from Hevy, a member with a shared Hevy routine link
+  s1 see: A box for the link with how to copy it in Hevy
+  s1 not: A link to Strong asked for here
+  s2 see: The routines exactly as saved: sets, rep ranges and rest
+  s2 see: If part of a folder failed: 'Only 4 of 6 routines could be read — try again' with 'Try again' or 'Use these'
+  s2 not: Half the folder brought in without a word
+J-F-phone-221-04 | type 2 | member | Android share menu, a member shares a Hevy file to MettleUp
+  s1 see: The import screen opens straight on the preview
+  s1 not: The file read as the wrong app
+J-F-phone-221-05 | type 3 | member | Import from Hevy
+  s1 see: A plain line that the file is neither
+  s1 not: A crash
+  s1 not: Anything imported
+  s2 see: 'No workouts were found in that file.'
+  s2 not: An empty import shown as done
+  s3 see: 'All <n> workouts are already here'
+  s3 not: The workouts doubled
+J-F-phone-221-06 | type 6 | member | Import from Hevy, a member with workouts already on the phone
+  s1 see: 'Delete <n> workouts first?' and button 'Replace'
+  s1 not: Workouts deleted with no question
+  s2 see: '<n> workouts replaced', then 'Undoing...' and the old workouts back
+  s2 not: The imported workouts left after the undo
+  s2 not: 'Couldn't undo the import...' with no way to try again
+J-F-phone-221-07 | type 6 | member | Import on a phone with the sample member's demo data
+  s1 see: 'Demo removed, history imported'
+  s1 not: The demo workouts mixed into the member's history
+J-F-phone-212-01 | type 1 | member | Profile tab, an Android member in a gym, watch connected
+  s1 see: Title 'Settings'
+  s1 see: Groups in order: 'You', 'Workouts', 'Your gym', 'Phone and watch', 'Your data', 'Help'
+  s1 not: A group with more than 7 rows
+  s1 not: A group heading with no rows
+  s2 see: 'Your profile' with the member's name, 'Units' with 'kg, km' or 'lb, miles', 'Light or dark', 'Reminders' with on/off and time, 'Rest timer and sounds' with the rest time, 'Weekly goal', 'Plates and bars', 'Rate how hard each set felt' on/off
+  s2 not: A row line that does not match what its page is set to
+  s3 see: 'Gym logo on my home screen' (when the gym has a logo), 'What my gym can see', 'Leave <gym name>' in red last
+  s3 see: 'Your watch', 'Health apps', 'Widgets'
+  s3 not: Another gym's name
+  s4 see: The 'Units' row now reads 'lb, miles'
+  s4 not: The old line until the app restarts
+  s4 not: Two Units pages stacked from a double tap
+J-F-phone-212-02 | type 2 | member | Settings on an iPhone
+  s1 see: Under 'Phone and watch': 'Not on iPhone yet: reminders, rest alerts, your watch, Health apps and widgets. They come in a later update.'
+  s1 see: No 'Reminders' row under 'You'
+  s1 not: Rows that open pages not built for iPhone
+J-F-phone-212-03 | type 2 | member | Settings, a member with no gym
+  s1 see: 'Join your gym' with 'Type your gym's code or scan its poster'
+  s1 see: The Gym tab's join screen (switched to, not stacked)
+  s1 not: 'Leave' or 'What my gym can see' rows with no gym
+J-F-phone-212-04 | type 2 | member | Settings after an update with a new feature
+  s1 see: A small dot on the row on the way to the new feature
+  s1 not: A dot that never goes away after the feature is opened
+J-F-phone-212-05 | type 3 | member | Settings, the phone has no Health Connect and no watch
+  s1 see: No 'Health apps' row, no 'Your watch' row
+  s1 see: 'Widgets' still shown
+  s1 not: A 'Health apps' row that opens an empty page
+  s1 not: An error when the health state cannot be read
+J-F-phone-212-06 | type 3 | member | Settings, MettleUp Plus switched off for this build
+  s1 see: No 'MettleUp Plus' row under 'You'
+  s1 not: A 'MettleUp Plus' row that opens a paywall while Plus is off
+J-F-phone-212-07 | type 6 | member | Settings open, the member leaves the app and comes back
+  s1 see: 'Widgets' row line updated
+  s1 not: The old widget count
+  s2 see: 'Your gym' shows the gym's rows instead of 'Join your gym'
+  s2 not: 'Join your gym' still shown
+J-F-phone-224-01 | type 1 | member | Settings, the newest app version installed
+  s1 see: Title 'What's new'
+  s1 see: 'What changed in the last 3 updates. Tap a button to try a change.'
+  s1 see: The last 3 updates, newest first, each change with a button
+  s1 not: Updates newer than the installed version
+  s1 not: More or fewer than the last 3 updates
+  s2 see: The page the change is about
+  s2 not: A button that opens a page the member cannot use (for example a gym page with no gym) without saying why
+  s2 not: Nothing happens
+J-F-phone-224-02 | type 2 | member | Settings
+  s1 see: Title 'About'
+  s1 see: Rows 'Credits', the RepDB credit link, and 'MettleUp' with the version
+  s1 not: No version shown on a normal build
+  s2 see: The credits page
+  s2 not: A blank page
+  s3 see: The exercise database page in the browser
+  s3 not: A crash when no browser can open it
+J-F-phone-224-03 | type 3 | member | A build whose version has no What's new entries
+  s1 see: 'Nothing new to show yet.'
+  s1 not: An empty card
+  s1 not: An error
+J-F-phone-224-04 | type 6 | member | What's new after an update
+  s1 see: The new update on top; the oldest of the 4 dropped
+  s1 not: The old list still shown
+  s2 see: The same list
+  s2 not: The list scrolled away or the button gone

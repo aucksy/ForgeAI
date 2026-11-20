@@ -1,0 +1,375 @@
+# A8-server-hq-gate-workers-3: coverage of 52 Tier 1 journeys (8 features, from A5-server-hq-gate-workers-3). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-server-222 | apps/dashboard/test/crm/retiredAiPack.test.ts | unit | 118 lines | imports the code
+F-server-222 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-server-222 | deploy/hq/english.test.mjs | unit | 351 lines | imports the code
+F-server-222 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-222 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-222 | apps/dashboard/e2e/ai-questions-uat.spec.mjs | e2e | 434 lines | asserts 1 journey phrase(s)
+F-server-222 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 1 journey phrase(s)
+F-server-222 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-server-222 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 1 journey phrase(s)
+F-server-222 | apps/dashboard/e2e/terms.spec.mjs | e2e | 149 lines | asserts 1 journey phrase(s)
+F-server-224 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | imports the code
+F-server-224 | apps/dashboard/test/crm/retiredAiPack.test.ts | unit | 118 lines | imports the code
+F-server-224 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-server-224 | deploy/hq/english.test.mjs | unit | 351 lines | imports the code
+F-server-224 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-224 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-224 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-server-224 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-server-224 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-server-224 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-server-224 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-server-217 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 6 journey phrase(s)
+F-server-217 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code, asserts 1 journey phrase(s)
+F-server-217 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 3 journey phrase(s)
+F-server-217 | apps/dashboard/test/crm/retiredAiPack.test.ts | unit | 118 lines | imports the code
+F-server-217 | deploy/hq/english.test.mjs | unit | 351 lines | imports the code
+F-server-217 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-217 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-217 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 2 journey phrase(s)
+F-server-217 | apps/dashboard/test/crm/hqAccess.test.ts | unit | 81 lines | asserts 2 journey phrase(s)
+F-server-217 | apps/mobile/test/cloud/backupWords.test.ts | unit | 88 lines | asserts 2 journey phrase(s)
+F-server-217 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-server-217 | apps/dashboard/e2e/bell-inbox-uat.spec.mjs | e2e | 401 lines | asserts 1 journey phrase(s)
+F-server-227 | deploy/hq/backup.test.mjs | unit | 165 lines | imports the code, file name
+F-server-227 | deploy/hq/readLogAlert.test.mjs | unit | 265 lines | imports the code, asserts 1 journey phrase(s)
+F-server-227 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-server-227 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-227 | deploy/hq/panelPush.test.mjs | unit | 211 lines | imports the code
+F-server-227 | deploy/hq/payFeed.test.mjs | unit | 170 lines | imports the code
+F-server-227 | deploy/hq/push.test.mjs | unit | 382 lines | imports the code
+F-server-227 | apps/mobile/qa/backup-m-after.yaml | maestro | 42 lines | file name
+F-server-227 | apps/mobile/qa/backup-m-check.yaml | maestro | 61 lines | file name
+F-server-227 | apps/mobile/qa/backup-m-photos-check.yaml | maestro | 81 lines | file name
+F-server-227 | apps/mobile/qa/backup-m-photos.yaml | maestro | 131 lines | file name
+F-server-227 | apps/mobile/qa/backup-m-prep.yaml | maestro | 134 lines | file name
+F-server-231 | deploy/hq/payFeed.test.mjs | unit | 170 lines | imports the code, file name
+F-server-231 | deploy/hq/push.test.mjs | unit | 382 lines | imports the code, asserts 1 journey phrase(s)
+F-server-231 | deploy/hq/readLogAlert.test.mjs | unit | 265 lines | imports the code, asserts 1 journey phrase(s)
+F-server-231 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-server-231 | deploy/hq/backup.test.mjs | unit | 165 lines | imports the code
+F-server-231 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-231 | deploy/hq/panelPush.test.mjs | unit | 211 lines | imports the code
+F-server-231 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-server-231 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-server-231 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 1 journey phrase(s)
+F-server-231 | apps/dashboard/e2e/pay-mettleup-uat.spec.mjs | e2e | 210 lines | asserts 1 journey phrase(s)
+F-server-231 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-server-201 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code, asserts 1 journey phrase(s)
+F-server-201 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-server-201 | deploy/hq/backup.test.mjs | unit | 165 lines | imports the code
+F-server-201 | deploy/hq/panelPush.test.mjs | unit | 211 lines | imports the code
+F-server-201 | deploy/hq/payFeed.test.mjs | unit | 170 lines | imports the code
+F-server-201 | deploy/hq/push.test.mjs | unit | 382 lines | imports the code
+F-server-201 | deploy/hq/readLogAlert.test.mjs | unit | 265 lines | imports the code
+F-server-201 | apps/dashboard/e2e/signin.spec.mjs | e2e | 82 lines | asserts 1 journey phrase(s)
+F-server-201 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 1 journey phrase(s)
+F-server-201 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | asserts 1 journey phrase(s)
+F-server-201 | apps/dashboard/test/crm/signin.test.ts | unit | 146 lines | asserts 1 journey phrase(s)
+F-server-201 | apps/mobile/test/cloud/copyPlan.test.ts | unit | 205 lines | asserts 1 journey phrase(s)
+F-server-200 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 5 journey phrase(s)
+F-server-200 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-server-200 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code, asserts 1 journey phrase(s)
+F-server-200 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-server-200 | apps/dashboard/test/crm/retiredAiPack.test.ts | unit | 118 lines | imports the code
+F-server-200 | apps/mobile/test/cloud/backupWords.test.ts | unit | 88 lines | asserts 3 journey phrase(s)
+F-server-200 | deploy/hq/backup.test.mjs | unit | 165 lines | imports the code
+F-server-200 | deploy/hq/english.test.mjs | unit | 351 lines | imports the code
+F-server-200 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-200 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-200 | deploy/hq/panelPush.test.mjs | unit | 211 lines | imports the code
+F-server-200 | deploy/hq/payFeed.test.mjs | unit | 170 lines | imports the code
+F-server-228 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | imports the code
+F-server-228 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-server-228 | deploy/hq/backup.test.mjs | unit | 165 lines | imports the code
+F-server-228 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-server-228 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-228 | deploy/hq/panelPush.test.mjs | unit | 211 lines | imports the code
+F-server-228 | deploy/hq/payFeed.test.mjs | unit | 170 lines | imports the code
+F-server-228 | deploy/hq/push.test.mjs | unit | 382 lines | imports the code
+F-server-228 | deploy/hq/readLogAlert.test.mjs | unit | 265 lines | imports the code
+F-server-228 | apps/dashboard/test/crm/assistant/todayApiVoice.test.ts | unit | 165 lines | asserts 1 journey phrase(s)
+F-server-228 | apps/dashboard/test/crm/crashReport.test.ts | unit | 52 lines | asserts 1 journey phrase(s)
+F-server-228 | apps/dashboard/test/crm/joinPay.test.ts | unit | 223 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-server-222-01 | type 1 | HQ admin | HQ, one gym's page, card 'AI Assistant credits'; the gym paid Rs 399 by UPI for a 150 pack
+  s1 see: Help line 'Packs: 50 (₹149), 150 (₹399), 500 (₹999). A minus number takes free credits back.'
+  s1 see: Note help 'Written in the log.'
+  s1 not: Credits added before the button is tapped
+  s2 see: Question 'Add 150 AI credits to <gym name>?'
+  s2 not: Credits added when the question is cancelled
+  s3 see: The gym page reloads with 'Saved: <gym name> now has <n> AI credits.'
+  s3 see: A new line at the top of the recent credits list
+  s3 not: A balance that did not go up by exactly 150
+  s3 not: The add missing from 'What HQ did here' and the HQ log
+J-F-server-222-02 | type 2 | HQ admin | HQ, one gym's page, 'AI Assistant credits'; free credits were given by mistake
+  s1 see: The fields keep the values
+  s1 not: The kind switching back to 'A pack the gym paid for' by itself
+  s2 see: Question 'Take back 50 AI credits from <gym name>?'
+  s2 not: The question saying 'Add' for a minus number
+  s3 see: 'Saved: <gym name> now has <n> AI credits.' with the balance 50 lower, never below 0
+  s3 not: A balance below 0
+  s3 not: Credits the gym paid for taken back
+J-F-server-222-03 | type 3 | HQ admin | HQ, one gym's page, 'AI Assistant credits'
+  s1 see: The question, then the words for a bad request under the button (BAD_REQUEST)
+  s1 not: Any credits added
+  s1 not: A success line
+  s2 see: The words for a bad request: a paid pack cannot be minus
+  s2 not: Paid credits taken back
+  s3 see: The card shows the not-ready words (AI_NOT_READY) and no add form
+  s3 not: An add form that fails on every tap
+J-F-server-222-04 | type 6 | HQ admin | HQ, a gym that never used the AI Assistant
+  s1 see: 'No credits added or used yet. The owner gets 20 starter credits the first time they open the AI Assistant, and 100 free every month while on a paid yearly or lifetime plan.'
+  s1 not: A blank card or NaN balance
+  s2 see: Balance and the recent list show both lines, newest first, at most 10 lines
+  s2 not: The first line lost when the second is added
+J-F-server-222-05 | type 12 | HQ admin | HQ, a gym page, after adding credits with a note
+  s1 see: The add with its note, seen only inside HQ
+  s1 not: The note shown to another gym
+  s2 see: The new balance
+  s2 not: Bought credits later taken back or expired, against the credits promise
+J-F-server-224-01 | type 1 | HQ admin | HQ, one gym's page, 'AI Assistant credits' card, part 'Daily limit' showing 'Normal limit.'
+  s1 see: Help 'Normal: 50 (20 while the gym is in its free trial or has not paid). 0 switches the AI Assistant off for this gym.'
+  s1 see: Help 'Normal: 10.'
+  s1 not: The boxes reset while typing
+  s2 see: 'Saved: 100 AI requests and 20 spoken minutes a day.'
+  s2 not: A success line when the save failed
+  s2 not: The change missing from HQ's log
+  s3 see: 'Set by MettleUp for this gym.' with 100 and 20 in the boxes
+  s3 not: The old numbers back after reload
+J-F-server-224-02 | type 2 | HQ admin | HQ, one gym's page, card 'AI column matching'
+  s1 see: 'Saved: 50 a day.'
+  s1 not: The AI Assistant limit changed by this card
+  s2 see: 'Back to normal: <n> a day.' and the box shows the normal number
+  s2 not: The gym left on 50 after 'Back to normal'
+J-F-server-224-03 | type 3 | HQ admin | HQ, one gym's page, 'Daily limit'
+  s1 see: The words for a bad request under the buttons
+  s1 not: Any limit saved
+  s2 see: The limit stays as it was, or a clear word that the box is empty
+  s2 not: The AI Assistant switched off for the gym because an empty box was sent as 0
+  s3 see: 'The AI Assistant daily limit can be set once its web database update (0015) is applied.'
+  s3 not: Boxes that fail on every save
+J-F-server-224-04 | type 6 | HQ admin | HQ, a gym on its own limit
+  s1 see: 'Saved: 0 AI requests and <m> spoken minutes a day.'
+  s1 not: The owner's AI Assistant still answering after the limit is 0
+  s2 see: 'Saved: 50 AI requests and 10 spoken minutes a day.' and 'Normal limit.' after reload
+  s2 not: 'Set by MettleUp for this gym.' still shown after going back to normal
+J-F-server-217-01 | type 1 | HQ admin | HQ, one gym's page, 'Support access' card says 'Closed. Normally the gym opens it ...'; HQ signed in less than 15 minutes ago
+  s1 see: Question 'Open support access in an emergency? It is read-only, it ends by itself, and the gym owner sees it with your reason.'
+  s1 not: Access opened when the question is cancelled
+  s2 see: Card 'Support access is open': 'Opened by MettleUp (emergency), until <time>. Read-only. The gym owner sees every look.'
+  s2 not: Access opened for more than 60 minutes
+  s2 not: The opening missing from the gym owner's list
+  s3 see: A table titled '<kind> (<n>)' or 'None.'
+  s3 not: Any way to change a record
+  s3 not: Records of another gym
+  s4 see: The card is back to 'Support access' closed
+  s4 not: Records still readable after closing
+J-F-server-217-02 | type 2 | HQ admin | HQ, one gym's page, the gym owner opened access from the admin app
+  s1 see: 'Opened by the gym, until <time>. Read-only. The gym owner sees every look.'
+  s1 not: The emergency form shown while the gym's own access is open
+  s2 see: 'Support access is open, so names, devices and addresses show (the gym owner sees this look).' and rows with Who, Device, From
+  s2 not: Names, devices or addresses shown while access is closed
+J-F-server-217-03 | type 3 | HQ admin | HQ, one gym's page, support access closed; HQ signed in more than 15 minutes ago
+  s1 see: The fresh sign-in words and a 'Sign in again' button
+  s1 not: Access opened without a fresh sign-in
+  s2 see: Google sign-in, then back on the same gym page
+  s2 not: Landing on the home page and losing the gym
+  s3 see: The server's refusal words
+  s3 not: Access opened with no reason the owner can read
+J-F-server-217-04 | type 6 | HQ admin | HQ, a gym page with access open for 15 minutes
+  s1 see: The closed 'Support access' card
+  s1 not: Record buttons still working after the end time
+  s2 see: A new open card with the new end time
+  s2 not: The old window counted as still open
+  s2 not: The second opening missing from the owner's list
+J-F-server-217-05 | type 12 | HQ admin | HQ, a gym page, access closed, the owner did not ask
+  s1 see: Member names and phone numbers in the table
+  s1 not: A look the gym owner cannot see with its reason
+  s1 not: A member list read while the in-app promise says support looks only when the gym lets them
+J-F-server-217-06 | type 1 | gym owner | Admin app, Help and feedback, card 'MettleUp access' saying 'MettleUp has never opened your records.'
+  s1 see: Sheet 'Let MettleUp support look?' with 'They cannot change anything.'
+  s1 not: Access opened before 'Yes, for 1 hour'
+  s2 see: 'Support access is open until <time> (you opened it). Nothing looked at yet.'
+  s2 not: Access open for longer than one hour
+  s3 see: The look listed on the card
+  s3 not: A look not listed
+J-F-server-217-07 | type 2 | gym owner | Admin app, Settings
+  s1 see: Help and feedback opens with the 'MettleUp access' card
+  s1 not: A blank page or the card missing
+J-F-server-217-08 | type 3 | gym owner | Admin app signed in as front desk, or a gym not set up online
+  s1 see: No support button for the desk (the server refuses anyone but the owner), or 'MettleUp access is not switched on for your gym yet.'
+  s1 not: A desk login opening support access
+J-F-server-217-09 | type 6 | gym owner | Admin app, 'MettleUp access' with access open (you opened it)
+  s1 see: 'Support access was open <day>, <from>-<to> (you opened it). Nothing was looked at.' and the button 'Let MettleUp support look (1 hour)' again
+  s1 not: HQ still able to read records after closing
+J-F-server-217-10 | type 12 | gym owner | Admin app, 'MettleUp access', the owner never opened access
+  s1 see: A line that MettleUp opened access in an emergency, with the reason and what was looked at
+  s1 not: Records read with no line on the card
+  s1 not: Any other gym or member seeing this list
+J-F-server-227-01 | type 1 | the system | The 03:00 India-time Cron Trigger fires; KV binding BACKUP is set
+  s1 see: Log '[backup] stored' with the day, size and parts
+  s1 not: The clean-up running before the copy
+  s2 see: KV status { ok: true, lastGoodDay: <today> }
+  s2 not: A copy kept longer than 7 days
+  s2 not: The meta written before every part is stored
+  s3 see: Both run even when the backup failed
+  s3 not: The clean-up skipped because the backup failed
+J-F-server-227-02 | type 2 | the system | A night when the copy is bigger than one KV value (over 20 MB)
+  s1 see: KV keys snap/<day>/part/0, part/1 ... and meta with parts: <n>
+  s1 not: A part over the 25 MiB KV limit
+  s1 not: Parts out of order
+J-F-server-227-03 | type 3 | the system | A night with something wrong
+  s1 see: Log '[backup] off: no BACKUP binding ...' and nothing stored
+  s1 not: A crash that stops the clean-up
+  s2 see: KV status { ok: false, error: 'NOT_READY: migration 0052 not applied' } or 'gym server answered <code>'
+  s2 not: The last good time lost
+  s3 see: KV status error 'copy looks incomplete (<n> bytes)'
+  s3 not: A cut-off copy stored as good
+J-F-server-227-04 | type 6 | the system | Several nights in a row
+  s1 see: Status ok false, lastGoodAt still the good night
+  s1 not: lastGoodAt wiped by the failed night
+  s2 see: Copies older than 7 days are gone by themselves
+  s2 not: An eighth copy still kept
+J-F-server-227-05 | type 12 | the system | A member deleted their account yesterday
+  s1 see: The copy expires within 7 days of being taken, so within 7 days of the deletion
+  s1 not: A copy with the member kept past 7 days
+  s1 not: The copy readable by anyone without the Cloudflare account
+J-F-server-227-06 | type 1 | HQ admin | The watch workflow (or the owner) asks /backup/status the morning after a good night
+  s1 see: Answer { setUp: true, lastRunOk: true, lastGoodAt: <time>, fresh: true }
+  s1 not: Any gym name, size or count in the answer
+J-F-server-227-07 | type 3 | HQ admin | The status asked in a wrong way or before set-up
+  s1 see: { setUp: false, fresh: false }
+  s1 not: fresh true when nothing is stored
+  s2 see: Not answered as status: HQ sign-in is asked
+  s2 not: The status changed by a public call
+J-F-server-227-08 | type 6 | HQ admin | Just deployed, no night yet, then nights go by
+  s1 see: fresh true, and the waiting time is remembered
+  s1 not: An alarm on the day of the deploy
+  s2 see: fresh false; the watch opens an issue
+  s2 not: fresh true after 30 hours with no good copy
+J-F-server-231-01 | type 1 | the system | Every minute; the desk made a fee request two minutes ago for a member who has the app
+  s1 see: The request is in the list
+  s1 not: Requests of shop orders or paid requests handed as fee notes
+  s2 see: One note per app member: 'Your gym asked you to pay for <plan>. Tap to pay in the app.'
+  s2 not: A name, phone number or amount leaving the Cloudflare database
+  s3 see: The note goes out
+  s3 not: The note sent twice
+J-F-server-231-02 | type 3 | the system | Bad rows or a server not ready
+  s1 see: That row skipped, the rest handed
+  s1 not: The whole run failing for one bad row
+  s2 see: One warning 'the gym server has no hq_fee_request_notes yet'
+  s2 not: A warning every minute
+  s2 not: The phone pop-ups after it skipped
+J-F-server-231-03 | type 6 | the system | The same request on the next runs
+  s1 see: No new note (the server tag makes one note per request)
+  s1 not: A second pop-up for the same request
+  s2 see: No note
+  s2 not: A please-pay note after the fee was paid
+J-F-server-231-04 | type 12 | the system | A fee request for a member
+  s1 see: Only the plan label, never the amount; 'Your gym asked you to pay your fee. Tap to pay in the app.' when there is no label
+  s1 not: An amount or another member's name in the note
+  s1 not: The note going to an app member of another gym
+J-F-server-231-05 | type 1 | staff | Admin app, a member with dues who has the MettleUp app
+  s1 see: The request shows as open on the desk
+  s1 not: The request made for the wrong member
+  s2 see: The member gets the pop-up on the phone
+  s2 not: The member never told, with the desk unaware
+J-F-server-231-06 | type 3 | staff | Admin app, a member on the list who never joined the app
+  s1 see: The request is made; no phone note can go
+  s1 not: The desk told the member was notified when no app phone is linked
+J-F-server-231-07 | type 6 | staff | Admin app, an open fee request
+  s1 see: No note goes
+  s1 not: A please-pay pop-up after the money was taken
+  s2 see: The note already sent stays on the phone
+  s2 not: A second note for the same request
+J-F-server-231-08 | type 1 | member | Phone with the MettleUp app joined to the gym; the desk asked for the fee
+  s1 see: 'Your gym asked you to pay for <plan>. Tap to pay in the app.'
+  s1 not: An amount on the lock screen
+  s2 see: The pay screen of the app opens
+  s2 not: The app opening on the home screen with no way to pay
+J-F-server-231-09 | type 3 | member | A member whose list entry is not linked to the app, or who left the gym
+  s1 see: No pop-up
+  s1 not: A pop-up from a gym the member left
+J-F-server-231-10 | type 6 | member | The member paid after the pop-up
+  s1 see: No new pop-up for the same request
+  s1 not: The same request popping up again
+J-F-server-231-11 | type 12 | member | The phone is locked on a table
+  s1 see: Only the gym asking and the plan name
+  s1 not: The amount owed shown to anyone holding the phone
+J-F-server-201-01 | type 1 | HQ admin | Phone browser, HQ open and signed in
+  s1 see: The HQ name and icon from the manifest, fetched without sign-in
+  s1 not: A broken icon
+  s1 not: A private page cached for anyone
+  s2 see: HQ opens; sign-in asked if needed
+  s2 not: Gym data shown without sign-in
+J-F-server-201-02 | type 2 | HQ admin | HQ installed on the phone, no internet
+  s1 see: The 'You're offline' page
+  s1 not: A browser error page
+  s1 not: Old gym data shown offline
+J-F-server-201-03 | type 3 | HQ admin | A browser that is not signed in
+  s1 see: { error: 'SIGN_IN' } for the API, or the move to sign-in
+  s1 not: Any gym data
+  s2 see: Not served as a public file
+  s2 not: A prefix of a public path serving a private file
+J-F-server-201-04 | type 6 | HQ admin | HQ installed; a new version is deployed
+  s1 see: The new service worker is checked on every visit (no-cache)
+  s1 not: An old service worker stuck for days
+J-F-server-200-01 | type 1 | HQ admin | HQ in Google mode, not signed in, asking a gym page
+  s1 see: The Google account picker
+  s1 not: HQ pages before sign-in
+  s2 see: Back on the page asked for, signed in
+  s2 not: Landing on another site
+  s2 not: The sign-in not written in HQ's log
+J-F-server-200-02 | type 2 | HQ admin | HQ in Cloudflare Access mode
+  s1 see: HQ opens
+  s1 not: HQ opening for another account
+  s2 see: Cloudflare Access's sign-out page
+  s2 not: A HQ session left active
+J-F-server-200-03 | type 3 | HQ admin | HQ in Google mode
+  s1 see: 'Could not sign you in' with 'This Google account cannot open MettleUp HQ.' and 'Try again'
+  s1 not: Any HQ page for that account
+  s2 see: 'Could not sign you in' with 'The gym server did not answer, so the sign-in could not be written down. Try again in a minute.'
+  s2 not: A sign-in with no record in HQ's log
+  s3 see: 'MettleUp HQ is not set up yet' with 'A setting is missing. Ask Claude to check the HQ setup list.'
+  s3 not: A half-working HQ
+J-F-server-200-04 | type 6 | HQ admin | Signed in to HQ
+  s1 see: 'Signed out' with 'You are signed out of MettleUp HQ.' and 'Sign in again'
+  s1 not: HQ pages still open on this browser
+  s2 see: The fresh sign-in words and 'Sign in again'
+  s2 not: Support access opened with a sign-in older than 15 minutes
+  s3 see: Sign-in asked again
+  s3 not: A session older than 30 days still working
+J-F-server-200-05 | type 12 | HQ admin | HQ sign-in log
+  s1 see: The sign-in is in HQ's log with whether it was fresh
+  s1 not: Another person able to open HQ with a link from the history
+J-F-server-228-01 | type 1 | the system | The 03:00 India-time Cron Trigger fires, after the backup
+  s1 see: Counts of rows removed
+  s1 not: A lead with a deal deleted
+  s1 not: Feedback younger than 1 year deleted
+  s2 see: Log '[hq-cron] clean-up done'
+  s2 not: The clean-up before the backup
+  s3 see: Logs 'test gyms deleted' and 'old AI requests deleted'
+  s3 not: A real gym deleted
+  s3 not: An AI request younger than 400 days deleted
+J-F-server-228-02 | type 2 | the system | The other kind: the AI Assistant purge on its own
+  s1 see: The request and its words gone; the credits count stays
+  s1 not: The credit totals changed
+J-F-server-228-03 | type 3 | the system | A night with something wrong
+  s1 see: web { error: 'failed' } and the gym server clean-up still runs
+  s1 not: The whole night stopped by the first step
+  s2 see: Error logged; the QA gym and 400-day purges are not reached that night
+  s2 not: Silence: no error in the logs
+  s3 see: qaGyms or aiOld { error: 'failed' }
+  s3 not: The other steps undone
+J-F-server-228-04 | type 6 | the system | Rows at the edges
+  s1 see: Kept
+  s1 not: Deleted
+  s2 see: Kept (only the tests' own QA gyms go)
+  s2 not: A real gym deleted for its name
+J-F-server-228-05 | type 12 | the system | Privacy promises on keeping data
+  s1 see: Only the credits used stay
+  s1 not: A request older than 400 days still kept
+  s1 not: A lead older than 12 months with no deal still kept

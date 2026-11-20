@@ -1,0 +1,129 @@
+# B-run-phone-tracker-services-1-b: gap-8 x phone / phone/tracker-services-1. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H8.1 | gap-8 | By script first: docs/system-map/_tools/silent.mjs lists every catch block with file:line and three flags: logs? (calls a log, report or crash function inside), tells_user? (sets an error state, toast or alert inside), rethrows?
+H8.2 | gap-8 | Output _sources/silent.csv
+H8.3 | gap-8 | Helpers read ONLY the rows where all three are "no", plus every fallback value (?? null, || [], ?? 0) that sits in a file named in a journey that writes money, messages, alerts, sign-in or sync
+H8.4 | gap-8 | Everything else is counted in the grid as "filtered by script, N rows, not read" so the gap is visible
+H8.5 | gap-8 | For each: if this path runs, does the user (or owner, or HQ) learn anything?
+H8.6 | gap-8 | A silent path that hides a failed promise = finding
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-500 | live | Ask your own AI: copy a text of my last 4 weeks of training (no name, phone or body weight in it) | apps/mobile/src/tracker/services/aiSummaryService.ts:22
+F-phone-501 | live | Badge shelf (badges earned from workouts, lifts, body weight and records) | apps/mobile/src/tracker/services/badgesService.ts:19
+F-phone-502 | live | Balance check card on Charts (a muscle trained much less than the rest; Not now; an old focus block runs to its end) | apps/mobile/src/tracker/services/balanceCheck.ts:37
+F-phone-503 | live | Share a before/after picture of two progress photos | apps/mobile/src/tracker/services/beforeAfterCopies.ts:15
+F-phone-504 | live | Workout calendar and week streak (days trained per month, weeks in a row, rest days) | apps/mobile/src/tracker/services/calendarService.ts:5
+F-phone-505 | live | Workout complete screen (summary, muscle split, new records, kg lifted against last time, short note of facts, milestone | apps/mobile/src/tracker/services/finishSummary.ts:1
+F-phone-506 | behind switch | AI-written finish note from Groq (opt-in; needs the coach switch, the member's coach-notes setting and a Groq key) | apps/mobile/src/tracker/services/coachNote.ts:314
+F-phone-507 | live | The Target line for each exercise of a plan day (live workout, Home and the chat coach's 'today's workout'; follows Weig | apps/mobile/src/tracker/services/coachTargets.ts:1
+F-phone-508 | live | Home screen numbers (today's workout with Targets, volume and recovery, lifts that beat a best this week; insight line a | apps/mobile/src/tracker/services/dashboardPhase2.ts:64
+F-phone-509 | live | Bring in workouts from Hevy or Strong (pick the app, read the file on the phone, match unknown exercise names, import, t | apps/mobile/src/tracker/services/hevyImport.ts:61
+F-phone-510 | live | One-time repairs at app start: old imported workout times moved to the real moment, and folders copied from a Hevy link  | apps/mobile/src/tracker/services/importClockRepair.ts:25
+F-phone-511 | live | Exercise page History tab (each past workout's kg lifted, sets and best set, with the workout in progress shown as 'curr | apps/mobile/src/tracker/services/currentInHistory.ts:17
+F-phone-512 | live | Exercise page Summary (Last time and Best, the chart with its chips and range, records, set-record ladder, numbers for e | apps/mobile/src/tracker/services/exerciseStats.ts:1
+F-phone-513 | live | Log sets and save a workout (which rows count as logged; the same exercise on two cards stays two cards after saving) | apps/mobile/src/tracker/services/draftSets.ts:22
+F-phone-514 | live | Edit a saved workout in the normal logger, including its minutes and start time (and log a past workout) | apps/mobile/src/tracker/services/editDraft.ts:1
+F-phone-515 | live | Empty workout remembers last time's exercises and set counts (also kept in the member's cloud copy) | apps/mobile/src/tracker/services/emptyWorkoutMemory.ts:18
+F-phone-516 | live | New exercise form guesses the muscle, gear and how it is logged from the typed name | apps/mobile/src/tracker/services/exerciseGuess.ts:1
+F-phone-517 | live | Add my own photo or video to an exercise (gallery or camera, kept on this phone only) | apps/mobile/src/tracker/services/exerciseMedia.ts:1
+F-phone-518 | live | Search and filter exercises (library, Add exercise, Swap): typos, word order, Hindi gym words, muscle and gear filters | apps/mobile/src/tracker/services/exerciseSearch.ts:1
+F-phone-519 | live | Profile's Workouts feed (one card per workout: time, kg lifted, records, first 3 exercises, month lines); also a gym mat | apps/mobile/src/tracker/services/feedCard.ts:1
+F-phone-520 | live | Workout history (endless list by month, search by workout or exercise name, a day's workouts, the History card's words) | apps/mobile/src/tracker/services/historyFeed.ts:1
+F-phone-521 | live | Finish sheet before saving (what will be saved, rows with numbers never ticked, a better end time, a default name) | apps/mobile/src/tracker/services/finishCheck.ts:1
+F-phone-522 | live | Forgotten Finish: a workout left open for an hour pauses itself, back-dated (never while a hold timer is open) | apps/mobile/src/tracker/services/idlePause.ts:16
+F-phone-523 | live | Guided first routine (makes a 'My plan' folder and one routine from picked exercises) | apps/mobile/src/tracker/services/firstRoutineGuide.ts:19
+F-phone-524 | live | Choose which folder a new, saved or duplicated routine goes into | apps/mobile/src/tracker/services/folderChoice.ts:22
+F-phone-525 | behind switch | Measurements taken by the gym's trainer show on the Body page (kept on the phone, also after leaving the gym) | apps/mobile/src/tracker/services/gymBodySync.ts:25
+F-phone-526 | behind switch | The gym's diet plans on the phone (kept for offline; removed when the member leaves the gym) | apps/mobile/src/tracker/services/gymBodySync.ts:27
+F-phone-527 | behind switch | Workout plans from the gym appear as routine folders (updated on a new version, relabelled 'No longer sent', a deleted o | apps/mobile/src/tracker/services/gymPlansSync.ts:38
+F-phone-528 | behind switch | The gym's workout of the day card on the Workout tab (Start saves it as a routine in 'Workouts of the day' and starts it | apps/mobile/src/tracker/services/gymWodSync.ts:45
+F-phone-529 | live | Save my history (whole workout history as a CSV that imports back) | apps/mobile/src/tracker/services/historyExport.ts:1
+F-phone-530 | live | Save my measurements (body weight and measurements as a CSV; nothing written while demo data is loaded) | apps/mobile/src/tracker/services/measurementsExport.ts:135
+F-phone-531 | live | Hold timer for a timed set (a brushed screen never loses it; Back or X asks Keep / Discard / Keep going) | apps/mobile/src/tracker/services/holdTimerRules.ts:10
+F-phone-532 | live | Live workout notification card (current exercise and set, 'Complete set' that works with the app closed, workout clock,  | apps/mobile/src/tracker/services/liveCard.ts:1
+F-phone-533 | live | Record alert and medal the moment a set is ticked during a workout | apps/mobile/src/tracker/services/liveRecords.ts:1
+F-phone-534 | behind switch | Muscle tips ('Smart suggestion') on the Up next card: Add or Swap an exercise, Not now, Undo bar | apps/mobile/src/tracker/services/muscleTips.ts:1
+F-phone-535 | live | 1-rep max and percent calculator (rounded to weights the gym's bar and plates can load) | apps/mobile/src/tracker/services/oneRepMax.ts:1
+F-phone-536 | behind switch | Include photos in my backup (default off; newest progress photos shrunk to fit a 15 MB budget in Android's own backup, r | apps/mobile/src/tracker/services/photoBackup.ts:43
+F-phone-537 | live | Save a progress photo to the phone gallery (through the phone's share list) | apps/mobile/src/tracker/services/photoSave.ts:20
+F-phone-538 | live | Followed plan: which week it is and easy weeks (take one now, skip one, how often) | apps/mobile/src/tracker/services/planState.ts:1
+F-phone-539 | live | Get a routine folder from a ready program, the plan builder or a shared file, and follow it as the plan | apps/mobile/src/tracker/services/plansService.ts:1
+## SILENT CATCH ROWS TO READ (kind,file,line,logs,tells_user,rethrows,text)
+catch,apps/mobile/src/tracker/services/badgesService.ts,40,no,no,no,(() => { if (kept?.badges === badges) kept = null; })
+catch,apps/mobile/src/tracker/services/beforeAfterCopies.ts,32,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/coachNote.ts,177,no,no,no,(() => new Set<string>())
+catch,apps/mobile/src/tracker/services/coachTargets.ts,89,no,no,no,{ return { experience: 'intermediate'  goal: null }; // no profile yet — never the beginne
+catch,apps/mobile/src/tracker/services/coachTargets.ts,126,no,no,no,{ // quiet: an unreadable settings store means the defaults; nothing the member typed is l
+catch,apps/mobile/src/tracker/services/coachTargets.ts,154,no,no,no,( () => new Map<string  TrackerExercise>()  )
+catch,apps/mobile/src/tracker/services/coachTargets.ts,163,no,no,no,(() => new Map<string  string>())
+catch,apps/mobile/src/tracker/services/coachTargets.ts,225,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/coachTargets.ts,419,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/coachTargets.ts,570,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/coachTargets.ts,594,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/coachTargets.ts,608,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/dashboardPhase2.ts,74,no,no,no,(failed)
+catch,apps/mobile/src/tracker/services/dashboardPhase2.ts,75,no,no,no,(failed)
+catch,apps/mobile/src/tracker/services/dashboardPhase2.ts,76,no,no,no,(failed)
+catch,apps/mobile/src/tracker/services/dashboardPhase2.ts,77,no,no,no,(failed)
+catch,apps/mobile/src/tracker/services/exerciseMedia.ts,56,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/exerciseMedia.ts,61,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/exerciseMedia.ts,109,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/exerciseMedia.ts,123,no,no,no,(() => ({ exists: false }))
+catch,apps/mobile/src/tracker/services/exerciseStats.ts,274,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/finishSummary.ts,115,no,no,no,(() => [] as RecordEventRow[])
+catch,apps/mobile/src/tracker/services/finishSummary.ts,125,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/hevyImport.ts,74,no,no,no,{ return []; }
+catch,apps/mobile/src/tracker/services/hevyImport.ts,991,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/hevyImport.ts,992,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/hevyImport.ts,1090,no,no,no,(() => [] as { id: string; title: string | null }[])
+catch,apps/mobile/src/tracker/services/hevyImport.ts,1101,no,no,no,(() => [])
+catch,apps/mobile/src/tracker/services/hevyImport.ts,1124,no,no,no,(() => 0)
+catch,apps/mobile/src/tracker/services/hevyImport.ts,1226,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/hevyImport.ts,1227,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/hevyImport.ts,1463,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/hevyImport.ts,1464,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/hevyImport.ts,1471,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/historyExport.ts,346,no,no,no,(() => [] as string[])
+catch,apps/mobile/src/tracker/services/historyExport.ts,348,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/historyExport.ts,373,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/historyFeed.ts,108,no,no,no,(() => d)
+catch,apps/mobile/src/tracker/services/importClockRepair.ts,46,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/importClockRepair.ts,49,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/importClockRepair.ts,67,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/importClockRepair.ts,79,no,no,no,{ // unreadable: the importer ignores it anyway }
+catch,apps/mobile/src/tracker/services/importMatch.ts,66,no,no,no,{ return []; }
+catch,apps/mobile/src/tracker/services/importMatch.ts,80,no,no,no,{ // no hidden list: every exercise is a candidate }
+catch,apps/mobile/src/tracker/services/keptData.ts,22,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/linkFolderRepair.ts,54,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/linkFolderRepair.ts,57,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/linkFolderRepair.ts,114,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/linkFolderRepair.ts,126,no,no,no,{ all = {}; }
+catch,apps/mobile/src/tracker/services/milestones.ts,40,no,no,no,(() => new Set<string>())
+catch,apps/mobile/src/tracker/services/photoBackup.ts,71,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/photoBackup.ts,75,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/photoBackup.ts,81,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/photoBackup.ts,115,no,no,no,{ // Already released. }
+catch,apps/mobile/src/tracker/services/photoBackup.ts,150,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/photoBackup.ts,171,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/photoBackup.ts,176,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/photoBackup.ts,222,no,no,no,{ failed = true; }
+catch,apps/mobile/src/tracker/services/photoBackup.ts,242,no,no,no,{ return {}; }
+catch,apps/mobile/src/tracker/services/photoBackup.ts,264,no,no,no,(() => [] as string[])
+catch,apps/mobile/src/tracker/services/photoBackup.ts,325,no,no,no,{ if (!(await stillOn(gen)) || !(await fs.isDir(dir))) { stopped = true; break; } memo[p.i
+catch,apps/mobile/src/tracker/services/photoBackup.ts,335,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/photoBackup.ts,343,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/photoBackup.ts,351,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/photoBackup.ts,359,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/photoBackup.ts,377,no,no,no,(() => [] as string[])
+catch,apps/mobile/src/tracker/services/photoBackup.ts,398,no,no,no,{ // That one stays missing; the others still come back. }
+catch,apps/mobile/src/tracker/services/photoBackup.ts,410,no,no,no,(() => 0)
+catch,apps/mobile/src/tracker/services/photoBackup.ts,412,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/photoBackup.ts,419,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/photoBackup.ts,426,no,no,no,{ // The next change or start-up tries again. }
+catch,apps/mobile/src/tracker/services/planState.ts,120,no,no,no,(() => today)
+catch,apps/mobile/src/tracker/services/planState.ts,122,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/services/plansService.ts,143,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/services/plansService.ts,144,no,no,no,(() => null)
+## FALLBACK ROWS TO READ (files that write money, messages, alerts, sign-in or sync)
+(none)
+## FILTERED BY SCRIPT
+224 other rows of _sources/silent.csv in this area: not read (write this number in the H8 evidence)

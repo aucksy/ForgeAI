@@ -1,0 +1,1052 @@
+# A8-panel-screens-1-4: coverage of 93 Tier 1 journeys (10 features, from A5-panel-screens-1-4). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-232 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 11 journey phrase(s)
+F-panel-232 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 9 journey phrase(s)
+F-panel-232 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 8 journey phrase(s)
+F-panel-232 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 8 journey phrase(s)
+F-panel-232 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 6 journey phrase(s)
+F-panel-232 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 5 journey phrase(s)
+F-panel-232 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 5 journey phrase(s)
+F-panel-232 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-panel-232 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 4 journey phrase(s)
+F-panel-232 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 4 journey phrase(s)
+F-panel-232 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-panel-232 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-panel-231 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-panel-231 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-231 | apps/dashboard/test/crm/moveStart.test.ts | unit | 131 lines | imports the code
+F-panel-231 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-panel-231 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 2 journey phrase(s)
+F-panel-231 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 2 journey phrase(s)
+F-panel-231 | apps/mobile/test/db/workoutPhotosReal.test.ts | unit | 327 lines | asserts 2 journey phrase(s)
+F-panel-231 | apps/mobile/test/onboarding/eraseLeftBehind.test.ts | unit | 59 lines | asserts 2 journey phrase(s)
+F-panel-231 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 2 journey phrase(s)
+F-panel-231 | apps/mobile/test/onboarding/startup.test.ts | unit | 185 lines | asserts 2 journey phrase(s)
+F-panel-231 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-231 | apps/mobile/test/tracker/auditC9Words.test.ts | unit | 51 lines | asserts 2 journey phrase(s)
+F-panel-230 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-230 | apps/dashboard/test/crm/moveStart.test.ts | unit | 131 lines | imports the code
+F-panel-230 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-panel-230 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 2 journey phrase(s)
+F-panel-230 | deploy/panel/assistCatalogue.test.mjs | unit | 184 lines | asserts 2 journey phrase(s)
+F-panel-230 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-panel-230 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 1 journey phrase(s)
+F-panel-230 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 1 journey phrase(s)
+F-panel-230 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 1 journey phrase(s)
+F-panel-230 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 1 journey phrase(s)
+F-panel-230 | apps/dashboard/e2e/offline.spec.mjs | e2e | 74 lines | asserts 1 journey phrase(s)
+F-panel-230 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 1 journey phrase(s)
+F-panel-235 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-235 | apps/dashboard/test/crm/moveStart.test.ts | unit | 131 lines | imports the code
+F-panel-235 | apps/dashboard/test/crm/workoutOffer.test.ts | unit | 290 lines | asserts 3 journey phrase(s)
+F-panel-235 | apps/mobile/test/tracker/watchBridge.test.ts | unit | 153 lines | asserts 2 journey phrase(s)
+F-panel-235 | supabase/tests/0060_pay_mettleup.sql | db | 317 lines | asserts 2 journey phrase(s)
+F-panel-235 | apps/dashboard/e2e/assistant-uat.spec.mjs | e2e | 822 lines | asserts 1 journey phrase(s)
+F-panel-235 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-panel-235 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-panel-235 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 1 journey phrase(s)
+F-panel-235 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-235 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 1 journey phrase(s)
+F-panel-235 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-237 | apps/dashboard/e2e/workoutcode.spec.mjs | e2e | 55 lines | asserts 5 journey phrase(s)
+F-panel-237 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-237 | apps/dashboard/test/crm/moveStart.test.ts | unit | 131 lines | imports the code
+F-panel-237 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 2 journey phrase(s)
+F-panel-237 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 1 journey phrase(s)
+F-panel-237 | apps/dashboard/test/crm/workoutOffer.test.ts | unit | 290 lines | asserts 1 journey phrase(s)
+F-panel-237 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-panel-237 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-panel-237 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-panel-237 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 1 journey phrase(s)
+F-panel-237 | deploy/panel/helpPages.test.mjs | unit | 109 lines | asserts 1 journey phrase(s)
+F-panel-238 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-panel-238 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 5 journey phrase(s)
+F-panel-238 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 5 journey phrase(s)
+F-panel-238 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 4 journey phrase(s)
+F-panel-238 | apps/mobile/qa/sub-uat-f194-choose.yaml | maestro | 31 lines | asserts 4 journey phrase(s)
+F-panel-238 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 4 journey phrase(s)
+F-panel-238 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-panel-238 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 3 journey phrase(s)
+F-panel-238 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 3 journey phrase(s)
+F-panel-238 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-238 | apps/dashboard/test/crm/moveStart.test.ts | unit | 131 lines | imports the code
+F-panel-238 | apps/dashboard/test/crm/r448.test.ts | unit | 76 lines | asserts 3 journey phrase(s)
+F-panel-233 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 11 journey phrase(s)
+F-panel-233 | apps/dashboard/test/crm/hqAccess.test.ts | unit | 81 lines | asserts 4 journey phrase(s)
+F-panel-233 | apps/dashboard/test/crm/moveStart.test.ts | unit | 131 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-233 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 3 journey phrase(s)
+F-panel-233 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-233 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-panel-233 | deploy/panel/helpArticles.test.mjs | unit | 156 lines | asserts 3 journey phrase(s)
+F-panel-233 | supabase/tests/0064_billing_checks.sql | db | 133 lines | asserts 3 journey phrase(s)
+F-panel-233 | apps/dashboard/test/crm/local.test.ts | unit | 1070 lines | asserts 2 journey phrase(s)
+F-panel-233 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 2 journey phrase(s)
+F-panel-233 | apps/mobile/qa/xj-2-order-cancel.yaml | maestro | 34 lines | asserts 2 journey phrase(s)
+F-panel-233 | apps/mobile/test/shop/gym.test.ts | unit | 480 lines | asserts 2 journey phrase(s)
+F-panel-234 | apps/dashboard/test/crm/moveStart.test.ts | unit | 131 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-234 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-234 | apps/dashboard/e2e/trainers-uat.spec.mjs | e2e | 282 lines | asserts 1 journey phrase(s)
+F-panel-234 | apps/dashboard/test/crm/auditC7Words.test.ts | unit | 35 lines | asserts 1 journey phrase(s)
+F-panel-234 | apps/dashboard/test/crm/local.test.ts | unit | 1070 lines | asserts 1 journey phrase(s)
+F-panel-234 | apps/dashboard/test/crm/selfJoin.test.ts | unit | 174 lines | asserts 1 journey phrase(s)
+F-panel-234 | apps/dashboard/test/crm/workoutOffer.test.ts | unit | 290 lines | asserts 1 journey phrase(s)
+F-panel-234 | apps/mobile/test/db/finishReal.test.ts | unit | 104 lines | asserts 1 journey phrase(s)
+F-panel-234 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-panel-234 | apps/mobile/test/shop/planRequest.test.ts | unit | 171 lines | asserts 1 journey phrase(s)
+F-panel-234 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 1 journey phrase(s)
+F-panel-234 | apps/mobile/test/tracker/phase2ReviewFixes.test.ts | unit | 287 lines | asserts 1 journey phrase(s)
+F-panel-236 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-panel-236 | apps/dashboard/test/crm/hqAccess.test.ts | unit | 81 lines | asserts 4 journey phrase(s)
+F-panel-236 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-236 | apps/dashboard/test/crm/moveStart.test.ts | unit | 131 lines | imports the code
+F-panel-236 | deploy/panel/helpArticles.test.mjs | unit | 156 lines | asserts 3 journey phrase(s)
+F-panel-236 | supabase/tests/0064_billing_checks.sql | db | 133 lines | asserts 3 journey phrase(s)
+F-panel-236 | apps/dashboard/e2e/fonts.spec.mjs | e2e | 44 lines | asserts 2 journey phrase(s)
+F-panel-236 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 2 journey phrase(s)
+F-panel-236 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 2 journey phrase(s)
+F-panel-236 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 2 journey phrase(s)
+F-panel-236 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-panel-236 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 1 journey phrase(s)
+F-panel-239 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 7 journey phrase(s)
+F-panel-239 | apps/dashboard/test/crm/r448.test.ts | unit | 76 lines | asserts 5 journey phrase(s)
+F-panel-239 | apps/dashboard/test/crm/machines/pretendMachine.test.ts | unit | 216 lines | asserts 3 journey phrase(s)
+F-panel-239 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-239 | apps/dashboard/test/crm/moveStart.test.ts | unit | 131 lines | imports the code
+F-panel-239 | apps/dashboard/e2e/gymdata.spec.mjs | e2e | 52 lines | asserts 2 journey phrase(s)
+F-panel-239 | apps/dashboard/test/crm/machines/adms.test.ts | unit | 141 lines | asserts 2 journey phrase(s)
+F-panel-239 | apps/mobile/test/onboarding/welcomeStart.test.ts | unit | 55 lines | asserts 2 journey phrase(s)
+F-panel-239 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-239 | supabase/tests/0017_undo_import.sql | db | 86 lines | asserts 2 journey phrase(s)
+F-panel-239 | supabase/tests/0032_member_cloud.sql | db | 217 lines | asserts 2 journey phrase(s)
+F-panel-239 | supabase/tests/0035_trainer_measurements_diet.sql | db | 227 lines | asserts 2 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-232-01 | type 1 | owner | Signed in as the owner; member page of a member with no membership yet
+  s1 see: Sheet titled "Sell membership"
+  s1 see: Boxes "Plan", "Starts on", "Plan price", "Joining fee", "Received now"
+  s1 see: Under Received now: "Leave blank if they will pay later. It will show in Dues."
+  s1 not: A plan picked from another gym or branch
+  s1 not: The sheet opening with money already typed
+  s2 see: Button reads "Saving…" and cannot be tapped again
+  s2 see: Sheet closes
+  s2 see: Toast "Membership saved. Receipt <number>."
+  s2 not: Two memberships or two receipts from two fast taps
+  s2 not: Cash saved as UPI
+  s2 not: A receipt for more than was typed
+  s3 see: Memberships card shows the plan with its first and last day
+  s3 see: Payments card shows the new receipt number, day and way paid
+  s3 see: Dues tile shows the balance with "Still to pay", or "—" with "Fully paid"
+  s3 not: Dues, price and receipt that do not add up
+  s3 not: The member still shown as "No membership yet."
+J-F-panel-232-02 | type 2 | owner | Signed in as the owner; member page of a member whose plan is running (button reads "Renew")
+  s1 see: Sheet titled "Renew membership"
+  s1 see: "Starts on" is filled with the day after the current plan ends, with the line "The day after their current plan ends (<day>)."
+  s1 not: A start day that overlaps the running plan
+  s1 not: The title "Sell membership" for a renewal
+  s2 see: A question about the higher price shows once
+  s2 see: Button now reads "Yes, save"
+  s2 not: The sale saved at the higher price with no question
+  s2 not: The question shown again after "Yes, save" with nothing changed
+  s3 see: Toast "Membership saved. No money taken yet." when Received now was blank
+  s3 see: The plan line reads "renewed till <day>"
+  s3 not: The old plan cut short
+  s3 not: Dues missing the new plan's price
+J-F-panel-232-03 | type 2 | owner | Signed in as the owner; member page of a member who owes money (Dues tile shows an amount)
+  s1 see: Sheet titled "Collect payment"
+  s1 see: Boxes "For which membership", "Amount received", "Paid by", "Reference (optional)", "Received on"
+  s1 see: Under the amount: "Leave blank to collect the full amount due."
+  s1 not: The button shown for a member with no dues
+  s1 not: A cancelled membership offered in "For which membership"
+  s2 see: "Still due after this: <amount>"
+  s2 not: "This clears all dues on this membership." for a part payment
+  s3 see: Button reads "Saving…"
+  s3 see: Toast "Payment saved. Receipt <number>."
+  s3 see: Dues tile goes down by the amount
+  s3 not: Two receipts from two taps
+  s3 not: The payment put on another membership
+  s3 not: Cash taken after the member already paid the same due online
+J-F-panel-232-04 | type 3 | owner | Signed in as the owner; Collect payment sheet open for a member who owes money
+  s1 see: Red line "That is more than the <amount> due on this membership."
+  s1 see: Sheet stays open
+  s1 not: A receipt above the due
+  s1 not: Dues shown as a minus figure
+  s2 see: "Type an amount more than zero."
+  s2 not: A zero receipt that uses up a receipt number
+  s3 see: A red line refuses the date; nothing is saved
+  s3 not: A receipt dated ahead of today
+  s3 not: A cleared date box shown as "Not a YYYY-MM-DD date:"
+  s4 see: "You haven’t created any plans yet. Add a plan first, then you can sell it here."
+  s4 not: An empty Plan list with a Confirm button that does nothing
+J-F-panel-232-05 | type 6 | owner | Signed in as the owner; member with no dues, so no "Collect payment" button shows
+  s1 see: Toast "Membership saved. No money taken yet."
+  s1 see: Dues tile shows the full amount with "Still to pay"
+  s1 see: Button "Collect payment" now shows at the top
+  s1 not: A receipt made for zero
+  s1 not: "Fully paid" on the Dues tile
+  s2 see: "This clears all dues on this membership." before saving
+  s2 see: Toast "Payment saved. Receipt <number>."
+  s2 not: Less than the full due collected from a blank amount
+  s3 see: Dues tile "—" with "Fully paid"
+  s3 see: Button "Collect payment" is gone
+  s3 see: Membership row reads "Paid"
+  s3 not: The Collect button still shown with nothing due
+  s3 not: The member still on the dues list
+J-F-panel-232-06 | type 12 | owner | Signed in as the owner with a named login; member page
+  s1 see: Receipt opens as a page to print with this member's name and amount
+  s1 see: The sale and the receipt are saved under the person who is signed in
+  s1 not: Another staff member's name saved as the person who took the money
+  s1 not: The receipt or the member's phone number reachable by another gym
+  s1 not: The price a member paid shown to other members
+J-F-panel-232-07 | type 1 | staff | Signed in as front desk staff; member page of a member with no membership yet
+  s1 see: Sheet titled "Sell membership"
+  s1 see: Boxes "Plan", "Starts on", "Plan price", "Joining fee", "Received now"
+  s1 see: Under Received now: "Leave blank if they will pay later. It will show in Dues."
+  s1 not: A plan picked from another gym or branch
+  s1 not: The sheet opening with money already typed
+  s2 see: Button reads "Saving…" and cannot be tapped again
+  s2 see: Sheet closes
+  s2 see: Toast "Membership saved. Receipt <number>."
+  s2 not: Two memberships or two receipts from two fast taps
+  s2 not: Cash saved as UPI
+  s2 not: A receipt for more than was typed
+  s3 see: Memberships card shows the plan with its first and last day
+  s3 see: Payments card shows the new receipt number, day and way paid
+  s3 see: Dues tile shows the balance with "Still to pay", or "—" with "Fully paid"
+  s3 not: Dues, price and receipt that do not add up
+  s3 not: The member still shown as "No membership yet."
+J-F-panel-232-08 | type 2 | staff | Signed in as front desk staff; member page of a member whose plan is running (button reads "Renew")
+  s1 see: Sheet titled "Renew membership"
+  s1 see: "Starts on" is filled with the day after the current plan ends, with the line "The day after their current plan ends (<day>)."
+  s1 not: A start day that overlaps the running plan
+  s1 not: The title "Sell membership" for a renewal
+  s2 see: A question about the higher price shows once
+  s2 see: Button now reads "Yes, save"
+  s2 not: The sale saved at the higher price with no question
+  s2 not: The question shown again after "Yes, save" with nothing changed
+  s3 see: Toast "Membership saved. No money taken yet." when Received now was blank
+  s3 see: The plan line reads "renewed till <day>"
+  s3 not: The old plan cut short
+  s3 not: Dues missing the new plan's price
+J-F-panel-232-09 | type 2 | staff | Signed in as front desk staff; member page of a member who owes money (Dues tile shows an amount)
+  s1 see: Sheet titled "Collect payment"
+  s1 see: Boxes "For which membership", "Amount received", "Paid by", "Reference (optional)", "Received on"
+  s1 see: Under the amount: "Leave blank to collect the full amount due."
+  s1 not: The button shown for a member with no dues
+  s1 not: A cancelled membership offered in "For which membership"
+  s2 see: "Still due after this: <amount>"
+  s2 not: "This clears all dues on this membership." for a part payment
+  s3 see: Button reads "Saving…"
+  s3 see: Toast "Payment saved. Receipt <number>."
+  s3 see: Dues tile goes down by the amount
+  s3 not: Two receipts from two taps
+  s3 not: The payment put on another membership
+  s3 not: Cash taken after the member already paid the same due online
+J-F-panel-232-10 | type 3 | staff | Signed in as front desk staff; Collect payment sheet open for a member who owes money
+  s1 see: Red line "That is more than the <amount> due on this membership."
+  s1 see: Sheet stays open
+  s1 not: A receipt above the due
+  s1 not: Dues shown as a minus figure
+  s2 see: "Type an amount more than zero."
+  s2 not: A zero receipt that uses up a receipt number
+  s3 see: Under the date: "Today, or up to <n> days back."
+  s3 see: A red line refuses the date; nothing is saved
+  s3 not: A receipt dated ahead of today
+  s3 not: A cleared date box shown as "Not a YYYY-MM-DD date:"
+  s4 see: "There are no plans to sell yet. Ask the owner to add a plan."
+  s4 not: An empty Plan list with a Confirm button that does nothing
+J-F-panel-232-11 | type 6 | staff | Signed in as front desk staff; member with no dues, so no "Collect payment" button shows
+  s1 see: Toast "Membership saved. No money taken yet."
+  s1 see: Dues tile shows the full amount with "Still to pay"
+  s1 see: Button "Collect payment" now shows at the top
+  s1 not: A receipt made for zero
+  s1 not: "Fully paid" on the Dues tile
+  s2 see: "This clears all dues on this membership." before saving
+  s2 see: Toast "Payment saved. Receipt <number>."
+  s2 not: Less than the full due collected from a blank amount
+  s3 see: Dues tile "—" with "Fully paid"
+  s3 see: Button "Collect payment" is gone
+  s3 see: Membership row reads "Paid"
+  s3 not: The Collect button still shown with nothing due
+  s3 not: The member still on the dues list
+J-F-panel-232-12 | type 12 | staff | Signed in as front desk staff with a named login; member page
+  s1 see: Receipt opens as a page to print with this member's name and amount
+  s1 see: The sale and the receipt are saved under the person who is signed in
+  s1 not: Another staff member's name saved as the person who took the money
+  s1 not: The receipt or the member's phone number reachable by another gym
+  s1 not: The price a member paid shown to other members
+J-F-panel-231-01 | type 1 | owner | Signed in as the owner; gym whose server keeps photos; member page of a member with no photo (initials shown)
+  s1 see: Sheet titled "Take photo"
+  s1 see: "Starting the camera… If the browser asks, tap Allow."
+  s1 see: Then the camera picture with "Ask the member to look at the camera, with their face inside the oval."
+  s1 see: "Only your gym’s staff can see this photo. It shows on the member’s page, their member card and at check-in."
+  s1 not: The camera left on after the sheet is closed
+  s1 not: The picture shown mirrored the wrong way
+  s2 see: The still picture
+  s2 see: "Check that the face is clear. Tap Use photo to keep it."
+  s2 see: Buttons to take it again and "Use photo"
+  s2 not: A still that is flipped compared with the preview
+  s2 not: "The photo was not taken. Try again." with no way to try again
+  s3 see: Button reads "Saving…"
+  s3 see: Sheet closes
+  s3 see: Toast "Photo saved."
+  s3 see: The photo shows larger in place of the initials; the button now reads "Change photo"
+  s3 not: "Photo saved." while the old initials stay
+  s3 not: The photo saved on another member
+  s3 not: Two uploads from two taps
+J-F-panel-231-02 | type 2 | owner | Signed in as the owner; same page, the member brought a picture file
+  s1 see: The picked picture with "Use photo" and "Pick another"
+  s1 not: A file that is not a picture accepted without a word
+  s2 see: Toast "Photo saved."
+  s2 see: The photo in place of the initials
+  s2 not: A huge file sent as it is so the save hangs
+  s2 not: The page left with a broken-picture mark
+J-F-panel-231-03 | type 3 | owner | Signed in as the owner; member page; the browser has refused the camera
+  s1 see: Plain words that the camera could not be used
+  s1 see: Buttons "Try again" and "Upload a photo" (the upload button is the main one)
+  s1 not: An endless "Starting camera…"
+  s1 not: A blank sheet with no way on
+  s2 see: "That photo couldn’t be used. Pick a JPG or PNG picture."
+  s2 not: The sheet closing as if it saved
+  s3 see: Only the initials; no "Take photo" button under them
+  s3 not: A button that opens the camera and then cannot save
+J-F-panel-231-04 | type 6 | owner | Signed in as the owner; member page of a member who has a photo (button reads "Change photo")
+  s1 see: Sheet titled "Change photo"
+  s1 see: Toast "Photo saved."
+  s1 see: The new photo on the page
+  s1 not: The old photo still shown after a refresh
+  s1 not: Both photos kept on the server
+  s2 see: Toast "Photo removed."
+  s2 see: Initials again; the button reads "Take photo"
+  s2 not: The photo still on the member card or at check-in
+  s2 not: "The photo wasn’t removed. Try again." shown together with the photo gone
+J-F-panel-231-05 | type 12 | owner | Signed in as the owner; member page; a photo was just saved
+  s1 see: "Only your gym’s staff can see this photo. It shows on the member’s page, their member card and at check-in."
+  s1 see: The photo in those three places in the panel
+  s1 not: The photo shown to other members, on a public page or leaderboard
+  s1 not: The photo readable by another gym
+  s1 not: The photo kept on the server after "Remove photo"
+J-F-panel-231-06 | type 1 | staff | Signed in as front desk staff; gym whose server keeps photos; member page of a member with no photo (initials shown)
+  s1 see: Sheet titled "Take photo"
+  s1 see: "Starting the camera… If the browser asks, tap Allow."
+  s1 see: Then the camera picture with "Ask the member to look at the camera, with their face inside the oval."
+  s1 see: "Only your gym’s staff can see this photo. It shows on the member’s page, their member card and at check-in."
+  s1 not: The camera left on after the sheet is closed
+  s1 not: The picture shown mirrored the wrong way
+  s2 see: The still picture
+  s2 see: "Check that the face is clear. Tap Use photo to keep it."
+  s2 see: Buttons to take it again and "Use photo"
+  s2 not: A still that is flipped compared with the preview
+  s2 not: "The photo was not taken. Try again." with no way to try again
+  s3 see: Button reads "Saving…"
+  s3 see: Sheet closes
+  s3 see: Toast "Photo saved."
+  s3 see: The photo shows larger in place of the initials; the button now reads "Change photo"
+  s3 not: "Photo saved." while the old initials stay
+  s3 not: The photo saved on another member
+  s3 not: Two uploads from two taps
+J-F-panel-231-07 | type 2 | staff | Signed in as front desk staff; same page, the member brought a picture file
+  s1 see: The picked picture with "Use photo" and "Pick another"
+  s1 not: A file that is not a picture accepted without a word
+  s2 see: Toast "Photo saved."
+  s2 see: The photo in place of the initials
+  s2 not: A huge file sent as it is so the save hangs
+  s2 not: The page left with a broken-picture mark
+J-F-panel-231-08 | type 3 | staff | Signed in as front desk staff; member page; the browser has refused the camera
+  s1 see: Plain words that the camera could not be used
+  s1 see: Buttons "Try again" and "Upload a photo" (the upload button is the main one)
+  s1 not: An endless "Starting camera…"
+  s1 not: A blank sheet with no way on
+  s2 see: "That photo couldn’t be used. Pick a JPG or PNG picture."
+  s2 not: The sheet closing as if it saved
+  s3 see: Only the initials; no "Take photo" button under them
+  s3 not: A button that opens the camera and then cannot save
+J-F-panel-231-09 | type 6 | staff | Signed in as front desk staff; member page of a member who has a photo (button reads "Change photo")
+  s1 see: Sheet titled "Change photo"
+  s1 see: Toast "Photo saved."
+  s1 see: The new photo on the page
+  s1 not: The old photo still shown after a refresh
+  s1 not: Both photos kept on the server
+  s2 see: Toast "Photo removed."
+  s2 see: Initials again; the button reads "Take photo"
+  s2 not: The photo still on the member card or at check-in
+  s2 not: "The photo wasn’t removed. Try again." shown together with the photo gone
+J-F-panel-231-10 | type 12 | staff | Signed in as front desk staff; member page; a photo was just saved
+  s1 see: "Only your gym’s staff can see this photo. It shows on the member’s page, their member card and at check-in."
+  s1 see: The photo in those three places in the panel
+  s1 not: The photo shown to other members, on a public page or leaderboard
+  s1 not: The photo readable by another gym
+  s1 not: The photo kept on the server after "Remove photo"
+J-F-panel-230-01 | type 1 | owner | Signed in as the owner; member page of a member with a full mobile number and money due; internet on
+  s1 see: Sheet titled "WhatsApp <member name>"
+  s1 see: Chips under "Which message"
+  s1 see: A language picker
+  s1 see: Box "Message (you can change it)" already filled
+  s1 see: Green button "Send on WhatsApp"
+  s1 not: A message about another member
+  s1 not: A wrong amount or a wrong last day in the ready text
+  s2 see: The changed text stays in the box
+  s2 not: The text jumping back while typing
+  s3 see: WhatsApp opens in a new tab on this member's number with the message typed, waiting for the person to press send
+  s3 not: A message sent with no press inside WhatsApp
+  s3 not: Another person's number
+  s3 not: The message cut short or with broken letters
+J-F-panel-230-02 | type 2 | owner | Signed in as the owner; WhatsApp sheet open for a member whose plan has ended and whose birthday is today
+  s1 see: The box is filled again with that message
+  s1 not: A "Haven’t seen you" chip for a member who trains fine
+  s1 not: A birthday chip on a day that is not the birthday
+  s2 see: The same message in the picked language
+  s2 see: The pick is remembered the next time the sheet opens
+  s2 not: Two languages mixed in one message
+  s2 not: The amount or the day changed by the language
+J-F-panel-230-03 | type 3 | owner | Signed in as the owner; member page of a member whose mobile number is not complete
+  s1 see: Red box "This mobile number is not complete, so WhatsApp can’t open it. Tap Edit on their page to fix it."
+  s1 see: No "Send on WhatsApp" button
+  s1 not: WhatsApp opening on a wrong or half number
+  s2 see: The link reads "WhatsApp (needs internet)", greyed, and does nothing
+  s2 not: The sheet opening and failing only at the last step
+J-F-panel-230-04 | type 6 | owner | Signed in as the owner; WhatsApp sheet open, message changed by hand
+  s1 see: The ready message again (the hand change is not kept)
+  s1 not: Yesterday's changed text sent to today's member
+  s2 see: The sheet as it was; nothing on the member page says a message was sent
+  s2 not: The member marked as reminded when nothing was sent
+  s2 not: A second WhatsApp tab opening by itself
+J-F-panel-230-05 | type 12 | owner | Signed in as the owner; member page of a member who owes money
+  s1 see: Only this member's name, plan, day and amount, and the gym's name
+  s1 not: Another member's dues or name in the text
+  s1 not: The message going to any number but this member's own
+  s1 not: The message text saved anywhere after the sheet closes
+J-F-panel-230-06 | type 1 | staff | Signed in as front desk staff; member page of a member with a full mobile number and money due; internet on
+  s1 see: Sheet titled "WhatsApp <member name>"
+  s1 see: Chips under "Which message"
+  s1 see: A language picker
+  s1 see: Box "Message (you can change it)" already filled
+  s1 see: Green button "Send on WhatsApp"
+  s1 not: A message about another member
+  s1 not: A wrong amount or a wrong last day in the ready text
+  s2 see: The changed text stays in the box
+  s2 not: The text jumping back while typing
+  s3 see: WhatsApp opens in a new tab on this member's number with the message typed, waiting for the person to press send
+  s3 not: A message sent with no press inside WhatsApp
+  s3 not: Another person's number
+  s3 not: The message cut short or with broken letters
+J-F-panel-230-07 | type 2 | staff | Signed in as front desk staff; WhatsApp sheet open for a member whose plan has ended and whose birthday is today
+  s1 see: The box is filled again with that message
+  s1 not: A "Haven’t seen you" chip for a member who trains fine
+  s1 not: A birthday chip on a day that is not the birthday
+  s2 see: The same message in the picked language
+  s2 see: The pick is remembered the next time the sheet opens
+  s2 not: Two languages mixed in one message
+  s2 not: The amount or the day changed by the language
+J-F-panel-230-08 | type 3 | staff | Signed in as front desk staff; member page of a member whose mobile number is not complete
+  s1 see: Red box "This mobile number is not complete, so WhatsApp can’t open it. Tap Edit on their page to fix it."
+  s1 see: No "Send on WhatsApp" button
+  s1 not: WhatsApp opening on a wrong or half number
+  s2 see: The link reads "WhatsApp (needs internet)", greyed, and does nothing
+  s2 not: The sheet opening and failing only at the last step
+J-F-panel-230-09 | type 6 | staff | Signed in as front desk staff; WhatsApp sheet open, message changed by hand
+  s1 see: The ready message again (the hand change is not kept)
+  s1 not: Yesterday's changed text sent to today's member
+  s2 see: The sheet as it was; nothing on the member page says a message was sent
+  s2 not: The member marked as reminded when nothing was sent
+  s2 not: A second WhatsApp tab opening by itself
+J-F-panel-230-10 | type 12 | staff | Signed in as front desk staff; member page of a member who owes money
+  s1 see: Only this member's name, plan, day and amount, and the gym's name
+  s1 not: Another member's dues or name in the text
+  s1 not: The message going to any number but this member's own
+  s1 not: The message text saved anywhere after the sheet closes
+J-F-panel-235-01 | type 1 | owner | Signed in as the owner; member page of a member with a running PT pack and no session marked today; internet on
+  s1 see: A line with sessions used and left
+  s1 see: A bar of sessions used
+  s1 see: "<plan name> · runs until <day>"
+  s1 see: Button "Mark session"
+  s1 not: The card missing for a member with a running pack
+  s1 not: A count from a cancelled pack
+  s2 see: Toast "PT session marked."
+  s2 see: Button reads "Session marked today", greyed
+  s2 see: Today shows first under "Sessions used on"
+  s2 see: Sessions left goes down by one
+  s2 not: Two sessions taken by two fast taps
+  s2 not: The session taken off the newer pack while the older one still has sessions
+J-F-panel-235-02 | type 2 | owner | Signed in as the owner; member page; every session of the running PT pack is used
+  s1 see: "All <n> PT sessions used. Time to renew."
+  s1 see: Button "Renew PT" (only while that PT plan is still on sale)
+  s1 not: "Mark session" still offered with none left
+  s2 see: The sell sheet opens with the PT plan already picked
+  s2 not: The sheet opening on the gym plan
+  s2 not: The picked plan kept for the next plain "Sell membership"
+J-F-panel-235-03 | type 3 | owner | Signed in as the owner; member page; a PT session is already marked today
+  s1 see: Nothing happens; the button is greyed
+  s1 not: A second session on the same day
+  s2 see: "Mark session" and "Undo last session" are greyed and say they need internet
+  s2 not: A session marked on this device only and lost later
+  s3 see: "<plan> · Ended on <day> with <n> sessions left" with button "Extend"
+  s3 not: "Mark session" on an ended pack
+J-F-panel-235-04 | type 6 | owner | Signed in as the owner; member page; running PT pack, nothing marked today
+  s1 see: Toast "PT session marked."
+  s1 see: Button "Undo last session" shows
+  s1 not: No way to take back a wrong tap on the same day
+  s2 see: Toast "Last PT session undone."
+  s2 see: Button reads "Mark session" again
+  s2 see: Sessions left back to the number before
+  s2 not: An older session removed in place of today's
+  s2 not: The count going below zero or above the pack size
+  s3 see: One session for today
+  s3 not: Two pills for the same day
+J-F-panel-235-05 | type 1 | staff | Signed in as front desk staff; member page of a member with a running PT pack and no session marked today; internet on
+  s1 see: A line with sessions used and left
+  s1 see: A bar of sessions used
+  s1 see: "<plan name> · runs until <day>"
+  s1 see: Button "Mark session"
+  s1 not: The card missing for a member with a running pack
+  s1 not: A count from a cancelled pack
+  s2 see: Toast "PT session marked."
+  s2 see: Button reads "Session marked today", greyed
+  s2 see: Today shows first under "Sessions used on"
+  s2 see: Sessions left goes down by one
+  s2 not: Two sessions taken by two fast taps
+  s2 not: The session taken off the newer pack while the older one still has sessions
+J-F-panel-235-06 | type 2 | staff | Signed in as front desk staff; member page; every session of the running PT pack is used
+  s1 see: "All <n> PT sessions used. Time to renew."
+  s1 see: Button "Renew PT" (only while that PT plan is still on sale)
+  s1 not: "Mark session" still offered with none left
+  s2 see: The sell sheet opens with the PT plan already picked
+  s2 not: The sheet opening on the gym plan
+  s2 not: The picked plan kept for the next plain "Sell membership"
+J-F-panel-235-07 | type 3 | staff | Signed in as front desk staff; member page; the last PT session was marked on an earlier day
+  s1 see: No "Undo last session" button (only the owner may undo an earlier day)
+  s1 not: Front desk taking back a session of an earlier day
+  s2 see: "<plan> · Ended on <day> with <n> sessions left"
+  s2 see: "Only the owner can extend it."
+  s2 see: No "Extend" button
+  s2 not: Front desk moving the last day of a pack
+J-F-panel-235-08 | type 6 | staff | Signed in as front desk staff; member page; running PT pack, nothing marked today
+  s1 see: Toast "PT session marked."
+  s1 see: Button "Undo last session" shows
+  s1 not: No way to take back a wrong tap on the same day
+  s2 see: Toast "Last PT session undone."
+  s2 see: Button reads "Mark session" again
+  s2 see: Sessions left back to the number before
+  s2 not: An older session removed in place of today's
+  s2 not: The count going below zero or above the pack size
+  s3 see: One session for today
+  s3 not: Two pills for the same day
+J-F-panel-237-01 | type 1 | owner | Signed in as the owner; member page; the member shows a workout code on their phone ("Show my workouts to the desk") and has checked in on t
+  s1 see: Sheet titled "Check workout code"
+  s1 see: "For the workout offer. The member opens “Show my workouts to the desk” in the app. Type the code from their phone."
+  s1 see: Box "Workout code"; button "Check" greyed while empty
+  s1 not: The button missing on a member with a plan
+  s2 see: A bold line saying how many workout days count
+  s2 see: "Code made on <day>."
+  s2 see: A list of days, each "✓ Checked in at the desk" (or on the app, at the entry machine, imported) or "No check-in: does not count"
+  s2 not: A day counted without a check-in
+  s2 not: Another member's code accepted for this member
+  s3 see: The sheet "Freeze / extra days" opens on "Gift – Extra days" with 3 days
+  s3 not: Days added before the owner confirms
+  s3 not: The days put on a plan that is not the one ending last
+J-F-panel-237-02 | type 3 | owner | Signed in as the owner; "Check workout code" sheet open
+  s1 see: A red line under the box saying what is wrong with the code
+  s1 see: No list of days
+  s1 not: A crash on odd letters
+  s1 not: A wrong code shown as zero days that count
+  s2 see: The result, plus "It is more than <n> days old: ask for a new code to see the newest workouts."
+  s2 not: An old code shown as fresh
+  s3 see: Every day reads "No check-in: does not count"
+  s3 see: No "Give extra days" button and no owner line
+  s3 not: A reward offered for days with no check-in
+J-F-panel-237-03 | type 6 | owner | Signed in as the owner; "Check workout code" sheet showing a result
+  s1 see: The result goes away until "Check" is tapped again
+  s1 not: The old result left under a new code
+  s2 see: An empty box; nothing is remembered
+  s2 not: The last member's code or result shown on another member
+  s3 see: The same result again
+  s3 not: A second reward given for the same code with nothing saying it was used before
+J-F-panel-237-04 | type 12 | owner | Signed in as the owner; "Check workout code" sheet with a good code
+  s1 see: Only days, and for each day whether the member checked in
+  s1 not: Exercises, weights, sets, body weight or photos shown at the desk
+  s1 not: Days of another member
+J-F-panel-237-05 | type 1 | staff | Signed in as front desk staff; member page; the member shows a workout code on their phone ("Show my workouts to the desk") and has checked 
+  s1 see: Sheet titled "Check workout code"
+  s1 see: "For the workout offer. The member opens “Show my workouts to the desk” in the app. Type the code from their phone."
+  s1 see: Box "Workout code"; button "Check" greyed while empty
+  s1 not: The button missing on a member with a plan
+  s2 see: A bold line saying how many workout days count
+  s2 see: "Code made on <day>."
+  s2 see: A list of days, each "✓ Checked in at the desk" (or on the app, at the entry machine, imported) or "No check-in: does not count"
+  s2 not: A day counted without a check-in
+  s2 not: Another member's code accepted for this member
+  s3 see: "The owner gives the extra days."
+  s3 see: No button to give days
+  s3 not: Front desk adding days to a plan
+J-F-panel-237-06 | type 3 | staff | Signed in as front desk staff; "Check workout code" sheet open
+  s1 see: A red line under the box saying what is wrong with the code
+  s1 see: No list of days
+  s1 not: A crash on odd letters
+  s1 not: A wrong code shown as zero days that count
+  s2 see: The result, plus "It is more than <n> days old: ask for a new code to see the newest workouts."
+  s2 not: An old code shown as fresh
+  s3 see: Every day reads "No check-in: does not count"
+  s3 see: No "Give extra days" button and no owner line
+  s3 not: A reward offered for days with no check-in
+J-F-panel-237-07 | type 6 | staff | Signed in as front desk staff; "Check workout code" sheet showing a result
+  s1 see: The result goes away until "Check" is tapped again
+  s1 not: The old result left under a new code
+  s2 see: An empty box; nothing is remembered
+  s2 not: The last member's code or result shown on another member
+  s3 see: The same result again
+  s3 not: A second reward given for the same code with nothing saying it was used before
+J-F-panel-237-08 | type 12 | staff | Signed in as front desk staff; "Check workout code" sheet with a good code
+  s1 see: Only days, and for each day whether the member checked in
+  s1 not: Exercises, weights, sets, body weight or photos shown at the desk
+  s1 not: Days of another member
+J-F-panel-238-01 | type 1 | owner | Signed in as the owner; gym online; the gym has saved workout plans; member page of a member with none
+  s1 see: "No workout plan sent yet. They see one in the MettleUp app after one check-in at the gym."
+  s1 see: Sheet titled "Send a plan to <member name>"
+  s1 see: A list "Your gym’s plans", each row ending in "Send"
+  s1 see: Below: "Or make one for them" with "Start from a ready plan" and "Make a new plan"
+  s1 not: Plans of another gym in the list
+  s2 see: That row reads "Sending…"; the other rows cannot be tapped
+  s2 see: Sheet closes
+  s2 see: A bar "“<plan>” sent to <member name>." with Undo, for about 8 seconds
+  s2 see: The plan name now shows in the Workout plans card
+  s2 not: The plan sent twice
+  s2 not: Another desk's change to the plan lost by this save
+  s2 not: Other members taken off the plan
+J-F-panel-238-02 | type 2 | owner | Signed in as the owner; "Send a plan" sheet open
+  s1 see: Title changes to "Start from a ready plan"
+  s1 see: A list of ready plans ("Beginner to advanced, filled in for you")
+  s1 see: Button "‹ Back"
+  s1 not: The sheet closing by itself
+  s2 see: The plan builder opens with this member already ticked
+  s2 not: The builder opening with no member ticked
+  s2 not: The plan saved before the person presses save
+  s3 see: Toast "“<plan>” sent to <member name>."
+  s3 not: "“<plan>” saved." while this member was ticked
+J-F-panel-238-03 | type 2 | owner | Signed in as the owner; "Send a plan" sheet open; the gym has no plans of its own
+  s1 see: No "Your gym’s plans" list; the heading reads "Make one for them"
+  s1 see: The builder opens empty ("Pick every exercise yourself") with this member ticked
+  s1 not: An empty "Your gym’s plans" heading
+  s2 see: Toast "“<plan>” saved." (not "sent")
+  s2 not: A toast saying it was sent to the member
+J-F-panel-238-04 | type 3 | owner | Signed in as the owner; member who already gets one of the gym's plans
+  s1 see: That plan's row carries "Already sent" and cannot be tapped
+  s1 not: The same plan sent a second time
+  s2 see: A red line in the sheet saying someone else changed this plan; nothing is sent
+  s2 not: The other device's change overwritten
+  s3 see: "Send a plan" is greyed and says it needs internet
+  s3 not: A plan shown as sent that never reached the server
+  s4 see: The card reads "No workout plan sent yet." followed by words that the gym is not online yet
+  s4 not: "They see one in the MettleUp app" promised to a gym that is not online
+J-F-panel-238-05 | type 6 | owner | Signed in as the owner; a plan was sent one tap ago; the Undo bar is showing
+  s1 see: Toast "“<plan>” is no longer sent to <member name>."
+  s1 see: The plan leaves the Workout plans card
+  s1 not: The whole plan deleted
+  s1 not: Other members taken off it
+  s2 see: The bar goes away; the plan stays sent
+  s2 not: The plan taken back when the bar times out
+  s3 see: The plan name followed by " · through their membership plan"
+  s3 not: "Already sent" missing so the plan is sent by name a second time with no word
+J-F-panel-238-06 | type 1 | staff | Signed in as front desk staff; gym online; the gym has saved workout plans; member page of a member with none
+  s1 see: "No workout plan sent yet. They see one in the MettleUp app after one check-in at the gym."
+  s1 see: Sheet titled "Send a plan to <member name>"
+  s1 see: A list "Your gym’s plans", each row ending in "Send"
+  s1 see: Below: "Or make one for them" with "Start from a ready plan" and "Make a new plan"
+  s1 not: Plans of another gym in the list
+  s2 see: That row reads "Sending…"; the other rows cannot be tapped
+  s2 see: Sheet closes
+  s2 see: A bar "“<plan>” sent to <member name>." with Undo, for about 8 seconds
+  s2 see: The plan name now shows in the Workout plans card
+  s2 not: The plan sent twice
+  s2 not: Another desk's change to the plan lost by this save
+  s2 not: Other members taken off the plan
+J-F-panel-238-07 | type 2 | staff | Signed in as front desk staff; "Send a plan" sheet open
+  s1 see: Title changes to "Start from a ready plan"
+  s1 see: A list of ready plans ("Beginner to advanced, filled in for you")
+  s1 see: Button "‹ Back"
+  s1 not: The sheet closing by itself
+  s2 see: The plan builder opens with this member already ticked
+  s2 not: The builder opening with no member ticked
+  s2 not: The plan saved before the person presses save
+  s3 see: Toast "“<plan>” sent to <member name>."
+  s3 not: "“<plan>” saved." while this member was ticked
+J-F-panel-238-08 | type 2 | staff | Signed in as front desk staff; "Send a plan" sheet open; the gym has no plans of its own
+  s1 see: No "Your gym’s plans" list; the heading reads "Make one for them"
+  s1 see: The builder opens empty ("Pick every exercise yourself") with this member ticked
+  s1 not: An empty "Your gym’s plans" heading
+  s2 see: Toast "“<plan>” saved." (not "sent")
+  s2 not: A toast saying it was sent to the member
+J-F-panel-238-09 | type 3 | staff | Signed in as front desk staff; member who already gets one of the gym's plans
+  s1 see: That plan's row carries "Already sent" and cannot be tapped
+  s1 not: The same plan sent a second time
+  s2 see: A red line in the sheet saying someone else changed this plan; nothing is sent
+  s2 not: The other device's change overwritten
+  s3 see: "Send a plan" is greyed and says it needs internet
+  s3 not: A plan shown as sent that never reached the server
+  s4 see: The card reads "No workout plan sent yet." followed by words that the gym is not online yet
+  s4 not: "They see one in the MettleUp app" promised to a gym that is not online
+J-F-panel-238-10 | type 6 | staff | Signed in as front desk staff; a plan was sent one tap ago; the Undo bar is showing
+  s1 see: Toast "“<plan>” is no longer sent to <member name>."
+  s1 see: The plan leaves the Workout plans card
+  s1 not: The whole plan deleted
+  s1 not: Other members taken off it
+  s2 see: The bar goes away; the plan stays sent
+  s2 not: The plan taken back when the bar times out
+  s3 see: The plan name followed by " · through their membership plan"
+  s3 not: "Already sent" missing so the plan is sent by name a second time with no word
+J-F-panel-238-11 | type 1 | trainer | Signed in as a trainer (a staff login ticked as trainer); gym online; the gym has saved workout plans; member page of a member with none
+  s1 see: "No workout plan sent yet. They see one in the MettleUp app after one check-in at the gym."
+  s1 see: Sheet titled "Send a plan to <member name>"
+  s1 see: A list "Your gym’s plans", each row ending in "Send"
+  s1 see: Below: "Or make one for them" with "Start from a ready plan" and "Make a new plan"
+  s1 not: Plans of another gym in the list
+  s2 see: That row reads "Sending…"; the other rows cannot be tapped
+  s2 see: Sheet closes
+  s2 see: A bar "“<plan>” sent to <member name>." with Undo, for about 8 seconds
+  s2 see: The plan name now shows in the Workout plans card
+  s2 not: The plan sent twice
+  s2 not: Another desk's change to the plan lost by this save
+  s2 not: Other members taken off the plan
+J-F-panel-238-12 | type 2 | trainer | Signed in as a trainer (a staff login ticked as trainer); "Send a plan" sheet open
+  s1 see: Title changes to "Start from a ready plan"
+  s1 see: A list of ready plans ("Beginner to advanced, filled in for you")
+  s1 see: Button "‹ Back"
+  s1 not: The sheet closing by itself
+  s2 see: The plan builder opens with this member already ticked
+  s2 not: The builder opening with no member ticked
+  s2 not: The plan saved before the person presses save
+  s3 see: Toast "“<plan>” sent to <member name>."
+  s3 not: "“<plan>” saved." while this member was ticked
+J-F-panel-238-13 | type 2 | trainer | Signed in as a trainer (a staff login ticked as trainer); "Send a plan" sheet open; the gym has no plans of its own
+  s1 see: No "Your gym’s plans" list; the heading reads "Make one for them"
+  s1 see: The builder opens empty ("Pick every exercise yourself") with this member ticked
+  s1 not: An empty "Your gym’s plans" heading
+  s2 see: Toast "“<plan>” saved." (not "sent")
+  s2 not: A toast saying it was sent to the member
+J-F-panel-238-14 | type 3 | trainer | Signed in as a trainer (a staff login ticked as trainer); member who already gets one of the gym's plans
+  s1 see: That plan's row carries "Already sent" and cannot be tapped
+  s1 not: The same plan sent a second time
+  s2 see: A red line in the sheet saying someone else changed this plan; nothing is sent
+  s2 not: The other device's change overwritten
+  s3 see: "Send a plan" is greyed and says it needs internet
+  s3 not: A plan shown as sent that never reached the server
+  s4 see: The card reads "No workout plan sent yet." followed by words that the gym is not online yet
+  s4 not: "They see one in the MettleUp app" promised to a gym that is not online
+J-F-panel-238-15 | type 6 | trainer | Signed in as a trainer (a staff login ticked as trainer); a plan was sent one tap ago; the Undo bar is showing
+  s1 see: Toast "“<plan>” is no longer sent to <member name>."
+  s1 see: The plan leaves the Workout plans card
+  s1 not: The whole plan deleted
+  s1 not: Other members taken off it
+  s2 see: The bar goes away; the plan stays sent
+  s2 not: The plan taken back when the bar times out
+  s3 see: The plan name followed by " · through their membership plan"
+  s3 not: "Already sent" missing so the plan is sent by name a second time with no word
+J-F-panel-233-01 | type 1 | owner | Signed in as the owner; internet on; member page of a member with a part-paid running membership
+  s1 see: Sheet titled "Cancel this membership?"
+  s1 see: "<plan> (<first day> → <last day>) will no longer count, and its unpaid amount is removed from their dues. It stays on their page, and you can undo this later."
+  s1 see: Box "Reason" (example "Moved city") with "Saved with the membership, so it is clear months later."
+  s1 see: Buttons "Keep it" and "Cancel membership" (greyed)
+  s1 not: The membership cancelled by the first tap with no question
+  s2 see: Button reads "Saving…"
+  s2 see: Sheet closes
+  s2 see: Toast "Membership cancelled."
+  s2 not: The cancel saved twice
+  s2 not: Money already received removed from income
+  s3 see: The row shows "<amount> unpaid · not in dues" and button "Undo cancel"
+  s3 see: Dues tile no longer counts this plan
+  s3 see: The receipts stay in Payments
+  s3 not: The row gone from the page
+  s3 not: The member still chased for the cancelled amount
+  s3 not: The reason lost
+J-F-panel-233-02 | type 3 | owner | Signed in as the owner; "Cancel this membership?" sheet open
+  s1 see: "Cancel membership" stays greyed
+  s1 not: A cancel saved with no reason
+  s2 see: Sheet closes; the membership is as before
+  s2 not: Any change saved
+  s3 see: "Cancel" is greyed and says it needs internet
+  s3 not: A cancel kept only on this device
+  s4 see: No "Cancel" and no "Undo cancel" on any membership row
+  s4 not: Front desk cancelling a membership
+J-F-panel-233-03 | type 6 | owner | Signed in as the owner; member page with a cancelled membership
+  s1 see: Toast "Cancel undone."
+  s1 see: The row shows "Cancel" again
+  s1 see: Its unpaid amount is back in Dues as "<amount> due"
+  s1 not: Two undo saves from two fast taps
+  s1 not: The plan back with a new first or last day
+  s1 not: The paid receipts counted twice
+  s2 see: The new reason is the one kept
+  s2 not: Both the old and new reason lost
+J-F-panel-233-04 | type 12 | owner | Signed in as the owner; member page; a membership cancelled with the reason typed
+  s1 see: The reason on the gym's own member page
+  s1 not: The owner's typed reason shown to the member in the app
+  s1 not: The reason readable by another gym
+J-F-panel-234-01 | type 1 | owner | Signed in as the owner; internet on; member page; the member's gym plan is running
+  s1 see: Sheet titled "Freeze / extra days"
+  s1 see: "<plan> last day: <day>."
+  s1 see: Reason chips "Freeze – Medical", "Freeze – Travel", "Freeze – Other", "Gift – Extra days"
+  s1 see: Day chips and the box "Or type the days (1–365)", starting at 7
+  s1 see: "New last day: <day>" with "Valid till then (<when>)."
+  s1 not: The button on an earlier plan when a renewal is already waiting
+  s2 see: Button reads "Saving…"
+  s2 see: Toast "Plan moved <n> days later."
+  s2 not: The days added twice
+  s2 not: The price or dues changed
+  s3 see: The new last day
+  s3 see: A note line with the days and the reason
+  s3 not: A later plan of the member now overlapping
+  s3 not: The note in a different date style from the page
+J-F-panel-234-02 | type 2 | owner | Signed in as the owner; member page; a plan that has not started yet
+  s1 see: Sheet titled "Change start date"
+  s1 see: "<plan>: now <first day> → <last day>."
+  s1 see: Box "New start date" with "Pick the day the member will start."
+  s1 see: "Save start date" greyed while the day is unchanged
+  s1 not: The button on a plan that already started or is cancelled
+  s2 see: "The member keeps every day they paid for. The plan will end on <day>."
+  s2 not: A shorter plan than was paid for
+  s3 see: Toast "Start date changed to <day>."
+  s3 see: The row shows the new first and last day
+  s3 not: The plan now overlapping another plan of the member
+  s3 not: A start day in the past saved
+J-F-panel-234-03 | type 2 | owner | Signed in as the owner; member page; a PT pack ended with sessions left
+  s1 see: The same sheet: "<plan> ended on <day>. <n> PT sessions left."
+  s1 not: The gym plan opened in place of the PT pack
+  s2 see: "Still ended (<when>). Add more days to reach today."
+  s2 not: "Valid till then" for a day already gone
+  s3 see: Toast "Plan moved <n> days later."
+  s3 see: The pack is back under running packs with "Mark session"
+  s3 not: The unused sessions lost
+J-F-panel-234-04 | type 3 | owner | Signed in as the owner; "Freeze / extra days" sheet open
+  s1 see: Under the box: "A whole number from 1 to 365."
+  s1 see: Button reads "Add days", greyed
+  s1 see: "New last day: —"
+  s1 not: A save with a wrong number
+  s1 not: A minus number moving the last day back
+  s2 see: A red line under the date; "Save start date" greyed
+  s2 not: Two plans covering the same days
+  s3 see: No "Freeze / extra days" and no "Change start date" on any plan
+  s3 not: Front desk moving a plan's days
+J-F-panel-234-05 | type 6 | owner | Signed in as the owner; member page; 7 days were added a moment ago
+  s1 see: Toast "Plan moved 15 days later."
+  s1 see: Two note lines, one for each change
+  s1 not: The first note overwritten
+  s1 not: The last day moved by 15 from the old day, not the new one
+  s2 see: No undo is offered on this page
+  s2 not: A silent change of the last day with no note
+J-F-panel-234-06 | type 12 | owner | Signed in as the owner; member page; days added with the reason "Freeze – Medical"
+  s1 see: The reason in the note under the plan on the gym's own member page
+  s1 not: The word "Medical" or the typed "What happened" text shown outside the gym's own logins
+  s1 not: The note in an export or a message to the member
+J-F-panel-236-01 | type 1 | owner | Signed in as the owner; internet on; member page with a receipt for a running membership
+  s1 see: Sheet titled "Cancel this receipt?"
+  s1 see: "Receipt <number> for <amount>, taken on <day>, will no longer count as money received. The amount is added back to this member’s dues. The receipt stays in the list, marked cancelled. Its number is never used again."
+  s1 see: Box "Reason" (example "Entered twice") with "Saved with the receipt, so it is clear months later."
+  s1 see: Buttons "Keep it" and "Cancel receipt" (greyed)
+  s1 not: The receipt cancelled by the first tap
+  s2 see: Button reads "Cancelling…"
+  s2 see: Sheet closes
+  s2 see: Toast "Receipt cancelled. The amount is back in their dues."
+  s2 not: The receipt deleted
+  s2 not: The amount still counted as money received
+  s2 not: Two cancels saved
+  s3 see: The receipt stays, amount struck through, with "Cancelled: <reason>"
+  s3 see: Dues tile up by the amount; "Collect payment" shows
+  s3 see: No "Cancel receipt" button on that receipt any more
+  s3 not: The receipt number given to a new receipt
+  s3 not: Dues unchanged
+J-F-panel-236-02 | type 2 | owner | Signed in as the owner; member page with a receipt on a membership that was cancelled
+  s1 see: "That membership is cancelled, so nothing is added back to their dues."
+  s1 not: A promise that the amount goes back to dues
+  s2 see: Toast "Receipt cancelled." (no words about dues)
+  s2 see: Dues tile unchanged
+  s2 not: Dues going up for a cancelled membership
+J-F-panel-236-03 | type 3 | owner | Signed in as the owner; "Cancel this receipt?" sheet open
+  s1 see: "Cancel receipt" stays greyed
+  s1 not: A receipt cancelled with no reason
+  s2 see: Sheet closes; the receipt counts as before
+  s2 not: Any change saved
+  s3 see: "Cancel receipt" is greyed and says it needs internet
+  s3 not: A cancel kept only on this device
+  s4 see: No "Cancel receipt" on any receipt
+  s4 not: Front desk cancelling a receipt
+J-F-panel-236-04 | type 6 | owner | Signed in as the owner; member page with a receipt cancelled earlier
+  s1 see: The page to print still opens for it
+  s1 not: A cancelled receipt printing like a good one with no mark
+  s2 see: No undo; the money is taken again with "Collect payment", which makes a new receipt number
+  s2 not: The old number used again
+J-F-panel-236-05 | type 12 | owner | Signed in as the owner; member page; a receipt cancelled with a reason
+  s1 see: Only the owner had the button
+  s1 see: The reason under the receipt on the gym's own pages
+  s1 not: A staff login able to cancel a receipt
+  s1 not: The reason or the cancelled receipt readable by another gym
+  s1 not: The cancel leaving no trace of who did it and why
+J-F-panel-239-01 | type 1 | owner | Signed in as the owner; gym online with measurements switched on; member page of a member never measured
+  s1 see: "No measurements yet"
+  s1 see: "Measure <member name> at the desk: body weight, body fat and the tape measurements. Members see these in their MettleUp app (Progress → Body) after they check in at the gym once."
+  s1 see: Button "Add measurements"
+  s1 not: An endless "Loading…"
+  s1 not: The card missing
+  s2 see: Sheet titled "Add measurements"
+  s2 see: "<member name>. Fill in only what you measured."
+  s2 see: Boxes "Day measured" (today), "Body weight (kg)", "Body fat (%)", the tape boxes under "Tape measurements (cm)", "Desk note (only your gym sees it)"
+  s2 not: A day in the future already filled
+  s3 see: Button reads "Saving…"
+  s3 see: Toast "Measurements saved. <member name> sees them in the MettleUp app."
+  s3 see: The card lists today with "Measured by <name>" and each value
+  s3 not: Two entries from two taps
+  s3 not: Empty boxes saved as 0
+  s3 not: The entry on another member
+J-F-panel-239-02 | type 2 | owner | Signed in as the owner; member page of a member measured once before
+  s1 see: Sheet "Add measurements" with "; last time was <day>" after the first line
+  s1 not: The old values filled in as if measured today
+  s2 see: The new day on top
+  s2 see: After each value the change in brackets
+  s2 see: "Numbers in brackets show the change since the previous measurement."
+  s2 not: A change worked out against the wrong entry
+  s2 not: A change shown for a size measured only once
+J-F-panel-239-03 | type 3 | owner | Signed in as the owner; "Add measurements" sheet open
+  s1 see: A red line saying nothing was filled in; the sheet stays open
+  s1 not: An empty entry saved
+  s2 see: A red line under each wrong box
+  s2 not: The wrong value saved and shown in the member app
+  s3 see: "Measurements are kept on your gym’s server. Put your gym online first (Settings → Sign-in & data)."
+  s3 see: No Add button
+  s3 not: A form that cannot save
+  s4 see: "Measurements are not switched on for your gym yet."
+  s4 not: A raw server error
+J-F-panel-239-04 | type 6 | owner | Signed in as the owner; member page with five or more entries
+  s1 see: All entries, then the newest four again
+  s1 not: Entries out of day order
+  s2 see: Sheet titled "Fix measurements"
+  s2 see: Toast "Measurements updated."
+  s2 see: The changes in brackets worked out again
+  s2 not: A second entry for the same day
+  s2 not: The "Measured by" name lost
+  s3 see: Sheet "Delete these measurements?"
+  s3 see: "The measurements of <day> go from your list and from <member name>’s app the next time it checks the gym."
+  s3 see: Buttons "Keep them" and "Delete"
+  s3 not: Deleted by the first tap
+  s4 see: Button reads "Deleting…"
+  s4 see: Toast "Measurements deleted."
+  s4 see: The entry gone from the list
+  s4 not: Another day's entry deleted
+  s4 not: The entry still in the member app for good
+J-F-panel-239-05 | type 12 | owner | Signed in as the owner; member page; an entry saved with a desk note
+  s1 see: Here: the values and "Desk note: <text>"
+  s1 see: In the app: the values, marked with the gym's name
+  s1 not: The desk note shown to the member ("only your gym sees it")
+  s1 not: Another member's measurements shown
+  s1 not: Measurements readable by another gym
+  s1 not: Weight the member logged privately on the phone shown here
+J-F-panel-239-06 | type 1 | staff | Signed in as front desk staff; gym online with measurements switched on; member page of a member never measured
+  s1 see: "No measurements yet"
+  s1 see: "Measure <member name> at the desk: body weight, body fat and the tape measurements. Members see these in their MettleUp app (Progress → Body) after they check in at the gym once."
+  s1 see: Button "Add measurements"
+  s1 not: An endless "Loading…"
+  s1 not: The card missing
+  s2 see: Sheet titled "Add measurements"
+  s2 see: "<member name>. Fill in only what you measured."
+  s2 see: Boxes "Day measured" (today), "Body weight (kg)", "Body fat (%)", the tape boxes under "Tape measurements (cm)", "Desk note (only your gym sees it)"
+  s2 not: A day in the future already filled
+  s3 see: Button reads "Saving…"
+  s3 see: Toast "Measurements saved. <member name> sees them in the MettleUp app."
+  s3 see: The card lists today with "Measured by <name>" and each value
+  s3 not: Two entries from two taps
+  s3 not: Empty boxes saved as 0
+  s3 not: The entry on another member
+J-F-panel-239-07 | type 2 | staff | Signed in as front desk staff; member page of a member measured once before
+  s1 see: Sheet "Add measurements" with "; last time was <day>" after the first line
+  s1 not: The old values filled in as if measured today
+  s2 see: The new day on top
+  s2 see: After each value the change in brackets
+  s2 see: "Numbers in brackets show the change since the previous measurement."
+  s2 not: A change worked out against the wrong entry
+  s2 not: A change shown for a size measured only once
+J-F-panel-239-08 | type 3 | staff | Signed in as front desk staff; "Add measurements" sheet open
+  s1 see: A red line saying nothing was filled in; the sheet stays open
+  s1 not: An empty entry saved
+  s2 see: A red line under each wrong box
+  s2 not: The wrong value saved and shown in the member app
+  s3 see: "Measurements are kept on your gym’s server. Put your gym online first (Settings → Sign-in & data)."
+  s3 see: No Add button
+  s3 not: A form that cannot save
+  s4 see: "Measurements are not switched on for your gym yet."
+  s4 not: A raw server error
+J-F-panel-239-09 | type 6 | staff | Signed in as front desk staff; member page with five or more entries
+  s1 see: All entries, then the newest four again
+  s1 not: Entries out of day order
+  s2 see: Sheet titled "Fix measurements"
+  s2 see: Toast "Measurements updated."
+  s2 see: The changes in brackets worked out again
+  s2 not: A second entry for the same day
+  s2 not: The "Measured by" name lost
+  s3 see: Sheet "Delete these measurements?"
+  s3 see: "The measurements of <day> go from your list and from <member name>’s app the next time it checks the gym."
+  s3 see: Buttons "Keep them" and "Delete"
+  s3 not: Deleted by the first tap
+  s4 see: Button reads "Deleting…"
+  s4 see: Toast "Measurements deleted."
+  s4 see: The entry gone from the list
+  s4 not: Another day's entry deleted
+  s4 not: The entry still in the member app for good
+J-F-panel-239-10 | type 12 | staff | Signed in as front desk staff; member page; an entry saved with a desk note
+  s1 see: Here: the values and "Desk note: <text>"
+  s1 see: In the app: the values, marked with the gym's name
+  s1 not: The desk note shown to the member ("only your gym sees it")
+  s1 not: Another member's measurements shown
+  s1 not: Measurements readable by another gym
+  s1 not: Weight the member logged privately on the phone shown here
+J-F-panel-239-11 | type 1 | trainer | Signed in as a trainer (a staff login ticked as trainer); gym online with measurements switched on; member page of a member never measured
+  s1 see: "No measurements yet"
+  s1 see: "Measure <member name> at the desk: body weight, body fat and the tape measurements. Members see these in their MettleUp app (Progress → Body) after they check in at the gym once."
+  s1 see: Button "Add measurements"
+  s1 not: An endless "Loading…"
+  s1 not: The card missing
+  s2 see: Sheet titled "Add measurements"
+  s2 see: "<member name>. Fill in only what you measured."
+  s2 see: Boxes "Day measured" (today), "Body weight (kg)", "Body fat (%)", the tape boxes under "Tape measurements (cm)", "Desk note (only your gym sees it)"
+  s2 not: A day in the future already filled
+  s3 see: Button reads "Saving…"
+  s3 see: Toast "Measurements saved. <member name> sees them in the MettleUp app."
+  s3 see: The card lists today with "Measured by <name>" and each value
+  s3 not: Two entries from two taps
+  s3 not: Empty boxes saved as 0
+  s3 not: The entry on another member
+J-F-panel-239-12 | type 2 | trainer | Signed in as a trainer (a staff login ticked as trainer); member page of a member measured once before
+  s1 see: Sheet "Add measurements" with "; last time was <day>" after the first line
+  s1 not: The old values filled in as if measured today
+  s2 see: The new day on top
+  s2 see: After each value the change in brackets
+  s2 see: "Numbers in brackets show the change since the previous measurement."
+  s2 not: A change worked out against the wrong entry
+  s2 not: A change shown for a size measured only once
+J-F-panel-239-13 | type 3 | trainer | Signed in as a trainer (a staff login ticked as trainer); "Add measurements" sheet open
+  s1 see: A red line saying nothing was filled in; the sheet stays open
+  s1 not: An empty entry saved
+  s2 see: A red line under each wrong box
+  s2 not: The wrong value saved and shown in the member app
+  s3 see: "Measurements are kept on your gym’s server. Put your gym online first (Settings → Sign-in & data)."
+  s3 see: No Add button
+  s3 not: A form that cannot save
+  s4 see: "Measurements are not switched on for your gym yet."
+  s4 not: A raw server error
+J-F-panel-239-14 | type 6 | trainer | Signed in as a trainer (a staff login ticked as trainer); member page with five or more entries
+  s1 see: All entries, then the newest four again
+  s1 not: Entries out of day order
+  s2 see: Sheet titled "Fix measurements"
+  s2 see: Toast "Measurements updated."
+  s2 see: The changes in brackets worked out again
+  s2 not: A second entry for the same day
+  s2 not: The "Measured by" name lost
+  s3 see: Sheet "Delete these measurements?"
+  s3 see: "The measurements of <day> go from your list and from <member name>’s app the next time it checks the gym."
+  s3 see: Buttons "Keep them" and "Delete"
+  s3 not: Deleted by the first tap
+  s4 see: Button reads "Deleting…"
+  s4 see: Toast "Measurements deleted."
+  s4 see: The entry gone from the list
+  s4 not: Another day's entry deleted
+  s4 not: The entry still in the member app for good
+J-F-panel-239-15 | type 12 | trainer | Signed in as a trainer (a staff login ticked as trainer); member page; an entry saved with a desk note
+  s1 see: Here: the values and "Desk note: <text>"
+  s1 see: In the app: the values, marked with the gym's name
+  s1 not: The desk note shown to the member ("only your gym sees it")
+  s1 not: Another member's measurements shown
+  s1 not: Measurements readable by another gym
+  s1 not: Weight the member logged privately on the phone shown here

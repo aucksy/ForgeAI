@@ -1,0 +1,47 @@
+# B-run-panel-ui-shell-b: gap-8 x panel / panel/ui-shell. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H8.1 | gap-8 | By script first: docs/system-map/_tools/silent.mjs lists every catch block with file:line and three flags: logs? (calls a log, report or crash function inside), tells_user? (sets an error state, toast or alert inside), rethrows?
+H8.2 | gap-8 | Output _sources/silent.csv
+H8.3 | gap-8 | Helpers read ONLY the rows where all three are "no", plus every fallback value (?? null, || [], ?? 0) that sits in a file named in a journey that writes money, messages, alerts, sign-in or sync
+H8.4 | gap-8 | Everything else is counted in the grid as "filtered by script, N rows, not read" so the gap is visible
+H8.5 | gap-8 | For each: if this path runs, does the user (or owner, or HQ) learn anything?
+H8.6 | gap-8 | A silent path that hides a failed promise = finding
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1109 | live | What's new page, MettleUp HQ news in the bell, new-feature dots | apps/dashboard/src/crm/ui/WhatsNew.tsx:351
+F-panel-1121 | live | Workout offer: train N times get extra days, give or undo a reward, check a member's workout code | apps/dashboard/src/crm/ui/WorkoutCodeCheckSheet.tsx:18
+F-panel-1129 | live | Your numbers and Your growth: number tiles with the list behind each, month-by-month growth, one-page print report | apps/dashboard/src/crm/ui/BusinessGrowth.tsx:70
+F-panel-500 | live | Move around the admin app (side menu, phone bottom bar, More page, page links, one Refresh button) | apps/dashboard/src/crm/ui/AppShell.tsx:1
+F-panel-501 | live | This device: Dark or Light screen, English or Hinglish, put the admin app on the phone's home screen | apps/dashboard/src/crm/ui/ThemeToggle.tsx:1
+F-panel-502 | live | Offline front desk: keep working without internet, Offline banner, greyed-out buttons, sync when back | apps/dashboard/src/crm/ui/offline.tsx:1
+F-panel-503 | live | First run: welcome screen (sign in, create a gym, try it) and the 'your gym is ready' page with gym code, join link and  | apps/dashboard/src/crm/ui/Welcome.tsx:1
+F-panel-505 | live | Gym alerts: the bell's to-do list, 'Needs you' with a ring, and alerts on this device with the app closed (owner picks i | apps/dashboard/src/crm/ui/BellInbox.tsx:1
+F-panel-506 | live | What's new in the admin app, and the dots that mark a new feature in the menu | apps/dashboard/src/crm/ui/WhatsNew.tsx:351
+F-panel-508 | live | Today's to-do cards: approve members' pause and renew requests, confirm check-in mobile numbers, approve people who join | apps/dashboard/src/crm/ui/PlanRequestsCard.tsx:1
+F-panel-509 | live | Your numbers and Your growth: fees collected, new members, busiest hours, month-by-month growth and its printable report | apps/dashboard/src/crm/ui/OwnerNumbers.tsx:526
+F-panel-511 | live | Member ID card: print, share or save a member's card | apps/dashboard/src/crm/ui/MemberCardSheet.tsx:52
+F-panel-521 | live | Workout offer: check a member's workout code at the desk against the gym's check-ins | apps/dashboard/src/crm/ui/WorkoutCodeCheckSheet.tsx:18
+F-panel-535 | hidden | Pay MettleUp online and open MettleUp receipts | apps/dashboard/src/crm/ui/BillingOnline.tsx:65
+F-panel-536 | hidden | Stopped-paying line on Today: 7 extra days, then basic mode, then read-only, with Pay now for the owner | apps/dashboard/src/crm/ui/LapseBanner.tsx:30
+## SILENT CATCH ROWS TO READ (kind,file,line,logs,tells_user,rethrows,text)
+catch,apps/dashboard/src/crm/ui/AlertsCards.tsx,407,no,no,no,{ // quiet: a browser that keeps nothing shows the card again next time }
+catch,apps/dashboard/src/crm/ui/InstallCard.tsx,114,no,no,no,{ // quiet: a private window cannot save it; it stays closed until the page reloads. }
+catch,apps/dashboard/src/crm/ui/OwnerNumbers.tsx,86,no,no,no,{ // quiet: storage blocked (private window); 30 days is the default. return DEFAULT_RANGE
+catch,apps/dashboard/src/crm/ui/OwnerNumbers.tsx,95,no,no,no,{ // quiet: a private window cannot remember it; the choice still lasts while the page is 
+catch,apps/dashboard/src/crm/ui/deskPhotoImage.ts,69,no,no,no,{ // quiet: older browsers reject the option or the format; the <img> below tries next }
+## FALLBACK ROWS TO READ (files that write money, messages, alerts, sign-in or sync)
+fallback,apps/dashboard/src/crm/ui/AlertsCards.tsx,74,-,-,-,const key = session?.online ? (session.ownerKey ?? null) : null;
+fallback,apps/dashboard/src/crm/ui/AlertsCards.tsx,188,-,-,-,const test = answer?.test ?? null;
+fallback,apps/dashboard/src/crm/ui/JoinedOnlineCard.tsx,292,-,-,-,const form = { ...emptyMemberForm(today)  fullName: enquiry.name  dialCode  phone: nationa
+fallback,apps/dashboard/src/crm/ui/JoinedOnlineCard.tsx,299,-,-,-,await markRecorded(key  pay.id  pay.status === 'paid' ? { token  receiptNo: payment?.recei
+fallback,apps/dashboard/src/crm/ui/JoinedOnlineCard.tsx,299,-,-,-,await markRecorded(key  pay.id  pay.status === 'paid' ? { token  receiptNo: payment?.recei
+fallback,apps/dashboard/src/crm/ui/NeedsYou.tsx,167,-,-,-,const key = session?.online ? (session.ownerKey ?? null) : null;
+fallback,apps/dashboard/src/crm/ui/NeedsYou.tsx,402,-,-,-,const plan = useMemo(() => (planRows ?? []).filter((x) => x.status === 'pending').map((x) 
+fallback,apps/dashboard/src/crm/ui/NeedsYou.tsx,403,-,-,-,const links = useMemo(() => pendingLinks(linkRows ?? []).map((x) => x.id)  [linkRows]);
+fallback,apps/dashboard/src/crm/ui/NeedsYou.tsx,458,-,-,-,seenAlerts.current = new Set([...(seenAlerts.current ?? [])  ...mine.map((a) => a.id)]);
+fallback,apps/dashboard/src/crm/ui/NeedsYou.tsx,487,-,-,-,enquiries: snapshot.enquiries ?? null
+fallback,apps/dashboard/src/crm/ui/NeedsYou.tsx,510,-,-,-,() => ({ items  total  alerts: mine ?? []  facts  gymId  planRows  linkRows  refresh  refr
+fallback,apps/dashboard/src/crm/ui/NeedsYou.tsx,526,-,-,-,const key = session?.online ? (session.ownerKey ?? null) : null;
+fallback,apps/dashboard/src/crm/ui/PhoneLinksCard.tsx,27,-,-,-,const key = session?.online ? (session.ownerKey ?? null) : null;
+fallback,apps/dashboard/src/crm/ui/PlanRequestsCard.tsx,31,-,-,-,const key = session?.online ? (session.ownerKey ?? null) : null;
+## FILTERED BY SCRIPT
+104 other rows of _sources/silent.csv in this area: not read (write this number in the H8 evidence)

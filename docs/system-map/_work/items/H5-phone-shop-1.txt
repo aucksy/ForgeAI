@@ -1,0 +1,45 @@
+# H5-phone-shop-1: gap-5 x phone / phone/shop-1. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H5.1 | gap-5 | For every feature in features.json: is it on main, deployed, behind a switch, or waiting for a migration?
+H5.2 | gap-5 | Compare code on main with what the live panel, HQ, website, phone app (Play version) and database really run (check the live version labels, list_migrations/catalog, switches)
+H5.3 | gap-5 | Any feature the notes or What's new call live that is not live = finding
+H5.4 | gap-5 | Output docs/system-map/LIVE-STATE.md (one row per feature: main / live panel / live DB / Play app), so he can always see what is really live
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-300 | live | Gym tab home for a joined gym (tabs Shop, My gym, Leaderboard; pull to refresh; bell and bag on top) | apps/mobile/src/shop/ShopScreen.tsx:65
+F-phone-301 | live | Join your gym screen when no gym is joined (type the gym code, scan the poster, what a gym gives you, recommend MettleUp | apps/mobile/src/shop/ShopScreen.tsx:87
+F-phone-302 | behind switch | Browse the gym's shop and open a product (category chips, pictures, price, stock, options, add to bag) | apps/mobile/src/shop/ShopScreen.tsx:165
+F-phone-303 | behind switch | Bag and place an order with the gym (change quantity, remove, total, pay at the desk) | apps/mobile/src/shop/BagScreen.tsx:24
+F-phone-304 | live | My orders (status of each order, refreshed every 10 seconds, cancel while still Ordered) | apps/mobile/src/shop/OrdersScreen.tsx:40
+F-phone-305 | behind switch | Pay for a shop order (UPI QR, pay by UPI app, copy UPI ID, pay online) | apps/mobile/src/shop/PayPanel.tsx:144
+F-phone-306 | behind switch | Pay your gym for the membership (UPI QR, pay by UPI app, copy UPI ID, pay online) | apps/mobile/src/shop/PayPanel.tsx:97
+F-phone-307 | hidden | demo copy of the gym shop (sample products drawn in the app, pretend 'demo order' in the bag); no way in today: every sh | apps/mobile/src/shop/catalog.ts:224
+F-phone-308 | live | Check in by QR (the gym's poster link opens 'Check in', one tap, mobile number asked the first time, then offers today's | apps/mobile/src/shop/CheckInScreen.tsx:75
+F-phone-309 | live | Scan the gym poster with the app's own QR scanner (opens check-in or join; also fills the gym code on the welcome screen | apps/mobile/src/shop/ScanPosterScreen.tsx:17
+F-phone-310 | live | Join a gym from its invite link or code, or switch to another gym (gym shown first, tick the Terms box, one Join button; | apps/mobile/src/shop/InviteScreen.tsx:44
+F-phone-311 | live | 'We couldn't find this gym' page for a join or check-in link that matches no gym (scan the poster, type a gym code, or c | apps/mobile/src/shop/GymNotFoundCard.tsx:17
+F-phone-312 | live | Leave the gym (the phone forgets the gym, its kept plan, offer, reminders, diet plans and hours, then tells the gym) | apps/mobile/src/shop/gymActions.ts:525
+F-phone-313 | live | My membership (the member's plan from the gym's records, kept on the phone for no-signal use) | apps/mobile/src/shop/MembershipCard.tsx:31
+F-phone-314 | live | Ask the desk to pause or renew my plan (pause calendar, plan list, request sent, the desk's answer) | apps/mobile/src/shop/PlanRequestPanel.tsx:35
+F-phone-315 | live | Send my workout report to the gym when the desk asks (Yes sends it to this gym only, No sends nothing) | apps/mobile/src/shop/GymReportPanel.tsx:31
+F-phone-316 | live | 'Your plan ends on Friday. Renew at the front desk.' card on the Workout tab | apps/mobile/src/shop/PlanEndsCard.tsx:25
+F-phone-317 | live | Gym timings (open or closed now on the Gym tab, the week, special days, the gym's note) | apps/mobile/src/shop/GymHoursScreen.tsx:26
+F-phone-318 | live | How busy the gym is (people checked in lately, usual busy level per hour, quietest time later today) | apps/mobile/src/shop/GymBusyCard.tsx:40
+F-phone-319 | behind switch | Busy times by exercise tip ('Leg day is quieter on Tuesday', 'Not now' hides it for 30 days) | apps/mobile/src/shop/MachineTipCard.tsx:21
+F-phone-320 | live | Message your gym (question, feedback or complaint, the list of what was sent and every reply, red unread count on the ro | apps/mobile/src/shop/GymTalkScreen.tsx:64
+F-phone-321 | behind switch | Ask a trainer about your workout (one question at a time to your trainer, another trainer or any trainer; take a waiting | apps/mobile/src/shop/GymTalkScreen.tsx:161
+F-phone-322 | live | Trainer reply alert (red count on the Gym tab and the row until the reply is opened, and a pop-up from the 15-minute che | apps/mobile/src/shop/askReplySync.ts:99
+F-phone-323 | live | Gym messages inbox (the gym's messages newest first from the bell; opening marks them seen) | apps/mobile/src/shop/InboxScreen.tsx:19
+F-phone-324 | live | Gym message sound on phones that silence it (OPPO / OnePlus: plays the phone's notification sound once; Android only) | apps/mobile/src/shop/gymAlertRing.ts:62
+F-phone-325 | behind switch | Diet plan from the gym's trainer (read-only: goal, calories, protein, meals, notes) | apps/mobile/src/shop/DietPlanScreen.tsx:22
+F-phone-326 | behind switch | The gym's workout offer ('Train 10 times in 30 days, get 3 extra days': join after a consent screen, progress dots, leav | apps/mobile/src/shop/OfferCard.tsx:24
+F-phone-327 | live | Bring a friend (share your own link from the phone's share menu; see how many friends joined) | apps/mobile/src/shop/BringFriendCard.tsx:29
+F-phone-328 | behind switch | Gym leaderboard (last 30 days, Workouts or Kg lifted, top 10 and your own place, the gym's challenge on top) | apps/mobile/src/shop/LeaderboardCard.tsx:36
+F-phone-329 | behind switch | See a gym mate's profile and shared workouts from the leaderboard (read-only) | apps/mobile/src/shop/MateProfileScreen.tsx:30
+F-phone-330 | live | The gym's logo and name on top of the Gym tab; tap the logo to see it full size | apps/mobile/src/shop/GymHeaderMark.tsx:40
+F-phone-331 | behind switch | Add the gym's icon to the home screen (offered once right after joining, then how to take the MettleUp icon off) | apps/mobile/src/shop/GymIconOffer.tsx:34
+F-phone-332 | behind switch | Find my gym with my number (verify the mobile number by sending one WhatsApp message, the app finds the gyms that list i | apps/mobile/src/shop/ShopScreen.tsx:99
+F-phone-333 | behind switch | Tell my gym about MettleUp (when no gym lists the number: a ready message with the link in the phone's share menu, and a | apps/mobile/src/shop/findGym.ts:239
+F-phone-334 | hidden | 'Do you run a gym on MettleUp?' sign-in for the gym's owner or desk person with the admin app's mobile number and PIN (o | apps/mobile/src/shop/StaffDoorCard.tsx:23
+F-phone-335 | behind switch | Automatic reminders from the gym (phone notifications at 9:30 am, at most one a day: plan ending, welcome, days added, o | apps/mobile/src/shop/autoReminders.ts:280
+## MACHINE FILES (docs/system-map/_sources/machine/)
+live-state.csv: MISSING (items that need it = could-not-check)

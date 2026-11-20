@@ -1,0 +1,446 @@
+# A8-server-panel-worker-3: coverage of 81 Tier 1 journeys (8 features, from A5-server-panel-worker-3). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-server-113 | deploy/panel/help.test.mjs | unit | 215 lines | imports the code, file name
+F-server-113 | deploy/panel/helpArticles.test.mjs | unit | 156 lines | imports the code, file name
+F-server-113 | deploy/panel/helpCredits.test.mjs | unit | 163 lines | imports the code, file name
+F-server-113 | deploy/panel/helpPages.test.mjs | unit | 109 lines | imports the code, file name
+F-server-113 | apps/mobile/test/lib/helpHistory.test.ts | unit | 207 lines | file name, asserts 1 journey phrase(s)
+F-server-113 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-113 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-server-113 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-server-113 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-server-113 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-server-113 | apps/mobile/qa/uat-rel-13-help-questions.yaml | maestro | 79 lines | file name
+F-server-113 | apps/mobile/qa/uat-rel-r452-help-replies.yaml | maestro | 182 lines | file name
+F-server-115 | deploy/panel/crash.test.mjs | unit | 105 lines | imports the code, file name
+F-server-115 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-115 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-server-115 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-server-115 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-server-115 | deploy/panel/voice.test.mjs | unit | 161 lines | imports the code
+F-server-115 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-server-115 | apps/dashboard/test/crm/crashReport.test.ts | unit | 52 lines | file name
+F-server-115 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | file name
+F-server-115 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | asserts 1 journey phrase(s)
+F-server-115 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | asserts 1 journey phrase(s)
+F-server-115 | apps/dashboard/test/crm/gymReports.test.ts | unit | 140 lines | asserts 1 journey phrase(s)
+F-server-117 | deploy/panel/hqNews.test.mjs | unit | 58 lines | imports the code, file name
+F-server-117 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-117 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-server-117 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-server-117 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-server-117 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-server-117 | apps/dashboard/test/crm/hqNews.test.ts | unit | 54 lines | file name
+F-server-117 | apps/dashboard/e2e/gymdata.spec.mjs | e2e | 52 lines | asserts 1 journey phrase(s)
+F-server-117 | apps/dashboard/e2e/whatsnew.spec.mjs | e2e | 122 lines | asserts 1 journey phrase(s)
+F-server-117 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-server-117 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-server-117 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-server-137 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code, file name
+F-server-137 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-137 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-server-137 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-server-137 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-server-137 | deploy/hq/readLogAlert.test.mjs | unit | 265 lines | asserts 1 journey phrase(s)
+F-server-137 | deploy/panel/assist.test.mjs | unit | 473 lines | asserts 1 journey phrase(s)
+F-server-137 | deploy/panel/proxy.test.mjs | unit | 99 lines | asserts 1 journey phrase(s)
+F-server-135 | deploy/panel/whatsappHook.test.mjs | unit | 68 lines | imports the code, file name
+F-server-135 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-135 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-server-135 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-server-135 | deploy/panel/phoneInbound.test.mjs | unit | 355 lines | imports the code
+F-server-135 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-server-135 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-server-135 | apps/dashboard/e2e/terms.spec.mjs | e2e | 149 lines | asserts 2 journey phrase(s)
+F-server-135 | apps/mobile/test/cloud/copyPlan.test.ts | unit | 205 lines | asserts 2 journey phrase(s)
+F-server-135 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-server-135 | apps/dashboard/e2e/r534-training-progress-uat.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-server-135 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-server-139 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code, file name
+F-server-139 | apps/dashboard/e2e/hq-webpage-uat.spec.mjs | e2e | 166 lines | asserts 3 journey phrase(s)
+F-server-139 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-139 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-server-139 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-server-139 | deploy/panel/pageChat.test.mjs | unit | 354 lines | imports the code
+F-server-139 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-server-139 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | asserts 2 journey phrase(s)
+F-server-139 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-server-139 | apps/dashboard/e2e/pagechat-uat.spec.mjs | e2e | 272 lines | asserts 1 journey phrase(s)
+F-server-139 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-server-139 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | asserts 1 journey phrase(s)
+F-server-140 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code, file name
+F-server-140 | deploy/panel/leads.test.mjs | unit | 146 lines | imports the code, file name
+F-server-140 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | imports the code, asserts 1 journey phrase(s)
+F-server-140 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-server-140 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-server-140 | deploy/panel/mobileRule.test.mjs | unit | 51 lines | imports the code
+F-server-140 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-server-140 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-server-140 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-server-140 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-server-140 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-server-140 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 1 journey phrase(s)
+F-server-116 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-116 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-server-116 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-server-116 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-server-116 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-server-116 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-server-116 | apps/dashboard/e2e/r534-training-progress-uat.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-server-116 | apps/dashboard/e2e/whatsapp-verify-uat.spec.mjs | e2e | 324 lines | asserts 1 journey phrase(s)
+F-server-116 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-server-116 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | asserts 1 journey phrase(s)
+F-server-116 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 1 journey phrase(s)
+F-server-116 | apps/dashboard/test/crm/gymReports.test.ts | unit | 140 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-server-113-01 | type 1 | member | Member app, Help and feedback, signed in to a gym, AI answers on
+  s1 see: A short answer written from the help articles
+  s1 see: 'Did this solve it?' with Yes and No
+  s1 not: The message lost when the AI is slow
+  s1 not: An answer that names another gym or member
+  s2 see: The answer stays; the tap is kept once
+  s2 not: A second rating saved for the same question
+J-F-server-113-02 | type 2 | member | Member app, the gym has no AI credits left (or the member's AI questions for today are used up)
+  s1 see: The matching help pages, with a line saying why the AI was not asked
+  s1 see: No AI answer
+  s1 not: An AI call charged to the gym
+  s1 not: An error in place of the help pages
+  s2 see: The team's reply under the question once HQ replies
+  s2 not: The question missing because no AI answered it
+J-F-server-113-03 | type 3 | member | Member app, Help and feedback
+  s1 see: 'Write something first.'
+  s1 not: An empty row saved
+  s2 see: 'Keep it under 2000 letters.'
+  s2 not: The text saved cut short without a word
+  s3 see: 'Too many messages today. Try again tomorrow.'
+  s3 not: An AI call made for a refused message
+J-F-server-113-04 | type 6 | member | Member app, a question already answered by the AI
+  s1 see: The tap kept; the question goes to the HQ team to reply
+  s1 not: The question marked solved
+  s2 see: 'Not found.' refused; the first rating stays
+  s2 not: The rating changed or a second one saved
+  s3 see: Both team replies, oldest first
+  s3 not: Only the newest reply, with the first lost
+J-F-server-113-05 | type 12 | member | Member app, a question that names a body problem
+  s1 see: An answer from the help articles only
+  s1 not: The AI shown the member's gym record, gym code, install id or phone model
+  s2 see: Nothing (an empty list)
+  s2 not: The member's question, the AI answer or the team's reply handed out
+J-F-server-113-06 | type 1 | gym owner | Admin app, Help and feedback, signed in as the owner
+  s1 see: A short answer from the help articles
+  s1 see: 'Did this solve it?'
+  s1 not: A credit taken for the owner's own question
+  s2 see: The tap is kept
+  s2 not: The question shown to the gym's members
+J-F-server-113-07 | type 2 | gym owner | Admin app, the monthly AI ceiling is reached (or the AI key is missing)
+  s1 see: 'Thanks! We read every message and reply as soon as we can.'
+  s1 not: The message lost
+  s1 not: An error screen
+  s2 see: The team's reply when HQ has answered
+  s2 not: The reply shown on another owner's device
+J-F-server-113-08 | type 3 | gym owner | Admin app, the owner's daily free questions are used up
+  s1 see: The matching help pages, with a line about the daily limit and a way to get credits
+  s1 not: An AI call made anyway
+  s1 not: A blank answer
+  s2 see: 'Write something first.'
+  s2 not: An empty question saved
+J-F-server-113-09 | type 6 | gym owner | Admin app, an answered question
+  s1 see: The question waits for the HQ team
+  s1 not: The question shown as solved
+  s2 see: The team's reply under the AI answer
+  s2 not: The No rating lost
+J-F-server-113-10 | type 12 | gym owner | Admin app, a question that names a member
+  s1 see: An answer from the help articles only
+  s1 not: Any of the gym's member records sent to the AI
+  s1 not: The sign-in key saved or sent to the AI
+J-F-server-113-11 | type 1 | staff | Admin app, Help and feedback, signed in as front desk staff
+  s1 see: A short answer from the help articles
+  s1 see: 'Did this solve it?'
+  s1 not: A gym credit taken for the staff question
+J-F-server-113-12 | type 3 | staff | Admin app, staff member's daily free questions used up
+  s1 see: The matching help pages and a line about the daily limit
+  s1 not: An AI call made
+  s1 not: An error
+  s2 see: 'Too many messages today. Try again tomorrow.'
+  s2 not: The 21st saved
+J-F-server-113-13 | type 6 | staff | Admin app, an answered staff question
+  s1 see: Only the first tap kept
+  s1 not: The rating flipped
+J-F-server-113-14 | type 1 | trainer | Trainer signed in to the admin app, Help and feedback
+  s1 see: An answer from the help articles about who reads questions
+  s1 not: A gym credit taken
+  s1 not: Feedback or a complaint of a member shown
+J-F-server-113-15 | type 3 | trainer | Trainer, Help and feedback
+  s1 see: 'Write something first.'
+  s1 not: An empty row saved
+  s2 see: The matching help pages, no AI
+  s2 not: An error with no answer
+J-F-server-113-16 | type 6 | trainer | Trainer, an answered question
+  s1 see: The team's reply appears under the question
+  s1 not: The question lost after the app is reopened on the same device
+J-F-server-113-17 | type 1 | HQ admin | HQ feedback list, a member question the AI could not cover
+  s1 see: The question with its AI answer marked as needing a reply
+  s1 not: Questions the AI covered and the person marked solved shown as needing a reply
+  s2 see: The question no longer needs a reply
+  s2 not: The reply saved on another question
+  s3 see: The team's reply under the question
+  s3 not: The reply readable by any other install
+J-F-server-113-18 | type 3 | HQ admin | HQ feedback list
+  s1 see: Crash, done and spam rows never in the needs-reply list
+  s1 not: A crash row offered for a reply
+J-F-server-113-19 | type 6 | HQ admin | HQ feedback list, a question the AI covered
+  s1 see: The question comes back as needing a reply
+  s1 not: It stays hidden as solved
+  s2 see: The newest 20 replies kept
+  s2 not: The list growing without limit
+J-F-server-113-20 | type 12 | HQ admin | HQ feedback list
+  s1 see: The text, which app, the screen name and the app version
+  s1 not: The gym code, install id or phone model sent to the AI
+  s1 not: A member record shown beside it
+J-F-server-115-01 | type 1 | system | Member app hits an uncaught error
+  s1 see: 201 ok; one "crash" row with the message, stack, app version and screen name
+  s1 not: An email, phone number, long number or key kept in the text
+  s1 not: The gym code or install id kept
+J-F-server-115-02 | type 2 | system | Admin app hits an uncaught error
+  s1 see: 201 ok; the row marked admin
+  s1 not: The admin sign-in key or gym kept
+J-F-server-115-03 | type 3 | system | Crash address
+  s1 see: 400 'Unknown app.'
+  s1 not: A row saved
+  s2 see: 400 'No message.'
+  s2 not: A row saved
+  s3 see: 413 'Too long.'
+  s3 not: The body read and saved
+  s4 see: 429 'Too many reports today.'
+  s4 not: The database filled past the free limits
+J-F-server-115-04 | type 6 | system | The same crash happens again
+  s1 see: 200 ok, seen: counted once
+  s1 not: A second row for the same crash
+  s2 see: The daily clean-up deletes the row
+  s2 not: The row kept past 90 days
+J-F-server-115-05 | type 12 | system | A crash message that includes a phone number and an email
+  s1 see: The number as [n] and the email as [email]
+  s1 not: The number or email stored
+  s1 not: The network address stored as it is (only a daily one-way hash)
+J-F-server-115-06 | type 1 | HQ admin | HQ feedback list
+  s1 see: Crash rows labelled "crash" with app, version and screen
+  s1 not: A crash row mixed in with questions needing a reply
+  s2 see: One GitHub issue per new crash signature
+  s2 not: One issue per crash row (a flood of the same crash)
+J-F-server-115-07 | type 3 | HQ admin | HQ feedback list
+  s1 see: The text shown as data only
+  s1 not: The text acted on
+  s1 not: Over 2000 rows in a day
+J-F-server-115-08 | type 6 | HQ admin | HQ feedback list, a crash 89 days old
+  s1 see: The crash is gone
+  s1 not: Crash rows older than 90 days still listed
+J-F-server-115-09 | type 12 | HQ admin | HQ feedback list, a crash row
+  s1 see: Message, stack, app, version, screen
+  s1 not: A gym name, member name, phone or install id
+J-F-server-117-01 | type 1 | gym owner | Admin app, HQ has sent news this month
+  s1 see: "From MettleUp" with the newest messages first: title, words and a link when given
+  s1 not: Another gym's private news
+  s1 not: More than 10 messages or messages older than 120 days
+J-F-server-117-02 | type 3 | gym owner | Admin app, HQ has sent nothing (or the table is not there yet)
+  s1 see: No "From MettleUp" lines, no error
+  s1 not: An error or a spinner that never ends
+J-F-server-117-03 | type 6 | gym owner | Admin app, a message HQ later removes
+  s1 see: The message gone within about a minute
+  s1 not: The removed message still shown after a refresh a minute later
+J-F-server-117-04 | type 1 | staff | Admin app, HQ has sent news this month
+  s1 see: "From MettleUp" with the newest messages first: title, words and a link when given
+  s1 not: Another gym's private news
+  s1 not: More than 10 messages or messages older than 120 days
+J-F-server-117-05 | type 3 | staff | Admin app, HQ has sent nothing (or the table is not there yet)
+  s1 see: No "From MettleUp" lines, no error
+  s1 not: An error or a spinner that never ends
+J-F-server-117-06 | type 6 | staff | Admin app, a message HQ later removes
+  s1 see: The message gone within about a minute
+  s1 not: The removed message still shown after a refresh a minute later
+J-F-server-117-07 | type 12 | gym owner | Admin app bell
+  s1 see: The same HQ news every gym sees
+  s1 not: Any gym or member data in the answer
+  s1 not: A sign-in key needed or sent
+J-F-server-117-08 | type 1 | HQ admin | HQ app, send news to every gym
+  s1 see: The message in the HQ list
+  s1 not: The message sent to only some gyms
+  s2 see: The message under "From MettleUp"
+  s2 not: A delay of more than a minute
+J-F-server-117-09 | type 3 | HQ admin | HQ app, news list
+  s1 see: Gyms see only the newest 10
+  s1 not: The bell shows an error
+J-F-server-117-10 | type 6 | HQ admin | HQ app, a sent message
+  s1 see: It leaves every bell
+  s1 not: It stays in some bells for more than a minute
+J-F-server-117-11 | type 12 | HQ admin | HQ app, write a message
+  s1 see: The text is readable by anyone with the address, no sign-in
+  s1 not: A gym name, owner number or other private fact in a message
+J-F-server-137-01 | type 1 | gym owner | Admin app on a laptop browser, alerts off
+  s1 see: The browser asks to allow notifications
+  s1 not: A request with no key
+  s2 see: Alerts on; this browser saved for alerts
+  s2 not: The subscription saved for another gym
+J-F-server-137-02 | type 3 | gym owner | Admin app, the HQ link is not set up or HQ is down
+  s1 see: A plain line that alerts cannot be switched on now
+  s1 not: A success shown for alerts that will never come
+J-F-server-137-03 | type 6 | gym owner | Admin app, alerts on
+  s1 see: The same key; alerts on again
+  s1 not: Two subscriptions so each alert comes twice
+J-F-server-137-04 | type 1 | staff | Admin app on a laptop browser, alerts off
+  s1 see: The browser asks to allow notifications
+  s1 not: A request with no key
+  s2 see: Alerts on; this browser saved for alerts
+  s2 not: The subscription saved for another gym
+J-F-server-137-05 | type 3 | staff | Admin app, the HQ link is not set up or HQ is down
+  s1 see: A plain line that alerts cannot be switched on now
+  s1 not: A success shown for alerts that will never come
+J-F-server-137-06 | type 6 | staff | Admin app, alerts on
+  s1 see: The same key; alerts on again
+  s1 not: Two subscriptions so each alert comes twice
+J-F-server-137-07 | type 1 | system | Admin app asks for the key
+  s1 see: 200 with the public key from the HQ server
+  s1 not: The private key ever returned
+  s1 not: A key that is not 80-100 letters passed on
+J-F-server-137-08 | type 3 | system | Key address
+  s1 see: 405 'GET_ONLY'
+  s1 not: A key returned
+  s2 see: 503 'NOT_SET_UP'
+  s2 not: A crash or a made-up key
+  s3 see: 503 'UNREACHABLE'
+  s3 not: A long hang
+J-F-server-137-09 | type 6 | system | HQ changes its key
+  s1 see: The new key within an hour (the answer is kept up to an hour)
+  s1 not: The old key kept for longer than an hour
+J-F-server-135-01 | type 1 | system | A sign-in code was sent by WhatsApp; the app secret is set
+  s1 see: 200 OK; a log line "[whatsapp] status=delivered ... to=..41 (signed)"
+  s1 not: The full number or message text in the log
+  s1 not: A reply sent to anyone
+J-F-server-135-02 | type 2 | system | Setting up the webhook in Meta
+  s1 see: The challenge number echoed back
+  s1 not: Any other text echoed
+  s2 see: The code checked for a waiting verify tap
+  s2 not: An unsigned message ever verifying a number
+J-F-server-135-03 | type 3 | system | Webhook address
+  s1 see: 403 'Forbidden'; a log line 'bad signature'
+  s1 not: The body read or a number verified
+  s2 see: 403 'Forbidden'
+  s2 not: The challenge echoed
+  s3 see: 413 'Too large'
+  s3 not: The body read
+  s4 see: 200 OK and a warning line
+  s4 not: A 500 that makes Meta retry forever
+J-F-server-135-04 | type 6 | system | One message moves from accepted to failed
+  s1 see: An error log line with the code, title and details
+  s1 not: The failure logged as plain info
+  s2 see: Lines marked "(unsigned)"; inbound messages not checked
+  s2 not: A number verified from an unsigned post
+J-F-server-135-05 | type 12 | system | Any status or inbound message
+  s1 see: Only the last 2 digits of a number in logs
+  s1 not: A whole number, a name or message text kept in a log or the database
+J-F-server-135-06 | type 1 | HQ admin | A gym owner says the WhatsApp code never came
+  s1 see: status=failed with code, title and details for that send
+  s1 not: Only "accepted" with no reason
+J-F-server-135-07 | type 3 | HQ admin | Webhook never subscribed or verify word wrong
+  s1 see: "webhook check refused" lines, no status lines
+  s1 not: A silent gap with no line at all
+J-F-server-135-08 | type 6 | HQ admin | A message moves from sent to delivered to read
+  s1 see: One line per status, in order
+  s1 not: A status line with the message text
+J-F-server-139-01 | type 1 | gym owner | Admin app opens; gym web pages are live
+  s1 see: The "Your web page" row and screen
+  s1 not: A row for a feature that is off
+J-F-server-139-02 | type 3 | gym owner | Admin app; pay online on the join page is held (off)
+  s1 see: No such switch, no help article, no Approve line
+  s1 not: The switch shown for a feature that does not work
+J-F-server-139-03 | type 6 | gym owner | Admin app open; HQ switches gym web pages on
+  s1 see: The web page row appears with no reload
+  s1 not: A reload needed
+  s1 not: Half the parts shown
+  s2 see: The row and screen hidden within 5 minutes
+  s2 not: The row left showing a dead page
+J-F-server-139-04 | type 1 | staff | Admin app opens; gym web pages are live
+  s1 see: The "Your web page" row and screen
+  s1 not: A row for a feature that is off
+J-F-server-139-05 | type 3 | staff | Admin app; pay online on the join page is held (off)
+  s1 see: No such switch, no help article, no Approve line
+  s1 not: The switch shown for a feature that does not work
+J-F-server-139-06 | type 6 | staff | Admin app open; HQ switches gym web pages on
+  s1 see: The web page row appears with no reload
+  s1 not: A reload needed
+  s1 not: Half the parts shown
+  s2 see: The row and screen hidden within 5 minutes
+  s2 not: The row left showing a dead page
+J-F-server-139-07 | type 2 | gym owner | Admin app in the background while HQ switches a feature on
+  s1 see: The switches asked again and the new row shown
+  s1 not: The old view kept until the next 5-minute check
+J-F-server-139-08 | type 1 | system | GET /api/switches
+  s1 see: gymPages, joinPay, aiCharge, pageAi as true or false, not cached
+  s1 not: A cached answer
+  s1 not: A value "on" taken as live for the page switches
+J-F-server-139-09 | type 3 | system | PAGE_AI is live but GYM_PAGES is off
+  s1 see: pageAi false
+  s1 not: The page AI chat offered with no web page
+  s2 see: gymPages false
+  s2 not: The pages opened by a wrong word
+J-F-server-139-10 | type 6 | system | AI_CREDITS_CHARGE switched from on to off
+  s1 see: aiCharge false; the credits sheet hides "AI answers for members"
+  s1 not: Members charged while the switch is off
+J-F-server-140-01 | type 1 | prospect | Gym-owner landing page, the free demo form
+  s1 see: A thank-you; the request kept
+  s1 not: The request refused for a missing gym name
+  s1 not: The number shown in the address bar
+J-F-server-140-02 | type 2 | prospect | Landing page opened from a member's shared link (?from=member)
+  s1 see: A thank-you; the lead kept as member-referral
+  s1 not: The source lost
+  s2 see: The lead kept as member-app with no number
+  s2 not: The member's own number kept
+J-F-server-140-03 | type 3 | prospect | Free demo form
+  s1 see: 'Type a 10-digit mobile number.'
+  s1 not: A lead saved
+  s2 see: 'You have sent too many demo requests today. Please try again tomorrow.'
+  s2 not: The 6th saved
+  s3 see: 404 Not found
+  s3 not: A lead saved
+J-F-server-140-04 | type 6 | prospect | Free demo form
+  s1 see: A thank-you
+  s1 not: A thank-you shown for a lead that is dropped without any trace (a log line must exist)
+  s2 see: A second request kept
+  s2 not: An error for a repeat
+J-F-server-140-05 | type 12 | prospect | Free demo form
+  s1 see: The details used only to call back about a demo, deleted within 12 months if no deal
+  s1 not: The network address kept as it is
+  s1 not: The number written to a log
+J-F-server-140-06 | type 1 | HQ admin | HQ lead list
+  s1 see: Number, gym, city, size, today's tool, language and source; "Gym name: not entered" when empty
+  s1 not: A lead missing because the gym name was empty
+J-F-server-140-07 | type 3 | HQ admin | Leads table without the source column
+  s1 see: Saved without its source and a log line naming migration 0007
+  s1 not: The lead lost
+J-F-server-140-08 | type 6 | HQ admin | Leads older than 12 months
+  s1 see: Leads not won and older than 12 months deleted; won leads kept
+  s1 not: A won lead deleted
+  s1 not: Old leads kept forever
+J-F-server-140-09 | type 12 | HQ admin | HQ lead list
+  s1 see: Only HQ sees them
+  s1 not: Leads visible to any gym
+  s1 not: A lead used for anything other than a demo call
+J-F-server-116-01 | type 1 | system | Cron "30 21 * * *" (03:00 India time)
+  s1 see: Crash rows over 90 days, spoken-feedback counts over 7 days, WhatsApp code rows, "Verify with WhatsApp" rows and friend-page counts over 2 days deleted; one log line each
+  s1 not: Any non-crash feedback deleted
+  s1 not: Rows younger than their keep time deleted
+J-F-server-116-02 | type 2 | system | The every-10-minutes cron
+  s1 see: Only the payment check runs
+  s1 not: The clean-up run every 10 minutes
+J-F-server-116-03 | type 3 | system | D1 binding WEB missing or a table not created yet
+  s1 see: '[crash] clean-up skipped: D1 binding WEB missing'
+  s1 not: A crash of the scheduled run
+  s2 see: A warning for that part; the other parts still delete
+  s2 not: All parts stopped by one missing table
+J-F-server-116-04 | type 6 | system | A crash row 89 days old and one 91 days old
+  s1 see: Only the 91-day row deleted
+  s1 not: The 89-day row deleted
+  s2 see: Rows older than 7 India days deleted; other ai_usage kinds kept
+  s2 not: AI usage rows of other kinds deleted
+J-F-server-116-05 | type 12 | system | Privacy notice keep times
+  s1 see: Crash reports gone after 90 days as the notice says
+  s1 not: Crash rows or WhatsApp code hashes kept past their stated time

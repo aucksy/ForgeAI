@@ -1,0 +1,892 @@
+# A8-panel-auth-data-3: coverage of 93 Tier 1 journeys (8 features, from A5-panel-auth-data-3). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-1018 | apps/dashboard/test/crm/permissions.test.ts | unit | 157 lines | imports the code, file name
+F-panel-1018 | apps/dashboard/test/crm/auditC7.test.ts | unit | 333 lines | imports the code
+F-panel-1018 | apps/dashboard/test/crm/branches.test.ts | unit | 224 lines | imports the code
+F-panel-1018 | apps/dashboard/test/crm/challenges.test.ts | unit | 388 lines | imports the code
+F-panel-1018 | apps/dashboard/test/crm/importMembers.test.ts | unit | 575 lines | imports the code
+F-panel-1018 | apps/dashboard/test/crm/navGroups.test.ts | unit | 60 lines | imports the code
+F-panel-1018 | apps/dashboard/test/crm/newDots.test.ts | unit | 279 lines | imports the code
+F-panel-1018 | apps/dashboard/test/crm/ownerNumbers.test.ts | unit | 316 lines | imports the code
+F-panel-1018 | apps/dashboard/test/crm/whatsNew.test.ts | unit | 208 lines | imports the code
+F-panel-1018 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-1018 | apps/mobile/qa/p0-permissions-off.yaml | maestro | 48 lines | file name
+F-panel-1018 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-1006 | apps/dashboard/test/crm/pin.test.ts | unit | 159 lines | imports the code, asserts 3 journey phrase(s)
+F-panel-1006 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 4 journey phrase(s)
+F-panel-1006 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 3 journey phrase(s)
+F-panel-1006 | apps/dashboard/test/crm/r448.test.ts | unit | 76 lines | imports the code
+F-panel-1006 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 2 journey phrase(s)
+F-panel-1006 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 2 journey phrase(s)
+F-panel-1006 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-panel-1006 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 1 journey phrase(s)
+F-panel-1006 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-1006 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 1 journey phrase(s)
+F-panel-1006 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 1 journey phrase(s)
+F-panel-1006 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-1019 | apps/dashboard/test/crm/cloud.test.ts | unit | 466 lines | imports the code, file name
+F-panel-1019 | apps/dashboard/test/crm/assistant/awayIdea.test.ts | unit | 316 lines | imports the code
+F-panel-1019 | apps/dashboard/test/crm/auditC7.test.ts | unit | 333 lines | imports the code
+F-panel-1019 | apps/dashboard/test/crm/batches.test.ts | unit | 169 lines | imports the code
+F-panel-1019 | apps/dashboard/test/crm/branches.test.ts | unit | 224 lines | imports the code
+F-panel-1019 | apps/dashboard/test/crm/checkin.test.ts | unit | 137 lines | imports the code
+F-panel-1019 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-1019 | apps/dashboard/test/crm/gymExport.test.ts | unit | 48 lines | imports the code
+F-panel-1019 | apps/dashboard/test/crm/importMembers.test.ts | unit | 575 lines | imports the code
+F-panel-1019 | apps/dashboard/test/crm/joinTrial.test.ts | unit | 160 lines | imports the code
+F-panel-1019 | apps/dashboard/test/crm/local.test.ts | unit | 1070 lines | imports the code
+F-panel-1019 | apps/dashboard/test/crm/offlineDesk.test.ts | unit | 290 lines | imports the code
+F-panel-1021 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 6 journey phrase(s)
+F-panel-1021 | apps/dashboard/test/crm/demo.test.ts | unit | 300 lines | imports the code, file name
+F-panel-1021 | apps/dashboard/test/crm/demoGym.test.ts | unit | 109 lines | imports the code, file name
+F-panel-1021 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code, file name
+F-panel-1021 | apps/dashboard/e2e/demo-showcase-uat.spec.mjs | e2e | 181 lines | file name, asserts 1 journey phrase(s)
+F-panel-1021 | apps/dashboard/e2e/demo.spec.mjs | e2e | 142 lines | file name, asserts 1 journey phrase(s)
+F-panel-1021 | apps/dashboard/e2e/online.spec.mjs | e2e | 163 lines | asserts 3 journey phrase(s)
+F-panel-1021 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | imports the code
+F-panel-1021 | apps/dashboard/test/crm/launchFixes.test.ts | unit | 197 lines | imports the code
+F-panel-1021 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-1021 | apps/mobile/qa/gate-demo.yaml | maestro | 52 lines | file name
+F-panel-1021 | apps/mobile/qa/uat-rel-9-demo-first.yaml | maestro | 93 lines | file name
+F-panel-1024 | apps/dashboard/test/crm/importPreview.test.ts | unit | 55 lines | imports the code, file name
+F-panel-1024 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 1 journey phrase(s)
+F-panel-1024 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 1 journey phrase(s)
+F-panel-1024 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-panel-1024 | apps/mobile/test/shop/trainerShare.test.ts | unit | 155 lines | asserts 1 journey phrase(s)
+F-panel-1020 | apps/dashboard/test/crm/local.test.ts | unit | 1070 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-panel-1020 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-panel-1020 | apps/dashboard/test/crm/branches.test.ts | unit | 224 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-1020 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | imports the code
+F-panel-1020 | apps/dashboard/test/crm/assistant/awayIdea.test.ts | unit | 316 lines | imports the code
+F-panel-1020 | apps/dashboard/test/crm/auditC7.test.ts | unit | 333 lines | imports the code
+F-panel-1020 | apps/dashboard/test/crm/auditC7Import.test.ts | unit | 323 lines | imports the code
+F-panel-1020 | apps/dashboard/test/crm/auditC7Review.test.ts | unit | 96 lines | imports the code
+F-panel-1020 | apps/dashboard/test/crm/batches.test.ts | unit | 169 lines | imports the code
+F-panel-1020 | apps/dashboard/test/crm/cloud.test.ts | unit | 466 lines | imports the code
+F-panel-1020 | apps/dashboard/test/crm/demo.test.ts | unit | 300 lines | imports the code
+F-panel-1020 | apps/dashboard/test/crm/demoGym.test.ts | unit | 109 lines | imports the code
+F-panel-1023 | apps/dashboard/test/crm/offlinePayments.test.ts | unit | 582 lines | imports the code, asserts 2 journey phrase(s)
+F-panel-1023 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 3 journey phrase(s)
+F-panel-1023 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 3 journey phrase(s)
+F-panel-1023 | apps/dashboard/test/crm/offlineDesk.test.ts | unit | 290 lines | imports the code
+F-panel-1023 | apps/dashboard/test/crm/offlineReview.test.ts | unit | 395 lines | imports the code
+F-panel-1023 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 2 journey phrase(s)
+F-panel-1023 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 2 journey phrase(s)
+F-panel-1023 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-panel-1023 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-panel-1023 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | asserts 2 journey phrase(s)
+F-panel-1023 | apps/dashboard/test/crm/pin.test.ts | unit | 159 lines | asserts 2 journey phrase(s)
+F-panel-1023 | apps/dashboard/test/crm/r448.test.ts | unit | 76 lines | asserts 2 journey phrase(s)
+F-panel-1022 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 3 journey phrase(s)
+F-panel-1022 | apps/dashboard/test/crm/cloud.test.ts | unit | 466 lines | imports the code
+F-panel-1022 | apps/dashboard/test/crm/offlineDesk.test.ts | unit | 290 lines | imports the code
+F-panel-1022 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-1022 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-1022 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-panel-1022 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-panel-1022 | apps/dashboard/test/crm/gymPageEditor.test.ts | unit | 226 lines | asserts 1 journey phrase(s)
+F-panel-1022 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | asserts 1 journey phrase(s)
+F-panel-1022 | apps/dashboard/test/crm/signin.test.ts | unit | 146 lines | asserts 1 journey phrase(s)
+F-panel-1022 | apps/mobile/test/cloud/copyPlan.test.ts | unit | 205 lines | asserts 1 journey phrase(s)
+F-panel-1022 | apps/mobile/test/shop/mateShare.test.ts | unit | 125 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-1018-01 | type 1 | owner | An owner signed in to the panel of an online gym
+  s1 see: Two tabs: Collections and Dues
+  s1 see: Collections opens first
+  s1 not: Only the Dues tab shown to an owner
+  s2 see: Two tabs: Orders and Products
+  s2 not: The Products tab missing for an owner
+  s3 see: Each page opens as usual
+  s3 not: The 'Only an owner can see this' card shown to an owner
+  s3 not: A menu entry missing for an owner
+J-F-panel-1018-02 | type 2 | owner | An owner with an old bookmark to the Shop messages address
+  s1 see: The page Messages & offers opens
+  s1 not: The owner sent to Shop instead
+  s1 not: A blank page for the old address
+J-F-panel-1018-03 | type 3 | owner | A gym kept in this browser only (no sign-in), or a device signed in with an old owner key that carries no person
+  s1 see: Collections and Dues tabs; Expenses opens
+  s1 not: Staff limits applied because no person is known
+  s1 not: The 'Only an owner can see this' card
+  s2 see: The receipt saves; no name of a taker is forced
+  s2 not: The save refused because nobody is signed in as a person
+J-F-panel-1018-04 | type 6 | owner | A shared desk computer: the owner is signed in, then signs out and a Staff person signs in
+  s1 see: Collections and Dues
+  s1 not: Dues only
+  s2 see: Today opens for the Staff person
+  s2 see: The menu has no Expenses, Your growth, AI Assistant, Set up your gym or Branches
+  s2 not: The owner's menu still showing
+  s2 not: A money total left on screen from the owner
+  s3 see: An owner page shows 'Only an owner can see this', or Today
+  s3 not: The owner page from before the sign-out drawn with its figures
+  s4 see: Every page and both tabs are back
+  s4 not: The owner kept on the Staff limits
+J-F-panel-1018-05 | type 12 | owner | An owner on Settings, Staff & sign-in
+  s1 see: 'The owner can do everything. Staff (front desk) can add members, sell plans, collect fees, check members in, hand over shop orders and send members workout plans.'
+  s1 see: 'Staff cannot see money totals or expenses. They cannot cancel receipts, cancel or freeze plans, change plan prices or change gym details.'
+  s1 not: A right named here that Staff do not really have, or a limit named here that the panel does not keep
+  s1 not: Staff able to see a money total on any page although the line says they cannot
+J-F-panel-1018-06 | type 1 | staff | A Staff (front desk) person signed in to the panel
+  s1 see: One tab only: Dues, with the people to collect from
+  s1 not: The Collections tab or any money total for the gym
+  s2 see: One tab only: Orders
+  s2 not: The Products tab, or a way to change a price
+  s3 see: No Expenses, Your growth, AI Assistant, Set up your gym or Branches
+  s3 see: Workout plans and Diet are there
+  s3 not: A menu entry that leads to the owner-only card
+  s3 not: Workout plans hidden from Staff
+J-F-panel-1018-07 | type 2 | staff | A Staff person with an old link or a typed address to an owner page
+  s1 see: Card: 'Only an owner can see this'
+  s1 see: 'Ask your gym owner if you need something from here.'
+  s1 see: Button 'Back to Today'
+  s1 not: The Expenses page or any of its figures, even for a moment
+  s1 not: A blank page
+  s2 see: Today opens
+  s2 not: The refusal card staying on screen
+  s2 not: A sign-out
+J-F-panel-1018-08 | type 2 | staff | A Staff person with old links to the Money and Shop tabs and to Shop messages
+  s1 see: Money opens on Dues
+  s1 not: The Collections tab drawn
+  s1 not: An error page
+  s2 see: Shop opens on Orders
+  s2 not: The Products list drawn
+  s3 see: Shop opens
+  s3 not: Messages & offers opening for Staff
+  s4 see: Both pages open (the desk may look)
+  s4 not: The 'Only an owner can see this' card on these two pages
+  s4 not: A switch on Automatic reminders that Staff can change
+J-F-panel-1018-09 | type 3 | staff | A Staff person trying every owner page by address
+  s1 see: Each shows 'Only an owner can see this' with 'Back to Today'
+  s1 not: Any one of these pages opening
+  s1 not: A money total shown before the card appears
+  s2 see: No button for it, or a plain refusal
+  s2 not: The change saved under a Staff sign-in
+J-F-panel-1018-10 | type 6 | staff | A Staff person on the owner-only card
+  s1 see: The 'Only an owner can see this' card again
+  s1 not: The owner page shown on the way back
+  s2 see: The same card
+  s2 not: The page opening after a reload
+  s2 not: A sign-out
+  s3 see: Both Money tabs and every page
+  s3 not: The Staff limits kept after signing in as an owner
+J-F-panel-1018-11 | type 12 | staff | A Staff person using only the pages Staff may open
+  s1 see: People, dues per person and orders
+  s1 not: A total of money collected, an expense, or the month-by-month growth figures
+  s1 not: The gym's MettleUp plan and what the owner pays
+  s2 see: The receipt names this person as who took the money
+  s2 not: A receipt with no taker, or with the owner as taker
+J-F-panel-1006-01 | type 1 | owner | An owner with no PIN yet, on the sign-in page with a one-time code made on another device where an owner is signed in
+  s1 see: A sheet titled 'Set your own PIN' over Today
+  s1 see: 'Save your own PIN. Next time, sign in with your mobile number and this PIN. You won’t need a code from the owner.'
+  s1 see: Boxes 'Choose a 6-digit PIN' and 'Type the PIN again'; hint 'You sign in with your mobile number and this PIN. Keep it private.'
+  s1 see: Buttons 'Not now' and 'Save my PIN'
+  s1 not: The sheet shown to someone who signed in with a PIN
+  s1 not: The digits shown in clear
+  s1 not: Every other open tab of the panel reloading because the prompt was remembered
+  s2 see: The button reads 'Saving…'
+  s2 see: The sheet closes; a note for 3 seconds: 'PIN saved. Next time, sign in with your mobile number and this PIN.'
+  s2 not: Two saves from two taps
+  s2 not: The note staying on screen
+  s2 not: The sheet opening again after the save
+  s3 see: Today opens; no PIN sheet
+  s3 not: The PIN refused
+  s3 not: The sheet asked a second time on this device
+J-F-panel-1006-02 | type 2 | owner | An owner who already has a PIN (forgot it) and signs in with a one-time code made on another device where an owner is signed in
+  s1 see: A sheet titled 'Choose a new PIN?'
+  s1 see: 'You signed in with a one-time code. If you forgot your PIN, choose a new one now.'
+  s1 see: Buttons 'Keep my old PIN' and 'Save my PIN'; no box for the current PIN
+  s1 not: The 'Set your own PIN' wording for someone who has a PIN
+  s1 not: A box asking for the forgotten PIN
+  s2 see: 'New PIN saved. Next time, sign in with your mobile number and this PIN.'
+  s2 not: The old PIN still working
+  s2 not: The save refused inside the 15 minutes
+  s3 see: A plain message why it was not saved and what to do
+  s3 not: A silent failure
+  s3 not: The new PIN saved without the old one after the 15 minutes are over
+J-F-panel-1006-03 | type 3 | owner | An owner on the 'Set your own PIN' sheet
+  s1 see: 'The two PINs are not the same. Type the same PIN in both boxes.'
+  s1 not: A PIN saved
+  s1 not: The sheet closing
+  s2 see: Letters are not taken; a plain reason for a short or easy PIN
+  s2 not: A PIN shorter than 6 digits saved
+  s2 not: The last 6 digits of the mobile accepted as the PIN
+  s3 see: A plain message, then the sign-in page
+  s3 not: The sheet stuck on Saving…
+  s3 not: A PIN saved for a signed-out device
+  s4 see: No PIN sheet; Today opens
+  s4 not: An error page
+  s4 not: A sheet that returns on every page
+J-F-panel-1006-04 | type 6 | owner | An owner with no PIN, just signed in with a one-time code, sheet 'Set your own PIN' open
+  s1 see: The sheet again
+  s1 not: The prompt lost by a reload before any answer
+  s2 see: The sheet goes; Today stays
+  s2 not: A PIN saved
+  s2 not: A sign-out
+  s3 see: No sheet after the reload; after a new code sign-in the sheet is offered once more
+  s3 not: The sheet returning on the same sign-in after 'Not now'
+  s4 see: A button to set the own PIN later ('Set my PIN')
+  s4 not: No way left to set a PIN after 'Not now'
+  s5 see: The sheet is for the person now signed in
+  s5 not: The first person's PIN changed by the second person's sheet
+J-F-panel-1006-05 | type 12 | owner | An owner saving a PIN from the prompt
+  s1 see: Dots in place of digits
+  s1 not: The PIN written into the browser storage of this device
+  s1 not: The PIN shown in the address bar, a note or an error message
+  s2 see: Whether this person has a PIN, never the PIN itself
+  s2 not: The PIN or any part of it readable by the owner or anyone else
+J-F-panel-1006-06 | type 1 | staff | A Staff person with no PIN yet, on the sign-in page with a one-time code the owner made for them
+  s1 see: A sheet titled 'Set your own PIN' over Today
+  s1 see: 'Save your own PIN. Next time, sign in with your mobile number and this PIN. You won’t need a code from the owner.'
+  s1 see: Boxes 'Choose a 6-digit PIN' and 'Type the PIN again'; hint 'You sign in with your mobile number and this PIN. Keep it private.'
+  s1 see: Buttons 'Not now' and 'Save my PIN'
+  s1 not: The sheet shown to someone who signed in with a PIN
+  s1 not: The digits shown in clear
+  s1 not: Every other open tab of the panel reloading because the prompt was remembered
+  s2 see: The button reads 'Saving…'
+  s2 see: The sheet closes; a note for 3 seconds: 'PIN saved. Next time, sign in with your mobile number and this PIN.'
+  s2 not: Two saves from two taps
+  s2 not: The note staying on screen
+  s2 not: The sheet opening again after the save
+  s3 see: Today opens; no PIN sheet
+  s3 not: The PIN refused
+  s3 not: The sheet asked a second time on this device
+J-F-panel-1006-07 | type 2 | staff | A Staff person who already has a PIN (forgot it) and signs in with a one-time code the owner made for them
+  s1 see: A sheet titled 'Choose a new PIN?'
+  s1 see: 'You signed in with a one-time code. If you forgot your PIN, choose a new one now.'
+  s1 see: Buttons 'Keep my old PIN' and 'Save my PIN'; no box for the current PIN
+  s1 not: The 'Set your own PIN' wording for someone who has a PIN
+  s1 not: A box asking for the forgotten PIN
+  s2 see: 'New PIN saved. Next time, sign in with your mobile number and this PIN.'
+  s2 not: The old PIN still working
+  s2 not: The save refused inside the 15 minutes
+  s3 see: A plain message why it was not saved and what to do
+  s3 not: A silent failure
+  s3 not: The new PIN saved without the old one after the 15 minutes are over
+J-F-panel-1006-08 | type 3 | staff | A Staff person on the 'Set your own PIN' sheet
+  s1 see: 'The two PINs are not the same. Type the same PIN in both boxes.'
+  s1 not: A PIN saved
+  s1 not: The sheet closing
+  s2 see: Letters are not taken; a plain reason for a short or easy PIN
+  s2 not: A PIN shorter than 6 digits saved
+  s2 not: The last 6 digits of the mobile accepted as the PIN
+  s3 see: A plain message, then the sign-in page
+  s3 not: The sheet stuck on Saving…
+  s3 not: A PIN saved for a signed-out device
+  s4 see: No PIN sheet; Today opens
+  s4 not: An error page
+  s4 not: A sheet that returns on every page
+J-F-panel-1006-09 | type 6 | staff | A Staff person with no PIN, just signed in with a one-time code, sheet 'Set your own PIN' open
+  s1 see: The sheet again
+  s1 not: The prompt lost by a reload before any answer
+  s2 see: The sheet goes; Today stays
+  s2 not: A PIN saved
+  s2 not: A sign-out
+  s3 see: No sheet after the reload; after a new code sign-in the sheet is offered once more
+  s3 not: The sheet returning on the same sign-in after 'Not now'
+  s4 see: A button to set the own PIN later ('Set my PIN')
+  s4 not: No way left to set a PIN after 'Not now'
+  s5 see: The sheet is for the person now signed in
+  s5 not: The first person's PIN changed by the second person's sheet
+J-F-panel-1006-10 | type 12 | staff | A Staff person saving a PIN from the prompt
+  s1 see: Dots in place of digits
+  s1 not: The PIN written into the browser storage of this device
+  s1 not: The PIN shown in the address bar, a note or an error message
+  s2 see: Whether this person has a PIN, never the PIN itself
+  s2 not: The PIN or any part of it readable by the owner or anyone else
+J-F-panel-1006-11 | type 1 | trainer | A trainer with no PIN yet, on the sign-in page with a one-time code the owner made for them
+  s1 see: A sheet titled 'Set your own PIN' over Today
+  s1 see: 'Save your own PIN. Next time, sign in with your mobile number and this PIN. You won’t need a code from the owner.'
+  s1 see: Boxes 'Choose a 6-digit PIN' and 'Type the PIN again'; hint 'You sign in with your mobile number and this PIN. Keep it private.'
+  s1 see: Buttons 'Not now' and 'Save my PIN'
+  s1 not: The sheet shown to someone who signed in with a PIN
+  s1 not: The digits shown in clear
+  s1 not: Every other open tab of the panel reloading because the prompt was remembered
+  s2 see: The button reads 'Saving…'
+  s2 see: The sheet closes; a note for 3 seconds: 'PIN saved. Next time, sign in with your mobile number and this PIN.'
+  s2 not: Two saves from two taps
+  s2 not: The note staying on screen
+  s2 not: The sheet opening again after the save
+  s3 see: Today opens; no PIN sheet
+  s3 not: The PIN refused
+  s3 not: The sheet asked a second time on this device
+J-F-panel-1006-12 | type 2 | trainer | A trainer who already has a PIN (forgot it) and signs in with a one-time code the owner made for them
+  s1 see: A sheet titled 'Choose a new PIN?'
+  s1 see: 'You signed in with a one-time code. If you forgot your PIN, choose a new one now.'
+  s1 see: Buttons 'Keep my old PIN' and 'Save my PIN'; no box for the current PIN
+  s1 not: The 'Set your own PIN' wording for someone who has a PIN
+  s1 not: A box asking for the forgotten PIN
+  s2 see: 'New PIN saved. Next time, sign in with your mobile number and this PIN.'
+  s2 not: The old PIN still working
+  s2 not: The save refused inside the 15 minutes
+  s3 see: A plain message why it was not saved and what to do
+  s3 not: A silent failure
+  s3 not: The new PIN saved without the old one after the 15 minutes are over
+J-F-panel-1006-13 | type 3 | trainer | A trainer on the 'Set your own PIN' sheet
+  s1 see: 'The two PINs are not the same. Type the same PIN in both boxes.'
+  s1 not: A PIN saved
+  s1 not: The sheet closing
+  s2 see: Letters are not taken; a plain reason for a short or easy PIN
+  s2 not: A PIN shorter than 6 digits saved
+  s2 not: The last 6 digits of the mobile accepted as the PIN
+  s3 see: A plain message, then the sign-in page
+  s3 not: The sheet stuck on Saving…
+  s3 not: A PIN saved for a signed-out device
+  s4 see: No PIN sheet; Today opens
+  s4 not: An error page
+  s4 not: A sheet that returns on every page
+J-F-panel-1006-14 | type 6 | trainer | A trainer with no PIN, just signed in with a one-time code, sheet 'Set your own PIN' open
+  s1 see: The sheet again
+  s1 not: The prompt lost by a reload before any answer
+  s2 see: The sheet goes; Today stays
+  s2 not: A PIN saved
+  s2 not: A sign-out
+  s3 see: No sheet after the reload; after a new code sign-in the sheet is offered once more
+  s3 not: The sheet returning on the same sign-in after 'Not now'
+  s4 see: A button to set the own PIN later ('Set my PIN')
+  s4 not: No way left to set a PIN after 'Not now'
+  s5 see: The sheet is for the person now signed in
+  s5 not: The first person's PIN changed by the second person's sheet
+J-F-panel-1006-15 | type 12 | trainer | A trainer saving a PIN from the prompt
+  s1 see: Dots in place of digits
+  s1 not: The PIN written into the browser storage of this device
+  s1 not: The PIN shown in the address bar, a note or an error message
+  s2 see: Whether this person has a PIN, never the PIN itself
+  s2 not: The PIN or any part of it readable by the owner or anyone else
+J-F-panel-1019-01 | type 1 | owner | An owner on a laptop and a Staff person on the desk phone, both signed in to the same online gym
+  s1 see: A receipt with the next receipt number
+  s1 see: The member page shows the payment
+  s1 not: A receipt number already used
+  s1 not: The payment saved twice
+  s2 see: The same payment and the same dues
+  s2 not: Old dues still shown after the refresh
+  s2 not: A second copy of the payment
+  s3 see: A receipt with the number after the owner’s
+  s3 not: The same receipt number as the owner’s receipt
+J-F-panel-1019-02 | type 2 | owner | An owner importing a long member list into an online gym, too big for one save
+  s1 see: The members are saved in several parts
+  s1 not: A member saved twice across two parts
+  s2 see: A message that names how many members were already saved
+  s2 not: 'No new members were saved' although some were
+  s2 not: The saved part rolled back without a word
+  s3 see: The members already in read as already a member; the rest are added
+  s3 not: The first part added a second time
+J-F-panel-1019-03 | type 3 | owner | An owner saving while another desk saves at the very same moment, or with no internet
+  s1 see: The change saved on top of the other desk’s, or after repeated clashes: 'Someone else is saving at the same time. Please try again.'
+  s1 not: The other desk’s change wiped out
+  s1 not: A success message for a change that was not saved
+  s2 see: 'No internet, so this can't be saved now. Check-ins, payments and new members still work. Try this again when the internet is back.'
+  s2 not: The price shown as changed
+  s2 not: The change sent later without the owner knowing
+  s3 see: The sign-in page
+  s3 not: The gym’s records left readable on this device
+  s3 not: An endless error on every save
+J-F-panel-1019-04 | type 6 | owner | An owner taking a payment when the reply from the server is lost on the way
+  s1 see: 'The internet dropped while saving, so it may not have gone through yet. It is kept on this device and sent when the internet is back. Don't take this payment again: it shows on the member's page.'
+  s1 not: A plain "failed" with no word on what to do
+  s1 not: The payment missing from the member page
+  s2 see: The same receipt handed back, or 'A payment for this member is still being sent. When the internet is back, check the member's page before you take money again.'
+  s2 not: A second receipt with a new number for the same money
+  s3 see: 'Your last change was saved just now (the internet came back). Check the screen before doing it again.'
+  s3 not: The new action run on top without the owner seeing the late save
+  s3 not: The late save lost
+  s4 see: Both desks show the receipt as cancelled and the plan as active again
+  s4 not: One desk still showing the old state after its refresh
+J-F-panel-1019-05 | type 12 | owner | An owner of one gym signed in on a device
+  s1 see: Only this gym’s members, plans and receipts
+  s1 not: A member, a receipt or a count from another gym
+  s2 see: The name of the Staff person who took the money
+  s2 not: The owner named as taker of money someone else took
+J-F-panel-1019-06 | type 1 | staff | Two Staff people on two desk devices of the same online gym, each with a different member
+  s1 see: Each gets a receipt; the two receipt numbers follow one another
+  s1 not: Two receipts with the same number
+  s1 not: One of the two payments lost
+  s2 see: The other desk’s payment and the new dues
+  s2 not: Dues that still count the paid money as owed
+J-F-panel-1019-07 | type 2 | staff | Two Staff people adding the same new member (same mobile number) at two desks
+  s1 see: The member is added
+  s1 not: A refusal for a mobile nobody has
+  s2 see: A plain message that this mobile already belongs to a member, naming them
+  s2 not: Two members with the same mobile
+  s2 not: Desk B told it saved
+J-F-panel-1019-08 | type 3 | staff | A Staff person at the desk
+  s1 see: 'A payment for this member is still being sent. When the internet is back, check the member's page before you take money again.'
+  s1 not: A second receipt for the same dues
+  s2 see: 'Nothing was saved: this device is out of space. Free up space, or try again when the internet is back.'
+  s2 not: The change shown as saved
+  s2 not: The change lost with a success message
+  s3 see: A plain refusal
+  s3 not: The server keeping a Staff person’s cancel
+J-F-panel-1019-09 | type 6 | staff | A Staff person who checked a member in and took a payment
+  s1 see: One check-in for the day
+  s1 not: Two visits counted for one day
+  s2 see: After the refresh the desk shows the receipt as cancelled and the dues back
+  s2 not: The desk still showing the money as paid
+  s2 not: The desk’s next save bringing the cancelled receipt back to life
+  s3 see: The visit gone on both desks
+  s3 not: The visit back again after the other desk saves
+J-F-panel-1019-10 | type 12 | staff | A Staff person signed in at one branch of a gym with branches
+  s1 see: Only this branch’s members; the receipt number starts with this branch’s own code
+  s1 see: The receipt names this Staff person as taker
+  s1 not: Members or receipts of another branch or another gym
+  s1 not: A receipt number another branch could also print
+J-F-panel-1019-11 | type 1 | trainer | A trainer signed in on a phone; the front desk signed in on the desk computer
+  s1 see: The plan shows as sent on the member
+  s1 not: The plan saved twice from one tap
+  s2 see: The same workout plan
+  s2 not: No plan, or an older text of it
+J-F-panel-1019-12 | type 3 | trainer | A trainer saving a workout plan
+  s1 see: 'No internet, so this can't be saved now. Check-ins, payments and new members still work. Try this again when the internet is back.'
+  s1 not: The plan shown as sent to the member
+  s1 not: The typed plan thrown away without a word
+  s2 see: The plan saved, or 'Someone else is saving at the same time. Please try again.'
+  s2 not: The desk’s payment lost because the trainer saved
+J-F-panel-1019-13 | type 6 | trainer | A trainer who sent a workout plan to a member
+  s1 see: The new text on both devices
+  s1 not: Two plans for the member where one was changed
+  s2 see: The plan shows as withdrawn on the trainer’s phone and on the desk
+  s2 not: The desk still showing it as sent
+  s2 not: The plan coming back after the desk’s next save
+J-F-panel-1019-14 | type 12 | trainer | A trainer signed in to the panel
+  s1 see: Members and workout plans of this gym only
+  s1 not: Money totals or expenses
+  s1 not: Records of another gym
+J-F-panel-1019-15 | type 1 | system | The panel of an online gym, one desk saving a change
+  s1 see: Only the changed rows go to the server, named against the version the desk last saw
+  s1 see: The server answers with a new version; the desk shows the saved payment
+  s1 not: The whole gym sent on every save
+  s1 not: A save taken although the desk was on an older version
+  s2 see: The server refuses; the desk fetches the other desk’s rows and does the action again on top, by itself
+  s2 see: The receipt gets the next free number
+  s2 not: The person seeing an error for a clash the panel can settle by itself
+  s2 not: The first desk’s rows overwritten
+J-F-panel-1019-16 | type 2 | system | A desk holding one save that never got an answer; nobody touches the panel
+  s1 see: The kept save is sent again with the same id; the server answers with the version it already gave or takes it now
+  s1 see: The screen shows the record as saved
+  s1 not: A second copy of the record
+  s1 not: The refresh painting older rows over a change the desk just made
+J-F-panel-1019-17 | type 3 | system | The server answering a desk it will not serve
+  s1 see: The desk is signed out and the copy of the gym kept on that device is removed
+  s1 not: The gym still readable on that device
+  s1 not: What is waiting to be sent from that device thrown away
+  s2 see: A plain message that says why; nothing is saved
+  s2 not: The record shown as saved
+  s2 not: The same save retried in a loop
+J-F-panel-1019-18 | type 6 | system | A save whose answer was lost after the server kept it
+  s1 see: The server answers with the version it already gave
+  s1 not: The payment kept a second time
+  s2 see: The record with that press id is found and handed back
+  s2 not: A second receipt id and number for one press
+  s3 see: The save is treated like one made with no internet and sent in order
+  s3 not: The save dropped as if it had landed
+J-F-panel-1019-19 | type 12 | system | The server handing rows to a signed-in desk
+  s1 see: Rows of the gym its key belongs to, and nothing else
+  s1 not: A row of another gym in the answer
+  s1 not: Rows handed out for a key that was signed out
+  s2 see: The record keeps the name of who really took it
+  s2 not: The sender written as taker of someone else’s money
+J-F-panel-1021-01 | type 1 | prospect | A gym owner seeing the panel for the first time, not signed in, on the first screen
+  s1 see: A full gym named Iron Temple Fitness, Malviya Nagar, Jaipur opens
+  s1 see: About 128 members with plans, payments and check-ins
+  s1 not: A sign-up or a phone number asked first
+  s1 not: An empty gym
+  s2 see: Plans Monthly, Quarterly, Half-yearly, Annual and Day pass
+  s2 see: Some members part-paid; renewals falling due around today
+  s2 not: Every plan long expired because the dates are fixed in the past
+  s2 not: Dates in the future for payments already taken
+  s3 see: The same demo gym
+  s3 not: A new, different gym after a reload
+  s3 not: The demo gone
+J-F-panel-1021-02 | type 2 | prospect | A gym owner on the first screen with no internet
+  s1 see: The same made-up gym opens; pages that need the internet say they are switched off in the demo
+  s1 not: An endless spinner
+  s1 not: An error page because the shop could not be reached
+J-F-panel-1021-03 | type 3 | prospect | A gym owner inside the demo gym
+  s1 see: A card that says the members are made up and kept only in this browser, and that they can’t be put online; it points to 'Erase and start fresh'
+  s1 not: The made-up members sent to the server
+  s1 not: A sign-in code or a join code handed out for made-up data
+  s2 see: A plain message that the number is taken
+  s2 not: Two members with one number
+J-F-panel-1021-04 | type 6 | prospect | A gym owner who opened the demo gym yesterday
+  s1 see: The demo gym as it was left, with what was added yesterday
+  s1 not: The demo rebuilt over yesterday’s changes without asking
+  s2 see: Sheet 'Erase everything?' with 'You will be left with an empty gym: no members, no plans, no payments.'
+  s2 see: Note 'Started fresh.'; an empty gym
+  s2 not: Made-up members left behind
+  s2 not: The demo card still shown for the empty gym
+  s3 see: 'Demo gym loaded.'; the same names and plans as the first time, dated around today
+  s3 not: A half-loaded gym
+  s3 not: Two copies of every member
+J-F-panel-1021-05 | type 12 | prospect | A gym owner showing the demo gym to someone else
+  s1 see: Made-up names and numbers
+  s1 not: A real person’s name with their real number
+  s1 not: Any of it leaving this browser
+  s2 see: 'Saved in this browser only.' and 'A demo gym is never put online.'
+  s2 not: The demo data found on another device or online
+J-F-panel-1021-06 | type 1 | owner | An owner of a gym kept in this browser only (not online), on Settings
+  s1 see: Sheet 'Load the demo gym?'
+  s1 see: 'This makes a sample gym with about 128 members, their payments and check-ins. Use it to show someone the app. Don’t use it on a gym with real members.'
+  s1 see: Button 'Load demo gym'
+  s1 not: The gym replaced before the owner confirms
+  s2 see: Note 'Demo gym loaded.'
+  s2 see: The gym is now Iron Temple Fitness with about 128 members
+  s2 not: A mix of the old gym and the demo
+  s2 not: The UPI boxes of the old gym left filled for the demo gym
+J-F-panel-1021-07 | type 2 | owner | An owner of a new gym with no plans yet, on the Plans page
+  s1 see: Five plans appear: Monthly ₹1,200, Quarterly ₹3,000, Half-yearly ₹5,500, Annual ₹10,000 and Day pass ₹200; a ₹500 joining fee on the first three
+  s1 not: Made-up members added with the plans
+  s1 not: The gym’s id or name changed to the demo gym’s
+  s2 see: Five plans, once
+  s2 not: Ten plans with the same names (plans can be retired, never deleted)
+  s3 see: The reason, then 'Some plans may already be added. Check the list.'
+  s3 not: A success message
+  s3 not: The first two plans added again on the next try without a word
+J-F-panel-1021-08 | type 3 | owner | An owner of an ONLINE gym, on Settings
+  s1 see: Neither button is there
+  s1 not: A way to fill an online gym with sample members
+  s1 not: A way to wipe an online gym from this page
+  s2 see: The warning 'Don’t use it on a gym with real members.' before anything changes
+  s2 not: Real members replaced with no warning and no way to say no
+J-F-panel-1021-09 | type 6 | owner | An owner who loaded the demo gym in a browser-only gym
+  s1 see: A card saying the members are made up and kept only in this browser, and how to start the real gym
+  s1 not: The 'Put your gym online' offer for a demo gym
+  s2 see: 'Started fresh.'; an empty gym with the gym name kept
+  s2 not: The welcome screen again as if the gym was never set up
+  s2 not: Demo members left
+  s3 see: The real gym goes online
+  s3 not: Any made-up member going online with it
+J-F-panel-1021-10 | type 12 | owner | An owner with the demo gym loaded, on Settings, Your data
+  s1 see: 'Saved in this browser only.'
+  s1 see: 'A demo gym is never put online.'
+  s1 not: The demo members reaching the server, a backup or the member app
+J-F-panel-1024-01 | type 1 | owner | An owner on Import members with an Excel file that has members, their plan dates and a paid column
+  s1 see: A card 'Plans and payments': '{n} members come with their plan and its dates ({k} plan names), and ₹{amount} already paid as receipts. Expiry reminders work for them from day one.'
+  s1 not: A money figure shown before it is worked out as if it were final
+  s1 not: A figure bigger than the receipts the import will make
+  s2 see: The result names the same number of receipts and the same money as the card said
+  s2 not: More or less money saved than the card said
+  s2 not: The preview itself having saved anything before Add
+  s3 see: Receipts of the import adding up to the same amount
+  s3 not: A total that differs from the card
+J-F-panel-1024-02 | type 3 | owner | An owner on Import members with awkward files
+  s1 see: The card says ₹4,500 already paid as receipts
+  s1 not: ₹6,500 (the column added up)
+  s2 see: Money counted once for the copied row; nothing for the plan already here
+  s2 not: The copied row counted twice
+  s2 not: Money promised for a plan that will be skipped
+  s3 see: The card names the members and plans but leaves the money out; tapping Add says why
+  s3 not: A made-up amount
+  s3 not: A crash or a card that never appears
+  s4 see: The card with no money words at all
+  s4 not: '₹0 already paid as receipts'
+J-F-panel-1024-03 | type 6 | owner | An owner who already imported a file with payments
+  s1 see: No money promised: every plan and payment is already here
+  s1 not: The same receipts promised a second time
+  s1 not: A second set of receipts saved on Add
+  s2 see: The card shows the money again, as the first time
+  s2 not: Zero because receipts of the undone import are still counted
+  s3 see: The money line worked out again for the new columns
+  s3 not: The old figure left on the card
+J-F-panel-1024-04 | type 12 | owner | An owner looking at the card and then leaving without tapping Add
+  s1 see: The gym exactly as before: no new member, plan or receipt
+  s1 not: Anything from the file saved in the gym or sent anywhere just to work out the figure
+  s1 not: A member or receipt marked as a preview left in the gym
+J-F-panel-1020-01 | type 1 | prospect | A gym owner trying the panel without signing in, on the first screen
+  s1 see: An empty gym opens; no sign-in asked
+  s1 not: A phone number or code demanded first
+  s2 see: The member and a receipt with a receipt number
+  s2 not: Anything sent to a server
+  s3 see: The same gym, member and receipt
+  s3 not: An empty gym
+  s3 not: The first screen again
+  s4 see: 'Your gym is saved in this browser only.'
+  s4 not: Words that suggest the records are safe online
+J-F-panel-1020-02 | type 2 | prospect | A gym owner whose browser-only gym could not be read earlier; a copy was kept
+  s1 see: 'A gym this browser couldn’t read is kept here.'
+  s1 see: Button 'Download the saved data'
+  s1 not: The kept copy offered when there is none
+  s1 not: The kept copy deleted by opening Settings
+  s2 see: A file with the saved data downloads
+  s2 not: An empty file
+  s2 not: The copy removed from the browser after the download
+J-F-panel-1020-03 | type 3 | prospect | A gym owner whose saved gym in this browser is damaged (a save cut off half-way)
+  s1 see: 'We couldn’t read the gym saved in this browser. Your data is kept.'
+  s1 see: Three ways on: 'Try again', 'Download the saved data', 'Start a new gym'
+  s1 not: An empty gym opened without a word
+  s1 not: The damaged data deleted or written over
+  s2 see: The same message
+  s2 not: A new kept copy made on every try until the browser is full
+  s3 see: A question first; after yes, an empty gym; the unreadable copy still offered in Settings
+  s3 not: A new gym started with no question
+  s3 not: The kept copy gone
+  s4 see: A plain message that this could not be saved
+  s4 not: The last member shown as saved
+  s4 not: The whole gym lost
+J-F-panel-1020-04 | type 6 | prospect | A gym owner with the browser-only gym open in two tabs
+  s1 see: The member in tab one
+  s1 not: A save that drops something tab two saved before
+  s2 see: Both members in the gym afterwards
+  s2 not: Tab two saving its old copy over tab one’s member
+  s3 see: The gym’s records go online; the browser’s own copy is moved aside, not deleted
+  s3 not: The browser copy deleted before the records are online
+  s3 not: Two gyms shown
+J-F-panel-1020-05 | type 12 | prospect | A gym owner using a browser-only gym on a shared computer
+  s1 see: The gym opens without any sign-in
+  s1 not: Words anywhere that say the gym is protected by a sign-in while it is not online
+  s2 see: 'Your gym is saved in this browser only.' and 'Right now your members and payments are only in this browser.'
+  s2 not: The records found on a server or another device
+  s2 not: No word that clearing the browser loses the gym
+J-F-panel-1020-06 | type 1 | owner | An owner running the real gym in this browser only (never put online)
+  s1 see: The gym as left last night; no sign-in
+  s1 not: A sign-in page
+  s1 not: An empty gym
+  s2 see: Every change stays after a reload; receipt numbers follow one another
+  s2 not: A receipt number used twice
+  s2 not: A change lost on reload
+  s3 see: 'Saved in this browser only.'
+  s3 see: A card offering to put the gym online
+  s3 not: A count of records that differs from what is in the gym
+J-F-panel-1020-07 | type 2 | owner | An owner with a kept copy of a gym this browser could not read
+  s1 see: 'A gym this browser couldn’t read is kept here.'; a file downloads
+  s1 not: The button missing although a copy is kept
+  s1 not: The file empty
+J-F-panel-1020-08 | type 3 | owner | An owner whose browser-only gym was saved by a newer version of the panel than the one now open
+  s1 see: 'This gym was saved by a newer version of MettleUp (v{n}; this app reads v{n}). Reload the page to get the new version. Your data is safe.'
+  s1 not: The gym replaced with an empty one
+  s1 not: The newer data cut down to what the old version understands
+  s2 see: The new version opens the gym
+  s2 not: A kept copy made on every reload
+  s3 see: 'We couldn’t read the gym saved in this browser. Your data is kept.'
+  s3 not: The first-time welcome as if the gym was gone
+J-F-panel-1020-09 | type 6 | owner | An owner of a browser-only gym with real members
+  s1 see: Both changes stay after a reload
+  s1 not: The old state back after a reload
+  s2 see: The same members, plans and receipts online; this browser’s copy set aside under another name
+  s2 not: Members missing online
+  s2 not: The browser copy thrown away
+  s3 see: The sign-in page or an empty start
+  s3 not: The set-aside copy opened as if it were the live gym
+J-F-panel-1020-10 | type 12 | owner | An owner of a browser-only gym who clears the browser’s data or changes phone
+  s1 see: 'Your gym is saved in this browser only.'
+  s1 see: 'Right now your members and payments are only in this browser.'
+  s1 not: No warning that the gym exists nowhere else
+  s2 see: No gym: a first screen
+  s2 not: Words that blame the owner or suggest the data can be brought back from MettleUp
+J-F-panel-1023-01 | type 1 | owner | An owner at the desk of an online gym on a device that was online before; the internet goes down
+  s1 see: Bar at the top: 'Offline: nothing waiting to send. No internet. Check-ins, payments and new members are saved on this device and sent when the internet is back. Other things wait. Details shown are from {time}.'
+  s1 not: A sign-out
+  s1 not: A blank page
+  s2 see: The member, the plan and a receipt at once, each marked Waiting to send
+  s2 see: The receipt number is from this desk’s own offline series
+  s2 see: The bar now starts 'Offline:' with the count waiting
+  s2 not: A receipt number another desk can also give
+  s2 not: The money missing from the member page
+  s3 see: A list: what was done, for whom, when; each line Waiting to send
+  s3 see: The button now reads 'Hide the list'
+  s3 not: A waiting thing missing from the list
+  s3 not: Another gym’s item in the list
+  s4 see: 'Internet is back. Sending {n} saved on this device…', then 'All sent. Everything saved on this device is now online.'
+  s4 see: The Waiting to send marks go
+  s4 not: The member, plan or payment saved twice
+  s4 not: A new receipt number given to a receipt that was already printed
+  s4 not: The payment sent before the member it belongs to
+J-F-panel-1023-02 | type 2 | owner | An owner with things the server refused, shown in the bar after the internet is back
+  s1 see: A line per refused thing with the member’s name and the reason, such as 'Not sent: it is more than this member owes now (another device took money for the same plan). It is kept on this device. Ask the owner to check this member.'
+  s1 see: Buttons 'Save as cancelled receipt', 'Remove from this device', 'Try sending again'
+  s1 not: Refused money counted in the totals
+  s1 not: The refused thing dropped silently
+  s2 see: The receipt is in the gym as cancelled, with its printed number; the line leaves the bar
+  s2 not: The receipt counted as income
+  s2 not: The printed number lost
+  s3 see: 'Remove it from this device for good? It was never sent, so it will be gone.' with 'Yes, remove it' and 'Keep it'
+  s3 not: Removed at the first tap with no question
+  s4 see: It is sent with today’s date and leaves the bar
+  s4 not: A receipt dated in the future saved
+J-F-panel-1023-03 | type 2 | owner | An owner with payments waiting on this device, on Settings, Sign-in & data
+  s1 see: A warning that names what is waiting from this device, including the payments and their amount: 'They are not in your gym’s records yet. Clearing deletes them for good. Everything else in your gym’s records stays safe online.'
+  s1 not: The mild question 'Nothing is deleted from your gym’s records online' while payments are waiting
+  s1 not: Waiting payments deleted with no warning
+  s2 see: Everything still waiting
+  s2 not: Anything deleted
+J-F-panel-1023-04 | type 3 | owner | An owner with no internet
+  s1 see: 'No internet, so this can't be saved now. Check-ins, payments and new members still work. Try this again when the internet is back.'
+  s1 see: Or a page '{name} needs the internet' with 'This page opens when the internet is back. Open Members to save check-ins, payments and new members now.'
+  s1 not: The change shown as done
+  s1 not: The change put in the waiting list without a word
+  s2 see: 'Connect this device to the internet once so it can take payments offline. Until then, take this payment when the internet is back.'
+  s2 not: A receipt with a number that may clash
+  s2 not: A payment saved with no number
+  s3 see: 'A payment for this member is still being sent. When the internet is back, check the member's page before you take money again.'
+  s3 not: Two payments for the same dues
+  s4 see: 'Nothing was saved: this device is out of space. Free up space, or try again when the internet is back.'
+  s4 not: A receipt shown or printed for a payment that was not kept
+J-F-panel-1023-05 | type 6 | owner | An owner with three things waiting to send, internet still down
+  s1 see: The same three things, still marked Waiting to send
+  s1 not: The waiting list empty after a restart
+  s2 see: '3 saved on this device are still waiting to send. Wait for "All sent" at the top before you sign out.'; sign-out is not allowed yet
+  s2 not: A sign-out that leaves unsent payments behind without a word
+  s3 see: A note: 'Check {name}: {other name} already has the same mobile number. Both are kept.' with 'OK'
+  s3 not: One of the two members merged or dropped
+  s3 not: The payments taken for the offline member pointing at nobody
+  s4 see: The note goes
+  s4 not: The note back after a reload
+J-F-panel-1023-06 | type 12 | owner | An owner signing in on a desk device where a Staff person left unsent payments
+  s1 see: The waiting payments are sent; each receipt names the Staff person who took the money
+  s1 not: The owner written as taker
+  s1 not: The payments shown to someone who signs in to a different gym on this device
+  s2 see: Nothing of the first gym: no waiting list, no names, no amounts
+  s2 not: The first gym’s member names or payments in the bar or the list
+J-F-panel-1023-07 | type 1 | staff | A Staff person at the front desk of an online gym; the internet goes down during the evening rush
+  s1 see: The check-in shows at once
+  s1 see: The bar at the top now starts 'Offline:' with the count waiting, then 'No internet. Check-ins, payments and new members are saved on this device and sent when the internet is back.'
+  s1 not: The check-in refused because there is no internet
+  s2 see: A receipt at once with this desk’s own offline receipt number, marked Waiting to send; the receipt names this Staff person
+  s2 not: A receipt with no number
+  s2 not: Dues still shown in full
+  s3 see: The new number at once
+  s3 not: The change lost when the internet returns
+  s4 see: 'Internet is back. Sending {n} saved on this device…', then 'All sent. Everything saved on this device is now online.'
+  s4 not: Any of the three saved twice
+  s4 not: A second check-in for the day if another desk also checked the member in
+J-F-panel-1023-08 | type 2 | staff | A Staff person with unsent things on the device, on Settings, Staff & sign-in
+  s1 see: '{n} saved on this device are still waiting to send. Wait for "All sent" at the top before you sign out.'; sign-out is not allowed yet
+  s1 not: A sign-out with payments left unsent and no word
+  s2 see: '{n} saved on this device could not be sent (see the top of the page). If you sign out, they stay on this device until someone from this gym signs in here again.'; sign-out is allowed
+  s2 not: The refused payments deleted by the sign-out
+J-F-panel-1023-09 | type 3 | staff | A Staff person whose offline payment the server refuses when the internet is back
+  s1 see: Bar line: 'Not sent: the payment is more than 31 days old, and the front desk can’t send those. It is kept on this device. Ask the owner to sign in here to send it.'
+  s1 see: The receipt is marked Not sent: ask the owner
+  s1 not: The payment dropped
+  s1 not: The payment counted in the totals
+  s1 not: Buttons to remove it or save it as cancelled shown to Staff
+  s2 see: 'Not sent: it is more than this member owes now (another device took money for the same plan). It is kept on this device. Ask the owner to check this member.'
+  s2 not: The member shown as having paid more than the plan costs
+  s3 see: 'No internet, so this can't be saved now. Check-ins, payments and new members still work. Try this again when the internet is back.'
+  s3 not: The change queued silently
+J-F-panel-1023-10 | type 6 | staff | A Staff person who changed a member offline while the owner changed the same member online
+  s1 see: A field only the desk changed is kept; a field only the owner changed is kept; for a field both changed, the later change wins and the desk gets one line saying which
+  s1 not: The owner’s other changes wiped by the desk’s older copy
+  s1 not: No word to the desk that its change lost
+  s2 see: The waiting change for that member is dropped; nothing is sent
+  s2 not: The member brought back by the late change
+  s3 see: It is tried again; if still refused it stays with its reason
+  s3 not: A second copy sent
+  s3 not: The thing vanishing without being saved
+J-F-panel-1023-11 | type 12 | staff | A Staff person on a shared desk device with payments waiting, taken by a colleague
+  s1 see: The colleague’s payments wait for the colleague or an owner to send them, with a line saying so
+  s1 not: The payments sent under this Staff person’s name
+  s1 not: The payments lost
+  s2 see: Names and amounts of this gym only
+  s2 not: Money totals for the gym shown to Staff through the waiting figures of other people
+J-F-panel-1023-12 | type 1 | system | A desk device with a new member, a payment for them and a check-in waiting; the internet returns
+  s1 see: In the order it was done: the member first, then the payment, then the check-in
+  s1 see: Each record keeps the id and the receipt number it was shown and printed with
+  s1 not: A payment sent before its member
+  s1 not: A record given a new id or number on the way
+  s2 see: The waiting list is empty; the desk sees 'All sent. Everything saved on this device is now online.'
+  s2 not: A sent thing left in the list and sent again later
+J-F-panel-1023-13 | type 2 | system | A device with things waiting for a gym, signed out; later someone of the same gym signs in on it
+  s1 see: The waiting things of that gym are found (they are filed by gym, not by sign-in) and sent
+  s1 not: The waiting list lost by the sign-out or by a key that stopped working
+  s1 not: The waiting list of one gym sent into another gym
+J-F-panel-1023-14 | type 3 | system | The server refusing a waiting thing for good
+  s1 see: It is held on the device with a plain reason, shown in the bar, left out of the totals, and tried again on the next start or on Try sending again
+  s1 not: Money dropped
+  s1 not: The same refusal retried in a tight loop
+  s1 not: Other members’ waiting things blocked behind it
+  s2 see: It waits with 'Not sent yet: its date is later than today on the internet, so this device's clock may be wrong. It goes by itself when that day comes, or an owner can send it with today's date.'
+  s2 not: A receipt dated in the future saved
+  s2 not: The payment marked as refused for good
+  s3 see: No new offline receipt number is given while it cannot be read; the desk is told nothing was saved
+  s3 not: A number given twice
+  s3 not: A payment shown that was not kept
+J-F-panel-1023-15 | type 6 | system | A waiting thing that is sent twice, or that meets a change made elsewhere
+  s1 see: The server answers as before; one payment in the gym
+  s1 not: Two payments
+  s2 see: Nothing is sent; one visit for the day
+  s2 not: Two visits
+  s3 see: Both are kept; the late one is marked as a possible duplicate and the desk gets a note
+  s3 not: The two merged
+  s3 not: The late one dropped with its payments
+  s4 see: It is sent again exactly once with the same id
+  s4 not: It is lost by the reload
+  s4 not: It is saved twice
+J-F-panel-1023-16 | type 12 | system | The waiting list as kept on a desk device
+  s1 see: One list per gym, holding the records the desk made (names, mobiles, amounts) until they are sent
+  s1 not: The sign-in key or a PIN stored with it
+  s1 not: A list readable from a sign-in to another gym
+  s2 see: The copy of the gym goes; the waiting list stays for the next sign-in of the same gym
+  s2 not: Unsent payments deleted because the device was signed out
+J-F-panel-1022-01 | type 1 | owner | An owner signed in on a desk device that was online earlier today; the internet is down
+  s1 see: The panel opens on Today
+  s1 see: Bar: 'Offline: nothing waiting to send. No internet. Check-ins, payments and new members are saved on this device and sent when the internet is back. Other things wait. Details shown are from {time}.'
+  s1 not: A sign-in page
+  s1 not: A blank page or an endless spinner
+  s1 not: No word on how old the details are
+  s2 see: Their plan, its end date and what they owe, as last fetched
+  s2 not: Dues of zero because nothing could be fetched
+  s2 not: A member missing who was there when the copy was made
+  s3 see: The plans with prices; the people with dues
+  s3 not: An empty list
+  s3 not: An error because the server did not answer
+  s4 see: The bar goes; the details are fresh
+  s4 not: Old details kept on screen after the internet is back
+J-F-panel-1022-02 | type 3 | owner | An owner with no internet
+  s1 see: A plain message that the internet is needed
+  s1 not: An empty gym that looks real
+  s1 not: Another gym’s copy opened
+  s2 see: '{name} needs the internet' and 'This page opens when the internet is back. Open Members to save check-ins, payments and new members now.'
+  s2 not: A half-drawn page with empty figures
+  s3 see: 'No internet, so this can't be saved now. Check-ins, payments and new members still work. Try this again when the internet is back.'
+  s3 not: The change shown as saved in the copy
+J-F-panel-1022-03 | type 6 | owner | An owner on a desk device that holds a copy of the gym
+  s1 see: The sign-in page; the copy of the gym is removed from the device
+  s1 not: The members and dues still readable on the device after the sign-out
+  s2 see: The sign-in page (signing in needs the internet)
+  s2 not: The gym opening from a copy for a signed-out device
+  s3 see: 'Clear the offline copy on this device? Nothing is deleted from your gym’s records online.'
+  s3 see: 'Offline copy cleared. Your gym’s records online are safe. A fresh copy downloads while this device is online.'
+  s3 not: Any record deleted from the gym online
+  s3 not: No fresh copy made afterwards, so the next outage shows nothing
+J-F-panel-1022-04 | type 12 | owner | An owner on a device that two gyms use (one sign-in after another)
+  s1 see: Only gym two’s members and dues
+  s1 not: Any member of gym one
+  s1 not: Two copies kept on the device
+  s2 see: The same records the panel shows this person on screen
+  s2 not: The sign-in key itself stored with the copy
+  s2 not: The copy readable from a sign-in to another gym
+J-F-panel-1022-05 | type 1 | staff | A Staff person signed in on a desk device that was online earlier today; the internet is down
+  s1 see: The panel opens on Today
+  s1 see: Bar: 'Offline: nothing waiting to send. No internet. Check-ins, payments and new members are saved on this device and sent when the internet is back. Other things wait. Details shown are from {time}.'
+  s1 not: A sign-in page
+  s1 not: A blank page or an endless spinner
+  s1 not: No word on how old the details are
+  s2 see: Their plan, its end date and what they owe, as last fetched
+  s2 not: Dues of zero because nothing could be fetched
+  s2 not: Money totals that Staff may not see online
+  s3 see: The plans with prices; the people with dues
+  s3 not: An empty list
+  s3 not: An error because the server did not answer
+  s4 see: The bar goes; the details are fresh
+  s4 not: Old details kept on screen after the internet is back
+J-F-panel-1022-06 | type 3 | staff | A Staff person with no internet
+  s1 see: A plain message that the internet is needed
+  s1 not: An empty gym that looks real
+  s1 not: Another gym’s copy opened
+  s2 see: '{name} needs the internet' and 'This page opens when the internet is back. Open Members to save check-ins, payments and new members now.'
+  s2 not: A half-drawn page with empty figures
+  s3 see: 'No internet, so this can't be saved now. Check-ins, payments and new members still work. Try this again when the internet is back.'
+  s3 not: The change shown as saved in the copy
+J-F-panel-1022-07 | type 6 | staff | A Staff person on a desk device that holds a copy of the gym
+  s1 see: The sign-in page; the copy of the gym is removed from the device
+  s1 not: The members and dues still readable on the device after the sign-out
+  s2 see: The sign-in page (signing in needs the internet)
+  s2 not: The gym opening from a copy for a signed-out device
+  s3 see: The device is signed out at its next save or refresh and its copy of the gym is removed
+  s3 not: The copy left on the removed device
+  s3 not: What is waiting to be sent from the device thrown away
+J-F-panel-1022-08 | type 12 | staff | A Staff person on a device that two gyms use (one sign-in after another)
+  s1 see: Only gym two’s members and dues
+  s1 not: Any member of gym one
+  s1 not: Two copies kept on the device
+  s2 see: The same records the panel shows this person on screen
+  s2 not: More than a Staff person may see on screen
+  s2 not: The sign-in key itself stored with the copy

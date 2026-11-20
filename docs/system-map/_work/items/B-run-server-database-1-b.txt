@@ -1,0 +1,52 @@
+# B-run-server-database-1-b: gap-8 x server / server/database-1. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H8.1 | gap-8 | By script first: docs/system-map/_tools/silent.mjs lists every catch block with file:line and three flags: logs? (calls a log, report or crash function inside), tells_user? (sets an error state, toast or alert inside), rethrows?
+H8.2 | gap-8 | Output _sources/silent.csv
+H8.3 | gap-8 | Helpers read ONLY the rows where all three are "no", plus every fallback value (?? null, || [], ?? 0) that sits in a file named in a journey that writes money, messages, alerts, sign-in or sync
+H8.4 | gap-8 | Everything else is counted in the grid as "filtered by script, N rows, not read" so the gap is visible
+H8.5 | gap-8 | For each: if this path runs, does the user (or owner, or HQ) learn anything?
+H8.6 | gap-8 | A silent path that hides a failed promise = finding
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-server-300 | live | Old sign-in-account link between a gym and its people, the one-row workout summary a member phone sends up, and "erase m | supabase/migrations/0001_init.sql:120
+F-server-301 | live | demo copy of Start my gym: "Start demo" makes a gym with a sample shop and hands back an owner key, no sign-up | supabase/migrations/0002_shop.sql:187
+F-server-302 | live | Gym shop: add, edit, hide, delete products and add stock | supabase/migrations/0002_shop.sql:219
+F-server-303 | live | Gym shop: upload a product photo | supabase/migrations/0018_staff_and_owner_rules.sql:303
+F-server-304 | live | Gym shop: see member orders and mark them ready, collected or cancelled (stock goes back on cancel) | supabase/migrations/0002_shop.sql:262
+F-server-305 | live | Member shop: see the gym's products, place an order, see my orders, cancel an order | supabase/migrations/0002_shop.sql:347
+F-server-306 | live | Join a gym in the app with its code, set my name, load my gym on launch, leave the gym; the gym sees who joined the app | supabase/migrations/0020_gym_side_retries.sql:130
+F-server-307 | live | Gym branding: brand colour, background tone, logo and heading style shown in the member app | supabase/migrations/0018_staff_and_owner_rules.sql:370
+F-server-308 | live | Gym details: load the gym (name, code, brand) in the panel and rename the gym | supabase/migrations/0005_gym_theme.sql:89
+F-server-309 | live | Invite link and front-desk QR: show the gym's name and logo for a join code before joining | supabase/migrations/0007_invite_link.sql:13
+F-server-310 | live | Gym messages: sent list with "seen by x of y", take a message back, member inbox and unread count, messages to a chosen  | supabase/migrations/0025_workout_offer.sql:737
+F-server-311 | live | Panel sign-in with mobile number and a 6-digit code the owner makes: device sessions, sign out, guess limits, why a key  | supabase/migrations/0010_signin_and_records.sql:349
+F-server-312 | live | Staff and sign-in: add or remove a person of the gym (owner or front desk) | supabase/migrations/0031_branches.sql:338
+F-server-313 | live | Put the gym online: an owner-key gym gets its owner as a signed-in person on this device | supabase/migrations/0010_signin_and_records.sql:219
+F-server-314 | live | Gym records kept online and synced between devices (members, plans, memberships, receipts, check-ins, enquiries, expense | supabase/migrations/0024_workout_plans.sql:55
+F-server-315 | live | Front-desk limits enforced on the server: no plans, expenses, gym details, voids or cancels; saved receipts cannot chang | supabase/migrations/0019_staff_discount_and_taker.sql:24
+F-server-316 | live | Receipt rules and receipt change history: amounts and prices checked on save, every change to a receipt kept and shown t | supabase/migrations/0021_receipt_rules.sql:91
+F-server-317 | live | Undo this import: the owner deletes records a data import created | supabase/migrations/0017_undo_import.sql:1
+F-server-318 | live | Check in by QR from the member app: mobile matched to the gym roster, with limits on typed numbers | supabase/migrations/0015_qr_checkin.sql:53
+F-server-319 | live | My membership in the member app: plan, dates, days left (member matched by first name and check-in number) | supabase/migrations/0023_member_membership.sql:31
+F-server-320 | live | Workout plans from the gym or trainer shown in the member app | supabase/migrations/0024_workout_plans.sql:170
+F-server-321 | live | Workout offer, gym side: create or stop an offer, see who joined and their days, give the reward at the desk, undo a rew | supabase/migrations/0025_workout_offer.sql:312
+F-server-322 | live | Workout offer, member side: see offers, join, see my counted days, leave | supabase/migrations/0025_workout_offer.sql:477
+F-server-323 | live | HQ Look: list of gyms with counts only, one gym, system page, and the audit log of every look | supabase/migrations/0026_hq_audit_and_counts.sql:175
+F-server-324 | live | HQ pauses a gym (suspended = read-only): status change, and every gym table refuses writes while paused | supabase/migrations/0027_hq_actions.sql:183
+F-server-325 | live | HQ makes a gym for an owner and signs every device of a gym out | supabase/migrations/0027_hq_actions.sql:203
+F-server-326 | live | HQ deletes a gym through a delete-request list with steps | supabase/migrations/0027_hq_actions.sql:268
+F-server-327 | live | Support access (break-glass): the owner lets support look for 1 hour or HQ opens emergency access; read-only gym records | supabase/migrations/0028_hq_breakglass_and_logs.sql:166
+F-server-328 | live | Access log of the admin app: sign-ins, sign-outs, wrong codes, saves and whole-copy downloads, shown in HQ | supabase/migrations/0028_hq_breakglass_and_logs.sql:285
+F-server-329 | live | Nightly clean-up of old logs, creator addresses, support-access rows and finished delete requests (run by the HQ Worker  | supabase/migrations/0028_hq_breakglass_and_logs.sql:320
+F-server-330 | behind switch | Automatic reminders to members: the owner's on/off switches per case, handed to the member phone (no server sending) | supabase/migrations/0029_auto_reminders.sql:100
+F-server-331 | live | Free trial and plan of each gym: HQ extends the trial (cap 6 months) and sets the plan, billing and paid-until; nothing  | supabase/migrations/0030_plans_and_trials.sql:126
+F-server-332 | live | Branches: several gyms under one business - list, add, open another branch, rename the business, owners shared across br | supabase/migrations/0031_branches.sql:206
+F-server-333 | live | Branches: find a member of another branch by mobile, check the visitor in, list visitors, undo (file header says NOT APP | supabase/migrations/0031_branches.sql:449
+F-server-334 | live | Member cloud copy: a signed-in member's workouts, routines and body data kept on the server and restored on a new phone; | supabase/migrations/0032_member_cloud.sql:121
+F-server-335 | hidden | Free plan limits for the member app (routines 4, own exercises 7, charts 3 months), one switch, shipped off (file header | supabase/migrations/0032_member_cloud.sql:111
+F-server-336 | live | Accept the terms and the data agreement online: the owner ticks the box, each acceptance kept for ever (file header says | supabase/migrations/0033_terms_acceptance.sql:107
+## SILENT CATCH ROWS TO READ (kind,file,line,logs,tells_user,rethrows,text)
+(none)
+## FALLBACK ROWS TO READ (files that write money, messages, alerts, sign-in or sync)
+(none)
+## FILTERED BY SCRIPT
+0 other rows of _sources/silent.csv in this area: not read (write this number in the H8 evidence)

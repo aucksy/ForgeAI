@@ -1,0 +1,744 @@
+# A8-web-pages-1: coverage of 110 Tier 1 journeys (8 features, from A5-web-pages-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-web-139 | apps/dashboard/e2e/terms.spec.mjs | e2e | 149 lines | file name, asserts 3 journey phrase(s)
+F-web-139 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 3 journey phrase(s)
+F-web-139 | apps/dashboard/e2e/gyms-site-uat.spec.mjs | e2e | 242 lines | asserts 2 journey phrase(s)
+F-web-139 | apps/dashboard/e2e/member-messages-uat.spec.mjs | e2e | 236 lines | asserts 2 journey phrase(s)
+F-web-139 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 2 journey phrase(s)
+F-web-139 | apps/dashboard/e2e/r450-uat.spec.mjs | e2e | 331 lines | asserts 2 journey phrase(s)
+F-web-139 | apps/dashboard/test/crm/importTerms.test.ts | unit | 285 lines | file name
+F-web-139 | apps/dashboard/test/crm/terms.test.ts | unit | 75 lines | file name
+F-web-139 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-web-139 | supabase/tests/0033_terms_acceptance.sql | db | 98 lines | file name
+F-web-139 | supabase/tests/0067_terms_version.sql | db | 47 lines | file name
+F-web-139 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-web-138 | apps/dashboard/test/crm/webPush.test.ts | unit | 317 lines | imports the code, asserts 1 journey phrase(s)
+F-web-138 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-web-138 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-web-138 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-web-138 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-web-138 | apps/dashboard/test/crm/navNames.test.ts | unit | 61 lines | asserts 1 journey phrase(s)
+F-web-138 | apps/dashboard/test/crm/ownerOnboarding.test.ts | unit | 115 lines | asserts 1 journey phrase(s)
+F-web-138 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-web-138 | apps/dashboard/test/crm/sheets.test.ts | unit | 122 lines | asserts 1 journey phrase(s)
+F-web-138 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-web-138 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-web-138 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-web-100 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code, file name
+F-web-100 | apps/dashboard/e2e/move.spec.mjs | e2e | 141 lines | imports the code
+F-web-100 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-web-100 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-web-100 | deploy/panel/gymPage.test.mjs | unit | 328 lines | imports the code
+F-web-100 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-web-100 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-web-100 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-web-100 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-web-100 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-web-100 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-web-100 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-web-127 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 4 journey phrase(s)
+F-web-127 | deploy/panel/joinPay.test.mjs | unit | 374 lines | imports the code
+F-web-127 | deploy/panel/pay.test.mjs | unit | 393 lines | imports the code
+F-web-127 | deploy/panel/payAngles.test.mjs | unit | 1374 lines | imports the code
+F-web-127 | deploy/panel/payBudget.test.mjs | unit | 554 lines | imports the code
+F-web-127 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 2 journey phrase(s)
+F-web-127 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-web-127 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-web-127 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-web-127 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-web-127 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 1 journey phrase(s)
+F-web-127 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-web-129 | apps/mobile/test/shop/memberPay.test.ts | unit | 104 lines | asserts 3 journey phrase(s)
+F-web-129 | deploy/panel/joinPay.test.mjs | unit | 374 lines | imports the code
+F-web-129 | deploy/panel/pay.test.mjs | unit | 393 lines | imports the code
+F-web-129 | deploy/panel/payAngles.test.mjs | unit | 1374 lines | imports the code
+F-web-129 | deploy/panel/payBudget.test.mjs | unit | 554 lines | imports the code
+F-web-129 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 2 journey phrase(s)
+F-web-129 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-web-129 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-web-129 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-web-129 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 1 journey phrase(s)
+F-web-129 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 1 journey phrase(s)
+F-web-129 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-web-137 | deploy/panel/proxy.test.mjs | unit | 99 lines | imports the code, file name
+F-web-137 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-web-137 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-web-137 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-web-137 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-web-137 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-web-137 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-web-137 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-web-137 | deploy/hq/readLogAlert.test.mjs | unit | 265 lines | asserts 1 journey phrase(s)
+F-web-108 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 8 journey phrase(s)
+F-web-108 | apps/dashboard/test/crm/selfJoin.test.ts | unit | 174 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-web-108 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-web-108 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 5 journey phrase(s)
+F-web-108 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | file name, asserts 2 journey phrase(s)
+F-web-108 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 4 journey phrase(s)
+F-web-108 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 4 journey phrase(s)
+F-web-108 | apps/dashboard/e2e/r579-uat.spec.mjs | e2e | 298 lines | asserts 4 journey phrase(s)
+F-web-108 | apps/mobile/qa/sub-uat-f194-choose.yaml | maestro | 31 lines | asserts 4 journey phrase(s)
+F-web-108 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 4 journey phrase(s)
+F-web-108 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-web-108 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 3 journey phrase(s)
+F-web-109 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-web-109 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code, asserts 1 journey phrase(s)
+F-web-109 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | file name, asserts 1 journey phrase(s)
+F-web-109 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-web-109 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-web-109 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-web-109 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-web-109 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-web-109 | apps/dashboard/test/crm/checkin.test.ts | unit | 137 lines | file name
+F-web-109 | apps/mobile/qa/checkin-f1.yaml | maestro | 54 lines | file name
+F-web-109 | apps/mobile/qa/checkin-f2.yaml | maestro | 115 lines | file name
+F-web-109 | apps/mobile/qa/checkin-f3.yaml | maestro | 59 lines | file name
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-web-139-01 | type 1 | prospect | The gym-owner site gyms.mettleup.fit, footer link Refunds
+  s1 see: Heading 'MettleUp refunds and cancellation'
+  s1 see: Section '1. The free trial'
+  s1 see: Section '2. We never charge you automatically'
+  s1 see: Section '3. Payments are not refunded'
+  s1 see: Top line of links: Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+  s1 not: A blank page or the admin app opening instead of the page
+  s1 not: A section heading with no text under it
+  s2 see: A line starting 'Last updated:'
+  s2 see: The email contact@mettleup.fit as a link
+  s2 not: The page cut off before the Last updated line
+  s2 not: An email address that cannot be tapped
+J-F-web-139-02 | type 2 | prospect | On /refund.html, the top line of links
+  s1 see: Heading 'MettleUp shipping and delivery'
+  s1 see: Section 'When you get access'
+  s1 see: Top line of links: Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+  s1 not: The link opening the admin app or the member site
+  s1 not: A different page from the one tapped
+  s2 see: The same page
+  s2 not: A redirect to app.mettleup.fit
+  s2 not: A Not found answer
+J-F-web-139-03 | type 3 | prospect | A browser, a wrong page address on mettleup.fit
+  s1 see: The address moves to app.mettleup.fit/refunds and the admin app opens
+  s1 not: A legal page shown with someone else's content
+  s1 not: An endless loop of redirects
+  s2 see: Heading 'MettleUp refunds and cancellation'
+  s2 not: The admin app instead of the page
+J-F-web-139-04 | type 6 | prospect | /refund.html was changed after the role last read it
+  s1 see: The new text and the new 'Last updated' date
+  s1 not: The old version of the page kept on the phone (the admin app's offline keeper must skip these pages)
+  s1 not: Two different dates on the same page
+J-F-web-139-05 | type 12 | prospect | Anyone, signed in or not, opens /refund.html
+  s1 see: General words only; no gym, member or staff name, no number
+  s1 not: Any gym or person's data on a public page
+  s1 not: A sign-in asked before the page can be read
+J-F-web-139-06 | type 1 | owner | Admin app, the terms and data agreement accept card, link Data agreement
+  s1 see: Heading 'MettleUp data agreement for gyms'
+  s1 see: Section '1. Your records are yours'
+  s1 see: Section '4. Security'
+  s1 see: Section '9. Deleting your gym'
+  s1 see: Top line of links: Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+  s1 not: A blank page or the admin app opening instead of the page
+  s1 not: A section heading with no text under it
+  s2 see: A line starting 'Last updated:'
+  s2 see: The email contact@mettleup.fit as a link
+  s2 not: The page cut off before the Last updated line
+  s2 not: An email address that cannot be tapped
+J-F-web-139-07 | type 2 | owner | On /data-agreement.html, the top line of links
+  s1 see: Heading 'MettleUp terms of use'
+  s1 see: Section 'B. For gyms (the admin app)'
+  s1 see: Top line of links: Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+  s1 not: The link opening the admin app or the member site
+  s1 not: A different page from the one tapped
+  s2 see: The same page
+  s2 not: A redirect to app.mettleup.fit
+  s2 not: A Not found answer
+J-F-web-139-08 | type 3 | owner | A browser, a wrong page address on mettleup.fit
+  s1 see: The address moves to app.mettleup.fit/refunds and the admin app opens
+  s1 not: A legal page shown with someone else's content
+  s1 not: An endless loop of redirects
+  s2 see: Heading 'MettleUp refunds and cancellation'
+  s2 not: The admin app instead of the page
+J-F-web-139-09 | type 6 | owner | /data-agreement.html was changed after the role last read it
+  s1 see: The new text and the new 'Last updated' date
+  s1 not: The old version of the page kept on the phone (the admin app's offline keeper must skip these pages)
+  s1 not: Two different dates on the same page
+J-F-web-139-10 | type 12 | owner | Anyone, signed in or not, opens /data-agreement.html
+  s1 see: General words only; no gym, member or staff name, no number
+  s1 not: Any gym or person's data on a public page
+  s1 not: A sign-in asked before the page can be read
+J-F-web-139-11 | type 1 | staff | Admin app, Settings, link Terms
+  s1 see: Heading 'MettleUp terms of use'
+  s1 see: Section 'In short'
+  s1 see: Section 'B. For gyms (the admin app)'
+  s1 see: Top line of links: Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+  s1 not: A blank page or the admin app opening instead of the page
+  s1 not: A section heading with no text under it
+  s2 see: A line starting 'Last updated:'
+  s2 see: The email contact@mettleup.fit as a link
+  s2 not: The page cut off before the Last updated line
+  s2 not: An email address that cannot be tapped
+J-F-web-139-12 | type 2 | staff | On /terms.html, the top line of links
+  s1 see: Heading 'Contact MettleUp'
+  s1 see: Section 'Complaints'
+  s1 see: Top line of links: Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+  s1 not: The link opening the admin app or the member site
+  s1 not: A different page from the one tapped
+  s2 see: The same page
+  s2 not: A redirect to app.mettleup.fit
+  s2 not: A Not found answer
+J-F-web-139-13 | type 3 | staff | A browser, a wrong page address on mettleup.fit
+  s1 see: The address moves to app.mettleup.fit/refunds and the admin app opens
+  s1 not: A legal page shown with someone else's content
+  s1 not: An endless loop of redirects
+  s2 see: Heading 'MettleUp refunds and cancellation'
+  s2 not: The admin app instead of the page
+J-F-web-139-14 | type 6 | staff | /terms.html was changed after the role last read it
+  s1 see: The new text and the new 'Last updated' date
+  s1 not: The old version of the page kept on the phone (the admin app's offline keeper must skip these pages)
+  s1 not: Two different dates on the same page
+J-F-web-139-15 | type 12 | staff | Anyone, signed in or not, opens /terms.html
+  s1 see: General words only; no gym, member or staff name, no number
+  s1 not: Any gym or person's data on a public page
+  s1 not: A sign-in asked before the page can be read
+J-F-web-139-16 | type 1 | trainer | Admin app, Settings, link Privacy notice
+  s1 see: Heading 'MettleUp privacy notice'
+  s1 see: Section 'In short'
+  s1 see: Section '4. What we collect, and why'
+  s1 see: Section '6. How long we keep it'
+  s1 see: Top line of links: Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+  s1 not: A blank page or the admin app opening instead of the page
+  s1 not: A section heading with no text under it
+  s2 see: A line starting 'Last updated:'
+  s2 see: The email contact@mettleup.fit as a link
+  s2 not: The page cut off before the Last updated line
+  s2 not: An email address that cannot be tapped
+J-F-web-139-17 | type 2 | trainer | On /privacy.html, the top line of links
+  s1 see: Heading 'About MettleUp'
+  s1 see: Section 'Our promises to gyms'
+  s1 see: Top line of links: Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+  s1 not: The link opening the admin app or the member site
+  s1 not: A different page from the one tapped
+  s2 see: The same page
+  s2 not: A redirect to app.mettleup.fit
+  s2 not: A Not found answer
+J-F-web-139-18 | type 3 | trainer | A browser, a wrong page address on mettleup.fit
+  s1 see: The address moves to app.mettleup.fit/refunds and the admin app opens
+  s1 not: A legal page shown with someone else's content
+  s1 not: An endless loop of redirects
+  s2 see: Heading 'MettleUp refunds and cancellation'
+  s2 not: The admin app instead of the page
+J-F-web-139-19 | type 6 | trainer | /privacy.html was changed after the role last read it
+  s1 see: The new text and the new 'Last updated' date
+  s1 not: The old version of the page kept on the phone (the admin app's offline keeper must skip these pages)
+  s1 not: Two different dates on the same page
+J-F-web-139-20 | type 12 | trainer | Anyone, signed in or not, opens /privacy.html
+  s1 see: General words only; no gym, member or staff name, no number
+  s1 not: Any gym or person's data on a public page
+  s1 not: A sign-in asked before the page can be read
+J-F-web-139-21 | type 1 | member | Google Play listing, link Delete account
+  s1 see: Heading 'Delete your MettleUp account'
+  s1 see: Section 'Delete it in the app'
+  s1 see: Section 'No app any more? Email us'
+  s1 see: Section 'What we delete'
+  s1 see: Section 'What is kept, and for how long'
+  s1 see: Top line of links: Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+  s1 not: A blank page or the admin app opening instead of the page
+  s1 not: A section heading with no text under it
+  s2 see: A line starting 'Last updated:'
+  s2 see: The email contact@mettleup.fit as a link
+  s2 not: The page cut off before the Last updated line
+  s2 not: An email address that cannot be tapped
+J-F-web-139-22 | type 2 | member | On /delete-account.html, the top line of links
+  s1 see: Heading 'MettleUp privacy notice'
+  s1 see: Section '7. Delete your data'
+  s1 see: Top line of links: Privacy notice · Terms · Data agreement · Refunds · Shipping and delivery · Contact · About · Delete your account
+  s1 not: The link opening the admin app or the member site
+  s1 not: A different page from the one tapped
+  s2 see: The same page
+  s2 not: A redirect to app.mettleup.fit
+  s2 not: A Not found answer
+J-F-web-139-23 | type 3 | member | A browser, a wrong page address on mettleup.fit
+  s1 see: The address moves to app.mettleup.fit/refunds and the admin app opens
+  s1 not: A legal page shown with someone else's content
+  s1 not: An endless loop of redirects
+  s2 see: Heading 'MettleUp refunds and cancellation'
+  s2 not: The admin app instead of the page
+J-F-web-139-24 | type 6 | member | /delete-account.html was changed after the role last read it
+  s1 see: The new text and the new 'Last updated' date
+  s1 not: The old version of the page kept on the phone (the admin app's offline keeper must skip these pages)
+  s1 not: Two different dates on the same page
+J-F-web-139-25 | type 12 | member | Anyone, signed in or not, opens /delete-account.html
+  s1 see: 'Backup copies: we remove every backup copy of your data within 7 days of deletion.'
+  s1 see: Gym records stay with the gym; leaving the gym erases the mobile number
+  s1 not: A promise here that differs from privacy notice section 7
+  s1 not: Any member name or gym data shown on the public page
+J-F-web-138-01 | type 1 | owner | Chrome on the desk phone, app.mettleup.fit signed in, internet on
+  s1 see: Chrome's Install app sheet with the MettleUp admin icon
+  s1 not: No install offer (the service worker did not take the page)
+  s2 see: The admin app opens on the newest version
+  s2 not: An old version shown while the newest is online
+  s3 see: The admin app opens and shows the copy of the gym kept on this device
+  s3 not: Chrome's dinosaur page
+  s3 not: A blank white screen
+  s3 not: Old buttons from a previous deploy that no longer work
+J-F-web-138-02 | type 2 | owner | Alerts on for this browser, the admin app closed
+  s1 see: A phone or computer notice, for example 'MettleUp: news from your members'
+  s1 not: The same alert shown twice (open page and closed app)
+  s1 not: Another gym's alert
+  s2 see: The admin app opens on that alert's page; an open tab is reused
+  s2 not: A second admin app tab when one is already open
+  s2 not: A page outside the admin app
+J-F-web-138-03 | type 2 | owner | Settings, Alerts from your members, this device signed up for alerts
+  s1 see: A test notice on this device
+  s1 see: The alerts card says when it showed, for example 'It showed on this device at 7:41 pm'
+  s1 not: The card never saying it showed although the notice appeared
+  s1 not: The test reaching another device
+J-F-web-138-04 | type 3 | owner | A new phone that never opened the admin app, no internet
+  s1 see: The browser's own no-internet page
+  s1 not: A half-drawn admin app
+  s1 not: A copy of another person's gym
+  s2 see: The browser's no-internet page (join, check-in and legal pages are never kept)
+  s2 not: The admin app opening in place of the join page
+J-F-web-138-05 | type 6 | owner | The installed app used offline yesterday; a new version was deployed today
+  s1 see: The new version, without a reload by hand
+  s1 not: Yesterday's version kept on screen while online
+  s2 see: Today's version from the device copy
+  s2 not: Files of the old version mixed in
+  s2 not: A blank page because an old file was dropped
+J-F-web-138-06 | type 12 | owner | A shared desk computer with the installed admin app
+  s1 see: The sign-in screen; no gym copy
+  s1 not: The previous person's gym data shown offline
+  s1 not: Members' names readable without a sign-in
+J-F-web-138-07 | type 1 | staff | Chrome on the desk phone, app.mettleup.fit signed in, internet on
+  s1 see: Chrome's Install app sheet with the MettleUp admin icon
+  s1 not: No install offer (the service worker did not take the page)
+  s2 see: The admin app opens on the newest version
+  s2 not: An old version shown while the newest is online
+  s3 see: The admin app opens and shows the copy of the gym kept on this device
+  s3 not: Chrome's dinosaur page
+  s3 not: A blank white screen
+  s3 not: Old buttons from a previous deploy that no longer work
+J-F-web-138-08 | type 2 | staff | Alerts on for this browser, the admin app closed
+  s1 see: A phone or computer notice, for example 'MettleUp: news from your members'
+  s1 not: The same alert shown twice (open page and closed app)
+  s1 not: Another gym's alert
+  s2 see: The admin app opens on that alert's page; an open tab is reused
+  s2 not: A second admin app tab when one is already open
+  s2 not: A page outside the admin app
+J-F-web-138-09 | type 2 | staff | Settings, Alerts from your members, this device signed up for alerts
+  s1 see: A test notice on this device
+  s1 see: The alerts card says when it showed, for example 'It showed on this device at 7:41 pm'
+  s1 not: The card never saying it showed although the notice appeared
+  s1 not: The test reaching another device
+J-F-web-138-10 | type 3 | staff | A new phone that never opened the admin app, no internet
+  s1 see: The browser's own no-internet page
+  s1 not: A half-drawn admin app
+  s1 not: A copy of another person's gym
+  s2 see: The browser's no-internet page (join, check-in and legal pages are never kept)
+  s2 not: The admin app opening in place of the join page
+J-F-web-138-11 | type 6 | staff | The installed app used offline yesterday; a new version was deployed today
+  s1 see: The new version, without a reload by hand
+  s1 not: Yesterday's version kept on screen while online
+  s2 see: Today's version from the device copy
+  s2 not: Files of the old version mixed in
+  s2 not: A blank page because an old file was dropped
+J-F-web-138-12 | type 12 | staff | A shared desk computer with the installed admin app
+  s1 see: The sign-in screen; no gym copy
+  s1 not: The previous person's gym data shown offline
+  s1 not: Members' names readable without a sign-in
+J-F-web-138-13 | type 1 | trainer | Chrome on the desk phone, app.mettleup.fit signed in, internet on
+  s1 see: Chrome's Install app sheet with the MettleUp admin icon
+  s1 not: No install offer (the service worker did not take the page)
+  s2 see: The admin app opens on the newest version
+  s2 not: An old version shown while the newest is online
+  s3 see: The admin app opens and shows the copy of the gym kept on this device
+  s3 not: Chrome's dinosaur page
+  s3 not: A blank white screen
+  s3 not: Old buttons from a previous deploy that no longer work
+J-F-web-138-14 | type 2 | trainer | Alerts on for this browser, the admin app closed
+  s1 see: A phone or computer notice, for example 'MettleUp: news from your members'
+  s1 not: The same alert shown twice (open page and closed app)
+  s1 not: Another gym's alert
+  s2 see: The admin app opens on that alert's page; an open tab is reused
+  s2 not: A second admin app tab when one is already open
+  s2 not: A page outside the admin app
+J-F-web-138-15 | type 2 | trainer | Settings, Alerts from your members, this device signed up for alerts
+  s1 see: A test notice on this device
+  s1 see: The alerts card says when it showed, for example 'It showed on this device at 7:41 pm'
+  s1 not: The card never saying it showed although the notice appeared
+  s1 not: The test reaching another device
+J-F-web-138-16 | type 3 | trainer | A new phone that never opened the admin app, no internet
+  s1 see: The browser's own no-internet page
+  s1 not: A half-drawn admin app
+  s1 not: A copy of another person's gym
+  s2 see: The browser's no-internet page (join, check-in and legal pages are never kept)
+  s2 not: The admin app opening in place of the join page
+J-F-web-138-17 | type 6 | trainer | The installed app used offline yesterday; a new version was deployed today
+  s1 see: The new version, without a reload by hand
+  s1 not: Yesterday's version kept on screen while online
+  s2 see: Today's version from the device copy
+  s2 not: Files of the old version mixed in
+  s2 not: A blank page because an old file was dropped
+J-F-web-138-18 | type 12 | trainer | A shared desk computer with the installed admin app
+  s1 see: The sign-in screen; no gym copy
+  s1 not: The previous person's gym data shown offline
+  s1 not: Members' names readable without a sign-in
+J-F-web-100-01 | type 1 | prospect | A browser, typing gyms.mettleup.fit
+  s1 see: The gym-owner page (MettleUp for gyms) with its free demo form
+  s1 not: Another site's page at this address
+  s1 not: A redirect loop
+  s1 not: A Not found page
+J-F-web-100-02 | type 2 | prospect | A browser, an old or other MettleUp address
+  s1 see: A permanent move to the right MettleUp address, path kept
+  s1 not: The address bar left on the old address with a broken page
+  s1 not: A POST turned into a GET (308 kept)
+J-F-web-100-03 | type 3 | prospect | A browser, a wrong address
+  s1 see: The words 'Not found' (status 404)
+  s1 not: The admin app page served for an /api address
+  s1 not: A server error page
+J-F-web-100-04 | type 6 | prospect | The owner of MettleUp has switched the landing pages off (LANDING not live)
+  s1 see: A move to app.mettleup.fit (the admin app)
+  s1 not: The hidden page shown anyway
+  s1 not: A blank page
+J-F-web-100-05 | type 1 | owner | A browser, typing app.mettleup.fit
+  s1 see: The admin app sign-in or the signed-in Today page
+  s1 not: Another site's page at this address
+  s1 not: A redirect loop
+  s1 not: A Not found page
+J-F-web-100-06 | type 2 | owner | A browser, an old or other MettleUp address
+  s1 see: A permanent move to the right MettleUp address, path kept
+  s1 not: The address bar left on the old address with a broken page
+  s1 not: A POST turned into a GET (308 kept)
+J-F-web-100-07 | type 3 | owner | A browser, a wrong address
+  s1 see: The words 'Not found' (status 404)
+  s1 not: The admin app page served for an /api address
+  s1 not: A server error page
+J-F-web-100-08 | type 6 | owner | The owner of MettleUp has switched the landing pages off (LANDING not live)
+  s1 see: A move to gyms.mettleup.fit, which then moves to app.mettleup.fit
+  s1 not: The hidden page shown anyway
+  s1 not: A blank page
+J-F-web-100-09 | type 12 | owner | Signed in at the old address forgeai.aakashpahuja.in
+  s1 see: Page 'Opening MettleUp…' then the admin app, still signed in
+  s1 not: The sign-in key shown in the address bar
+  s1 not: Another site able to send a sign-in into this address
+  s2 see: The admin app sign-in page
+  s2 not: A sign-in written from a page that is not the old address
+  s2 not: An error page that strands the desk
+J-F-web-100-10 | type 1 | staff | A browser, typing app.mettleup.fit
+  s1 see: The admin app sign-in
+  s1 not: Another site's page at this address
+  s1 not: A redirect loop
+  s1 not: A Not found page
+J-F-web-100-11 | type 2 | staff | A browser, an old or other MettleUp address
+  s1 see: Only the old /home page moves; the admin app at the old address asks to move and carries the sign-in to app.mettleup.fit
+  s1 not: The address bar left on the old address with a broken page
+  s1 not: A POST turned into a GET (308 kept)
+J-F-web-100-12 | type 3 | staff | A browser, a wrong address
+  s1 see: The words 'Not found' (status 404)
+  s1 not: The admin app page served for an /api address
+  s1 not: A server error page
+J-F-web-100-13 | type 6 | staff | The owner of MettleUp has switched the landing pages off (LANDING not live)
+  s1 see: A move to gyms.mettleup.fit, which then moves to app.mettleup.fit
+  s1 not: The hidden page shown anyway
+  s1 not: A blank page
+J-F-web-100-14 | type 12 | staff | Signed in at the old address forgeai.aakashpahuja.in
+  s1 see: Page 'Opening MettleUp…' then the admin app, still signed in
+  s1 not: The sign-in key shown in the address bar
+  s1 not: Another site able to send a sign-in into this address
+  s2 see: The admin app sign-in page
+  s2 not: A sign-in written from a page that is not the old address
+  s2 not: An error page that strands the desk
+J-F-web-100-15 | type 1 | trainer | A browser, typing app.mettleup.fit
+  s1 see: The admin app sign-in
+  s1 not: Another site's page at this address
+  s1 not: A redirect loop
+  s1 not: A Not found page
+J-F-web-100-16 | type 2 | trainer | A browser, an old or other MettleUp address
+  s1 see: A permanent move to the right MettleUp address, path kept
+  s1 not: The address bar left on the old address with a broken page
+  s1 not: A POST turned into a GET (308 kept)
+J-F-web-100-17 | type 3 | trainer | A browser, a wrong address
+  s1 see: The words 'Not found' (status 404)
+  s1 not: The admin app page served for an /api address
+  s1 not: A server error page
+J-F-web-100-18 | type 6 | trainer | The owner of MettleUp has switched the landing pages off (LANDING not live)
+  s1 see: A move to gyms.mettleup.fit, which then moves to app.mettleup.fit
+  s1 not: The hidden page shown anyway
+  s1 not: A blank page
+J-F-web-100-19 | type 12 | trainer | Signed in at the old address forgeai.aakashpahuja.in
+  s1 see: Page 'Opening MettleUp…' then the admin app, still signed in
+  s1 not: The sign-in key shown in the address bar
+  s1 not: Another site able to send a sign-in into this address
+  s2 see: The admin app sign-in page
+  s2 not: A sign-in written from a page that is not the old address
+  s2 not: An error page that strands the desk
+J-F-web-100-20 | type 1 | member | A browser, typing mettleup.fit
+  s1 see: The member page about the free MettleUp app
+  s1 not: Another site's page at this address
+  s1 not: A redirect loop
+  s1 not: A Not found page
+J-F-web-100-21 | type 2 | member | A browser, an old or other MettleUp address
+  s1 see: A permanent move to the right MettleUp address, path kept
+  s1 not: The address bar left on the old address with a broken page
+  s1 not: A POST turned into a GET (308 kept)
+J-F-web-100-22 | type 3 | member | A browser, a wrong address
+  s1 see: A move to app.mettleup.fit/api/nothing, which answers 'Not found'
+  s1 not: The admin app page served for an /api address
+  s1 not: A server error page
+J-F-web-100-23 | type 6 | member | The owner of MettleUp has switched the landing pages off (LANDING not live)
+  s1 see: A move to app.mettleup.fit (the admin app)
+  s1 not: The hidden page shown anyway
+  s1 not: A blank page
+J-F-web-127-01 | type 1 | owner | Member page with dues, a payment company connected, member has a mobile number
+  s1 see: 'Making the link…'
+  s1 see: A QR code of the payment link
+  s1 see: 'Scan with the phone camera to pay by UPI, card or net banking on {name}.'
+  s1 not: Two live links for the same dues
+  s1 not: A link for a different amount from the one shown
+  s2 see: WhatsApp with '{payee}: please pay {amount} for {label}. Pay here: {url}'
+  s2 not: Another member's name or amount in the message
+  s3 see: 'Receipt saved.'
+  s3 not: A receipt saved twice
+  s3 not: The payment saved as cash
+J-F-web-127-02 | type 2 | owner | Member page with dues, the gym's UPI ID saved in Settings, Payments
+  s1 see: UPI QR code to pay {amount}
+  s1 see: 'Scan with any UPI app: Google Pay, PhonePe, Paytm or BHIM.'
+  s1 see: 'When the money shows in your UPI app or sound box, tap Save payment.'
+  s1 not: A UPI ID the owner did not set
+  s2 see: Payment saved; the request is done and any company link for it is closed
+  s2 not: The member still able to pay the old link
+  s2 not: A payment made online a moment ago saved again as cash
+J-F-web-127-03 | type 2 | owner | Member page with dues, the member uses the MettleUp app
+  s1 see: 'Sent. They see it under My membership in the MettleUp app. Tap Save payment when the money shows.'
+  s1 not: The request reaching another member's app
+J-F-web-127-04 | type 3 | owner | Collect sheet, payment company connected
+  s1 see: '{name} needs the member’s mobile number for a payment link. Add it to the member, or show the UPI QR.'
+  s1 not: A link made without a number
+  s1 not: The UPI QR hidden too
+  s2 see: The request refused (BAD_AMOUNT)
+  s2 not: A ₹0 link sent to a member
+  s3 see: 'No internet. Try again.'
+  s3 not: A spinner that never ends
+J-F-web-127-05 | type 6 | owner | A payment link sent, member has not paid
+  s1 see: A new link; the old one is asked once, then closed at the company
+  s1 not: The member able to pay both links
+  s2 see: The request shows cancelled
+  s2 not: A payment that already happened hidden by the cancel
+J-F-web-127-06 | type 6 | owner | Paid online, receipt not made (the automatic receipt failed)
+  s1 see: 'These members paid online, but the receipt could not be made by itself. Save each payment by hand, then tap I saved it.'
+  s1 see: '{name} paid {amount} online'
+  s1 not: A test-mode payment counted as money
+  s1 not: A refunded payment offered for a receipt
+  s2 see: The line goes away
+  s2 not: The same payment saved twice by two desks
+J-F-web-127-07 | type 12 | owner | Payments switched on, PAY_LIVE off (test mode)
+  s1 see: 'Test mode: no real money moves.'
+  s1 not: A test payment saved as a real receipt
+  s2 see: Connect, Paste keys and Disconnect buttons; the keys are never shown back
+  s2 not: The company keys shown on screen
+  s2 not: Requests of another gym listed
+J-F-web-127-08 | type 1 | staff | Member page with dues, a payment company connected, member has a mobile number
+  s1 see: 'Making the link…'
+  s1 see: A QR code of the payment link
+  s1 see: 'Scan with the phone camera to pay by UPI, card or net banking on {name}.'
+  s1 not: Two live links for the same dues
+  s1 not: A link for a different amount from the one shown
+  s2 see: WhatsApp with '{payee}: please pay {amount} for {label}. Pay here: {url}'
+  s2 not: Another member's name or amount in the message
+  s3 see: 'Receipt saved.'
+  s3 not: A receipt saved twice
+  s3 not: The payment saved as cash
+J-F-web-127-09 | type 2 | staff | Member page with dues, the gym's UPI ID saved in Settings, Payments
+  s1 see: UPI QR code to pay {amount}
+  s1 see: 'Scan with any UPI app: Google Pay, PhonePe, Paytm or BHIM.'
+  s1 see: 'When the money shows in your UPI app or sound box, tap Save payment.'
+  s1 not: A UPI ID other than the gym's saved one
+  s2 see: Payment saved; the request is done and any company link for it is closed
+  s2 not: The member still able to pay the old link
+  s2 not: A payment made online a moment ago saved again as cash
+J-F-web-127-10 | type 2 | staff | Member page with dues, the member uses the MettleUp app
+  s1 see: 'Sent. They see it under My membership in the MettleUp app. Tap Save payment when the money shows.'
+  s1 not: The request reaching another member's app
+J-F-web-127-11 | type 3 | staff | Collect sheet, payment company connected
+  s1 see: '{name} needs the member’s mobile number for a payment link. Add it to the member, or show the UPI QR.'
+  s1 not: A link made without a number
+  s1 not: The UPI QR hidden too
+  s2 see: The request refused (BAD_AMOUNT)
+  s2 not: A ₹0 link sent to a member
+  s3 see: 'No internet. Try again.'
+  s3 not: A spinner that never ends
+J-F-web-127-12 | type 6 | staff | A payment link sent, member has not paid
+  s1 see: A new link; the old one is asked once, then closed at the company
+  s1 not: The member able to pay both links
+  s2 see: The request shows cancelled
+  s2 not: A payment that already happened hidden by the cancel
+J-F-web-127-13 | type 6 | staff | Paid online, receipt not made (the automatic receipt failed)
+  s1 see: 'These members paid online, but the receipt could not be made by itself. Save each payment by hand, then tap I saved it.'
+  s1 see: '{name} paid {amount} online'
+  s1 not: A test-mode payment counted as money
+  s1 not: A refunded payment offered for a receipt
+  s2 see: The line goes away
+  s2 not: The same payment saved twice by two desks
+J-F-web-127-14 | type 12 | staff | Payments switched on, PAY_LIVE off (test mode)
+  s1 see: 'Test mode: no real money moves.'
+  s1 not: A test payment saved as a real receipt
+  s2 see: 'Only the gym owner can connect a payment company.'
+  s2 not: The company keys shown on screen
+  s2 not: Requests of another gym listed
+J-F-web-129-01 | type 1 | member | Member app, My membership, the gym asked for dues by Send to their app
+  s1 see: 'Pay your gym'
+  s1 see: 'Scan this QR with any UPI app.'
+  s1 see: Button 'Pay by UPI app'
+  s1 see: 'After you pay, the gym saves your receipt.'
+  s1 not: Another member's request
+  s1 not: A wrong amount
+  s2 see: 'Paid. The gym can see it.'
+  s2 not: Paid shown before the money came
+  s2 not: A second payment asked for
+J-F-web-129-02 | type 2 | member | Member app, Shop, an order placed, not collected
+  s1 see: A payment page or UPI QR for the order total
+  s1 not: An amount different from the order total
+  s1 not: A payment for a cancelled or collected order
+  s2 see: 'Paid. The gym can see it.'
+  s2 not: The order paid twice when its total changed (old link must close)
+J-F-web-129-03 | type 3 | member | The owner switched off Take payments in the member app
+  s1 see: The amount and label
+  s1 see: 'Pay this at the gym desk.'
+  s1 not: A QR, UPI link or payment page shown
+  s2 see: 'Online payment is not set up at this gym yet. Pay at the desk.'
+  s2 not: An error code
+  s2 not: A blank card
+J-F-web-129-04 | type 3 | member | A payment link older than its time limit
+  s1 see: 'This payment link has run out. Ask the desk for a new one.'
+  s1 not: A dead link opened
+J-F-web-129-05 | type 6 | member | A payment try failed at the payment company
+  s1 see: 'Your last try did not go through. You can try again.'
+  s1 not: The request shown paid
+  s2 see: 'Paid. The gym can see it.'
+  s2 not: Two payments taken
+J-F-web-129-06 | type 12 | member | Member app in test mode (PAY_LIVE off)
+  s1 see: 'Test mode: no real money moves.'
+  s1 not: Other members' requests, ids or payment ids
+  s1 not: Card, UPI or bank details kept by MettleUp
+J-F-web-137-01 | type 1 | system | The admin app or the member app calls the gym server through app.mettleup.fit/sb
+  s1 see: The gym server's answer, with the X-Forge-Proxy stamp
+  s1 not: Cookies passed on to the gym server
+  s1 not: An answer that runs as a page on the admin app address
+J-F-web-137-02 | type 2 | system | The owner sends a message to members from Messages & offers
+  s1 see: The send succeeds
+  s1 not: The message saved twice
+  s2 see: Members' phones get the pop-up within seconds
+  s2 not: The pop-up waiting for the next minute
+  s2 not: A pop-up when the send failed
+J-F-web-137-03 | type 2 | system | The owner answers a member's workout question
+  s1 see: The member's phone gets the answer at once
+  s1 not: The answer reaching another member
+J-F-web-137-04 | type 3 | system | The gym server does not answer
+  s1 see: Status 502 and 'The gym server could not be reached. Try again.' with the unreachable stamp
+  s1 not: The same request sent twice
+  s1 not: A Cloudflare page read as a real answer
+  s2 see: Not passed on to the gym server
+  s2 not: /sbx treated as /sb
+J-F-web-137-05 | type 6 | system | Cloudflare's free daily limit is used up
+  s1 see: The apps use the gym server's own address for a while
+  s1 not: The app stuck on errors
+  s1 not: A save sent twice
+J-F-web-137-06 | type 12 | system | Any call through /sb
+  s1 see: The answer with nosniff and a sandbox rule
+  s1 not: Our site's cookies reaching the gym server
+  s1 not: A gym server answer able to read the desks' saved keys
+J-F-web-108-01 | type 1 | prospect | An Android phone without the MettleUp app, a WhatsApp invite link /j/CODE
+  s1 see: Gym name as the heading
+  s1 see: 'invites you to the MettleUp app'
+  s1 see: The 6-letter gym code
+  s1 see: Button 'Join in the MettleUp app'
+  s1 not: Another gym's name
+  s1 not: A broken logo picture
+  s2 see: Chrome comes back with the card 'First, get the MettleUp app' and the big button 'Get it on Google Play'
+  s2 not: A loop between the page and the store
+  s2 not: A dead button
+  s3 see: The app opens on joining this gym
+  s3 not: The code lost on the way
+J-F-web-108-02 | type 2 | prospect | A computer browser, the invite link
+  s1 see: 'Open this link on your phone'
+  s1 see: 'Scan this QR code with your phone’s camera.'
+  s1 see: A QR code
+  s1 see: 'Your gym’s code'
+  s1 not: A Join button that does nothing on a computer
+J-F-web-108-03 | type 2 | prospect | An iPhone, the invite link
+  s1 see: The App Store, when the iPhone app is set; otherwise 'The iPhone app is coming soon' and 'Until then, the front desk at <gym> can add you as a member.'
+  s1 not: An Android-only Join button
+J-F-web-108-04 | type 2 | prospect | The invite page of a gym that takes sign-ups online and has plans
+  s1 see: 'Pick a plan and send your details to the gym from this phone. You pay at the gym desk.'
+  s1 see: Button 'Become a member'
+  s1 not: Words about paying that differ from the Become a member page
+  s1 not: The card shown for a gym that is closed to sign-ups
+  s2 see: The gym's Become a member page at /m/CODE
+  s2 not: A page for a different gym
+J-F-web-108-05 | type 3 | prospect | A wrong or old invite link
+  s1 see: 'Gym not found'
+  s1 see: 'This link doesn’t match a gym'
+  s1 see: 'Ask your gym for a new link or their gym code.'
+  s1 not: An endless spinner
+  s1 not: Another gym's page
+  s2 see: 'Couldn’t reach the gym'
+  s2 see: 'Check your internet and open the link again.'
+  s2 not: 'Gym not found' for a gym that exists
+J-F-web-108-06 | type 6 | prospect | The gym switches off online sign-ups after the link was sent
+  s1 see: Gym name as the heading
+  s1 see: 'invites you to the MettleUp app'
+  s1 see: The 6-letter gym code
+  s1 see: No Not a member yet? card
+  s1 not: A Become a member button that leads to a closed page
+J-F-web-108-07 | type 12 | prospect | The invite link forwarded to a stranger
+  s1 see: Only the gym's name, code and logo; title 'Join <gym> on MettleUp'
+  s1 not: Any member's name or number
+  s1 not: The inviter's phone number
+J-F-web-108-08 | type 1 | member | An Android phone with the MettleUp app, the invite link from the gym
+  s1 see: Gym name as the heading
+  s1 see: 'invites you to the MettleUp app'
+  s1 see: The 6-letter gym code
+  s1 not: Another gym
+  s2 see: The MettleUp app opens on joining this gym
+  s2 not: The Play Store when the app is already installed
+J-F-web-108-09 | type 2 | member | An Android phone with only the older ForgeAI app
+  s1 see: Chrome comes back with try=old and opens the older app on the join
+  s1 not: A loop
+  s1 not: A dead end with no way to Google Play
+J-F-web-108-10 | type 3 | member | A link with a short code
+  s1 see: 'Gym not found'
+  s1 not: A server error page
+J-F-web-108-11 | type 6 | member | The gym changed its name a minute ago
+  s1 see: The old name for up to 5 minutes, then the new name
+  s1 not: The old name kept for longer than 5 minutes
+J-F-web-108-12 | type 12 | member | The invite link preview in WhatsApp
+  s1 see: 'Join <gym> on MettleUp'
+  s1 see: '<gym> invites you to the MettleUp app. Tap to join. Gym code <code>.'
+  s1 not: The member's own name or number in the preview
+J-F-web-109-01 | type 1 | member | At the gym, Android phone with the MettleUp app, the check-in QR poster
+  s1 see: 'Check in at <gym>'
+  s1 see: Button 'Check in with the MettleUp app'
+  s1 see: 'No app? No problem.' 'The front desk can check you in.'
+  s1 not: Another gym's name
+  s2 see: The app opens its check-in screen for this gym
+  s2 not: A check-in at another gym
+  s2 not: A loop back to the page
+J-F-web-109-02 | type 2 | member | Android phone without the app
+  s1 see: Card 'First, get the MettleUp app'
+  s1 see: 'Join your gym in the app, then scan the poster again.'
+  s1 see: Button 'Get it on Google Play'
+  s1 not: A dead end
+J-F-web-109-03 | type 2 | member | An iPhone
+  s1 see: 'MettleUp is an Android app for now'
+  s1 see: 'Check in at the front desk today.'
+  s1 not: A Check in button that cannot work
+J-F-web-109-04 | type 3 | member | An old or wrong poster
+  s1 see: 'This poster doesn’t match a gym'
+  s1 see: 'Check in at the front desk, and ask them for a new poster.'
+  s1 not: A check-in at a wrong gym
+  s2 see: 'Couldn’t reach the gym'
+  s2 not: 'Gym not found' for a real gym
+J-F-web-109-05 | type 6 | member | Only the older ForgeAI app installed
+  s1 see: Chrome comes back with try=old and opens the older app
+  s1 not: A loop between the two
+J-F-web-109-06 | type 12 | member | Anyone scans the poster
+  s1 see: Only the gym's name and logo
+  s1 not: A member's name or number on the page

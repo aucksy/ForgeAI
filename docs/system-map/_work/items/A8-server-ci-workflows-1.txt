@@ -1,0 +1,628 @@
+# A8-server-ci-workflows-1: coverage of 91 Tier 1 journeys (16 features, from A5-server-ci-workflows-1, A5-server-ci-workflows-2). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-server-602 | apps/dashboard/test/crm/assistant/todayApiVoice.test.ts | unit | 165 lines | asserts 1 journey phrase(s)
+F-server-602 | apps/dashboard/test/crm/joinPay.test.ts | unit | 223 lines | asserts 1 journey phrase(s)
+F-server-602 | apps/dashboard/test/crm/pin.test.ts | unit | 159 lines | asserts 1 journey phrase(s)
+F-server-602 | apps/mobile/test/lib/loadState.test.ts | unit | 85 lines | asserts 1 journey phrase(s)
+F-server-602 | apps/mobile/test/shop/leaderboardPush.test.ts | unit | 269 lines | asserts 1 journey phrase(s)
+F-server-602 | apps/mobile/test/shop/mateShare.test.ts | unit | 125 lines | asserts 1 journey phrase(s)
+F-server-602 | apps/mobile/test/tracker/auditC5RestBell.test.ts | unit | 132 lines | asserts 1 journey phrase(s)
+F-server-602 | apps/mobile/test/tracker/watchInstall.test.ts | unit | 159 lines | asserts 1 journey phrase(s)
+F-server-602 | apps/mobile/test/tracker/watchUpdate.test.ts | unit | 240 lines | asserts 1 journey phrase(s)
+F-server-602 | deploy/hq/readLog.test.mjs | unit | 152 lines | asserts 1 journey phrase(s)
+F-server-602 | deploy/panel/assist.test.mjs | unit | 473 lines | asserts 1 journey phrase(s)
+F-server-602 | deploy/panel/assistPlan.test.mjs | unit | 298 lines | asserts 1 journey phrase(s)
+F-server-603 | apps/mobile/test/cloud/copyPlan.test.ts | unit | 205 lines | asserts 2 journey phrase(s)
+F-server-603 | apps/dashboard/e2e/hq-webpage-uat.spec.mjs | e2e | 166 lines | asserts 1 journey phrase(s)
+F-server-603 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-server-603 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | asserts 1 journey phrase(s)
+F-server-603 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 1 journey phrase(s)
+F-server-603 | apps/mobile/qa/uat-b2.yaml | maestro | 45 lines | asserts 1 journey phrase(s)
+F-server-603 | apps/mobile/test/onboarding/startup.test.ts | unit | 185 lines | asserts 1 journey phrase(s)
+F-server-603 | deploy/hq/readLog.test.mjs | unit | 152 lines | asserts 1 journey phrase(s)
+F-server-603 | deploy/panel/assistCatalogue.test.mjs | unit | 184 lines | asserts 1 journey phrase(s)
+F-server-603 | supabase/tests/0037_leaderboard.sql | db | 548 lines | asserts 1 journey phrase(s)
+F-server-604 | deploy/panel/pay.test.mjs | unit | 393 lines | asserts 3 journey phrase(s)
+F-server-604 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 2 journey phrase(s)
+F-server-604 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 1 journey phrase(s)
+F-server-604 | apps/dashboard/test/crm/assistant/messageLang.test.ts | unit | 175 lines | asserts 1 journey phrase(s)
+F-server-604 | deploy/hq/billing.test.mjs | unit | 448 lines | asserts 1 journey phrase(s)
+F-server-605 | (no candidate found by the script)
+F-server-610 | apps/mobile/test/lib/loadState.test.ts | unit | 85 lines | asserts 1 journey phrase(s)
+F-server-610 | apps/mobile/test/tracker/phase5ProgressTop.test.ts | unit | 271 lines | asserts 1 journey phrase(s)
+F-server-610 | deploy/hq/readLog.test.mjs | unit | 152 lines | asserts 1 journey phrase(s)
+F-server-610 | deploy/panel/assistCatalogue.test.mjs | unit | 184 lines | asserts 1 journey phrase(s)
+F-server-611 | (no candidate found by the script)
+F-server-612 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-server-612 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-server-612 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-server-612 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 1 journey phrase(s)
+F-server-612 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-server-612 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-server-612 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 1 journey phrase(s)
+F-server-612 | apps/mobile/test/tracker/watchBridge.test.ts | unit | 153 lines | asserts 1 journey phrase(s)
+F-server-613 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 1 journey phrase(s)
+F-server-613 | apps/dashboard/test/crm/assistant/todayApiVoice.test.ts | unit | 165 lines | asserts 1 journey phrase(s)
+F-server-613 | apps/dashboard/test/crm/installSteps.test.ts | unit | 43 lines | asserts 1 journey phrase(s)
+F-server-613 | apps/dashboard/test/crm/joinPay.test.ts | unit | 223 lines | asserts 1 journey phrase(s)
+F-server-613 | apps/mobile/test/lib/feedback.test.ts | unit | 59 lines | asserts 1 journey phrase(s)
+F-server-613 | apps/mobile/test/lib/loadState.test.ts | unit | 85 lines | asserts 1 journey phrase(s)
+F-server-613 | apps/mobile/test/shop/leaderboardPush.test.ts | unit | 269 lines | asserts 1 journey phrase(s)
+F-server-613 | apps/mobile/test/shop/mateShare.test.ts | unit | 125 lines | asserts 1 journey phrase(s)
+F-server-613 | apps/mobile/test/tracker/watchInstall.test.ts | unit | 159 lines | asserts 1 journey phrase(s)
+F-server-613 | apps/mobile/test/tracker/watchUpdate.test.ts | unit | 240 lines | asserts 1 journey phrase(s)
+F-server-613 | deploy/panel/appLink.test.mjs | unit | 259 lines | asserts 1 journey phrase(s)
+F-server-613 | deploy/panel/assist.test.mjs | unit | 473 lines | asserts 1 journey phrase(s)
+F-server-614 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 2 journey phrase(s)
+F-server-614 | apps/dashboard/e2e/trainers-uat.spec.mjs | e2e | 282 lines | asserts 1 journey phrase(s)
+F-server-614 | apps/dashboard/test/crm/assistant/todayApiVoice.test.ts | unit | 165 lines | asserts 1 journey phrase(s)
+F-server-614 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 1 journey phrase(s)
+F-server-614 | apps/dashboard/test/crm/joinPay.test.ts | unit | 223 lines | asserts 1 journey phrase(s)
+F-server-614 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | asserts 1 journey phrase(s)
+F-server-614 | apps/mobile/test/lib/loadState.test.ts | unit | 85 lines | asserts 1 journey phrase(s)
+F-server-614 | apps/mobile/test/shop/leaderboardPush.test.ts | unit | 269 lines | asserts 1 journey phrase(s)
+F-server-614 | apps/mobile/test/shop/mateShare.test.ts | unit | 125 lines | asserts 1 journey phrase(s)
+F-server-614 | apps/mobile/test/shop/trainerShare.test.ts | unit | 155 lines | asserts 1 journey phrase(s)
+F-server-614 | apps/mobile/test/tracker/watchInstall.test.ts | unit | 159 lines | asserts 1 journey phrase(s)
+F-server-614 | apps/mobile/test/tracker/watchUpdate.test.ts | unit | 240 lines | asserts 1 journey phrase(s)
+F-server-615 | apps/mobile/test/tracker/batch2Screens.test.ts | unit | 184 lines | asserts 2 journey phrase(s)
+F-server-615 | deploy/panel/helpArticles.test.mjs | unit | 156 lines | asserts 2 journey phrase(s)
+F-server-615 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-server-615 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-server-615 | apps/dashboard/test/crm/installSteps.test.ts | unit | 43 lines | asserts 1 journey phrase(s)
+F-server-615 | apps/dashboard/test/crm/pin.test.ts | unit | 159 lines | asserts 1 journey phrase(s)
+F-server-615 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-server-615 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-server-615 | apps/mobile/test/backup/backupFormat.test.ts | unit | 136 lines | asserts 1 journey phrase(s)
+F-server-615 | apps/mobile/test/backup/backupRoundTrip.test.ts | unit | 432 lines | asserts 1 journey phrase(s)
+F-server-615 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-server-615 | apps/mobile/test/cloud/restoreRepairs.test.ts | unit | 233 lines | asserts 1 journey phrase(s)
+F-server-616 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 1 journey phrase(s)
+F-server-616 | apps/mobile/qa/real-workout-w1.yaml | maestro | 368 lines | asserts 1 journey phrase(s)
+F-server-616 | apps/mobile/qa/store-a.yaml | maestro | 219 lines | asserts 1 journey phrase(s)
+F-server-616 | apps/mobile/qa/sub-uat-r482-restore.yaml | maestro | 117 lines | asserts 1 journey phrase(s)
+F-server-616 | apps/mobile/qa/uat-bk.yaml | maestro | 229 lines | asserts 1 journey phrase(s)
+F-server-616 | apps/mobile/qa/uat-d-hevy-replace.yaml | maestro | 83 lines | asserts 1 journey phrase(s)
+F-server-616 | apps/mobile/qa/uat-rel-1-seed.yaml | maestro | 237 lines | asserts 1 journey phrase(s)
+F-server-616 | apps/mobile/qa/v0270-i.yaml | maestro | 614 lines | asserts 1 journey phrase(s)
+F-server-616 | apps/mobile/qa/v0280-j.yaml | maestro | 427 lines | asserts 1 journey phrase(s)
+F-server-616 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-server-616 | apps/mobile/qa/v0290-l.yaml | maestro | 401 lines | asserts 1 journey phrase(s)
+F-server-616 | apps/mobile/qa/xc-4c-import-start.yaml | maestro | 58 lines | asserts 1 journey phrase(s)
+F-server-619 | (no candidate found by the script)
+F-server-600 | apps/mobile/test/tracker/watchInstall.test.ts | unit | 159 lines | file name, asserts 1 journey phrase(s)
+F-server-600 | apps/mobile/test/tracker/watchUpdate.test.ts | unit | 240 lines | file name, asserts 1 journey phrase(s)
+F-server-600 | deploy/hq/readLogAlert.test.mjs | unit | 265 lines | asserts 3 journey phrase(s)
+F-server-600 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | file name
+F-server-600 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLogRenderTest.kt | watch | 282 lines | file name
+F-server-600 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLogTest.kt | watch | 303 lines | file name
+F-server-600 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchNextExerciseTest.kt | watch | 74 lines | file name
+F-server-600 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchScreensRenderTest.kt | watch | 336 lines | file name
+F-server-600 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchVersionTest.kt | watch | 31 lines | file name
+F-server-600 | apps/mobile/qa/uat-rel-r438-a-watch-update.yaml | maestro | 89 lines | file name
+F-server-600 | apps/mobile/qa/uat-rel-r438-b-watch-update.yaml | maestro | 184 lines | file name
+F-server-600 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 2 journey phrase(s)
+F-server-620 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-server-620 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-server-620 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-server-620 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-server-620 | apps/mobile/test/backup/backupFormat.test.ts | unit | 136 lines | asserts 1 journey phrase(s)
+F-server-620 | apps/mobile/test/backup/backupRoundTrip.test.ts | unit | 432 lines | asserts 1 journey phrase(s)
+F-server-620 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-server-620 | apps/mobile/test/cloud/restoreRepairs.test.ts | unit | 233 lines | asserts 1 journey phrase(s)
+F-server-620 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-server-620 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-server-621 | apps/dashboard/e2e/terms.spec.mjs | e2e | 149 lines | asserts 2 journey phrase(s)
+F-server-621 | apps/mobile/test/shop/offerActions.test.ts | unit | 189 lines | asserts 2 journey phrase(s)
+F-server-621 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-server-621 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | asserts 1 journey phrase(s)
+F-server-621 | apps/dashboard/test/crm/gymReports.test.ts | unit | 140 lines | asserts 1 journey phrase(s)
+F-server-621 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | asserts 1 journey phrase(s)
+F-server-621 | apps/dashboard/test/crm/planRequests.test.ts | unit | 239 lines | asserts 1 journey phrase(s)
+F-server-621 | apps/dashboard/test/crm/plusLock.test.ts | unit | 92 lines | asserts 1 journey phrase(s)
+F-server-621 | apps/dashboard/test/crm/terms.test.ts | unit | 75 lines | asserts 1 journey phrase(s)
+F-server-621 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 1 journey phrase(s)
+F-server-621 | apps/mobile/modules/forge-rest/android/src/test/java/com/forgeai/rest/WearWireTest.kt | native | 459 lines | asserts 1 journey phrase(s)
+F-server-621 | apps/mobile/test/lib/helpHistory.test.ts | unit | 207 lines | asserts 1 journey phrase(s)
+F-server-601 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 2 journey phrase(s)
+F-server-601 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 2 journey phrase(s)
+F-server-601 | apps/mobile/test/cloud/copyPlan.test.ts | unit | 205 lines | asserts 2 journey phrase(s)
+F-server-601 | apps/mobile/test/shop/offerActions.test.ts | unit | 189 lines | asserts 2 journey phrase(s)
+F-server-601 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-server-601 | apps/dashboard/e2e/r534-training-progress-uat.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-server-601 | apps/dashboard/test/crm/assistant/messageLang.test.ts | unit | 175 lines | asserts 1 journey phrase(s)
+F-server-601 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | asserts 1 journey phrase(s)
+F-server-601 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 1 journey phrase(s)
+F-server-601 | apps/dashboard/test/crm/gymReports.test.ts | unit | 140 lines | asserts 1 journey phrase(s)
+F-server-601 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | asserts 1 journey phrase(s)
+F-server-601 | apps/dashboard/test/crm/pageChat.test.ts | unit | 118 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-server-602-01 | type 1 | system | A push to any branch (not a v* tag)
+  s1 see: Run 'CI' with job 'check' on the Actions page
+  s1 not: The run skipped for a branch push
+  s1 not: The job on ubuntu-latest, where Playwright cannot install Chrome
+  s2 see: 'all phone-test files parse'
+  s2 not: A phone-test file that cannot be parsed reaching the 2-hour cloud phone run
+  s3 see: Three green 'Unit tests (mobile...)' steps
+  s3 not: A date test red in only one time zone leaving the job green
+  s4 see: Artifact 'dashboard-dist' kept 3 days
+  s4 not: A failed build still uploading 'dashboard-dist' for the deploy
+  s5 see: Artifact 'dashboard-uat-pictures' kept 7 days, also when the run failed
+  s5 not: A page error, console error or sideways overflow passing the crawl
+  s5 not: UAT pictures missing from a red run
+J-F-server-602-02 | type 2 | system | A pull request is opened, or someone presses 'Run workflow' on CI
+  s1 see: The same steps as a push, on the pull request's code
+  s1 not: A pull request merged with no 'check' run
+  s1 not: A different, shorter list of steps for a pull request
+J-F-server-602-03 | type 3 | system | A push that adds a new silent catch, a new bare scroll check, or pushes a v* tag
+  s1 see: Step 'Silent-catch ratchet' red; job 'check' red
+  s1 not: The baseline count raised by the run so the push passes
+  s2 see: Step 'Phone-test scroll lint' red
+  s2 not: The new bare check accepted because the old count still fits
+  s3 see: No 'CI' run for the tag (release-apk.yml runs the checks)
+  s3 not: Two different gates for one tag
+J-F-server-602-04 | type 6 | system | A push where a warn-only check finds a problem
+  s1 see: '::warning::expo-doctor: N check(s) failed (warn only, ...)' on the run page
+  s1 see: Job 'check' still green
+  s1 not: A warn-only step turning the whole job red
+  s1 not: A warn-only failure hidden with no warning line
+  s2 see: The parity gap now turns the job red
+  s2 not: The switch left on warn after iPhone work restarts
+J-F-server-603-01 | type 1 | system | A push to any branch (not a v* tag)
+  s1 see: Step 'Start a local Supabase (applies every migration)' green
+  s1 not: A migration skipped or applied out of order
+  s2 see: No error lines
+  s2 not: A broken function body passing the lint
+  s3 see: 'ok <file>: ...' for each file
+  s3 not: A FAIL line while the job stays green
+  s4 see: 'RESULT PASS: every table and sign-in account came back identical (N checked)'
+  s4 not: A table missing after restore while the drill passes
+J-F-server-603-02 | type 3 | system | A push with a broken migration or a failing security check
+  s1 see: 'plpgsql lint' red; job 'database' red
+  s1 not: Later steps reported green after the lint failed
+  s2 see: 'FAIL <file>:' and its last 20 lines; job red
+  s2 not: The other files' 'ok' lines hiding the failure
+J-F-server-603-03 | type 6 | system | The backup restore drill runs on the throw-away database
+  s1 see: The wipe check: public.gyms count is 0
+  s1 not: 'FAIL: the wipe did not wipe' ignored
+  s2 see: 'ok: a restore over live rows is refused and changes nothing'
+  s2 not: A second restore allowed over live rows
+  s2 not: The refused restore changing rows
+J-F-server-603-04 | type 12 | system | A push runs the security check
+  s1 see: 'ok' for each security file
+  s1 not: A new function callable without signing in that is not on the exact list
+  s1 not: Gym A reading gym B in the check while the job is green
+J-F-server-604-01 | type 1 | system | A push to main
+  s1 see: 'Razorpay test-mode check. Key ID: rzp_test_**** (hidden). Amount: Rs 1.'
+  s1 not: The key printed in the log
+  s1 not: A live key used
+  s2 see: 'PASS' lines, then 'All checks passed.'
+  s2 not: Real money moving
+  s2 not: A FAIL line while the job is green
+J-F-server-604-02 | type 2 | system | Someone presses 'Run workflow' on CI, on any branch
+  s1 see: The same Razorpay check as a push to main
+  s1 not: The job skipped on a hand start
+J-F-server-604-03 | type 3 | system | Wrong keys in the secrets
+  s1 see: 'REFUSED: the Key ID is not a Razorpay TEST key (it must start with rzp_test_). Nothing was asked.'; job red
+  s1 not: Any call to Razorpay with a live key
+  s2 see: Job 'razorpay-test-mode' skipped
+  s2 not: Razorpay called from a pull request or a fork
+  s3 see: 'SKIPPED: no Razorpay test keys here (a fork or a pull request). Nothing was asked.'; job green
+  s3 not: A green job on main that checked nothing
+J-F-server-604-04 | type 6 | system | The test link goes through its states
+  s1 see: The read after cancel shows the link cancelled
+  s1 not: The test link left active at Razorpay
+  s2 see: 'that connection is switched off as bad keys (off, bad_keys)' PASS
+  s2 not: The connection left on with bad keys
+  s2 not: Anything marked paid
+J-F-server-604-05 | type 12 | system | Any run of the Razorpay check
+  s1 see: 'Key ID: rzp_test_**** (hidden)'
+  s1 not: The key ID or secret shown in the log
+  s1 not: A live key accepted
+J-F-server-605-01 | type 1 | HQ admin | GitHub Actions page, workflow 'exercise-clips'
+  s1 see: Jobs plan, assets, render (one per recipe, up to 20 at once), publish
+  s1 not: A recipe silently left out of the matrix
+  s2 see: Artifact 'clip-<key>' kept 14 days
+  s2 not: Blender or MPFB used when its checksum does not match
+  s3 see: Files key.v1.webp, key.v1.mp4, key.v1.poster.webp on the release
+  s3 not: The clips release marked as the latest app release
+J-F-server-605-02 | type 2 | HQ admin | Run 'exercise-clips' with mode stills
+  s1 see: Artifact 'stills-<key>' with <key>__start.png and <key>.checks.txt, kept 14 days
+  s1 not: Stills uploaded to the exercise-clips release
+J-F-server-605-03 | type 2 | HQ admin | Run 'exercise-clips' with a short list of keys
+  s1 see: Only those two render jobs
+  s1 not: Every recipe rendered when keys were given
+J-F-server-605-04 | type 3 | HQ admin | Run 'exercise-clips' with a key that has no recipe, or publish off
+  s1 see: Job plan red: 'no recipe for: <key>'
+  s1 not: Render jobs started for the other keys with a partial matrix
+  s2 see: Clips only as artifacts; release unchanged
+  s2 not: Anything uploaded to the release
+J-F-server-605-05 | type 6 | HQ admin | A clip already published, then the run repeated
+  s1 see: The release files with the same names replaced
+  s1 not: The app showing the old clip with no sign it changed
+  s2 see: Publish still runs with the clips that rendered
+  s2 not: The failed key's old clip deleted
+  s2 not: The run shown green with a key missing
+J-F-server-610-01 | type 1 | HQ admin | GitHub Actions page, workflow 'Play store listing (pictures in order)'
+  s1 see: Steps 'Self-tests (Play scripts)', 'Google sign-in (keyless, Workload Identity Federation)'
+  s1 not: A key file created for the sign-in
+  s2 see: 'Uploading screenshots in this order: ...; LIVE'
+  s2 see: 'Screenshots in the edit: ...'
+  s2 not: The screenshots in a different order than shot-01 to shot-08
+  s3 see: 'FINAL screenshot order on Play: ...' and 'RESULT: ...'
+  s3 not: A commit when the order Play reports is not the one uploaded
+J-F-server-610-02 | type 2 | HQ admin | Run the listing workflow with 'Also set the title / short / full description from listing-draft.txt'
+  s1 see: 'Listing text set: title ..., short N chars, ...'
+  s1 not: A title or description cut by Play without a word
+J-F-server-610-03 | type 3 | HQ admin | Listing text too long, or Play reports a wrong picture order
+  s1 see: '<field> is N characters; Play allows M'; run red
+  s1 not: A half-changed listing
+  s2 see: 'Play reports ..., expected .... Edit discarded; nothing changed on Play.'
+  s2 not: The wrong order committed
+J-F-server-610-04 | type 6 | HQ admin | A dry run
+  s1 see: '...; DRY RUN' and 'RESULT: validated'
+  s1 not: The live listing changed by a dry run
+J-F-server-611-01 | type 1 | system | A v* tag release run whose publish job succeeded
+  s1 see: 'Tag v0.N.N, dry run: false'
+  s1 not: A start before the release's publish job succeeded
+  s1 not: Two starts for one release
+  s2 see: Its byte count in the log
+  s2 not: What's new notes from main instead of the tag
+  s3 see: The AAB listed in the log
+  s3 not: A rebuilt AAB uploaded instead of the gated, signed release asset
+  s4 see: The phone build on internal, alpha and beta with the What's new notes
+  s4 not: The production track touched
+  s5 see: The watch build on wear:internal, wear:closed, wear:beta
+  s5 not: A watch failure undoing the phone tracks
+  s5 not: A watch failure hidden (it must turn the job red)
+J-F-server-611-02 | type 2 | system | A release made before 0.60.0 (no watch bundle)
+  s1 see: '::notice::<tag> has no mettleup-<tag>-wear.aab (watch bundles start with 0.60.0): nothing to upload for the watch.'
+  s1 not: A failed GitHub call read as 'no watch bundle'
+J-F-server-611-03 | type 3 | system | A bad tag or a production track
+  s1 see: '::error::'<tag>' is not a release tag like v0.57.0.'
+  s1 not: Anything uploaded
+  s2 see: 'refusing to touch the production track ...'
+  s2 not: Production or wear:production changed
+  s3 see: A warning; internal and closed still go out
+  s3 not: The whole upload failing for the open track
+J-F-server-611-04 | type 6 | system | The same tag uploaded a second time
+  s1 see: Each track that already has the versionCode skipped with a log line
+  s1 not: A second release on a track
+  s1 not: A versionCode error turning the job red
+J-F-server-611-05 | type 1 | HQ admin | GitHub Actions page, workflow 'Play upload (testing tracks)'
+  s1 see: 'Tag v0.57.1, dry run: true'
+  s1 not: Dry run off by default on a hand start
+  s2 see: Play validated the edit; nothing committed
+  s2 not: A testing track changed by a dry run
+J-F-server-611-06 | type 3 | HQ admin | Hand start with a wrong tag
+  s1 see: '::error::'0.57.1' is not a release tag like v0.57.0.'
+  s1 not: A download or upload attempted
+  s2 see: The download step red
+  s2 not: A rebuild started in its place
+J-F-server-611-07 | type 6 | HQ admin | Hand start with dry run off, then again
+  s1 see: Tracks internal, alpha, beta and the watch tracks get the release
+  s1 not: Production touched
+  s2 see: Every track skipped: it already has that versionCode
+  s2 not: A second release on any track
+J-F-server-612-01 | type 1 | HQ admin | GitHub Actions page, workflow 'Phone conditions (offline, flaky, killed, Doze, upgrade)'
+  s1 see: Run named 'Phone conditions (all)'
+  s1 not: The run counted by the release gate
+  s2 see: 'Condition 1 old side: vX (mettleup-vX.apk)'
+  s2 not: A ForgeAI (com.forgeai.app) release used as the old side
+  s3 see: 'Same signers as the published vX.'
+  s3 not: An old side signed differently from the published APK
+  s4 see: Each condition checked on screen and in what the phone or server holds
+  s4 not: Two orders or two visits after reconnecting
+  s4 not: 'Rest is over' late in deep Doze
+  s5 see: Artifact 'qa-conditions' kept 14 days
+  s5 not: Evidence missing when a condition failed
+J-F-server-612-02 | type 2 | HQ admin | Run only some conditions
+  s1 see: Run named 'Phone conditions (2,5)'; only offline and Doze run
+  s1 not: Other conditions run, or the name says all
+J-F-server-612-03 | type 3 | HQ admin | No MettleUp release yet, or the old side signed wrongly
+  s1 see: '::notice::No published MettleUp release yet (only ForgeAI ones, another app on the phone): condition 1 (upgrade) is skipped.'
+  s1 not: The run red for the missing release
+  s2 see: '::error::The rebuilt vX is not signed like the published one.'
+  s2 not: The upgrade test run on a wrongly signed old side
+J-F-server-612-04 | type 6 | HQ admin | The release key is not available to the run
+  s1 see: '::warning::No release key here: both sides stay on the debug key (condition 1 then proves less).'
+  s1 not: A green upgrade presented as proof of the real release signing
+J-F-server-612-05 | type 12 | HQ admin | Any conditions run
+  s1 see: A new test gym used for the orders and visits
+  s1 not: FORGE1 or RAMS01 or any real gym touched
+  s1 not: The owner session left signed in
+J-F-server-613-01 | type 1 | HQ admin | GitHub Actions page, workflow 'Device QA (Android emulator)'
+  s1 see: Run named 'Device QA (Android emulator)'
+  s1 not: A whole run named partial, so the gate ignores it
+  s2 see: 'affected parts: ...' and 'APK sha256 <hash>'
+  s2 not: Each shard building its own APK
+  s3 see: 'device-qa (<shard>)' jobs; the first red cancels the rest
+  s3 not: 'This shard's APK is not the one built for this run.' ignored
+  s3 not: A round running on for hours after a red part
+  s4 see: Step 'Every shard green, every part run'; artifact 'qa-out' kept 30 days
+  s4 not: A green run when a part never ran
+J-F-server-613-02 | type 2 | HQ admin | Run the device test on the owner's phone profile
+  s1 see: Run named 'Device QA (owner phone, api 34)'
+  s1 not: The owner run named so the gate cannot find it
+J-F-server-613-03 | type 2 | HQ admin | Run only some parts
+  s1 see: Run named 'Device QA (partial u461, api 34, profile default)'; one piece
+  s1 not: A partial run opening the release gate
+J-F-server-613-04 | type 3 | HQ admin | Run on another Android version
+  s1 see: Run named 'Device QA (partial whole run, api 35, profile default)'
+  s1 not: A non-34 run counted by the release gate
+  s2 see: '::error::A shard failed (see its summary).' in job report
+  s2 not: Job report green
+J-F-server-613-05 | type 6 | HQ admin | A red round fixed and finished
+  s1 see: The older run cancelled
+  s1 not: Two whole runs of the same phone at once
+  s2 see: Green shards keep their evidence; job report checks all of them again
+  s2 not: Green shards' evidence lost on re-run
+J-F-server-613-06 | type 12 | HQ admin | Any device test build
+  s1 see: Made-up answers that say on screen they are test data; a stand-in store that takes no money
+  s1 not: Stand-ins in a store or GitHub release build
+  s1 not: A real payment taken by the test
+J-F-server-613-07 | type 1 | system | A v* tag's release run reaches its phone gate
+  s1 see: Runs named 'Device QA (Android emulator...)' and 'Device QA (owner phone, api 34...)' found green
+  s1 not: A partial run accepted
+  s1 not: A run on another commit accepted
+J-F-server-613-08 | type 2 | system | A later release workflow calls this one with uses:
+  s1 see: The run recorded under the caller's workflow name
+  s1 not: The gate looking for the run under this file's name and not finding it
+J-F-server-613-09 | type 3 | system | Release tagged with no owner-profile whole run
+  s1 see: unknown: gate words not read (scripts/ci/phone_gate.py)
+  s1 not: The release built without the owner-profile run
+J-F-server-613-10 | type 6 | system | The whole run is cancelled by a newer one
+  s1 see: The older run cancelled
+  s1 not: The cancelled run counted as passing by the gate
+J-F-server-614-01 | type 1 | HQ admin | GitHub, Actions tab, workflow 'Cross-role journeys (phone + admin app + server)' on main
+  s1 see: A run named 'Cross-role journeys (owner phone, api 34)' starts
+  s1 not: The run tests an admin app or member app not built from this commit
+  s2 see: Steps 'Build the admin app', 'Build an emulator APK (x86_64)', 'Free disk space for the emulator', 'Run the cross-role journeys' turn green
+  s2 not: The emulator download dies with 'No space left on device'
+  s2 not: The run makes its gyms in a real customer's gym
+  s3 see: One line per journey: 'PASS (<n> steps)' or 'FAILED at step <n> (<who>: <what>)'
+  s3 see: 'Gyms: <A>, <B>, made fresh for this run; owner sessions signed out.'
+  s3 not: A journey shown PASS after one of its steps failed
+  s3 not: A failed run ending green
+  s4 see: Screenshots of both apps, journeys/<J>.log, journeys/<J>-step<n>-failed.png, timeline.txt
+  s4 not: A key-shaped string left in the evidence (the run must stop with 'KEY CHECK FAILED')
+J-F-server-614-02 | type 3 | HQ admin | A run where the phone seed or one hand-off fails
+  s1 see: 'SEED FAILED: the phone (journeys/seed.log)' or '<J> step <n> FAILED (<who>: <what>) after <s>s'
+  s1 see: Later steps of that journey logged as 'SKIPPED: the journey already failed at ...'
+  s1 not: Later steps of a failed journey run on and report PASS
+  s1 not: The run turns green
+  s2 see: 'journeys finished: FAILED'
+  s2 see: The failed step's screenshot
+  s2 not: No picture of the failed step
+J-F-server-614-03 | type 6 | HQ admin | Two runs in a row
+  s1 see: Two new gyms with new codes, made fresh for this run
+  s1 not: The second run reuses the first run's gyms or orders and passes on old data
+  s2 see: Owner sessions of both runs signed out
+  s2 not: An owner session of the earlier run still signed in
+J-F-server-614-04 | type 12 | HQ admin | Any finished run
+  s1 see: Two test gyms per run stay on the live server (the script says the gyms stay behind)
+  s1 see: Artifact with screenshots of test gyms only
+  s1 not: Any real gym's members, names or numbers in the screenshots or logs
+  s1 not: A token or key printed in the public run log
+J-F-server-615-01 | type 1 | HQ admin | app.json version bumped to the new version on main; owner said 'release'
+  s1 see: Run 'Build & Release (APK + AAB)' starts: phone-gate, build, update-proof, publish, play-upload
+  s1 not: A release starts without the owner's 'release' word
+  s1 not: The tag and app.json versions differ and the build goes on
+  s2 see: 'Require a passing phone test on this commit' green
+  s2 not: The gate skipped on a tag
+  s3 see: Files mettleup-v<version>.apk, .aab, -wear.apk, -wear.aab, .js.map, whats-new.json in artifact 'forgeai-build'
+  s3 see: 'AAB signer SHA-256: <one hash>'
+  s3 not: A phone APK signed with a different key than the watch APK
+  s3 not: A versionCode lower than the last release's
+  s4 see: The previous release installs, then this build updates it in place with the same firstInstallTime and the data marker intact
+  s4 not: A build that needs an uninstall published
+  s5 see: GitHub Release 'MettleUp v<version>' with the four app files, the source map and whats-new.json
+  s5 see: The AABs sent to Play's internal and closed tests
+  s5 not: Anything sent to Play production
+  s5 not: The Release published when update-proof failed
+J-F-server-615-02 | type 2 | HQ admin | Actions tab, 'Build & Release (APK + AAB)', Run workflow on main (dry run)
+  s1 see: Version name '<version>-dryrun.<run number>'
+  s1 see: build and update-proof run
+  s1 not: A dry run publishing a Release
+  s1 not: A dry run uploading to Play
+  s2 see: The gate step says loudly that it was skipped
+  s2 not: skip_phone_gate taking effect on a tag push
+J-F-server-615-03 | type 3 | HQ admin | Tag pushed but app.json still says the old version
+  s1 see: 'Tag v<new> but apps/mobile/app.json says <old>. Bump app.json first.' and the build stops
+  s1 not: Phones told to update to their own version
+  s1 not: A Release published
+  s2 see: phone-gate red; nothing built
+  s2 not: The build and publish running anyway
+J-F-server-615-04 | type 6 | HQ admin | A tag for a version already released, or a re-run of a failed release
+  s1 see: Jobs re-run; publish only after build and update-proof both pass
+  s1 not: A second Release for the same tag
+  s1 not: Play getting the same versionCode twice
+  s2 see: The release checks fail and nothing is published
+  s2 not: An older versionCode reaching phones
+J-F-server-615-05 | type 12 | HQ admin | A published release
+  s1 see: App files, source map and whats-new.json public on the Release
+  s1 see: 'Secrets present' style lines only; no key, password or keystore printed
+  s1 not: The keystore or its password in the log
+  s1 not: The keystore file left on the runner after the signing step
+J-F-server-615-06 | type 1 | system | A tag v<version> reaches GitHub
+  s1 see: phone-gate runs phone_gate.py against qa-device.yml results for this commit or its parent
+  s1 not: The run starting from a branch push
+  s2 see: v1/v2 debug key, v3 release key with lineage; '16 KB zip alignment kept after signing.'
+  s2 not: 'Signing broke the 16 KB zip alignment that Gradle's APK had.' ignored
+  s2 not: The keystore left in $RUNNER_TEMP after the step
+  s3 see: play-upload called with tag v<version>, dry_run false
+  s3 not: play-upload running when publish failed
+J-F-server-615-07 | type 3 | system | Signing secrets half set
+  s1 see: 'ANDROID_KEY_ALIAS is not set; refusing to ship a half-configured signature.' and the run fails
+  s1 not: A half-signed APK uploaded
+  s2 see: Warning 'ANDROID_KEYSTORE_BASE64 is not set, so this build is signed with the PUBLIC debug key only'; release checks fail it when ALLOWED_CERT_SHA256 is set
+  s2 not: A debug-only build published silently
+J-F-server-615-08 | type 6 | system | update-proof fails after a successful build
+  s1 see: update-proof red; artifact 'update-proof' with evidence (kept 30 days)
+  s1 not: publish or play-upload running
+J-F-server-616-01 | type 1 | HQ admin | Actions tab, 'Store screens (Play Store app pictures)'
+  s1 see: Job 'build' builds an emulator APK and uploads artifact 'qa-apk' (kept 7 days)
+  s1 not: The shots job starting before the APK exists
+  s2 see: Step 'Take the screens' runs run-store-shots.sh
+  s2 not: The run marked as a test or used as a release gate
+  s3 see: The Play Store app pictures from store-out, clean status bar, a real-looking member history
+  s3 not: A real member's name or number in a picture
+J-F-server-616-02 | type 2 | HQ admin | Actions tab, same workflow, with an earlier run's APK
+  s1 see: Job 'build' skipped; 'APK of an earlier run' downloads that run's qa-apk
+  s1 not: This commit built anyway (25 minutes lost)
+J-F-server-616-03 | type 3 | HQ admin | apk_run holds a run id whose qa-apk has expired or never existed
+  s1 see: 'APK of an earlier run' fails; the shots job stops red
+  s1 not: Pictures taken of some other app
+J-F-server-616-04 | type 6 | HQ admin | A second run after the listing changed
+  s1 see: New pictures from this commit in a new 'store-shots' artifact
+  s1 not: Old pictures mixed into the new artifact
+J-F-server-616-05 | type 12 | HQ admin | Pictures that go on Google Play
+  s1 see: Only made-up demo data
+  s1 not: A real person's data or phone number on a public store picture
+J-F-server-619-01 | type 1 | HQ admin | Actions tab, 'Watch demo video (Play foreground-service form)'
+  s1 see: Two jobs 'record (api 33)' and 'record (api 34)'
+  s1 not: The video recorded from a watch APK that was not released
+  s2 see: sha256 of watch.apk printed
+  s2 see: watch-demo-raw.mp4 and watch-demo-captioned.mp4 durations printed
+  s2 not: A job stopping the other when it fails
+  s3 see: MP4s and stills: a workout open, live heart rate, leaving the app while it keeps running, rest running out, the next set
+  s3 not: A video that does not show the foreground service at work
+J-F-server-619-02 | type 2 | HQ admin | Same workflow with another release
+  s1 see: The current release's watch APK recorded
+  s1 not: The default v0.71.0 recorded instead
+J-F-server-619-03 | type 3 | HQ admin | A tag with no watch APK asset
+  s1 see: 'gh release download' fails; the job stops red; Upload still runs
+  s1 not: An empty MP4 uploaded as if it were the video
+J-F-server-619-04 | type 6 | HQ admin | A raw video recorded but the captions step fails
+  s1 see: 'Captioned version' red, the raw MP4 still in the artifact
+  s1 not: The raw video lost
+J-F-server-600-01 | type 1 | system | Every 10 minutes (cron '*/10 * * * *'), all parts answering, no open outage issue
+  s1 see: Log lines '[outage] OK Website (mettleup.fit)', 'Admin app (app.mettleup.fit)', 'HQ (hq.mettleup.fit)', 'Gym server (data...)', 'Gym server (sign-in...)', 'Nightly backup', 'Read log'
+  s1 not: A real member's row read (only the public app key and a one-row gyms select)
+  s2 see: None open: nothing is done
+  s2 not: A new issue or email when everything answers
+J-F-server-600-02 | type 2 | system | Hand-started run (Run workflow)
+  s1 see: The same checks and the same issue logic
+  s1 not: A second issue opened next to an open one
+J-F-server-600-03 | type 3 | system | One part answers slowly once
+  s1 see: '[outage] <part>: try 1 failed: no answer in 20 s' then OK
+  s1 not: An outage issue for one slow answer
+  s2 see: Issue 'Outage: <part> not answering' with '@aucksy' and the run link
+  s2 not: No issue when a part is truly down
+J-F-server-600-04 | type 6 | system | Outage open, then what is down changes, then all answers again
+  s1 see: Issue retitled, comment 'What is down changed.' with the new list
+  s1 not: A comment every 10 minutes with the same list
+  s1 not: A second outage issue
+  s2 see: Comment 'Everything answers again (checked <time>, India time). Closing.' and the issue closed
+  s2 not: The issue left open after recovery
+  s3 see: One issue 'Reminder: the Supabase logs key ends on <d Mon yyyy>' labelled key-reminder; closed by itself when a new end date is saved
+  s3 not: The same reminder opened twice, even after it was closed
+J-F-server-600-05 | type 1 | HQ admin | Owner's email, a part of MettleUp is down
+  s1 see: 'MettleUp check at <time> (India time): this part is not answering.' and '- **<part>**: <why>'
+  s1 see: 'Members or gyms may not be able to open it now. I check every 10 minutes and close this issue by myself when everything answers again.'
+  s1 not: Several emails for one outage
+  s1 not: A time not in India time
+  s2 see: The run log with each try's failure
+  s2 not: A token or key in the log
+  s3 see: Comment 'Everything answers again ... Closing.' and the issue closed
+  s3 not: The issue staying open after recovery
+J-F-server-600-06 | type 2 | HQ admin | Read log failing for an hour (members not affected)
+  s1 see: 'the record of direct looks at gym data has not worked since <time> (India time): <reason>. Supabase keeps its logs only about a day, so fix it today.'
+  s1 see: 'Members and gyms are not affected.'
+  s1 not: The issue says members may not open the app
+J-F-server-600-07 | type 3 | HQ admin | Owner closes the outage issue by hand while the part is still down
+  s1 see: Within 10 minutes a NEW issue opens (only open issues are looked at)
+  s1 not: The outage forgotten silently
+J-F-server-600-08 | type 6 | HQ admin | Key reminder open, owner saves a new key end date
+  s1 see: Comment 'A new end date is saved for the logs key (<date>, ...). Closing this reminder.' and the reminder closed
+  s1 not: The old reminder left open
+  s1 not: A reminder reopened for a date already reminded
+J-F-server-600-09 | type 12 | HQ admin | Any outage or reminder issue
+  s1 see: The repo is public: anyone can read which part is down and why
+  s1 not: Any member, gym or key value in the issue
+J-F-server-620-01 | type 1 | system | A push to main that touches the watch app, forge-rest, the shortcut files or the watch UAT scripts
+  s1 see: Watch unit tests + rendered watch screens; artifacts 'watch-screens', 'shortcut-icons' (3 days on a push)
+  s1 not: A screen a round watch would clip passing
+  s2 see: Package com.mettleup.app, uses-feature android.hardware.type.watch, versionCode = 1_000_000_000 + the phone's, 'The release watch APK declares forgeai_watch_app.'
+  s2 not: USE_EXACT_ALARM in the watch APK
+  s2 not: A watch APK without forgeai_watch_app
+  s3 see: 'Rotated watch APK: the new key on every watch API, with the debug key's lineage.'
+  s3 not: The phone and watch APKs carrying different certificates
+  s4 see: 'Workout keeps MettleUp in front', 'Workout dims after interruptions', 'Workout dims with Always-on display OFF', and on the small watch 'The largest text on the small watch'
+  s4 see: Artifact 'watch-uat-api<tag>' (7 days)
+  s4 not: One leg's failure cancelling the others
+J-F-server-620-02 | type 2 | system | A push that changes only scripts/ci/sign_rotated.sh (the release's watch signing)
+  s1 see: No 'Wear OS build' run (the path is not in the push list)
+  s1 not: A signing change reaching a release tag without its dry run
+J-F-server-620-03 | type 3 | system | A push that breaks a watch unit test
+  s1 see: 'Watch unit tests + watch screens (rendered)' red; 'wear-unit-tests' and 'watch-screens' still uploaded
+  s1 not: The UAT job running on a broken build
+  s1 not: The pictures lost because a test failed
+J-F-server-620-04 | type 6 | system | Two pushes in a row
+  s1 see: The first push run cancelled, the newer one runs
+  s1 not: A hand-started run cancelled by a push
+J-F-server-620-05 | type 1 | HQ admin | Actions tab, 'Wear OS build (watch app)'
+  s1 see: The same build and uat jobs; artifacts kept 14 days
+  s1 not: A later push cancelling this hand-started run
+  s2 see: The debug-signed-lineage watch APK, round-screen PNGs, UAT pictures and dumps
+  s2 not: The debug-signed watch APK installed beside a Play phone app as if it would pair
+J-F-server-620-06 | type 3 | HQ admin | UAT leg fails on one watch
+  s1 see: The other legs finished; pictures and dumps of the failed leg uploaded
+  s1 not: No pictures of the failed leg
+J-F-server-620-07 | type 6 | HQ admin | Re-run after a fix
+  s1 see: Only the failed legs run again, against the same 'mettleup-wear' artifact
+  s1 not: A green re-run that tested an old APK from another run
+J-F-server-621-01 | type 1 | HQ admin | Owner sent any WhatsApp to +91 86905 60741 in the last 24 hours; Actions tab, 'WhatsApp probe'
+  s1 see: 'Secrets present (values not shown).'
+  s1 see: Meta's account health_status
+  s1 not: The owner's number or the token printed in the public log
+  s2 see: {accepted, error} from Meta
+  s2 see: The owner's phone gets 'MettleUp test 1 of 2 (plain message). Your MettleUp code is 482913. ...'
+  s2 not: A message to any number other than the PROBE_TO secret
+  s3 see: {accepted, error}
+  s3 see: 'Accepted is not delivered: Meta reports 131042 later, by webhook. The owner's phone is the real answer (code 735104).'
+  s3 not: 'accepted' read as 'delivered'
+J-F-server-621-02 | type 2 | HQ admin | Same workflow, mode 'text' or 'template'
+  s1 see: Only the login_code template is sent; the text step skipped
+  s1 not: Both messages sent
+J-F-server-621-03 | type 3 | HQ admin | Secrets missing or wrong
+  s1 see: 'PROBE_TO missing or not 91+10 digits' and the run stops
+  s1 not: A send attempted to a wrong number
+  s2 see: The error code, subcode and message in the step output; the step still green
+  s2 not: A green step read as the message arriving
+J-F-server-621-04 | type 6 | HQ admin | Run the probe twice
+  s1 see: Two more messages to the owner's phone, same fixed codes
+  s1 not: Messages to anyone but the owner
+J-F-server-621-05 | type 12 | HQ admin | The public repo and the probe
+  s1 see: Only Meta's answers; 'values not shown'
+  s1 not: The PROBE_TO number, the token or the account's private data in the log
+J-F-server-601-01 | type 1 | HQ admin | Secrets WHATSAPP_TOKEN and WHATSAPP_PIN (6 digits) added; Actions tab, 'WhatsApp set-up'
+  s1 see: 'Secrets present (values not shown).'
+  s1 not: The token or PIN printed
+  s2 see: 'Meta answered HTTP 200:' and {success: true}
+  s2 not: The run going on as if registered after a non-200 answer
+  s3 see: '== Phone number 1410811765454726 ==', '== Template login_code ...', '== Health: WhatsApp account ...', '== Apps subscribed to ...'
+  s3 not: An access token in the printed JSON
+  s4 see: wrangler puts the secret into forgeai-panel; PHONE_CODE_SECRET too when that GitHub secret exists, else 'No PHONE_CODE_SECRET GitHub secret: skipped (Claude puts it in at switch-on).'
+  s4 not: The Worker's code changed
+  s4 not: The secret put into another Worker
+J-F-server-601-02 | type 2 | HQ admin | Same workflow with only 'subscribe' ticked (delivery webhook)
+  s1 see: '== Connect our app to 1007126462431898 (webhook news) ==' with {success}
+  s1 see: The subscribed apps list
+  s1 not: The number registered again
+  s1 not: A Worker secret changed
+J-F-server-601-03 | type 3 | HQ admin | Secrets missing or Cloudflare token read-only
+  s1 see: 'The GitHub secret WHATSAPP_TOKEN is missing. See docs/WHATSAPP-SETUP.md step 3.'
+  s1 not: Any Meta call made
+  s2 see: 'The GitHub secret WHATSAPP_PIN is missing or is not exactly 6 digits.'
+  s2 not: The number registered with a wrong PIN
+  s3 see: 'Cloudflare refused. The CLOUDFLARE_API_TOKEN secret may be read-only: it needs 'Workers Scripts: Edit' on the account.'
+  s3 not: A green run without the secret put
+J-F-server-601-04 | type 6 | HQ admin | Run again after the number is registered
+  s1 see: Meta's answer for an already-registered number; status steps still print (they run always)
+  s1 not: Status hidden because (a) failed
+  s2 see: The new token put into forgeai-panel
+  s2 not: The old token left in the Worker
+J-F-server-601-05 | type 12 | HQ admin | The public repo
+  s1 see: Public business ids (number id, account id, Cloudflare account id) and Meta's answers only
+  s1 not: Token, PIN or PHONE_CODE_SECRET printed

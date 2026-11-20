@@ -1,0 +1,47 @@
+# L9-panel-logic-2: 9 x panel / panel/logic-2. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L9.1 | 9 | Screen reader labels, tap target size, contrast in dark and light, largest font, no meaning by colour only, keyboard use on the panel
+L9.2 | 9 | Every tappable thing LOOKS tappable (read the screenshot as a first-time user)
+L9.3 | 9 | every pop-up that can be closed leaves a way back to what it offered
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-3100 | live | Mobile number boxes keep only the 10-digit number (a pasted or auto-filled +91 number is cut down), on sign-in, Add memb | apps/dashboard/src/crm/logic/members.ts:237
+F-panel-700 | live | Import members from another software's sheet (plans become real memberships, several sheets, undo this import) | apps/dashboard/src/crm/logic/importTerms.ts:47
+F-panel-701 | live | Joined online: make a member from a join-page request, approve one that paid online, let a free-trial person in | apps/dashboard/src/crm/logic/selfJoin.ts:40
+F-panel-702 | live | Member ID card (print, picture, WhatsApp) | apps/dashboard/src/crm/logic/memberCard.ts:25
+F-panel-703 | behind switch | Member messages: read and reply to what members send from 'Message your gym' | apps/dashboard/src/crm/logic/memberMessages.ts:99
+F-panel-704 | live | Member photo taken at the desk | apps/dashboard/src/crm/logic/memberPhoto.ts:33
+F-panel-705 | live | Gym and trainers see a member's training progress (Progress card, strength trend, My members list, cheer on WhatsApp) | apps/dashboard/src/crm/logic/memberProgress.ts:50
+F-panel-706 | live | Add and edit members (mobile number rules, duplicates) | apps/dashboard/src/crm/logic/members.ts:51
+F-panel-707 | live | Sell, renew and extend a membership (term dates, start-day and joining-fee defaults) | apps/dashboard/src/crm/logic/membership.ts:37
+F-panel-709 | live | Receipts (number per financial year, receipt rules, printable receipt with amount in words, receipt on WhatsApp) | apps/dashboard/src/crm/logic/receiptDoc.ts:95
+F-panel-710 | live | Side menu and More page in five groups that fold | apps/dashboard/src/crm/logic/navGroups.ts:33
+F-panel-711 | live | 'Needs you' on Today (count, badge, list, sound and browser notice for waiting requests) | apps/dashboard/src/crm/logic/needsYou.ts:51
+F-panel-712 | live | New gym ready card: gym code and join link shown once after 'Create my gym' | apps/dashboard/src/crm/logic/newGymReady.ts:16
+F-panel-713 | live | Numbers for the owner on Today (renewals due, fees due, stopped coming, new members, busy hours) | apps/dashboard/src/crm/logic/ownerNumbers.ts:44
+F-panel-714 | behind switch | Read a web-page visitor's chat with the AI helper in Enquiries | apps/dashboard/src/crm/logic/pageChat.ts:27
+F-panel-715 | live | Refresh the whole panel from the top bar | apps/dashboard/src/crm/logic/panelRefresh.ts:17
+F-panel-716 | live | Pass members (FITPASS, cultpass): add, count pass visits, match the company's payment | apps/dashboard/src/crm/logic/passMembers.ts:31
+F-panel-717 | behind switch | Pay MettleUp for a plan (UPI QR or bank transfer, send the reference number) | apps/dashboard/src/crm/logic/payMettleUp.ts:85
+F-panel-718 | live | Numbers to confirm: say yes or no to a mobile number typed at the poster check-in | apps/dashboard/src/crm/logic/phoneLinks.ts:36
+F-panel-719 | live | Approve pause and renew requests from the member app | apps/dashboard/src/crm/logic/planRequests.ts:53
+F-panel-720 | behind switch | MettleUp Plus: owner's switch to lock paid extras after a member's plan ends | apps/dashboard/src/crm/logic/plusLock.ts:18
+F-panel-721 | live | Personal training packs with a count of classes used | apps/dashboard/src/crm/logic/pt.ts:25
+F-panel-722 | live | Quick action buttons at the top of Today, picked and ordered by the owner | apps/dashboard/src/crm/logic/quickActions.ts:35
+F-panel-723 | live | Ready-made challenges to turn on, off or edit | apps/dashboard/src/crm/logic/readyChallenges.ts:80
+F-panel-724 | live | Bring a friend: thank the member who brought a new member with free days | apps/dashboard/src/crm/logic/referrals.ts:20
+F-panel-725 | live | Ready WhatsApp message to one member (plan ending, plan ended, birthday, haven't seen you) in English or Hindi, with ren | apps/dashboard/src/crm/logic/whatsapp.ts:259
+F-panel-726 | live | Messages & offers: ready messages for all members (gym news, offers, events) sent in the app and on WhatsApp down a list | apps/dashboard/src/crm/logic/messageTemplates.ts:138
+F-panel-727 | live | One plain sentence under each setting | apps/dashboard/src/crm/logic/settingLines.ts:12
+F-panel-728 | live | Settings tabs (Gym, Member app, Sign-in & data) carrying new-feature dots | apps/dashboard/src/crm/logic/newDots.ts:133
+F-panel-729 | live | Set-up cards on Today, one at a time (get alerts on this device, put the admin app on your phone) | apps/dashboard/src/crm/logic/setupCards.ts:14
+F-panel-730 | live | Add a person with a job (Owner, Staff, Trainer, Other) in Settings > Staff & sign-in | apps/dashboard/src/crm/logic/staffJobs.ts:44
+F-panel-731 | behind switch | Trainer profiles and schedules: working hours, book personal-training classes | apps/dashboard/src/crm/logic/trainerSchedule.ts:38
+F-panel-732 | live | The gym's own form videos: a trainer's YouTube link on an exercise | apps/dashboard/src/crm/logic/trainerVideos.ts:17
+F-panel-733 | live | Free-trial banner for the gym owner on Today | apps/dashboard/src/crm/logic/trial.ts:48
+F-panel-734 | live | Gym alerts on this phone or computer with the admin app closed (at once, daily or weekly) | apps/dashboard/src/crm/logic/webPush.ts:29
+F-panel-735 | live | Monday summary of last week to send on WhatsApp | apps/dashboard/src/crm/logic/weekSummary.ts:14
+F-panel-736 | live | Workout offer: train N times in N days, get free days (set up, give or undo the reward) | apps/dashboard/src/crm/logic/workoutOffer.ts:102
+F-panel-737 | live | Workout plans from the gym or trainer, with ready-made programs | apps/dashboard/src/crm/logic/workoutPlans.ts:80
+F-panel-738 | live | What's new in the admin app (card on Today after an update, full list in Settings) | apps/dashboard/src/crm/logic/whatsNew.ts:41
+## MACHINE FILES (docs/system-map/_sources/machine/)
+a11y.json: MISSING (items that need it = could-not-check)

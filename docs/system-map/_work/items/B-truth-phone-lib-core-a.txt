@@ -1,0 +1,82 @@
+# B-truth-phone-lib-core-a: 2 + 17 x phone / phone/lib-core. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L2.1 | 2 | Every number shown (dues, counts, dates, streaks, records, credits) is recomputed independently and compared
+L2.2 | 2 | rounding
+L2.3 | 2 | time zone (IST)
+L2.4 | 2 | duplicates on double tap / two devices
+L2.5 | 2 | import and undo-import
+L2.6 | 2 | what happens to old data after every migration
+L2.7 | 2 | Also: AI answers (assistant, AI import, AI questions, coach): built only from that gym's real data
+L2.8 | 2 | Also: AI answers (assistant, AI import, AI questions, coach): what a wrong answer costs the owner
+L2.9 | 2 | Also: AI answers (assistant, AI import, AI questions, coach): what is sent to the AI company
+L17.1 | 17 | The same fact, word, colour, icon and rule is the same on panel, phone, watch, website and messages
+L17.2 | 17 | Trace every value a user enters on one device (watch, phone, panel) to every place that should hold it (the other device, the saved record, the server, Health Connect): it arrives unchanged and stays
+L17.3 | 17 | where a paired device cannot run in the cloud, trace it in the code
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-1700 | behind switch | Open the MettleUp Plus page or the Find my gym page from a link (mettleup://plus, mettleup://find-gym); the page leaves  | apps/mobile/src/plan/PlusPageGate.tsx:3
+F-phone-1701 | behind switch | MettleUp Plus: free month, what stays free, and the 'needs MettleUp Plus' pop-up on paid features (charts, own exercises | apps/mobile/src/plan/memberPlan.ts:40
+F-phone-1702 | behind switch | Free month pop-ups: '5 days left' and 'Your free month has ended' (once each, never during a workout) | apps/mobile/src/plan/PlanNotice.tsx:17
+F-phone-1703 | behind switch | Buy or restore MettleUp Plus through Google Play (monthly, yearly, lifetime); test mode with a stand-in store until paym | apps/mobile/src/plan/playBilling.ts:96
+F-phone-1704 | hidden | AI coach: save your own OpenAI, Anthropic or Groq key on the phone (kept in the phone's secure store) | apps/mobile/src/lib/keys.ts:16
+F-phone-1705 | hidden | AI coach: talk to the coach by voice and hear replies, with a plain reason when the mic cannot listen | apps/mobile/src/lib/voice.ts:17
+F-phone-1706 | live | 'A new version is ready' for copies installed from the GitHub APK (asks GitHub every 6 hours; never shown on a Google Pl | apps/mobile/src/lib/appUpdate.ts:87
+F-phone-1707 | live | Update prompt: full-screen 'A new MettleUp is here' (first launch, then every 7th launch, every 3rd when far behind), 'L | apps/mobile/src/lib/updatePrompt.ts:81
+F-phone-1708 | live | What's new after an update: the card on the Workout tab, 'See earlier updates', and Settings > What's new (release notes | apps/mobile/src/lib/whatsNew.ts:687
+F-phone-1709 | live | Follow the dots: small dots on the tab, button, row and page that lead to a new feature, cleared when the page is opened | apps/mobile/src/lib/newDots.ts:84
+F-phone-1710 | live | 'Backups now go to your MettleUp account' card, shown once on the Workout tab to a phone that had Google Drive linked | apps/mobile/src/lib/backupMoved.ts:36
+F-phone-1711 | live | 'Your workouts are only on this phone' card after the 3rd workout for a member with no account, with 'Hide for 30 days' | apps/mobile/src/lib/safekeepNudge.ts:48
+F-phone-1712 | live | Workout tab shows one notice card at a time; after one is closed the others wait for the next day | apps/mobile/src/lib/workoutNotices.ts:33
+F-phone-1713 | live | Send feedback or ask for help (Settings > Help and feedback): the message goes to MettleUp's feedback box with the app v | apps/mobile/src/lib/feedback.ts:110
+F-phone-1714 | live | Floating feedback button on every screen: drag it to an edge, switch it on or off in Settings, red dot when the team rep | apps/mobile/src/lib/feedbackButton.ts:113
+F-phone-1715 | live | Speak your feedback: record in Hindi or English, the server turns it into text, then check and Send | apps/mobile/src/lib/feedbackVoice.ts:151
+F-phone-1716 | live | Your questions: the list of questions sent from this phone with the AI's answer, 'Did this solve it?' and the MettleUp t | apps/mobile/src/lib/helpHistory.ts:179
+F-phone-1717 | live | Notification 'The MettleUp team answered your question' (Android only, only when notifications are already allowed); a t | apps/mobile/src/lib/helpReplyAlert.ts:57
+F-phone-1718 | live | 'Add my watch's screen log' in Help and feedback: sends the watch's screen diary with the message | apps/mobile/src/lib/watchDiag.ts:284
+F-phone-1719 | live | Crash reports: the app sends a crash (message, short stack, app version; no personal data) to MettleUp by itself | apps/mobile/src/lib/crashReport.ts:83
+F-phone-1720 | live | Suggested weight and reps for today's workout (progressive overload targets from past sets) | apps/mobile/src/engine/overload.ts:44
+F-phone-1721 | live | Estimated 1-rep max and its record rule (reps above 12 count as 12; a lighter set is never a record) | apps/mobile/src/lib/e1rm.ts:25
+F-phone-1722 | hidden | Home summary numbers: recovery score, strength score and the one-line insight (whether each card is on screen today was  | apps/mobile/src/services/dashboard.ts:31
+F-phone-1723 | live | Charts and per-exercise stats (30, 90 or 180 days) | apps/mobile/src/services/analytics.ts:29
+F-phone-1724 | live | Week streak: weeks in a row with at least one workout | apps/mobile/src/lib/streak.ts:11
+F-phone-1725 | live | Units: show weights and distances as 'kg, km' or 'lb, miles', with numbers grouped the phone's way | apps/mobile/src/lib/units.ts:28
+F-phone-1726 | live | The three tabs (Workout, Gym, Profile), the back arrow that always goes somewhere, and Android Back inside a screen with | apps/mobile/src/lib/appTabs.ts:27
+F-phone-1727 | live | Opening the app from a link, an app-icon shortcut or a tapped notification lands on the right page: old page addresses r | apps/mobile/src/lib/alertRoute.ts:13
+F-phone-1728 | live | One-time 'it moved' hints after the layout change (the shop is now in the Gym tab; the Progress-tab hint is retired) | apps/mobile/src/lib/layoutHints.ts:35
+F-phone-1729 | live | Credits page: the third-party drawings, body map and fonts the app uses | apps/mobile/src/lib/credits.ts:1
+F-phone-1730 | live | Take or pick a picture: the picture is kept when Android closes the app behind the camera, a refused permission is expla | apps/mobile/src/lib/pendingPick.ts:41
+F-phone-1731 | hidden | On iPhone, parts not built yet say so on screen instead of showing an Android page (whether an iPhone build is with memb | apps/mobile/src/lib/onIphone.ts:8
+F-phone-1732 | live | Every screen that reads data: loading skeleton, 'Couldn't load' with Try again, quiet retries, a second tap is ignored w | apps/mobile/src/lib/loadState.ts:1
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-1700 | behind switch | Open the MettleUp Plus page or the Find my gym page from a link (mettleup://plus, mettleup://find-gym); the page leaves  | apps/mobile/src/plan/PlusPageGate.tsx:3
+F-phone-1701 | behind switch | MettleUp Plus: free month, what stays free, and the 'needs MettleUp Plus' pop-up on paid features (charts, own exercises | apps/mobile/src/plan/memberPlan.ts:40
+F-phone-1702 | behind switch | Free month pop-ups: '5 days left' and 'Your free month has ended' (once each, never during a workout) | apps/mobile/src/plan/PlanNotice.tsx:17
+F-phone-1703 | behind switch | Buy or restore MettleUp Plus through Google Play (monthly, yearly, lifetime); test mode with a stand-in store until paym | apps/mobile/src/plan/playBilling.ts:96
+F-phone-1704 | hidden | AI coach: save your own OpenAI, Anthropic or Groq key on the phone (kept in the phone's secure store) | apps/mobile/src/lib/keys.ts:16
+F-phone-1705 | hidden | AI coach: talk to the coach by voice and hear replies, with a plain reason when the mic cannot listen | apps/mobile/src/lib/voice.ts:17
+F-phone-1706 | live | 'A new version is ready' for copies installed from the GitHub APK (asks GitHub every 6 hours; never shown on a Google Pl | apps/mobile/src/lib/appUpdate.ts:87
+F-phone-1707 | live | Update prompt: full-screen 'A new MettleUp is here' (first launch, then every 7th launch, every 3rd when far behind), 'L | apps/mobile/src/lib/updatePrompt.ts:81
+F-phone-1708 | live | What's new after an update: the card on the Workout tab, 'See earlier updates', and Settings > What's new (release notes | apps/mobile/src/lib/whatsNew.ts:687
+F-phone-1709 | live | Follow the dots: small dots on the tab, button, row and page that lead to a new feature, cleared when the page is opened | apps/mobile/src/lib/newDots.ts:84
+F-phone-1710 | live | 'Backups now go to your MettleUp account' card, shown once on the Workout tab to a phone that had Google Drive linked | apps/mobile/src/lib/backupMoved.ts:36
+F-phone-1711 | live | 'Your workouts are only on this phone' card after the 3rd workout for a member with no account, with 'Hide for 30 days' | apps/mobile/src/lib/safekeepNudge.ts:48
+F-phone-1712 | live | Workout tab shows one notice card at a time; after one is closed the others wait for the next day | apps/mobile/src/lib/workoutNotices.ts:33
+F-phone-1713 | live | Send feedback or ask for help (Settings > Help and feedback): the message goes to MettleUp's feedback box with the app v | apps/mobile/src/lib/feedback.ts:110
+F-phone-1714 | live | Floating feedback button on every screen: drag it to an edge, switch it on or off in Settings, red dot when the team rep | apps/mobile/src/lib/feedbackButton.ts:113
+F-phone-1715 | live | Speak your feedback: record in Hindi or English, the server turns it into text, then check and Send | apps/mobile/src/lib/feedbackVoice.ts:151
+F-phone-1716 | live | Your questions: the list of questions sent from this phone with the AI's answer, 'Did this solve it?' and the MettleUp t | apps/mobile/src/lib/helpHistory.ts:179
+F-phone-1717 | live | Notification 'The MettleUp team answered your question' (Android only, only when notifications are already allowed); a t | apps/mobile/src/lib/helpReplyAlert.ts:57
+F-phone-1718 | live | 'Add my watch's screen log' in Help and feedback: sends the watch's screen diary with the message | apps/mobile/src/lib/watchDiag.ts:284
+F-phone-1719 | live | Crash reports: the app sends a crash (message, short stack, app version; no personal data) to MettleUp by itself | apps/mobile/src/lib/crashReport.ts:83
+F-phone-1720 | live | Suggested weight and reps for today's workout (progressive overload targets from past sets) | apps/mobile/src/engine/overload.ts:44
+F-phone-1721 | live | Estimated 1-rep max and its record rule (reps above 12 count as 12; a lighter set is never a record) | apps/mobile/src/lib/e1rm.ts:25
+F-phone-1722 | hidden | Home summary numbers: recovery score, strength score and the one-line insight (whether each card is on screen today was  | apps/mobile/src/services/dashboard.ts:31
+F-phone-1723 | live | Charts and per-exercise stats (30, 90 or 180 days) | apps/mobile/src/services/analytics.ts:29
+F-phone-1724 | live | Week streak: weeks in a row with at least one workout | apps/mobile/src/lib/streak.ts:11
+F-phone-1725 | live | Units: show weights and distances as 'kg, km' or 'lb, miles', with numbers grouped the phone's way | apps/mobile/src/lib/units.ts:28
+F-phone-1726 | live | The three tabs (Workout, Gym, Profile), the back arrow that always goes somewhere, and Android Back inside a screen with | apps/mobile/src/lib/appTabs.ts:27
+F-phone-1727 | live | Opening the app from a link, an app-icon shortcut or a tapped notification lands on the right page: old page addresses r | apps/mobile/src/lib/alertRoute.ts:13
+F-phone-1728 | live | One-time 'it moved' hints after the layout change (the shop is now in the Gym tab; the Progress-tab hint is retired) | apps/mobile/src/lib/layoutHints.ts:35
+F-phone-1729 | live | Credits page: the third-party drawings, body map and fonts the app uses | apps/mobile/src/lib/credits.ts:1
+F-phone-1730 | live | Take or pick a picture: the picture is kept when Android closes the app behind the camera, a refused permission is expla | apps/mobile/src/lib/pendingPick.ts:41
+F-phone-1731 | hidden | On iPhone, parts not built yet say so on screen instead of showing an Android page (whether an iPhone build is with memb | apps/mobile/src/lib/onIphone.ts:8
+F-phone-1732 | live | Every screen that reads data: loading skeleton, 'Couldn't load' with Try again, quiet retries, a second tap is ignored w | apps/mobile/src/lib/loadState.ts:1

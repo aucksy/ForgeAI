@@ -1,0 +1,1 @@
+{"id":"CAL-prep","step":"coord","item":"coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed)","needs":[],"checkpoint":"-","out_file":"_work/calib/"}

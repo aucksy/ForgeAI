@@ -1,0 +1,1147 @@
+# A8-panel-screens-2-4: coverage of 105 Tier 1 journeys (9 features, from A5-panel-screens-2-4). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-334 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | file name, asserts 6 journey phrase(s)
+F-panel-334 | apps/dashboard/e2e/hq-webpage-uat.spec.mjs | e2e | 166 lines | file name, asserts 4 journey phrase(s)
+F-panel-334 | apps/mobile/test/db/workoutPhotosReal.test.ts | unit | 327 lines | asserts 5 journey phrase(s)
+F-panel-334 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-panel-334 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 5 journey phrase(s)
+F-panel-334 | supabase/tests/0043_member_photos.sql | db | 135 lines | asserts 5 journey phrase(s)
+F-panel-334 | apps/mobile/test/backup/backupFormat.test.ts | unit | 136 lines | asserts 4 journey phrase(s)
+F-panel-334 | apps/mobile/test/tracker/auditPhase5Body.test.ts | unit | 469 lines | asserts 4 journey phrase(s)
+F-panel-334 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 3 journey phrase(s)
+F-panel-334 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 3 journey phrase(s)
+F-panel-334 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 3 journey phrase(s)
+F-panel-334 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | asserts 3 journey phrase(s)
+F-panel-336 | apps/dashboard/e2e/hq-webpage-uat.spec.mjs | e2e | 166 lines | file name
+F-panel-336 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-panel-336 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | file name
+F-panel-336 | apps/dashboard/e2e/r534-training-progress-uat.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-panel-335 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | file name, asserts 2 journey phrase(s)
+F-panel-335 | apps/dashboard/e2e/hq-webpage-uat.spec.mjs | e2e | 166 lines | file name
+F-panel-335 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-panel-335 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 1 journey phrase(s)
+F-panel-335 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-panel-335 | apps/dashboard/test/crm/assistant/screenWords.test.ts | unit | 188 lines | asserts 1 journey phrase(s)
+F-panel-335 | deploy/hq/readLog.test.mjs | unit | 152 lines | asserts 1 journey phrase(s)
+F-panel-335 | deploy/panel/assistCatalogue.test.mjs | unit | 184 lines | asserts 1 journey phrase(s)
+F-panel-337 | apps/mobile/test/tracker/r60RepsToBeat.test.ts | unit | 103 lines | asserts 6 journey phrase(s)
+F-panel-337 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 3 journey phrase(s)
+F-panel-337 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 3 journey phrase(s)
+F-panel-337 | apps/mobile/test/tracker/phase4RoutinesPure.test.ts | unit | 164 lines | asserts 3 journey phrase(s)
+F-panel-337 | supabase/tests/0073_member_push_more.sql | db | 147 lines | asserts 3 journey phrase(s)
+F-panel-337 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-panel-337 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-panel-337 | apps/dashboard/e2e/test-alert-uat.spec.mjs | e2e | 338 lines | asserts 2 journey phrase(s)
+F-panel-337 | apps/dashboard/e2e/whatsapp-verify-uat.spec.mjs | e2e | 324 lines | asserts 2 journey phrase(s)
+F-panel-337 | apps/dashboard/test/crm/moveStart.test.ts | unit | 131 lines | asserts 2 journey phrase(s)
+F-panel-337 | apps/dashboard/test/crm/plusLock.test.ts | unit | 92 lines | asserts 2 journey phrase(s)
+F-panel-337 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 2 journey phrase(s)
+F-panel-338 | apps/dashboard/e2e/assistant-uat.spec.mjs | e2e | 822 lines | asserts 2 journey phrase(s)
+F-panel-338 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-338 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 2 journey phrase(s)
+F-panel-338 | apps/dashboard/test/crm/workoutPlans.test.ts | unit | 598 lines | file name
+F-panel-338 | supabase/tests/0035_trainer_measurements_diet.sql | db | 227 lines | asserts 2 journey phrase(s)
+F-panel-338 | supabase/tests/0073_member_push_more.sql | db | 147 lines | asserts 2 journey phrase(s)
+F-panel-338 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-panel-338 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 1 journey phrase(s)
+F-panel-338 | apps/dashboard/e2e/importcheck.spec.mjs | e2e | 62 lines | asserts 1 journey phrase(s)
+F-panel-338 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-338 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-338 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 1 journey phrase(s)
+F-panel-339 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-panel-339 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 4 journey phrase(s)
+F-panel-339 | apps/dashboard/test/crm/workoutPlans.test.ts | unit | 598 lines | file name, asserts 2 journey phrase(s)
+F-panel-339 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-panel-339 | supabase/tests/0060_pay_mettleup.sql | db | 317 lines | asserts 4 journey phrase(s)
+F-panel-339 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-panel-339 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-panel-339 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-panel-339 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-panel-339 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 3 journey phrase(s)
+F-panel-339 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 3 journey phrase(s)
+F-panel-339 | apps/mobile/test/tracker/switcherLine.test.ts | unit | 38 lines | asserts 3 journey phrase(s)
+F-panel-342 | apps/dashboard/test/crm/workoutPlans.test.ts | unit | 598 lines | file name
+F-panel-342 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-342 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-342 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-342 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 1 journey phrase(s)
+F-panel-342 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 1 journey phrase(s)
+F-panel-342 | apps/dashboard/e2e/r495-uat.spec.mjs | e2e | 303 lines | asserts 1 journey phrase(s)
+F-panel-342 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-panel-342 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 1 journey phrase(s)
+F-panel-342 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-panel-342 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 1 journey phrase(s)
+F-panel-342 | apps/dashboard/test/crm/navNames.test.ts | unit | 61 lines | asserts 1 journey phrase(s)
+F-panel-340 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 10 journey phrase(s)
+F-panel-340 | apps/dashboard/e2e/assistant-uat.spec.mjs | e2e | 822 lines | asserts 3 journey phrase(s)
+F-panel-340 | apps/dashboard/e2e/r532-uat.spec.mjs | e2e | 143 lines | asserts 3 journey phrase(s)
+F-panel-340 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-panel-340 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-panel-340 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 2 journey phrase(s)
+F-panel-340 | apps/dashboard/test/crm/workoutPlans.test.ts | unit | 598 lines | file name
+F-panel-340 | apps/mobile/qa/brand-theme.yaml | maestro | 170 lines | asserts 2 journey phrase(s)
+F-panel-340 | apps/mobile/qa/p2-pause-a.yaml | maestro | 64 lines | asserts 2 journey phrase(s)
+F-panel-340 | apps/mobile/qa/phase7-bigtext.yaml | maestro | 326 lines | asserts 2 journey phrase(s)
+F-panel-340 | apps/mobile/qa/xj-2-order-cancel.yaml | maestro | 34 lines | asserts 2 journey phrase(s)
+F-panel-340 | apps/mobile/test/shop/gym.test.ts | unit | 480 lines | asserts 2 journey phrase(s)
+F-panel-341 | apps/dashboard/test/crm/workoutPlans.test.ts | unit | 598 lines | file name, asserts 5 journey phrase(s)
+F-panel-341 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 6 journey phrase(s)
+F-panel-341 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-panel-341 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 5 journey phrase(s)
+F-panel-341 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 4 journey phrase(s)
+F-panel-341 | apps/mobile/qa/sub-uat-f194-choose.yaml | maestro | 31 lines | asserts 4 journey phrase(s)
+F-panel-341 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 4 journey phrase(s)
+F-panel-341 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-panel-341 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 3 journey phrase(s)
+F-panel-341 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 3 journey phrase(s)
+F-panel-341 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 3 journey phrase(s)
+F-panel-341 | apps/dashboard/test/crm/r448.test.ts | unit | 76 lines | asserts 3 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-334-01 | type 1 | owner | Owner signed in, gym online, web pages switched on, no page made yet. Menu group 'Your gym', row 'Your web page'
+  s1 see: Title 'Your web page'
+  s1 see: Status line 'Not made yet. Fill in the parts below, then publish.'
+  s1 see: Box 'Page address' already filled from the gym's name, and under it 'Your page: join.mettleup.fit/<address>'
+  s1 not: The editor shown for a gym that is not online
+  s1 not: An empty address box that the owner has to invent
+  s2 see: The address under the box changes to include the area
+  s2 see: Sections 'Where your gym is', 'About your gym', 'What your gym has', 'Photos'
+  s2 not: The address changing again after the owner typed his own address
+  s2 not: A locked address before the page was ever published
+  s3 see: Letter count under About with 'No web addresses.'
+  s3 see: 'Adding a photo…', then each photo with a box 'Photo 1: what it shows (optional)' and buttons 'Move up' and 'Remove'
+  s3 not: The Save button usable while a photo is still being added
+  s3 not: A photo sent with its location data
+  s3 not: More than 6 photos kept
+  s4 see: Button reads 'Saving…'
+  s4 see: Toast 'Published. Your page is ready.'
+  s4 see: Status 'Published. People can open your page.' with the address
+  s4 see: Buttons 'Copy link' and 'Share on WhatsApp'
+  s4 see: The address is now plain text with 'The address stays the same once the page is published…'
+  s4 not: A page published without the owner's tick on the terms line
+  s4 not: Two saves from a double tap
+  s4 not: A success toast when the server refused the save
+J-F-panel-334-02 | type 2 | owner | Owner on 'Set up your gym', the step for the web page (exact step words not read: unknown)
+  s1 see: The same 'Your web page' screen with its status card and editor
+  s1 not: The step shown while web pages are switched off
+  s1 not: A different, second editor for the same page
+  s2 see: Toast 'Saved. Your page is not published.'
+  s2 see: Status 'Saved, not published. Visitors cannot see it.'
+  s2 not: The page opened to visitors without the publish tick
+  s2 not: The setup step still showing as not done after a save (unknown how the step reads it)
+J-F-panel-334-03 | type 3 | owner | Owner in the web page editor with wrong or missing input
+  s1 see: Red words under 'Page address' (exact words live in the page logic: unknown)
+  s1 see: Banner 'Fix the parts marked in red, then save again.'
+  s1 not: A save sent to the server with a bad address
+  s1 not: The red words staying after the box is fixed
+  s2 see: Red words under About / under the map link
+  s2 see: Banner 'Fix the parts marked in red, then save again.'
+  s2 not: A web address shown on the public page
+  s2 not: The whole form cleared
+  s3 see: Red words under the terms tick
+  s3 see: Nothing is published
+  s3 not: The page going public without the terms tick
+  s4 see: Red words under 'Page address' naming the address as taken (the server's SLUG_TAKEN answer)
+  s4 not: Another gym's page overwritten
+  s4 not: A plain 'could not be saved' with no hint which box is wrong
+  s5 see: 'A page has at most 6 photos. Remove one to add another.'
+  s5 see: Only the photos that fit are added
+  s5 not: A 7th photo kept
+  s5 not: The first photos lost
+  s6 see: 'Your web page needs your gym online' and 'The page is made from your gym’s records on its server. Put your gym online first (Settings → Sign-in & data).'
+  s6 not: An editor whose Save can never work
+J-F-panel-334-04 | type 6 | owner | Owner, page saved but never published
+  s1 see: 'Saved, not published. Visitors cannot see it.'
+  s1 see: The address box can still be changed
+  s1 not: Share buttons shown for a page nobody can open
+  s2 see: Toast 'Published. Your page is ready.'
+  s2 see: Address locked
+  s2 not: The terms tick asked again on later saves
+  s3 see: Toast 'Saved. Your page shows the changes.'
+  s3 see: Then 'All changes saved.' next to a greyed Save button
+  s3 not: Save usable when nothing changed
+  s3 not: The old About still on the public page
+  s4 see: Toast 'Saved. Your page is not published.'
+  s4 see: Status 'Saved, not published. Visitors cannot see it.'
+  s4 see: 'Copy link' and 'Share on WhatsApp' are gone
+  s4 see: The address stays locked
+  s4 not: The page still open to visitors
+  s4 not: The address free to change, breaking links already shared
+  s5 see: Red banner 'MettleUp has taken your page down, so visitors cannot see it.' with MettleUp’s note and 'Fix what the note says, then write to MettleUp from Help and feedback to put it back.'
+  s5 see: Status 'Taken down by MettleUp.'
+  s5 not: The status saying 'Published' while visitors cannot open it
+  s5 not: Share buttons shown
+J-F-panel-334-05 | type 12 | owner | Owner in the editor, deciding what strangers may see
+  s1 see: Rows Fees, Timings, 'Name, logo and colours', Address, each with 'Open'
+  s1 see: 'Change them there and your page changes too. Members, money and staff never show on the page.'
+  s1 not: A member's name, a payment or a staff name on the public page
+  s2 see: The WhatsApp tick is greyed
+  s2 see: 'Questions sent from your page come to Enquiries either way.'
+  s2 not: The gym's phone number on the public page
+  s2 not: A WhatsApp button without the phone tick
+  s3 see: The page opens by its link
+  s3 not: The page offered to Google search while the tick is off
+  s4 see: 'Each photo is made smaller on this device, and its location data is taken out before it is sent.'
+  s4 not: The photo's place data reaching the server
+  s4 not: A photo visible to visitors while the page is not published or is taken down
+J-F-panel-334-06 | type 1 | staff | Front desk login, gym online, web pages on. Menu row 'Your web page'
+  s1 see: Title 'Your web page'
+  s1 see: Status line, for example 'Published. People can open your page.', and the page address
+  s1 see: 'Only the owner can change the web page.'
+  s1 not: Any text box, photo button, publish tick or Save button
+  s1 not: The About text, photos or phone settings shown for editing
+J-F-panel-334-07 | type 3 | staff | Front desk login, things not ready
+  s1 see: 'Your web page needs your gym online'
+  s1 not: An endless 'Loading…'
+  s2 see: The Settings screen opens instead
+  s2 not: A blank screen
+  s2 not: Words such as 'not open yet'
+  s3 see: Words such as 'Your web page could not be opened. Check your internet and try again.' and a 'Try again' button
+  s3 not: A status from another gym
+  s3 not: A crash
+J-F-panel-334-08 | type 6 | staff | Front desk login, the page in each of its states
+  s1 see: 'Not made yet. Fill in the parts below, then publish.' and 'Only the owner can change the web page.'
+  s1 not: Parts to fill in shown to the desk
+  s2 see: 'Saved, not published. Visitors cannot see it.' and the address
+  s2 not: 'Published' shown
+  s3 see: 'Published. People can open your page.' and the address
+  s3 not: A stale 'not published' kept from the last visit after the fresh answer arrives
+  s4 see: Red banner 'MettleUp has taken your page down, so visitors cannot see it.' and 'Taken down by MettleUp.'
+  s4 not: 'Published' shown while visitors cannot open it
+J-F-panel-334-09 | type 12 | staff | Front desk login on 'Your web page'
+  s1 see: Only the status, the address and, when taken down, MettleUp's note
+  s1 see: 'Only the owner can change the web page.'
+  s1 not: The desk able to save the page by any route (the server lets only the owner save)
+  s1 not: The owner's terms tick or its time shown
+J-F-panel-336-01 | type 1 | owner | Owner on 'Your web page', page published and not taken down
+  s1 see: Toast 'Link copied.'
+  s1 not: The toast shown when nothing was copied
+  s1 not: A link to a different address than the one on the card
+  s2 see: https://join.mettleup.fit/<address>
+  s2 not: A panel address, a login link or a key inside the link
+J-F-panel-336-02 | type 2 | owner | Owner on 'Your web page', page published
+  s1 see: WhatsApp opens in a new tab with the ready line 'See the fees, timings and photos of <gym name>: https://join.mettleup.fit/<address>' and asks who to send it to
+  s1 not: A message sent without the owner choosing a person
+  s1 not: A number filled in for him
+  s1 not: The gym name broken by special letters
+J-F-panel-336-03 | type 3 | owner | Owner on 'Your web page', sharing cannot work
+  s1 see: Only 'See your page' in the status card; no 'Copy link', no 'Share on WhatsApp'
+  s1 not: A share button for a page visitors cannot open
+  s2 see: Nothing at all: no toast, no words (WebPage.tsx:569-575). Finding FN-A5-panel-screens-2-4-01
+  s2 not: The owner believing the link was copied
+  s2 not: A silent failure
+J-F-panel-336-04 | type 6 | owner | Owner, page published and its link already sent to people
+  s1 see: Share buttons disappear
+  s1 see: Status 'Saved, not published. Visitors cannot see it.'
+  s1 not: The shared link still showing the page
+  s2 see: Share buttons are back with the same address
+  s2 not: A new address, so old links and printed QR codes stop working
+J-F-panel-336-05 | type 12 | owner | Owner about to share the page
+  s1 see: Only the gym's name and the public page address
+  s1 not: A member's name, a phone number or a join code in the line
+  s1 not: MettleUp sending the message itself
+J-F-panel-335-01 | type 1 | owner | Owner in the web page editor with some parts typed, not saved
+  s1 see: Sheet 'Your page, as visitors see it'
+  s1 see: 'Drawing your page…'
+  s1 see: Then the page in a phone-sized frame, drawn from what is typed
+  s1 see: 'A preview: your page is not published yet. Buttons do not work here.' (or 'With your changes, before you save them. Buttons do not work here.' when publish is ticked)
+  s1 not: The typed changes saved or published by opening the preview
+  s1 not: Buttons in the preview that call, message or send an enquiry
+  s1 not: The saved page shown instead of what is typed
+  s2 see: The editor, with every typed value as it was
+  s2 not: Typed values lost
+  s2 not: The Save button state changed
+J-F-panel-335-02 | type 3 | owner | Owner in the web page editor
+  s1 see: 'The preview could not be drawn. Check the page address, then try again.'
+  s1 not: An endless 'Drawing your page…'
+  s1 not: A blank white frame
+  s2 see: The page is still drawn, without timings or without the gym's colour and logo, and with no word why
+  s2 not: The whole preview failing
+  s2 not: Another gym's colours
+J-F-panel-335-03 | type 6 | owner | Owner with the preview seen once
+  s1 see: The new About in the preview
+  s1 not: The first drawing shown again
+  s2 see: 'With your changes, before you save them. Buttons do not work here.'
+  s2 not: Words that say the page is already public
+  s3 see: The photo in the preview, or a neat gap
+  s3 not: A broken-picture mark
+J-F-panel-335-04 | type 12 | owner | Owner checking what strangers will see
+  s1 see: Fees, timings, photos, facilities, area and the ask-a-question part; no phone number
+  s1 not: Member names, money or staff in the preview
+  s1 not: The preview sent anywhere: it is drawn in this browser only
+  s1 not: Scripts running inside the preview frame
+J-F-panel-337-01 | type 1 | owner | Owner signed in, gym online, gym server has the workout of the day. Menu 'Workout plans', card 'Workout of the day', nothing set
+  s1 see: 'Workout of the day'
+  s1 see: 'One workout for everyone at your gym. Members see it on the Workout tab of their MettleUp app and start it with one tap.'
+  s1 see: 'Nothing set for today.'
+  s1 see: Button 'Set today’s workout'
+  s1 not: The card drawn for a gym that is not online
+  s1 not: Yesterday's workout shown as today's
+  s2 see: Sheet 'Workout of the day' with Day (today), 'Start from one of your plans (optional)', 'Workout name', 'Kind of day', 'Note for members (optional)'
+  s2 see: 'No exercises yet. Pick a plan above, or search below to add one.'
+  s2 not: A day in the past offered
+  s2 not: More than today plus 7 days offered
+  s3 see: Workout name and the exercises of that day filled in, each with sets, reps, start kg and rest
+  s3 not: The gym's plan itself changed by edits made here
+  s4 see: 'Saving…'
+  s4 see: Toast 'Saved. Members see it now.'
+  s4 see: A row 'Today' with the workout's line and buttons 'Change' and 'Take it off'
+  s4 see: The top button now reads '+ Plan another day'
+  s4 not: Two workouts for one day
+  s4 not: The toast when the save failed
+  s4 not: Members of another gym seeing it
+J-F-panel-337-02 | type 2 | owner | Owner signed in, today's workout already set
+  s1 see: Sheet 'Workout of the day' with Day set to the next free day
+  s1 not: Day preset to a day that already has a workout while a free day exists
+  s2 see: Each exercise in its own box with 'Sets', 'Reps from', 'Reps to', 'Rest (seconds)'
+  s2 see: For the own exercise: 'Your own exercise' and 'Main muscle'
+  s2 not: More than 30 exercises accepted
+  s3 see: Toast 'Saved for tomorrow.' or 'Saved for <date>.'
+  s3 see: A new row under today's with that day's name
+  s3 not: Today's workout replaced
+  s3 not: The workout shown to members before its day (unknown how the app treats later days)
+J-F-panel-337-03 | type 3 | owner | Owner signed in, in the 'Workout of the day' sheet
+  s1 see: 'Give the workout a name, for example “Leg day”.'
+  s1 not: A nameless workout saved
+  s2 see: A red line asking for at least one exercise (exact words: unknown)
+  s2 not: An empty workout sent to members
+  s3 see: '<exercise>: sets must be a whole number from 1 to 20.'
+  s3 not: A workout with zero sets saved
+  s4 see: 'This replaces “<name>”, already set for that day.'
+  s4 not: The other workout replaced without this line
+  s5 see: No 'Workout of the day' card at all
+  s5 not: A card whose save can never work
+  s5 not: An error banner about a missing part
+J-F-panel-337-04 | type 6 | owner | Owner signed in, a workout set for today
+  s1 see: The sheet filled with the saved name, note and exercises
+  s1 not: An empty sheet
+  s2 see: Toast 'Saved. Members see it now.'
+  s2 see: One row for today, with the new content
+  s2 not: A second row for the same day
+  s2 not: Members who already started it losing their workout
+  s3 see: Sheet 'Take this workout off?' with '<name> will no longer show to members for today. Members who already started it keep their workout.'
+  s3 see: Buttons 'Keep it' and 'Take it off'
+  s3 not: The workout removed before the question is answered
+  s4 see: After 'Keep it': the row is still there
+  s4 see: After confirming: toast 'Workout taken off.' and 'Nothing set for today.'
+  s4 see: Top button back to 'Set today’s workout'
+  s4 not: The row left on screen after it was taken off
+  s4 not: A workout of another day removed
+  s5 see: Toast 'Saved. Members see it now.'
+  s5 not: A refusal because one existed before
+J-F-panel-337-05 | type 12 | owner | Owner signed in, writing the note for members
+  s1 see: The note and workout go to every member of this gym on their Workout tab
+  s1 not: A member's name or health detail typed into the note reaching all members without the writer knowing who reads it
+  s1 not: Members of another gym or branch seeing it
+  s1 not: The name of who set it shown to members without the gym knowing (the server keeps the setter's name: unknown where it shows)
+J-F-panel-337-06 | type 1 | staff | Front desk login (staff may make, change, send and withdraw workout plans), gym online, gym server has the workout of the day. Menu 'Workout
+  s1 see: 'Workout of the day'
+  s1 see: 'One workout for everyone at your gym. Members see it on the Workout tab of their MettleUp app and start it with one tap.'
+  s1 see: 'Nothing set for today.'
+  s1 see: Button 'Set today’s workout'
+  s1 not: The card drawn for a gym that is not online
+  s1 not: Yesterday's workout shown as today's
+  s2 see: Sheet 'Workout of the day' with Day (today), 'Start from one of your plans (optional)', 'Workout name', 'Kind of day', 'Note for members (optional)'
+  s2 see: 'No exercises yet. Pick a plan above, or search below to add one.'
+  s2 not: A day in the past offered
+  s2 not: More than today plus 7 days offered
+  s3 see: Workout name and the exercises of that day filled in, each with sets, reps, start kg and rest
+  s3 not: The gym's plan itself changed by edits made here
+  s4 see: 'Saving…'
+  s4 see: Toast 'Saved. Members see it now.'
+  s4 see: A row 'Today' with the workout's line and buttons 'Change' and 'Take it off'
+  s4 see: The top button now reads '+ Plan another day'
+  s4 not: Two workouts for one day
+  s4 not: The toast when the save failed
+  s4 not: Members of another gym seeing it
+J-F-panel-337-07 | type 2 | staff | Front desk login (staff may make, change, send and withdraw workout plans), today's workout already set
+  s1 see: Sheet 'Workout of the day' with Day set to the next free day
+  s1 not: Day preset to a day that already has a workout while a free day exists
+  s2 see: Each exercise in its own box with 'Sets', 'Reps from', 'Reps to', 'Rest (seconds)'
+  s2 see: For the own exercise: 'Your own exercise' and 'Main muscle'
+  s2 not: More than 30 exercises accepted
+  s3 see: Toast 'Saved for tomorrow.' or 'Saved for <date>.'
+  s3 see: A new row under today's with that day's name
+  s3 not: Today's workout replaced
+  s3 not: The workout shown to members before its day (unknown how the app treats later days)
+J-F-panel-337-08 | type 3 | staff | Front desk login (staff may make, change, send and withdraw workout plans), in the 'Workout of the day' sheet
+  s1 see: 'Give the workout a name, for example “Leg day”.'
+  s1 not: A nameless workout saved
+  s2 see: A red line asking for at least one exercise (exact words: unknown)
+  s2 not: An empty workout sent to members
+  s3 see: '<exercise>: sets must be a whole number from 1 to 20.'
+  s3 not: A workout with zero sets saved
+  s4 see: 'This replaces “<name>”, already set for that day.'
+  s4 not: The other workout replaced without this line
+  s5 see: No 'Workout of the day' card at all
+  s5 not: A card whose save can never work
+  s5 not: An error banner about a missing part
+J-F-panel-337-09 | type 6 | staff | Front desk login (staff may make, change, send and withdraw workout plans), a workout set for today
+  s1 see: The sheet filled with the saved name, note and exercises
+  s1 not: An empty sheet
+  s2 see: Toast 'Saved. Members see it now.'
+  s2 see: One row for today, with the new content
+  s2 not: A second row for the same day
+  s2 not: Members who already started it losing their workout
+  s3 see: Sheet 'Take this workout off?' with '<name> will no longer show to members for today. Members who already started it keep their workout.'
+  s3 see: Buttons 'Keep it' and 'Take it off'
+  s3 not: The workout removed before the question is answered
+  s4 see: After 'Keep it': the row is still there
+  s4 see: After confirming: toast 'Workout taken off.' and 'Nothing set for today.'
+  s4 see: Top button back to 'Set today’s workout'
+  s4 not: The row left on screen after it was taken off
+  s4 not: A workout of another day removed
+  s5 see: Toast 'Saved. Members see it now.'
+  s5 not: A refusal because one existed before
+J-F-panel-337-10 | type 12 | staff | Front desk login (staff may make, change, send and withdraw workout plans), writing the note for members
+  s1 see: The note and workout go to every member of this gym on their Workout tab
+  s1 not: A member's name or health detail typed into the note reaching all members without the writer knowing who reads it
+  s1 not: Members of another gym or branch seeing it
+  s1 not: The name of who set it shown to members without the gym knowing (the server keeps the setter's name: unknown where it shows)
+J-F-panel-337-11 | type 1 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), gym online, gym server has the workout of the 
+  s1 see: 'Workout of the day'
+  s1 see: 'One workout for everyone at your gym. Members see it on the Workout tab of their MettleUp app and start it with one tap.'
+  s1 see: 'Nothing set for today.'
+  s1 see: Button 'Set today’s workout'
+  s1 not: The card drawn for a gym that is not online
+  s1 not: Yesterday's workout shown as today's
+  s2 see: Sheet 'Workout of the day' with Day (today), 'Start from one of your plans (optional)', 'Workout name', 'Kind of day', 'Note for members (optional)'
+  s2 see: 'No exercises yet. Pick a plan above, or search below to add one.'
+  s2 not: A day in the past offered
+  s2 not: More than today plus 7 days offered
+  s3 see: Workout name and the exercises of that day filled in, each with sets, reps, start kg and rest
+  s3 not: The gym's plan itself changed by edits made here
+  s4 see: 'Saving…'
+  s4 see: Toast 'Saved. Members see it now.'
+  s4 see: A row 'Today' with the workout's line and buttons 'Change' and 'Take it off'
+  s4 see: The top button now reads '+ Plan another day'
+  s4 not: Two workouts for one day
+  s4 not: The toast when the save failed
+  s4 not: Members of another gym seeing it
+J-F-panel-337-12 | type 2 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), today's workout already set
+  s1 see: Sheet 'Workout of the day' with Day set to the next free day
+  s1 not: Day preset to a day that already has a workout while a free day exists
+  s2 see: Each exercise in its own box with 'Sets', 'Reps from', 'Reps to', 'Rest (seconds)'
+  s2 see: For the own exercise: 'Your own exercise' and 'Main muscle'
+  s2 not: More than 30 exercises accepted
+  s3 see: Toast 'Saved for tomorrow.' or 'Saved for <date>.'
+  s3 see: A new row under today's with that day's name
+  s3 not: Today's workout replaced
+  s3 not: The workout shown to members before its day (unknown how the app treats later days)
+J-F-panel-337-13 | type 3 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), in the 'Workout of the day' sheet
+  s1 see: 'Give the workout a name, for example “Leg day”.'
+  s1 not: A nameless workout saved
+  s2 see: A red line asking for at least one exercise (exact words: unknown)
+  s2 not: An empty workout sent to members
+  s3 see: '<exercise>: sets must be a whole number from 1 to 20.'
+  s3 not: A workout with zero sets saved
+  s4 see: 'This replaces “<name>”, already set for that day.'
+  s4 not: The other workout replaced without this line
+  s5 see: No 'Workout of the day' card at all
+  s5 not: A card whose save can never work
+  s5 not: An error banner about a missing part
+J-F-panel-337-14 | type 6 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), a workout set for today
+  s1 see: The sheet filled with the saved name, note and exercises
+  s1 not: An empty sheet
+  s2 see: Toast 'Saved. Members see it now.'
+  s2 see: One row for today, with the new content
+  s2 not: A second row for the same day
+  s2 not: Members who already started it losing their workout
+  s3 see: Sheet 'Take this workout off?' with '<name> will no longer show to members for today. Members who already started it keep their workout.'
+  s3 see: Buttons 'Keep it' and 'Take it off'
+  s3 not: The workout removed before the question is answered
+  s4 see: After 'Keep it': the row is still there
+  s4 see: After confirming: toast 'Workout taken off.' and 'Nothing set for today.'
+  s4 see: Top button back to 'Set today’s workout'
+  s4 not: The row left on screen after it was taken off
+  s4 not: A workout of another day removed
+  s5 see: Toast 'Saved. Members see it now.'
+  s5 not: A refusal because one existed before
+J-F-panel-337-15 | type 12 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), writing the note for members
+  s1 see: The note and workout go to every member of this gym on their Workout tab
+  s1 not: A member's name or health detail typed into the note reaching all members without the writer knowing who reads it
+  s1 not: Members of another gym or branch seeing it
+  s1 not: The name of who set it shown to members without the gym knowing (the server keeps the setter's name: unknown where it shows)
+J-F-panel-338-01 | type 1 | owner | Owner signed in. Menu 'Workout plans', the gym has plans
+  s1 see: Title 'Workout plans', 'Send members their routines', button '+ New plan'
+  s1 see: 'Members see it in the MettleUp app after one check-in at the gym.'
+  s1 see: Card 'Plans': each plan's name, who it goes to, and '<days and exercises> · Updated <day> · by <name>'
+  s1 see: Buttons 'Edit', 'Make a copy', 'Withdraw' on each
+  s1 not: Withdrawn plans mixed into the list
+  s1 not: A staff login sent away from this screen
+  s2 see: Sheet 'Edit workout plan' filled with the plan
+  s2 not: A blank builder
+  s2 not: Another plan opened
+  s3 see: Toast '“<name>” updated.' (or '“<name>” saved. Tick members to send it.' when nobody is ticked)
+  s3 see: The row shows today's date after 'Updated'
+  s3 not: A second plan with the same name
+  s3 not: 'by <name>' changed to the person who edited
+J-F-panel-338-02 | type 2 | owner | Owner signed in, on the plans list
+  s1 see: Sheet 'New workout plan' filled with the plan's days and exercises (the copy's name and who it goes to: unknown)
+  s1 not: The original plan changed
+  s1 not: The copy sent to the same members without the user seeing it under 'Send to'
+  s2 see: A new row in 'Plans'
+  s2 see: Toast '“<name>” saved and sent.' or '“<name>” saved. Tick members to send it.'
+  s2 not: The original gone
+J-F-panel-338-03 | type 3 | owner | Owner signed in, on 'Workout plans' with nothing or with trouble
+  s1 see: 'No workout plans yet' and 'Make a plan once (for example “Beginner 3 days”) and send it to members or to everyone on a membership plan.'
+  s1 see: Button '+ New plan'
+  s1 not: A blank card
+  s1 not: An error
+  s2 see: 'Members get these plans only once your gym is online (Settings → Sign-in & data).'
+  s2 not: 'Members see it in the MettleUp app…' when no phone can ever get the plan
+  s3 see: A red banner with the reason, or 'Could not withdraw it. Try again.'
+  s3 see: The plan still in 'Plans'
+  s3 not: Toast 'Plan withdrawn.' for a plan that was not withdrawn
+J-F-panel-338-04 | type 6 | owner | Owner signed in, a plan that goes to members
+  s1 see: Sheet 'Withdraw this plan?' with '<name> will stop going to members. Routines already on their phones stay there, but get no more changes. You can’t send this plan again; make a copy of it instead.'
+  s1 see: Buttons 'Keep it' and 'Withdraw'
+  s1 not: The plan withdrawn before the question is answered
+  s2 see: The plan still in 'Plans'
+  s2 not: Any change
+  s3 see: Toast 'Plan withdrawn.'
+  s3 see: The plan leaves 'Plans'
+  s3 see: A folded card 'Withdrawn plans (1)'
+  s3 not: The plan deleted
+  s3 not: The routine removed from a member's phone
+  s4 see: 'Members no longer get these. Routines already on their phones stay there.'
+  s4 see: The plan with only 'Make a copy'
+  s4 not: 'Edit' or a way to send it again
+  s4 not: A way to bring it back (there is none: make a copy)
+J-F-panel-338-05 | type 12 | owner | Owner signed in, reading the plans list
+  s1 see: Who it goes to as a short summary and 'by <name>' of the staff member who made it
+  s1 not: Plans of another gym
+  s1 not: Member phone numbers on the list
+  s1 not: A member seeing a plan that was not sent to them
+J-F-panel-338-06 | type 1 | staff | Front desk login (staff may make, change, send and withdraw workout plans). Menu 'Workout plans', the gym has plans
+  s1 see: Title 'Workout plans', 'Send members their routines', button '+ New plan'
+  s1 see: 'Members see it in the MettleUp app after one check-in at the gym.'
+  s1 see: Card 'Plans': each plan's name, who it goes to, and '<days and exercises> · Updated <day> · by <name>'
+  s1 see: Buttons 'Edit', 'Make a copy', 'Withdraw' on each
+  s1 not: Withdrawn plans mixed into the list
+  s1 not: A staff login sent away from this screen
+  s2 see: Sheet 'Edit workout plan' filled with the plan
+  s2 not: A blank builder
+  s2 not: Another plan opened
+  s3 see: Toast '“<name>” updated.' (or '“<name>” saved. Tick members to send it.' when nobody is ticked)
+  s3 see: The row shows today's date after 'Updated'
+  s3 not: A second plan with the same name
+  s3 not: 'by <name>' changed to the person who edited
+J-F-panel-338-07 | type 2 | staff | Front desk login (staff may make, change, send and withdraw workout plans), on the plans list
+  s1 see: Sheet 'New workout plan' filled with the plan's days and exercises (the copy's name and who it goes to: unknown)
+  s1 not: The original plan changed
+  s1 not: The copy sent to the same members without the user seeing it under 'Send to'
+  s2 see: A new row in 'Plans'
+  s2 see: Toast '“<name>” saved and sent.' or '“<name>” saved. Tick members to send it.'
+  s2 not: The original gone
+J-F-panel-338-08 | type 3 | staff | Front desk login (staff may make, change, send and withdraw workout plans), on 'Workout plans' with nothing or with trouble
+  s1 see: 'No workout plans yet' and 'Make a plan once (for example “Beginner 3 days”) and send it to members or to everyone on a membership plan.'
+  s1 see: Button '+ New plan'
+  s1 not: A blank card
+  s1 not: An error
+  s2 see: 'Members get these plans only once your gym is online (Settings → Sign-in & data).'
+  s2 not: 'Members see it in the MettleUp app…' when no phone can ever get the plan
+  s3 see: A red banner with the reason, or 'Could not withdraw it. Try again.'
+  s3 see: The plan still in 'Plans'
+  s3 not: Toast 'Plan withdrawn.' for a plan that was not withdrawn
+J-F-panel-338-09 | type 6 | staff | Front desk login (staff may make, change, send and withdraw workout plans), a plan that goes to members
+  s1 see: Sheet 'Withdraw this plan?' with '<name> will stop going to members. Routines already on their phones stay there, but get no more changes. You can’t send this plan again; make a copy of it instead.'
+  s1 see: Buttons 'Keep it' and 'Withdraw'
+  s1 not: The plan withdrawn before the question is answered
+  s2 see: The plan still in 'Plans'
+  s2 not: Any change
+  s3 see: Toast 'Plan withdrawn.'
+  s3 see: The plan leaves 'Plans'
+  s3 see: A folded card 'Withdrawn plans (1)'
+  s3 not: The plan deleted
+  s3 not: The routine removed from a member's phone
+  s4 see: 'Members no longer get these. Routines already on their phones stay there.'
+  s4 see: The plan with only 'Make a copy'
+  s4 not: 'Edit' or a way to send it again
+  s4 not: A way to bring it back (there is none: make a copy)
+J-F-panel-338-10 | type 12 | staff | Front desk login (staff may make, change, send and withdraw workout plans), reading the plans list
+  s1 see: Who it goes to as a short summary and 'by <name>' of the staff member who made it
+  s1 not: Plans of another gym
+  s1 not: Member phone numbers on the list
+  s1 not: A member seeing a plan that was not sent to them
+J-F-panel-338-11 | type 1 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff). Menu 'Workout plans', the gym has plans
+  s1 see: Title 'Workout plans', 'Send members their routines', button '+ New plan'
+  s1 see: 'Members see it in the MettleUp app after one check-in at the gym.'
+  s1 see: Card 'Plans': each plan's name, who it goes to, and '<days and exercises> · Updated <day> · by <name>'
+  s1 see: Buttons 'Edit', 'Make a copy', 'Withdraw' on each
+  s1 not: Withdrawn plans mixed into the list
+  s1 not: A staff login sent away from this screen
+  s2 see: Sheet 'Edit workout plan' filled with the plan
+  s2 not: A blank builder
+  s2 not: Another plan opened
+  s3 see: Toast '“<name>” updated.' (or '“<name>” saved. Tick members to send it.' when nobody is ticked)
+  s3 see: The row shows today's date after 'Updated'
+  s3 not: A second plan with the same name
+  s3 not: 'by <name>' changed to the person who edited
+J-F-panel-338-12 | type 2 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), on the plans list
+  s1 see: Sheet 'New workout plan' filled with the plan's days and exercises (the copy's name and who it goes to: unknown)
+  s1 not: The original plan changed
+  s1 not: The copy sent to the same members without the user seeing it under 'Send to'
+  s2 see: A new row in 'Plans'
+  s2 see: Toast '“<name>” saved and sent.' or '“<name>” saved. Tick members to send it.'
+  s2 not: The original gone
+J-F-panel-338-13 | type 3 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), on 'Workout plans' with nothing or with troubl
+  s1 see: 'No workout plans yet' and 'Make a plan once (for example “Beginner 3 days”) and send it to members or to everyone on a membership plan.'
+  s1 see: Button '+ New plan'
+  s1 not: A blank card
+  s1 not: An error
+  s2 see: 'Members get these plans only once your gym is online (Settings → Sign-in & data).'
+  s2 not: 'Members see it in the MettleUp app…' when no phone can ever get the plan
+  s3 see: A red banner with the reason, or 'Could not withdraw it. Try again.'
+  s3 see: The plan still in 'Plans'
+  s3 not: Toast 'Plan withdrawn.' for a plan that was not withdrawn
+J-F-panel-338-14 | type 6 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), a plan that goes to members
+  s1 see: Sheet 'Withdraw this plan?' with '<name> will stop going to members. Routines already on their phones stay there, but get no more changes. You can’t send this plan again; make a copy of it instead.'
+  s1 see: Buttons 'Keep it' and 'Withdraw'
+  s1 not: The plan withdrawn before the question is answered
+  s2 see: The plan still in 'Plans'
+  s2 not: Any change
+  s3 see: Toast 'Plan withdrawn.'
+  s3 see: The plan leaves 'Plans'
+  s3 see: A folded card 'Withdrawn plans (1)'
+  s3 not: The plan deleted
+  s3 not: The routine removed from a member's phone
+  s4 see: 'Members no longer get these. Routines already on their phones stay there.'
+  s4 see: The plan with only 'Make a copy'
+  s4 not: 'Edit' or a way to send it again
+  s4 not: A way to bring it back (there is none: make a copy)
+J-F-panel-338-15 | type 12 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), reading the plans list
+  s1 see: Who it goes to as a short summary and 'by <name>' of the staff member who made it
+  s1 not: Plans of another gym
+  s1 not: Member phone numbers on the list
+  s1 not: A member seeing a plan that was not sent to them
+J-F-panel-339-01 | type 1 | owner | Owner signed in. 'Workout plans', '+ New plan', 'Start empty'
+  s1 see: 'New workout plan'
+  s1 see: 'Members see it in the MettleUp app after one check-in at the gym.'
+  s1 see: 'Plan name' (cursor in it), 'Note for members (optional)'
+  s1 see: 'Days' with '+ Add day' and a chip 'Day 1 · 0 exercises'
+  s1 see: 'No exercises on this day yet. Search below to add one.'
+  s1 not: A plan saved just by opening the sheet
+  s2 see: The chip shows the day name
+  s2 not: The name cut without a word
+  s3 see: The exercise box: '1. <name>', muscles and how it is logged, 'Sets (1-20)', 'Reps from', 'Reps to (max 100)', 'Start kg (optional)' with 'Empty: they choose', 'Rest (seconds)' with 'Empty: their own timer'
+  s3 see: The search box is empty again
+  s3 see: Chip 'Day 1 · 1 exercise'
+  s3 not: '1 exercises'
+  s3 not: The same exercise added twice by one tap
+  s4 see: Hint under Start kg 'Until they log their own'
+  s4 see: A second chip, selected
+  s4 not: A 15th day accepted
+  s4 not: Day 1's exercises lost when switching days
+  s5 see: The member with their mobile number and a pill 'Sending'
+  s5 see: After clearing the search: '1 member ticked.'
+  s5 not: A member of another gym in the search
+  s5 not: More than 30 matches drawn at once
+  s6 see: 'Saving…'
+  s6 see: Toast '“Beginner 3 days” saved and sent.'
+  s6 see: The plan in the list with 'by <the user's name>'
+  s6 not: Two plans from a double tap
+  s6 not: The plan sent to anyone not ticked
+J-F-panel-339-02 | type 2 | owner | Owner signed in, in the builder: the other kinds of 'who gets it' and of exercise
+  s1 see: Pill 'Sending' on that plan; the line under 'Send to' names it
+  s1 not: Members whose membership ended getting it
+  s1 not: A plan that is 'No longer sold' offered unless it was already ticked
+  s2 see: 'Your own exercise' and a box 'Main muscle' with 'Needed so the member’s app can add it'
+  s2 not: The own exercise saved without a main muscle
+  s3 see: A 'Seconds (…)' box in place of reps and kg
+  s3 not: Reps boxes for a timed hold
+  s4 see: Toast '“<name>” saved. Tick members to send it.'
+  s4 not: 'saved and sent' when it went to nobody
+J-F-panel-339-03 | type 3 | owner | Owner signed in, in the builder with wrong input
+  s1 see: 'Give the plan a name.'
+  s1 not: A nameless plan saved
+  s2 see: 'Keep the plan name to 80 letters.'
+  s2 not: The name cut silently
+  s3 see: 'Add at least one exercise to <day>.'
+  s3 not: An empty day sent to members
+  s4 see: '<exercise>: sets must be a whole number from 1 to 20.' / '<exercise>: the lowest reps can’t be more than the highest.'
+  s4 not: Bad numbers reaching a member's phone
+  s5 see: '+ Add day' and 'Copy day' greyed, 'A plan can have at most 14 days.'
+  s5 not: A 15th day
+  s6 see: 'A day can have at most 30 exercises.' in place of the search
+  s6 not: A 31st exercise
+J-F-panel-339-04 | type 6 | owner | Owner signed in, a saved plan opened with 'Edit'
+  s1 see: The chips change at once; the last day cannot be removed (no button)
+  s1 not: Exercises of another day changed
+  s1 not: A plan left with no day
+  s2 see: The list, plan unchanged
+  s2 not: Any of the edits saved
+  s3 see: Toast '“<name>” updated.'
+  s3 not: The routine removed from that member's phone (it stays; they get no more changes: unknown how the app shows it)
+  s4 see: 'Someone else changed this plan while you had it open. Close it and open it again to see their changes.'
+  s4 not: The other person's change lost
+  s4 not: Both changes half-merged
+J-F-panel-339-05 | type 12 | owner | Owner signed in, choosing who gets a plan
+  s1 see: Members of this gym by name with their mobile numbers
+  s1 not: Members of another gym or branch
+  s1 not: The plan visible in the app of a member who is not ticked and not on a ticked membership plan
+  s2 see: The maker's name is kept on the plan and shown to the gym's staff on the list
+  s2 not: An injury or health word typed in a note shown to members other than those who get the plan
+J-F-panel-339-06 | type 1 | staff | Front desk login (staff may make, change, send and withdraw workout plans). 'Workout plans', '+ New plan', 'Start empty'
+  s1 see: 'New workout plan'
+  s1 see: 'Members see it in the MettleUp app after one check-in at the gym.'
+  s1 see: 'Plan name' (cursor in it), 'Note for members (optional)'
+  s1 see: 'Days' with '+ Add day' and a chip 'Day 1 · 0 exercises'
+  s1 see: 'No exercises on this day yet. Search below to add one.'
+  s1 not: A plan saved just by opening the sheet
+  s2 see: The chip shows the day name
+  s2 not: The name cut without a word
+  s3 see: The exercise box: '1. <name>', muscles and how it is logged, 'Sets (1-20)', 'Reps from', 'Reps to (max 100)', 'Start kg (optional)' with 'Empty: they choose', 'Rest (seconds)' with 'Empty: their own timer'
+  s3 see: The search box is empty again
+  s3 see: Chip 'Day 1 · 1 exercise'
+  s3 not: '1 exercises'
+  s3 not: The same exercise added twice by one tap
+  s4 see: Hint under Start kg 'Until they log their own'
+  s4 see: A second chip, selected
+  s4 not: A 15th day accepted
+  s4 not: Day 1's exercises lost when switching days
+  s5 see: The member with their mobile number and a pill 'Sending'
+  s5 see: After clearing the search: '1 member ticked.'
+  s5 not: A member of another gym in the search
+  s5 not: More than 30 matches drawn at once
+  s6 see: 'Saving…'
+  s6 see: Toast '“Beginner 3 days” saved and sent.'
+  s6 see: The plan in the list with 'by <the user's name>'
+  s6 not: Two plans from a double tap
+  s6 not: The plan sent to anyone not ticked
+J-F-panel-339-07 | type 2 | staff | Front desk login (staff may make, change, send and withdraw workout plans), in the builder: the other kinds of 'who gets it' and of exercise
+  s1 see: Pill 'Sending' on that plan; the line under 'Send to' names it
+  s1 not: Members whose membership ended getting it
+  s1 not: A plan that is 'No longer sold' offered unless it was already ticked
+  s2 see: 'Your own exercise' and a box 'Main muscle' with 'Needed so the member’s app can add it'
+  s2 not: The own exercise saved without a main muscle
+  s3 see: A 'Seconds (…)' box in place of reps and kg
+  s3 not: Reps boxes for a timed hold
+  s4 see: Toast '“<name>” saved. Tick members to send it.'
+  s4 not: 'saved and sent' when it went to nobody
+J-F-panel-339-08 | type 3 | staff | Front desk login (staff may make, change, send and withdraw workout plans), in the builder with wrong input
+  s1 see: 'Give the plan a name.'
+  s1 not: A nameless plan saved
+  s2 see: 'Keep the plan name to 80 letters.'
+  s2 not: The name cut silently
+  s3 see: 'Add at least one exercise to <day>.'
+  s3 not: An empty day sent to members
+  s4 see: '<exercise>: sets must be a whole number from 1 to 20.' / '<exercise>: the lowest reps can’t be more than the highest.'
+  s4 not: Bad numbers reaching a member's phone
+  s5 see: '+ Add day' and 'Copy day' greyed, 'A plan can have at most 14 days.'
+  s5 not: A 15th day
+  s6 see: 'A day can have at most 30 exercises.' in place of the search
+  s6 not: A 31st exercise
+J-F-panel-339-09 | type 6 | staff | Front desk login (staff may make, change, send and withdraw workout plans), a saved plan opened with 'Edit'
+  s1 see: The chips change at once; the last day cannot be removed (no button)
+  s1 not: Exercises of another day changed
+  s1 not: A plan left with no day
+  s2 see: The list, plan unchanged
+  s2 not: Any of the edits saved
+  s3 see: Toast '“<name>” updated.'
+  s3 not: The routine removed from that member's phone (it stays; they get no more changes: unknown how the app shows it)
+  s4 see: 'Someone else changed this plan while you had it open. Close it and open it again to see their changes.'
+  s4 not: The other person's change lost
+  s4 not: Both changes half-merged
+J-F-panel-339-10 | type 12 | staff | Front desk login (staff may make, change, send and withdraw workout plans), choosing who gets a plan
+  s1 see: Members of this gym by name with their mobile numbers
+  s1 not: Members of another gym or branch
+  s1 not: The plan visible in the app of a member who is not ticked and not on a ticked membership plan
+  s2 see: The maker's name is kept on the plan and shown to the gym's staff on the list
+  s2 not: An injury or health word typed in a note shown to members other than those who get the plan
+J-F-panel-339-11 | type 1 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff). 'Workout plans', '+ New plan', 'Start empty'
+  s1 see: 'New workout plan'
+  s1 see: 'Members see it in the MettleUp app after one check-in at the gym.'
+  s1 see: 'Plan name' (cursor in it), 'Note for members (optional)'
+  s1 see: 'Days' with '+ Add day' and a chip 'Day 1 · 0 exercises'
+  s1 see: 'No exercises on this day yet. Search below to add one.'
+  s1 not: A plan saved just by opening the sheet
+  s2 see: The chip shows the day name
+  s2 not: The name cut without a word
+  s3 see: The exercise box: '1. <name>', muscles and how it is logged, 'Sets (1-20)', 'Reps from', 'Reps to (max 100)', 'Start kg (optional)' with 'Empty: they choose', 'Rest (seconds)' with 'Empty: their own timer'
+  s3 see: The search box is empty again
+  s3 see: Chip 'Day 1 · 1 exercise'
+  s3 not: '1 exercises'
+  s3 not: The same exercise added twice by one tap
+  s4 see: Hint under Start kg 'Until they log their own'
+  s4 see: A second chip, selected
+  s4 not: A 15th day accepted
+  s4 not: Day 1's exercises lost when switching days
+  s5 see: The member with their mobile number and a pill 'Sending'
+  s5 see: After clearing the search: '1 member ticked.'
+  s5 not: A member of another gym in the search
+  s5 not: More than 30 matches drawn at once
+  s6 see: 'Saving…'
+  s6 see: Toast '“Beginner 3 days” saved and sent.'
+  s6 see: The plan in the list with 'by <the user's name>'
+  s6 not: Two plans from a double tap
+  s6 not: The plan sent to anyone not ticked
+J-F-panel-339-12 | type 2 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), in the builder: the other kinds of 'who gets i
+  s1 see: Pill 'Sending' on that plan; the line under 'Send to' names it
+  s1 not: Members whose membership ended getting it
+  s1 not: A plan that is 'No longer sold' offered unless it was already ticked
+  s2 see: 'Your own exercise' and a box 'Main muscle' with 'Needed so the member’s app can add it'
+  s2 not: The own exercise saved without a main muscle
+  s3 see: A 'Seconds (…)' box in place of reps and kg
+  s3 not: Reps boxes for a timed hold
+  s4 see: Toast '“<name>” saved. Tick members to send it.'
+  s4 not: 'saved and sent' when it went to nobody
+J-F-panel-339-13 | type 3 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), in the builder with wrong input
+  s1 see: 'Give the plan a name.'
+  s1 not: A nameless plan saved
+  s2 see: 'Keep the plan name to 80 letters.'
+  s2 not: The name cut silently
+  s3 see: 'Add at least one exercise to <day>.'
+  s3 not: An empty day sent to members
+  s4 see: '<exercise>: sets must be a whole number from 1 to 20.' / '<exercise>: the lowest reps can’t be more than the highest.'
+  s4 not: Bad numbers reaching a member's phone
+  s5 see: '+ Add day' and 'Copy day' greyed, 'A plan can have at most 14 days.'
+  s5 not: A 15th day
+  s6 see: 'A day can have at most 30 exercises.' in place of the search
+  s6 not: A 31st exercise
+J-F-panel-339-14 | type 6 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), a saved plan opened with 'Edit'
+  s1 see: The chips change at once; the last day cannot be removed (no button)
+  s1 not: Exercises of another day changed
+  s1 not: A plan left with no day
+  s2 see: The list, plan unchanged
+  s2 not: Any of the edits saved
+  s3 see: Toast '“<name>” updated.'
+  s3 not: The routine removed from that member's phone (it stays; they get no more changes: unknown how the app shows it)
+  s4 see: 'Someone else changed this plan while you had it open. Close it and open it again to see their changes.'
+  s4 not: The other person's change lost
+  s4 not: Both changes half-merged
+J-F-panel-339-15 | type 12 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), choosing who gets a plan
+  s1 see: Members of this gym by name with their mobile numbers
+  s1 not: Members of another gym or branch
+  s1 not: The plan visible in the app of a member who is not ticked and not on a ticked membership plan
+  s2 see: The maker's name is kept on the plan and shown to the gym's staff on the list
+  s2 not: An injury or health word typed in a note shown to members other than those who get the plan
+J-F-panel-342-01 | type 1 | owner | Owner signed in, gym online on a gym server that keeps video links; plan builder open with one exercise
+  s1 see: Box 'Your video of it (YouTube link, optional)' with 'https://youtu.be/…' and 'Members see “Watch your trainer” on this exercise in their app.'
+  s1 not: The box shown when the gym server cannot keep the link
+  s2 see: No red words under the box
+  s2 see: The plan's toast, for example '“<name>” saved and sent.'
+  s2 not: The link saved on a different exercise
+  s2 not: The link changed so that it opens another video
+J-F-panel-342-02 | type 2 | owner | Owner signed in, in the 'Workout of the day' sheet with one exercise
+  s1 see: The same box and hint as in a plan
+  s1 see: Toast 'Saved. Members see it now.'
+  s1 not: The link dropped from the saved workout
+J-F-panel-342-03 | type 3 | owner | Owner signed in, in the plan builder
+  s1 see: Red words 'Paste a YouTube link (youtube.com or youtu.be).'
+  s1 not: Any other site's link accepted
+  s2 see: '<exercise>: the video link must be a YouTube link (youtube.com or youtu.be).'
+  s2 see: The sheet stays open
+  s2 not: The plan saved with the bad link
+  s2 not: The plan saved with the link silently removed
+  s3 see: No '+ Add your video' button on exercises
+  s3 not: A link typed that can never reach a member
+J-F-panel-342-04 | type 6 | owner | Owner signed in, a plan saved with a video link on one exercise
+  s1 see: The video box already open with the saved link
+  s1 not: The link hidden behind '+ Add your video'
+  s1 not: The link hidden because the server check has not answered yet (a saved link always shows)
+  s2 see: Toast '“<name>” updated.'
+  s2 not: The old link still shown to members (unknown how an empty box is saved: not read)
+  s3 see: The copied exercise keeps the link (unknown: not read)
+  s3 not: A half-copied link
+J-F-panel-342-05 | type 12 | owner | Owner signed in, adding a video
+  s1 see: Members who get this plan see “Watch your trainer” on that exercise
+  s1 not: The video uploaded to or stored by MettleUp (only the link is kept)
+  s1 not: Members who do not get the plan seeing the link
+  s1 not: A link to a private page that asks members to sign in elsewhere
+J-F-panel-342-06 | type 1 | staff | Front desk login (staff may make, change, send and withdraw workout plans), gym online on a gym server that keeps video links; plan builder 
+  s1 see: Box 'Your video of it (YouTube link, optional)' with 'https://youtu.be/…' and 'Members see “Watch your trainer” on this exercise in their app.'
+  s1 not: The box shown when the gym server cannot keep the link
+  s2 see: No red words under the box
+  s2 see: The plan's toast, for example '“<name>” saved and sent.'
+  s2 not: The link saved on a different exercise
+  s2 not: The link changed so that it opens another video
+J-F-panel-342-07 | type 2 | staff | Front desk login (staff may make, change, send and withdraw workout plans), in the 'Workout of the day' sheet with one exercise
+  s1 see: The same box and hint as in a plan
+  s1 see: Toast 'Saved. Members see it now.'
+  s1 not: The link dropped from the saved workout
+J-F-panel-342-08 | type 3 | staff | Front desk login (staff may make, change, send and withdraw workout plans), in the plan builder
+  s1 see: Red words 'Paste a YouTube link (youtube.com or youtu.be).'
+  s1 not: Any other site's link accepted
+  s2 see: '<exercise>: the video link must be a YouTube link (youtube.com or youtu.be).'
+  s2 see: The sheet stays open
+  s2 not: The plan saved with the bad link
+  s2 not: The plan saved with the link silently removed
+  s3 see: No '+ Add your video' button on exercises
+  s3 not: A link typed that can never reach a member
+J-F-panel-342-09 | type 6 | staff | Front desk login (staff may make, change, send and withdraw workout plans), a plan saved with a video link on one exercise
+  s1 see: The video box already open with the saved link
+  s1 not: The link hidden behind '+ Add your video'
+  s1 not: The link hidden because the server check has not answered yet (a saved link always shows)
+  s2 see: Toast '“<name>” updated.'
+  s2 not: The old link still shown to members (unknown how an empty box is saved: not read)
+  s3 see: The copied exercise keeps the link (unknown: not read)
+  s3 not: A half-copied link
+J-F-panel-342-10 | type 12 | staff | Front desk login (staff may make, change, send and withdraw workout plans), adding a video
+  s1 see: Members who get this plan see “Watch your trainer” on that exercise
+  s1 not: The video uploaded to or stored by MettleUp (only the link is kept)
+  s1 not: Members who do not get the plan seeing the link
+  s1 not: A link to a private page that asks members to sign in elsewhere
+J-F-panel-342-11 | type 1 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), gym online on a gym server that keeps video li
+  s1 see: Box 'Your video of it (YouTube link, optional)' with 'https://youtu.be/…' and 'Members see “Watch your trainer” on this exercise in their app.'
+  s1 not: The box shown when the gym server cannot keep the link
+  s2 see: No red words under the box
+  s2 see: The plan's toast, for example '“<name>” saved and sent.'
+  s2 not: The link saved on a different exercise
+  s2 not: The link changed so that it opens another video
+J-F-panel-342-12 | type 2 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), in the 'Workout of the day' sheet with one exe
+  s1 see: The same box and hint as in a plan
+  s1 see: Toast 'Saved. Members see it now.'
+  s1 not: The link dropped from the saved workout
+J-F-panel-342-13 | type 3 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), in the plan builder
+  s1 see: Red words 'Paste a YouTube link (youtube.com or youtu.be).'
+  s1 not: Any other site's link accepted
+  s2 see: '<exercise>: the video link must be a YouTube link (youtube.com or youtu.be).'
+  s2 see: The sheet stays open
+  s2 not: The plan saved with the bad link
+  s2 not: The plan saved with the link silently removed
+  s3 see: No '+ Add your video' button on exercises
+  s3 not: A link typed that can never reach a member
+J-F-panel-342-14 | type 6 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), a plan saved with a video link on one exercise
+  s1 see: The video box already open with the saved link
+  s1 not: The link hidden behind '+ Add your video'
+  s1 not: The link hidden because the server check has not answered yet (a saved link always shows)
+  s2 see: Toast '“<name>” updated.'
+  s2 not: The old link still shown to members (unknown how an empty box is saved: not read)
+  s3 see: The copied exercise keeps the link (unknown: not read)
+  s3 not: A half-copied link
+J-F-panel-342-15 | type 12 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), adding a video
+  s1 see: Members who get this plan see “Watch your trainer” on that exercise
+  s1 not: The video uploaded to or stored by MettleUp (only the link is kept)
+  s1 not: Members who do not get the plan seeing the link
+  s1 not: A link to a private page that asks members to sign in elsewhere
+J-F-panel-340-01 | type 1 | owner | Owner signed in, on 'Workout plans'
+  s1 see: Sheet 'New workout plan' with 'Start from a ready plan and change anything you like, or start empty.'
+  s1 see: A row per ready plan: name, level and size, a line about it
+  s1 see: Last row 'Start empty' / 'Pick every exercise yourself'
+  s1 see: Button 'Cancel'
+  s1 not: A plan saved by opening the sheet
+  s1 not: An empty list
+  s2 see: The chooser closes and the builder 'New workout plan' opens with that plan's name, days and exercises filled in, nobody ticked under 'Send to'
+  s2 not: The ready plan sent to anyone before 'Save plan'
+  s2 not: Two builders opened
+J-F-panel-340-02 | type 2 | owner | Owner signed in, a gym with no plans yet
+  s1 see: The same sheet 'New workout plan'
+  s1 not: A different chooser
+  s2 see: The builder with an empty name, one day 'Day 1 · 0 exercises' and the cursor in 'Plan name'
+  s2 not: A ready plan's exercises left in the empty plan
+J-F-panel-340-03 | type 3 | owner | Owner signed in, in the 'New workout plan' chooser (it takes no typing)
+  s1 see: The plans list, unchanged
+  s1 not: An empty plan added to the list
+  s2 see: The plans list, unchanged; no toast
+  s2 not: A plan saved without 'Save plan'
+J-F-panel-340-04 | type 6 | owner | Owner signed in, starting twice from the same ready plan
+  s1 see: The new plan in the list
+  s1 not: The ready plan itself changed
+  s2 see: The ready plan as it was, without the earlier changes
+  s2 not: The first plan's edits or ticked members carried into the new one
+J-F-panel-340-05 | type 1 | staff | Front desk login (staff may make, change, send and withdraw workout plans), on 'Workout plans'
+  s1 see: Sheet 'New workout plan' with 'Start from a ready plan and change anything you like, or start empty.'
+  s1 see: A row per ready plan: name, level and size, a line about it
+  s1 see: Last row 'Start empty' / 'Pick every exercise yourself'
+  s1 see: Button 'Cancel'
+  s1 not: A plan saved by opening the sheet
+  s1 not: An empty list
+  s2 see: The chooser closes and the builder 'New workout plan' opens with that plan's name, days and exercises filled in, nobody ticked under 'Send to'
+  s2 not: The ready plan sent to anyone before 'Save plan'
+  s2 not: Two builders opened
+J-F-panel-340-06 | type 2 | staff | Front desk login (staff may make, change, send and withdraw workout plans), a gym with no plans yet
+  s1 see: The same sheet 'New workout plan'
+  s1 not: A different chooser
+  s2 see: The builder with an empty name, one day 'Day 1 · 0 exercises' and the cursor in 'Plan name'
+  s2 not: A ready plan's exercises left in the empty plan
+J-F-panel-340-07 | type 3 | staff | Front desk login (staff may make, change, send and withdraw workout plans), in the 'New workout plan' chooser (it takes no typing)
+  s1 see: The plans list, unchanged
+  s1 not: An empty plan added to the list
+  s2 see: The plans list, unchanged; no toast
+  s2 not: A plan saved without 'Save plan'
+J-F-panel-340-08 | type 6 | staff | Front desk login (staff may make, change, send and withdraw workout plans), starting twice from the same ready plan
+  s1 see: The new plan in the list
+  s1 not: The ready plan itself changed
+  s2 see: The ready plan as it was, without the earlier changes
+  s2 not: The first plan's edits or ticked members carried into the new one
+J-F-panel-340-09 | type 1 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), on 'Workout plans'
+  s1 see: Sheet 'New workout plan' with 'Start from a ready plan and change anything you like, or start empty.'
+  s1 see: A row per ready plan: name, level and size, a line about it
+  s1 see: Last row 'Start empty' / 'Pick every exercise yourself'
+  s1 see: Button 'Cancel'
+  s1 not: A plan saved by opening the sheet
+  s1 not: An empty list
+  s2 see: The chooser closes and the builder 'New workout plan' opens with that plan's name, days and exercises filled in, nobody ticked under 'Send to'
+  s2 not: The ready plan sent to anyone before 'Save plan'
+  s2 not: Two builders opened
+J-F-panel-340-10 | type 2 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), a gym with no plans yet
+  s1 see: The same sheet 'New workout plan'
+  s1 not: A different chooser
+  s2 see: The builder with an empty name, one day 'Day 1 · 0 exercises' and the cursor in 'Plan name'
+  s2 not: A ready plan's exercises left in the empty plan
+J-F-panel-340-11 | type 3 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), in the 'New workout plan' chooser (it takes no
+  s1 see: The plans list, unchanged
+  s1 not: An empty plan added to the list
+  s2 see: The plans list, unchanged; no toast
+  s2 not: A plan saved without 'Save plan'
+J-F-panel-340-12 | type 6 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), starting twice from the same ready plan
+  s1 see: The new plan in the list
+  s1 not: The ready plan itself changed
+  s2 see: The ready plan as it was, without the earlier changes
+  s2 not: The first plan's edits or ticked members carried into the new one
+J-F-panel-341-01 | type 1 | owner | Owner signed in. Member detail of a member, card 'Workout plans'; the gym has plans
+  s1 see: Sheet 'Send a plan to <member name>'
+  s1 see: 'Members see it in the MettleUp app after one check-in at the gym.'
+  s1 see: 'Your gym’s plans': each plan with its size, who it goes to and 'Send'
+  s1 see: 'Or make one for them': 'Start from a ready plan', 'Make a new plan'
+  s1 not: Withdrawn plans offered
+  s1 not: The button usable with no internet
+  s2 see: 'Sending…' on that row, the other rows greyed
+  s2 see: The sheet closes
+  s2 see: A bar '“<plan>” sent to <member name>.' with Undo
+  s2 not: The plan sent twice
+  s2 not: Other members ticked on the plan taken off
+  s2 not: The plan's exercises changed
+J-F-panel-341-02 | type 2 | owner | Owner signed in, in 'Send a plan to <member name>'
+  s1 see: Title 'Start from a ready plan', the ready plans and 'Start empty', button '‹ Back'
+  s1 not: The member dropped from the plan being made
+  s2 see: The builder 'New workout plan' with this member ticked under 'Send to'
+  s2 not: Nobody ticked
+  s3 see: Toast '“<plan>” sent to <member name>.'
+  s3 not: 'sent to' when the member was unticked before saving (then it reads '“<plan>” saved.')
+  s4 see: An empty builder with this member ticked
+  s4 not: A ready plan's content
+J-F-panel-341-03 | type 3 | owner | Owner signed in, sending cannot go the normal way
+  s1 see: That plan greyed with a pill 'Already sent'
+  s1 not: The member added twice
+  s1 not: A tap doing anything
+  s2 see: Only 'Make one for them' with its two rows
+  s2 not: An empty heading 'Your gym’s plans'
+  s3 see: Red banner 'Someone else changed this plan while you had it open. Close it and open it again to see their changes.' (or 'Could not send this plan. Try again.')
+  s3 see: The sheet stays open
+  s3 not: The other person's change lost
+  s3 not: The bar '… sent to …' shown
+  s4 see: 'Members get these plans only once your gym is online (Settings → Sign-in & data).' in the sheet
+  s4 not: Words promising the member will see it
+  s5 see: One note about Pro in place of the 'Workout plans' card
+  s5 not: A 'Send a plan' button that then fails
+J-F-panel-341-04 | type 6 | owner | Owner signed in, a plan just sent in one tap
+  s1 see: The bar goes; the member is off the plan again
+  s1 not: Other members taken off
+  s1 not: The plan withdrawn
+  s2 see: The bar goes by itself; the plan stays sent
+  s2 not: The plan taken back when the bar goes
+  s3 see: That plan shows 'Already sent'
+  s3 not: 'Send' offered again
+  s4 see: 'Someone changed “<plan>” just now. To take <member name> off it, open it under Workout plans.'
+  s4 not: The other person's change undone
+  s4 not: No word at all
+J-F-panel-341-05 | type 12 | owner | Owner signed in, sending a plan to one member
+  s1 see: Each plan's 'who it goes to' summary; only this member is added
+  s1 not: Names or numbers of the plan's other members listed in the sheet
+  s1 not: The member seeing the plan before a check-in at the gym, or a member of another gym seeing it
+  s1 not: The plan staying on offer to a member whose data was deleted (unknown: not read)
+J-F-panel-341-06 | type 1 | staff | Front desk login (staff may make, change, send and withdraw workout plans). Member detail of a member, card 'Workout plans'; the gym has pla
+  s1 see: Sheet 'Send a plan to <member name>'
+  s1 see: 'Members see it in the MettleUp app after one check-in at the gym.'
+  s1 see: 'Your gym’s plans': each plan with its size, who it goes to and 'Send'
+  s1 see: 'Or make one for them': 'Start from a ready plan', 'Make a new plan'
+  s1 not: Withdrawn plans offered
+  s1 not: The button usable with no internet
+  s2 see: 'Sending…' on that row, the other rows greyed
+  s2 see: The sheet closes
+  s2 see: A bar '“<plan>” sent to <member name>.' with Undo
+  s2 not: The plan sent twice
+  s2 not: Other members ticked on the plan taken off
+  s2 not: The plan's exercises changed
+J-F-panel-341-07 | type 2 | staff | Front desk login (staff may make, change, send and withdraw workout plans), in 'Send a plan to <member name>'
+  s1 see: Title 'Start from a ready plan', the ready plans and 'Start empty', button '‹ Back'
+  s1 not: The member dropped from the plan being made
+  s2 see: The builder 'New workout plan' with this member ticked under 'Send to'
+  s2 not: Nobody ticked
+  s3 see: Toast '“<plan>” sent to <member name>.'
+  s3 not: 'sent to' when the member was unticked before saving (then it reads '“<plan>” saved.')
+  s4 see: An empty builder with this member ticked
+  s4 not: A ready plan's content
+J-F-panel-341-08 | type 3 | staff | Front desk login (staff may make, change, send and withdraw workout plans), sending cannot go the normal way
+  s1 see: That plan greyed with a pill 'Already sent'
+  s1 not: The member added twice
+  s1 not: A tap doing anything
+  s2 see: Only 'Make one for them' with its two rows
+  s2 not: An empty heading 'Your gym’s plans'
+  s3 see: Red banner 'Someone else changed this plan while you had it open. Close it and open it again to see their changes.' (or 'Could not send this plan. Try again.')
+  s3 see: The sheet stays open
+  s3 not: The other person's change lost
+  s3 not: The bar '… sent to …' shown
+  s4 see: 'Members get these plans only once your gym is online (Settings → Sign-in & data).' in the sheet
+  s4 not: Words promising the member will see it
+  s5 see: One note about Pro in place of the 'Workout plans' card
+  s5 not: A 'Send a plan' button that then fails
+J-F-panel-341-09 | type 6 | staff | Front desk login (staff may make, change, send and withdraw workout plans), a plan just sent in one tap
+  s1 see: The bar goes; the member is off the plan again
+  s1 not: Other members taken off
+  s1 not: The plan withdrawn
+  s2 see: The bar goes by itself; the plan stays sent
+  s2 not: The plan taken back when the bar goes
+  s3 see: That plan shows 'Already sent'
+  s3 not: 'Send' offered again
+  s4 see: 'Someone changed “<plan>” just now. To take <member name> off it, open it under Workout plans.'
+  s4 not: The other person's change undone
+  s4 not: No word at all
+J-F-panel-341-10 | type 12 | staff | Front desk login (staff may make, change, send and withdraw workout plans), sending a plan to one member
+  s1 see: Each plan's 'who it goes to' summary; only this member is added
+  s1 not: Names or numbers of the plan's other members listed in the sheet
+  s1 not: The member seeing the plan before a check-in at the gym, or a member of another gym seeing it
+  s1 not: The plan staying on offer to a member whose data was deleted (unknown: not read)
+J-F-panel-341-11 | type 1 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff). Member detail of a member, card 'Workout plans
+  s1 see: Sheet 'Send a plan to <member name>'
+  s1 see: 'Members see it in the MettleUp app after one check-in at the gym.'
+  s1 see: 'Your gym’s plans': each plan with its size, who it goes to and 'Send'
+  s1 see: 'Or make one for them': 'Start from a ready plan', 'Make a new plan'
+  s1 not: Withdrawn plans offered
+  s1 not: The button usable with no internet
+  s2 see: 'Sending…' on that row, the other rows greyed
+  s2 see: The sheet closes
+  s2 see: A bar '“<plan>” sent to <member name>.' with Undo
+  s2 not: The plan sent twice
+  s2 not: Other members ticked on the plan taken off
+  s2 not: The plan's exercises changed
+J-F-panel-341-12 | type 2 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), in 'Send a plan to <member name>'
+  s1 see: Title 'Start from a ready plan', the ready plans and 'Start empty', button '‹ Back'
+  s1 not: The member dropped from the plan being made
+  s2 see: The builder 'New workout plan' with this member ticked under 'Send to'
+  s2 not: Nobody ticked
+  s3 see: Toast '“<plan>” sent to <member name>.'
+  s3 not: 'sent to' when the member was unticked before saving (then it reads '“<plan>” saved.')
+  s4 see: An empty builder with this member ticked
+  s4 not: A ready plan's content
+J-F-panel-341-13 | type 3 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), sending cannot go the normal way
+  s1 see: That plan greyed with a pill 'Already sent'
+  s1 not: The member added twice
+  s1 not: A tap doing anything
+  s2 see: Only 'Make one for them' with its two rows
+  s2 not: An empty heading 'Your gym’s plans'
+  s3 see: Red banner 'Someone else changed this plan while you had it open. Close it and open it again to see their changes.' (or 'Could not send this plan. Try again.')
+  s3 see: The sheet stays open
+  s3 not: The other person's change lost
+  s3 not: The bar '… sent to …' shown
+  s4 see: 'Members get these plans only once your gym is online (Settings → Sign-in & data).' in the sheet
+  s4 not: Words promising the member will see it
+  s5 see: One note about Pro in place of the 'Workout plans' card
+  s5 not: A 'Send a plan' button that then fails
+J-F-panel-341-14 | type 6 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), a plan just sent in one tap
+  s1 see: The bar goes; the member is off the plan again
+  s1 not: Other members taken off
+  s1 not: The plan withdrawn
+  s2 see: The bar goes by itself; the plan stays sent
+  s2 not: The plan taken back when the bar goes
+  s3 see: That plan shows 'Already sent'
+  s3 not: 'Send' offered again
+  s4 see: 'Someone changed “<plan>” just now. To take <member name> off it, open it under Workout plans.'
+  s4 not: The other person's change undone
+  s4 not: No word at all
+J-F-panel-341-15 | type 12 | trainer | Trainer on a staff login (permissions know only owner and staff, so a trainer acts as staff), sending a plan to one member
+  s1 see: Each plan's 'who it goes to' summary; only this member is added
+  s1 not: Names or numbers of the plan's other members listed in the sheet
+  s1 not: The member seeing the plan before a check-in at the gym, or a member of another gym seeing it
+  s1 not: The plan staying on offer to a member whose data was deleted (unknown: not read)

@@ -1,0 +1,47 @@
+# L7-server-panel-worker: 7 x server / server/panel-worker. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L7.1 | 7 | Panel load on a slow Indian 4G phone (Core Web Vitals)
+L7.2 | 7 | biggest pages and lists with 500+ members
+L7.3 | 7 | phone app start time, workout screen with long history
+L7.4 | 7 | watch battery and screen-on time
+L7.5 | 7 | database queries without indexes
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-server-101 | live | Move a desk from the old admin address to app.mettleup.fit: the old address asks whether to move and hands the sign-in o | deploy/panel/worker.js:101
+F-server-102 | live | Block-proof gym server address: both apps reach the gym server through our own address (/sb) so a block of supabase.co c | deploy/panel/worker.js:110
+F-server-103 | live | Phone pop-ups at once: after the admin app sends a message, starts an offer or answers a member question, HQ is told to  | deploy/panel/proxy.js:75
+F-server-104 | live | Gym invite link page (/j/CODE): shows "Join <gym>" with the gym name and logo for link previews; opens the app on a phon | deploy/panel/worker.js:111
+F-server-105 | live | Check-in poster link page (/c/CODE): "Check in at <gym>"; opens the app's check-in screen, or tells a phone without the  | deploy/panel/worker.js:117
+F-server-106 | live | Bring a friend: a member's invite page (/f/CODE) names the gym and the member, and its form sends the friend's name and  | deploy/panel/worker.js:121
+F-server-107 | live | Join online: the gym's "Become a member" page (/m/CODE) shows the gym's plans and prices (and a free trial when on), and | deploy/panel/worker.js:126
+F-server-108 | behind switch | Pay online on the join page: tells the page whether this gym can be paid online, checks the page's own payment, and take | deploy/panel/worker.js:131
+F-server-109 | live | Smart app link (/app): Android goes to Google Play, an iPhone to the App Store once set ("coming soon" until then), a co | deploy/panel/worker.js:134
+F-server-110 | live | What's new lines for the app's update screen, served from our own server (read from GitHub, cached, last good copy kept  | deploy/panel/worker.js:133
+F-server-111 | live | Release file pass-through for the Play Console page (/dl/<version>.aab and its store pictures): lets the console page fe | deploy/panel/worker.js:136
+F-server-112 | live | Send feedback: both apps post a message; it is kept in MettleUp's own small database (not the gym server), with how it w | deploy/panel/worker.js:140
+F-server-113 | live | Help and feedback with an AI answer: the message is saved, an answer is written from the help articles (or matched from  | deploy/panel/worker.js:141
+F-server-114 | unknown | Spoken feedback: the member app sends a short voice clip, gets the text back to fix and send; the clip is not kept; coun | deploy/panel/worker.js:145
+F-server-115 | live | Crash reports: both apps post an uncaught error with no personal data; kept 90 days as "crash" rows for HQ and the daily | deploy/panel/worker.js:146
+F-server-116 | live | Daily clean-up at 03:00 India time: deletes crash reports older than 90 days, spoken-feedback counts older than 7 days,  | deploy/panel/worker.js:177
+F-server-117 | live | News from MettleUp HQ for the admin app's bell: the latest messages HQ sent to every gym | deploy/panel/worker.js:147
+F-server-118 | unknown | AI column matching in the member import: the AI is shown column names and a few masked example rows and says which colum | deploy/panel/worker.js:148
+F-server-119 | unknown | Owner's AI Assistant: the owner's typed or spoken sentence becomes 1 to 3 cards from a fixed list of tools and admin pag | deploy/panel/worker.js:149
+F-server-122 | unknown | AI workout plan writer: the assistant writes a plan for one member from the goal, level and days the owner gave, using t | deploy/panel/worker.js:152
+F-server-123 | live | AI question credits: before an AI answer, one question is taken from the gym's AI credits (members and page visitors: 10 | deploy/panel/questionCredits.js:82
+F-server-124 | behind switch | Connect the gym's own payment company: the owner types the company's keys (sealed before they are stored), sees the conn | deploy/panel/worker.js:154
+F-server-125 | behind switch | Connect a payment company by signing in (Razorpay or Cashfree "Connect" button) instead of typing keys | deploy/panel/pay.js:745
+F-server-126 | live | Collect a payment online at the desk: make a payment link (or UPI request) for a member through the gym's own account, c | deploy/panel/pay.js:766
+F-server-128 | live | Member pays in the app: the member sees what can be paid online, pays a due or a shop order through the gym's payment li | deploy/panel/pay.js:778
+F-server-130 | behind switch | Payment company webhook: the company tells us a link was paid (signature checked, each event kept once) and the request  | deploy/panel/pay.js:743
+F-server-131 | behind switch | Every 10 minutes: open payment links are checked with each gym's payment company and marked paid when the money has arri | deploy/panel/worker.js:179
+F-server-132 | behind switch | Owner's two payment switches ("Take payments in the member app", "Take payments when people join online") and the desk's | deploy/panel/pay.js:786
+F-server-133 | hidden | Sign-in code by WhatsApp: a 6-digit code sent to a mobile number for Forgot PIN and for the new-gym number check (login_ | deploy/panel/worker.js:160
+F-server-134 | live | "Verify with WhatsApp": the person sends MettleUp's number one WhatsApp message with a code to prove the number is their | deploy/panel/phoneCode.js:247
+F-server-135 | live | WhatsApp delivery news: Meta tells us whether each WhatsApp message was sent, delivered or failed and why (written to th | deploy/panel/worker.js:162
+F-server-136 | behind switch | Pay online for a MettleUp plan: the admin app's "Pay online" request is passed to the HQ server, which makes the payment | deploy/panel/worker.js:156
+F-server-137 | live | Public key for the admin app's alerts when the app is closed (browser push), passed on from the HQ server | deploy/panel/worker.js:158
+F-server-139 | live | Feature switches for the admin app (/api/switches): says whether gym web pages, pay online on the join page, AI credit c | deploy/panel/worker.js:166
+F-server-140 | live | Free demo request form on the gym-owner landing page: the gym's contact details are kept for MettleUp to call back, with | deploy/panel/worker.js:167
+F-server-141 | hidden | Gym's own free web page (join.mettleup.fit/<gym>): the gym's plans and prices, timings, address with map links, faciliti | deploy/panel/worker.js:93
+## MACHINE FILES (docs/system-map/_sources/machine/)
+db-perf.json: MISSING (items that need it = could-not-check)
+pagespeed.json: MISSING (items that need it = could-not-check)

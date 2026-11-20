@@ -1,0 +1,1 @@
+{"id":"H5-panel-ui-shell","step":"H5","item":"hunt 5 (Built vs live (deploy state)) x panel / panel/ui-shell: 4 items","needs":["CAL-score","M2-machine-pass"],"checkpoint":"_work/H5-panel-ui-shell.md","out_file":"_work/out/H5-panel-ui-shell.jsonl","surface":"panel","area":"panel/ui-shell","lenses":["gap-5"],"lens_items":["H5.1","H5.2","H5.3","H5.4"]}

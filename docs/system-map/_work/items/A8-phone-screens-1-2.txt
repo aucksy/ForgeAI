@@ -1,0 +1,431 @@
+# A8-phone-screens-1-2: coverage of 52 Tier 1 journeys (8 features, from A5-phone-screens-1-2). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-phone-114 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 5 journey phrase(s)
+F-phone-114 | apps/mobile/test/tracker/components/routineImportStepKey.test.ts | unit | 47 lines | imports the code, file name
+F-phone-114 | apps/dashboard/e2e/aiimport.spec.mjs | e2e | 169 lines | file name, asserts 1 journey phrase(s)
+F-phone-114 | apps/mobile/test/tracker/muscleTipsRoutines.test.ts | unit | 525 lines | file name, asserts 1 journey phrase(s)
+F-phone-114 | apps/mobile/test/tracker/v0281.test.ts | unit | 194 lines | imports the code
+F-phone-114 | apps/mobile/test/tracker/v0290.test.ts | unit | 240 lines | imports the code
+F-phone-114 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | file name
+F-phone-114 | apps/dashboard/e2e/importcheck.spec.mjs | e2e | 62 lines | file name
+F-phone-114 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 2 journey phrase(s)
+F-phone-114 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | file name
+F-phone-114 | apps/dashboard/test/crm/aiImportSameKind.test.ts | unit | 59 lines | file name
+F-phone-114 | apps/dashboard/test/crm/auditC7Import.test.ts | unit | 323 lines | file name
+F-phone-115 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-phone-115 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 4 journey phrase(s)
+F-phone-115 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-phone-115 | apps/mobile/test/lib/safekeepNudge.test.ts | unit | 107 lines | imports the code
+F-phone-115 | apps/mobile/test/shop/r77GymTab.test.ts | unit | 93 lines | imports the code
+F-phone-115 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 3 journey phrase(s)
+F-phone-115 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 2 journey phrase(s)
+F-phone-115 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-phone-115 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 2 journey phrase(s)
+F-phone-115 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-phone-115 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | asserts 2 journey phrase(s)
+F-phone-115 | apps/mobile/test/db/workoutPhotosReal.test.ts | unit | 327 lines | asserts 2 journey phrase(s)
+F-phone-110 | apps/mobile/qa/uat-h.yaml | maestro | 430 lines | asserts 5 journey phrase(s)
+F-phone-110 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-phone-110 | apps/mobile/test/tracker/exerciseFormChoices.test.ts | unit | 71 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-110 | apps/mobile/test/tracker/r320Widgets.test.ts | unit | 119 lines | asserts 4 journey phrase(s)
+F-phone-110 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-phone-110 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-phone-110 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-phone-110 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-phone-110 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-phone-110 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-phone-110 | apps/mobile/qa/uat-d.yaml | maestro | 342 lines | asserts 3 journey phrase(s)
+F-phone-110 | apps/mobile/qa/uat-g.yaml | maestro | 275 lines | asserts 3 journey phrase(s)
+F-phone-111 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 5 journey phrase(s)
+F-phone-111 | apps/mobile/test/tracker/auditC2Numbers.test.ts | unit | 168 lines | imports the code
+F-phone-111 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 2 journey phrase(s)
+F-phone-111 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 2 journey phrase(s)
+F-phone-111 | apps/mobile/qa/backup-m-prep.yaml | maestro | 134 lines | asserts 2 journey phrase(s)
+F-phone-111 | apps/mobile/qa/xc-1-old-seed.yaml | maestro | 217 lines | asserts 2 journey phrase(s)
+F-phone-111 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 1 journey phrase(s)
+F-phone-111 | apps/dashboard/e2e/importcheck.spec.mjs | e2e | 62 lines | asserts 1 journey phrase(s)
+F-phone-111 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-phone-111 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 1 journey phrase(s)
+F-phone-111 | apps/dashboard/test/crm/gymState.test.ts | unit | 78 lines | asserts 1 journey phrase(s)
+F-phone-111 | apps/dashboard/test/crm/pin.test.ts | unit | 159 lines | asserts 1 journey phrase(s)
+F-phone-113 | apps/mobile/qa/phase9-p.yaml | maestro | 364 lines | asserts 5 journey phrase(s)
+F-phone-113 | apps/mobile/qa/uat-h.yaml | maestro | 430 lines | asserts 5 journey phrase(s)
+F-phone-113 | apps/mobile/test/tracker/shareText.test.ts | unit | 447 lines | asserts 5 journey phrase(s)
+F-phone-113 | apps/mobile/test/tracker/r320Widgets.test.ts | unit | 119 lines | asserts 4 journey phrase(s)
+F-phone-113 | apps/dashboard/test/crm/progressTrend.test.ts | unit | 245 lines | asserts 3 journey phrase(s)
+F-phone-113 | apps/mobile/qa/uat-d.yaml | maestro | 342 lines | asserts 3 journey phrase(s)
+F-phone-113 | apps/mobile/qa/uat-g.yaml | maestro | 275 lines | asserts 3 journey phrase(s)
+F-phone-113 | apps/mobile/qa/uat-rel-r436-a-memory.yaml | maestro | 227 lines | asserts 3 journey phrase(s)
+F-phone-113 | apps/mobile/test/ai/unitsCoach.test.ts | unit | 62 lines | asserts 3 journey phrase(s)
+F-phone-113 | apps/mobile/test/tracker/progression.test.ts | unit | 507 lines | asserts 3 journey phrase(s)
+F-phone-113 | apps/mobile/test/tracker/r350SimpleRule.test.ts | unit | 252 lines | asserts 3 journey phrase(s)
+F-phone-113 | apps/mobile/test/tracker/r515GoalWords.test.ts | unit | 207 lines | asserts 3 journey phrase(s)
+F-phone-112 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 10 journey phrase(s)
+F-phone-112 | apps/dashboard/test/crm/r448.test.ts | unit | 76 lines | asserts 5 journey phrase(s)
+F-phone-112 | apps/dashboard/e2e/gymdata.spec.mjs | e2e | 52 lines | asserts 3 journey phrase(s)
+F-phone-112 | apps/dashboard/test/crm/machines/pretendMachine.test.ts | unit | 216 lines | asserts 3 journey phrase(s)
+F-phone-112 | apps/mobile/qa/uat-rel-f146-share-gym.yaml | maestro | 354 lines | asserts 3 journey phrase(s)
+F-phone-112 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-phone-112 | apps/mobile/test/db/workoutPhotosReal.test.ts | unit | 327 lines | imports the code
+F-phone-112 | apps/mobile/test/theme/popupBars.test.ts | unit | 49 lines | imports the code
+F-phone-112 | apps/mobile/test/tracker/phase3Review.test.ts | unit | 235 lines | imports the code
+F-phone-112 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-phone-112 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 2 journey phrase(s)
+F-phone-112 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 2 journey phrase(s)
+F-phone-123 | apps/mobile/test/tracker/muscleTipsRoutines.test.ts | unit | 525 lines | asserts 5 journey phrase(s)
+F-phone-123 | apps/mobile/test/tracker/switcherLine.test.ts | unit | 38 lines | asserts 4 journey phrase(s)
+F-phone-123 | apps/mobile/qa/redesign-r.yaml | maestro | 1131 lines | asserts 3 journey phrase(s)
+F-phone-123 | apps/mobile/qa/v0280-j.yaml | maestro | 427 lines | asserts 3 journey phrase(s)
+F-phone-123 | apps/mobile/qa/v0290-l.yaml | maestro | 401 lines | asserts 3 journey phrase(s)
+F-phone-123 | apps/mobile/test/tracker/r319ImportEraseCharts.test.ts | unit | 136 lines | asserts 3 journey phrase(s)
+F-phone-123 | apps/mobile/qa/real-workout-w1.yaml | maestro | 368 lines | asserts 2 journey phrase(s)
+F-phone-123 | apps/mobile/qa/store-a.yaml | maestro | 219 lines | asserts 2 journey phrase(s)
+F-phone-123 | apps/mobile/qa/uat-rel-1-seed.yaml | maestro | 237 lines | asserts 2 journey phrase(s)
+F-phone-123 | apps/mobile/qa/uat-rel-10-r319.yaml | maestro | 190 lines | asserts 2 journey phrase(s)
+F-phone-123 | apps/mobile/qa/uat-rel-r461-plus.yaml | maestro | 365 lines | asserts 2 journey phrase(s)
+F-phone-123 | apps/mobile/qa/v0260-g.yaml | maestro | 751 lines | asserts 2 journey phrase(s)
+F-phone-122 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-phone-122 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-phone-122 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-phone-122 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-phone-122 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-phone-122 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-phone-122 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-phone-122 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 3 journey phrase(s)
+F-phone-122 | apps/mobile/test/tracker/switcherLine.test.ts | unit | 38 lines | asserts 3 journey phrase(s)
+F-phone-122 | apps/mobile/test/tracker/v0290.test.ts | unit | 240 lines | imports the code
+F-phone-122 | supabase/tests/0039_gym_busy.sql | db | 167 lines | asserts 3 journey phrase(s)
+F-phone-122 | supabase/tests/0043_member_photos.sql | db | 135 lines | asserts 3 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-phone-114-01 | type 1 | member | Settings, Your data, 'Bring in from Hevy or Strong'; member has a Hevy export .csv on the phone and an empty or own history
+  s1 see: Card 'Bring your Hevy history in' with numbered export steps, 'Kilograms or pounds: both are read.', 'Everything is processed on your phone — nothing is uploaded.'
+  s1 not: The Strong steps shown for Hevy
+  s2 see: Button reads 'Reading…', then a preview: file name, Workouts, Sets, Exercises, Date range
+  s2 not: The file sent to a server; a preview with 0 workouts for a real export
+  s3 see: Progress while importing, then 'Workouts added', 'Sets logged', 'New exercises created'
+  s3 not: A workout already in MettleUp added a second time (same day, started within 30 minutes)
+  s4 see: The imported workouts in History on their own dates
+  s4 not: Imported workouts missing from History or on a shifted date
+J-F-phone-114-02 | type 2 | member | Import from Hevy, idle screen (Hevy branch only)
+  s1 see: Screen 'Import routines', 'Copy your routines from Hevy', a link box, 'Read link' (greyed while the box is empty)
+  s1 not: The paste screen offered from the Strong branch
+  s2 see: 'Reading your Hevy link…', 'This takes a few seconds.', then the check-and-follow steps with every routine ticked
+  s2 not: Routines changed from how they were saved in Hevy (sets, reps, rest)
+  s3 see: The routines in the chosen folder
+  s3 not: The member's current plan changed without picking it
+J-F-phone-114-03 | type 2 | member | Member shares a Strong .csv from the Files app into MettleUp (or picks it through 'Import from Hevy')
+  s1 see: The import screen opens and reads the file once; title becomes 'Import from Strong'
+  s1 not: The file read twice; a Strong file treated as Hevy
+  s2 see: Each option shows a real set from the file, e.g. 'Bench Press: 100 lb (45.4 kg)'; Import waits ('Choose kg or lb first')
+  s2 not: Import running before units are picked; lb stored as kg
+  s3 see: Routines built from the workouts repeated most
+  s3 not: Routines made from one-off workouts only
+J-F-phone-114-04 | type 3 | member | Import from Hevy, idle
+  s1 see: 'This file isn’t a Hevy or Strong export. In Hevy: Settings → Export & Backup Data. In Strong: Settings → Export Strong Data.'
+  s1 not: A crash, a blank preview, or anything written to History
+  s2 see: 'No workouts were found in that file.'
+  s2 not: An import button that imports nothing and says done
+  s3 see: 'That isn’t a Hevy share link. It looks like hevy.com/folder/… or hevy.com/routine/…'
+  s3 not: A network read of a non-Hevy address
+  s4 see: 'Hevy says this link does not exist any more. Copy it again from Hevy.'
+  s4 not: An empty routine list shown as success
+J-F-phone-114-05 | type 3 | member | Preview of an export whose dates are numbers only (can be read two ways)
+  s1 see: 'This file writes dates as numbers only…', choices day-first and month-first; the import button reads 'Answer the date question first'
+  s1 not: Import allowed before the answer; day and month swapped silently
+  s2 see: 'The import failed. Nothing was changed. Please try again.' and the preview again
+  s2 not: Half the workouts written; the success screen shown
+J-F-phone-114-06 | type 6 | member | Own history of 20 workouts; preview of a Hevy file
+  s1 see: A confirm 'Delete 20 workouts first?' with how many are not in the file, button 'Replace'
+  s1 not: Workouts deleted with no question
+  s2 see: Undo bar '20 workouts replaced' and 'Undo import'
+  s2 not: No way back after Replace
+  s3 see: 'Import undone', 'Everything is back as it was before the import.'
+  s3 not: Imported workouts left behind, or the 20 old ones still missing
+  s4 see: 'Already imported (skipped)' count; Workouts added 0
+  s4 not: Every workout added a second time
+J-F-phone-114-07 | type 6 | member | App still holds the demo (sample) data; member imports a Hevy file
+  s1 see: The demo will be removed before import
+  s1 not: Import mixing into demo workouts
+  s2 see: 'Your name, please. The demo’s name goes with the demo.'
+  s2 not: Import running with the demo's name kept
+  s3 see: Undo bar 'Demo removed, history imported'
+  s3 not: Demo workouts left in History next to imported ones
+J-F-phone-114-08 | type 12 | member | Member imports a Hevy file and a Hevy link
+  s1 see: 'Everything is processed on your phone — nothing is uploaded.'
+  s1 not: The export file sent to MettleUp or a third party
+  s2 see: Only the public Hevy share page is read
+  s2 not: Member data sent to Hevy with the request
+  s3 see: Only what the member already shares (workout dates/summary per their switches)
+  s3 not: Imported exercises, weights or notes shown to the gym
+J-F-phone-115-01 | type 1 | member | App already set up, in no gym; member taps the gym's invite link (https://…/j/<CODE>) in WhatsApp
+  s1 see: Screen 'Join your gym', spinner 'Finding your gym…', then the gym's logo, name and 'Gym code <CODE>'
+  s1 not: Another gym's name or logo; the code box instead of the gym
+  s2 see: 'Join to see your membership and your gym's messages here…', 'Your gym sees how many workouts you log and the weight you lift, for challenges. Other members see your name only if you switch it on.'
+  s2 not: A name box that overwrites what the member typed with the profile name
+  s3 see: Busy button, then the gym's page (Shop/Gym tab) with membership and messages
+  s3 not: Join sent before the box is ticked; two joins from a double tap
+J-F-phone-115-02 | type 2 | member | Brand-new phone, app never opened; member taps the invite link
+  s1 see: The welcome steps (the link is kept in the background)
+  s1 not: The link lost; the welcome flow skipped
+  s2 see: About a second later 'Join your gym' opens for the linked gym on its own
+  s2 not: Join screen never opening; it opening twice
+  s3 see: 'Join your gym' still opens after setup
+  s3 not: The kept link forgotten after the restart
+J-F-phone-115-03 | type 2 | member | Member is in Gym A; taps Gym B's invite link
+  s1 see: 'You're in Gym A now. Switching takes you out of Gym A on this phone.'; button 'Switch to this gym'
+  s1 not: Silent move to Gym B; the Join wording for a member who is in a gym
+  s2 see: A question about the open order before switching; 'stayed' keeps the member in Gym A
+  s2 not: The order cancelled without asking; member left in no gym after a failed join
+  s3 see: Gym B's page; Gym A no longer listed
+  s3 not: Member in both gyms; Gym A still showing the member as active after it confirms the leave
+J-F-phone-115-04 | type 3 | member | Invite link with a wrong or old code
+  s1 see: Not-found card for the code, with a way to the code box
+  s1 not: A spinner that never ends; a join to a different gym
+  s2 see: An error line and 'Try again'
+  s2 not: A blank card; the app closing
+  s3 see: A line asking to tick the box; nothing sent
+  s3 not: A join made without agreeing
+J-F-phone-115-05 | type 6 | member | Member already in this gym taps its invite link again
+  s1 see: 'You're already in <gym>. Nothing to do.' and 'Open your gym'
+  s1 not: A second member row for the same phone; the join form shown again
+  s2 see: The Gym tab of that gym
+  s2 not: A new join sent
+J-F-phone-115-06 | type 12 | member | Gym's server has the trainer view on; member joins from the link
+  s1 see: 'Your workouts stay on this phone.' then 'Your gym sees how many workouts you log and the weight you lift…' and 'Your gym and your trainer see your workouts, so they can help you progress.'
+  s1 not: Two lines that say opposite things about who sees the workouts
+  s2 see: Trainer sharing switched on (Settings, Your gym, What my gym can see)
+  s2 not: Sharing switched on without the member having read that it would be; body weight, photos or notes shared
+  s3 see: The name the member typed, and only what the switches allow
+  s3 not: The member's phone number, body weight or photos
+J-F-phone-110-01 | type 1 | member | Exercise library, member taps create (screen 'New exercise')
+  s1 see: The name; muscle and equipment may be guessed from the name until the member picks them
+  s1 not: A guess overwriting a field the member already picked
+  s2 see: The pinned button changes from the missing-field words to 'Save exercise'
+  s2 not: Save tappable while name, muscle or equipment is empty
+  s3 see: The new exercise's page
+  s3 not: Two copies from a double tap; the exercise missing from the library
+J-F-phone-110-02 | type 2 | member | Active workout, exercise picker; member ticks two exercises then taps create
+  s1 see: Button 'Save and add to workout'
+  s1 not: The ticked exercises forgotten
+  s2 see: Back in the workout with the two ticked exercises and the new one added
+  s2 not: The new exercise saved but not added; the picker left open over the workout
+J-F-phone-110-03 | type 2 | member | A routine's 'Add exercise' picker; member creates a new exercise
+  s1 see: Back on the routine with the exercise added
+  s1 not: The routine left without it and no word
+  s2 see: 'Saved, but not added' — '<name> is in your library. Add it to the routine from "Add exercise".'
+  s2 not: The exercise lost, or a success with nothing added
+J-F-phone-110-04 | type 2 | member | Library exercise page; member hides it, then opens Hidden exercises
+  s1 see: It disappears from every exercise list
+  s1 not: It still showing in the workout picker
+  s2 see: Subtitle 'Hidden from every exercise list. Show one to bring it back.' and the exercise with 'Show'
+  s2 not: A blank list while something is hidden
+  s3 see: It leaves this list and comes back in every list
+  s3 not: Past sets of that exercise lost or changed
+J-F-phone-110-05 | type 3 | member | New exercise, name typed is the same as one already there ('bench press' vs 'Bench Press')
+  s1 see: Pop-up 'Already in your library' — '"Bench Press" already exists.' with 'Open it'
+  s1 not: A second exercise with the same name
+  s2 see: The existing exercise's page
+  s2 not: A new exercise made anyway
+  s3 see: A load error; nothing saves
+  s3 not: The edit saved as a new exercise
+J-F-phone-110-06 | type 3 | member | Free plan limit on own exercises switched on (switched off at launch); member at the limit
+  s1 see: An explanation of the free limit with a way to MettleUp Plus
+  s1 not: The exercise saved over the limit; a gym member (free Plus) refused
+  s2 see: The form as typed, Save usable again
+  s2 not: Save stuck on its busy spinner
+J-F-phone-110-07 | type 6 | member | Own exercise 'Landmine Press' with 10 logged sets
+  s1 see: The saved values; 'How you log it' locked when sets exist
+  s1 not: Log type changeable so old sets turn wrong
+  s2 see: Back on the page with the new muscle
+  s2 not: Old sets deleted or moved to another exercise
+  s3 see: 'Nothing hidden' — 'Every exercise shows in your lists.'
+  s3 not: A skeleton that never ends
+J-F-phone-110-08 | type 12 | member | Member adds a photo or video to an own exercise
+  s1 see: The picture on the exercise
+  s1 not: A too-large video saved silently ('That video is too large. Pick a shorter one.' must show)
+  s2 see: No own-exercise photos or videos
+  s2 not: Member's exercise media shown to the gym or other members
+J-F-phone-111-01 | type 1 | member | Profile, Body (screen 'Body'), body weight chip selected
+  s1 see: Screen 'Add measures', 'Fill in any you like.', Date row set to today, number boxes
+  s1 not: Yesterday's date by default; boxes in the wrong unit
+  s2 see: Back on Body; the weigh-in in History and on the chart
+  s2 not: A second weigh-in for the same day without asking; the value changed by rounding
+  s3 see: A line chart of the two days
+  s3 not: 'Add it again on another day to see a graph.' still showing with two days
+J-F-phone-111-02 | type 2 | member | Member is in a gym whose trainer recorded a measurement (gym_body_measurements)
+  s1 see: Trainer's entries marked 'From <gym>'; History heading 'Tap your own entry to fix or delete it. Ask your gym to change the ones they recorded.'
+  s1 not: A gym entry that opens the fix sheet; another member's entries
+  s2 see: Only the member's own entry for that day
+  s2 not: Both on the same day, or the gym's hiding the member's own
+  s3 see: The kept copy of the gym's entries
+  s3 not: An error that hides the member's own entries
+J-F-phone-111-03 | type 2 | member | Body, another chip (waist, chest…)
+  s1 see: Its own chart and History, or 'No <measure> entries yet'
+  s1 not: Body weight values under the waist chip
+  s2 see: The picture kept with the day's entry
+  s2 not: The picture saved under another day after the Date is changed
+J-F-phone-111-04 | type 3 | member | Add measures
+  s1 see: 'Nothing to save' — 'Type at least one measure, or add a picture.'
+  s1 not: An empty entry saved
+  s2 see: 'Check the numbers' — '<measure>: type a number above 0, like 82.5.'
+  s2 not: 0 kg saved
+  s3 see: A typo question with 'Keep it' and 'Fix it'
+  s3 not: The odd value saved without asking
+  s4 see: 'Camera not allowed. Allow the camera for MettleUp in your phone settings, or choose a photo from the gallery.'
+  s4 not: A crash; the prompt looping
+J-F-phone-111-05 | type 6 | member | Body, History has a weigh-in on 3 Nov
+  s1 see: '<date> already has Body weight …' — 'Replace it with this one?' with 'Replace'
+  s1 not: The other day's entry replaced without asking
+  s2 see: Undo bar 'Replaced the entry on <date>'
+  s2 not: The replaced entry gone with no undo
+  s3 see: Undo bar 'Weigh-in on <date> deleted'
+  s3 not: The deletion without an undo
+  s4 see: Both entries back as they were
+  s4 not: Undo failing with no word (the undo errors are swallowed)
+J-F-phone-111-06 | type 12 | member | Member logs body weight; member is in a gym
+  s1 see: Body weight stays private
+  s1 not: Body weight sent to the gym, shown on the leaderboard or to gym mates
+  s2 see: Only the trainer's own measurements and allowed workout data
+  s2 not: The member's own weigh-ins or body pictures
+J-F-phone-113-01 | type 1 | member | Member with Plus access (free month, gym member or paid); exercise page of Bench Press with recent sets
+  s1 see: Screen '1-rep max' with subtitle 'Bench Press'; boxes 'Weight (kg)' and 'Reps' filled; 'Filled in from your best recent set.'
+  s1 not: Boxes filled from a warm-up set; another exercise's name
+  s2 see: 'Your estimated 1-rep max' in large figures, the same as the chart's 'Estimated 1-rep max'
+  s2 not: A different estimate from the chart for the same set
+  s3 see: Rows from 95 % down to 50 % with 'Weight' and 'Plates per side' using the member's bar and plates
+  s3 not: A weight the bar and plates cannot make; plates per side for a load under the bar
+J-F-phone-113-02 | type 2 | member | Plate calculator showing 100 kg
+  s1 see: Weight box starts at 100, Reps empty; 'Type a weight and reps to see your 1-rep max.'
+  s1 not: A made-up reps number
+  s2 see: The estimate and the percentage table
+  s2 not: No subtitle crash when no exercise is given
+J-F-phone-113-03 | type 3 | member | 1-rep max screen
+  s1 see: 'Weight must be more than 0.' and no table
+  s1 not: A table of zeros
+  s2 see: 'Reps must be a whole number from 1 to 100.'
+  s2 not: An estimate from 150 reps
+  s3 see: 'Type a weight and reps to see your 1-rep max.'
+  s3 not: NaN in the result
+J-F-phone-113-04 | type 3 | member | Free member without Plus (free month over, not in a gym) opens a link straight to the calculator
+  s1 see: The MettleUp Plus screen instead
+  s1 not: The calculator usable for free; a blank screen
+  s2 see: The page before, not the calculator again
+  s2 not: A loop back to Plus
+J-F-phone-113-05 | type 6 | member | Calculator opened from an exercise; member changes the boxes
+  s1 see: 'Filled in from your best recent set.' disappears; result updates as typed
+  s1 not: The prefill overwriting what was typed when recent sets load late
+  s2 see: The screen stays until it is left; next open goes to Plus
+  s2 not: Calculator kept open for free on every later open
+J-F-phone-112-01 | type 1 | member | Body, 'Progress photos' card, 'Add' (no photos yet); photo backup off
+  s1 see: Title 'Progress photos', subtitle 'Private. They stay on this phone.', empty state 'No photos yet'
+  s1 not: A subtitle saying photos are backed up while backup is off
+  s2 see: The camera; after the shot the photo in the grid dated today
+  s2 not: The photo saved twice; dated another day
+  s3 see: The viewer with 'Save to phone gallery', 'Change date', 'Delete photo'
+  s3 not: Another photo opening
+J-F-phone-112-02 | type 2 | member | Progress photos, 'Choose from gallery' with a WhatsApp copy (no date of its own)
+  s1 see: Sheet 'When was this photo taken?' — 'It came without a date of its own, so it shows today until you pick one.'
+  s1 not: The photo silently filed under today with no question
+  s2 see: The photo placed on that day in the grid
+  s2 not: The date changed on another photo
+J-F-phone-112-03 | type 2 | member | Progress photos with at least two photos
+  s1 see: 'Tap the first photo', then 'Now tap the second photo', with 'Cancel'
+  s1 not: Compare opening with one photo
+  s2 see: Screen 'Compare' with how far apart they are and 'Share before and after'
+  s2 not: The two photos in the wrong order (newer as before)
+  s3 see: The phone share list with one before-and-after picture
+  s3 not: Name or body weight on the picture
+J-F-phone-112-04 | type 3 | member | Progress photos, camera refused by the phone
+  s1 see: 'Camera not allowed. Allow the camera for MettleUp in your phone settings, or choose a photo from the gallery.' and 'Allow the camera in Settings'
+  s1 not: A crash; a blank camera
+  s2 see: 'This phone has no share list, so the photo couldn’t be handed over.'
+  s2 not: A success with nothing saved
+  s3 see: 'Photos not found' — 'One of these photos was deleted. Go back and pick two again.'
+  s3 not: A broken picture
+J-F-phone-112-05 | type 6 | member | Viewer open on a photo from 2 Oct
+  s1 see: Viewer shows 9 Oct; grid moves it
+  s1 not: The photo duplicated on both days
+  s2 see: 'Delete this photo?' — 'From 9 Oct 2026. It is removed from the app for good.' with 'Delete'
+  s2 not: Deleted without asking
+  s3 see: The photo gone from the grid and from Compare
+  s3 not: The file left behind in the backup or the grid
+J-F-phone-112-06 | type 12 | member | Member turns photo backup on in Settings, then opens Progress photos
+  s1 see: Subtitle 'Private. Your newest are in your phone’s backup too.'
+  s1 not: Photos described as staying on the phone only while they are copied to the backup
+  s2 see: No progress photos
+  s2 not: Any progress photo shown to the gym, trainers or gym mates
+J-F-phone-123-01 | type 1 | member | Workout tab, member opens 'Build a plan' (profile goal Build muscle, level Beginner)
+  s1 see: 'Build a plan', 'Step 1 of N', Goal and Experience chips pre-picked from the profile
+  s1 not: Empty chips with no default; another member's answers
+  s2 see: Each step with its chips; 'Back' from step 2 on
+  s2 not: Answers lost when going back a step
+  s3 see: The plan: its name, '4 days a week · <n> min · <equipment>', 'Routines' with day badges, 'Weekly sets per muscle'
+  s3 not: A plan with 3 routines for 4 days; exercises needing equipment not picked
+  s4 see: Workout tab with the new folder open; the plan is now the member's plan
+  s4 not: Two folders from a double tap; the old plan still followed
+J-F-phone-123-02 | type 2 | member | Builder, step 'Go easy on' and leave-out list
+  s1 see: The chip ticked; 'We leave out moves that often bother that area.'
+  s1 not: A move that bothers that area still in the plan
+  s2 see: Library exercises only, each with 'Leave out'; subtitle becomes '1 exercise left out'
+  s2 not: Own exercises offered; the tick not shown
+  s3 see: 'The plan picks another exercise for the same muscles.' — the left-out exercise nowhere in the plan, chip '<name> ✕' on the step
+  s3 not: The left-out exercise in the plan; a muscle with no exercise
+J-F-phone-123-03 | type 2 | member | Built plan on screen
+  s1 see: Workout tab with the folder open; the current plan unchanged
+  s1 not: The member's followed plan switched without picking it
+J-F-phone-123-04 | type 3 | member | Built plan; saving fails (storage full)
+  s1 see: 'Could not save the plan' — 'Please try again.'; the plan still on screen
+  s1 not: Half a folder saved; the answers cleared
+  s2 see: A plan that still has exercises for each day, or a plain word that the answers leave too little
+  s2 not: An empty routine saved as a plan
+J-F-phone-123-05 | type 6 | member | Built plan on screen
+  s1 see: The answers again (last step), not out of the builder
+  s1 not: The builder closing with every answer lost
+  s2 see: A new plan for 3 days
+  s2 not: The old 4-day plan kept
+  s3 see: The exercise allowed again in the next build
+  s3 not: The list still leaving it out
+J-F-phone-123-06 | type 12 | member | Member in a gym builds and follows a plan
+  s1 see: Routines saved on the phone
+  s1 not: The plan or sore areas sent to the gym
+  s2 see: Only what the member shares (workout data per the switches)
+  s2 not: The sore areas (health detail) shown to the gym
+J-F-phone-122-01 | type 1 | member | Workout tab, 'Find a plan' (subtitle 'A plan built for you, or a ready program.')
+  s1 see: 'Build a plan' row, then ready programs grouped by equipment, then 'Bring routines in'
+  s1 not: An empty group heading; a program in the wrong equipment group
+  s2 see: The program page: name, '<equipment> · <meta>', summary, 'Easy week every N weeks' switch, '<n> routines · <n> days a week'
+  s2 not: 'Program not found' for a listed program
+  s3 see: Workout tab with the program's folder open; it is the member's plan
+  s3 not: Two folders from a double tap; the old plan still followed
+J-F-phone-122-02 | type 2 | member | Program page, member wants it kept but not followed
+  s1 see: Workout tab with the folder open; current plan unchanged
+  s1 not: The followed plan switched
+J-F-phone-122-03 | type 2 | member | Find a plan, 'Import a routine file' (a file another MettleUp member shared)
+  s1 see: 'Routines added' — 'They are in a new folder on the Workout tab.' (or new library exercises named)
+  s1 not: Exercises with no muscles added silently ('Left out (no muscles in the file): …' must show)
+  s2 see: Sheet 'You have this file already' — 'It is in "<folder>".' with 'Update the existing folder' and 'Add a copy'
+  s2 not: A second folder made without asking
+  s3 see: 'Folder updated' and 'Your changes were kept in: …' when the member had edited routines
+  s3 not: The member's own edits overwritten
+J-F-phone-122-04 | type 2 | member | Find a plan, 'Bring in from Hevy or Strong'
+  s1 see: Settings page 'Bring in from Hevy or Strong'
+  s1 not: A different import flow from the one in Settings
+J-F-phone-122-05 | type 3 | member | Find a plan, 'Import a routine file'
+  s1 see: 'Could not open that file' with the reason
+  s1 not: A crash; an empty folder made
+  s2 see: 'Program not found' — 'Go back and pick another.'
+  s2 not: A blank page
+  s3 see: 'Could not add the program' — 'Please try again.'
+  s3 not: Half a folder saved
+J-F-phone-122-06 | type 6 | member | Program already added as a folder, not followed
+  s1 see: 'Already in your routines ("<folder>").' with 'Follow it' and 'Add a copy'
+  s1 not: 'Follow this plan' making a second folder
+  s2 see: The same folder becomes the followed plan; page then says 'You follow this program ("<folder>").'
+  s2 not: A copy made; the other folder's routines changed
+  s3 see: A second folder without easy weeks
+  s3 not: The first folder's easy-week setting changed
+J-F-phone-122-07 | type 12 | member | Member in a gym follows a ready program
+  s1 see: Folder saved on the phone
+  s1 not: The program choice sent to anyone
+  s2 see: The file holds routines and exercises only
+  s2 not: The member's name, body weight or history in the shared file

@@ -1,0 +1,58 @@
+# B-run-panel-pay-machines-b: gap-8 x panel / panel/pay-machines. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H8.1 | gap-8 | By script first: docs/system-map/_tools/silent.mjs lists every catch block with file:line and three flags: logs? (calls a log, report or crash function inside), tells_user? (sets an error state, toast or alert inside), rethrows?
+H8.2 | gap-8 | Output _sources/silent.csv
+H8.3 | gap-8 | Helpers read ONLY the rows where all three are "no", plus every fallback value (?? null, || [], ?? 0) that sits in a file named in a journey that writes money, messages, alerts, sign-in or sync
+H8.4 | gap-8 | Everything else is counted in the grid as "filtered by script, N rows, not read" so the gap is visible
+H8.5 | gap-8 | For each: if this path runs, does the user (or owner, or HQ) learn anything?
+H8.6 | gap-8 | A silent path that hides a failed promise = finding
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-100 | hidden | Entry machine reports in to the gym server (machine recognised by serial, last-seen kept, unknown machine noted) | apps/dashboard/src/crm/machines/supabaseStore.ts:57
+F-panel-101 | hidden | Entry machine punch becomes a member visit (machine number matched to member, repeat punches dropped, punches and visits | apps/dashboard/src/crm/machines/supabaseStore.ts:90
+F-panel-102 | hidden | Entry machine picks up queued jobs from the gym and reports each result | apps/dashboard/src/crm/machines/supabaseStore.ts:119
+F-panel-103 | live | See the gym's branches and switch to another branch | apps/dashboard/src/crm/branches/api.ts:26
+F-panel-104 | live | Add a branch (optionally copying plans; gets its own receipt prefix) | apps/dashboard/src/crm/branches/api.ts:31
+F-panel-105 | live | Rename the business (the name over all branches) | apps/dashboard/src/crm/branches/api.ts:45
+F-panel-106 | live | Check in a member from another branch by mobile number, list today's visitors from other branches, undo a visitor check- | apps/dashboard/src/crm/branches/api.ts:50
+F-panel-107 | live | All branches page: totals, lists and member search across every branch, open a branch | apps/dashboard/src/crm/branches/AllBranches.tsx:32
+F-panel-108 | live | Demo gym (pretend server, in memory): opens as the sample gym | apps/dashboard/src/crm/demo/demoServer.ts:445
+F-panel-109 | live | Demo gym (pretend server, in memory): Staff & sign-in list and PIN status | apps/dashboard/src/crm/demo/demoServer.ts:449
+F-panel-110 | live | Demo gym (pretend server, in memory): Training progress and trainer setup (make a trainer, assign a member, see a member | apps/dashboard/src/crm/demo/demoServer.ts:456
+F-panel-1104 | behind switch | Branches: All branches totals, branch switcher, add or rename a branch, check in a member from another branch | apps/dashboard/src/crm/branches/AllBranches.tsx:32
+F-panel-111 | live | Demo gym (pretend server, in memory): Member questions (count, list, answer) | apps/dashboard/src/crm/demo/demoServer.ts:480
+F-panel-1114 | behind switch | Online payments: Settings > Payments (UPI QR, gym's own payment company), Pay online inside the money sheets, payments t | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:57
+F-panel-112 | live | Demo gym (pretend server, in memory): Member messages (waiting count, threads, reply, mark done) | apps/dashboard/src/crm/demo/demoServer.ts:495
+F-panel-113 | live | Demo gym (pretend server, in memory): Messages & offers: app members, sent messages, send and withdraw a message | apps/dashboard/src/crm/demo/demoServer.ts:515
+F-panel-1137 | live | demo copy of server-backed features (staff, trainers, progress, questions, member messages, messages, reminders, offers, | apps/dashboard/src/crm/demo/demoServer.ts:445
+F-panel-114 | live | Demo gym (pretend server, in memory): Automatic reminders (read and save settings) | apps/dashboard/src/crm/demo/demoServer.ts:532
+F-panel-115 | live | Demo gym (pretend server, in memory): Workout offer and its members | apps/dashboard/src/crm/demo/demoServer.ts:539
+F-panel-116 | live | Demo gym (pretend server, in memory): Shop products, orders and order status | apps/dashboard/src/crm/demo/demoServer.ts:549
+F-panel-117 | live | Demo gym (pretend server, in memory): Member body measurements (list, save, delete) | apps/dashboard/src/crm/demo/demoServer.ts:563
+F-panel-118 | live | Demo gym (pretend server, in memory): Diet plans (list, save, withdraw) | apps/dashboard/src/crm/demo/demoServer.ts:578
+F-panel-119 | live | Demo gym (pretend server, in memory): Trainers week schedule, book and cancel a PT class | apps/dashboard/src/crm/demo/demoServer.ts:596
+F-panel-120 | live | Demo gym (pretend server, in memory): Challenges and leaderboard | apps/dashboard/src/crm/demo/demoServer.ts:611
+F-panel-121 | live | Demo gym (pretend server, in memory): Gym timings (read and save) | apps/dashboard/src/crm/demo/demoServer.ts:619
+F-panel-122 | live | Demo gym (pretend server, in memory): Bring a friend summary | apps/dashboard/src/crm/demo/demoServer.ts:627
+F-panel-123 | live | Demo gym (pretend server, in memory): Members' renew/pause plan requests (list, approve or decline) | apps/dashboard/src/crm/demo/demoServer.ts:633
+F-panel-124 | behind switch | Pro pack gate: a Starter gym sees "Part of the Pro pack" in place of Branding, Shop, Challenges, Workout offer, Workout  | apps/dashboard/src/crm/plan/GymPackProvider.tsx:26
+F-panel-125 | live | Payments settings: UPI QR status (uses the gym's UPI ID, no server part) | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:57
+F-panel-126 | behind switch | Connect or disconnect a payment company (Razorpay, Cashfree; PayU and PhonePe only if already on them) by keys or compan | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:129
+F-panel-127 | behind switch | Where members can pay online: "Take payments in the member app" and "Take payments when people join online" switches | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:183
+## SILENT CATCH ROWS TO READ (kind,file,line,logs,tells_user,rethrows,text)
+catch,apps/dashboard/src/crm/machines/adms.ts,72,no,no,no,{ return s; // quiet: a stray % from a machine; keep the text as sent }
+catch,apps/dashboard/src/crm/machines/handler.ts,97,no,no,no,{ // The store failed (gym server down). The machine keeps its data and tries again later.
+catch,apps/dashboard/src/crm/machines/handler.ts,199,no,no,no,{ body = ''; // quiet: a broken upload reads as empty  answered  OK: 0  }
+catch,apps/dashboard/src/crm/move/move.ts,106,no,no,no,{ return true; // unreadable: never move away from records someone may need }
+catch,apps/dashboard/src/crm/pay/payApi.ts,122,no,no,no,{ json = {}; }
+catch,apps/dashboard/src/crm/pay/payApi.ts,145,no,no,no,{ if (e instanceof PayRefused) { const why = e.code === 'NO_MASTER_KEY' || e.code === 'DEM
+## FALLBACK ROWS TO READ (files that write money, messages, alerts, sign-in or sync)
+fallback,apps/dashboard/src/crm/branches/AllBranches.tsx,77,-,-,-,return [mine  ...rest].sort((a  b) => (order.get(a.gymId) ?? 0) - (order.get(b.gymId) ?? 0
+fallback,apps/dashboard/src/crm/branches/AllBranches.tsx,77,-,-,-,return [mine  ...rest].sort((a  b) => (order.get(a.gymId) ?? 0) - (order.get(b.gymId) ?? 0
+fallback,apps/dashboard/src/crm/branches/BranchProvider.tsx,68,-,-,-,const msg = e instanceof Error ? e.message : typeof e === 'object' && e ? String((e as { m
+fallback,apps/dashboard/src/crm/branches/BranchProvider.tsx,68,-,-,-,const msg = e instanceof Error ? e.message : typeof e === 'object' && e ? String((e as { m
+fallback,apps/dashboard/src/crm/branches/BranchProvider.tsx,80,-,-,-,const phone = session?.person?.phone ?? '';
+fallback,apps/dashboard/src/crm/branches/api.ts,22,-,-,-,const msg = e instanceof Error ? e.message : typeof e === 'object' && e ? String((e as { m
+fallback,apps/dashboard/src/crm/branches/api.ts,22,-,-,-,const msg = e instanceof Error ? e.message : typeof e === 'object' && e ? String((e as { m
+fallback,apps/dashboard/src/crm/branches/api.ts,36,-,-,-,plansCopied: Number(r.plansCopied) || 0
+## FILTERED BY SCRIPT
+108 other rows of _sources/silent.csv in this area: not read (write this number in the H8 evidence)

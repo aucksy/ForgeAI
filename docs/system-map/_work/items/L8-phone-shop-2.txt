@@ -1,0 +1,42 @@
+# L8-phone-shop-2: 8 x phone / phone/shop-2. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L8.1 | 8 | Every paid or capped thing: Supabase free-plan limits (DB size, egress, log retention), Cloudflare limits, GitHub storage, AI spend per gym and per call with no cap, WhatsApp template cost
+L8.2 | 8 | what happens at each limit
+L8.3 | 8 | a usage alarm before each one
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-400 | live | Join a gym by invite link or gym code (with the 18+ and terms tick box) | apps/mobile/src/shop/gymApi.ts:85
+F-phone-401 | hidden | Gym owner or desk staff unlock their gym in the member app with their mobile number and PIN | apps/mobile/src/shop/gymApi.ts:98
+F-phone-402 | live | Find my gym and sign in with my mobile number (WhatsApp check) | apps/mobile/src/shop/gymApi.ts:686
+F-phone-403 | live | Gym tab home: the gym's name and logo, its parts, and staying linked to the gym | apps/mobile/src/shop/gymTab.ts:1
+F-phone-404 | live | Gym shop: see products, fill the bag, place and cancel an order | apps/mobile/src/shop/gymApi.ts:152
+F-phone-405 | live | demo copy of Gym shop (the sample shop and its pretend orders, shown before joining a gym) | apps/mobile/src/shop/shopStore.ts:72
+F-phone-406 | live | Messages from the gym: the inbox behind the bell (holidays, timings, offers, events) | apps/mobile/src/shop/gymApi.ts:116
+F-phone-407 | behind switch | Gym messages pop up on the phone (15-minute background check and instant push; quiet pop-up during a workout) | apps/mobile/src/shop/noticeAlertsRun.ts:147
+F-phone-408 | behind switch | Automatic reminders from the gym (plan ending, birthday wishes and others), set on the phone itself | apps/mobile/src/shop/gymReminders.ts:286
+F-phone-409 | live | My membership: plan, end date, days left, and the "plan ends soon" card on the Workout tab | apps/mobile/src/shop/gymApi.ts:197
+F-phone-410 | live | Ask the desk to pause or renew my plan | apps/mobile/src/shop/gymApi.ts:308
+F-phone-411 | live | Check in by QR: scan the poster at the desk | apps/mobile/src/shop/gymApi.ts:186
+F-phone-412 | live | Workout plans sent by the gym | apps/mobile/src/shop/gymApi.ts:220
+F-phone-413 | live | The gym's workout of the day | apps/mobile/src/shop/gymApi.ts:231
+F-phone-414 | live | Watch your trainer: the gym's own form videos on an exercise | apps/mobile/src/shop/trainerVideo.ts:1
+F-phone-415 | live | Measurements taken by the gym's trainer and diet plans from the gym | apps/mobile/src/shop/gymApi.ts:242
+F-phone-416 | live | The gym's opening hours | apps/mobile/src/shop/gymApi.ts:261
+F-phone-417 | live | How busy the gym is right now | apps/mobile/src/shop/gymApi.ts:283
+F-phone-418 | behind switch | Busy times by exercise (which machines are usually free) | apps/mobile/src/shop/gymApi.ts:494
+F-phone-419 | live | Gym leaderboard and monthly challenge | apps/mobile/src/shop/gymApi.ts:272
+F-phone-420 | behind switch | Gym mate profiles: let my gym mates see my workouts, and see theirs | apps/mobile/src/shop/gymApi.ts:384
+F-phone-421 | behind switch | Share my workouts with my trainers (weekly summary and recent workouts; my start date at the gym) | apps/mobile/src/shop/gymApi.ts:514
+F-phone-422 | behind switch | Ask my trainer for help (one tap) | apps/mobile/src/shop/gymApi.ts:537
+F-phone-423 | live | Ask a trainer a workout question, and get a pop-up when the trainer replies | apps/mobile/src/shop/gymApi.ts:557
+F-phone-424 | live | Message your gym: a question, feedback or a complaint to the owner or a trainer, with the red unread count | apps/mobile/src/shop/gymApi.ts:632
+F-phone-425 | hidden | demo copy of Message your gym (the pretend gym in QA test builds; the page says the messages stay on the phone) | apps/mobile/src/shop/gymTalk.ts:129
+F-phone-426 | live | The gym's workout offer: join, share workout dates, leave, and show my workouts to the desk | apps/mobile/src/shop/gymApi.ts:435
+F-phone-427 | live | Send my workout report to the gym when the desk asks | apps/mobile/src/shop/gymApi.ts:354
+F-phone-428 | live | Bring a friend: my invite code, the free days and how many friends joined | apps/mobile/src/shop/gymApi.ts:622
+F-phone-429 | live | Leave the gym (open orders are cancelled first; an offline leave is sent again later) | apps/mobile/src/shop/gymApi.ts:461
+F-phone-430 | live | Add the gym's logo to the home screen | apps/mobile/src/shop/gymShortcut.ts:103
+F-phone-431 | behind switch | Pay the gym from the app: UPI QR, UPI app, or online payment for fees and shop orders | apps/mobile/src/shop/memberPay.ts:1
+F-phone-432 | live | Recommend MettleUp to your gym (share link on the no-gym screen) | apps/mobile/src/shop/recommendGym.ts:1
+F-phone-433 | behind switch | MettleUp Plus: paid extras lock 7 days after the plan ends | apps/mobile/src/shop/gymApi.ts:727
+## MACHINE FILES (docs/system-map/_sources/machine/)
+limits.json: MISSING (items that need it = could-not-check)

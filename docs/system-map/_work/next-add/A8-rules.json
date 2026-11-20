@@ -1,0 +1,1 @@
+{"id":"A8-rules","step":"A8r","item":"coverage rule per journey template (42) from the CI gate lists -> _work/a8-rules.json; brief _work/briefs/A8-rules.md","needs":["A8-index"],"checkpoint":"_work/A8-rules.md","out_file":"_work/a8-rules.json"}

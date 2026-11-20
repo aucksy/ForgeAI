@@ -1,0 +1,112 @@
+# B-run-panel-auth-data-b: gap-8 x panel / panel/auth-data. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H8.1 | gap-8 | By script first: docs/system-map/_tools/silent.mjs lists every catch block with file:line and three flags: logs? (calls a log, report or crash function inside), tells_user? (sets an error state, toast or alert inside), rethrows?
+H8.2 | gap-8 | Output _sources/silent.csv
+H8.3 | gap-8 | Helpers read ONLY the rows where all three are "no", plus every fallback value (?? null, || [], ?? 0) that sits in a file named in a journey that writes money, messages, alerts, sign-in or sync
+H8.4 | gap-8 | Everything else is counted in the grid as "filtered by script, N rows, not read" so the gap is visible
+H8.5 | gap-8 | For each: if this path runs, does the user (or owner, or HQ) learn anything?
+H8.6 | gap-8 | A silent path that hides a failed promise = finding
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1000 | live | Sign in to the gym panel (mobile number + your PIN, or a one-time code) | apps/dashboard/src/crm/auth/SignInForms.tsx:43
+F-panel-1001 | live | Set up a new gym online (Create my gym: gym name, your name, mobile, PIN, agree to terms) | apps/dashboard/src/crm/auth/SignInForms.tsx:150
+F-panel-1002 | behind switch | Verify your mobile number with WhatsApp (send one message from your phone, or scan the QR on a computer; older way: type | apps/dashboard/src/crm/auth/WhatsAppVerify.tsx:99
+F-panel-1003 | behind switch | Forgot your PIN: check the number on WhatsApp, then choose a new PIN and sign in | apps/dashboard/src/crm/auth/ForgotPin.tsx:125
+F-panel-1004 | live | Other ways back in when the PIN is forgotten (code from another signed-in device, from another owner, or email MettleUp  | apps/dashboard/src/crm/auth/ForgotPin.tsx:73
+F-panel-1005 | live | Set or change my own 6-digit PIN (Staff & sign-in, You card) | apps/dashboard/src/crm/auth/PinForms.tsx:60
+F-panel-1006 | live | One-time prompt to set your own PIN after signing in with a one-time code (skippable with Not now) | apps/dashboard/src/crm/auth/pinPrompt.ts:25
+F-panel-1007 | live | Staff & sign-in screen: see who may open this gym's panel, who has a PIN, and what staff can and cannot do | apps/dashboard/src/crm/auth/PeopleScreen.tsx:109
+F-panel-1008 | live | Add a person to the panel (Owner, Staff front desk, Trainer, or Other with a typed job) | apps/dashboard/src/crm/auth/PeopleScreen.tsx:496
+F-panel-1009 | live | Name a staff member's job (for example Manager); kept on this browser until the gym server has job names | apps/dashboard/src/crm/auth/api.ts:140
+F-panel-1010 | live | Make a sign-in code for a person (or yourself) and read it out, copy it or send it on WhatsApp | apps/dashboard/src/crm/auth/PeopleScreen.tsx:586
+F-panel-1011 | live | Sign a person out everywhere (also clears that person's PIN) | apps/dashboard/src/crm/auth/PeopleScreen.tsx:658
+F-panel-1012 | live | Remove a person from the gym's panel | apps/dashboard/src/crm/auth/PeopleScreen.tsx:658
+F-panel-1013 | live | Sign out of this device (the device forgets its key and its saved copy of the gym; unsent payments are kept) | apps/dashboard/src/crm/auth/PeopleScreen.tsx:290
+F-panel-1014 | live | Told why you were signed out (signed out from another device, or removed from the gym) | apps/dashboard/src/crm/auth/api.ts:111
+F-panel-1015 | live | Put your records online (a gym kept in this browser becomes an online gym; every record is copied up; a demo gym is neve | apps/dashboard/src/crm/auth/GoOnlineCard.tsx:36
+F-panel-1016 | live | Agree to the MettleUp terms and data agreement (asked once per version; owner only; shows when you accepted) | apps/dashboard/src/crm/auth/TermsGate.tsx:73
+F-panel-1017 | live | MettleUp access: let MettleUp support look at the gym's records for one hour, end it early, and see every time MettleUp  | apps/dashboard/src/crm/auth/hqAccess.ts:166
+F-panel-1018 | live | Staff limits: front desk sees only Dues in Money and only Orders in Shop, cannot open owner pages, and gets an Only an o | apps/dashboard/src/crm/auth/permissions.ts:83
+F-panel-1019 | live | The gym's records online: every desk sees the same members, plans and receipts; two desks never save the same receipt nu | apps/dashboard/src/crm/data/cloud.ts:512
+F-panel-1020 | live | Gym kept in this browser only (no sign-in): all records saved on this device, with a backup of anything unreadable | apps/dashboard/src/crm/data/local.ts:177
+F-panel-1021 | live | demo copy of the gym's records (a made-up gym with members, plans, payments and check-ins for the sales demo; also the s | apps/dashboard/src/crm/data/demo.ts:82
+F-panel-1022 | live | Offline front desk: the panel still opens and members, plans and dues can be looked up with no internet (a copy of the g | apps/dashboard/src/crm/data/savedCopy.ts:130
+F-panel-1023 | live | Offline front desk waiting list: check-ins, new members, member changes, payments and plans sold with no internet are sh | apps/dashboard/src/crm/data/outbox.ts:163
+F-panel-1024 | live | Import members: see how many receipts and how much money an import will really save, before tapping Add | apps/dashboard/src/crm/data/importPreview.ts:31
+F-panel-1025 | live | Mark a person on the staff list as a trainer (tick on Staff & sign-in) | apps/dashboard/src/crm/auth/PeopleScreen.tsx:353
+F-panel-1101 | live | Sign in, set up a new gym, PIN and Forgot PIN by WhatsApp, verify number with WhatsApp, put a browser-only gym online, a | apps/dashboard/src/crm/auth/PinForms.tsx:60
+F-panel-1102 | live | Staff & sign-in: add or remove people, set their job, make a one-time sign-in code, sign a person out | apps/dashboard/src/crm/auth/PeopleScreen.tsx:109
+F-panel-1103 | live | Gym records store: pull and push to the gym server, browser-only gym, saved copy and outbox for an offline front desk, R | apps/dashboard/src/crm/auth/api.ts:208
+F-panel-1136 | live | Demo gym at /demo: made-up sample gym in page memory, locked away from the real gym and the network | apps/dashboard/src/crm/data/demo.ts:1
+## SILENT CATCH ROWS TO READ (kind,file,line,logs,tells_user,rethrows,text)
+catch,apps/dashboard/src/crm/auth/AuthProvider.tsx,85,no,no,no,{ // Storage blocked: nothing to set aside. }
+catch,apps/dashboard/src/crm/auth/AuthProvider.tsx,94,no,no,no,{ return true; // unreadable: keep it  someone may want it }
+catch,apps/dashboard/src/crm/auth/GoOnlineCard.tsx,76,no,no,no,{ return { raw: null  snap: null }; }
+catch,apps/dashboard/src/crm/auth/GoOnlineCard.tsx,173,no,no,no,(() => undefined)
+catch,apps/dashboard/src/crm/auth/WhatsAppVerify.tsx,82,no,no,no,{ // quiet: another site's window; it opened  which is all that matters. }
+catch,apps/dashboard/src/crm/auth/WhatsAppVerify.tsx,239,no,no,no,(fail)
+catch,apps/dashboard/src/crm/auth/WhatsAppVerify.tsx,293,no,no,no,(fail)
+catch,apps/dashboard/src/crm/auth/api.ts,102,no,no,no,{ // Offline: the key is forgotten here anyway; an owner can sign the device out from the 
+catch,apps/dashboard/src/crm/auth/phoneCode.ts,91,no,no,no,{ data = null; }
+catch,apps/dashboard/src/crm/auth/phoneCode.ts,115,no,no,no,{ return 'off'; }
+catch,apps/dashboard/src/crm/auth/phoneCode.ts,195,no,no,no,{ data = null; }
+catch,apps/dashboard/src/crm/data/cloud.ts,547,no,no,no,(() => undefined)
+catch,apps/dashboard/src/crm/data/cloud.ts,923,no,no,no,{ // quiet: still offline; the next tick tries again (the push is kept). }
+catch,apps/dashboard/src/crm/data/local.ts,224,no,no,no,{ parsed = null; }
+## FALLBACK ROWS TO READ (files that write money, messages, alerts, sign-in or sync)
+fallback,apps/dashboard/src/crm/auth/AuthProvider.tsx,153,-,-,-,const key = readCloudGym()?.ownerKey ?? null;
+fallback,apps/dashboard/src/crm/auth/GoOnlineCard.tsx,128,-,-,-,const [name  setName] = useState(pending?.person?.name ?? '');
+fallback,apps/dashboard/src/crm/auth/GoOnlineCard.tsx,129,-,-,-,const [phone  setPhone] = useState(pending?.person?.phone ?? '');
+fallback,apps/dashboard/src/crm/auth/GoOnlineCard.tsx,149,-,-,-,signed = await authApi.goOnline(cloud.ownerKey  name  ten ?? '');
+fallback,apps/dashboard/src/crm/auth/GoOnlineCard.tsx,151,-,-,-,signed = await authApi.createOnlineGym(snapshot.gym.name  name  ten ?? '');
+fallback,apps/dashboard/src/crm/auth/PeopleScreen.tsx,114,-,-,-,const refused = desk?.held.length ?? 0;
+fallback,apps/dashboard/src/crm/auth/PeopleScreen.tsx,115,-,-,-,const key = session?.ownerKey ?? '';
+fallback,apps/dashboard/src/crm/auth/PeopleScreen.tsx,116,-,-,-,const me = session?.person ?? null;
+fallback,apps/dashboard/src/crm/auth/PeopleScreen.tsx,326,-,-,-,{(people ?? []).map((p) => {
+fallback,apps/dashboard/src/crm/auth/PinForms.tsx,166,-,-,-,const person = session?.online ? (session.person ?? null) : null;
+fallback,apps/dashboard/src/crm/auth/api.ts,95,-,-,-,return { name: String(r.name ?? '')  joinCode: String(r.joinCode ?? '')  person: personFro
+fallback,apps/dashboard/src/crm/auth/api.ts,95,-,-,-,return { name: String(r.name ?? '')  joinCode: String(r.joinCode ?? '')  person: personFro
+fallback,apps/dashboard/src/crm/auth/api.ts,200,-,-,-,out.push({ k: k as CrmRecord['k']  id: r.id  d: r.d ?? null  x: r.x === true });
+fallback,apps/dashboard/src/crm/auth/api.ts,212,-,-,-,version: Number(r.version) || 0
+fallback,apps/dashboard/src/crm/auth/api.ts,214,-,-,-,gymId: String(g.gymId ?? '')
+fallback,apps/dashboard/src/crm/auth/api.ts,215,-,-,-,name: String(g.name ?? '')
+fallback,apps/dashboard/src/crm/auth/api.ts,216,-,-,-,joinCode: String(g.joinCode ?? '')
+fallback,apps/dashboard/src/crm/auth/signin.ts,228,-,-,-,devices: Number(r.devices) || 0
+fallback,apps/dashboard/src/crm/data/cloud.ts,168,-,-,-,err instanceof Error ? err.message : typeof err === 'object' && err ? String((err as { mes
+fallback,apps/dashboard/src/crm/data/cloud.ts,168,-,-,-,err instanceof Error ? err.message : typeof err === 'object' && err ? String((err as { mes
+fallback,apps/dashboard/src/crm/data/cloud.ts,221,-,-,-,phone: rows.gym?.phone ?? null
+fallback,apps/dashboard/src/crm/data/cloud.ts,222,-,-,-,address: rows.gym?.address ?? null
+fallback,apps/dashboard/src/crm/data/cloud.ts,223,-,-,-,gstin: rows.gym?.gstin ?? null
+fallback,apps/dashboard/src/crm/data/cloud.ts,224,-,-,-,receiptPrefix: rows.gym?.receiptPrefix ?? null
+fallback,apps/dashboard/src/crm/data/cloud.ts,225,-,-,-,upiId: rows.gym?.upiId ?? null
+fallback,apps/dashboard/src/crm/data/cloud.ts,226,-,-,-,friendRewardDays: rows.gym?.friendRewardDays ?? null
+fallback,apps/dashboard/src/crm/data/cloud.ts,227,-,-,-,joinTrialDays: rows.gym?.joinTrialDays ?? null
+fallback,apps/dashboard/src/crm/data/cloud.ts,230,-,-,-,members: byTime(list<Member>(rows.member)  (m) => m.createdAt ?? 0).map(normalizeMember)
+fallback,apps/dashboard/src/crm/data/cloud.ts,231,-,-,-,plans: byTime(list<Plan>(rows.plan)  (p) => p.createdAt ?? 0)
+fallback,apps/dashboard/src/crm/data/cloud.ts,232,-,-,-,memberships: byTime(list<Membership>(rows.membership)  (m) => m.createdAt ?? 0)
+fallback,apps/dashboard/src/crm/data/cloud.ts,233,-,-,-,payments: byTime(list<Payment>(rows.payment)  (p) => p.createdAt ?? 0)
+fallback,apps/dashboard/src/crm/data/cloud.ts,234,-,-,-,visits: byTime(list<Visit>(rows.visit)  (v) => v.checkedInAt ?? 0)
+fallback,apps/dashboard/src/crm/data/cloud.ts,236,-,-,-,enquiries: byTime(list<Enquiry>(rows.enquiry).filter((e) => !isDeskClaim(String(e.id ?? ''
+fallback,apps/dashboard/src/crm/data/cloud.ts,236,-,-,-,enquiries: byTime(list<Enquiry>(rows.enquiry).filter((e) => !isDeskClaim(String(e.id ?? ''
+fallback,apps/dashboard/src/crm/data/cloud.ts,237,-,-,-,expenses: byTime(list<Expense>(rows.expense)  (e) => e.createdAt ?? 0)
+fallback,apps/dashboard/src/crm/data/cloud.ts,238,-,-,-,workoutPlans: byTime(list<WorkoutPlan>(rows.workout_plan)  (w) => w.updatedAt ?? 0)
+fallback,apps/dashboard/src/crm/data/cloud.ts,286,-,-,-,for (const row of (snap[key as ListKey] ?? []) as readonly { id: string }[]) {
+fallback,apps/dashboard/src/crm/data/cloud.ts,464,-,-,-,return e instanceof Error ? e.message : typeof e === 'object' && e ? String((e as { messag
+fallback,apps/dashboard/src/crm/data/cloud.ts,464,-,-,-,return e instanceof Error ? e.message : typeof e === 'object' && e ? String((e as { messag
+fallback,apps/dashboard/src/crm/data/cloud.ts,580,-,-,-,words: i.held ?? ''
+fallback,apps/dashboard/src/crm/data/cloud.ts,586,-,-,-,.map((i) => ({ id: i.id  memberId: i.memberId  words: i.waitReason ?? ''  clockAhead: i.wa
+fallback,apps/dashboard/src/crm/data/cloud.ts,616,-,-,-,return copy ?? null;
+fallback,apps/dashboard/src/crm/data/cloud.ts,675,-,-,-,const old = copy?.queued ?? [];
+fallback,apps/dashboard/src/crm/data/cloud.ts,1225,-,-,-,const seq = Math.max(seen[key] ?? 0  highestOfflineSeq(existing  desk.no  paidOn  prefix))
+fallback,apps/dashboard/src/crm/data/cloud.ts,1238,-,-,-,? Object.fromEntries(Object.keys(extra.patch).map((k) => [k  (baseMember as unknown as Rec
+fallback,apps/dashboard/src/crm/data/cloud.ts,1245,-,-,-,memberId: memberId || (changes.find((c) => c.k === 'member')?.id ?? '')
+fallback,apps/dashboard/src/crm/data/cloud.ts,1251,-,-,-,const expected = got ? (seen[got.key] ?? 0) : 0;
+fallback,apps/dashboard/src/crm/data/cloud.ts,1256,-,-,-,if (got && (doc.seq[got.key] ?? 0) !== expected) return null;
+fallback,apps/dashboard/src/crm/data/outbox.ts,310,-,-,-,paidP += Number((r.d as Payment).amountP) || 0;
+fallback,apps/dashboard/src/crm/data/outbox.ts,384,-,-,-,.reduce((sum  p) => sum + (Number(p.amountP) || 0)  0);
+fallback,apps/dashboard/src/crm/data/outbox.ts,385,-,-,-,const owed = (Number(plan.priceP) || 0) + (Number(plan.joiningFeeP) || 0) - paid;
+fallback,apps/dashboard/src/crm/data/outbox.ts,385,-,-,-,const owed = (Number(plan.priceP) || 0) + (Number(plan.joiningFeeP) || 0) - paid;
+fallback,apps/dashboard/src/crm/data/outbox.ts,386,-,-,-,return Math.max(0  (Number(pay.amountP) || 0) - Math.max(0  owed));
+fallback,apps/dashboard/src/crm/data/outbox.ts,391,-,-,-,return JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
+fallback,apps/dashboard/src/crm/data/outbox.ts,391,-,-,-,return JSON.stringify(a ?? null) === JSON.stringify(b ?? null);
+## FILTERED BY SCRIPT
+92 other rows of _sources/silent.csv in this area: not read (write this number in the H8 evidence)

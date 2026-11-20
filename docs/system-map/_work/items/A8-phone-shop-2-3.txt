@@ -1,0 +1,644 @@
+# A8-phone-shop-2-3: coverage of 91 Tier 1 journeys (8 features, from A5-phone-shop-2-3). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-phone-428 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | asserts 3 journey phrase(s)
+F-phone-428 | apps/mobile/test/shop/askReplyAlerts.test.ts | unit | 226 lines | imports the code
+F-phone-428 | apps/mobile/test/shop/boardNameChoice.test.ts | unit | 79 lines | imports the code
+F-phone-428 | apps/mobile/test/shop/c6LeavePending.test.ts | unit | 104 lines | imports the code
+F-phone-428 | apps/mobile/test/shop/c6S3.test.ts | unit | 187 lines | imports the code
+F-phone-428 | apps/mobile/test/shop/c6S4.test.ts | unit | 132 lines | imports the code
+F-phone-428 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | imports the code
+F-phone-428 | apps/mobile/test/shop/gymBusy.test.ts | unit | 209 lines | imports the code
+F-phone-428 | apps/mobile/test/shop/gymReminders.test.ts | unit | 200 lines | imports the code
+F-phone-428 | apps/mobile/test/shop/gymRemindersErase.test.ts | unit | 36 lines | imports the code
+F-phone-428 | apps/mobile/test/shop/gymWod.test.ts | unit | 164 lines | imports the code
+F-phone-428 | apps/mobile/test/shop/invite.test.ts | unit | 119 lines | imports the code
+F-phone-424 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | imports the code, file name, asserts 7 journey phrase(s)
+F-phone-424 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | asserts 10 journey phrase(s)
+F-phone-424 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | imports the code, file name, asserts 4 journey phrase(s)
+F-phone-424 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 7 journey phrase(s)
+F-phone-424 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 7 journey phrase(s)
+F-phone-424 | apps/dashboard/e2e/ai-questions-uat.spec.mjs | e2e | 434 lines | asserts 6 journey phrase(s)
+F-phone-424 | supabase/tests/0080_gym_page.sql | db | 269 lines | asserts 6 journey phrase(s)
+F-phone-424 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 5 journey phrase(s)
+F-phone-424 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 5 journey phrase(s)
+F-phone-424 | supabase/tests/0069_member_messages.sql | db | 186 lines | asserts 5 journey phrase(s)
+F-phone-424 | supabase/tests/0078_ai_questions.sql | db | 198 lines | asserts 5 journey phrase(s)
+F-phone-424 | supabase/tests/0087_feedback_owner_desk.sql | db | 143 lines | asserts 5 journey phrase(s)
+F-phone-402 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | imports the code, asserts 3 journey phrase(s)
+F-phone-402 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 3 journey phrase(s)
+F-phone-402 | apps/mobile/test/shop/askReplyAlerts.test.ts | unit | 226 lines | imports the code
+F-phone-402 | apps/mobile/test/shop/boardNameChoice.test.ts | unit | 79 lines | imports the code
+F-phone-402 | apps/mobile/test/shop/c6LeavePending.test.ts | unit | 104 lines | imports the code
+F-phone-402 | apps/mobile/test/shop/c6S3.test.ts | unit | 187 lines | imports the code
+F-phone-402 | apps/mobile/test/shop/c6S4.test.ts | unit | 132 lines | imports the code
+F-phone-402 | apps/mobile/test/shop/gymBusy.test.ts | unit | 209 lines | imports the code
+F-phone-402 | apps/mobile/test/shop/gymReminders.test.ts | unit | 200 lines | imports the code
+F-phone-402 | apps/mobile/test/shop/gymRemindersErase.test.ts | unit | 36 lines | imports the code
+F-phone-402 | apps/mobile/test/shop/gymWod.test.ts | unit | 164 lines | imports the code
+F-phone-402 | apps/mobile/test/shop/invite.test.ts | unit | 119 lines | imports the code
+F-phone-430 | apps/mobile/test/shop/gymShortcut.test.ts | unit | 46 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-phone-430 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-430 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-phone-430 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 5 journey phrase(s)
+F-phone-430 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 4 journey phrase(s)
+F-phone-430 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 4 journey phrase(s)
+F-phone-430 | apps/mobile/qa/brand-welcome.yaml | maestro | 149 lines | asserts 4 journey phrase(s)
+F-phone-430 | apps/mobile/qa/sub-uat-f194-choose.yaml | maestro | 31 lines | asserts 4 journey phrase(s)
+F-phone-430 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 4 journey phrase(s)
+F-phone-430 | apps/mobile/test/onboarding/welcomeIntro.test.ts | unit | 355 lines | asserts 4 journey phrase(s)
+F-phone-430 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-phone-430 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 3 journey phrase(s)
+F-phone-403 | apps/mobile/test/shop/r517GymHeader.test.ts | unit | 114 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-phone-403 | apps/mobile/test/shop/c6S3.test.ts | unit | 187 lines | imports the code, asserts 2 journey phrase(s)
+F-phone-403 | apps/mobile/test/shop/r77GymTab.test.ts | unit | 93 lines | imports the code, file name
+F-phone-403 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-403 | apps/mobile/test/shop/gym.test.ts | unit | 480 lines | asserts 4 journey phrase(s)
+F-phone-403 | apps/dashboard/e2e/ai-questions-uat.spec.mjs | e2e | 434 lines | asserts 3 journey phrase(s)
+F-phone-403 | apps/mobile/test/shop/askReplyAlerts.test.ts | unit | 226 lines | imports the code
+F-phone-403 | apps/mobile/test/shop/boardNameChoice.test.ts | unit | 79 lines | imports the code
+F-phone-403 | apps/mobile/test/shop/c6LeavePending.test.ts | unit | 104 lines | imports the code
+F-phone-403 | apps/mobile/test/shop/c6S4.test.ts | unit | 132 lines | imports the code
+F-phone-403 | apps/mobile/test/shop/gymBusy.test.ts | unit | 209 lines | imports the code
+F-phone-403 | apps/mobile/test/shop/gymReminders.test.ts | unit | 200 lines | imports the code
+F-phone-432 | apps/mobile/test/shop/recommendGym.test.ts | unit | 21 lines | imports the code, file name
+F-phone-432 | apps/mobile/test/onboarding/welcomeIntro.test.ts | unit | 355 lines | imports the code
+F-phone-432 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-phone-432 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-phone-432 | apps/dashboard/e2e/assistant-uat.spec.mjs | e2e | 822 lines | asserts 1 journey phrase(s)
+F-phone-432 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-phone-432 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-phone-432 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-phone-432 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-phone-432 | apps/dashboard/test/crm/planRequests.test.ts | unit | 239 lines | asserts 1 journey phrase(s)
+F-phone-432 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-phone-432 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-phone-405 | apps/mobile/test/shop/shopStore.test.ts | unit | 60 lines | imports the code, file name
+F-phone-405 | apps/mobile/test/shop/shopErase.test.ts | unit | 53 lines | imports the code
+F-phone-405 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | asserts 2 journey phrase(s)
+F-phone-405 | apps/mobile/qa/welcome-gym.yaml | maestro | 173 lines | asserts 2 journey phrase(s)
+F-phone-405 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-phone-405 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-phone-405 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 1 journey phrase(s)
+F-phone-405 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-phone-405 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-phone-405 | apps/dashboard/e2e/r579-uat.spec.mjs | e2e | 298 lines | asserts 1 journey phrase(s)
+F-phone-405 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-phone-405 | apps/dashboard/test/crm/getStarted.test.ts | unit | 99 lines | asserts 1 journey phrase(s)
+F-phone-414 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-414 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-phone-414 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-phone-414 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-phone-414 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-phone-414 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-phone-414 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-phone-414 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-phone-414 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 3 journey phrase(s)
+F-phone-414 | apps/mobile/test/shop/gymWod.test.ts | unit | 164 lines | imports the code
+F-phone-414 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-414 | apps/mobile/test/tracker/switcherLine.test.ts | unit | 38 lines | asserts 3 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-phone-428-01 | type 1 | member | Gym tab, 'My gym' part, joined gym with bring-a-friend live (0056), online, gym gives 7 free days per friend
+  s1 see: Card titled 'Bring a friend'
+  s1 see: 'Send a friend a link to your gym. They leave their number, and the gym calls them.'
+  s1 see: 'When a friend joins, your gym can add 7 free days to your plan.'
+  s1 see: 'Friends who joined: 0'
+  s1 not: '1 days' for a one-day reward
+  s1 not: Names or numbers of the friends who asked
+  s2 see: The phone's share menu with 'Come and train with me at <gym>! Leave your name and number on this page, and the gym will call you: <link with own code>'
+  s2 not: Another member's code in the link
+  s2 not: The share menu opening twice
+J-F-phone-428-02 | type 3 | member | Gym tab, 'My gym' part, member who left the gym or the gym is paused (server answers LEFT / SUSPENDED)
+  s1 see: No 'Bring a friend' card at all; the rest of the part as usual
+  s1 not: A card with a dead link
+  s1 not: An error box about the invite
+J-F-phone-428-03 | type 3 | member | Gym tab, 'My gym' part, phone offline (or server without 0056)
+  s1 see: No 'Bring a friend' card (it needs the code from the server)
+  s1 not: A card with an empty or made-up code outside a QA build
+  s1 not: An endless spinner
+  s2 see: The card appears with the member's own code
+  s2 not: The card staying hidden for the app's life after one offline miss (only a missing-server answer is remembered)
+J-F-phone-428-04 | type 6 | member | Card shown with 'Friends who joined: 0'; a friend uses the link and the desk marks the enquiry joined
+  s1 see: 'Friends who joined: 1'
+  s1 not: The count going up when the friend only left a number but did not join
+  s1 not: The friend's name shown
+  s2 see: The count goes back down
+  s2 not: A count that never goes down
+J-F-phone-428-05 | type 12 | member | Member shares the link; friend fills the page
+  s1 see: The friend shows in the gym's enquiries with the member's name; the member's card shows only the count
+  s1 not: The member seeing the friend's number or name
+  s1 not: The friend's details reaching another gym
+J-F-phone-428-06 | type 1 | pass member | Gym tab, 'My gym' part, joined gym with bring-a-friend live (0056), online, member on a pass (FITPASS etc.)
+  s1 see: Card titled 'Bring a friend'
+  s1 see: 'Send a friend a link to your gym. They leave their number, and the gym calls them.'
+  s1 see: 'Friends who joined: 0'
+  s1 not: A free-days line for a pass member who has no plan to extend
+  s1 not: Names or numbers of the friends who asked
+  s2 see: The phone's share menu with 'Come and train with me at <gym>! Leave your name and number on this page, and the gym will call you: <link with own code>'
+  s2 not: Another member's code in the link
+  s2 not: The share menu opening twice
+J-F-phone-428-07 | type 3 | pass member | Gym tab, 'My gym' part, member who left the gym or the gym is paused (server answers LEFT / SUSPENDED)
+  s1 see: No 'Bring a friend' card at all; the rest of the part as usual
+  s1 not: A card with a dead link
+  s1 not: An error box about the invite
+J-F-phone-428-08 | type 3 | pass member | Gym tab, 'My gym' part, phone offline (or server without 0056)
+  s1 see: No 'Bring a friend' card (it needs the code from the server)
+  s1 not: A card with an empty or made-up code outside a QA build
+  s1 not: An endless spinner
+  s2 see: The card appears with the member's own code
+  s2 not: The card staying hidden for the app's life after one offline miss (only a missing-server answer is remembered)
+J-F-phone-428-09 | type 6 | pass member | Card shown with 'Friends who joined: 0'; a friend uses the link and the desk marks the enquiry joined
+  s1 see: 'Friends who joined: 1'
+  s1 not: The count going up when the friend only left a number but did not join
+  s1 not: The friend's name shown
+  s2 see: The count goes back down
+  s2 not: A count that never goes down
+J-F-phone-428-10 | type 12 | pass member | Member shares the link; friend fills the page
+  s1 see: The friend shows in the gym's enquiries with the member's name; the member's card shows only the count
+  s1 not: The member seeing the friend's number or name
+  s1 not: The friend's details reaching another gym
+J-F-phone-424-01 | type 1 | member | Gym tab row 'Message your gym' ('Ask a question, share feedback or make a complaint'), joined gym with 0069 and 0096 live, online
+  s1 see: Page titled 'Message your gym'
+  s1 see: 'What is it about?' with chips 'Question', 'Feedback', 'Complaint'
+  s1 see: 'Who should read it?' with 'Gym owner' and the trainers, own trainer as '<name> (your trainer)' first
+  s1 not: A trainer chip for Feedback or Complaint
+  s1 not: Another gym's trainers
+  s2 see: '<trainer> reads your question and gets a notification. The owner of <gym> can read it too.'
+  s2 see: '<n> of 1000 letters'
+  s2 not: More than 1000 letters taken
+  s3 see: 'Sent. When your gym replies, you will see it below.'
+  s3 see: Under 'Your messages': 'Question · To: <trainer> · <when>' and 'Not seen by your gym yet. Waiting for a reply.'
+  s3 not: Two threads from one send
+  s3 not: The typed text kept in the box after a good send
+  s4 see: '<name> from your gym · <when>' with a 'New' tag; the Gym tab row says 'Your gym replied. Tap to read it.' and the tab bar badge counts it
+  s4 not: The red count staying after the reply was read
+  s4 not: The reply shown under another thread
+J-F-phone-424-02 | type 2 | member | A gym reply's notification on the lock screen (kind gym_reply)
+  s1 see: 'Message your gym' page opens on 'The gym' with the reply shown
+  s1 not: The app opening on the Workout tab instead
+  s1 not: Another member's thread
+J-F-phone-424-03 | type 2 | member | Message your gym page, kind 'Complaint' (another kind)
+  s1 see: 'Only the owner of <gym> reads your complaint. The front desk and trainers do not see it.'
+  s1 see: Placeholder 'For example: The AC in the cardio room is not working.'
+  s1 not: A trainer chip offered
+  s1 not: 'Send without my name' offered for a complaint
+  s2 see: 'The owner and front desk at <gym> read your complaint. Your trainers do not see it.'
+  s2 not: The line still saying only the owner reads it
+  s3 see: 'Complaint · To: Gym admin · <when>' in 'Your messages'
+  s3 not: The complaint reaching a trainer
+J-F-phone-424-04 | type 3 | member | Message your gym page, nothing typed / only spaces
+  s1 see: The button is greyed out
+  s1 not: A thread with empty text
+  s2 see: The button stays greyed out; a forced send shows 'Please type your message first.'
+  s2 not: A blank message sent to the gym
+J-F-phone-424-05 | type 3 | member | Message your gym page, server refusals
+  s1 see: 'You have sent a lot of messages today. Please try again tomorrow.'
+  s1 not: 'Sent.' shown for a refused message
+  s2 see: 'Messages to your gym are paused for now. Please ask at the front desk.'
+  s2 not: The typed text cleared on a refusal
+  s3 see: 'Could not send. Check your internet and try again.'
+  s3 not: A success message
+  s3 not: The text lost
+J-F-phone-424-06 | type 3 | member | Server without 0069 (part not applied)
+  s1 see: 'Messaging your gym is not ready yet. Please check again later.'
+  s1 not: A send box that cannot send
+J-F-phone-424-07 | type 6 | member | A thread the gym marked done
+  s1 see: 'Your gym marked this as done. Write back if you need more help.'
+  s1 see: 'Write back' button
+  s1 not: No way to reply
+  s2 see: 'Sent.'; the thread is open again with the new line under 'You · <when>'
+  s2 not: The thread staying marked done after the member wrote back
+  s3 see: 'This conversation is full. Please send a new message instead.'
+  s3 not: A silent failure
+J-F-phone-424-08 | type 12 | member | Feedback sent with 'Send without my name'
+  s1 see: 'Your gym can still reply here, but it will not see who sent it.'
+  s1 see: 'Only the owner and front desk at <gym> read your feedback. Your trainers do not see it.' (or the 'Gym owner' / 'Gym admin' line)
+  s1 not: The switch offered for Question or Complaint
+  s2 see: 'Feedback · ... · Sent without your name'
+  s2 not: The member's name or number shown to the gym
+  s2 not: A trainer seeing the feedback
+  s2 not: The thread kept beyond 180 days after the last message
+J-F-phone-424-09 | type 1 | pass member | Gym tab row 'Message your gym' ('Ask a question, share feedback or make a complaint'), joined gym with 0069 and 0096 live, online
+  s1 see: Page titled 'Message your gym'
+  s1 see: 'What is it about?' with chips 'Question', 'Feedback', 'Complaint'
+  s1 see: 'Who should read it?' with 'Gym owner' and the trainers, own trainer as '<name> (your trainer)' first
+  s1 not: A trainer chip for Feedback or Complaint
+  s1 not: Another gym's trainers
+  s2 see: '<trainer> reads your question and gets a notification. The owner of <gym> can read it too.'
+  s2 see: '<n> of 1000 letters'
+  s2 not: More than 1000 letters taken
+  s3 see: 'Sent. When your gym replies, you will see it below.'
+  s3 see: Under 'Your messages': 'Question · To: <trainer> · <when>' and 'Not seen by your gym yet. Waiting for a reply.'
+  s3 not: Two threads from one send
+  s3 not: The typed text kept in the box after a good send
+  s4 see: '<name> from your gym · <when>' with a 'New' tag; the Gym tab row says 'Your gym replied. Tap to read it.' and the tab bar badge counts it
+  s4 not: The red count staying after the reply was read
+  s4 not: The reply shown under another thread
+J-F-phone-424-10 | type 2 | pass member | A gym reply's notification on the lock screen (kind gym_reply)
+  s1 see: 'Message your gym' page opens on 'The gym' with the reply shown
+  s1 not: The app opening on the Workout tab instead
+  s1 not: Another member's thread
+J-F-phone-424-11 | type 2 | pass member | Message your gym page, kind 'Complaint' (another kind)
+  s1 see: 'Only the owner of <gym> reads your complaint. The front desk and trainers do not see it.'
+  s1 see: Placeholder 'For example: The AC in the cardio room is not working.'
+  s1 not: A trainer chip offered
+  s1 not: 'Send without my name' offered for a complaint
+  s2 see: 'The owner and front desk at <gym> read your complaint. Your trainers do not see it.'
+  s2 not: The line still saying only the owner reads it
+  s3 see: 'Complaint · To: Gym admin · <when>' in 'Your messages'
+  s3 not: The complaint reaching a trainer
+J-F-phone-424-12 | type 3 | pass member | Message your gym page, nothing typed / only spaces
+  s1 see: The button is greyed out
+  s1 not: A thread with empty text
+  s2 see: The button stays greyed out; a forced send shows 'Please type your message first.'
+  s2 not: A blank message sent to the gym
+J-F-phone-424-13 | type 3 | pass member | Message your gym page, server refusals
+  s1 see: 'You have sent a lot of messages today. Please try again tomorrow.'
+  s1 not: 'Sent.' shown for a refused message
+  s2 see: 'Messages to your gym are paused for now. Please ask at the front desk.'
+  s2 not: The typed text cleared on a refusal
+  s3 see: 'Could not send. Check your internet and try again.'
+  s3 not: A success message
+  s3 not: The text lost
+J-F-phone-424-14 | type 3 | pass member | Server without 0069 (part not applied)
+  s1 see: 'Messaging your gym is not ready yet. Please check again later.'
+  s1 not: A send box that cannot send
+J-F-phone-424-15 | type 6 | pass member | A thread the gym marked done
+  s1 see: 'Your gym marked this as done. Write back if you need more help.'
+  s1 see: 'Write back' button
+  s1 not: No way to reply
+  s2 see: 'Sent.'; the thread is open again with the new line under 'You · <when>'
+  s2 not: The thread staying marked done after the member wrote back
+  s3 see: 'This conversation is full. Please send a new message instead.'
+  s3 not: A silent failure
+J-F-phone-424-16 | type 12 | pass member | Feedback sent with 'Send without my name'
+  s1 see: 'Your gym can still reply here, but it will not see who sent it.'
+  s1 see: 'Only the owner and front desk at <gym> read your feedback. Your trainers do not see it.' (or the 'Gym owner' / 'Gym admin' line)
+  s1 not: The switch offered for Question or Complaint
+  s2 see: 'Feedback · ... · Sent without your name'
+  s2 not: The member's name or number shown to the gym
+  s2 not: A trainer seeing the feedback
+  s2 not: The thread kept beyond 180 days after the last message
+J-F-phone-402-01 | type 1 | prospect | Gym tab with no gym, card 'Find my gym with my number'; the person is on a MettleUp gym's list with a plan running today
+  s1 see: 'We check your number against the member lists of gyms that use MettleUp. We only show you your own gym.'
+  s1 see: Boxes 'Your mobile number' and 'Your first name, as your gym has it'
+  s1 see: 'Your number is checked once and is not kept for this.'
+  s1 not: The number box keeping '+91 ' or spaces
+  s2 see: WhatsApp opens with a ready message to MettleUp; the app shows 'Send the message in WhatsApp'
+  s2 not: A charge or a message sent without the person tapping send
+  s3 see: 'Looking for your gym...' then 'You are a member of <gym>', 'Your plan runs until <date>.', button 'Join <gym>'
+  s3 not: Another person's gym shown
+  s3 not: A gym where the plan ended
+  s4 see: The join page of that gym's code; after the join the plan's paid features open
+  s4 not: The join landing on another gym
+J-F-phone-402-02 | type 2 | prospect | First screen (Welcome), 'Continue with your phone number' (the sign-in way in)
+  s1 see: 'Looking for your gym...' then 'We found you: <role at gym>.' or 'We found you at <n> gyms. Pick the gym to open in the app.'
+  s1 not: A gym the number is not listed at
+  s2 see: 'Opening <gym>…'
+  s2 not: The setup questions skipped with no gym joined
+J-F-phone-402-03 | type 3 | prospect | Find my gym form, wrong input
+  s1 see: 'Type your 10-digit mobile number.'
+  s1 not: WhatsApp opening for a wrong number
+  s2 see: 'Type your first name, as your gym has it.'
+  s2 not: A search with no name
+  s3 see: 'The message came from a different number. Send it from the WhatsApp of the number you typed.'
+  s3 not: The other number's gym shown
+J-F-phone-402-04 | type 3 | prospect | Not on any gym's list (or the plan ended)
+  s1 see: 'We did not find your gym'
+  s1 see: 'We look only for a plan that runs today, under the number and first name your gym has for you.'
+  s1 see: Buttons 'Tell my gym' and 'Skip'
+  s1 not: A made-up gym outside a test build
+  s2 see: 'This number has been checked too many times today. Try again tomorrow.'
+  s2 not: An endless 'Looking for your gym...'
+J-F-phone-402-05 | type 6 | prospect | Check started, WhatsApp not sent; the check runs out
+  s1 see: 'The check ran out of time. Tap Start again.' and 'Start again'
+  s1 not: A found gym from an old check
+  s2 see: The form again with the typed values
+  s2 not: A second WhatsApp prompt with the old code
+J-F-phone-402-06 | type 12 | prospect | Not found, the person types the gym's name and city and taps 'Tell my gym'
+  s1 see: 'If you type your gym’s name and city, the MettleUp team may contact your gym. We never share your number.'
+  s1 see: The share menu with a ready message
+  s1 not: The person's mobile number sent with the gym lead
+  s1 not: The number kept after the check (promise: not kept for this)
+J-F-phone-402-07 | type 1 | member | New phone, first screen, member listed at a MettleUp gym with a running plan
+  s1 see: Title 'Continue with your phone number'
+  s1 see: 'If your gym uses MettleUp, it may already have your number. We use it to find your gym and link this app to it.'
+  s1 not: A sign-in that needs a password
+  s2 see: 'We found you: <member at gym>.'
+  s2 see: 'Your plan runs until <date>.'
+  s2 not: The plan of another member with the same number but another name
+  s3 see: 'Opening <gym>…', then the Gym tab of that gym
+  s3 not: The member linked to the gym's list twice
+J-F-phone-402-08 | type 2 | member | Joined through 'Find my gym' then the join page (the claim after the join)
+  s1 see: The plan shown at once (the same proof links the list member)
+  s1 not: 'Check in once to link your membership' shown when the claim went through
+  s2 see: The join works; the desk confirms the number at check-in instead
+  s2 not: An error about the proof shown to the member
+J-F-phone-402-09 | type 3 | member | Sign-in with a number no gym has
+  s1 see: 'We did not find your number at a gym on MettleUp'
+  s1 see: '...You can still use the app without a gym: tap "Set up the app".'
+  s1 see: 'Try another number'
+  s1 not: A gym shown from a partial name match
+  s2 see: 'Signing in with your number is not open yet. Tap Back, then Try another way, then Join my gym, and type your gym’s 6-letter code.'
+  s2 not: A dead button
+J-F-phone-402-10 | type 6 | member | Found at two gyms
+  s1 see: 'We found you at 2 gyms. Pick the gym to open in the app.'
+  s1 not: Only one gym shown
+  s2 see: The app opens the picked gym; the proof is used once
+  s2 not: Both gyms joined at once
+  s2 not: The used proof accepted again after 15 minutes
+J-F-phone-402-11 | type 12 | member | Number check for a member
+  s1 see: 'We only use your number to find your gym. Your number is checked once and is not kept for this.'
+  s1 not: The number stored for this search
+  s1 not: Other gyms the number is listed at named, beyond the person's own
+J-F-phone-430-01 | type 1 | member | Android phone, just joined a gym that has a logo (https) and branding; offer not shown before for this gym code
+  s1 see: 'Put <gym> on your home screen'
+  s1 see: '<gym>'s logo opens MettleUp in your gym's look.'
+  s1 see: Buttons 'Add to home screen' and 'Not now'
+  s1 not: The pop-up for a gym with no logo
+  s1 not: Another gym's logo
+  s2 see: 'Tap Add on your phone's question. Then come back here.'
+  s2 see: Android's own add-shortcut question
+  s2 not: A shortcut added without Android's question
+  s3 see: 'Last step: remove the MettleUp icon' with 3 steps and 'MettleUp stays on your phone, in your app list. Only its icon leaves the home screen. Don't tap Uninstall.'
+  s3 not: Advice that removes the app itself
+  s4 see: MettleUp opens in the gym's look
+  s4 not: The icon opening a blank screen
+J-F-phone-430-02 | type 2 | member | Settings → Your gym, row 'Gym logo on my home screen' ('Opens MettleUp from your home screen')
+  s1 see: Android's add-shortcut question
+  s1 not: The row on a phone that cannot pin shortcuts
+  s2 see: '<gym> is already on your home screen. Its picture is up to date.'
+  s2 not: A second icon added
+J-F-phone-430-03 | type 3 | member | Pop-up shown, member taps 'Not now' (or refuses Android's question)
+  s1 see: The pop-up closes and is not offered again for this gym
+  s1 not: The pop-up returning on every visit
+  s2 see: 'Not added' and 'Your gym's icon was not added. You can add it any time in Settings → Your gym.'
+  s2 not: 'Last step' shown when nothing was added
+J-F-phone-430-04 | type 3 | member | Gym without a logo, or offline when the logo must download
+  s1 see: No 'Gym logo on my home screen' row (no logo)
+  s1 not: A row that only fails
+  s2 see: 'Couldn't get <gym>'s logo. Check the internet and try again.'
+  s2 not: A shortcut with a broken picture
+J-F-phone-430-05 | type 6 | member | Shortcut on the home screen; the gym changes its logo, then the member leaves the gym
+  s1 see: The home-screen icon is redrawn with the new logo, no question asked
+  s1 not: The old logo kept
+  s1 not: A second icon pinned
+  s2 see: The shortcut is greyed out with 'You left <gym>. Open MettleUp from its own icon.'
+  s2 not: The shortcut still opening the gym's look after leaving
+J-F-phone-430-06 | type 1 | pass member | Android phone, just joined a gym that has a logo (https) and branding; offer not shown before for this gym code
+  s1 see: 'Put <gym> on your home screen'
+  s1 see: '<gym>'s logo opens MettleUp in your gym's look.'
+  s1 see: Buttons 'Add to home screen' and 'Not now'
+  s1 not: The pop-up for a gym with no logo
+  s1 not: Another gym's logo
+  s2 see: 'Tap Add on your phone's question. Then come back here.'
+  s2 see: Android's own add-shortcut question
+  s2 not: A shortcut added without Android's question
+  s3 see: 'Last step: remove the MettleUp icon' with 3 steps and 'MettleUp stays on your phone, in your app list. Only its icon leaves the home screen. Don't tap Uninstall.'
+  s3 not: Advice that removes the app itself
+  s4 see: MettleUp opens in the gym's look
+  s4 not: The icon opening a blank screen
+J-F-phone-430-07 | type 2 | pass member | Settings → Your gym, row 'Gym logo on my home screen' ('Opens MettleUp from your home screen')
+  s1 see: Android's add-shortcut question
+  s1 not: The row on a phone that cannot pin shortcuts
+  s2 see: '<gym> is already on your home screen. Its picture is up to date.'
+  s2 not: A second icon added
+J-F-phone-430-08 | type 3 | pass member | Pop-up shown, member taps 'Not now' (or refuses Android's question)
+  s1 see: The pop-up closes and is not offered again for this gym
+  s1 not: The pop-up returning on every visit
+  s2 see: 'Not added' and 'Your gym's icon was not added. You can add it any time in Settings → Your gym.'
+  s2 not: 'Last step' shown when nothing was added
+J-F-phone-430-09 | type 3 | pass member | Gym without a logo, or offline when the logo must download
+  s1 see: No 'Gym logo on my home screen' row (no logo)
+  s1 not: A row that only fails
+  s2 see: 'Couldn't get <gym>'s logo. Check the internet and try again.'
+  s2 not: A shortcut with a broken picture
+J-F-phone-430-10 | type 6 | pass member | Shortcut on the home screen; the gym changes its logo, then the member leaves the gym
+  s1 see: The home-screen icon is redrawn with the new logo, no question asked
+  s1 not: The old logo kept
+  s1 not: A second icon pinned
+  s2 see: The shortcut is greyed out with 'You left <gym>. Open MettleUp from its own icon.'
+  s2 not: The shortcut still opening the gym's look after leaving
+J-F-phone-403-01 | type 1 | member | Joined gym with a logo and at least one shop product, online
+  s1 see: The gym's logo (56 dp, own shape up to 2:1) and the gym's name at the top
+  s1 see: Parts 'Shop', 'My gym', 'Ranking' with 'Shop' open first
+  s1 not: Another gym's name or logo
+  s1 not: 'Leaderboard' broken mid-word at large text
+  s2 see: The logo full size with a close button ('Close the logo')
+  s2 not: A stretched or cut logo
+  s3 see: The plan, hours, check in and the rest of 'My gym'
+  s3 not: The tab jumping back to 'Shop' on its own
+  s4 see: The gym's name, logo and parts read again
+  s4 not: A spinner that never stops
+J-F-phone-403-02 | type 2 | member | Gym with no shop products
+  s1 see: Only 'My gym' and 'Ranking', with 'My gym' open
+  s1 not: An empty 'Shop' part
+J-F-phone-403-03 | type 2 | member | A gym reminder notification or a What's new button asks for 'My gym' or 'Ranking'
+  s1 see: The Gym tab opens on the asked part, not on 'Shop'
+  s1 not: The tab opening on 'Shop' when 'My gym' was asked
+  s1 not: Nothing happening on a second tap of the same request
+J-F-phone-403-04 | type 3 | member | The gym removed this phone (server answers BAD_KEY on the gym check)
+  s1 see: Notice titled 'No longer in <gym>' with 'This phone is no longer joined to the gym. Join again with its code.'
+  s1 see: The Gym tab shows the 'Join your gym' screen
+  s1 not: The old gym's plan, messages, diets or hours still on the phone
+  s1 not: The old gym's logo kept on the home-screen shortcut without the grey-out
+J-F-phone-403-05 | type 3 | member | Offline on launch
+  s1 see: The last known name, logo and parts
+  s1 not: An error page instead of the kept gym
+  s1 not: The member unlinked because the check failed
+J-F-phone-403-06 | type 6 | member | The gym changes its name and logo in the panel
+  s1 see: The new name and logo
+  s1 not: The old name on one screen and the new on another
+  s2 see: The 'Shop' part goes; 'My gym' opens
+  s2 not: A picked 'Shop' part left empty
+J-F-phone-403-07 | type 1 | pass member | Joined gym with a logo and at least one shop product, online
+  s1 see: The gym's logo (56 dp, own shape up to 2:1) and the gym's name at the top
+  s1 see: Parts 'Shop', 'My gym', 'Ranking' with 'Shop' open first
+  s1 not: Another gym's name or logo
+  s1 not: 'Leaderboard' broken mid-word at large text
+  s2 see: The logo full size with a close button ('Close the logo')
+  s2 not: A stretched or cut logo
+  s3 see: The plan, hours, check in and the rest of 'My gym'
+  s3 not: The tab jumping back to 'Shop' on its own
+  s4 see: The gym's name, logo and parts read again
+  s4 not: A spinner that never stops
+J-F-phone-403-08 | type 2 | pass member | Gym with no shop products
+  s1 see: Only 'My gym' and 'Ranking', with 'My gym' open
+  s1 not: An empty 'Shop' part
+J-F-phone-403-09 | type 2 | pass member | A gym reminder notification or a What's new button asks for 'My gym' or 'Ranking'
+  s1 see: The Gym tab opens on the asked part, not on 'Shop'
+  s1 not: The tab opening on 'Shop' when 'My gym' was asked
+  s1 not: Nothing happening on a second tap of the same request
+J-F-phone-403-10 | type 3 | pass member | The gym removed this phone (server answers BAD_KEY on the gym check)
+  s1 see: Notice titled 'No longer in <gym>' with 'This phone is no longer joined to the gym. Join again with its code.'
+  s1 see: The Gym tab shows the 'Join your gym' screen
+  s1 not: The old gym's plan, messages, diets or hours still on the phone
+  s1 not: The old gym's logo kept on the home-screen shortcut without the grey-out
+J-F-phone-403-11 | type 3 | pass member | Offline on launch
+  s1 see: The last known name, logo and parts
+  s1 not: An error page instead of the kept gym
+  s1 not: The member unlinked because the check failed
+J-F-phone-403-12 | type 6 | pass member | The gym changes its name and logo in the panel
+  s1 see: The new name and logo
+  s1 not: The old name on one screen and the new on another
+  s2 see: The 'Shop' part goes; 'My gym' opens
+  s2 not: A picked 'Shop' part left empty
+J-F-phone-403-13 | type 12 | member | Gym tab home on a joined phone
+  s1 see: Only this gym's public name, logo and parts
+  s1 not: Any other gym's data
+  s1 not: The member's details sent beyond the gym's own member_me check (it tells the gym this phone is still in use)
+J-F-phone-403-14 | type 12 | pass member | Gym tab home on a joined phone
+  s1 see: Only this gym's public name, logo and parts
+  s1 not: Any other gym's data
+  s1 not: The member's details sent beyond the gym's own member_me check (it tells the gym this phone is still in use)
+J-F-phone-432-01 | type 1 | prospect | Gym tab, no-gym ('Join your gym') screen, app user with no gym joined
+  s1 see: 'Is your gym not on MettleUp yet?'
+  s1 see: 'MettleUp is also software that gym owners use to run their gym. ... Every member of a MettleUp gym gets every feature of this app free, and can also get their trainer's workout plans in it.'
+  s1 see: Button 'Recommend MettleUp to my gym'
+  s1 not: Clipped half-sentences
+  s1 not: The card shown to a member already in a MettleUp gym
+  s2 see: The phone's share menu with 'Our gym could use MettleUp. ... Have a look: https://gyms.mettleup.fit/?from=member'
+  s2 not: A link without ?from=member
+  s2 not: A message sent without the person picking an app and tapping send
+  s3 see: WhatsApp shows the ready text; back in the app the same screen
+  s3 not: The app sending anything on its own
+J-F-phone-432-02 | type 2 | prospect | The intro slides on first open (the recommend button on a slide)
+  s1 see: The same share menu with the same text and link
+  s1 not: Different words from the Gym tab card
+  s1 not: The slides moving on by themselves
+J-F-phone-432-03 | type 3 | prospect | Share menu opened, then cancelled
+  s1 see: The no-gym screen unchanged
+  s1 not: An error box
+  s1 not: 'Sent' shown when nothing was sent
+  s2 see: The screen stays; nothing breaks (the failure is only logged)
+  s2 not: A crash
+J-F-phone-432-04 | type 6 | prospect | The person joins a MettleUp gym later
+  s1 see: The gym's home; the recommend card is gone
+  s1 not: The recommend card still shown inside a joined gym
+  s2 see: The no-gym screen and the card again
+  s2 not: The card missing after leaving
+J-F-phone-432-05 | type 12 | prospect | Shared link opened by the gym owner
+  s1 see: The MettleUp gym-owner page; the lead is marked 'from a member's shared link' only
+  s1 not: The member's name or number in the link or the lead
+  s1 not: Any of the member's workouts sent
+J-F-phone-432-06 | type 1 | member | Gym tab, no-gym ('Join your gym') screen, member who left their gym (or whose gym is not on MettleUp), no gym joined now
+  s1 see: 'Is your gym not on MettleUp yet?'
+  s1 see: 'MettleUp is also software that gym owners use to run their gym. ... Every member of a MettleUp gym gets every feature of this app free, and can also get their trainer's workout plans in it.'
+  s1 see: Button 'Recommend MettleUp to my gym'
+  s1 not: Clipped half-sentences
+  s1 not: The card shown to a member already in a MettleUp gym
+  s2 see: The phone's share menu with 'Our gym could use MettleUp. ... Have a look: https://gyms.mettleup.fit/?from=member'
+  s2 not: A link without ?from=member
+  s2 not: A message sent without the person picking an app and tapping send
+  s3 see: WhatsApp shows the ready text; back in the app the same screen
+  s3 not: The app sending anything on its own
+J-F-phone-432-07 | type 2 | member | The intro slides on first open (the recommend button on a slide)
+  s1 see: The same share menu with the same text and link
+  s1 not: Different words from the Gym tab card
+  s1 not: The slides moving on by themselves
+J-F-phone-432-08 | type 3 | member | Share menu opened, then cancelled
+  s1 see: The no-gym screen unchanged
+  s1 not: An error box
+  s1 not: 'Sent' shown when nothing was sent
+  s2 see: The screen stays; nothing breaks (the failure is only logged)
+  s2 not: A crash
+J-F-phone-432-09 | type 6 | member | The person joins a MettleUp gym later
+  s1 see: The gym's home; the recommend card is gone
+  s1 not: The recommend card still shown inside a joined gym
+  s2 see: The no-gym screen and the card again
+  s2 not: The card missing after leaving
+J-F-phone-432-10 | type 12 | member | Shared link opened by the gym owner
+  s1 see: The MettleUp gym-owner page; the lead is marked 'from a member's shared link' only
+  s1 not: The member's name or number in the link or the lead
+  s1 not: Any of the member's workouts sent
+J-F-phone-405-01 | type 1 | prospect | App with no gym joined, Gym tab
+  s1 see: Only the 'Join your gym' screen: code box, 'Scan the poster', what a gym in the app gives, 'No gym? Everything else works without one.'
+  s1 see: No sample shop and no example products (the code says the sample shop is gone, R-77)
+  s1 not: Example products shown as if they were the gym's
+  s1 not: A 'Place demo order' button reachable
+J-F-phone-405-02 | type 3 | prospect | App with no gym joined, opens a saved link to the bag or a product page (/shop/bag, /shop/<id>, /shop/orders)
+  s1 see: The app moves to the Gym tab's 'Join your gym' screen
+  s1 not: The sample bag with 'Place demo order'
+  s1 not: 'Demo order — not sent to your gym' shown
+  s1 not: A blank page
+J-F-phone-405-03 | type 6 | prospect | Phone that kept pretend orders from an older app version, no gym
+  s1 see: No pretend orders anywhere; 'Join your gym' screen
+  s1 not: Old pretend orders mixed into the gym's 'My orders'
+  s1 not: A pretend order sent to the gym
+  s2 see: The kept sample bag and pretend orders are wiped with the rest
+  s2 not: The old sample bag left on the phone
+J-F-phone-405-04 | type 1 | member | Member who just left their gym (no gym joined now), Gym tab
+  s1 see: Only the 'Join your gym' screen: code box, 'Scan the poster', what a gym in the app gives, 'No gym? Everything else works without one.'
+  s1 see: No sample shop and no example products (the code says the sample shop is gone, R-77)
+  s1 not: Example products shown as if they were the gym's
+  s1 not: A 'Place demo order' button reachable
+J-F-phone-405-05 | type 3 | member | Member who just left their gym (no gym joined now), opens a saved link to the bag or a product page (/shop/bag, /shop/<id>, /shop/orders)
+  s1 see: The app moves to the Gym tab's 'Join your gym' screen
+  s1 not: The sample bag with 'Place demo order'
+  s1 not: 'Demo order — not sent to your gym' shown
+  s1 not: A blank page
+J-F-phone-405-06 | type 6 | member | Phone that kept pretend orders from an older app version, then joins a gym
+  s1 see: No pretend orders anywhere; after joining, 'My orders' shows only the gym's own orders ('No orders yet' when none)
+  s1 not: Old pretend orders mixed into the gym's 'My orders'
+  s1 not: A pretend order sent to the gym
+  s2 see: The kept sample bag and pretend orders are wiped with the rest
+  s2 not: The old sample bag left on the phone
+J-F-phone-414-01 | type 1 | member | Joined gym; the trainer put a YouTube link on 'Barbell squat' in the member's gym workout plan; plans synced
+  s1 see: A row 'Watch your trainer' with 'A video from <trainer> on YouTube' (or 'A video from your gym on YouTube')
+  s1 not: The row on an exercise with no video
+  s1 not: Another gym's video
+  s2 see: YouTube (or the browser) opens the trainer's video
+  s2 not: A link that is not an https YouTube link opened
+  s2 not: The app closing
+J-F-phone-414-02 | type 2 | member | Today's workout of the day (WOD) from the gym has a video on an exercise (another source)
+  s1 see: 'Watch your trainer' for the WOD's video
+  s1 not: The plan's older video shown over the newest one
+J-F-phone-414-03 | type 2 | member | An exercise the trainer typed by hand (no library key), matched by name
+  s1 see: 'Watch your trainer' row
+  s1 not: No row because of a case or extra space difference
+  s1 not: A row on a different exercise with a similar name
+J-F-phone-414-04 | type 3 | member | The trainer typed a link that is not YouTube (or over 300 letters, or http)
+  s1 see: No 'Watch your trainer' row; the page exactly as before
+  s1 not: The bad link offered or opened
+J-F-phone-414-05 | type 3 | member | Phone offline or YouTube cannot open
+  s1 see: Notice 'Couldn’t open the video' with 'Check your internet, then try again.'
+  s1 not: No word at all
+  s1 not: A crash
+J-F-phone-414-06 | type 6 | member | Video shown; then the trainer removes it, then the member leaves the gym
+  s1 see: The row is gone
+  s1 not: The removed video still offered
+  s2 see: No 'Watch your trainer' row (the saved videos are forgotten)
+  s2 not: The old gym's video still offered
+J-F-phone-414-07 | type 12 | member | Trainer video on the exercise page
+  s1 see: The video opens in YouTube, outside MettleUp
+  s1 not: Anything about the member sent with the link
+  s1 not: A non-YouTube site opened
+J-F-phone-414-08 | type 1 | pass member | Joined gym; the trainer put a YouTube link on 'Barbell squat' in the member's gym workout plan; plans synced
+  s1 see: A row 'Watch your trainer' with 'A video from <trainer> on YouTube' (or 'A video from your gym on YouTube')
+  s1 not: The row on an exercise with no video
+  s1 not: Another gym's video
+  s2 see: YouTube (or the browser) opens the trainer's video
+  s2 not: A link that is not an https YouTube link opened
+  s2 not: The app closing
+J-F-phone-414-09 | type 2 | pass member | Today's workout of the day (WOD) from the gym has a video on an exercise (another source)
+  s1 see: 'Watch your trainer' for the WOD's video
+  s1 not: The plan's older video shown over the newest one
+J-F-phone-414-10 | type 2 | pass member | An exercise the trainer typed by hand (no library key), matched by name
+  s1 see: 'Watch your trainer' row
+  s1 not: No row because of a case or extra space difference
+  s1 not: A row on a different exercise with a similar name
+J-F-phone-414-11 | type 3 | pass member | The trainer typed a link that is not YouTube (or over 300 letters, or http)
+  s1 see: No 'Watch your trainer' row; the page exactly as before
+  s1 not: The bad link offered or opened
+J-F-phone-414-12 | type 3 | pass member | Phone offline or YouTube cannot open
+  s1 see: Notice 'Couldn’t open the video' with 'Check your internet, then try again.'
+  s1 not: No word at all
+  s1 not: A crash
+J-F-phone-414-13 | type 6 | pass member | Video shown; then the trainer removes it, then the member leaves the gym
+  s1 see: The row is gone
+  s1 not: The removed video still offered
+  s2 see: No 'Watch your trainer' row (the saved videos are forgotten)
+  s2 not: The old gym's video still offered
+J-F-phone-414-14 | type 12 | pass member | Trainer video on the exercise page
+  s1 see: The video opens in YouTube, outside MettleUp
+  s1 not: Anything about the member sent with the link
+  s1 not: A non-YouTube site opened

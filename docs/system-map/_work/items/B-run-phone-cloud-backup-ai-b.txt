@@ -1,0 +1,66 @@
+# B-run-phone-cloud-backup-ai-b: gap-8 x phone / phone/cloud-backup-ai. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H8.1 | gap-8 | By script first: docs/system-map/_tools/silent.mjs lists every catch block with file:line and three flags: logs? (calls a log, report or crash function inside), tells_user? (sets an error state, toast or alert inside), rethrows?
+H8.2 | gap-8 | Output _sources/silent.csv
+H8.3 | gap-8 | Helpers read ONLY the rows where all three are "no", plus every fallback value (?? null, || [], ?? 0) that sits in a file named in a journey that writes money, messages, alerts, sign-in or sync
+H8.4 | gap-8 | Everything else is counted in the grid as "filtered by script, N rows, not read" so the gap is visible
+H8.5 | gap-8 | For each: if this path runs, does the user (or owner, or HQ) learn anything?
+H8.6 | gap-8 | A silent path that hides a failed promise = finding
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-1500 | behind switch | Chat with the coach: send a message, get a reply and cards (Coach tab; switched off in code, FEATURES.coach is false) | apps/mobile/src/ai/orchestrator.ts:111
+F-phone-1501 | behind switch | Use your own AI key for the coach (Claude, OpenAI or Groq) and pick the model in Settings | apps/mobile/src/ai/providers/anthropic.ts:79
+F-phone-1502 | behind switch | Coach without a key: understands typed workouts and body weight in English, Hindi and Hinglish, fully offline | apps/mobile/src/ai/localCoach.ts:839
+F-phone-1503 | behind switch | Coach reads and changes your data by chat: log a workout, meal or body weight, show today's workout, records, stats and  | apps/mobile/src/ai/tools.ts:441
+F-phone-1505 | behind switch | Send the coach a meal photo to estimate calories and log it (needs a Claude or OpenAI key; offline coach asks you to des | apps/mobile/src/ai/orchestrator.ts:113
+F-phone-1510 | live | Download my data: save one backup file (ZIP) with workouts, routines, own exercises, body weight, measurements, photos,  | apps/mobile/src/backup/backupSave.ts:42
+F-phone-1511 | live | Restore from a backup file: open it, see what is inside, then replace everything on this phone or add only what is missi | apps/mobile/src/backup/backupOpen.ts:36
+F-phone-1512 | live | Undo a restore: put the phone back as it was before the backup was put in | apps/mobile/src/backup/backupRestore.ts:551
+F-phone-1520 | live | MettleUp account: Continue with Google, and sign out (offered to every member, gym or not, in a build with a real Google | apps/mobile/src/cloud/account.ts:50
+F-phone-1521 | live | Keep your workouts on MettleUp: every saved change is copied to the server by itself in the background, and waits when o | apps/mobile/src/cloud/copySync.ts:381
+F-phone-1522 | live | Bring back my workouts: after signing in on a new phone, the saved copy is merged in with no duplicate workouts, newest  | apps/mobile/src/cloud/copySync.ts:223
+F-phone-1523 | live | Delete my MettleUp account and the saved copy of my workouts (a gym owner's or trainer's sign-in is kept, only the copy  | apps/mobile/src/cloud/account.ts:149
+F-phone-1524 | live | Backup status line in Settings: when the copy was last saved, changes still waiting, sign in again needed, or the copy i | apps/mobile/src/cloud/copySync.ts:402
+F-phone-1525 | live | Restore from an older Google Drive backup: sign in to Drive, find the newest backup, put it on this phone (kept for memb | apps/mobile/src/cloud/drive.ts:110
+F-phone-1526 | hidden | Back up to Google Drive (upload a new backup, keep the newest few): code still present but no screen calls it since Driv | apps/mobile/src/cloud/drive.ts:366
+F-phone-1527 | behind switch | Old gym link: sign in with email and password, then join a gym by its code (Settings, Gym; switched off in code, FEATURE | apps/mobile/src/cloud/session.ts:75
+F-phone-1528 | behind switch | Old gym sync: after any saved change, and when the internet comes back, one activity summary row of the member is sent t | apps/mobile/src/cloud/sync.ts:12
+F-phone-1529 | behind switch | Old gym link: delete my cloud data and disconnect from the gym (only disconnects after the server confirms the delete) | apps/mobile/src/cloud/session.ts:148
+F-phone-1530 | live | Reaching the server when Supabase is blocked: every request goes through our own addresses first (app.mettleup.fit/sb, t | apps/mobile/src/cloud/address.ts:115
+F-phone-1531 | live | Gym logo and shop photos load through our own address when the saved link is Supabase's | apps/mobile/src/cloud/picture.ts:20
+F-phone-1532 | behind switch | MettleUp Plus limits (paid member plan): more than 7 exercises of your own and charts older than 3 months are refused wi | apps/mobile/src/cloud/limitsFlag.ts:21
+## SILENT CATCH ROWS TO READ (kind,file,line,logs,tells_user,rethrows,text)
+catch,apps/mobile/src/ai/localCoach.ts,774,no,no,no,(() => null)
+catch,apps/mobile/src/ai/orchestrator.ts,87,no,no,no,{ return { error: err instanceof Error ? err.message : 'Tool execution failed.' }; }
+catch,apps/mobile/src/ai/orchestrator.ts,126,no,no,no,{ return saved; // DB unavailable — nothing else we can do. }
+catch,apps/mobile/src/ai/orchestrator.ts,243,no,no,no,{ /* non-serialisable result — skip from the grounding corpus */ }
+catch,apps/mobile/src/ai/orchestrator.ts,259,no,no,no,{ /* keep the best interim text; tools already ran and cards are saved */ }
+catch,apps/mobile/src/ai/orchestrator.ts,276,no,no,no,{ const detail = err instanceof Error ? err.message : 'Something went wrong.'; try { // A 
+catch,apps/mobile/src/ai/orchestrator.ts,292,no,no,no,{ // Persistence itself failed; return what we have. }
+catch,apps/mobile/src/ai/providers/anthropic.ts,27,no,no,no,{ return String(value); }
+catch,apps/mobile/src/ai/providers/anthropic.ts,116,no,no,no,(() => '')
+catch,apps/mobile/src/ai/providers/openai.ts,35,no,no,no,{ return String(value); }
+catch,apps/mobile/src/ai/providers/openai.ts,47,no,no,no,{ return {}; }
+catch,apps/mobile/src/ai/providers/openai.ts,150,no,no,no,(() => '')
+catch,apps/mobile/src/ai/tools.ts,183,no,no,no,(() => null)
+catch,apps/mobile/src/ai/tools.ts,228,no,no,no,(() => newPrs)
+catch,apps/mobile/src/ai/tools.ts,389,no,no,no,{ // quiet: an unreadable settings store means the routine's own range  as before }
+catch,apps/mobile/src/ai/tools.ts,777,no,no,no,(() => null)
+catch,apps/mobile/src/ai/tools.ts,912,no,no,no,(() => raw)
+catch,apps/mobile/src/ai/tools.ts,913,no,no,no,( () => new Map()  )
+catch,apps/mobile/src/backup/backupCollect.ts,84,no,no,no,{ ids = []; }
+catch,apps/mobile/src/backup/backupIo.ts,107,no,no,no,{ return []; }
+catch,apps/mobile/src/backup/backupRestore.ts,283,no,no,no,{ keep = []; }
+catch,apps/mobile/src/backup/backupRestore.ts,353,no,no,no,(() => 0)
+catch,apps/mobile/src/backup/backupRestore.ts,361,no,no,no,(() => [] as { id: string }[])
+catch,apps/mobile/src/cloud/connectivity.ts,21,no,no,no,{ // best-effort; the next reconnect retries }
+catch,apps/mobile/src/cloud/drive.ts,77,no,no,no,{ // Swallow — surfaced later when the user actually taps a Drive action. }
+catch,apps/mobile/src/cloud/drive.ts,168,no,no,no,{ /* ignore */ }
+catch,apps/mobile/src/cloud/drive.ts,205,no,no,no,(() => '')
+catch,apps/mobile/src/cloud/outbox.ts,75,no,no,no,{ await db.runAsync(  UPDATE sync_outbox SET status = 'error'  attempts = attempts + 1  la
+catch,apps/mobile/src/cloud/picture.ts,13,no,no,no,{ // quiet: no app config (pure unit tests): a picture loads from its saved link  as befor
+catch,apps/mobile/src/cloud/session.ts,57,no,no,no,{ // offline / transient — the outbox drains later }
+catch,apps/mobile/src/cloud/sync.ts,23,no,no,no,{ // Push is best-effort; never surface to the UI (offline demo must be seamless). }
+## FALLBACK ROWS TO READ (files that write money, messages, alerts, sign-in or sync)
+(none)
+## FILTERED BY SCRIPT
+174 other rows of _sources/silent.csv in this area: not read (write this number in the H8 evidence)

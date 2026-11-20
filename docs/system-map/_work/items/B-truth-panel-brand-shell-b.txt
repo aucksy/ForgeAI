@@ -1,0 +1,7 @@
+# B-truth-panel-brand-shell-b: gap-9 x panel / panel/brand-shell. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H9.1 | gap-9 | For each fact a user sees (count of alerts, dues, plan end, birthdays today, members using the app): list every place it shows (panel, Today, AI, bell, push, phone app, HQ, export) and compare the values on the Crispy Curves data and the ugly data pack
+H9.2 | gap-9 | Any difference = finding
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1105 | live | Branding: gym logo and colours for the member app, logo upload, remove logo background, phone and shortcut preview | apps/dashboard/src/crm/brand/BrandingScreen.tsx:41
+F-panel-3101 | live | Branding: suggest a gym colour from the uploaded logo | apps/dashboard/src/crm/brand/brandLogic.ts:141

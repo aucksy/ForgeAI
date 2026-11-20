@@ -1,0 +1,732 @@
+# A8-phone-onboarding-db-1: coverage of 88 Tier 1 journeys (9 features, from A5-phone-onboarding-db-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-phone-1620 | apps/mobile/test/tracker/coachTargets.test.ts | unit | 82 lines | imports the code
+F-phone-1620 | apps/mobile/test/tracker/phase4Review.test.ts | unit | 183 lines | imports the code
+F-phone-1620 | apps/mobile/test/tracker/phase4Stall.test.ts | unit | 65 lines | imports the code
+F-phone-1620 | apps/mobile/test/tracker/phase8Batch.test.ts | unit | 282 lines | imports the code
+F-phone-1620 | apps/mobile/test/tracker/phase8Rollback.test.ts | unit | 253 lines | imports the code
+F-phone-1620 | apps/mobile/qa/audit3-n.yaml | maestro | 301 lines | asserts 2 journey phrase(s)
+F-phone-1620 | apps/mobile/qa/uat-g.yaml | maestro | 275 lines | asserts 2 journey phrase(s)
+F-phone-1620 | apps/mobile/qa/uat-h.yaml | maestro | 430 lines | asserts 2 journey phrase(s)
+F-phone-1620 | apps/dashboard/test/crm/joinPay.test.ts | unit | 223 lines | asserts 1 journey phrase(s)
+F-phone-1620 | apps/mobile/qa/phase7-bigtext.yaml | maestro | 326 lines | asserts 1 journey phrase(s)
+F-phone-1620 | apps/mobile/qa/store-c.yaml | maestro | 130 lines | asserts 1 journey phrase(s)
+F-phone-1620 | apps/mobile/qa/uat-f5.yaml | maestro | 121 lines | asserts 1 journey phrase(s)
+F-phone-1616 | apps/mobile/test/db/e1rmCapReal.test.ts | unit | 102 lines | imports the code
+F-phone-1616 | apps/mobile/test/db/migrations.test.ts | unit | 228 lines | imports the code
+F-phone-1616 | apps/mobile/test/db/phase3ReviewFixes.test.ts | unit | 306 lines | imports the code
+F-phone-1616 | apps/mobile/test/db/realRepos.test.ts | unit | 298 lines | imports the code
+F-phone-1616 | apps/mobile/test/db/reviewE1rmLogReal.test.ts | unit | 116 lines | imports the code
+F-phone-1616 | apps/mobile/test/tracker/audit13OctV037.test.ts | unit | 356 lines | imports the code
+F-phone-1616 | apps/mobile/test/tracker/exerciseMerge.test.ts | unit | 194 lines | imports the code
+F-phone-1616 | apps/mobile/test/tracker/phase4Review.test.ts | unit | 183 lines | imports the code
+F-phone-1616 | apps/mobile/test/tracker/recordStart.test.ts | unit | 412 lines | imports the code
+F-phone-1617 | apps/mobile/test/db/queuedWrites.test.ts | unit | 132 lines | imports the code, file name
+F-phone-1617 | apps/mobile/test/onboarding/dataActions.test.ts | unit | 504 lines | imports the code, file name
+F-phone-1617 | apps/mobile/test/db/finishReal.test.ts | unit | 104 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1617 | apps/mobile/test/db/packetBCards.test.ts | unit | 145 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1617 | apps/mobile/qa/sub-settings-open.yaml | maestro | 62 lines | asserts 3 journey phrase(s)
+F-phone-1617 | apps/mobile/test/ai/auditC3Coach.test.ts | unit | 74 lines | imports the code
+F-phone-1617 | apps/mobile/test/backup/backupRoundTrip.test.ts | unit | 432 lines | imports the code
+F-phone-1617 | apps/mobile/test/backup/driveBackup.test.ts | unit | 177 lines | imports the code
+F-phone-1617 | apps/mobile/test/cloud/backupSafety.test.ts | unit | 95 lines | imports the code
+F-phone-1617 | apps/mobile/test/cloud/cloudCopy.test.ts | unit | 548 lines | imports the code
+F-phone-1617 | apps/mobile/test/cloud/limitsFlag.test.ts | unit | 115 lines | imports the code
+F-phone-1617 | apps/mobile/test/cloud/restoreClockRepair.test.ts | unit | 80 lines | imports the code
+F-phone-1615 | apps/mobile/test/db/queuedWrites.test.ts | unit | 132 lines | imports the code, file name
+F-phone-1615 | apps/mobile/test/cloud/cloudCopy.test.ts | unit | 548 lines | imports the code
+F-phone-1615 | apps/mobile/test/cloud/restoreRepairs.test.ts | unit | 233 lines | imports the code
+F-phone-1615 | apps/mobile/test/cloud/undoRestore.test.ts | unit | 143 lines | imports the code
+F-phone-1615 | apps/mobile/test/db/auditC3RoutinesReal.test.ts | unit | 201 lines | imports the code
+F-phone-1615 | apps/mobile/test/db/auditC4ImportReal.test.ts | unit | 70 lines | imports the code
+F-phone-1615 | apps/mobile/test/db/cardioMachineReal.test.ts | unit | 85 lines | imports the code
+F-phone-1615 | apps/mobile/test/db/e1rmCapReal.test.ts | unit | 102 lines | imports the code
+F-phone-1615 | apps/mobile/test/db/editPast.test.ts | unit | 271 lines | imports the code
+F-phone-1615 | apps/mobile/test/db/finishFirstWorkoutReal.test.ts | unit | 69 lines | imports the code
+F-phone-1615 | apps/mobile/test/db/historyChartReal.test.ts | unit | 116 lines | imports the code
+F-phone-1615 | apps/mobile/test/db/historyScopeReal.test.ts | unit | 352 lines | imports the code
+F-phone-1611 | apps/mobile/test/onboarding/saveDataFile.test.ts | unit | 122 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-phone-1611 | apps/mobile/test/onboarding/onboardingStore.test.ts | unit | 255 lines | imports the code, file name
+F-phone-1611 | apps/mobile/test/onboarding/startup.test.ts | unit | 185 lines | imports the code, asserts 2 journey phrase(s)
+F-phone-1611 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-phone-1611 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 4 journey phrase(s)
+F-phone-1611 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-phone-1611 | apps/mobile/test/onboarding/demoRemovalLeave.test.ts | unit | 60 lines | imports the code
+F-phone-1611 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 3 journey phrase(s)
+F-phone-1611 | supabase/tests/0060_pay_mettleup.sql | db | 317 lines | asserts 3 journey phrase(s)
+F-phone-1611 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 2 journey phrase(s)
+F-phone-1611 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 2 journey phrase(s)
+F-phone-1611 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 2 journey phrase(s)
+F-phone-1601 | apps/mobile/test/onboarding/welcomeIntro.test.ts | unit | 355 lines | imports the code, asserts 9 journey phrase(s)
+F-phone-1601 | apps/mobile/test/tracker/watchInstall.test.ts | unit | 159 lines | asserts 6 journey phrase(s)
+F-phone-1601 | apps/mobile/qa/uat-e.yaml | maestro | 267 lines | asserts 5 journey phrase(s)
+F-phone-1601 | apps/mobile/test/tracker/watchStartAndIntro.test.ts | unit | 109 lines | imports the code, asserts 2 journey phrase(s)
+F-phone-1601 | apps/mobile/qa/phase1-a.yaml | maestro | 320 lines | asserts 4 journey phrase(s)
+F-phone-1601 | apps/mobile/test/onboarding/welcomeUat.test.ts | unit | 90 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1601 | apps/mobile/qa/real-workout-w1.yaml | maestro | 368 lines | asserts 3 journey phrase(s)
+F-phone-1601 | apps/mobile/qa/store-a.yaml | maestro | 219 lines | asserts 3 journey phrase(s)
+F-phone-1601 | apps/mobile/qa/tour-first-run.yaml | maestro | 249 lines | asserts 3 journey phrase(s)
+F-phone-1601 | apps/mobile/qa/uat-d.yaml | maestro | 342 lines | asserts 3 journey phrase(s)
+F-phone-1601 | apps/mobile/qa/uat-rel-1-seed.yaml | maestro | 237 lines | asserts 3 journey phrase(s)
+F-phone-1601 | apps/mobile/test/lib/installSource.test.ts | unit | 70 lines | asserts 3 journey phrase(s)
+F-phone-1606 | apps/mobile/test/onboarding/welcomeStart.test.ts | unit | 55 lines | imports the code, file name
+F-phone-1606 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 5 journey phrase(s)
+F-phone-1606 | apps/mobile/test/cloud/accountGate.test.ts | unit | 42 lines | imports the code
+F-phone-1606 | apps/mobile/test/onboarding/welcomeGym.test.ts | unit | 117 lines | imports the code
+F-phone-1606 | apps/mobile/test/onboarding/welcomeHero.test.ts | unit | 53 lines | imports the code
+F-phone-1606 | apps/mobile/test/onboarding/welcomeIntro.test.ts | unit | 355 lines | imports the code
+F-phone-1606 | apps/mobile/test/onboarding/welcomeUat.test.ts | unit | 90 lines | imports the code
+F-phone-1606 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-phone-1606 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 2 journey phrase(s)
+F-phone-1606 | apps/mobile/qa/brand-welcome.yaml | maestro | 149 lines | asserts 2 journey phrase(s)
+F-phone-1606 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 2 journey phrase(s)
+F-phone-1606 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 1 journey phrase(s)
+F-phone-1607 | apps/mobile/test/onboarding/welcomeGym.test.ts | unit | 117 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-phone-1607 | apps/mobile/test/onboarding/welcomeUat.test.ts | unit | 90 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1607 | apps/mobile/test/shop/r152CameraOnlyCheckIn.test.ts | unit | 77 lines | imports the code
+F-phone-1607 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | asserts 2 journey phrase(s)
+F-phone-1607 | apps/mobile/qa/welcome-gym.yaml | maestro | 173 lines | asserts 2 journey phrase(s)
+F-phone-1607 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-phone-1607 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-phone-1607 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-phone-1607 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-phone-1607 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 1 journey phrase(s)
+F-phone-1607 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 1 journey phrase(s)
+F-phone-1607 | apps/dashboard/e2e/r495-uat.spec.mjs | e2e | 303 lines | asserts 1 journey phrase(s)
+F-phone-1604 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | imports the code, file name, asserts 8 journey phrase(s)
+F-phone-1604 | apps/mobile/qa/uat-rel-f203-phone-sign-in.yaml | maestro | 483 lines | asserts 3 journey phrase(s)
+F-phone-1604 | apps/mobile/test/onboarding/welcomeIntro.test.ts | unit | 355 lines | imports the code
+F-phone-1604 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 2 journey phrase(s)
+F-phone-1604 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 2 journey phrase(s)
+F-phone-1604 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-phone-1604 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 2 journey phrase(s)
+F-phone-1604 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-phone-1604 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 2 journey phrase(s)
+F-phone-1604 | apps/dashboard/e2e/whatsapp-verify-uat.spec.mjs | e2e | 324 lines | asserts 2 journey phrase(s)
+F-phone-1604 | apps/dashboard/test/crm/pin.test.ts | unit | 159 lines | asserts 2 journey phrase(s)
+F-phone-1604 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | asserts 2 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-phone-1620-01 | type 1 | member | A member who follows a plan (3 routine days and a rest day), Workout tab
+  s1 see: Sheet titled 'Log a past workout'
+  s1 see: 'Pick the day, when it started and how long it lasted.'
+  s1 see: Question 'Which routine?' with one chip per routine day of the followed plan, in plan order, and a chip 'None'
+  s1 not: A rest day offered as a routine
+  s1 not: Routines of a plan that is no longer followed
+  s2 see: The chip is picked, then un-picked (back to not said)
+  s2 not: Two chips picked at once
+  s3 see: The workout editor opens with that routine's exercises in the plan's order
+  s3 not: An exercise missing from the day with no word
+  s3 not: Exercises in another order than the plan
+J-F-phone-1620-02 | type 2 | member | A member who follows a plan, Today screen
+  s1 see: Today's workout card for the next plan day in rotation, with its exercises and targets
+  s1 not: A day of another plan
+  s1 not: A rest day shown as a workout
+  s2 see: The next plan day in rotation
+  s2 not: The same day offered again after it was done
+J-F-phone-1620-03 | type 3 | member | A member who never picked a plan (new install)
+  s1 see: The sheet without the 'Which routine?' question
+  s1 not: An error, an empty chip row or an endless spinner
+  s2 see: The editor opens empty
+  s2 not: The sheet stuck because no plan exists
+J-F-phone-1620-04 | type 6 | member | A member who follows a plan; the plan is switched to another one
+  s1 see: The new plan shown as followed
+  s1 not: Two plans active at once
+  s2 see: 'Which routine?' chips of the new plan only
+  s2 not: The old plan's routines still offered
+  s3 see: The day without that exercise
+  s3 not: A crash or a blank day
+J-F-phone-1620-05 | type 1 | pass member | A pass member who follows a plan (3 routine days and a rest day), Workout tab
+  s1 see: Sheet titled 'Log a past workout'
+  s1 see: 'Pick the day, when it started and how long it lasted.'
+  s1 see: Question 'Which routine?' with one chip per routine day of the followed plan, in plan order, and a chip 'None'
+  s1 not: A rest day offered as a routine
+  s1 not: Routines of a plan that is no longer followed
+  s2 see: The chip is picked, then un-picked (back to not said)
+  s2 not: Two chips picked at once
+  s3 see: The workout editor opens with that routine's exercises in the plan's order
+  s3 not: An exercise missing from the day with no word
+  s3 not: Exercises in another order than the plan
+J-F-phone-1620-06 | type 2 | pass member | A pass member who follows a plan, Today screen
+  s1 see: Today's workout card for the next plan day in rotation, with its exercises and targets
+  s1 not: A day of another plan
+  s1 not: A rest day shown as a workout
+  s2 see: The next plan day in rotation
+  s2 not: The same day offered again after it was done
+J-F-phone-1620-07 | type 3 | pass member | A pass member who never picked a plan (new install)
+  s1 see: The sheet without the 'Which routine?' question
+  s1 not: An error, an empty chip row or an endless spinner
+  s2 see: The editor opens empty
+  s2 not: The sheet stuck because no plan exists
+J-F-phone-1620-08 | type 6 | pass member | A pass member who follows a plan; the plan is switched to another one
+  s1 see: The new plan shown as followed
+  s1 not: Two plans active at once
+  s2 see: 'Which routine?' chips of the new plan only
+  s2 not: The old plan's routines still offered
+  s3 see: The day without that exercise
+  s3 not: A crash or a blank day
+J-F-phone-1616-01 | type 1 | member | A member with past bench press workouts (best 60 kg × 8), in a workout
+  s1 see: A new record pops up with confetti and names the record beaten
+  s1 not: A record for a warm-up set
+  s1 not: Two records of the same kind for one exercise in one workout
+  s2 see: Bench press with its best weight and best estimated one-rep max, newest first
+  s2 not: An older lower record shown as the best
+  s2 not: A record of a deleted exercise
+  s3 see: Each record in date order
+  s3 not: The same record listed twice
+J-F-phone-1616-02 | type 2 | member | A member; an older workout is edited to a heavier set
+  s1 see: The workout saved
+  s1 not: The edit lost
+  s2 see: The edited workout's set is the record; later lighter sets no longer show as records
+  s2 not: A record that a heavier earlier set already beat
+J-F-phone-1616-03 | type 3 | member | A member whose best bench press is 80 kg × 5
+  s1 see: No record pop-up
+  s1 not: A record for a warm-up set
+  s1 not: A record for a lighter working set
+J-F-phone-1616-04 | type 6 | member | A member whose newest bench press record came from one workout
+  s1 see: The workout gone from history
+  s1 not: The workout still listed
+  s2 see: The next best earlier set is now the record
+  s2 not: The deleted workout's record still shown
+  s2 not: No record at all although older workouts exist
+J-F-phone-1616-05 | type 12 | member | A member linked to a gym
+  s1 see: Words saying MettleUp never sends which exercises were done or the weights
+  s1 not: Any record, exercise or weight sent to the gym
+J-F-phone-1616-06 | type 1 | pass member | A pass member with past bench press workouts (best 60 kg × 8), in a workout
+  s1 see: A new record pops up with confetti and names the record beaten
+  s1 not: A record for a warm-up set
+  s1 not: Two records of the same kind for one exercise in one workout
+  s2 see: Bench press with its best weight and best estimated one-rep max, newest first
+  s2 not: An older lower record shown as the best
+  s2 not: A record of a deleted exercise
+  s3 see: Each record in date order
+  s3 not: The same record listed twice
+J-F-phone-1616-07 | type 2 | pass member | A pass member; an older workout is edited to a heavier set
+  s1 see: The workout saved
+  s1 not: The edit lost
+  s2 see: The edited workout's set is the record; later lighter sets no longer show as records
+  s2 not: A record that a heavier earlier set already beat
+J-F-phone-1616-08 | type 3 | pass member | A pass member whose best bench press is 80 kg × 5
+  s1 see: No record pop-up
+  s1 not: A record for a warm-up set
+  s1 not: A record for a lighter working set
+J-F-phone-1616-09 | type 6 | pass member | A pass member whose newest bench press record came from one workout
+  s1 see: The workout gone from history
+  s1 not: The workout still listed
+  s2 see: The next best earlier set is now the record
+  s2 not: The deleted workout's record still shown
+  s2 not: No record at all although older workouts exist
+J-F-phone-1616-10 | type 12 | pass member | A pass member linked to a gym
+  s1 see: Words saying MettleUp never sends which exercises were done or the weights
+  s1 not: Any record, exercise or weight sent to the gym
+J-F-phone-1617-01 | type 1 | member | A member on Profile
+  s1 see: Screen titled 'Your profile'
+  s1 see: 'Changes save as you type.'
+  s1 not: A Save button that must be tapped before leaving
+  s2 see: 'Saved' for a moment
+  s2 see: The new name on Profile and Today
+  s2 not: The old name still shown after the save
+  s3 see: The new goal and experience kept
+  s3 not: Targets reset without a word
+J-F-phone-1617-02 | type 2 | member | A member on Progress, measures
+  s1 see: The weigh-in on the chosen day in body weight history
+  s1 not: The weigh-in saved on another day
+  s2 see: One point per day, oldest to newest
+  s2 not: Two points for the same day
+J-F-phone-1617-03 | type 3 | member | A member on 'Your profile' and 'Add measures'
+  s1 see: A message under the name box; the name is not saved
+  s1 not: An empty name saved
+  s2 see: 'Check the numbers'
+  s2 see: 'Body weight: type a number above 0, like 82.5.'
+  s2 not: A zero or letter weight saved
+  s3 see: 'Nothing to save'
+  s3 see: 'Type at least one measure, or add a picture.'
+  s3 not: An empty row saved
+J-F-phone-1617-04 | type 6 | member | A member who already weighed in today
+  s1 see: 'That day already has a weigh-in. Saving replaces it.'
+  s1 not: Two weigh-ins for one day
+  s1 not: The old weight kept silently
+  s2 see: Today's weigh-in shows the new weight
+  s2 not: The confirm skipped and both values lost
+J-F-phone-1617-05 | type 12 | member | A member linked to a gym
+  s1 see: 'Never your body weight, photos or notes.'
+  s1 not: Body weight sent to the gym or shown in the gym's panel
+J-F-phone-1617-06 | type 1 | pass member | A pass member on Profile
+  s1 see: Screen titled 'Your profile'
+  s1 see: 'Changes save as you type.'
+  s1 not: A Save button that must be tapped before leaving
+  s2 see: 'Saved' for a moment
+  s2 see: The new name on Profile and Today
+  s2 not: The old name still shown after the save
+  s3 see: The new goal and experience kept
+  s3 not: Targets reset without a word
+J-F-phone-1617-07 | type 2 | pass member | A pass member on Progress, measures
+  s1 see: The weigh-in on the chosen day in body weight history
+  s1 not: The weigh-in saved on another day
+  s2 see: One point per day, oldest to newest
+  s2 not: Two points for the same day
+J-F-phone-1617-08 | type 3 | pass member | A pass member on 'Your profile' and 'Add measures'
+  s1 see: A message under the name box; the name is not saved
+  s1 not: An empty name saved
+  s2 see: 'Check the numbers'
+  s2 see: 'Body weight: type a number above 0, like 82.5.'
+  s2 not: A zero or letter weight saved
+  s3 see: 'Nothing to save'
+  s3 see: 'Type at least one measure, or add a picture.'
+  s3 not: An empty row saved
+J-F-phone-1617-09 | type 6 | pass member | A pass member who already weighed in today
+  s1 see: 'That day already has a weigh-in. Saving replaces it.'
+  s1 not: Two weigh-ins for one day
+  s1 not: The old weight kept silently
+  s2 see: Today's weigh-in shows the new weight
+  s2 not: The confirm skipped and both values lost
+J-F-phone-1617-10 | type 12 | pass member | A pass member linked to a gym
+  s1 see: 'Never your body weight, photos or notes.'
+  s1 not: Body weight sent to the gym or shown in the gym's panel
+J-F-phone-1615-01 | type 1 | member | A member in a live workout with 3 exercises
+  s1 see: The finished workout summary
+  s1 not: A set missing from the saved workout
+  s1 not: Set numbers repeated for one exercise
+  s2 see: The workout at the top with its date, exercises and volume
+  s2 not: The workout listed twice
+  s3 see: Streak, weekly volume, muscle split and consistency include the workout
+  s3 not: Warm-up sets counted in volume
+J-F-phone-1615-02 | type 2 | member | A member who trained yesterday but did not log it
+  s1 see: The editor for that day
+  s1 not: Today's date on the workout
+  s2 see: The workout on yesterday in History; the streak counts yesterday
+  s2 not: The workout sorted after today's
+J-F-phone-1615-03 | type 3 | member | A member on a saved workout
+  s1 see: 'Delete this workout?'
+  s1 see: 'This removes the workout and its sets.'
+  s1 not: The workout deleted without asking
+  s2 see: The workout still there
+  s2 not: The workout or its sets removed
+  s3 see: 'Could not delete this workout. It is still here. Please try again.'
+  s3 not: 'Could not delete' over a workout that is gone
+  s3 not: The workout's records gone while the workout stays
+J-F-phone-1615-04 | type 6 | member | A member with a 5-day streak
+  s1 see: The workout gone from History
+  s1 not: The workout still listed
+  s2 see: The streak worked out again without that day; records catch up
+  s2 not: The old streak still shown
+  s2 not: A record from the deleted workout
+J-F-phone-1615-05 | type 12 | member | A member not signed in to any account
+  s1 see: 'Your workouts are only on this phone.'
+  s1 not: Workouts sent anywhere without a backup or sign-in
+  s2 see: Words that MettleUp never sends which exercises were done
+  s2 not: Exercises, weights or sets sent to the gym
+J-F-phone-1615-06 | type 1 | pass member | A pass member in a live workout with 3 exercises
+  s1 see: The finished workout summary
+  s1 not: A set missing from the saved workout
+  s1 not: Set numbers repeated for one exercise
+  s2 see: The workout at the top with its date, exercises and volume
+  s2 not: The workout listed twice
+  s3 see: Streak, weekly volume, muscle split and consistency include the workout
+  s3 not: Warm-up sets counted in volume
+J-F-phone-1615-07 | type 2 | pass member | A pass member who trained yesterday but did not log it
+  s1 see: The editor for that day
+  s1 not: Today's date on the workout
+  s2 see: The workout on yesterday in History; the streak counts yesterday
+  s2 not: The workout sorted after today's
+J-F-phone-1615-08 | type 3 | pass member | A pass member on a saved workout
+  s1 see: 'Delete this workout?'
+  s1 see: 'This removes the workout and its sets.'
+  s1 not: The workout deleted without asking
+  s2 see: The workout still there
+  s2 not: The workout or its sets removed
+  s3 see: 'Could not delete this workout. It is still here. Please try again.'
+  s3 not: 'Could not delete' over a workout that is gone
+  s3 not: The workout's records gone while the workout stays
+J-F-phone-1615-09 | type 6 | pass member | A pass member with a 5-day streak
+  s1 see: The workout gone from History
+  s1 not: The workout still listed
+  s2 see: The streak worked out again without that day; records catch up
+  s2 not: The old streak still shown
+  s2 not: A record from the deleted workout
+J-F-phone-1615-10 | type 12 | pass member | A pass member not signed in to any account
+  s1 see: 'Your workouts are only on this phone.'
+  s1 not: Workouts sent anywhere without a backup or sign-in
+  s2 see: Words that MettleUp never sends which exercises were done
+  s2 not: Exercises, weights or sets sent to the gym
+J-F-phone-1611-01 | type 1 | member | A member opens the app and the phone's data cannot be read
+  s1 see: Title 'MettleUp could not start'
+  s1 see: 'MettleUp couldn't read your data. Your workouts are still on this phone. Tap Try again.'
+  s1 see: Buttons 'Try again' and 'Save my data file'
+  s1 see: 'Details'
+  s1 not: The welcome or first-run screen over a phone full of workouts
+  s2 see: The app opens on the member's own data
+  s2 not: Data lost or reset by the retry
+J-F-phone-1611-02 | type 2 | member | A member whose phone storage is full
+  s1 see: Title 'Your phone's storage is full'
+  s1 see: 'Your phone's storage is full. Free some space, then tap Try again.'
+  s1 not: The general 'could not start' words when the cause is known
+  s2 see: 'MettleUp couldn't finish updating your data. Your workouts are still on this phone. Tap Try again.'
+  s2 not: The data file deleted or reset
+J-F-phone-1611-03 | type 3 | member | A member on the error screen
+  s1 see: 'No data file found on this phone.'
+  s1 not: An empty file shared as the member's data
+  s2 see: 'This phone can't share files right now.'
+  s2 not: A crash or a share sheet that never opens with no word
+J-F-phone-1611-04 | type 6 | member | A member on the error screen
+  s1 see: The raw error text, then hidden again
+  s1 not: Details stuck open or closed
+  s2 see: The error screen again with the same words
+  s2 not: The welcome screen
+  s2 not: The button stuck on loading
+J-F-phone-1611-05 | type 12 | member | A member on the error screen
+  s1 see: 'Keep this file somewhere safe. If you need help, send it to your gym, who can pass it to MettleUp to open.'
+  s1 not: Advice to send the whole data file (body weight, notes, profile, phone number) to the gym
+  s1 not: The file sent anywhere without the member choosing
+J-F-phone-1611-06 | type 1 | pass member | A pass member opens the app and the phone's data cannot be read
+  s1 see: Title 'MettleUp could not start'
+  s1 see: 'MettleUp couldn't read your data. Your workouts are still on this phone. Tap Try again.'
+  s1 see: Buttons 'Try again' and 'Save my data file'
+  s1 see: 'Details'
+  s1 not: The welcome or first-run screen over a phone full of workouts
+  s2 see: The app opens on the member's own data
+  s2 not: Data lost or reset by the retry
+J-F-phone-1611-07 | type 2 | pass member | A pass member whose phone storage is full
+  s1 see: Title 'Your phone's storage is full'
+  s1 see: 'Your phone's storage is full. Free some space, then tap Try again.'
+  s1 not: The general 'could not start' words when the cause is known
+  s2 see: 'MettleUp couldn't finish updating your data. Your workouts are still on this phone. Tap Try again.'
+  s2 not: The data file deleted or reset
+J-F-phone-1611-08 | type 3 | pass member | A pass member on the error screen
+  s1 see: 'No data file found on this phone.'
+  s1 not: An empty file shared as the member's data
+  s2 see: 'This phone can't share files right now.'
+  s2 not: A crash or a share sheet that never opens with no word
+J-F-phone-1611-09 | type 6 | pass member | A pass member on the error screen
+  s1 see: The raw error text, then hidden again
+  s1 not: Details stuck open or closed
+  s2 see: The error screen again with the same words
+  s2 not: The welcome screen
+  s2 not: The button stuck on loading
+J-F-phone-1611-10 | type 12 | pass member | A pass member on the error screen
+  s1 see: 'Keep this file somewhere safe. If you need help, send it to your gym, who can pass it to MettleUp to open.'
+  s1 not: Advice to send the whole data file (body weight, notes, profile, phone number) to the gym
+  s1 not: The file sent anywhere without the member choosing
+J-F-phone-1601-01 | type 1 | prospect | A person installing MettleUp, first open, no watch
+  s1 see: '1 of 2'
+  s1 see: 'Beat your last workout'
+  s1 see: 'Log every set. Our own progression engine gives each set a target, a little above last time. Progressive overload, done for you.'
+  s1 see: 'Skip'
+  s1 see: 'Next'
+  s1 not: The intro behind a blank screen
+  s1 not: Example figures without the word 'Example'
+  s2 see: '2 of 2'
+  s2 see: 'Your gym, in your pocket'
+  s2 see: 'Get started'
+  s2 see: 'Recommend MettleUp to my gym'
+  s2 not: The watch screen without a watch
+  s3 see: The welcome screen
+  s3 not: The intro again on the next open
+J-F-phone-1601-02 | type 2 | prospect | A person installing MettleUp with a Wear OS watch connected
+  s1 see: '1 of 3' once the watch answers
+  s1 not: The watch screen added after screen 1 was left
+  s2 see: 'We found your watch'
+  s2 see: 'Your workout on your wrist'
+  s2 see: 'Install on my watch' (or 'On your watch' when it is there)
+  s2 not: 'Install' offered when the watch app is installed
+  s3 see: The phone's share sheet with a message about MettleUp
+  s3 not: A message sent without the share sheet
+J-F-phone-1601-03 | type 3 | prospect | A person installing MettleUp, first open
+  s1 see: The welcome screen
+  s1 not: The intro shown again on the next open
+  s2 see: Only 2 screens
+  s2 not: 'We found your watch' with no watch
+J-F-phone-1601-04 | type 6 | prospect | A person installing MettleUp who has seen the intro
+  s1 see: Screen 1
+  s1 not: The app closing from screen 2
+  s2 see: The welcome screen directly
+  s2 not: The intro again
+J-F-phone-1601-05 | type 1 | member | A gym member installing MettleUp, first open, no watch
+  s1 see: '1 of 2'
+  s1 see: 'Beat your last workout'
+  s1 see: 'Log every set. Our own progression engine gives each set a target, a little above last time. Progressive overload, done for you.'
+  s1 see: 'Skip'
+  s1 see: 'Next'
+  s1 not: The intro behind a blank screen
+  s1 not: Example figures without the word 'Example'
+  s2 see: '2 of 2'
+  s2 see: 'Your gym, in your pocket'
+  s2 see: 'Get started'
+  s2 see: 'Recommend MettleUp to my gym'
+  s2 not: The watch screen without a watch
+  s3 see: The welcome screen
+  s3 not: The intro again on the next open
+J-F-phone-1601-06 | type 2 | member | A gym member installing MettleUp with a Wear OS watch connected
+  s1 see: '1 of 3' once the watch answers
+  s1 not: The watch screen added after screen 1 was left
+  s2 see: 'We found your watch'
+  s2 see: 'Your workout on your wrist'
+  s2 see: 'Install on my watch' (or 'On your watch' when it is there)
+  s2 not: 'Install' offered when the watch app is installed
+  s3 see: The phone's share sheet with a message about MettleUp
+  s3 not: A message sent without the share sheet
+J-F-phone-1601-07 | type 3 | member | A gym member installing MettleUp, first open
+  s1 see: The welcome screen
+  s1 not: The intro shown again on the next open
+  s2 see: Only 2 screens
+  s2 not: 'We found your watch' with no watch
+J-F-phone-1601-08 | type 6 | member | A gym member installing MettleUp who has seen the intro
+  s1 see: Screen 1
+  s1 not: The app closing from screen 2
+  s2 see: The welcome screen directly
+  s2 not: The intro again
+J-F-phone-1606-01 | type 1 | member | A member on a new phone with a MettleUp backup in Google Drive, welcome screen
+  s1 see: Google's account picker
+  s1 not: Google opened before the box is ticked
+  s2 see: 'Checking your Google Drive for a backup…'
+  s2 see: 'We found your backup from 3 Nov 2026 with 120 workouts. Bring it back to this phone?'
+  s2 see: 'Restore my backup'
+  s2 see: 'Not now'
+  s2 not: A backup of another account
+  s2 not: A workout count that does not match the backup
+  s3 see: 'Bringing back your backup…'
+  s3 see: The app opens with the workouts back
+  s3 not: The welcome left held with a spinning button
+  s3 not: An older backup restored than the one offered
+J-F-phone-1606-02 | type 2 | member | A gym member whose phone is linked to a gym (server copy), welcome screen
+  s1 see: 'Signing in…'
+  s1 see: A note, then 'Next'
+  s1 not: A Drive search instead of the gym's copy
+  s2 see: The 3 setup questions with the name filled
+  s2 not: The name typed again
+J-F-phone-1606-03 | type 3 | member | A member with no MettleUp backup in Drive
+  s1 see: A message to tick the 18+ and terms box
+  s1 not: Google opened anyway
+  s2 see: 'No MettleUp backup in your Google Drive yet. Tap Next to set up the app.'
+  s2 see: 'Next'
+  s2 see: 'Use another Google account'
+  s2 not: An endless 'Checking…'
+  s3 see: The welcome as before
+  s3 not: An error message for a cancel
+J-F-phone-1606-04 | type 6 | member | A member with 5 workouts on the phone (kept after removing the demo)
+  s1 see: 'Replace the workouts on this phone?'
+  s1 see: 'The 5 workouts on this phone are deleted and your backup takes their place.'
+  s1 see: 'Replace'
+  s1 not: The 5 workouts replaced without asking
+  s2 see: 'Your workouts are back. Tap Next and add your name to carry on.'
+  s2 not: The button spinning forever
+  s2 not: Back held for good
+  s3 see: 'Next' and 'Restore my backup' still offered
+  s3 not: The backup forgotten
+J-F-phone-1606-05 | type 12 | member | A member signing in with Google
+  s1 see: Only the MettleUp backup file is read
+  s1 not: Other Drive files read or listed
+  s1 not: Drive used for anything but bringing back the backup
+J-F-phone-1607-01 | type 1 | member | A gym member on the welcome, online, with the gym code from the desk
+  s1 see: 'Join your gym'
+  s1 see: 'Scan the poster at your gym'
+  s1 see: 'or type the gym code'
+  s1 not: The camera opened without a tap
+  s2 see: 'Checking the code…'
+  s2 see: '<Gym> found. Its join screen opens right after setup.'
+  s2 see: Button 'Join <Gym>'
+  s2 not: A wrong code told only after setup
+  s3 see: The gym's join screen, asking before anything is joined
+  s3 not: The gym joined without asking
+  s3 not: The kept code lost
+J-F-phone-1607-02 | type 2 | member | A gym member at the gym's front desk
+  s1 see: The camera; 'Close the camera'
+  s1 not: The typing box hidden for good
+  s2 see: The code filled in and checked as if typed
+  s2 not: Another QR read as a gym code
+J-F-phone-1607-03 | type 3 | member | A gym member typing a code
+  s1 see: 'The code is 6 letters or numbers. Ask at your gym's desk.'
+  s1 not: The short code kept
+  s2 see: 'No gym has the code <CODE>. Check the code with your gym's desk and type it again.'
+  s2 not: The wrong code kept
+  s3 see: 'MettleUp is not allowed to use your camera, so type your gym's code below instead.'
+  s3 not: A crash or the camera asked on every tap
+J-F-phone-1607-04 | type 6 | member | A gym member with a code kept
+  s1 see: An empty box with the keyboard up
+  s1 not: The old gym still kept
+  s2 see: 'Gym code <CODE> saved. Your gym's join screen opens right after setup.'
+  s2 not: Setup blocked until online
+J-F-phone-1607-05 | type 12 | member | A gym member typing the gym code
+  s1 see: 'Your gym gives you a code to check in and order from its shop. Your workouts stay on this phone.'
+  s1 not: Workouts sent to the gym by keeping the code
+  s2 see: The gym's join screen asks before anything is shared
+  s2 not: The gym told about the member before the join screen
+J-F-phone-1607-06 | type 1 | pass member | A pass member of a gym on the welcome, online, with the gym code from the desk
+  s1 see: 'Join your gym'
+  s1 see: 'Scan the poster at your gym'
+  s1 see: 'or type the gym code'
+  s1 not: The camera opened without a tap
+  s2 see: 'Checking the code…'
+  s2 see: '<Gym> found. Its join screen opens right after setup.'
+  s2 see: Button 'Join <Gym>'
+  s2 not: A wrong code told only after setup
+  s3 see: The gym's join screen, asking before anything is joined
+  s3 not: The gym joined without asking
+  s3 not: The kept code lost
+J-F-phone-1607-07 | type 2 | pass member | A pass member of a gym at the gym's front desk
+  s1 see: The camera; 'Close the camera'
+  s1 not: The typing box hidden for good
+  s2 see: The code filled in and checked as if typed
+  s2 not: Another QR read as a gym code
+J-F-phone-1607-08 | type 3 | pass member | A pass member of a gym typing a code
+  s1 see: 'The code is 6 letters or numbers. Ask at your gym's desk.'
+  s1 not: The short code kept
+  s2 see: 'No gym has the code <CODE>. Check the code with your gym's desk and type it again.'
+  s2 not: The wrong code kept
+  s3 see: 'MettleUp is not allowed to use your camera, so type your gym's code below instead.'
+  s3 not: A crash or the camera asked on every tap
+J-F-phone-1607-09 | type 6 | pass member | A pass member of a gym with a code kept
+  s1 see: An empty box with the keyboard up
+  s1 not: The old gym still kept
+  s2 see: 'Gym code <CODE> saved. Your gym's join screen opens right after setup.'
+  s2 not: Setup blocked until online
+J-F-phone-1604-01 | type 1 | member | A member with a running plan at one MettleUp gym, welcome screen
+  s1 see: 'If your gym uses MettleUp, it may already have your number. We use it to find your gym and link this app to it.'
+  s1 see: 'Your mobile number'
+  s1 see: 'Your first name, as your gym has it'
+  s1 see: 'Check with WhatsApp'
+  s1 not: Other ways shown before 'Try another way'
+  s2 see: WhatsApp opens with a message to MettleUp ready
+  s2 see: 'Send the message in WhatsApp'
+  s2 not: A message sent without the member tapping send
+  s3 see: 'Looking for your gym...'
+  s3 see: 'Opening <gym>…'
+  s3 see: The app opens in the gym, no setup questions
+  s3 not: The number saved in Profile
+  s3 not: A second join after a double tap
+J-F-phone-1604-02 | type 2 | member | A member found at 2 gyms
+  s1 see: 'We found you at 2 gyms. Pick the gym to open in the app.'
+  s1 see: A card per gym with 'Join <gym>'
+  s1 not: Only one gym offered
+  s1 not: A gym where the member is not known
+  s2 see: 'Opening <gym>…'
+  s2 not: Both gyms joined
+J-F-phone-1604-03 | type 3 | member | A member on 'Continue with your phone number'
+  s1 see: 'Type your 10-digit mobile number.'
+  s1 not: WhatsApp opened
+  s2 see: 'Type your first name, as your gym has it.'
+  s2 not: A search without a name
+  s3 see: 'We did not find your number at a gym on MettleUp'
+  s3 see: 'Set up the app'
+  s3 see: 'Try another number'
+  s3 not: Another person's gym shown
+J-F-phone-1604-04 | type 6 | member | A member waiting for the WhatsApp check
+  s1 see: 'The check ran out of time. Tap Start again.'
+  s1 not: An old proof used again
+  s2 see: 'You searched too many times with this check. Tap Start again.'
+  s2 not: Unlimited searches
+  s3 see: 'That did not work. Try again.' with the card still there
+  s3 not: A joined gym shown when the join failed
+J-F-phone-1604-05 | type 12 | member | A member after the phone check
+  s1 see: Profile's mobile number empty until typed there
+  s1 not: The proven number kept in Profile
+  s1 not: WhatsApp messages sent to the number later
+  s2 see: 'We only use your number to find your gym. Your number is checked once and is not kept for this.'
+  s2 see: 'You pay nothing, and we never message you.'
+  s2 not: The line missing
+J-F-phone-1604-06 | type 1 | owner | The gym's owner, new phone, welcome screen
+  s1 see: WhatsApp opens with the message ready
+  s1 not: The check started without the 18+ tick
+  s2 see: 'We found you: owner at <gym>.'
+  s2 see: 'As the owner, you get every MettleUp feature free.'
+  s2 see: 'Join <gym>'
+  s2 not: The app joined straight in like a member
+  s2 not: Member plan dates shown for staff
+  s3 see: The gym's join screen
+  s3 not: Setup questions skipped
+  s3 not: Staff treated as a paying member
+J-F-phone-1604-07 | type 2 | owner | An owner of two branches
+  s1 see: 'We found you at 2 gyms. Pick the gym to open in the app.'
+  s1 not: Only one branch offered
+  s2 see: The 3 setup questions, then that branch's join screen
+  s2 not: The other branch opened
+J-F-phone-1604-08 | type 3 | owner | An owner on 'Continue with your phone number'
+  s1 see: 'Type your 10-digit mobile number.'
+  s1 not: WhatsApp opened
+  s2 see: 'Type your first name, as your gym has it.'
+  s2 not: A search without a name
+  s3 see: 'We did not find your number at a gym on MettleUp'
+  s3 see: 'Set up the app'
+  s3 see: 'Try another number'
+  s3 not: Another person's gym shown
+J-F-phone-1604-09 | type 6 | owner | An owner waiting for the WhatsApp check
+  s1 see: 'The check ran out of time. Tap Start again.'
+  s1 not: An old proof used again
+  s2 see: 'You searched too many times with this check. Tap Start again.'
+  s2 not: Unlimited searches
+  s3 see: 'Your phone is not connected to the internet. Connect, then try again.'
+  s3 not: A joined gym shown when the join failed
+J-F-phone-1604-10 | type 12 | owner | An owner after the phone check
+  s1 see: Profile's mobile number empty until typed there
+  s1 not: The proven number kept in Profile
+  s1 not: WhatsApp messages sent to the number later
+  s2 see: 'We only use your number to find your gym. Your number is checked once and is not kept for this.'
+  s2 see: 'You pay nothing, and we never message you.'
+  s2 not: The line missing
+J-F-phone-1604-11 | type 1 | trainer | The gym's trainer, new phone, welcome screen
+  s1 see: WhatsApp opens with the message ready
+  s1 not: The check started without the 18+ tick
+  s2 see: 'We found you: trainer at <gym>.'
+  s2 see: 'As a trainer, you get every MettleUp feature free.'
+  s2 see: 'Join <gym>'
+  s2 not: The app joined straight in like a member
+  s2 not: Member plan dates shown for staff
+  s3 see: The gym's join screen
+  s3 not: Setup questions skipped
+  s3 not: Staff treated as a paying member
+J-F-phone-1604-12 | type 3 | trainer | A trainer on 'Continue with your phone number'
+  s1 see: 'Type your 10-digit mobile number.'
+  s1 not: WhatsApp opened
+  s2 see: 'Type your first name, as your gym has it.'
+  s2 not: A search without a name
+  s3 see: 'We did not find your number at a gym on MettleUp'
+  s3 see: 'Set up the app'
+  s3 see: 'Try another number'
+  s3 not: Another person's gym shown
+J-F-phone-1604-13 | type 6 | trainer | A trainer waiting for the WhatsApp check
+  s1 see: 'The check ran out of time. Tap Start again.'
+  s1 not: An old proof used again
+  s2 see: 'You searched too many times with this check. Tap Start again.'
+  s2 not: Unlimited searches
+  s3 see: 'Your phone is not connected to the internet. Connect, then try again.'
+  s3 not: A joined gym shown when the join failed
+J-F-phone-1604-14 | type 12 | trainer | A trainer after the phone check
+  s1 see: Profile's mobile number empty until typed there
+  s1 not: The proven number kept in Profile
+  s1 not: WhatsApp messages sent to the number later
+  s2 see: 'We only use your number to find your gym. Your number is checked once and is not kept for this.'
+  s2 see: 'You pay nothing, and we never message you.'
+  s2 not: The line missing
+J-F-phone-1604-15 | type 1 | staff | The gym's staff, new phone, welcome screen
+  s1 see: WhatsApp opens with the message ready
+  s1 not: The check started without the 18+ tick
+  s2 see: 'We found you: desk staff at <gym>.'
+  s2 see: 'As desk staff, you get every MettleUp feature free.'
+  s2 see: 'Join <gym>'
+  s2 not: The app joined straight in like a member
+  s2 not: Member plan dates shown for staff
+  s3 see: The gym's join screen
+  s3 not: Setup questions skipped
+  s3 not: Staff treated as a paying member
+J-F-phone-1604-16 | type 3 | staff | Desk staff on 'Continue with your phone number'
+  s1 see: 'Type your 10-digit mobile number.'
+  s1 not: WhatsApp opened
+  s2 see: 'Type your first name, as your gym has it.'
+  s2 not: A search without a name
+  s3 see: 'We did not find your number at a gym on MettleUp'
+  s3 see: 'Set up the app'
+  s3 see: 'Try another number'
+  s3 not: Another person's gym shown
+J-F-phone-1604-17 | type 6 | staff | Desk staff waiting for the WhatsApp check
+  s1 see: 'The check ran out of time. Tap Start again.'
+  s1 not: An old proof used again
+  s2 see: 'You searched too many times with this check. Tap Start again.'
+  s2 not: Unlimited searches
+  s3 see: 'Your phone is not connected to the internet. Connect, then try again.'
+  s3 not: A joined gym shown when the join failed
+J-F-phone-1604-18 | type 12 | staff | Desk staff after the phone check
+  s1 see: Profile's mobile number empty until typed there
+  s1 not: The proven number kept in Profile
+  s1 not: WhatsApp messages sent to the number later
+  s2 see: 'We only use your number to find your gym. Your number is checked once and is not kept for this.'
+  s2 see: 'You pay nothing, and we never message you.'
+  s2 not: The line missing

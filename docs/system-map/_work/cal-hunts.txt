@@ -1,0 +1,44 @@
+# The 10 gap hunts, word for word from lens-items.json (made 21 Nov 2026). Read this whole file first.
+# A finding of a hunt: lens "gap-<n>" (hunt 1 = "gap-1").
+Hunt 1, Should-read matrix (missing links):
+H1.1 List every setting, switch, plan gate, status and automation (from features.json + entities.json)
+H1.2 For EACH one, list every other feature whose result it SHOULD change (the AI ideas, Today, counts, badges, reminders, messages, help, exports, the phone app)
+H1.3 Then check in code that each of those really reads it
+H1.4 A should-read with no read = finding
+Hunt 2, Hidden conditions (works only if ...):
+H2.1 For every automatic or "on" feature: write ALL conditions for it to reach one person (app installed, app linked by proven number, notifications allowed, phone maker rules, plan running, data filled in like birthday/phone, feature switch, version)
+H2.2 Then check: can the owner SEE, per member, who will get it and who will not, and why?
+H2.3 If the switch says "on" but some people silently get nothing = finding
+H2.4 Count real reach on Crispy Curves (e.g. "birthday wish: on, reaches 1 of 40 members")
+Hunt 3, Did it happen? (proof of every automatic action):
+H3.1 Every automatic send, reminder, push, digest, job: is there a record the owner (or HQ) can open that says it went, to whom, when, and why not when it did not?
+H3.2 An automatic action with no record and no "why not" = finding (S2 when the owner believes it ran)
+Hunt 4, Two features, one job (overlap and conflict):
+H4.1 Find every pair of features that act on the same people or the same event (manual message vs automatic reminder; AI idea vs Today nudge; bell vs Today vs push; desk link vs phone proof)
+H4.2 Check they agree: no double message, no suggestion to do what the system already did, the same count in both places, "done" in one is "done" in the other
+Hunt 5, Built vs live (deploy state):
+H5.1 For every feature in features.json: is it on main, deployed, behind a switch, or waiting for a migration?
+H5.2 Compare code on main with what the live panel, HQ, website, phone app (Play version) and database really run (check the live version labels, list_migrations/catalog, switches)
+H5.3 Any feature the notes or What's new call live that is not live = finding
+H5.4 Output docs/system-map/LIVE-STATE.md (one row per feature: main / live panel / live DB / Play app), so he can always see what is really live
+Hunt 6, Data a feature needs but nobody fills:
+H6.1 For every field a feature depends on (birthday, phone, check-in phone, app link, plan dates, trainer, batch): how many Crispy Curves rows have it filled?
+H6.2 Is there a screen that asks for it at the right moment?
+H6.3 A feature that depends on a field most rows lack = finding
+Hunt 7, Old users, new rules:
+H7.1 Every new flow that fixes something only for NEW installs or NEW members (e.g. the phone sign-in shows only on new installs): what happens to existing users?
+H7.2 Is there a path for them?
+H7.3 None = finding
+Hunt 8, Silent fallbacks:
+H8.1 By script first: docs/system-map/_tools/silent.mjs lists every catch block with file:line and three flags: logs? (calls a log, report or crash function inside), tells_user? (sets an error state, toast or alert inside), rethrows?
+H8.2 Output _sources/silent.csv
+H8.3 Helpers read ONLY the rows where all three are "no", plus every fallback value (?? null, || [], ?? 0) that sits in a file named in a journey that writes money, messages, alerts, sign-in or sync
+H8.4 Everything else is counted in the grid as "filtered by script, N rows, not read" so the gap is visible
+H8.5 For each: if this path runs, does the user (or owner, or HQ) learn anything?
+H8.6 A silent path that hides a failed promise = finding
+Hunt 9, Same fact, every place:
+H9.1 For each fact a user sees (count of alerts, dues, plan end, birthdays today, members using the app): list every place it shows (panel, Today, AI, bell, push, phone app, HQ, export) and compare the values on the Crispy Curves data and the ugly data pack
+H9.2 Any difference = finding
+Hunt 10, Words promise more than the code:
+H10.1 Every switch label, help article, What's new line and button that says what happens ("Members get a birthday wish", "Done items leave the bell"): read the code path end to end and confirm it happens for EVERY member the words cover
+H10.2 Words wider than reality = finding (tie to the promise register)

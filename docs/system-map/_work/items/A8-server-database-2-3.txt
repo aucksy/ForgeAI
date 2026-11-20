@@ -1,0 +1,547 @@
+# A8-server-database-2-3: coverage of 95 Tier 1 journeys (8 features, from A5-server-database-2-3). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-server-419 | supabase/tests/0051_gym_videos_and_wod.sql | db | 170 lines | file name
+F-server-419 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 1 journey phrase(s)
+F-server-419 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-server-419 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 1 journey phrase(s)
+F-server-419 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 1 journey phrase(s)
+F-server-420 | supabase/tests/0051_gym_videos_and_wod.sql | db | 170 lines | file name
+F-server-420 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-server-420 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-server-420 | apps/mobile/test/tracker/historyCard.test.ts | unit | 86 lines | asserts 1 journey phrase(s)
+F-server-420 | apps/mobile/test/tracker/historyScope.test.ts | unit | 100 lines | asserts 1 journey phrase(s)
+F-server-420 | apps/mobile/test/tracker/r61WorkoutScreen.test.ts | unit | 169 lines | asserts 1 journey phrase(s)
+F-server-421 | apps/mobile/test/tracker/phase3Numbers.test.ts | unit | 256 lines | asserts 2 journey phrase(s)
+F-server-421 | apps/mobile/test/tracker/r147KgHero.test.ts | unit | 137 lines | asserts 2 journey phrase(s)
+F-server-421 | supabase/tests/0052_hq_backup.sql | db | 71 lines | file name
+F-server-421 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-server-421 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 1 journey phrase(s)
+F-server-421 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-server-421 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-server-421 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-server-421 | apps/dashboard/test/crm/navNames.test.ts | unit | 61 lines | asserts 1 journey phrase(s)
+F-server-421 | apps/dashboard/test/crm/ownerOnboarding.test.ts | unit | 115 lines | asserts 1 journey phrase(s)
+F-server-421 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-server-421 | apps/dashboard/test/crm/sheets.test.ts | unit | 122 lines | asserts 1 journey phrase(s)
+F-server-422 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 4 journey phrase(s)
+F-server-422 | supabase/tests/0053_ask_trainer_and_progress.sql | db | 232 lines | file name, asserts 1 journey phrase(s)
+F-server-422 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-server-422 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 1 journey phrase(s)
+F-server-422 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 1 journey phrase(s)
+F-server-422 | apps/dashboard/e2e/trainers-uat.spec.mjs | e2e | 282 lines | asserts 1 journey phrase(s)
+F-server-422 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-server-422 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | asserts 1 journey phrase(s)
+F-server-422 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 1 journey phrase(s)
+F-server-422 | apps/dashboard/test/crm/messageTemplates.test.ts | unit | 246 lines | asserts 1 journey phrase(s)
+F-server-422 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 1 journey phrase(s)
+F-server-422 | apps/mobile/test/lib/helpHistory.test.ts | unit | 207 lines | asserts 1 journey phrase(s)
+F-server-423 | supabase/tests/0054_member_alerts.sql | db | 139 lines | file name, asserts 1 journey phrase(s)
+F-server-423 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-server-423 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-server-423 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-server-423 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-server-423 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 1 journey phrase(s)
+F-server-423 | apps/dashboard/e2e/fonts.spec.mjs | e2e | 44 lines | asserts 1 journey phrase(s)
+F-server-423 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-server-423 | apps/dashboard/e2e/gymdata.spec.mjs | e2e | 52 lines | asserts 1 journey phrase(s)
+F-server-423 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 1 journey phrase(s)
+F-server-423 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 1 journey phrase(s)
+F-server-423 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 1 journey phrase(s)
+F-server-424 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 2 journey phrase(s)
+F-server-424 | apps/dashboard/test/crm/passMembers.test.ts | unit | 199 lines | asserts 2 journey phrase(s)
+F-server-424 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | asserts 2 journey phrase(s)
+F-server-424 | supabase/tests/0055_pass_members.sql | db | 79 lines | file name
+F-server-424 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-server-424 | apps/mobile/test/shop/c6S4.test.ts | unit | 132 lines | asserts 1 journey phrase(s)
+F-server-424 | apps/mobile/test/shop/membership.test.ts | unit | 154 lines | asserts 1 journey phrase(s)
+F-server-424 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 1 journey phrase(s)
+F-server-424 | apps/mobile/test/tracker/phoneFeatures.test.ts | unit | 87 lines | asserts 1 journey phrase(s)
+F-server-424 | deploy/panel/helpPages.test.mjs | unit | 109 lines | asserts 1 journey phrase(s)
+F-server-425 | supabase/tests/0056_bring_a_friend.sql | db | 130 lines | file name, asserts 3 journey phrase(s)
+F-server-425 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | asserts 2 journey phrase(s)
+F-server-425 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 2 journey phrase(s)
+F-server-425 | apps/dashboard/test/crm/challenges.test.ts | unit | 388 lines | asserts 2 journey phrase(s)
+F-server-425 | apps/mobile/qa/uat-rel-f147-bring-friend.yaml | maestro | 56 lines | asserts 2 journey phrase(s)
+F-server-425 | apps/mobile/test/shop/bringFriend.test.ts | unit | 104 lines | asserts 2 journey phrase(s)
+F-server-425 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-server-425 | supabase/tests/0076_panel_web_push.sql | db | 209 lines | asserts 2 journey phrase(s)
+F-server-425 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-server-425 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-server-425 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 1 journey phrase(s)
+F-server-425 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-server-426 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 2 journey phrase(s)
+F-server-426 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-server-426 | supabase/tests/0057_member_pay_me.sql | db | 74 lines | file name
+F-server-426 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-server-426 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-server-426 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 1 journey phrase(s)
+F-server-426 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 1 journey phrase(s)
+F-server-426 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-server-426 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-server-426 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 1 journey phrase(s)
+F-server-426 | apps/dashboard/test/crm/auditC7.test.ts | unit | 333 lines | asserts 1 journey phrase(s)
+F-server-426 | apps/dashboard/test/crm/whatsapp.test.ts | unit | 192 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-server-419-01 | type 1 | owner | Admin app, Workout plans, a gym on Pro with a plan open for editing
+  s1 see: The link sits on the exercise
+  s1 not: Any link other than https YouTube accepted
+  s2 see: The plan saves as before, with the video on that exercise
+  s2 not: The plan saved without the link while the screen says it was saved
+  s2 not: The whole plan refused because of a valid YouTube link
+  s3 see: 'Watch your trainer' on that exercise
+  s3 not: The button on an exercise that has no link
+J-F-server-419-02 | type 3 | owner | Admin app, Workout plans, an exercise being edited
+  s1 see: The admin app says the link is not allowed (same rule as the server, trainerVideos.ts)
+  s1 not: The bad link saved
+  s2 see: The save is refused as INVALID
+  s2 not: The plan saved with the bad link
+  s2 not: Other edits to the plan lost without a word
+J-F-server-419-03 | type 6 | owner | Admin app, Workout plans, an exercise that already has a video
+  s1 see: The exercise shows no link (or the new one)
+  s1 not: The old link kept on the server
+  s2 see: 'Watch your trainer' gone (or opens the new video)
+  s2 not: The phone still opens the removed video
+J-F-server-419-04 | type 1 | staff | Admin app, Workout plans, a gym on Pro with a plan open for editing
+  s1 see: The link sits on the exercise
+  s1 not: Any link other than https YouTube accepted
+  s2 see: The plan saves as before, with the video on that exercise
+  s2 not: The plan saved without the link while the screen says it was saved
+  s2 not: The whole plan refused because of a valid YouTube link
+  s3 see: 'Watch your trainer' on that exercise
+  s3 not: The button on an exercise that has no link
+J-F-server-419-05 | type 3 | staff | Admin app, Workout plans, an exercise being edited
+  s1 see: The admin app says the link is not allowed (same rule as the server, trainerVideos.ts)
+  s1 not: The bad link saved
+  s2 see: The save is refused as INVALID
+  s2 not: The plan saved with the bad link
+  s2 not: Other edits to the plan lost without a word
+J-F-server-419-06 | type 6 | staff | Admin app, Workout plans, an exercise that already has a video
+  s1 see: The exercise shows no link (or the new one)
+  s1 not: The old link kept on the server
+  s2 see: 'Watch your trainer' gone (or opens the new video)
+  s2 not: The phone still opens the removed video
+J-F-server-419-07 | type 1 | trainer | Admin app, Workout plans, a gym on Pro with a plan open for editing
+  s1 see: The link sits on the exercise
+  s1 not: Any link other than https YouTube accepted
+  s2 see: The plan saves as before, with the video on that exercise
+  s2 not: The plan saved without the link while the screen says it was saved
+  s2 not: The whole plan refused because of a valid YouTube link
+  s3 see: 'Watch your trainer' on that exercise
+  s3 not: The button on an exercise that has no link
+J-F-server-419-08 | type 3 | trainer | Admin app, Workout plans, an exercise being edited
+  s1 see: The admin app says the link is not allowed (same rule as the server, trainerVideos.ts)
+  s1 not: The bad link saved
+  s2 see: The save is refused as INVALID
+  s2 not: The plan saved with the bad link
+  s2 not: Other edits to the plan lost without a word
+J-F-server-419-09 | type 6 | trainer | Admin app, Workout plans, an exercise that already has a video
+  s1 see: The exercise shows no link (or the new one)
+  s1 not: The old link kept on the server
+  s2 see: 'Watch your trainer' gone (or opens the new video)
+  s2 not: The phone still opens the removed video
+J-F-server-419-10 | type 2 | owner | Admin app, Workout plans
+  s1 see: Each one is kept
+  s1 not: A valid YouTube form refused
+  s2 see: Saved
+  s2 not: A link changed or cut on save
+J-F-server-419-11 | type 3 | owner | A gym not on Pro (plan_gate on): Workout plans
+  s1 see: Workout plans locked, with what plan unlocks it (trainerPlans)
+  s1 not: A video saved on a plan the gym's tier does not allow
+J-F-server-419-12 | type 12 | owner | Admin app, a plan with videos assigned to some members
+  s1 see: Only members assigned this plan see 'Watch your trainer'
+  s1 not: Another gym's members seeing the link
+  s1 not: Member data sent to YouTube by the server
+J-F-server-419-13 | type 1 | member | Member phone, Workout tab, a gym plan with a trainer video on one exercise
+  s1 see: 'Watch your trainer' on the exercise with the video
+  s1 not: The button on exercises without a video
+  s2 see: The YouTube video opens
+  s2 not: A link that fails the YouTube rule opened (apps/mobile/src/shop/trainerVideo.ts)
+J-F-server-419-14 | type 3 | member | Member phone, a gym plan whose exercises have no video
+  s1 see: No 'Watch your trainer' button
+  s1 not: An empty or broken button
+  s1 not: A crash on a missing videoUrl
+J-F-server-419-15 | type 6 | member | Member phone, an exercise whose video the trainer has just removed
+  s1 see: The button is gone
+  s1 not: The old video still opens
+J-F-server-419-16 | type 12 | member | Member phone, a plan with a trainer video
+  s1 see: The video opens in YouTube; only the link is passed
+  s1 not: The member's name or workouts sent with the link
+  s1 not: A non-YouTube site opened
+J-F-server-420-01 | type 1 | owner | Admin app, Workout of the day, no workout set for today
+  s1 see: Today's workout in the list, with the name of who set it
+  s1 not: Saved on the wrong India day
+  s1 not: Saved without the signed-in person's name
+  s2 see: Today's workout of the day, started with one tap
+  s2 not: Another gym's workout shown
+J-F-server-420-02 | type 3 | owner | Admin app, Workout of the day
+  s1 see: Refused: BAD_DATE, with a plain message
+  s1 not: The workout saved for a day outside today .. today + 7
+  s2 see: Refused: INVALID
+  s2 not: A broken workout reaching members
+  s3 see: Refused (the gym is read-only)
+  s3 not: The workout saved
+J-F-server-420-03 | type 6 | owner | Admin app, Workout of the day, a workout set for today
+  s1 see: The new one replaces the old; the setter's name updates
+  s1 not: Two workouts for one day
+  s2 see: Gone from the list
+  s2 not: Another gym's day touched
+  s2 not: A member who already started it loses their copy
+  s3 see: No workout of the day
+  s3 not: The removed workout still offered
+J-F-server-420-04 | type 1 | staff | Admin app, Workout of the day, no workout set for today
+  s1 see: Today's workout in the list, with the name of who set it
+  s1 not: Saved on the wrong India day
+  s1 not: Saved without the signed-in person's name
+  s2 see: Today's workout of the day, started with one tap
+  s2 not: Another gym's workout shown
+J-F-server-420-05 | type 3 | staff | Admin app, Workout of the day
+  s1 see: Refused: BAD_DATE, with a plain message
+  s1 not: The workout saved for a day outside today .. today + 7
+  s2 see: Refused: INVALID
+  s2 not: A broken workout reaching members
+  s3 see: Refused (the gym is read-only)
+  s3 not: The workout saved
+J-F-server-420-06 | type 6 | staff | Admin app, Workout of the day, a workout set for today
+  s1 see: The new one replaces the old; the setter's name updates
+  s1 not: Two workouts for one day
+  s2 see: Gone from the list
+  s2 not: Another gym's day touched
+  s2 not: A member who already started it loses their copy
+  s3 see: No workout of the day
+  s3 not: The removed workout still offered
+J-F-server-420-07 | type 1 | trainer | Admin app, Workout of the day, no workout set for today
+  s1 see: Today's workout in the list, with the name of who set it
+  s1 not: Saved on the wrong India day
+  s1 not: Saved without the signed-in person's name
+  s2 see: Today's workout of the day, started with one tap
+  s2 not: Another gym's workout shown
+J-F-server-420-08 | type 3 | trainer | Admin app, Workout of the day
+  s1 see: Refused: BAD_DATE, with a plain message
+  s1 not: The workout saved for a day outside today .. today + 7
+  s2 see: Refused: INVALID
+  s2 not: A broken workout reaching members
+  s3 see: Refused (the gym is read-only)
+  s3 not: The workout saved
+J-F-server-420-09 | type 6 | trainer | Admin app, Workout of the day, a workout set for today
+  s1 see: The new one replaces the old; the setter's name updates
+  s1 not: Two workouts for one day
+  s2 see: Gone from the list
+  s2 not: Another gym's day touched
+  s2 not: A member who already started it loses their copy
+  s3 see: No workout of the day
+  s3 not: The removed workout still offered
+J-F-server-420-10 | type 2 | owner | Admin app, Workout of the day
+  s1 see: It shows in the coming days list, after today
+  s1 not: It shown to members before that day
+  s2 see: Saved with no setter name
+  s2 not: Someone else's name filled in
+J-F-server-420-11 | type 12 | owner | Admin app, a workout of the day just saved
+  s1 see: Every member of this gym sees the routine, the note and the setter's name
+  s1 not: Members of another gym see it
+  s1 not: Any member data inside the workout
+J-F-server-420-12 | type 1 | member | Member phone, Workout tab, the gym set a workout for today
+  s1 see: Today's workout of the day with its name, exercises, note and who set it
+  s1 not: Yesterday's or tomorrow's workout shown as today's
+  s2 see: A workout starts with those exercises; the phone keeps its own copy
+  s2 not: The workout lost if the gym takes it off mid-workout
+J-F-server-420-13 | type 3 | member | Member phone, Workout tab, a member the gym's list cannot match
+  s1 see: No workout of the day, and the reason in plain words (NO_PHONE, SHARED_NUMBER, NAME_MISMATCH, NOT_ON_ROSTER, GYM_NOT_ONLINE)
+  s1 not: Another member's gym workout shown
+  s1 not: A crash on the error answer
+J-F-server-420-14 | type 6 | member | Member phone, a workout of the day was set for today
+  s1 see: No workout of the day
+  s1 not: The removed workout still offered as new
+  s2 see: The new day's workout, or none
+  s2 not: Yesterday's workout still shown as today's
+J-F-server-420-15 | type 12 | member | Member phone, Workout tab
+  s1 see: The gym's routine and the setter's name only
+  s1 not: Any other member's data
+  s1 not: Another gym's workout
+J-F-server-421-01 | type 1 | system | Night: the HQ Worker (deploy/hq/backup.js) runs its backup with the HQ key
+  s1 see: One copy: format 'mettleup-backup-1', takenAt, counts per table, every public table's rows, sign-in accounts without password hashes or tokens
+  s1 not: A payment in the copy without its receipt, or the other way round
+  s1 not: A password hash or one-time token in the copy
+  s2 see: The copy readable for 7 days, then gone
+  s2 not: A copy kept longer than 7 days
+  s3 see: One 'nightly-backup' row with the table count, row count and account count
+  s3 not: No audit row for a copy taken
+J-F-server-421-02 | type 3 | system | Anyone calls the backup function without the HQ key
+  s1 see: Refused (grants and _hq_guard)
+  s1 not: Any row returned
+  s1 not: An audit row written
+J-F-server-421-03 | type 6 | system | A migration added a new table since the last copy; a member deleted their account yesterday
+  s1 see: The new table is in the copy by itself; the deleted account is not
+  s1 not: The new table missing because a hand list went stale
+  s2 see: Copies older than 7 days no longer exist
+  s2 not: The deleted member's data still in a copy after 7 days
+J-F-server-421-04 | type 12 | system | A copy in Cloudflare KV
+  s1 see: Every gym's records and members, readable only with HQ's Cloudflare access
+  s1 not: A copy reachable by a gym, a member or the public
+  s1 not: Password hashes or sign-in tokens in it
+J-F-server-421-05 | type 1 | HQ admin | Restore drill (docs/BACKUP-RESTORE.md) with a stored copy
+  s1 see: SQL that puts back every table; the row counts match 'counts'
+  s1 not: A table restored with fewer rows than counted, silently
+  s2 see: A Google sign-in works as before; an email-and-password account needs a password reset
+  s2 not: A member told nothing and locked out
+J-F-server-421-06 | type 3 | HQ admin | Restore with a damaged or wrong copy
+  s1 see: The restore stops and says why
+  s1 not: A half restore written
+J-F-server-421-07 | type 6 | HQ admin | Restore after a member deleted their account 3 days ago
+  s1 see: The deleted member comes back in the restored data
+  s1 not: The restored data used without deleting that member again
+J-F-server-421-08 | type 12 | HQ admin | HQ admin opens a stored copy
+  s1 see: Every gym's members, payments and messages in one file
+  s1 not: A copy downloaded to a laptop and kept past 7 days
+  s1 not: Gym storage files (logos, photos, report files) assumed to be inside
+J-F-server-422-01 | type 1 | member | Member phone, Gym tab, a member on a running paid plan with no open question
+  s1 see: 'Who should answer?' with their own trainer preselected, other ticked trainers and the owner as 'Rohit S.', and 'Any trainer'
+  s1 not: A front-desk person without the trainer tick offered
+  s1 not: Full surnames shown
+  s2 see: The question in the list, waiting for a reply
+  s2 not: Two questions made by one tap
+  s3 see: A pop-up on this member's phone: the trainer's first name and the reply; tapping opens the reply
+  s3 not: The pop-up on another member's phone
+  s3 not: The reply shown with no name
+J-F-server-422-02 | type 2 | member | Member phone, Gym tab, 'Who should answer?'
+  s1 see: Sent; any ticked trainer or the owner may reply
+  s1 not: The question lost because no one was picked
+J-F-server-422-03 | type 2 | member | Member phone locked, a reply has just come
+  s1 see: The app opens on the reply (member_questions marks it seen)
+  s1 not: The app opening on the home tab with no reply in sight
+J-F-server-422-04 | type 3 | member | Member phone, 'Ask about your workout'
+  s1 see: Refused: OPEN_QUESTION, in plain words
+  s1 not: A second open question made
+  s2 see: Refused: TOO_MANY or INVALID
+  s2 not: Text cut and sent without a word
+  s3 see: Refused: NO_PLAN; the newer app hides 'Ask a trainer'
+  s3 not: The question reaching a trainer
+J-F-server-422-05 | type 6 | member | Member phone, an open question with no reply
+  s1 see: It shows as taken back; a new question can be sent
+  s1 not: The trainer can still reply to it
+  s2 see: Refused: NOT_FOUND
+  s2 not: The reply wiped
+  s3 see: All the member's questions deleted at once
+  s3 not: Questions kept after leaving
+J-F-server-422-06 | type 12 | member | Member phone, a question to one trainer
+  s1 see: Only the picked person; 'Any trainer' goes to every ticked trainer and the owner
+  s1 not: The owner or another trainer reading a question sent to one trainer
+  s1 not: The front desk without the tick reading it
+  s2 see: The question and reply deleted
+  s2 not: Kept beyond 180 days
+J-F-server-422-07 | type 1 | trainer | Admin app, Member questions, one open question for this person
+  s1 see: The question with the member's name; the menu badge counts open questions
+  s1 not: Questions this person may not see
+  s2 see: Marked answered, signed with this person's name
+  s2 not: The reply saved twice
+  s3 see: A pop-up with the replier's first name and the reply
+  s3 not: No pop-up while 'Messages from my gym' is on
+  s3 not: A pop-up on any other member's phone
+J-F-server-422-08 | type 3 | trainer | Admin app, Member questions
+  s1 see: Refused: WITHDRAWN or ALREADY_ANSWERED, in plain words
+  s1 not: A second reply saved over the first
+  s2 see: Refused: INVALID
+  s2 not: Text cut without a word
+  s3 see: Refused: SUSPENDED
+  s3 not: The reply saved
+J-F-server-422-09 | type 6 | trainer | Admin app, Member questions
+  s1 see: Their questions are gone from the list
+  s1 not: A reply still possible
+  s2 see: Not in the list
+  s2 not: Old questions filling the list beyond 200
+J-F-server-422-10 | type 1 | owner | Admin app, Member questions, one open question for this person
+  s1 see: The question with the member's name; the menu badge counts open questions
+  s1 not: Questions this person may not see
+  s2 see: Marked answered, signed with this person's name
+  s2 not: The reply saved twice
+  s3 see: A pop-up with the replier's first name and the reply
+  s3 not: No pop-up while 'Messages from my gym' is on
+  s3 not: A pop-up on any other member's phone
+J-F-server-422-11 | type 3 | owner | Admin app, Member questions
+  s1 see: Refused: WITHDRAWN or ALREADY_ANSWERED, in plain words
+  s1 not: A second reply saved over the first
+  s2 see: Refused: INVALID
+  s2 not: Text cut without a word
+  s3 see: Refused: SUSPENDED
+  s3 not: The reply saved
+J-F-server-422-12 | type 6 | owner | Admin app, Member questions
+  s1 see: Their questions are gone from the list
+  s1 not: A reply still possible
+  s2 see: Not in the list
+  s2 not: Old questions filling the list beyond 200
+J-F-server-422-13 | type 3 | trainer | Admin app, a front-desk login without the trainer tick
+  s1 see: 'Only trainers and the owner can see questions.' (TRAINER_ONLY)
+  s1 not: Any question shown
+J-F-server-422-14 | type 12 | trainer | Admin app, a trainer's Member questions
+  s1 see: Questions sent to this trainer, to 'Any trainer', and to people no longer answering
+  s1 not: Questions sent to another trainer or to the owner only
+J-F-server-422-15 | type 2 | owner | Admin app with an old owner key (no signed-in person)
+  s1 see: Signed with the gym owner's name, or 'Your gym'
+  s1 not: Signed with an empty name
+J-F-server-422-16 | type 6 | owner | Admin app, a trainer with open questions is unticked or removed
+  s1 see: That trainer's open questions now show for the owner and every ticked trainer
+  s1 not: The questions lost or unanswerable
+J-F-server-422-17 | type 12 | owner | Admin app, owner's Member questions
+  s1 see: Questions sent to the owner, to 'Any trainer', and orphaned ones
+  s1 not: Questions a member sent to one named trainer
+J-F-server-423-01 | type 1 | member | Member phone with 'Messages from my gym' on; a pause request is pending
+  s1 see: A pop-up: 'Approved: your plan is paused from 5 Nov to 12 Nov.'
+  s1 not: A money amount or another member's data in the line
+  s1 not: The pop-up twice
+  s2 see: The app opens on the plan request page (/shop)
+  s2 not: The app opening somewhere unrelated
+J-F-server-423-02 | type 2 | member | Member phone, a shop order placed
+  s1 see: 'Your order 12 is ready. Collect it at the desk.'; a tap opens /shop/orders
+  s1 not: A pop-up when the member cancels their own order
+  s2 see: 'Your gym cancelled your order 12. Ask at the desk to know why.'
+  s2 not: No word to the member
+J-F-server-423-03 | type 2 | member | Member phone, the gym asks for this member's workout report
+  s1 see: 'Your gym asked to see your workout report. Open the app to say yes or no.'
+  s1 not: The pop-up on a phone whose number is shared by two list members
+  s1 not: The pop-up on a member with another first name
+J-F-server-423-04 | type 3 | member | Member phone with 'Messages from my gym' off, or a member who left
+  s1 see: No pop-up; the app shows the answer when opened
+  s1 not: A pop-up sent while the switch is off
+  s1 not: The gym's decline blocked by a pop-up error
+J-F-server-423-05 | type 6 | member | Member phone, a note waiting while the phone is off
+  s1 see: No late pop-up; the answer is in the app
+  s1 not: A pop-up about something 7 hours old
+  s2 see: One pop-up only
+  s2 not: Two pop-ups for one order
+J-F-server-423-06 | type 12 | member | Member phone lock screen
+  s1 see: The gym's name and a short line with no amounts
+  s1 not: Money, another member's name, or report contents on the lock screen
+J-F-server-423-07 | type 1 | system | Every minute: the HQ Worker (deploy/hq/push.js) with the HQ key
+  s1 see: Waiting notes with the member's push addresses, each already marked done
+  s1 not: A note handed out twice
+  s1 not: More than the address limit, except one first note
+  s2 see: One pop-up per address
+  s2 not: A note retried after the sender died (it is lost by design; the app still shows the answer)
+J-F-server-423-08 | type 3 | system | Bad caller or bad notes
+  s1 see: Refused
+  s1 not: Any note or push address returned
+  s2 see: Closed as 'late' or 'no-phone', no pop-up
+  s2 not: A stale pop-up sent
+J-F-server-423-09 | type 6 | system | A trigger fires inside the gym's own save
+  s1 see: The gym's approval, report request or order change still saves; only a warning is logged
+  s1 not: The gym's action rolled back by the pop-up
+  s2 see: Deleted on a later run
+  s2 not: Done notes kept forever
+J-F-server-423-10 | type 12 | system | Report request matching
+  s1 see: No note for anyone
+  s1 not: The pop-up reaching the wrong person
+J-F-server-424-01 | type 1 | pass member | A pass member (desk turned on 'Comes with a pass', FITPASS) with the member app
+  s1 see: 'You're checked in'
+  s1 not: 'Your plan has ended, see the desk'
+  s1 not: No visit written
+  s2 see: 'FITPASS member'
+  s2 not: 'No plan yet. Ask the desk.'
+  s2 not: A dues line
+J-F-server-424-02 | type 2 | pass member | A pass member opens 'My membership' straight from the Gym tab
+  s1 see: The pass company's name as the desk wrote it, and visits this month
+  s1 not: A renewal reminder
+J-F-server-424-03 | type 3 | pass member | A pass member whose app name or number does not match the gym's list
+  s1 see: The matching error in plain words (NAME_MISMATCH, SHARED_NUMBER, NOT_ON_ROSTER)
+  s1 not: Another member's pass shown
+J-F-server-424-04 | type 6 | pass member | The desk turns 'Comes with a pass' off
+  s1 see: The normal plan check: 'see the desk' if there is no plan
+  s1 not: Still treated as a pass member
+  s2 see: 'No plan yet. Ask the desk.' or their new plan
+  s2 not: 'FITPASS member' still shown
+J-F-server-424-05 | type 12 | pass member | A pass member's check-ins
+  s1 see: Nothing sent to the pass company; only the gym counts the visits
+  s1 not: The member's data sent to FITPASS or cultpass
+J-F-server-424-06 | type 1 | member | A member who pays the gym, with a plan covering today
+  s1 see: 'You're checked in'
+  s1 not: A pass label on a paying member
+  s2 see: Plan name and dates; no pass line
+  s2 not: 'FITPASS member' shown
+J-F-server-424-07 | type 3 | member | A paying member whose plan ended
+  s1 see: 'Your plan has ended, see the desk'
+  s1 not: Treated as covered by a pass
+J-F-server-424-08 | type 6 | member | The desk turns a paying member into a pass member
+  s1 see: 'FITPASS member'; the old plan does not show as due
+  s1 not: Both a pass and a due plan shown
+J-F-server-424-09 | type 12 | member | 'My membership'
+  s1 see: Only this member's own plan, visits and pass
+  s1 not: Another list member's plan when two share a number
+J-F-server-425-01 | type 1 | member | Member phone, Gym tab, a member still in the gym; the gym set 7 free days
+  s1 see: The card with the share link app.mettleup.fit/f/<CODE> and 'When a friend joins, your gym can add 7 free days to your plan.'
+  s1 not: A new code on every open
+  s1 not: Another member's code
+  s2 see: 'Friends who joined: 1'
+  s2 not: The friend's name or number shown to the member
+J-F-server-425-02 | type 3 | member | Member phone, a member who left, or a suspended gym
+  s1 see: The card is not offered (LEFT or SUSPENDED)
+  s1 not: A link that still works after leaving
+J-F-server-425-03 | type 6 | member | Member phone, a friend's enquiry moves from open to joined, then the gym deletes it
+  s1 see: The count goes up on 'joined', and down if the enquiry is deleted
+  s1 not: A count that includes friends who only asked
+J-F-server-425-04 | type 12 | member | Member phone, the card after friends asked
+  s1 see: Only a number of friends who joined
+  s1 not: Who asked or who joined
+  s2 see: The member's first name only
+  s2 not: The member's surname, number or plan
+J-F-server-425-05 | type 1 | prospect | A friend opens the shared link on any phone or computer
+  s1 see: The gym's name and look, and the inviting member's first name
+  s1 not: Any other member data
+  s2 see: The page says it was sent; 'Only the gym sees your number.'
+  s2 not: The number shown to the inviting member
+J-F-server-425-06 | type 3 | prospect | The friend's form
+  s1 see: BAD_NAME or BAD_PHONE in plain words
+  s1 not: An enquiry made with a bad number
+  s2 see: TOO_MANY in plain words
+  s2 not: Unlimited enquiries from one link
+  s3 see: The page says the link stopped
+  s3 not: The gym's name for a dead link
+J-F-server-425-07 | type 6 | prospect | A friend whose number the gym already knows
+  s1 see: The page says it was sent, exactly as for a new number
+  s1 not: The page telling a stranger the number belongs to a member
+  s1 not: A second enquiry for the same number (0085: a note on the existing one instead)
+J-F-server-425-08 | type 12 | prospect | The friend's details after sending
+  s1 see: Only into that gym's Enquiries
+  s1 not: Another gym, MettleUp marketing, or the inviting member seeing them
+J-F-server-425-09 | type 1 | owner | Admin app, Enquiries, after a friend sent the form
+  s1 see: The friend's enquiry: name, number, 'Best time to train: Evening', marked 'Referred by <member>', follow-up today
+  s1 not: The enquiry missing until a manual reload
+  s2 see: An offer to add the free days to the inviting member's plan, one tap
+  s2 not: Free days added without the owner's tap
+  s3 see: Links made, friends who asked, friends who joined
+  s3 not: Counts of another gym
+J-F-server-425-10 | type 3 | owner | Admin app, Settings, Bring a friend free days
+  s1 see: 'No free days for a friend who joins.' and the member's card shows no days
+  s1 not: 61 days offered to members
+J-F-server-425-11 | type 6 | owner | Admin app, a friend's enquiry
+  s1 see: The member's count goes up, then back down; the summary follows
+  s1 not: The count stuck
+J-F-server-425-12 | type 12 | owner | Admin app, a friend's enquiry
+  s1 see: Only this gym's admin app
+  s1 not: The inviting member seeing the friend's number
+J-F-server-426-01 | type 1 | member | Member phone, the desk confirmed the member's check-in number; the gym asked them to pay online
+  s1 see: 'Your gym asked you to pay ₹1,500 for Monthly plan'
+  s1 not: Another member's payment request
+  s1 not: The request missing for the right member
+  s2 see: The request marked paid
+  s2 not: The request still asking after payment
+J-F-server-426-02 | type 3 | member | Member phone, a number shared by two list members, or a different first name
+  s1 see: Only the member's own shop-order payments; no gym payment request
+  s1 not: A request meant for the other person on that number
+J-F-server-426-03 | type 6 | member | Member phone, the member changes their check-in number
+  s1 see: No gym payment request until it matches again
+  s1 not: A request reaching the old number's owner
+J-F-server-426-04 | type 12 | member | Member phone, payment requests
+  s1 see: The gym id, the app member id, the gym's member id or null, and the first name
+  s1 not: Money, plans or anyone else's name from this call
+J-F-server-426-05 | type 1 | system | The web server (deploy/panel/pay.js) with a member's key
+  s1 see: {gymId, memberId, rosterId, name}
+  s1 not: A rosterId for a number shared on the gym's list
+  s2 see: Only that member's requests
+  s2 not: Requests of another rosterId
+J-F-server-426-06 | type 3 | system | A dead or wrong key
+  s1 see: Refused: BAD_KEY
+  s1 not: Any member's ids returned
+J-F-server-426-07 | type 6 | system | A member who left the gym
+  s1 see: BAD_KEY (leaving changes the key)
+  s1 not: The left member still shown the gym's payment requests
+J-F-server-426-08 | type 12 | system | member_pay_me answer
+  s1 see: Ids and a first name only
+  s1 not: Phone numbers or plan details in the answer

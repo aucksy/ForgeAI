@@ -1,0 +1,612 @@
+# A8-panel-shop-1: coverage of 70 Tier 1 journeys (6 features, from A5-panel-shop-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-807 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | imports the code
+F-panel-807 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | imports the code
+F-panel-807 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | imports the code
+F-panel-807 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-807 | apps/dashboard/test/crm/gymReports.test.ts | unit | 140 lines | imports the code
+F-panel-807 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | imports the code
+F-panel-807 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | imports the code
+F-panel-807 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | imports the code
+F-panel-807 | apps/dashboard/test/crm/planRequests.test.ts | unit | 239 lines | imports the code
+F-panel-807 | apps/dashboard/test/crm/plusLock.test.ts | unit | 92 lines | imports the code
+F-panel-807 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | imports the code
+F-panel-807 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 3 journey phrase(s)
+F-panel-814 | apps/dashboard/test/crm/checkin.test.ts | unit | 137 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-panel-814 | apps/dashboard/test/crm/invite.test.ts | unit | 105 lines | imports the code
+F-panel-814 | apps/dashboard/test/crm/oneLink.test.ts | unit | 61 lines | imports the code
+F-panel-814 | apps/dashboard/test/crm/selfJoin.test.ts | unit | 174 lines | imports the code
+F-panel-814 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | file name, asserts 1 journey phrase(s)
+F-panel-814 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-814 | apps/dashboard/test/crm/ownerOnboarding.test.ts | unit | 115 lines | asserts 2 journey phrase(s)
+F-panel-814 | apps/mobile/qa/checkin-f1.yaml | maestro | 54 lines | file name
+F-panel-814 | apps/mobile/qa/checkin-f2.yaml | maestro | 115 lines | file name
+F-panel-814 | apps/mobile/qa/checkin-f3.yaml | maestro | 59 lines | file name
+F-panel-814 | apps/mobile/qa/uat-rel-7-gym-checkin.yaml | maestro | 53 lines | file name
+F-panel-814 | apps/mobile/qa/xc-2b-checkin-again.yaml | maestro | 14 lines | file name
+F-panel-811 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-panel-811 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 5 journey phrase(s)
+F-panel-811 | apps/dashboard/test/crm/invite.test.ts | unit | 105 lines | imports the code, file name
+F-panel-811 | apps/mobile/qa/invite-e.yaml | maestro | 81 lines | file name, asserts 3 journey phrase(s)
+F-panel-811 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 5 journey phrase(s)
+F-panel-811 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 4 journey phrase(s)
+F-panel-811 | apps/mobile/qa/invite-c.yaml | maestro | 58 lines | file name, asserts 2 journey phrase(s)
+F-panel-811 | apps/mobile/qa/sub-uat-f194-choose.yaml | maestro | 31 lines | asserts 4 journey phrase(s)
+F-panel-811 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 4 journey phrase(s)
+F-panel-811 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-panel-811 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 3 journey phrase(s)
+F-panel-811 | apps/dashboard/e2e/r579-uat.spec.mjs | e2e | 298 lines | asserts 3 journey phrase(s)
+F-panel-808 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 11 journey phrase(s)
+F-panel-808 | apps/dashboard/test/crm/messages.test.ts | unit | 189 lines | asserts 8 journey phrase(s)
+F-panel-808 | apps/dashboard/e2e/messages.spec.mjs | e2e | 191 lines | asserts 5 journey phrase(s)
+F-panel-808 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 5 journey phrase(s)
+F-panel-808 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 4 journey phrase(s)
+F-panel-808 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-808 | supabase/tests/0042_message_calm.sql | db | 150 lines | asserts 4 journey phrase(s)
+F-panel-808 | apps/dashboard/e2e/r534-training-progress-uat.spec.mjs | e2e | 165 lines | asserts 3 journey phrase(s)
+F-panel-808 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 3 journey phrase(s)
+F-panel-808 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | imports the code
+F-panel-808 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | imports the code
+F-panel-808 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | imports the code
+F-panel-801 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 11 journey phrase(s)
+F-panel-801 | apps/dashboard/test/crm/r448.test.ts | unit | 76 lines | asserts 5 journey phrase(s)
+F-panel-801 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-801 | apps/dashboard/e2e/gymdata.spec.mjs | e2e | 52 lines | asserts 3 journey phrase(s)
+F-panel-801 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | imports the code
+F-panel-801 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | imports the code
+F-panel-801 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-801 | apps/dashboard/test/crm/gymReports.test.ts | unit | 140 lines | imports the code
+F-panel-801 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | imports the code
+F-panel-801 | apps/dashboard/test/crm/machines/pretendMachine.test.ts | unit | 216 lines | asserts 3 journey phrase(s)
+F-panel-801 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | imports the code
+F-panel-801 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | imports the code
+F-panel-800 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 9 journey phrase(s)
+F-panel-800 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | imports the code, asserts 4 journey phrase(s)
+F-panel-800 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-panel-800 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-panel-800 | supabase/tests/0054_member_alerts.sql | db | 139 lines | asserts 4 journey phrase(s)
+F-panel-800 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-panel-800 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-panel-800 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 3 journey phrase(s)
+F-panel-800 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 3 journey phrase(s)
+F-panel-800 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-panel-800 | apps/dashboard/e2e/importcheck.spec.mjs | e2e | 62 lines | asserts 3 journey phrase(s)
+F-panel-800 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-807-01 | type 1 | owner | Members page, gym with the member app on and members who joined in the app
+  s1 see: Subtitle 'Who has the MettleUp app on their phone'
+  s1 see: Line 'Members who joined your gym in the MettleUp app with gym code <CODE>.'
+  s1 see: One card per app member: name, 'Joined <time ago> · last seen <time ago>', '1 order' / '<n> orders' / 'No orders yet', '<amount> paid for shop orders' or 'No shop orders paid yet'
+  s1 not: A member of another gym in the list
+  s1 not: 'Loading…' that never ends
+  s1 not: A gym-wide money total on this list
+  s2 see: That member's own page opens
+  s2 not: Another member's page opens (wrong match by mobile number)
+  s2 not: The add form opens for someone already in the list
+J-F-panel-807-02 | type 2 | owner | Joined in the app list, an app member whose number is not in the gym's member list
+  s1 see: Extra line 'Not in your member list yet. Tap to add them.'
+  s1 not: The line shown for a member who is already in the list
+  s2 see: The add-member form opens with the name filled in and the mobile number filled in with +91 and the last 10 digits
+  s2 not: A member saved without the person pressing save
+  s2 not: A number from another country rewritten to a wrong +91 number without a word
+  s2 not: An empty form
+J-F-panel-807-03 | type 3 | owner | Members page, gym that has not turned on the member app
+  s1 see: Card 'Let members order from your gym in the MettleUp app.' with 'Turn on the shop to get your gym code. It comes with 12 sample products you can change or delete.' and the button 'Turn on the shop'
+  s1 not: An empty list that reads as 'nobody joined'
+  s1 not: An error
+  s1 not: A gym code shown before the shop is on
+  s2 see: A red line with the reason on top; the list already loaded stays
+  s2 not: 'Nobody has joined in the app yet' shown because the load failed
+  s2 not: The list wiped
+J-F-panel-807-04 | type 6 | owner | Joined in the app list of a gym where nobody has joined yet
+  s1 see: 'Nobody has joined in the app yet' with 'Ask members to open the MettleUp app and join with gym code <CODE>. They show up here at once.'
+  s1 not: A blank page
+  s1 not: A count of members
+  s2 see: The member's card appears by itself on the next refresh (the list re-reads every 60 seconds), with 'No orders yet' and 'Not in your member list yet. Tap to add them.'
+  s2 not: The member never appears until the page is reloaded
+  s2 not: The member shown twice
+  s3 see: The 'Not in your member list yet' line is gone; a tap now opens the member's page
+  s3 not: The card still offers to add a member who was just added
+  s3 not: A second member row made by tapping again
+J-F-panel-807-05 | type 12 | owner | Joined in the app list, signed in as owner
+  s1 see: Name, when they joined, when the app was last seen, how many shop orders and how much was paid for shop orders
+  s1 not: The member's workouts, weight or health entries
+  s1 not: A member who joined another gym
+  s1 not: The member's full mobile number printed on the card
+  s2 see: The sign-in page
+  s2 not: The list shown to someone who is not signed in to this gym
+J-F-panel-807-06 | type 1 | staff | Members page, gym with the member app on and members who joined in the app
+  s1 see: Subtitle 'Who has the MettleUp app on their phone'
+  s1 see: Line 'Members who joined your gym in the MettleUp app with gym code <CODE>.'
+  s1 see: One card per app member: name, 'Joined <time ago> · last seen <time ago>', '1 order' / '<n> orders' / 'No orders yet', '<amount> paid for shop orders' or 'No shop orders paid yet'
+  s1 not: A member of another gym in the list
+  s1 not: 'Loading…' that never ends
+  s1 not: A gym-wide money total on this list
+  s2 see: That member's own page opens
+  s2 not: Another member's page opens (wrong match by mobile number)
+  s2 not: The add form opens for someone already in the list
+J-F-panel-807-07 | type 2 | staff | Joined in the app list, an app member whose number is not in the gym's member list
+  s1 see: Extra line 'Not in your member list yet. Tap to add them.'
+  s1 not: The line shown for a member who is already in the list
+  s2 see: The add-member form opens with the name filled in and the mobile number filled in with +91 and the last 10 digits
+  s2 not: A member saved without the person pressing save
+  s2 not: A number from another country rewritten to a wrong +91 number without a word
+  s2 not: An empty form
+J-F-panel-807-08 | type 3 | staff | Members page, staff login, gym that has not turned on the member app
+  s1 see: Card 'The member app and shop are not turned on yet. Only an owner can turn them on.'
+  s1 not: A 'Turn on the shop' button for staff
+  s1 not: An empty list that reads as 'nobody joined'
+  s2 see: A red line with the reason on top; the list already loaded stays
+  s2 not: 'Nobody has joined in the app yet' shown because the load failed
+J-F-panel-807-09 | type 6 | staff | Joined in the app list of a gym where nobody has joined yet
+  s1 see: 'Nobody has joined in the app yet' with 'Ask members to open the MettleUp app and join with gym code <CODE>. They show up here at once.'
+  s1 not: A blank page
+  s1 not: A count of members
+  s2 see: The member's card appears by itself on the next refresh (the list re-reads every 60 seconds), with 'No orders yet' and 'Not in your member list yet. Tap to add them.'
+  s2 not: The member never appears until the page is reloaded
+  s2 not: The member shown twice
+  s3 see: The 'Not in your member list yet' line is gone; a tap now opens the member's page
+  s3 not: The card still offers to add a member who was just added
+  s3 not: A second member row made by tapping again
+J-F-panel-807-10 | type 12 | staff | Joined in the app list, signed in as staff
+  s1 see: Name, when they joined, when the app was last seen, how many shop orders and how much was paid for shop orders
+  s1 not: The member's workouts, weight or health entries
+  s1 not: A member who joined another gym
+  s1 not: The member's full mobile number printed on the card
+  s2 see: The sign-in page
+  s2 not: The list shown to someone who is not signed in to this gym
+J-F-panel-814-01 | type 1 | owner | Attendance (the register), gym that is online and has a gym code
+  s1 see: Title 'Check-in QR', line 'Members scan it with the MettleUp app and check themselves in', button 'Back to the register'
+  s1 see: Card 'Scan to check in' with the poster: gym name, logo if any, the QR, the steps 'Open your phone camera', 'Scan this code', 'The MettleUp app checks you in', the line 'No app, or not on the gym list yet? Check in at the desk.' and the link app.mettleup.fit/c/<CODE>
+  s1 see: Card 'How it works' with three steps and the gym code
+  s1 not: Another gym's name, code or logo on the poster
+  s1 not: The invite link (/j/) inside the check-in QR
+  s1 not: A QR that is cut off
+  s2 see: The browser's print page with only the poster on the paper
+  s2 not: The menu, the buttons or the 'How it works' card on the paper
+  s2 not: An empty sheet
+  s2 not: Two pages for one poster
+J-F-panel-814-02 | type 2 | owner | Check-in QR page (another way to get the poster: a picture)
+  s1 see: A picture file named after 'checkin-poster' is saved and a short note says 'Poster saved as a picture.'
+  s1 not: A picture without the QR or without the gym name
+  s1 not: The note 'Poster saved' when no file was made
+  s1 not: A picture with the logo of another gym
+  s2 see: The note 'Could not make the picture. Try Print poster.'
+  s2 not: No word at all
+  s2 not: A broken, empty file
+J-F-panel-814-03 | type 2 | owner | Set up your gym list (owner only), step 'Print the check-in poster'
+  s1 see: The Check-in QR page
+  s1 not: The invite poster page instead
+  s1 not: An 'owner only' wall for the owner
+  s2 see: The step is ticked as done
+  s2 not: The step still open after the poster was printed or saved
+  s2 not: The step ticked for another gym or branch in the same browser
+J-F-panel-814-04 | type 3 | owner | Check-in QR page of a gym that is not online (records kept in this browser only)
+  s1 see: 'Put your gym online first' with 'Members check in from their own phone, so your gym must be online first. Go to Settings → Sign-in & data. Then come back here for the poster.' and the button 'Open Settings'
+  s1 not: A poster with an empty or made-up code
+  s1 not: Print or Download buttons
+  s2 see: The Settings page
+  s2 not: A dead button
+  s2 not: A blank page
+J-F-panel-814-05 | type 6 | owner | Check-in QR page, poster already printed once
+  s1 see: The same poster with the same code and link; both buttons still work
+  s1 not: A new code or link, which would make the printed poster useless
+  s2 see: The poster shows the new name and logo; the QR and the code are unchanged
+  s2 not: The old logo kept on the screen poster
+  s2 not: The QR changed by a rename
+  s3 see: The page as before
+  s3 not: A crash or a blank page after cancelling
+J-F-panel-814-06 | type 12 | owner | Check-in QR page, signed in as owner
+  s1 see: Only the gym's name, logo, gym code and the link app.mettleup.fit/c/<CODE>
+  s1 not: A member's name or number
+  s1 not: The gym's sign-in key or any secret inside the QR or the picture file
+  s2 see: 'How it works' says the app matches a person to the Members list by mobile number, and sends anyone not on the list to the desk
+  s2 not: A promise on this page that a scan alone, with no match to the list, records a visit
+J-F-panel-814-07 | type 1 | staff | Attendance (the register), gym that is online and has a gym code
+  s1 see: Title 'Check-in QR', line 'Members scan it with the MettleUp app and check themselves in', button 'Back to the register'
+  s1 see: Card 'Scan to check in' with the poster: gym name, logo if any, the QR, the steps 'Open your phone camera', 'Scan this code', 'The MettleUp app checks you in', the line 'No app, or not on the gym list yet? Check in at the desk.' and the link app.mettleup.fit/c/<CODE>
+  s1 see: Card 'How it works' with three steps and the gym code
+  s1 not: Another gym's name, code or logo on the poster
+  s1 not: The invite link (/j/) inside the check-in QR
+  s1 not: A QR that is cut off
+  s2 see: The browser's print page with only the poster on the paper
+  s2 not: The menu, the buttons or the 'How it works' card on the paper
+  s2 not: An empty sheet
+  s2 not: Two pages for one poster
+J-F-panel-814-08 | type 2 | staff | Check-in QR page (another way to get the poster: a picture)
+  s1 see: A picture file named after 'checkin-poster' is saved and a short note says 'Poster saved as a picture.'
+  s1 not: A picture without the QR or without the gym name
+  s1 not: The note 'Poster saved' when no file was made
+  s1 not: A picture with the logo of another gym
+  s2 see: The note 'Could not make the picture. Try Print poster.'
+  s2 not: No word at all
+  s2 not: A broken, empty file
+J-F-panel-814-09 | type 3 | staff | Check-in QR page of a gym that is not online (records kept in this browser only)
+  s1 see: 'Put your gym online first' with 'Members check in from their own phone, so your gym must be online first. Go to Settings → Sign-in & data. Then come back here for the poster.' and the button 'Open Settings'
+  s1 not: A poster with an empty or made-up code
+  s1 not: Print or Download buttons
+  s2 see: The Settings page
+  s2 not: A dead button
+  s2 not: A blank page
+J-F-panel-814-10 | type 6 | staff | Check-in QR page, poster already printed once
+  s1 see: The same poster with the same code and link; both buttons still work
+  s1 not: A new code or link, which would make the printed poster useless
+  s2 see: The poster shows the new name and logo; the QR and the code are unchanged
+  s2 not: The old logo kept on the screen poster
+  s2 not: The QR changed by a rename
+  s3 see: The page as before
+  s3 not: A crash or a blank page after cancelling
+J-F-panel-814-11 | type 12 | staff | Check-in QR page, signed in as staff
+  s1 see: Only the gym's name, logo, gym code and the link app.mettleup.fit/c/<CODE>
+  s1 not: A member's name or number
+  s1 not: The gym's sign-in key or any secret inside the QR or the picture file
+  s2 see: 'How it works' says the app matches a person to the Members list by mobile number, and sends anyone not on the list to the desk
+  s2 not: A promise on this page that a scan alone, with no match to the list, records a visit
+J-F-panel-811-01 | type 1 | owner | Menu, 'Invite members', gym with the member app on
+  s1 see: Title 'Invite members', line 'Send your gym’s link on WhatsApp, or put a QR poster at the front desk.', button 'Back to Settings'
+  s1 see: Card 'Your gym’s link' with app.mettleup.fit/j/<CODE> and the buttons 'Send on WhatsApp', 'Copy link', 'Copy message'
+  s1 see: 'The message members get' with the full words, and 'To invite one member, open them in Members and tap “Share app link”.'
+  s1 not: Another gym's code in the link
+  s1 not: The check-in link (/c/) in place of the invite link
+  s2 see: WhatsApp opens in a new tab with the message typed in: 'Hi!', 'Join <gym> in the MettleUp app: track your workouts and order from the gym shop.', 'Tap to join:', the link, 'Gym code: <CODE>'; WhatsApp asks who to send it to
+  s2 not: A message sent to anyone before the person picks who and presses send in WhatsApp
+  s2 not: A number already filled in
+  s2 not: The link glued to other words so WhatsApp does not make it tappable
+J-F-panel-811-02 | type 2 | owner | Invite members page (other ways to share: copy)
+  s1 see: A short note 'Link copied.'
+  s1 not: The note shown when nothing was copied
+  s2 see: The note 'This browser blocked copying. Select the text and copy it.'
+  s2 not: 'Message copied.' shown when the copy was blocked
+J-F-panel-811-03 | type 2 | owner | Invite members page (another kind: the front-desk QR poster)
+  s1 see: The poster with the gym name, logo if any, a QR of the invite link and the gym code
+  s1 not: The check-in poster's words on the join poster
+  s2 see: The print page with only the poster; then the note 'Poster saved as a picture.' (or 'Could not make the picture. Try Print poster.')
+  s2 see: Hint 'Print it on A4 and stick it at the desk. On a phone, Print → “Save as PDF” also works. Use the picture for a print shop.'
+  s2 not: The rest of the page on the paper
+  s2 not: A picture without the QR
+J-F-panel-811-04 | type 2 | owner | A gym-code card elsewhere in the panel (Settings, or 'Invite & QR poster' links from Check-in QR, Messages, What's new, the new-gym sheet, q
+  s1 see: The button reads 'Copied ✓' for about 3 seconds
+  s1 not: 'Copied ✓' when the browser refused; then it must say 'This browser blocked copying. The code is selected. Press Ctrl+C to copy it.'
+  s2 see: WhatsApp opens with the same invite message; then the Invite members page opens
+  s2 not: A different message or link than the Invite members page sends
+J-F-panel-811-05 | type 3 | owner | Invite members page of a gym that has not turned on the member app
+  s1 see: Card 'Let members order from your gym in the MettleUp app.' with the button 'Turn on the shop'
+  s1 not: A link or QR with an empty code
+  s1 not: A blank page
+  s2 see: The button reads 'Turning on…', then a red line with the reason; the button can be pressed again
+  s2 not: A gym code shown though nothing was made
+  s2 not: A button stuck on 'Turning on…'
+  s2 not: Two gyms made by a second tap
+J-F-panel-811-06 | type 6 | owner | Invite members page before and after the member app is on
+  s1 see: Before: the 'not turned on' card. After the owner turns it on: the link, the message and the poster with the new gym code
+  s1 not: The old card still shown after the app is on
+  s1 not: A code that changes each time the page opens
+  s2 see: The same link and code
+  s2 not: A changed link that breaks the messages and posters already out
+J-F-panel-811-07 | type 12 | owner | Invite members page, signed in as owner
+  s1 see: Only the gym's name, its link and its gym code
+  s1 not: A member's name or number
+  s1 not: The gym's sign-in key
+  s1 not: A claim the panel sent the message: it is sent from the person's own WhatsApp
+  s2 see: Anyone who gets the link or the code can join the gym in the app and then shows under 'Joined in the app'
+  s2 not: A joined stranger shown as a paying member of the gym without the desk adding them
+J-F-panel-811-08 | type 1 | staff | Menu, 'Invite members', gym with the member app on
+  s1 see: Title 'Invite members', line 'Send your gym’s link on WhatsApp, or put a QR poster at the front desk.', button 'Back to Settings'
+  s1 see: Card 'Your gym’s link' with app.mettleup.fit/j/<CODE> and the buttons 'Send on WhatsApp', 'Copy link', 'Copy message'
+  s1 see: 'The message members get' with the full words, and 'To invite one member, open them in Members and tap “Share app link”.'
+  s1 not: Another gym's code in the link
+  s1 not: The check-in link (/c/) in place of the invite link
+  s2 see: WhatsApp opens in a new tab with the message typed in: 'Hi!', 'Join <gym> in the MettleUp app: track your workouts and order from the gym shop.', 'Tap to join:', the link, 'Gym code: <CODE>'; WhatsApp asks who to send it to
+  s2 not: A message sent to anyone before the person picks who and presses send in WhatsApp
+  s2 not: A number already filled in
+  s2 not: The link glued to other words so WhatsApp does not make it tappable
+J-F-panel-811-09 | type 2 | staff | Invite members page (other ways to share: copy)
+  s1 see: A short note 'Link copied.'
+  s1 not: The note shown when nothing was copied
+  s2 see: The note 'This browser blocked copying. Select the text and copy it.'
+  s2 not: 'Message copied.' shown when the copy was blocked
+J-F-panel-811-10 | type 2 | staff | Invite members page (another kind: the front-desk QR poster)
+  s1 see: The poster with the gym name, logo if any, a QR of the invite link and the gym code
+  s1 not: The check-in poster's words on the join poster
+  s2 see: The print page with only the poster; then the note 'Poster saved as a picture.' (or 'Could not make the picture. Try Print poster.')
+  s2 see: Hint 'Print it on A4 and stick it at the desk. On a phone, Print → “Save as PDF” also works. Use the picture for a print shop.'
+  s2 not: The rest of the page on the paper
+  s2 not: A picture without the QR
+J-F-panel-811-11 | type 2 | staff | A gym-code card elsewhere in the panel (Settings, or 'Invite & QR poster' links from Check-in QR, Messages, What's new, the new-gym sheet, q
+  s1 see: The button reads 'Copied ✓' for about 3 seconds
+  s1 not: 'Copied ✓' when the browser refused; then it must say 'This browser blocked copying. The code is selected. Press Ctrl+C to copy it.'
+  s2 see: WhatsApp opens with the same invite message; then the Invite members page opens
+  s2 not: A different message or link than the Invite members page sends
+J-F-panel-811-12 | type 3 | staff | Invite members page, staff login, gym that has not turned on the member app
+  s1 see: Card 'The member app and shop are not turned on yet. Only an owner can turn them on.'
+  s1 not: A 'Turn on the shop' button for staff
+  s1 not: A link or QR with an empty code
+J-F-panel-811-13 | type 6 | staff | Invite members page before and after the member app is on
+  s1 see: Before: the 'not turned on' card. After the owner turns it on: the link, the message and the poster with the new gym code
+  s1 not: The old card still shown after the app is on
+  s1 not: A code that changes each time the page opens
+  s2 see: The same link and code
+  s2 not: A changed link that breaks the messages and posters already out
+J-F-panel-811-14 | type 12 | staff | Invite members page, signed in as staff
+  s1 see: Only the gym's name, its link and its gym code
+  s1 not: A member's name or number
+  s1 not: The gym's sign-in key
+  s1 not: A claim the panel sent the message: it is sent from the person's own WhatsApp
+  s2 see: Anyone who gets the link or the code can join the gym in the app and then shows under 'Joined in the app'
+  s2 not: A joined stranger shown as a paying member of the gym without the desk adding them
+J-F-panel-808-01 | type 1 | owner | Menu, 'Messages & offers', gym with the member app on and app members
+  s1 see: Title 'Messages & offers', line 'Messages, offers and wishes for your members, in the app and on WhatsApp', tabs 'Messages', 'Workout offer', 'Reminders'
+  s1 see: Card 'Pick a message' with the kinds and 'Write my own'; below, 'Sent in the app'
+  s1 not: A blank page
+  s1 not: The Sent list of another gym
+  s2 see: The words of the message with boxes to fill in, a letter count, and who gets it
+  s2 not: Words of the message picked before still in the boxes
+  s3 see: The 'Send in the app' button turns on once every box is filled
+  s3 not: The button on while a box is empty ('Fill in: …' must show instead)
+  s4 see: Line 'Goes to <n> members in the app. Send now?' with 'Yes, send' and 'Not yet'; then 'Sending…'
+  s4 see: Note 'Sent to <n> members in the app.'; the button is replaced by 'Sent in the app'; the message is on top of 'Sent in the app'
+  s4 not: The message sent on the first tap with no question
+  s4 not: Two messages from two taps
+  s4 not: A count in the question that differs from the count in the note
+J-F-panel-808-02 | type 2 | owner | Messages page (another kind: your own words)
+  s1 see: Starting words for that type in the title and message boxes; a letter count under each (title 60, message 300)
+  s1 not: Words the owner already typed replaced by the starting words when the type is changed
+  s2 see: The same question and note as a ready message; the message shows in the Sent list with its type
+  s2 not: The message saved with its end cut off without a word
+J-F-panel-808-03 | type 2 | owner | Messages page on a server that knows groups and times (another kind: a group, at a later time)
+  s1 see: How many of the group have the app; 'Still loading who in this group has the app…' until the list is in
+  s1 not: The send button on while the group's app members are unknown
+  s1 not: The button on when nobody in the group has the app
+  s2 see: Line 'Goes to <n> members of this group in the app on <day and time>. Send then?'; then note 'Goes out <day and time> to <n> members in the app.'
+  s2 see: In the Sent list: 'To a group', 'Goes out <day and time> · <n> members' and a 'Cancel' button
+  s2 not: The message going to every app member
+  s2 not: The message going out now
+  s2 not: A time more than 30 days ahead accepted ('Pick a time within the next 30 days.')
+J-F-panel-808-04 | type 2 | owner | Messages page (another kind: WhatsApp, one member at a time)
+  s1 see: For a personal message: 'Sent on WhatsApp only, one member at a time, each with their own name and dates.'
+  s1 see: Choice 'Not in the app' / 'Whole group' with counts, and the button 'WhatsApp one by one (<n>)'; 'Opens your own WhatsApp with the words typed in. It costs nothing.'
+  s1 not: A count that includes members with no mobile number
+  s1 not: The button on with 0 people
+  s2 see: A sheet that opens WhatsApp for each member with the words typed in; back on the page '2 of <n> done on WhatsApp for this message.'
+  s2 not: A WhatsApp sent by the panel itself
+  s2 not: One member's name or dates in another member's message
+  s2 not: The done count lost on closing the sheet
+J-F-panel-808-05 | type 2 | owner | An old link to Shop → Messages, or a nudge on Today that names a message
+  s1 see: The Messages & offers page
+  s1 not: A 'page not found'
+  s1 not: The Shop orders page for an owner
+  s2 see: The Messages page with that ready message already picked and its starting group chosen
+  s2 not: A message sent by the nudge itself
+  s2 not: Another message picked
+J-F-panel-808-06 | type 3 | owner | Messages page, an offer already sent today
+  s1 see: A warning line saying an offer or event already went today and members get at most one a day; 'Send in the app' is off
+  s1 not: A second offer sent the same day
+  s1 not: The WhatsApp way closed too
+  s2 see: 'Write a title.' and the send button off
+  s2 not: An empty message sent
+  s3 see: A red line: 'You already sent an offer or event today. Members get at most one a day. Send it tomorrow.' or 'You sent 3 offers or events this week. Members get at most 3 a week. Wait a few days.' or 'You sent 10 messages today. That is the most for one day. Send it tomorrow.'
+  s3 not: 'Sent to …' shown for a refused message
+  s3 not: A raw error code on the screen
+  s4 see: A red line ending 'Check the Sent list below before sending it again.' and the Sent list re-read
+  s4 not: The same message sent twice by trying again blind
+J-F-panel-808-07 | type 6 | owner | Sent in the app list with one message sent now and one timed for later
+  s1 see: How many members have seen it, and a 'Take back' button
+  s1 not: A seen count higher than the number it went to
+  s2 see: The card fades and shows 'Taken back'; no button is left on it
+  s2 not: The message taken back without the question
+  s2 not: The message still in members' inboxes
+  s2 not: A way offered to send it again that sends a copy without a word
+  s3 see: The card shows 'Cancelled'
+  s3 not: The cancelled message going out at its time
+  s4 see: The 'Sent in the app' mark turns back into the 'Send in the app' button
+  s4 not: The same unchanged words offered for sending again on this open page
+J-F-panel-808-08 | type 12 | owner | Messages page, signed in as owner
+  s1 see: Exactly who gets it: the count of this group's app members, or 'Goes to all <n> members in the app, not only this group. Send now?' on a server without groups
+  s1 not: A message meant for one group reaching every member without that warning
+  s1 not: Members of another gym counted
+  s2 see: Each message with how many members have seen it
+  s2 not: Other gyms' messages
+  s2 not: A member's private data inside a broadcast message
+  s3 see: Members get at most one offer or event a day and three a week
+  s3 not: A member's phone getting more offers than the limit says
+J-F-panel-808-09 | type 1 | staff | Menu, staff login
+  s1 see: The page is titled 'Workout offer' ('Rewards for members who train') with only the tabs 'Workout offer' and 'Reminders'
+  s1 not: A 'Messages' tab
+  s1 not: The 'Pick a message' card
+  s1 not: The 'Sent in the app' list
+J-F-panel-808-10 | type 3 | staff | An old link to Shop → Messages, staff login
+  s1 see: The Shop page with the orders list
+  s1 not: The message composer
+  s1 not: A blank page or a loop between two pages
+  s2 see: Still the 'Workout offer' page
+  s2 not: A way for staff to send a message to members
+J-F-panel-808-11 | type 6 | staff | Messages address, staff login, before and after the owner sends a message
+  s1 see: The same 'Workout offer' page as before
+  s1 not: The owner's sent message, its seen count or a 'Take back' button shown to staff
+J-F-panel-808-12 | type 12 | staff | Any page, staff login
+  s1 see: None in the panel for staff
+  s1 not: Staff able to send, read the Sent list or take a message back
+  s1 not: A staff sign-in sending a message by a direct call that the server accepts
+J-F-panel-801-01 | type 1 | owner | Menu, 'Shop', gym with the member app on
+  s1 see: Line '<n> products · <m> shown in the app' and the button '+ Add product'; one card per product
+  s1 not: 'Loading your products…' that never ends
+  s1 not: Products of another gym
+  s2 see: Sheet 'Add product' with Name, Category, Price, 'Description (optional)', 'Picture if there’s no photo', Colour, 'Shown in the app', Choices and Stock; buttons 'Cancel' and 'Add product'
+  s2 not: Values of the product edited before left in the boxes
+  s3 see: The button reads 'Saving…', the sheet closes, note '<name> added to the shop.'; the new card is in the list
+  s3 not: Two products from two taps
+  s3 not: The price saved 100 times too big or too small
+  s3 not: The product missing after a refresh
+J-F-panel-801-02 | type 2 | owner | Products list (another kind: change a product)
+  s1 see: Sheet 'Edit product' with the saved values; buttons 'Delete', 'Cancel', 'Save changes'
+  s1 not: Stock shown as it was before members' latest orders
+  s2 see: Note '<name> saved.' and the new price on the card
+  s2 not: Stock set back to an old number by saving the price
+  s2 not: Old orders changing their price
+J-F-panel-801-03 | type 2 | owner | Add or edit sheet (another kind: a product with choices)
+  s1 see: 'Comes in flavours or sizes, each with its own stock' in place of 'One kind, one stock number'; 'What is the choice?' and rows with a name, Stock, 'Own price (optional)' and 'Colour (optional)'
+  s1 not: The single stock number kept as well as the choices' stock
+  s2 see: The card shows the number of choices and the total stock
+  s2 not: A choice saved without stock
+  s2 not: The total not equal to the sum of the choices
+J-F-panel-801-04 | type 2 | owner | Products list (other ways: the quick buttons on a card)
+  s1 see: Note 'Added 10 to <name>. <n> in stock now.' (with the choice named when the product has choices)
+  s1 not: Stock set to a fixed number that undoes a member's order made a moment ago
+  s1 not: 20 added by a fast double tap
+  s2 see: Notes '<name> is hidden from the app.' then '<name> is shown in the app again.'; the count 'shown in the app' follows
+  s2 not: A hidden product still for sale in the member app
+  s2 not: Hiding changing price, stock or old orders
+  s3 see: 'Uploading…' then note 'Photo added to <name>. Members see it in the app now.'
+  s3 not: The photo on another product
+  s3 not: A failed upload that still says the photo was added
+J-F-panel-801-05 | type 3 | owner | Add product sheet
+  s1 see: 'Please fix the boxes marked in red.' and under the name 'Give the product a name.'
+  s1 not: A product with no name saved
+  s1 not: The sheet closing
+  s2 see: A message under the box: stock 'Stock must be a whole number from 0 to 1,00,000.'; a refused price says 'Something in this form isn’t allowed. Check the price (₹1 to ₹1,00,000) and stock.'
+  s2 not: A free or negative-price product in the member app
+  s2 not: The typed values wiped
+  s3 see: 'Two choices have the same name.'
+  s3 not: Two choices members cannot tell apart
+  s4 see: 'This product changed while you were editing. Someone may have ordered it. We loaded the new details. Check them and save again.' with the new stock in the form and a photo just uploaded kept
+  s4 not: The older stock saved over the member's order
+  s4 not: 'This product was deleted while you were editing it.' missing when it was deleted
+J-F-panel-801-06 | type 6 | owner | Products list, one product shown in the app
+  s1 see: The card and the count change each time; nothing else on the product changes
+  s1 not: Stock or price changed by hiding
+  s2 see: Sheet 'Delete <name>?' with 'It goes from the app at once. Old orders for it stay as they are. If you may sell it again, use Hide from app instead.' and the button 'Delete product'
+  s2 not: The product deleted by the first tap
+  s3 see: 'Deleting…' then note '<name> deleted.'; the card is gone; there is no undo
+  s3 not: Old orders losing the item's name or price
+  s3 not: The product still for sale in the member app
+  s3 not: An open order for it that can no longer be handed over
+J-F-panel-801-07 | type 12 | owner | Products list, signed in as owner
+  s1 see: Shown products, their prices, photos and stock are seen by every member who joined the gym in the app; hidden ones by the gym only
+  s1 not: A hidden product or its photo reachable by members
+  s1 not: Another gym's products in this list
+  s2 see: No Products tab
+  s2 not: Staff changing a price or stock
+J-F-panel-801-08 | type 1 | staff | Menu, 'Shop', staff login
+  s1 see: Title 'Shop', line 'What members order in the MettleUp app', the orders list and no tabs
+  s1 not: A 'Products' tab
+  s1 not: '+ Add product'
+  s1 not: Any price or stock box
+J-F-panel-801-09 | type 3 | staff | The products address typed by hand, staff login
+  s1 see: The orders list, as if /shop was opened
+  s1 not: The products list
+  s1 not: A blank page
+  s2 see: The server refuses with an owner-only answer
+  s2 not: A product, price or stock changed by staff
+J-F-panel-801-10 | type 6 | staff | Shop page, staff login, before and after the owner hides a product
+  s1 see: The same orders list; old orders keep the item's name and price
+  s1 not: A Products tab appearing for staff
+  s1 not: An old order losing its line
+J-F-panel-801-11 | type 12 | staff | Shop page, staff login
+  s1 see: Only the item names, amounts and prices on each order
+  s1 not: Stock numbers, hidden products or a way to change a price
+J-F-panel-800-01 | type 1 | owner | Menu, 'Shop', a new order placed by a member in the app
+  s1 see: Title 'Shop', 'What members order in the MettleUp app, and what you sell', tabs 'Orders' / 'Products'
+  s1 see: Chips 'New', 'Ready', 'Collected', 'Cancelled', 'All' with counts; under 'New' a card 'Order <no>', the member's name, '<time ago> · <clock time>', each item with its amount, 'Total' and the mark 'New'
+  s1 see: Buttons 'Mark ready', 'Collected (paid)' and 'Cancel order'
+  s1 not: Orders of another gym
+  s1 not: A total that is not the sum of the lines
+  s1 not: 'Loading orders…' that never ends
+  s2 see: The button reads 'Saving…'; note 'Order <no> is ready. <member> can see this in the app.'; the card moves to 'Ready' and the counts change
+  s2 not: The order in both New and Ready
+  s2 not: The member not told the order is ready
+  s2 not: Stock taken a second time
+  s3 see: Note 'Order <no> collected. <amount> taken.'; the card moves to 'Collected' and has no buttons
+  s3 not: An online payment link for this order still open after the desk took the money
+  s3 not: The amount in the note different from the order total
+J-F-panel-800-02 | type 2 | owner | Today page with a new order (other ways in)
+  s1 see: The Shop page on the orders list with 'New' chosen
+  s1 not: A number on Today or in the menu that differs from the 'New' count
+  s1 not: The Products tab opened instead
+  s2 see: The new card appears by itself on the next refresh (every 60 seconds)
+  s2 not: The order never showing until a reload
+J-F-panel-800-03 | type 2 | owner | Orders list, a new order the member collects at once (another kind: skip 'ready')
+  s1 see: Note 'Order <no> collected. <amount> taken.'; the card moves straight to 'Collected'
+  s1 not: A question that needs 'Mark ready' first
+  s1 not: The order left under 'New'
+J-F-panel-800-04 | type 3 | owner | Orders list, things that must be refused
+  s1 see: A red line on the card saying the member has just paid online, so no money is to be taken; the order stays open
+  s1 not: The desk told to take money that was already paid online
+  s1 not: The order marked collected twice
+  s2 see: A red line 'Someone already changed that order. We updated the list.' and the fresh list
+  s2 not: A cancelled order turned back into ready
+  s2 not: The old state painted over the new one
+  s3 see: Owner: the card with 'Turn on the shop'. Staff: 'The member app and shop are not turned on yet. Only an owner can turn them on.'
+  s3 not: An empty orders list that reads as 'no orders'
+  s4 see: A red line 'Can’t reach the internet. Check the connection and try again.'; the order stays as it was
+  s4 not: A 'ready' note for a change that was not saved
+J-F-panel-800-05 | type 6 | owner | Orders list, one order under 'Ready'
+  s1 see: Note 'Order <no> is back to new.'; the card is under 'New' again with 'Mark ready', 'Collected (paid)', 'Cancel order'
+  s1 not: The member still shown 'Ready' in the app
+  s2 see: Sheet 'Cancel order <no>?': '<member>’s order for <amount> will be cancelled. The items go back into stock, and <member> sees “Cancelled” in the app. This cannot be undone.' with 'Keep it' and 'Cancel order'
+  s2 not: The order cancelled by the first tap
+  s3 see: Nothing changes on 'Keep it'; then 'Cancelling…', note 'Order <no> cancelled. Stock is back.'; the card is under 'Cancelled' with no buttons
+  s3 not: Stock not given back, or given back twice
+  s3 not: A cancelled or collected order that can be changed again
+  s3 not: A paid online link left open for a cancelled order
+  s4 see: The mark 'Cancelled by member'
+  s4 not: It shown as cancelled by the gym
+J-F-panel-800-06 | type 12 | owner | Orders list, signed in as owner
+  s1 see: The member's name, what they ordered, the amounts and the total of that one order
+  s1 not: The member's mobile number, health data or other orders' totals added up
+  s1 not: Orders of another gym
+  s2 see: The member sees 'Ready' and 'Cancelled' for their own order in the app
+  s2 not: One member seeing another member's order
+  s2 not: A day's or month's shop total shown to staff
+J-F-panel-800-07 | type 1 | staff | Menu, 'Shop', a new order placed by a member in the app
+  s1 see: Title 'Shop', 'What members order in the MettleUp app' and no tabs
+  s1 see: Chips 'New', 'Ready', 'Collected', 'Cancelled', 'All' with counts; under 'New' a card 'Order <no>', the member's name, '<time ago> · <clock time>', each item with its amount, 'Total' and the mark 'New'
+  s1 see: Buttons 'Mark ready', 'Collected (paid)' and 'Cancel order'
+  s1 not: Orders of another gym
+  s1 not: A total that is not the sum of the lines
+  s1 not: 'Loading orders…' that never ends
+  s2 see: The button reads 'Saving…'; note 'Order <no> is ready. <member> can see this in the app.'; the card moves to 'Ready' and the counts change
+  s2 not: The order in both New and Ready
+  s2 not: The member not told the order is ready
+  s2 not: Stock taken a second time
+  s3 see: Note 'Order <no> collected. <amount> taken.'; the card moves to 'Collected' and has no buttons
+  s3 not: An online payment link for this order still open after the desk took the money
+  s3 not: The amount in the note different from the order total
+J-F-panel-800-08 | type 2 | staff | Today page with a new order (other ways in)
+  s1 see: The Shop page on the orders list with 'New' chosen
+  s1 not: A number on Today or in the menu that differs from the 'New' count
+  s1 not: The Products tab opened instead
+  s2 see: The new card appears by itself on the next refresh (every 60 seconds)
+  s2 not: The order never showing until a reload
+J-F-panel-800-09 | type 2 | staff | Orders list, a new order the member collects at once (another kind: skip 'ready')
+  s1 see: Note 'Order <no> collected. <amount> taken.'; the card moves straight to 'Collected'
+  s1 not: A question that needs 'Mark ready' first
+  s1 not: The order left under 'New'
+J-F-panel-800-10 | type 3 | staff | Orders list, things that must be refused
+  s1 see: A red line on the card saying the member has just paid online, so no money is to be taken; the order stays open
+  s1 not: The desk told to take money that was already paid online
+  s1 not: The order marked collected twice
+  s2 see: A red line 'Someone already changed that order. We updated the list.' and the fresh list
+  s2 not: A cancelled order turned back into ready
+  s2 not: The old state painted over the new one
+  s3 see: Owner: the card with 'Turn on the shop'. Staff: 'The member app and shop are not turned on yet. Only an owner can turn them on.'
+  s3 not: An empty orders list that reads as 'no orders'
+  s4 see: A red line 'Can’t reach the internet. Check the connection and try again.'; the order stays as it was
+  s4 not: A 'ready' note for a change that was not saved
+J-F-panel-800-11 | type 6 | staff | Orders list, one order under 'Ready'
+  s1 see: Note 'Order <no> is back to new.'; the card is under 'New' again with 'Mark ready', 'Collected (paid)', 'Cancel order'
+  s1 not: The member still shown 'Ready' in the app
+  s2 see: Sheet 'Cancel order <no>?': '<member>’s order for <amount> will be cancelled. The items go back into stock, and <member> sees “Cancelled” in the app. This cannot be undone.' with 'Keep it' and 'Cancel order'
+  s2 not: The order cancelled by the first tap
+  s3 see: Nothing changes on 'Keep it'; then 'Cancelling…', note 'Order <no> cancelled. Stock is back.'; the card is under 'Cancelled' with no buttons
+  s3 not: Stock not given back, or given back twice
+  s3 not: A cancelled or collected order that can be changed again
+  s3 not: A paid online link left open for a cancelled order
+  s4 see: The mark 'Cancelled by member'
+  s4 not: It shown as cancelled by the gym
+J-F-panel-800-12 | type 12 | staff | Orders list, signed in as staff
+  s1 see: The member's name, what they ordered, the amounts and the total of that one order
+  s1 not: The member's mobile number, health data or other orders' totals added up
+  s1 not: Orders of another gym
+  s2 see: The member sees 'Ready' and 'Cancelled' for their own order in the app; staff may hand over orders but see no money totals for the shop
+  s2 not: One member seeing another member's order
+  s2 not: A day's or month's shop total shown to staff

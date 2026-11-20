@@ -1,0 +1,13 @@
+# L7-panel-brand-shell: 7 x panel / panel/brand-shell. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L7.1 | 7 | Panel load on a slow Indian 4G phone (Core Web Vitals)
+L7.2 | 7 | biggest pages and lists with 500+ members
+L7.3 | 7 | phone app start time, workout screen with long history
+L7.4 | 7 | watch battery and screen-on time
+L7.5 | 7 | database queries without indexes
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1105 | live | Branding: gym logo and colours for the member app, logo upload, remove logo background, phone and shortcut preview | apps/dashboard/src/crm/brand/BrandingScreen.tsx:41
+F-panel-3101 | live | Branding: suggest a gym colour from the uploaded logo | apps/dashboard/src/crm/brand/brandLogic.ts:141
+## MACHINE FILES (docs/system-map/_sources/machine/)
+db-perf.json: MISSING (items that need it = could-not-check)
+pagespeed.json: MISSING (items that need it = could-not-check)

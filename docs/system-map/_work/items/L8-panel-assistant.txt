@@ -1,0 +1,26 @@
+# L8-panel-assistant: 8 x panel / panel/assistant. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L8.1 | 8 | Every paid or capped thing: Supabase free-plan limits (DB size, egress, log retention), Cloudflare limits, GitHub storage, AI spend per gym and per call with no cap, WhatsApp template cost
+L8.2 | 8 | what happens at each limit
+L8.3 | 8 | a usage alarm before each one
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-900 | behind switch | Open the AI Assistant (floating button, side panel on a computer, full screen on a phone, menu entry) | apps/dashboard/src/crm/assistant/ui/AssistantFab.tsx:87
+F-panel-901 | behind switch | Ask a question about the gym and get an answer card (member lists, who owes, money, attendance, growth, one member, week | apps/dashboard/src/crm/assistant/answer.ts:744
+F-panel-902 | behind switch | Send a message to members by asking: editable draft, rewrite, Hindi or both, pick the day, send now or later, in-app plu | apps/dashboard/src/crm/assistant/plan.ts:499
+F-panel-903 | behind switch | Save a change by asking: add a member, renew a plan, record a payment, extend a plan, save an enquiry, save an expense;  | apps/dashboard/src/crm/assistant/plan.ts:304
+F-panel-904 | behind switch | AI writes a workout plan for a member (goal, level, days a week); writing is free, saving it from the Workout plans buil | apps/dashboard/src/crm/assistant/planWriter.ts:85
+F-panel-905 | behind switch | Diet plan request: the assistant says it cannot write diet plans yet and opens Diet plans (no price) | apps/dashboard/src/crm/assistant/ui/Cards.tsx:121
+F-panel-906 | behind switch | Speak a request instead of typing (up to 30 seconds; read and fix what was heard, then send) | apps/dashboard/src/crm/assistant/ui/VoiceSheet.tsx:25
+F-panel-907 | behind switch | AI credits sheet: balance, what uses credits, Ask MettleUp for credits (opens Help and feedback), recently used | apps/dashboard/src/crm/assistant/ui/CreditsSheet.tsx:120
+F-panel-908 | behind switch | AI answers for members: the owner's on/off switch and monthly limit in credits, with what members used this month | apps/dashboard/src/crm/assistant/ui/CreditsSheet.tsx:237
+F-panel-909 | behind switch | AI questions this month: who asked (you, staff, members, gym page visitors) and what questions cost | apps/dashboard/src/crm/assistant/ui/CreditsSheet.tsx:185
+F-panel-910 | behind switch | Daily question allowance: N questions left today from 5 down, and the ask box locks with a calm line when used up | apps/dashboard/src/crm/assistant/allowance.ts:54
+F-panel-911 | behind switch | Today for you ideas, at most four: birthdays, a festival coming, plans ending, dues, stopped coming, win back, week in n | apps/dashboard/src/crm/assistant/suggestions.ts:85
+F-panel-912 | behind switch | AI Assistant card on the Today screen: a box to ask in and today's ideas with See who | apps/dashboard/src/crm/assistant/ui/TodayAiCard.tsx:19
+F-panel-913 | behind switch | History of past AI tasks (what each did, status, credits) with ask again | apps/dashboard/src/crm/assistant/ui/AssistantHome.tsx:443
+F-panel-914 | behind switch | Try saying examples and the What the AI Assistant can do list; a tap puts the sentence in the box | apps/dashboard/src/crm/assistant/ui/AssistantHome.tsx:215
+F-panel-915 | behind switch | Helper cards: a question back with choices, Where to do it with steps and Open page, I can't do that, how-to goes to Hel | apps/dashboard/src/crm/assistant/ui/Cards.tsx:65
+F-panel-916 | behind switch | Find the member the owner named, including Hindi-script and loose spellings; pick one when several match, or offer to ad | apps/dashboard/src/crm/assistant/match.ts:29
+F-panel-917 | behind switch | Privacy: phone numbers and email addresses in the owner's sentence are swapped for placeholders before the AI sees them, | apps/dashboard/src/crm/assistant/mask.ts:23
+## MACHINE FILES (docs/system-map/_sources/machine/)
+limits.json: MISSING (items that need it = could-not-check)

@@ -1,0 +1,697 @@
+# A8-panel-logic-1-3: coverage of 61 Tier 1 journeys (8 features, from A5-panel-logic-1-3). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-624 | apps/dashboard/test/crm/exerciseCatalog.test.ts | unit | 84 lines | imports the code, file name
+F-panel-624 | apps/mobile/test/tracker/shareText.test.ts | unit | 447 lines | asserts 5 journey phrase(s)
+F-panel-624 | apps/dashboard/test/crm/workoutPlans.test.ts | unit | 598 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-624 | apps/dashboard/test/crm/assistant/planWriter.test.ts | unit | 218 lines | imports the code
+F-panel-624 | apps/dashboard/test/crm/gymWod.test.ts | unit | 144 lines | imports the code
+F-panel-624 | apps/dashboard/e2e/assistant-uat.spec.mjs | e2e | 822 lines | asserts 2 journey phrase(s)
+F-panel-624 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 2 journey phrase(s)
+F-panel-624 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 2 journey phrase(s)
+F-panel-624 | apps/mobile/test/tracker/f146Share.test.ts | unit | 204 lines | asserts 2 journey phrase(s)
+F-panel-624 | apps/mobile/test/tracker/phase4Exercises.test.ts | unit | 161 lines | asserts 2 journey phrase(s)
+F-panel-624 | apps/mobile/test/tracker/plans/quickWorkout.test.ts | unit | 143 lines | asserts 2 journey phrase(s)
+F-panel-624 | apps/mobile/test/tracker/workoutPause.test.ts | unit | 164 lines | asserts 2 journey phrase(s)
+F-panel-625 | apps/dashboard/test/crm/expenses.test.ts | unit | 128 lines | imports the code, file name
+F-panel-625 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | asserts 3 journey phrase(s)
+F-panel-625 | apps/dashboard/test/crm/auditC7.test.ts | unit | 333 lines | imports the code
+F-panel-625 | supabase/tests/0043_member_photos.sql | db | 135 lines | asserts 3 journey phrase(s)
+F-panel-625 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 2 journey phrase(s)
+F-panel-625 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-panel-625 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 2 journey phrase(s)
+F-panel-625 | apps/dashboard/e2e/r495-uat.spec.mjs | e2e | 303 lines | asserts 2 journey phrase(s)
+F-panel-625 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 2 journey phrase(s)
+F-panel-625 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 2 journey phrase(s)
+F-panel-625 | apps/mobile/qa/uat-r.yaml | maestro | 368 lines | asserts 2 journey phrase(s)
+F-panel-625 | apps/mobile/qa/uat-rel-r344-c-states.yaml | maestro | 160 lines | asserts 2 journey phrase(s)
+F-panel-626 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-panel-626 | apps/dashboard/test/crm/feedback.test.ts | unit | 91 lines | imports the code, file name
+F-panel-626 | apps/mobile/test/lib/helpHistory.test.ts | unit | 207 lines | file name, asserts 3 journey phrase(s)
+F-panel-626 | apps/dashboard/e2e/feedback.spec.mjs | e2e | 34 lines | file name, asserts 1 journey phrase(s)
+F-panel-626 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | imports the code
+F-panel-626 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-panel-626 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 2 journey phrase(s)
+F-panel-626 | apps/dashboard/e2e/whatsapp-verify-uat.spec.mjs | e2e | 324 lines | asserts 2 journey phrase(s)
+F-panel-626 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 2 journey phrase(s)
+F-panel-626 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 2 journey phrase(s)
+F-panel-626 | apps/mobile/test/lib/feedback.test.ts | unit | 59 lines | file name
+F-panel-626 | apps/mobile/test/lib/feedbackButton.test.ts | unit | 120 lines | file name
+F-panel-627 | apps/dashboard/test/crm/freshness.test.ts | unit | 56 lines | imports the code, file name, asserts 4 journey phrase(s)
+F-panel-627 | apps/dashboard/test/crm/bellGroups.test.ts | unit | 190 lines | imports the code
+F-panel-627 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 2 journey phrase(s)
+F-panel-627 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-panel-627 | apps/dashboard/e2e/friend-live-uat.spec.mjs | e2e | 262 lines | asserts 1 journey phrase(s)
+F-panel-627 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-panel-627 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 1 journey phrase(s)
+F-panel-627 | apps/dashboard/test/crm/gymPageEditor.test.ts | unit | 226 lines | asserts 1 journey phrase(s)
+F-panel-627 | apps/dashboard/test/crm/refreshKeepsPlace.test.ts | unit | 30 lines | asserts 1 journey phrase(s)
+F-panel-627 | apps/dashboard/test/crm/shop.test.ts | unit | 391 lines | asserts 1 journey phrase(s)
+F-panel-627 | apps/mobile/test/shop/gym.test.ts | unit | 480 lines | asserts 1 journey phrase(s)
+F-panel-627 | apps/mobile/test/shop/inbox.test.ts | unit | 109 lines | asserts 1 journey phrase(s)
+F-panel-628 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | file name, asserts 10 journey phrase(s)
+F-panel-628 | apps/dashboard/test/crm/getStarted.test.ts | unit | 99 lines | imports the code, file name, asserts 3 journey phrase(s)
+F-panel-628 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 7 journey phrase(s)
+F-panel-628 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 6 journey phrase(s)
+F-panel-628 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 5 journey phrase(s)
+F-panel-628 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-panel-628 | apps/dashboard/test/crm/ownerOnboarding.test.ts | unit | 115 lines | imports the code, asserts 2 journey phrase(s)
+F-panel-628 | apps/mobile/qa/sub-uat-f194-choose.yaml | maestro | 31 lines | asserts 4 journey phrase(s)
+F-panel-628 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 4 journey phrase(s)
+F-panel-628 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-panel-628 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 3 journey phrase(s)
+F-panel-628 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 3 journey phrase(s)
+F-panel-629 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-panel-629 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 3 journey phrase(s)
+F-panel-629 | apps/dashboard/test/crm/auditC7.test.ts | unit | 333 lines | imports the code
+F-panel-629 | apps/dashboard/test/crm/gst.test.ts | unit | 153 lines | imports the code
+F-panel-629 | apps/dashboard/test/crm/receiptDoc.test.ts | unit | 324 lines | imports the code
+F-panel-629 | apps/dashboard/test/crm/uatMoney.test.ts | unit | 592 lines | imports the code
+F-panel-629 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 2 journey phrase(s)
+F-panel-629 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 2 journey phrase(s)
+F-panel-629 | apps/dashboard/e2e/demo.spec.mjs | e2e | 142 lines | asserts 2 journey phrase(s)
+F-panel-629 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-panel-629 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 2 journey phrase(s)
+F-panel-629 | apps/dashboard/e2e/entry-uat.spec.mjs | e2e | 187 lines | asserts 2 journey phrase(s)
+F-panel-630 | apps/dashboard/test/crm/gymExport.test.ts | unit | 48 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-panel-630 | apps/dashboard/test/crm/launchFixes.test.ts | unit | 197 lines | imports the code, asserts 2 journey phrase(s)
+F-panel-630 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 4 journey phrase(s)
+F-panel-630 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | imports the code
+F-panel-630 | apps/dashboard/e2e/gymdata.spec.mjs | e2e | 52 lines | asserts 2 journey phrase(s)
+F-panel-630 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-panel-630 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 2 journey phrase(s)
+F-panel-630 | apps/mobile/test/shop/gym.test.ts | unit | 480 lines | asserts 2 journey phrase(s)
+F-panel-630 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-630 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 2 journey phrase(s)
+F-panel-630 | supabase/tests/0068_member_find_gym.sql | db | 159 lines | asserts 2 journey phrase(s)
+F-panel-630 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-panel-631 | apps/dashboard/test/crm/gymReports.test.ts | unit | 140 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-panel-631 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-panel-631 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 5 journey phrase(s)
+F-panel-631 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-panel-631 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | asserts 3 journey phrase(s)
+F-panel-631 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-panel-631 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | asserts 2 journey phrase(s)
+F-panel-631 | apps/mobile/test/cloud/backupWords.test.ts | unit | 88 lines | asserts 2 journey phrase(s)
+F-panel-631 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-631 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-panel-631 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-panel-631 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-624-01 | type 1 | owner | Menu, Training, Workout plans, signed in as the owner
+  s1 see: Sheet titled 'New workout plan' with 'Plan name' and 'Days of the plan'
+  s1 see: Hint 'No exercises on this day yet. Search below to add one.'
+  s1 see: Search box under 'Add an exercise' with the grey words 'Search: bench, squat, dole, chhati…'
+  s1 not: A day that already holds exercises nobody picked
+  s2 see: Up to 8 rows, each starting '+ ' and the exercise name, then its muscles in words such as 'Chest'
+  s2 not: An empty list for a common gym lift
+  s2 not: More than 8 rows pushing the rest of the sheet away
+  s2 not: Raw muscle keys such as 'front_delts' in place of words
+  s3 see: The exercise joins the day with Sets 3, Reps from 8 and Reps to 12
+  s3 see: The search box is empty again
+  s3 not: The exercise added twice
+  s3 not: The old search words left in the box
+  s4 see: Biceps exercises are listed, the best match first
+  s4 not: No match for a word the search box itself suggests
+  s5 see: The plan is in the Workout plans list
+  s5 not: The member's phone making a new exercise for one that is in its own library
+  s5 not: A hold exercise sent as weight and reps
+J-F-panel-624-02 | type 2 | owner | New workout plan sheet, search box under 'Add an exercise' (an exercise typed by hand)
+  s1 see: A row in the accent colour: '+ Add “Sandbag carry” as your own exercise'
+  s1 not: The row offered when the typed name is exactly a list exercise's name
+  s2 see: The exercise joins the day with Sets 3, Reps 8 to 12 and a 'Main muscle' picker that says 'Pick one'
+  s2 not: A muscle chosen for the trainer without asking
+  s2 not: The exercise saved under a list exercise's key
+  s3 see: Muscles in plain words: Chest, Lats, Upper back, Inner thighs, Outer thighs, Calves, Cardio and the rest
+  s3 not: A raw key such as 'adductors' in the picker
+J-F-panel-624-03 | type 3 | owner | New workout plan sheet, search box under 'Add an exercise'
+  s1 see: No rows and no 'Add as your own exercise' row
+  s1 not: An exercise with an empty name added
+  s2 see: No list rows; only '+ Add “zzzzqq” as your own exercise'
+  s2 not: An error, or list rows that do not hold the typed letters
+  s3 see: The row shows the first 80 letters; the exercise is added with a shortened name
+  s3 not: The name cut with no word to the trainer
+  s3 not: The sheet stretched sideways by the long name
+  s4 see: A second Bench Press on the day, or a word that it is already there
+  s4 not: The first Bench Press's sets and reps changed
+J-F-panel-624-04 | type 6 | owner | Workout plans, one saved plan holding a list exercise and a hand-typed one
+  s1 see: Each exercise shows its muscles in words and, where it applies, how it is logged ('Body weight', 'Held for time', 'Machine takes weight off')
+  s1 not: A saved exercise shown with empty muscles because its key is no longer found
+  s1 not: The hand-typed exercise turned into a list exercise
+  s2 see: The exercise is back with the starting numbers 3 sets of 8 to 12
+  s2 not: The removed exercise's old note or video coming back
+  s2 not: Two copies
+  s3 see: The same exercises in the same order
+  s3 not: A changed log type after saving
+J-F-panel-624-05 | type 1 | trainer | Menu, Training, Workout plans, signed in as a trainer signed in as staff
+  s1 see: Sheet titled 'New workout plan' with 'Plan name' and 'Days of the plan'
+  s1 see: Hint 'No exercises on this day yet. Search below to add one.'
+  s1 see: Search box under 'Add an exercise' with the grey words 'Search: bench, squat, dole, chhati…'
+  s1 not: A day that already holds exercises nobody picked
+  s2 see: Up to 8 rows, each starting '+ ' and the exercise name, then its muscles in words such as 'Chest'
+  s2 not: An empty list for a common gym lift
+  s2 not: More than 8 rows pushing the rest of the sheet away
+  s2 not: Raw muscle keys such as 'front_delts' in place of words
+  s3 see: The exercise joins the day with Sets 3, Reps from 8 and Reps to 12
+  s3 see: The search box is empty again
+  s3 not: The exercise added twice
+  s3 not: The old search words left in the box
+  s4 see: Biceps exercises are listed, the best match first
+  s4 not: No match for a word the search box itself suggests
+  s5 see: The plan is in the Workout plans list
+  s5 not: The member's phone making a new exercise for one that is in its own library
+  s5 not: A hold exercise sent as weight and reps
+J-F-panel-624-06 | type 2 | trainer | New workout plan sheet, search box under 'Add an exercise' (an exercise typed by hand)
+  s1 see: A row in the accent colour: '+ Add “Sandbag carry” as your own exercise'
+  s1 not: The row offered when the typed name is exactly a list exercise's name
+  s2 see: The exercise joins the day with Sets 3, Reps 8 to 12 and a 'Main muscle' picker that says 'Pick one'
+  s2 not: A muscle chosen for the trainer without asking
+  s2 not: The exercise saved under a list exercise's key
+  s3 see: Muscles in plain words: Chest, Lats, Upper back, Inner thighs, Outer thighs, Calves, Cardio and the rest
+  s3 not: A raw key such as 'adductors' in the picker
+J-F-panel-624-07 | type 3 | trainer | New workout plan sheet, search box under 'Add an exercise'
+  s1 see: No rows and no 'Add as your own exercise' row
+  s1 not: An exercise with an empty name added
+  s2 see: No list rows; only '+ Add “zzzzqq” as your own exercise'
+  s2 not: An error, or list rows that do not hold the typed letters
+  s3 see: The row shows the first 80 letters; the exercise is added with a shortened name
+  s3 not: The name cut with no word to the trainer
+  s3 not: The sheet stretched sideways by the long name
+  s4 see: A second Bench Press on the day, or a word that it is already there
+  s4 not: The first Bench Press's sets and reps changed
+J-F-panel-624-08 | type 6 | trainer | Workout plans, one saved plan holding a list exercise and a hand-typed one
+  s1 see: Each exercise shows its muscles in words and, where it applies, how it is logged ('Body weight', 'Held for time', 'Machine takes weight off')
+  s1 not: A saved exercise shown with empty muscles because its key is no longer found
+  s1 not: The hand-typed exercise turned into a list exercise
+  s2 see: The exercise is back with the starting numbers 3 sets of 8 to 12
+  s2 not: The removed exercise's old note or video coming back
+  s2 not: Two copies
+  s3 see: The same exercises in the same order
+  s3 not: A changed log type after saving
+J-F-panel-624-09 | type 12 | owner | New workout plan sheet in gym A, with a hand-typed exercise saved in a plan
+  s1 see: Only the members who get the plan see the hand-typed exercise in their app
+  s1 not: The hand-typed name offered in another gym's search
+  s1 not: A member who was not sent the plan seeing it
+  s2 see: The same shared list as every gym; the hand-typed exercise is not a list row
+  s2 not: Member names or any personal data in the exercise list
+J-F-panel-625-01 | type 1 | owner | Menu, Money, Expenses, a gym with receipts this month
+  s1 see: Title 'Expenses' and 'What went out, and what the gym kept'
+  s1 see: This month's name with 'This month' under it
+  s1 see: Three tiles: 'Collected', 'Expenses', 'Profit'
+  s1 not: A voided receipt counted in 'Collected'
+  s1 not: NaN or a blank in a tile
+  s2 see: Toast 'Expense added.'
+  s2 see: A row 'Rent' with the day and the amount
+  s2 see: 'By category' shows Rent with a bar
+  s2 not: Two rows from one save
+  s2 not: The expense landing in another month
+  s3 see: 'Expenses' went up by 12,000 and 'Profit' went down by the same
+  s3 see: When shop orders were handed over this month: 'Fees … + shop …' under Collected
+  s3 not: Profit not equal to Collected minus Expenses
+  s3 not: A different month total than the Money screen shows
+  s4 see: Last month's name and a link 'Back to this month'
+  s4 see: Last month's rows and totals
+  s4 not: This month's expense shown in last month
+  s4 not: The '›' arrow going past this month
+J-F-panel-625-02 | type 2 | owner | Today, the quick action 'Add expense'
+  s1 see: The Expenses screen opens
+  s1 not: Another screen, or a blank page
+  s2 see: Toast 'Expense added.' and the new row
+  s2 not: The expense missing after going back to Today
+J-F-panel-625-03 | type 2 | owner | AI Assistant, the owner asks it to add an expense
+  s1 see: The words 'Expense saved.' and a way to open Expenses
+  s1 not: An expense saved before the owner confirmed
+  s1 not: A second expense when the card is confirmed twice
+  s2 see: The expense is in the right month with the amount and category asked for
+  s2 not: A different amount or category than the card showed
+J-F-panel-625-04 | type 3 | owner | Expenses, the add sheet open
+  s1 see: 'Type how much was spent.'
+  s1 not: An expense of zero saved
+  s2 see: 'That amount looks wrong. Type it again.'
+  s2 not: The sheet closing
+  s3 see: 'Type an amount more than zero.'
+  s3 not: A zero row in the list
+  s4 see: 'The expense date can’t be in the future.'
+  s4 not: An expense dated in the future counted in this month
+  s5 see: No Expenses row in the menu; the address /expenses does not open the screen
+  s5 not: Staff seeing expenses or profit
+  s5 not: A greyed-out Expenses row
+J-F-panel-625-05 | type 6 | owner | Expenses, one expense saved this month
+  s1 see: Sheet 'Remove this expense?' with the amount, the category, the day and '… will be removed for good. You can’t get it back. You would have to add it again.'
+  s1 see: Buttons 'Keep it' and 'Remove'
+  s1 not: The expense removed before the owner confirms
+  s2 see: The row is still there
+  s2 not: A changed total
+  s3 see: Toast 'Expense removed.'
+  s3 see: Expenses and Profit go back to what they were
+  s3 see: With no rows left: 'No expenses this month' and 'Add rent, salaries, electricity and the rest to see what the gym really kept.'
+  s3 not: The removed expense still inside the month total
+  s3 not: It coming back after a refresh
+  s4 see: The screen moves to last month and shows the new row
+  s4 not: The screen staying on this month so the owner thinks nothing was saved
+J-F-panel-625-06 | type 12 | owner | A gym with an owner and one front-desk staff person, both signed in
+  s1 see: Staff see no Expenses page, no profit and no expense rows anywhere
+  s1 not: Expense amounts or profit on a staff screen
+  s1 not: A staff sign-in able to save or remove an expense
+  s2 see: The Expenses sheet lists every expense with date, amount, category and note
+  s2 not: Another gym's expenses in the file
+J-F-panel-626-01 | type 1 | owner | Menu, Your gym, Help and feedback, an online gym, signed in as the owner
+  s1 see: Title 'Help and feedback'
+  s1 see: 'Ask a question and get an answer at once. Or tell us what works, what is hard, or what you want next. Hindi or English. On a phone you can tap the microphone on your keyboard to speak.'
+  s1 see: A box 'Your message' and a 'Send' button that cannot be pressed while the box is empty
+  s1 see: 'Your questions' with 'Questions you send from this browser show here, with their answers.'
+  s1 not: The page in the demo gym's menu
+  s2 see: The button says 'Sending…' and the line 'Sending. The answer usually takes a few seconds.'
+  s2 see: The question shows at once under 'Your questions' with 'Waiting for the answer. It usually takes a few seconds.'
+  s2 not: Two messages sent by a second tap
+  s2 not: The typed text lost before the answer comes
+  s3 see: The answer in a box with 'Answer written by AI from our help pages.' and 'Did this solve it?' with 'Yes' and 'No'
+  s3 see: The message box is empty again
+  s3 see: The same answer under the question in 'Your questions'
+  s3 not: An answer about another gym's data
+  s3 not: The answer shown as if a person wrote it
+  s4 see: 'Great! Glad it helped.'
+  s4 see: 'You said this solved it.' under the question in 'Your questions'
+  s4 not: The Yes/No buttons still offered after the choice
+J-F-panel-626-02 | type 2 | owner | Help and feedback opened a day later in the same browser ('Your questions' history)
+  s1 see: Every question sent from this browser, newest first, each with its day, its answer and 'You said this solved it.' or 'You said this did not solve it. The MettleUp team will reply here.'
+  s1 not: Questions missing that were sent from this browser
+  s1 not: More than the kept number shown with no word
+  s2 see: A box 'Reply from the MettleUp team' with a 'New' mark and the reply
+  s2 not: The 'New' mark on a reply that was opened before
+  s2 not: A reply meant for another person's question
+  s3 see: The same reply without the 'New' mark
+  s3 not: The reply gone
+J-F-panel-626-03 | type 3 | owner | Help and feedback, message box
+  s1 see: The button cannot be pressed
+  s1 not: An empty message sent
+  s2 see: 'Couldn't send. Check your internet and try again. Your message is still here.'
+  s2 see: The typed text is still in the box
+  s2 not: 'Thanks! We read every message.' for a message that did not go
+  s2 not: The question left as 'Waiting for the answer' for ever under 'Your questions'
+  s3 see: The box holds the first 2,000 letters
+  s3 not: The rest dropped with no word that the message was cut
+  s4 see: An answer taken from the help pages
+  s4 see: A button 'Open AI Assistant'
+  s4 not: 'Did this solve it?' missing with no other way to say the answer did not help
+  s4 not: An error in place of an answer
+J-F-panel-626-04 | type 6 | owner | Help and feedback, an AI answer just shown
+  s1 see: 'Got it. We reply as soon as we can.'
+  s1 see: Under the question: 'You said this did not solve it. The MettleUp team will reply here.'
+  s1 not: The choice lost after a refresh
+  s1 not: A way to tap both Yes and No
+  s2 see: The old answer box goes away; the old question and answer stay under 'Your questions'
+  s2 not: The old answer shown under the new message
+  s3 see: 'Reply from the MettleUp team' with 'New', once
+  s3 not: No sign anywhere that a reply came while the page was closed
+  s4 see: There is none; the list stays in this browser
+  s4 not: A question removed from the list while its reply is still to come
+J-F-panel-626-05 | type 12 | owner | One desk computer used by the owner and by staff, both signing in to the same browser
+  s1 see: 'Your questions' shows only what this person sent
+  s1 not: The owner's questions, AI answers and MettleUp's replies shown to staff
+  s1 not: The owner's 'delete our gym' request (gym name, code and phone) listed for staff to read
+  s1 not: Another gym's questions after a different gym signs in on this browser
+  s2 see: Only the message, the app, the browser's name, the screen and this browser's random id go to MettleUp
+  s2 not: Member names or phone numbers added to the message by the app
+J-F-panel-626-06 | type 1 | staff | Menu, Your gym, Help and feedback, an online gym, signed in as front-desk staff
+  s1 see: Title 'Help and feedback'
+  s1 see: 'Ask a question and get an answer at once. Or tell us what works, what is hard, or what you want next. Hindi or English. On a phone you can tap the microphone on your keyboard to speak.'
+  s1 see: A box 'Your message' and a 'Send' button that cannot be pressed while the box is empty
+  s1 see: 'Your questions' with 'Questions you send from this browser show here, with their answers.'
+  s1 not: The page in the demo gym's menu
+  s2 see: The button says 'Sending…' and the line 'Sending. The answer usually takes a few seconds.'
+  s2 see: The question shows at once under 'Your questions' with 'Waiting for the answer. It usually takes a few seconds.'
+  s2 not: Two messages sent by a second tap
+  s2 not: The typed text lost before the answer comes
+  s3 see: The answer in a box with 'Answer written by AI from our help pages.' and 'Did this solve it?' with 'Yes' and 'No'
+  s3 see: The message box is empty again
+  s3 see: The same answer under the question in 'Your questions'
+  s3 not: An answer about another gym's data
+  s3 not: The answer shown as if a person wrote it
+  s4 see: 'Great! Glad it helped.'
+  s4 see: 'You said this solved it.' under the question in 'Your questions'
+  s4 not: The Yes/No buttons still offered after the choice
+J-F-panel-626-07 | type 2 | staff | Help and feedback opened a day later in the same browser ('Your questions' history)
+  s1 see: Every question sent from this browser, newest first, each with its day, its answer and 'You said this solved it.' or 'You said this did not solve it. The MettleUp team will reply here.'
+  s1 not: Questions missing that were sent from this browser
+  s1 not: More than the kept number shown with no word
+  s2 see: A box 'Reply from the MettleUp team' with a 'New' mark and the reply
+  s2 not: The 'New' mark on a reply that was opened before
+  s2 not: A reply meant for another person's question
+  s3 see: The same reply without the 'New' mark
+  s3 not: The reply gone
+J-F-panel-626-08 | type 3 | staff | Help and feedback, message box
+  s1 see: The button cannot be pressed
+  s1 not: An empty message sent
+  s2 see: 'Couldn't send. Check your internet and try again. Your message is still here.'
+  s2 see: The typed text is still in the box
+  s2 not: 'Thanks! We read every message.' for a message that did not go
+  s2 not: The question left as 'Waiting for the answer' for ever under 'Your questions'
+  s3 see: The box holds the first 2,000 letters
+  s3 not: The rest dropped with no word that the message was cut
+  s4 see: An answer taken from the help pages
+  s4 see: No 'Open AI Assistant' button
+  s4 not: A way for staff to buy or see the gym's AI credits
+  s4 not: An error in place of an answer
+J-F-panel-626-09 | type 6 | staff | Help and feedback, an AI answer just shown
+  s1 see: 'Got it. We reply as soon as we can.'
+  s1 see: Under the question: 'You said this did not solve it. The MettleUp team will reply here.'
+  s1 not: The choice lost after a refresh
+  s1 not: A way to tap both Yes and No
+  s2 see: The old answer box goes away; the old question and answer stay under 'Your questions'
+  s2 not: The old answer shown under the new message
+  s3 see: 'Reply from the MettleUp team' with 'New', once
+  s3 not: No sign anywhere that a reply came while the page was closed
+  s4 see: There is none; the list stays in this browser
+  s4 not: A question removed from the list while its reply is still to come
+J-F-panel-626-10 | type 12 | staff | One desk computer used by the owner and by staff, both signing in to the same browser
+  s1 see: 'Your questions' shows only what this person sent
+  s1 not: The owner's questions, AI answers and MettleUp's replies shown to staff
+  s1 not: The owner's 'delete our gym' request (gym name, code and phone) listed for staff to read
+  s1 not: Another gym's questions after a different gym signs in on this browser
+  s2 see: Only the message, the app, the browser's name, the screen and this browser's random id go to MettleUp
+  s2 not: Member names or phone numbers added to the message by the app
+J-F-panel-627-01 | type 1 | owner | Any page of an online gym's panel, signed in as the owner, top bar
+  s1 see: A 'Refresh' button with 'Updated just now'
+  s1 not: A time before any read has worked
+  s1 not: The line in the demo gym, which never reads a server
+  s2 see: 'Updated 20 s ago' (it moves in steps of 10 seconds, and resets when the next read lands)
+  s2 see: After a minute with no read: 'Updated 1 min ago'
+  s2 not: The whole page redrawing or scrolling each time the line changes
+  s2 not: A count that runs backwards
+  s3 see: The mark turns and the button reads 'Refreshing…'
+  s3 see: Then 'Updated just now' and the newest records on the page, at the same scroll place
+  s3 not: The page jumping to the top
+  s3 not: 'Updated just now' when a read failed
+J-F-panel-627-02 | type 2 | owner | The panel left open in a browser tab that was hidden for ten minutes
+  s1 see: The panel reads again at once and the line goes to 'Updated just now'
+  s1 not: Old records shown under 'Updated just now'
+  s1 not: Reads carrying on while the tab was hidden
+  s2 see: The refresh mark with a short age under it
+  s2 not: The age cut off or over the mark
+J-F-panel-627-03 | type 3 | owner | Top bar of the panel, internet switched off
+  s1 see: 'Could not refresh. Check the internet and try again.' and a red edge on the button (a '!' on the small phone button)
+  s1 not: 'Updated just now'
+  s1 not: The age reset to zero
+  s2 see: 'Updated over an hour ago'
+  s2 not: A fresh-looking time
+  s2 not: The button gone
+  s3 see: No Refresh button and no line
+  s3 not: 'Updated just now' for a gym that reads no server
+J-F-panel-627-04 | type 6 | owner | Top bar, a refresh that just failed
+  s1 see: 'Refreshing…', then 'Updated just now'; the red edge is gone
+  s1 not: The failed words staying after a good refresh
+  s2 see: One refresh; the second tap does nothing while it is busy
+  s2 not: Two reads at once
+  s2 not: A stuck 'Refreshing…'
+J-F-panel-627-05 | type 1 | staff | Any page of an online gym's panel, signed in as front-desk staff, top bar
+  s1 see: A 'Refresh' button with 'Updated just now'
+  s1 not: A time before any read has worked
+  s1 not: The line in the demo gym, which never reads a server
+  s2 see: 'Updated 20 s ago' (it moves in steps of 10 seconds, and resets when the next read lands)
+  s2 see: After a minute with no read: 'Updated 1 min ago'
+  s2 not: The whole page redrawing or scrolling each time the line changes
+  s2 not: A count that runs backwards
+  s3 see: The mark turns and the button reads 'Refreshing…'
+  s3 see: Then 'Updated just now' and the newest records on the page, at the same scroll place
+  s3 not: The page jumping to the top
+  s3 not: 'Updated just now' when a read failed
+J-F-panel-627-06 | type 2 | staff | The panel left open in a browser tab that was hidden for ten minutes
+  s1 see: The panel reads again at once and the line goes to 'Updated just now'
+  s1 not: Old records shown under 'Updated just now'
+  s1 not: Reads carrying on while the tab was hidden
+  s2 see: The refresh mark with a short age under it
+  s2 not: The age cut off or over the mark
+J-F-panel-627-07 | type 3 | staff | Top bar of the panel, internet switched off
+  s1 see: 'Could not refresh. Check the internet and try again.' and a red edge on the button (a '!' on the small phone button)
+  s1 not: 'Updated just now'
+  s1 not: The age reset to zero
+  s2 see: 'Updated over an hour ago'
+  s2 not: A fresh-looking time
+  s2 not: The button gone
+  s3 see: No Refresh button and no line
+  s3 not: 'Updated just now' for a gym that reads no server
+J-F-panel-627-08 | type 6 | staff | Top bar, a refresh that just failed
+  s1 see: 'Refreshing…', then 'Updated just now'; the red edge is gone
+  s1 not: The failed words staying after a good refresh
+  s2 see: One refresh; the second tap does nothing while it is busy
+  s2 not: Two reads at once
+  s2 not: A stuck 'Refreshing…'
+J-F-panel-627-09 | type 1 | trainer | Any page of an online gym's panel, signed in as a trainer signed in as staff, top bar
+  s1 see: A 'Refresh' button with 'Updated just now'
+  s1 not: A time before any read has worked
+  s1 not: The line in the demo gym, which never reads a server
+  s2 see: 'Updated 20 s ago' (it moves in steps of 10 seconds, and resets when the next read lands)
+  s2 see: After a minute with no read: 'Updated 1 min ago'
+  s2 not: The whole page redrawing or scrolling each time the line changes
+  s2 not: A count that runs backwards
+  s3 see: The mark turns and the button reads 'Refreshing…'
+  s3 see: Then 'Updated just now' and the newest records on the page, at the same scroll place
+  s3 not: The page jumping to the top
+  s3 not: 'Updated just now' when a read failed
+J-F-panel-627-10 | type 2 | trainer | The panel left open in a browser tab that was hidden for ten minutes
+  s1 see: The panel reads again at once and the line goes to 'Updated just now'
+  s1 not: Old records shown under 'Updated just now'
+  s1 not: Reads carrying on while the tab was hidden
+  s2 see: The refresh mark with a short age under it
+  s2 not: The age cut off or over the mark
+J-F-panel-627-11 | type 3 | trainer | Top bar of the panel, internet switched off
+  s1 see: 'Could not refresh. Check the internet and try again.' and a red edge on the button (a '!' on the small phone button)
+  s1 not: 'Updated just now'
+  s1 not: The age reset to zero
+  s2 see: 'Updated over an hour ago'
+  s2 not: A fresh-looking time
+  s2 not: The button gone
+  s3 see: No Refresh button and no line
+  s3 not: 'Updated just now' for a gym that reads no server
+J-F-panel-627-12 | type 6 | trainer | Top bar, a refresh that just failed
+  s1 see: 'Refreshing…', then 'Updated just now'; the red edge is gone
+  s1 not: The failed words staying after a good refresh
+  s2 see: One refresh; the second tap does nothing while it is busy
+  s2 not: Two reads at once
+  s2 not: A stuck 'Refreshing…'
+J-F-panel-628-01 | type 1 | owner | A new online gym, the owner signed in; menu row 'Set up your gym' with a ring
+  s1 see: A ring and '0 of 8 done'
+  s1 see: Steps in order: 'Add your plans', 'Bring in your members', 'Add your logo and colours', 'Add your staff and trainers', 'Set your gym timings', 'Let people find and join your gym online', 'Print the check-in poster', 'Send members the app link', each with a one-line hint
+  s1 not: A step ticked that the gym has not done
+  s1 not: The old count of five steps
+  s2 see: The Plans screen, with a slim bar 'Next step: Bring in your members ›' and 'Back to the list'
+  s2 not: The bar on screens that were not opened from the list
+  s3 see: 'Add your plans' is ticked and the line says '1 of 8 done'; the menu ring is fuller
+  s3 not: The ring and the line showing different counts
+  s4 see: The step is ticked and the count goes up
+  s4 not: 'Mark done' offered on steps the records can prove, such as plans or timings
+  s5 see: 'All done. Your gym is ready for members.'; the ring leaves the menu row
+  s5 not: The ring staying after all steps are done
+J-F-panel-628-02 | type 2 | owner | A setup screen opened from the list (the 'Next step' bar), with steps left
+  s1 see: The Members screen with the bar for the step after it
+  s1 not: The bar offering a step that is already done
+  s1 not: The bar pointing at the same step
+  s2 see: On that other screen the bar says 'Back to “Let people find and join your gym online”'
+  s2 not: 'Next step' there, which would skip the rest of the online journey
+  s3 see: The online step is ticked
+  s3 not: The step ticked by 'Not now' alone, before the link was shared
+J-F-panel-628-03 | type 3 | owner | Set up your gym, in gyms where a part does not apply
+  s1 see: No such row and no steps
+  s1 not: Setup steps or the ring shown to staff
+  s2 see: Seven steps: no online step
+  s2 not: A step that can never be finished in this gym
+  s3 see: The step is titled 'Let people join your gym online' with the hint 'Share your join link and QR poster, and see how people pay.'
+  s3 not: Words promising a web page this gym cannot make
+  s4 see: The step ticks only after the join link is shared
+  s4 not: The step shown done because the page was published before it was taken down
+J-F-panel-628-04 | type 6 | owner | Set up your gym, three steps done, five left
+  s1 see: 'Show this page at the top of the menu again'; the row is now under 'Your gym' and still shows its ring
+  s1 not: The ring or the count gone from the row
+  s2 see: 'Move this page to the bottom of the menu' and 'You can still open it from Your gym in the menu.'; the row is back at the top
+  s2 not: Two rows for the page
+  s3 see: 'Bring in your members' is not ticked any more
+  s3 not: A done count that the records no longer back
+  s4 see: A way to untick the step
+  s4 not: A hand tick that can never be taken back
+  s5 see: Steps the records prove are ticked; the hand-ticked ones are not
+  s5 not: A step shown done on one device and the gym told it is 'All done' while another device still shows the ring, with no word why
+J-F-panel-629-01 | type 1 | owner | A gym with a correct GSTIN saved; a member pays 1,500 rupees today
+  s1 see: A tax split inside the amount at 5 percent: taxable 1,428.57, central tax 35.71, state tax 35.72
+  s1 see: The total paid stays 1,500
+  s1 see: The gym's GSTIN, the service code 999723 and the gym's state as place of supply
+  s1 not: Tax added on top, making a receipt for more than was paid
+  s1 not: The parts not adding back to 1,500 to the paisa
+  s1 not: A line for inter-state tax
+  s2 see: The same amounts as before; GST changes no balance
+  s2 not: A due or a total reduced by the tax
+J-F-panel-629-02 | type 2 | owner | Settings, the gym's details, the GSTIN box (the GSTIN check)
+  s1 see: Under the box: 'This GSTIN looks wrong. It has 15 letters and numbers. Check your GST certificate, or leave it empty.'
+  s1 see: Nothing is saved
+  s1 not: 'Saved.' for a wrong GSTIN
+  s1 not: Receipts quietly losing their tax lines
+  s2 see: It saves, in capital letters
+  s2 not: A correct GSTIN refused for small letters or a space
+J-F-panel-629-03 | type 2 | owner | A receipt for money received before 22 September 2025 (the older rate)
+  s1 see: The tax split at 18 percent
+  s1 not: Today's 5 percent on money received when 18 percent applied
+  s2 see: The tax split at 5 percent
+  s2 not: 18 percent on the first day of the new rate
+J-F-panel-629-04 | type 3 | owner | Settings and receipts, with wrong or missing details
+  s1 see: 'Type the gym’s name.' under the name box
+  s1 not: The gym saved as 'My Gym'
+  s2 see: It saves; the receipt has no GSTIN and no tax lines
+  s2 not: A tax split on the receipt of a gym that is not registered
+  s3 see: The 'looks wrong' message
+  s3 not: It saved with no place of supply
+  s4 see: No way to change the gym's GSTIN
+  s4 not: Staff changing the GSTIN printed on every receipt
+J-F-panel-629-05 | type 6 | owner | A gym with 20 receipts and no GSTIN
+  s1 see: The old receipt now shows a tax split, at the rate of its own date
+  s1 not: A tax split dated before the gym registered, with no warning to the owner
+  s2 see: No GSTIN and no tax lines
+  s2 not: Tax lines left behind
+  s3 see: It reads as voided
+  s3 not: A voided receipt that still looks like tax collected
+J-F-panel-629-06 | type 12 | owner | A gym with a GSTIN; a receipt sent to a member; free days given to another member
+  s1 see: The member sees the gym's GSTIN and the tax inside what they paid
+  s1 not: Another gym's GSTIN
+  s1 not: Another member's name or amount
+  s2 see: No receipt and no GST for the free days
+  s2 not: A receipt or tax lines made for free days
+J-F-panel-630-01 | type 1 | owner | Settings, the card 'Download a backup', the owner of an online gym
+  s1 see: 'Download every member, plan, payment and check-in as an Excel file. Keep it on your phone or computer. We suggest once a month.'
+  s1 see: 'Not downloaded from this browser yet.'
+  s1 see: Button 'Download all your gym’s data'
+  s1 not: The card under 'Danger zone'
+  s2 see: Two files arrive: '<gym name> data <today>.xlsx' and '<gym name> data <today> (full copy).json'
+  s2 see: 'Downloaded: an Excel file and a full copy.'
+  s2 see: 'Last downloaded on <today> from this browser.'
+  s2 not: Only one of the two files, with the success words
+  s2 not: A file name dated yesterday
+  s2 not: A second download started by a double tap
+  s3 see: Sheets About, Members, Plans, Memberships, Payments, Check-ins, Enquiries, Expenses; money in rupees; each row carries the member's name
+  s3 not: Times that are hours away from India time with no word saying so
+  s3 not: Any of the gym's data left out of a file called 'all your gym's data' (shop orders and products, workout and diet plans, trainers and bookings, staff, measurements, member messages)
+J-F-panel-630-02 | type 3 | owner | Settings, the card 'Download a backup'
+  s1 see: The button waits for the internet and says so
+  s1 not: A dead button with no reason
+  s2 see: 'Could not make the file. Try again.' in red
+  s2 not: 'Last downloaded on …' moved to today after a failed download
+  s3 see: A word that the full copy was not saved
+  s3 not: 'Downloaded: an Excel file and a full copy.' when only one file was saved
+  s4 see: No 'Download a backup' card
+  s4 not: Staff downloading every member's phone number and address
+J-F-panel-630-03 | type 6 | owner | A gym with a voided receipt, a cancelled membership, an archived member and a removed member
+  s1 see: The voided receipt is there with 'Voided' true and why; the cancelled membership with 'Cancelled' true
+  s1 not: Voided or cancelled rows missing, so the file disagrees with the receipt numbers
+  s2 see: The archived member with 'Archived' true
+  s2 not: Archived members left out
+  s3 see: The name reads '(removed member)'
+  s3 not: An empty name or an error
+  s4 see: A second pair of files; 'Last downloaded on' stays today
+  s4 not: The date line going back to 'Not downloaded from this browser yet.'
+J-F-panel-630-04 | type 12 | owner | The downloaded files on the owner's phone or computer
+  s1 see: Every member's mobile, email, date of birth, address, emergency contact and notes
+  s1 not: Members of another gym or another branch the owner did not open
+  s1 not: Sign-in keys, PINs or codes in the Excel file or the full copy
+  s2 see: A word that the file holds members' personal details and should be kept safe
+  s2 not: No warning at all before a file of every member's details is saved on a shared computer
+J-F-panel-631-01 | type 1 | owner | A member's page in an online gym, signed in as the owner; the member uses the app and has a join date
+  s1 see: 'Ask this member to send their workouts from the app. Only workouts from the day they joined your gym are included.'
+  s1 see: Button 'Request workout report'
+  s1 not: The card in a gym that is not online
+  s2 see: 'Asking…', then 'Asked on <today>. Waiting for the member to say yes in the app.' and 'Workouts since <join day>, the day they joined.'
+  s2 see: The request button is gone while one is waiting
+  s2 not: Two requests from a double tap
+  s2 not: Any workout shown before the member says yes
+  s3 see: 'The member said yes. The report is on its way.', then 'Sent on <day>: 12 workouts, from <first day> to <last day>.' in green
+  s3 see: 'You can download it until <day>.'
+  s3 see: Button 'Download full history'
+  s3 not: Workouts from before the join date counted
+  s3 not: '1 workouts'
+  s4 see: 'Downloading…', then a file 'workout-report-<member name>-<sent day>.csv' that opens in Excel with names readable
+  s4 not: Another member's workouts in the file
+  s4 not: A cell that runs as a formula when opened
+J-F-panel-631-02 | type 2 | owner | A member's page where a report was sent five days ago (the download way in)
+  s1 see: The green 'Sent on …' line, 'You can download it until …', 'Download full history' and a quieter 'Request workout report'
+  s1 not: The download offered for a request that was only asked, not sent
+  s2 see: The same file as before
+  s2 not: A fresh ask sent to the member by a download
+J-F-panel-631-03 | type 3 | owner | A member's page, card 'Full workout history'
+  s1 see: 'This member has no join date or plan yet. Add one first, then ask again.'
+  s1 not: A request for the member's whole life of workouts
+  s2 see: 'You have asked this member many times today. Try again tomorrow.'
+  s2 not: The member's phone asked again and again
+  s3 see: 'Couldn’t reach the server. Check the internet and try again.'
+  s3 not: 'Asked on …' for a request that did not go
+  s4 see: 'Your gym account is on hold, so you can’t ask for reports now.'
+  s4 not: The request going through
+  s5 see: 'You have been signed out. Sign in again.'
+  s5 not: A blank card
+J-F-panel-631-04 | type 6 | owner | A member's page with an earlier request in each state
+  s1 see: 'The member said no on <day>. No report was sent. You can ask again later.' and the request button
+  s1 not: Any file to download
+  s2 see: 'No report came within 30 days. You can ask again.'
+  s2 not: The request still shown as waiting
+  s3 see: 'This report is more than 30 days old and was removed. Ask again for a new one.'
+  s3 not: The old file still handed out
+  s4 see: The new 'Asked on …' line, and the earlier report still downloadable until its day
+  s4 not: The earlier report's download gone the moment a new ask is made
+  s5 see: 'Sent on <day>: 0 workouts (nothing logged since joining).'
+  s5 not: A download of an empty file with no word
+J-F-panel-631-05 | type 12 | owner | A member who trained at another gym before joining this one
+  s1 see: The member's app asks first; nothing is sent unless the member says yes
+  s1 not: A report sent without the member's yes
+  s1 not: The ask repeated after a no on the same day
+  s2 see: Only workouts from the day the member joined this gym
+  s2 not: Workouts logged before joining, or at another gym
+  s3 see: Only people signed in to this gym, for 30 days after it was sent
+  s3 not: The file open to another gym's sign-in
+  s3 not: The file kept after 30 days
+J-F-panel-631-06 | type 1 | staff | A member's page in an online gym, signed in as front-desk staff; the member uses the app and has a join date
+  s1 see: 'Ask this member to send their workouts from the app. Only workouts from the day they joined your gym are included.'
+  s1 see: Button 'Request workout report'
+  s1 not: The card in a gym that is not online
+  s2 see: 'Asking…', then 'Asked on <today>. Waiting for the member to say yes in the app.' and 'Workouts since <join day>, the day they joined.'
+  s2 see: The request button is gone while one is waiting
+  s2 not: Two requests from a double tap
+  s2 not: Any workout shown before the member says yes
+  s3 see: 'The member said yes. The report is on its way.', then 'Sent on <day>: 12 workouts, from <first day> to <last day>.' in green
+  s3 see: 'You can download it until <day>.'
+  s3 see: Button 'Download full history'
+  s3 not: Workouts from before the join date counted
+  s3 not: '1 workouts'
+  s4 see: 'Downloading…', then a file 'workout-report-<member name>-<sent day>.csv' that opens in Excel with names readable
+  s4 not: Another member's workouts in the file
+  s4 not: A cell that runs as a formula when opened
+J-F-panel-631-07 | type 2 | staff | A member's page where a report was sent five days ago (the download way in)
+  s1 see: The green 'Sent on …' line, 'You can download it until …', 'Download full history' and a quieter 'Request workout report'
+  s1 not: The download offered for a request that was only asked, not sent
+  s2 see: The same file as before
+  s2 not: A fresh ask sent to the member by a download
+J-F-panel-631-08 | type 3 | staff | A member's page, card 'Full workout history'
+  s1 see: 'This member has no join date or plan yet. Add one first, then ask again.'
+  s1 not: A request for the member's whole life of workouts
+  s2 see: 'You have asked this member many times today. Try again tomorrow.'
+  s2 not: The member's phone asked again and again
+  s3 see: 'Couldn’t reach the server. Check the internet and try again.'
+  s3 not: 'Asked on …' for a request that did not go
+  s4 see: 'Your gym account is on hold, so you can’t ask for reports now.'
+  s4 not: The request going through
+  s5 see: 'You have been signed out. Sign in again.'
+  s5 not: A blank card
+J-F-panel-631-09 | type 6 | staff | A member's page with an earlier request in each state
+  s1 see: 'The member said no on <day>. No report was sent. You can ask again later.' and the request button
+  s1 not: Any file to download
+  s2 see: 'No report came within 30 days. You can ask again.'
+  s2 not: The request still shown as waiting
+  s3 see: 'This report is more than 30 days old and was removed. Ask again for a new one.'
+  s3 not: The old file still handed out
+  s4 see: The new 'Asked on …' line, and the earlier report still downloadable until its day
+  s4 not: The earlier report's download gone the moment a new ask is made
+  s5 see: 'Sent on <day>: 0 workouts (nothing logged since joining).'
+  s5 not: A download of an empty file with no word
+J-F-panel-631-10 | type 12 | staff | A member who trained at another gym before joining this one
+  s1 see: The member's app asks first; nothing is sent unless the member says yes
+  s1 not: A report sent without the member's yes
+  s1 not: The ask repeated after a no on the same day
+  s2 see: Only workouts from the day the member joined this gym
+  s2 not: Workouts logged before joining, or at another gym
+  s3 see: Only people signed in to this gym, for 30 days after it was sent; a trainer only for their own members
+  s3 not: The file open to another gym's sign-in
+  s3 not: The file kept after 30 days

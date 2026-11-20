@@ -1,0 +1,39 @@
+# H5-panel-auth-data: gap-5 x panel / panel/auth-data. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H5.1 | gap-5 | For every feature in features.json: is it on main, deployed, behind a switch, or waiting for a migration?
+H5.2 | gap-5 | Compare code on main with what the live panel, HQ, website, phone app (Play version) and database really run (check the live version labels, list_migrations/catalog, switches)
+H5.3 | gap-5 | Any feature the notes or What's new call live that is not live = finding
+H5.4 | gap-5 | Output docs/system-map/LIVE-STATE.md (one row per feature: main / live panel / live DB / Play app), so he can always see what is really live
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1000 | live | Sign in to the gym panel (mobile number + your PIN, or a one-time code) | apps/dashboard/src/crm/auth/SignInForms.tsx:43
+F-panel-1001 | live | Set up a new gym online (Create my gym: gym name, your name, mobile, PIN, agree to terms) | apps/dashboard/src/crm/auth/SignInForms.tsx:150
+F-panel-1002 | behind switch | Verify your mobile number with WhatsApp (send one message from your phone, or scan the QR on a computer; older way: type | apps/dashboard/src/crm/auth/WhatsAppVerify.tsx:99
+F-panel-1003 | behind switch | Forgot your PIN: check the number on WhatsApp, then choose a new PIN and sign in | apps/dashboard/src/crm/auth/ForgotPin.tsx:125
+F-panel-1004 | live | Other ways back in when the PIN is forgotten (code from another signed-in device, from another owner, or email MettleUp  | apps/dashboard/src/crm/auth/ForgotPin.tsx:73
+F-panel-1005 | live | Set or change my own 6-digit PIN (Staff & sign-in, You card) | apps/dashboard/src/crm/auth/PinForms.tsx:60
+F-panel-1006 | live | One-time prompt to set your own PIN after signing in with a one-time code (skippable with Not now) | apps/dashboard/src/crm/auth/pinPrompt.ts:25
+F-panel-1007 | live | Staff & sign-in screen: see who may open this gym's panel, who has a PIN, and what staff can and cannot do | apps/dashboard/src/crm/auth/PeopleScreen.tsx:109
+F-panel-1008 | live | Add a person to the panel (Owner, Staff front desk, Trainer, or Other with a typed job) | apps/dashboard/src/crm/auth/PeopleScreen.tsx:496
+F-panel-1009 | live | Name a staff member's job (for example Manager); kept on this browser until the gym server has job names | apps/dashboard/src/crm/auth/api.ts:140
+F-panel-1010 | live | Make a sign-in code for a person (or yourself) and read it out, copy it or send it on WhatsApp | apps/dashboard/src/crm/auth/PeopleScreen.tsx:586
+F-panel-1011 | live | Sign a person out everywhere (also clears that person's PIN) | apps/dashboard/src/crm/auth/PeopleScreen.tsx:658
+F-panel-1012 | live | Remove a person from the gym's panel | apps/dashboard/src/crm/auth/PeopleScreen.tsx:658
+F-panel-1013 | live | Sign out of this device (the device forgets its key and its saved copy of the gym; unsent payments are kept) | apps/dashboard/src/crm/auth/PeopleScreen.tsx:290
+F-panel-1014 | live | Told why you were signed out (signed out from another device, or removed from the gym) | apps/dashboard/src/crm/auth/api.ts:111
+F-panel-1015 | live | Put your records online (a gym kept in this browser becomes an online gym; every record is copied up; a demo gym is neve | apps/dashboard/src/crm/auth/GoOnlineCard.tsx:36
+F-panel-1016 | live | Agree to the MettleUp terms and data agreement (asked once per version; owner only; shows when you accepted) | apps/dashboard/src/crm/auth/TermsGate.tsx:73
+F-panel-1017 | live | MettleUp access: let MettleUp support look at the gym's records for one hour, end it early, and see every time MettleUp  | apps/dashboard/src/crm/auth/hqAccess.ts:166
+F-panel-1018 | live | Staff limits: front desk sees only Dues in Money and only Orders in Shop, cannot open owner pages, and gets an Only an o | apps/dashboard/src/crm/auth/permissions.ts:83
+F-panel-1019 | live | The gym's records online: every desk sees the same members, plans and receipts; two desks never save the same receipt nu | apps/dashboard/src/crm/data/cloud.ts:512
+F-panel-1020 | live | Gym kept in this browser only (no sign-in): all records saved on this device, with a backup of anything unreadable | apps/dashboard/src/crm/data/local.ts:177
+F-panel-1021 | live | demo copy of the gym's records (a made-up gym with members, plans, payments and check-ins for the sales demo; also the s | apps/dashboard/src/crm/data/demo.ts:82
+F-panel-1022 | live | Offline front desk: the panel still opens and members, plans and dues can be looked up with no internet (a copy of the g | apps/dashboard/src/crm/data/savedCopy.ts:130
+F-panel-1023 | live | Offline front desk waiting list: check-ins, new members, member changes, payments and plans sold with no internet are sh | apps/dashboard/src/crm/data/outbox.ts:163
+F-panel-1024 | live | Import members: see how many receipts and how much money an import will really save, before tapping Add | apps/dashboard/src/crm/data/importPreview.ts:31
+F-panel-1025 | live | Mark a person on the staff list as a trainer (tick on Staff & sign-in) | apps/dashboard/src/crm/auth/PeopleScreen.tsx:353
+F-panel-1101 | live | Sign in, set up a new gym, PIN and Forgot PIN by WhatsApp, verify number with WhatsApp, put a browser-only gym online, a | apps/dashboard/src/crm/auth/PinForms.tsx:60
+F-panel-1102 | live | Staff & sign-in: add or remove people, set their job, make a one-time sign-in code, sign a person out | apps/dashboard/src/crm/auth/PeopleScreen.tsx:109
+F-panel-1103 | live | Gym records store: pull and push to the gym server, browser-only gym, saved copy and outbox for an offline front desk, R | apps/dashboard/src/crm/auth/api.ts:208
+F-panel-1136 | live | Demo gym at /demo: made-up sample gym in page memory, locked away from the real gym and the network | apps/dashboard/src/crm/data/demo.ts:1
+## MACHINE FILES (docs/system-map/_sources/machine/)
+live-state.csv: MISSING (items that need it = could-not-check)

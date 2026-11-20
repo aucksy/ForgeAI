@@ -1,0 +1,593 @@
+# A8-phone-components-2-1: coverage of 70 Tier 1 journeys (7 features, from A5-phone-components-2-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-phone-1400 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-1400 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-1400 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 2 journey phrase(s)
+F-phone-1400 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 2 journey phrase(s)
+F-phone-1400 | apps/mobile/test/lib/feedbackButton.test.ts | unit | 120 lines | file name
+F-phone-1400 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | asserts 2 journey phrase(s)
+F-phone-1400 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 1 journey phrase(s)
+F-phone-1400 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 1 journey phrase(s)
+F-phone-1400 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-phone-1400 | apps/dashboard/e2e/pagechat-uat.spec.mjs | e2e | 272 lines | asserts 1 journey phrase(s)
+F-phone-1400 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 1 journey phrase(s)
+F-phone-1400 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 1 journey phrase(s)
+F-phone-1401 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-1401 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-1401 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | asserts 2 journey phrase(s)
+F-phone-1401 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 1 journey phrase(s)
+F-phone-1401 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-phone-1401 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 1 journey phrase(s)
+F-phone-1401 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 1 journey phrase(s)
+F-phone-1401 | apps/dashboard/e2e/r450-uat.spec.mjs | e2e | 331 lines | asserts 1 journey phrase(s)
+F-phone-1401 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-phone-1401 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 1 journey phrase(s)
+F-phone-1401 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-phone-1401 | apps/dashboard/test/crm/demoGym.test.ts | unit | 109 lines | asserts 1 journey phrase(s)
+F-phone-1402 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 6 journey phrase(s)
+F-phone-1402 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 4 journey phrase(s)
+F-phone-1402 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 3 journey phrase(s)
+F-phone-1402 | apps/mobile/qa/uat-rel-r452-help-replies.yaml | maestro | 182 lines | asserts 3 journey phrase(s)
+F-phone-1402 | apps/mobile/test/lib/helpHistory.test.ts | unit | 207 lines | asserts 3 journey phrase(s)
+F-phone-1402 | apps/dashboard/e2e/member-messages-uat.spec.mjs | e2e | 236 lines | asserts 2 journey phrase(s)
+F-phone-1402 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 2 journey phrase(s)
+F-phone-1402 | apps/dashboard/test/crm/offlinePayments.test.ts | unit | 582 lines | asserts 2 journey phrase(s)
+F-phone-1402 | apps/dashboard/test/crm/r448.test.ts | unit | 76 lines | asserts 2 journey phrase(s)
+F-phone-1402 | apps/mobile/test/lib/feedbackButton.test.ts | unit | 120 lines | file name
+F-phone-1402 | apps/dashboard/e2e/bell-inbox-uat.spec.mjs | e2e | 401 lines | asserts 1 journey phrase(s)
+F-phone-1402 | apps/dashboard/e2e/hq-webpage-uat.spec.mjs | e2e | 166 lines | asserts 1 journey phrase(s)
+F-phone-1403 | apps/dashboard/e2e/r608-uat.spec.mjs | e2e | 208 lines | asserts 4 journey phrase(s)
+F-phone-1403 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 2 journey phrase(s)
+F-phone-1403 | apps/mobile/qa/uat-rel-r452-help-replies.yaml | maestro | 182 lines | asserts 2 journey phrase(s)
+F-phone-1403 | apps/dashboard/e2e/ai-questions-uat.spec.mjs | e2e | 434 lines | asserts 1 journey phrase(s)
+F-phone-1403 | apps/dashboard/e2e/pagechat-uat.spec.mjs | e2e | 272 lines | asserts 1 journey phrase(s)
+F-phone-1403 | apps/dashboard/test/crm/assistant/awayIdea.test.ts | unit | 316 lines | asserts 1 journey phrase(s)
+F-phone-1403 | apps/dashboard/test/crm/autoReminders.test.ts | unit | 107 lines | asserts 1 journey phrase(s)
+F-phone-1403 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | asserts 1 journey phrase(s)
+F-phone-1403 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 1 journey phrase(s)
+F-phone-1403 | apps/dashboard/test/crm/workoutOffer.test.ts | unit | 290 lines | asserts 1 journey phrase(s)
+F-phone-1403 | apps/mobile/qa/sub-uat-f194-choose.yaml | maestro | 31 lines | asserts 1 journey phrase(s)
+F-phone-1403 | apps/mobile/qa/uat-rel-f194-a-history.yaml | maestro | 139 lines | asserts 1 journey phrase(s)
+F-phone-1404 | apps/mobile/test/lib/feedbackButton.test.ts | unit | 120 lines | file name
+F-phone-1404 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-phone-1404 | apps/dashboard/e2e/feedback.spec.mjs | e2e | 34 lines | asserts 1 journey phrase(s)
+F-phone-1404 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 1 journey phrase(s)
+F-phone-1404 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-phone-1404 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 1 journey phrase(s)
+F-phone-1404 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-phone-1404 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-phone-1404 | apps/dashboard/test/crm/demoGym.test.ts | unit | 109 lines | asserts 1 journey phrase(s)
+F-phone-1404 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | asserts 1 journey phrase(s)
+F-phone-1404 | apps/mobile/test/tracker/watchInstall.test.ts | unit | 159 lines | asserts 1 journey phrase(s)
+F-phone-1404 | deploy/panel/assistCatalogue.test.mjs | unit | 184 lines | asserts 1 journey phrase(s)
+F-phone-1406 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-phone-1406 | apps/mobile/test/lib/linkNotice.test.ts | unit | 14 lines | asserts 1 journey phrase(s)
+F-phone-1406 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-phone-1406 | apps/mobile/test/lib/safekeepNudge.test.ts | unit | 107 lines | asserts 1 journey phrase(s)
+F-phone-1406 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-phone-1406 | apps/mobile/test/shop/planEnds.test.ts | unit | 77 lines | asserts 1 journey phrase(s)
+F-phone-1407 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-1407 | apps/mobile/test/db/writeQueue.test.ts | unit | 420 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1407 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-1407 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | asserts 2 journey phrase(s)
+F-phone-1407 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 1 journey phrase(s)
+F-phone-1407 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-phone-1407 | apps/dashboard/test/crm/local.test.ts | unit | 1070 lines | asserts 1 journey phrase(s)
+F-phone-1407 | apps/mobile/qa/invite-d.yaml | maestro | 36 lines | asserts 1 journey phrase(s)
+F-phone-1407 | apps/mobile/qa/uat-rel-6-member.yaml | maestro | 153 lines | asserts 1 journey phrase(s)
+F-phone-1407 | apps/mobile/qa/uat-rel-t74-gym-icon.yaml | maestro | 59 lines | asserts 1 journey phrase(s)
+F-phone-1407 | apps/mobile/qa/xc-4c-import-check.yaml | maestro | 25 lines | asserts 1 journey phrase(s)
+F-phone-1407 | apps/mobile/test/cloud/backupWords.test.ts | unit | 88 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-phone-1400-01 | type 1 | member | Any screen except the live workout, round chat button on the screen edge, online, no unread reply
+  s1 see: Sheet titled 'Help and feedback'
+  s1 see: 'Ask about this screen and get an answer at once, or tell us what is wrong here.'
+  s1 see: Box with 'Type here, or tap Speak'
+  s1 see: Send button greyed out
+  s1 not: The sheet opens on someone else's questions
+  s1 not: Send can be tapped with an empty box
+  s2 see: The typed words in the box
+  s2 see: Send turns on
+  s2 not: Typing past 2,000 letters
+  s2 not: The round button floating over the keyboard
+  s3 see: Send shows it is busy
+  s3 see: 'Sending. The answer usually takes a few seconds.'
+  s3 see: Then 'Thanks! We read every message.' or a Quick answer card
+  s3 see: 'Your questions and answers are kept in Profile → Settings → Help and feedback.'
+  s3 not: The message sent twice
+  s3 not: The box emptied before the send went through
+  s3 not: A success line when the send failed
+J-F-phone-1400-02 | type 2 | member | Live workout screen open, sets being ticked
+  s1 see: The same 'Help and feedback' sheet
+  s1 see: The workout still running under it
+  s1 not: The workout or its rest timer stopping
+  s1 not: A round floating button covering the set ticks or Finish
+  s2 see: 'Thanks! We read every message.'
+  s2 see: Back on the live workout with every set as it was
+  s2 not: A set or the timer lost
+  s2 not: The message tagged with a screen name that holds an id or a code
+J-F-phone-1400-03 | type 3 | member | Help and feedback sheet open from the round button
+  s1 see: Send stays greyed out
+  s1 not: An empty message sent
+  s1 not: An error pop-up
+  s2 see: 'Couldn't send. Check your internet and try again. Your message is still here.' in red
+  s2 see: The typed message still in the box
+  s2 not: The message lost
+  s2 not: 'Thanks! We read every message.'
+  s2 not: The question left in 'Your questions' as waiting for ever
+  s3 see: No round button on the screen edge
+  s3 see: The workout top-bar chat button still there
+  s3 not: The round button still showing with no unread reply
+  s3 not: The top-bar button gone too
+J-F-phone-1400-04 | type 6 | member | Sheet open, a message half typed, then closed
+  s1 see: The half-typed message still in the box
+  s1 see: No old 'Thanks!' line
+  s1 not: The typed message lost
+  s1 not: The last answer or error still showing as if new
+  s2 see: The thanks line goes as soon as typing starts
+  s2 see: 'See your questions and answers' button
+  s2 not: The thanks line staying over the new message
+  s2 not: The sent message still in the box
+  s3 see: The button stays where it was dropped, half behind the edge
+  s3 not: The button jumping back to its old spot
+  s3 not: A drag that opens the sheet
+J-F-phone-1400-05 | type 12 | member | Help and feedback sheet open on the Members list or an exercise page
+  s1 see: 'Thanks! We read every message.' or a Quick answer
+  s1 not: The screen name sent with an exercise id, a member id or a join code in it
+  s1 not: The member's name or mobile number sent when not typed
+  s1 not: The message reaching the gym's owner or trainers
+J-F-phone-1400-06 | type 1 | pass member | Any screen except the live workout, round chat button on the screen edge, online, no unread reply (pass member)
+  s1 see: Sheet titled 'Help and feedback'
+  s1 see: 'Ask about this screen and get an answer at once, or tell us what is wrong here.'
+  s1 see: Box with 'Type here, or tap Speak'
+  s1 see: Send button greyed out
+  s1 not: The sheet opens on someone else's questions
+  s1 not: Send can be tapped with an empty box
+  s2 see: The typed words in the box
+  s2 see: Send turns on
+  s2 not: Typing past 2,000 letters
+  s2 not: The round button floating over the keyboard
+  s3 see: Send shows it is busy
+  s3 see: 'Sending. The answer usually takes a few seconds.'
+  s3 see: Then 'Thanks! We read every message.' or a Quick answer card
+  s3 see: 'Your questions and answers are kept in Profile → Settings → Help and feedback.'
+  s3 not: The message sent twice
+  s3 not: The box emptied before the send went through
+  s3 not: A success line when the send failed
+J-F-phone-1400-07 | type 2 | pass member | Live workout screen open, sets being ticked (pass member)
+  s1 see: The same 'Help and feedback' sheet
+  s1 see: The workout still running under it
+  s1 not: The workout or its rest timer stopping
+  s1 not: A round floating button covering the set ticks or Finish
+  s2 see: 'Thanks! We read every message.'
+  s2 see: Back on the live workout with every set as it was
+  s2 not: A set or the timer lost
+  s2 not: The message tagged with a screen name that holds an id or a code
+J-F-phone-1400-08 | type 3 | pass member | Help and feedback sheet open from the round button (pass member)
+  s1 see: Send stays greyed out
+  s1 not: An empty message sent
+  s1 not: An error pop-up
+  s2 see: 'Couldn't send. Check your internet and try again. Your message is still here.' in red
+  s2 see: The typed message still in the box
+  s2 not: The message lost
+  s2 not: 'Thanks! We read every message.'
+  s2 not: The question left in 'Your questions' as waiting for ever
+  s3 see: No round button on the screen edge
+  s3 see: The workout top-bar chat button still there
+  s3 not: The round button still showing with no unread reply
+  s3 not: The top-bar button gone too
+J-F-phone-1400-09 | type 6 | pass member | Sheet open, a message half typed, then closed (pass member)
+  s1 see: The half-typed message still in the box
+  s1 see: No old 'Thanks!' line
+  s1 not: The typed message lost
+  s1 not: The last answer or error still showing as if new
+  s2 see: The thanks line goes as soon as typing starts
+  s2 see: 'See your questions and answers' button
+  s2 not: The thanks line staying over the new message
+  s2 not: The sent message still in the box
+  s3 see: The button stays where it was dropped, half behind the edge
+  s3 not: The button jumping back to its old spot
+  s3 not: A drag that opens the sheet
+J-F-phone-1400-10 | type 12 | pass member | Help and feedback sheet open on the Members list or an exercise page (pass member)
+  s1 see: 'Thanks! We read every message.' or a Quick answer
+  s1 not: The screen name sent with an exercise id, a member id or a join code in it
+  s1 not: The member's name or mobile number sent when not typed
+  s1 not: The message reaching the gym's owner or trainers
+J-F-phone-1401-01 | type 1 | member | Help and feedback sheet open, microphone allowed, online
+  s1 see: The button turns red with a square
+  s1 see: 'Stop · 0:01 / 2:00' with a moving level bar
+  s1 see: 'Listening. Speak in Hindi or English, then tap Stop.'
+  s1 not: Recording before Speak is tapped
+  s1 not: The clock stuck at 0:00
+  s2 see: 'Turning your voice into text…' with a spinner
+  s2 see: The box locked while it writes
+  s2 not: The recording kept on the phone after the text comes
+  s2 not: The text sent to the team before Send
+  s3 see: 'Check the text. Fix anything, then tap Send.' in green
+  s3 see: The heard words added under what was already typed
+  s3 see: 'Thanks! We read every message.'
+  s3 not: What was typed before replaced by the heard words
+  s3 not: The message sent as typed when it was spoken
+J-F-phone-1401-02 | type 2 | member | Profile → Settings → Help and feedback page
+  s1 see: The same 'Turning your voice into text…' then the words in the box
+  s1 not: A different recorder or words from the floating sheet's box
+  s1 not: The phone's own speech-to-text used
+  s2 see: Back on Settings; no recording keeps going
+  s2 not: The microphone still on after leaving
+  s2 not: The clip left on the phone
+J-F-phone-1401-03 | type 3 | member | Help and feedback sheet open, microphone never allowed
+  s1 see: 'MettleUp needs the microphone to hear you. Allow it in your phone Settings, or type instead.'
+  s1 see: 'Open Settings' when the phone will not ask again
+  s1 not: A crash
+  s1 not: A prompt again on every tap after 'Don't ask again'
+  s1 not: A recording started
+  s2 see: 'That was too short. Tap Speak and talk for a few seconds.'
+  s2 not: A clip sent to the server
+  s2 not: An empty message in the box
+  s3 see: 'Couldn't reach us. Check your internet and try again, or type.'
+  s3 not: The typed text lost
+  s3 not: The screen stuck on 'Turning your voice into text…'
+J-F-phone-1401-04 | type 6 | member | Recording in progress in the sheet
+  s1 see: Back to 'Speak' with nothing added to the box
+  s1 not: The cancelled clip turned into text
+  s1 not: The clip sent to the server
+  s2 see: At 2:00 it stops by itself and turns what was heard into text
+  s2 not: 'That was too short' for a full 2-minute note
+  s2 not: The screen stuck on recording
+J-F-phone-1401-05 | type 12 | member | Help and feedback sheet open
+  s1 see: 'When you tap Stop, your recording goes through our server to an AI service in the USA that turns speech into text. Only the recording is sent. Neither we nor that service keep it. The text reaches us only if you tap Send.'
+  s1 not: The microphone used at any other time
+  s1 not: The recording kept by us or the service
+  s1 not: The text reaching the team without Send
+J-F-phone-1401-06 | type 1 | pass member | Help and feedback sheet open, microphone allowed, online (pass member)
+  s1 see: The button turns red with a square
+  s1 see: 'Stop · 0:01 / 2:00' with a moving level bar
+  s1 see: 'Listening. Speak in Hindi or English, then tap Stop.'
+  s1 not: Recording before Speak is tapped
+  s1 not: The clock stuck at 0:00
+  s2 see: 'Turning your voice into text…' with a spinner
+  s2 see: The box locked while it writes
+  s2 not: The recording kept on the phone after the text comes
+  s2 not: The text sent to the team before Send
+  s3 see: 'Check the text. Fix anything, then tap Send.' in green
+  s3 see: The heard words added under what was already typed
+  s3 see: 'Thanks! We read every message.'
+  s3 not: What was typed before replaced by the heard words
+  s3 not: The message sent as typed when it was spoken
+J-F-phone-1401-07 | type 2 | pass member | Profile → Settings → Help and feedback page (pass member)
+  s1 see: The same 'Turning your voice into text…' then the words in the box
+  s1 not: A different recorder or words from the floating sheet's box
+  s1 not: The phone's own speech-to-text used
+  s2 see: Back on Settings; no recording keeps going
+  s2 not: The microphone still on after leaving
+  s2 not: The clip left on the phone
+J-F-phone-1401-08 | type 3 | pass member | Help and feedback sheet open, microphone never allowed (pass member)
+  s1 see: 'MettleUp needs the microphone to hear you. Allow it in your phone Settings, or type instead.'
+  s1 see: 'Open Settings' when the phone will not ask again
+  s1 not: A crash
+  s1 not: A prompt again on every tap after 'Don't ask again'
+  s1 not: A recording started
+  s2 see: 'That was too short. Tap Speak and talk for a few seconds.'
+  s2 not: A clip sent to the server
+  s2 not: An empty message in the box
+  s3 see: 'Couldn't reach us. Check your internet and try again, or type.'
+  s3 not: The typed text lost
+  s3 not: The screen stuck on 'Turning your voice into text…'
+J-F-phone-1401-09 | type 6 | pass member | Recording in progress in the sheet (pass member)
+  s1 see: Back to 'Speak' with nothing added to the box
+  s1 not: The cancelled clip turned into text
+  s1 not: The clip sent to the server
+  s2 see: At 2:00 it stops by itself and turns what was heard into text
+  s2 not: 'That was too short' for a full 2-minute note
+  s2 not: The screen stuck on recording
+J-F-phone-1401-10 | type 12 | pass member | Help and feedback sheet open (pass member)
+  s1 see: 'When you tap Stop, your recording goes through our server to an AI service in the USA that turns speech into text. Only the recording is sent. Neither we nor that service keep it. The text reaches us only if you tap Send.'
+  s1 not: The microphone used at any other time
+  s1 not: The recording kept by us or the service
+  s1 not: The text reaching the team without Send
+J-F-phone-1402-01 | type 1 | member | App opened; the MettleUp team has replied to an earlier question; red dot with 1 on the round button
+  s1 see: A red dot with '1' on the half of the button that shows
+  s1 not: The dot on the half hidden behind the edge
+  s1 not: A dot when no reply is unread
+  s2 see: Sheet titled 'The MettleUp team answered you'
+  s2 see: The question with its day, the 'Quick answer' (automatic) if there was one, then 'Reply from the MettleUp team' with a 'New' tag and the time
+  s2 not: The empty message box instead of the reply
+  s2 not: Replies out of time order
+  s3 see: The red dot gone
+  s3 not: The dot coming back for the same reply
+  s3 not: The reply lost from 'Your questions'
+J-F-phone-1402-02 | type 2 | member | Profile → Settings → Help and feedback
+  s1 see: Every question sent from this phone, newest first, each with its answers
+  s1 not: Questions from another phone
+  s1 not: 'Questions you send from this phone show here, with their answers.' when there are some
+  s2 see: Within about a minute the reply appears with 'New'
+  s2 not: The reply only after leaving and coming back
+J-F-phone-1402-03 | type 2 | member | Phone shows the pop-up 'The MettleUp team answered your question'
+  s1 see: The app opens on 'Your questions' with the reply marked 'New'
+  s1 not: The app opens on the home tab with no reply
+  s1 not: Two pop-ups for the same reply
+J-F-phone-1402-04 | type 3 | member | A new phone, no question ever sent
+  s1 see: 'Your questions'
+  s1 see: 'Questions you send from this phone show here, with their answers.'
+  s1 not: A spinner that never ends
+  s1 not: Someone else's questions
+  s2 see: The message box, no 'See your questions and answers' button
+  s2 not: An empty conversations sheet
+  s2 not: A red dot
+J-F-phone-1402-05 | type 6 | member | A question sent seconds ago, answer on its way
+  s1 see: 'Waiting for the answer. It usually takes a few seconds.'
+  s1 not: 'Waiting' for ever after the answer came
+  s2 see: The waiting line turns into the Quick answer, or 'The MettleUp team will reply here.'
+  s2 not: The page needing to be left to update
+  s3 see: The reply 'New' once, then the message box
+  s3 not: The reply still 'New' on the next open
+  s3 not: The red dot still on after reading
+J-F-phone-1402-06 | type 12 | member | Two members share a phone, or a member gets a new phone
+  s1 see: Only questions sent from that phone
+  s1 not: Questions and replies from another phone or another member
+  s1 not: The reply shown to anyone without this phone's question secret
+J-F-phone-1402-07 | type 1 | pass member | App opened; the MettleUp team has replied to an earlier question; red dot with 1 on the round button (pass member)
+  s1 see: A red dot with '1' on the half of the button that shows
+  s1 not: The dot on the half hidden behind the edge
+  s1 not: A dot when no reply is unread
+  s2 see: Sheet titled 'The MettleUp team answered you'
+  s2 see: The question with its day, the 'Quick answer' (automatic) if there was one, then 'Reply from the MettleUp team' with a 'New' tag and the time
+  s2 not: The empty message box instead of the reply
+  s2 not: Replies out of time order
+  s3 see: The red dot gone
+  s3 not: The dot coming back for the same reply
+  s3 not: The reply lost from 'Your questions'
+J-F-phone-1402-08 | type 2 | pass member | Profile → Settings → Help and feedback (pass member)
+  s1 see: Every question sent from this phone, newest first, each with its answers
+  s1 not: Questions from another phone
+  s1 not: 'Questions you send from this phone show here, with their answers.' when there are some
+  s2 see: Within about a minute the reply appears with 'New'
+  s2 not: The reply only after leaving and coming back
+J-F-phone-1402-09 | type 2 | pass member | Phone shows the pop-up 'The MettleUp team answered your question' (pass member)
+  s1 see: The app opens on 'Your questions' with the reply marked 'New'
+  s1 not: The app opens on the home tab with no reply
+  s1 not: Two pop-ups for the same reply
+J-F-phone-1402-10 | type 3 | pass member | A new phone, no question ever sent (pass member)
+  s1 see: 'Your questions'
+  s1 see: 'Questions you send from this phone show here, with their answers.'
+  s1 not: A spinner that never ends
+  s1 not: Someone else's questions
+  s2 see: The message box, no 'See your questions and answers' button
+  s2 not: An empty conversations sheet
+  s2 not: A red dot
+J-F-phone-1402-11 | type 6 | pass member | A question sent seconds ago, answer on its way (pass member)
+  s1 see: 'Waiting for the answer. It usually takes a few seconds.'
+  s1 not: 'Waiting' for ever after the answer came
+  s2 see: The waiting line turns into the Quick answer, or 'The MettleUp team will reply here.'
+  s2 not: The page needing to be left to update
+  s3 see: The reply 'New' once, then the message box
+  s3 not: The reply still 'New' on the next open
+  s3 not: The red dot still on after reading
+J-F-phone-1402-12 | type 12 | pass member | Two members share a phone, or a member gets a new phone (pass member)
+  s1 see: Only questions sent from that phone
+  s1 not: Questions and replies from another phone or another member
+  s1 not: The reply shown to anyone without this phone's question secret
+J-F-phone-1403-01 | type 1 | member | Help and feedback sheet open, online, a question the help pages can answer
+  s1 see: 'Sending. The answer usually takes a few seconds.'
+  s1 see: A card with the answer, 'Answer written by AI from our help pages.' and 'Did this solve it?' with Yes and No
+  s1 not: The answer without the AI line
+  s1 not: Yes and No smaller than a finger
+  s2 see: 'Great! Glad it helped.'
+  s2 see: Yes and No gone
+  s2 not: A second rating with another tap
+  s2 not: The rating lost in 'Your questions'
+J-F-phone-1403-02 | type 2 | member | Profile → Settings → Help and feedback → 'Your questions', an older Quick answer not yet rated
+  s1 see: 'Got it. We reply as soon as we can.'
+  s1 not: The question asked again
+  s1 not: Yes and No still showing after the tap
+  s2 see: The earlier tap shown, not asked again
+  s2 not: 'Did this solve it?' asked again
+J-F-phone-1403-03 | type 3 | member | Server without an AI key, or the month's AI cap reached
+  s1 see: Only 'Thanks! We read every message.' in green
+  s1 see: No 'Did this solve it?'
+  s1 not: An empty answer card
+  s1 not: An AI line with no answer
+  s1 not: An error
+J-F-phone-1403-04 | type 6 | member | A Quick answer just came, sheet still open
+  s1 see: A fresh message box; the answer kept under 'See your questions and answers'
+  s1 not: The rating undone
+  s1 not: The quick answer lost
+  s2 see: 'Quick answer' with 'automatic', and the No kept
+  s2 not: Yes and No offered again
+J-F-phone-1403-05 | type 12 | member | Help and feedback sheet open
+  s1 see: 'Answer written by AI from our help pages.'
+  s1 not: An answer that is not marked as written by AI
+  s1 not: The answer naming another member or gym
+J-F-phone-1403-06 | type 1 | pass member | Help and feedback sheet open, online, a question the help pages can answer (pass member)
+  s1 see: 'Sending. The answer usually takes a few seconds.'
+  s1 see: A card with the answer, 'Answer written by AI from our help pages.' and 'Did this solve it?' with Yes and No
+  s1 not: The answer without the AI line
+  s1 not: Yes and No smaller than a finger
+  s2 see: 'Great! Glad it helped.'
+  s2 see: Yes and No gone
+  s2 not: A second rating with another tap
+  s2 not: The rating lost in 'Your questions'
+J-F-phone-1403-07 | type 2 | pass member | Profile → Settings → Help and feedback → 'Your questions', an older Quick answer not yet rated (pass member)
+  s1 see: 'Got it. We reply as soon as we can.'
+  s1 not: The question asked again
+  s1 not: Yes and No still showing after the tap
+  s2 see: The earlier tap shown, not asked again
+  s2 not: 'Did this solve it?' asked again
+J-F-phone-1403-08 | type 3 | pass member | Server without an AI key, or the month's AI cap reached (pass member)
+  s1 see: Only 'Thanks! We read every message.' in green
+  s1 see: No 'Did this solve it?'
+  s1 not: An empty answer card
+  s1 not: An AI line with no answer
+  s1 not: An error
+J-F-phone-1403-09 | type 6 | pass member | A Quick answer just came, sheet still open (pass member)
+  s1 see: A fresh message box; the answer kept under 'See your questions and answers'
+  s1 not: The rating undone
+  s1 not: The quick answer lost
+  s2 see: 'Quick answer' with 'automatic', and the No kept
+  s2 not: Yes and No offered again
+J-F-phone-1403-10 | type 12 | pass member | Help and feedback sheet open (pass member)
+  s1 see: 'Answer written by AI from our help pages.'
+  s1 not: An answer that is not marked as written by AI
+  s1 not: The answer naming another member or gym
+J-F-phone-1404-01 | type 1 | member | Watch paired and has sent its screen log to this phone; Help and feedback sheet open
+  s1 see: A switch 'Add my watch's screen log', off
+  s1 see: Its caption on what the log holds
+  s1 not: The switch already on
+  s1 not: The switch on a phone with no watch log
+  s2 see: 'Thanks! We read every message.'
+  s2 see: 'Your watch screen log was sent too.'
+  s2 see: The switch back off
+  s2 not: The log sent before the message
+  s2 not: The log sent twice
+J-F-phone-1404-02 | type 2 | member | Profile → Settings → Help and feedback page, watch log on this phone
+  s1 see: The same two lines after sending
+  s1 not: A different switch or words than the sheet
+J-F-phone-1404-03 | type 3 | member | Phone that never had a MettleUp watch
+  s1 see: No watch-log switch at all
+  s1 not: An empty or broken switch row
+  s2 see: 'Your message was sent, but the watch screen log was not. Try again later.' in red
+  s2 not: 'Your watch screen log was sent too.'
+  s2 not: The message itself shown as failed
+J-F-phone-1404-04 | type 6 | member | Switch turned on, then message send failed
+  s1 see: The offline line; the switch still on
+  s1 not: The log sent without the message
+  s2 see: Only 'Thanks! We read every message.'
+  s2 not: The log sent while the switch is off
+J-F-phone-1404-05 | type 12 | member | Watch log on this phone, sheet open
+  s1 see: Caption: 'It helps us fix a watch screen that goes dark. It holds only the times your watch screen turned on, off or dim, and your watch's Battery Saver and screen settings.'
+  s1 see: Only the message is sent
+  s1 not: The log sent with the switch off
+  s1 not: Workouts, heart rate or other watch data in the log
+J-F-phone-1404-06 | type 1 | pass member | Watch paired and has sent its screen log to this phone; Help and feedback sheet open (pass member)
+  s1 see: A switch 'Add my watch's screen log', off
+  s1 see: Its caption on what the log holds
+  s1 not: The switch already on
+  s1 not: The switch on a phone with no watch log
+  s2 see: 'Thanks! We read every message.'
+  s2 see: 'Your watch screen log was sent too.'
+  s2 see: The switch back off
+  s2 not: The log sent before the message
+  s2 not: The log sent twice
+J-F-phone-1404-07 | type 2 | pass member | Profile → Settings → Help and feedback page, watch log on this phone (pass member)
+  s1 see: The same two lines after sending
+  s1 not: A different switch or words than the sheet
+J-F-phone-1404-08 | type 3 | pass member | Phone that never had a MettleUp watch (pass member)
+  s1 see: No watch-log switch at all
+  s1 not: An empty or broken switch row
+  s2 see: 'Your message was sent, but the watch screen log was not. Try again later.' in red
+  s2 not: 'Your watch screen log was sent too.'
+  s2 not: The message itself shown as failed
+J-F-phone-1404-09 | type 6 | pass member | Switch turned on, then message send failed (pass member)
+  s1 see: The offline line; the switch still on
+  s1 not: The log sent without the message
+  s2 see: Only 'Thanks! We read every message.'
+  s2 not: The log sent while the switch is off
+J-F-phone-1404-10 | type 12 | pass member | Watch log on this phone, sheet open (pass member)
+  s1 see: Caption: 'It helps us fix a watch screen that goes dark. It holds only the times your watch screen turned on, off or dim, and your watch's Battery Saver and screen settings.'
+  s1 see: Only the message is sent
+  s1 not: The log sent with the switch off
+  s1 not: Workouts, heart rate or other watch data in the log
+J-F-phone-1406-01 | type 1 | member | Workout tab, What's new and 'Your workouts are only on this phone' both want to show
+  s1 see: One notice card above Up next (What's new first)
+  s1 see: Start still on screen
+  s1 not: Two or more notice cards stacked
+  s1 not: A card flashing up then going
+  s2 see: The card goes; no other notice shows for the rest of the day
+  s2 not: The next card popping up at once
+  s2 not: The closed card back after leaving the tab
+  s3 see: 'Your workouts are only on this phone' card
+  s3 not: Nothing for days
+  s3 not: What's new again
+J-F-phone-1406-02 | type 2 | member | A notice was closed earlier today; the member taps a gym link that fails, or updates the app
+  s1 see: 'That link didn't work' (or What's new after the update) shows even today
+  s1 not: The answer to the member's own tap held back until tomorrow
+J-F-phone-1406-03 | type 3 | member | No notice wants to show
+  s1 see: Up next and Start with no notice card
+  s1 see: No empty gap
+  s1 not: An empty card
+  s1 not: A blank space above Up next
+J-F-phone-1406-04 | type 6 | member | A notice closed today, rest day saved
+  s1 see: No offer card (watch, backup, safekeep)
+  s1 not: A notice closed today flashing up before the saved day is read
+  s2 see: 'Your plan ends on Friday' even though a card was closed today
+  s2 not: The plan-end fact held back
+J-F-phone-1406-05 | type 1 | pass member | Workout tab, What's new and 'Your workouts are only on this phone' both want to show (pass member)
+  s1 see: One notice card above Up next (What's new first)
+  s1 see: Start still on screen
+  s1 not: Two or more notice cards stacked
+  s1 not: A card flashing up then going
+  s2 see: The card goes; no other notice shows for the rest of the day
+  s2 not: The next card popping up at once
+  s2 not: The closed card back after leaving the tab
+  s3 see: 'Your workouts are only on this phone' card
+  s3 not: Nothing for days
+  s3 not: What's new again
+J-F-phone-1406-06 | type 2 | pass member | A notice was closed earlier today; the member taps a gym link that fails, or updates the app (pass member)
+  s1 see: 'That link didn't work' (or What's new after the update) shows even today
+  s1 not: The answer to the member's own tap held back until tomorrow
+J-F-phone-1406-07 | type 3 | pass member | No notice wants to show (pass member)
+  s1 see: Up next and Start with no notice card
+  s1 see: No empty gap
+  s1 not: An empty card
+  s1 not: A blank space above Up next
+J-F-phone-1406-08 | type 6 | pass member | A notice closed today, rest day saved (pass member)
+  s1 see: No offer card (watch, backup, safekeep)
+  s1 not: A notice closed today flashing up before the saved day is read
+  s2 see: 'Your plan ends on Friday' even though a card was closed today
+  s2 not: The plan-end fact held back
+J-F-phone-1407-01 | type 1 | member | Live workout open, phone storage full
+  s1 see: A calm banner at the top: 'Couldn't save — your phone's storage may be full. Free some space; we'll keep trying.'
+  s1 not: A code or a stack trace
+  s1 not: The banner taking taps meant for Minimise or the back arrow
+  s2 see: The banner goes on the next save that works
+  s2 not: The banner staying after saves work
+  s2 not: Sets lost
+J-F-phone-1407-02 | type 2 | member | Live workout open, storage full, member taps Finish
+  s1 see: 'Couldn't finish your workout — your phone's storage may be full. It's still open: free some space, then tap Finish again.'
+  s1 see: The workout still open
+  s1 not: 'We'll keep trying' for a Finish that is not retried
+  s1 not: The workout closed or lost
+  s2 see: The workout finishes; the banner goes
+  s2 not: The banner left after the finish
+  s2 not: Two saved workouts
+J-F-phone-1407-03 | type 2 | member | Editing a past workout, a save error that is not storage
+  s1 see: 'Couldn't save your changes. They're still open — tap Save changes again.'
+  s1 not: The edits thrown away
+  s1 not: The banner gone after an autosave works
+J-F-phone-1407-04 | type 3 | member | Live workout, saves fail for a reason other than storage
+  s1 see: 'Couldn't save your workout. We'll keep trying.'
+  s1 not: The storage-full words when storage is fine
+  s1 not: A red error pop-up that needs a tap
+J-F-phone-1407-05 | type 6 | member | Finish failed, banner shows the Finish line
+  s1 see: The Finish line stays
+  s1 not: The banner cleared by the autosave while Finish still needs a tap
+  s2 see: The banner goes
+  s2 not: The banner left on the next workout
+J-F-phone-1407-06 | type 1 | pass member | Live workout open, phone storage full (pass member)
+  s1 see: A calm banner at the top: 'Couldn't save — your phone's storage may be full. Free some space; we'll keep trying.'
+  s1 not: A code or a stack trace
+  s1 not: The banner taking taps meant for Minimise or the back arrow
+  s2 see: The banner goes on the next save that works
+  s2 not: The banner staying after saves work
+  s2 not: Sets lost
+J-F-phone-1407-07 | type 2 | pass member | Live workout open, storage full, member taps Finish (pass member)
+  s1 see: 'Couldn't finish your workout — your phone's storage may be full. It's still open: free some space, then tap Finish again.'
+  s1 see: The workout still open
+  s1 not: 'We'll keep trying' for a Finish that is not retried
+  s1 not: The workout closed or lost
+  s2 see: The workout finishes; the banner goes
+  s2 not: The banner left after the finish
+  s2 not: Two saved workouts
+J-F-phone-1407-08 | type 2 | pass member | Editing a past workout, a save error that is not storage (pass member)
+  s1 see: 'Couldn't save your changes. They're still open — tap Save changes again.'
+  s1 not: The edits thrown away
+  s1 not: The banner gone after an autosave works
+J-F-phone-1407-09 | type 3 | pass member | Live workout, saves fail for a reason other than storage (pass member)
+  s1 see: 'Couldn't save your workout. We'll keep trying.'
+  s1 not: The storage-full words when storage is fine
+  s1 not: A red error pop-up that needs a tap
+J-F-phone-1407-10 | type 6 | pass member | Finish failed, banner shows the Finish line (pass member)
+  s1 see: The Finish line stays
+  s1 not: The banner cleared by the autosave while Finish still needs a tap
+  s2 see: The banner goes
+  s2 not: The banner left on the next workout

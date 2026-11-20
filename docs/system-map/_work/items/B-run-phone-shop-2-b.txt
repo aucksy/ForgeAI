@@ -1,0 +1,84 @@
+# B-run-phone-shop-2-b: gap-8 x phone / phone/shop-2. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H8.1 | gap-8 | By script first: docs/system-map/_tools/silent.mjs lists every catch block with file:line and three flags: logs? (calls a log, report or crash function inside), tells_user? (sets an error state, toast or alert inside), rethrows?
+H8.2 | gap-8 | Output _sources/silent.csv
+H8.3 | gap-8 | Helpers read ONLY the rows where all three are "no", plus every fallback value (?? null, || [], ?? 0) that sits in a file named in a journey that writes money, messages, alerts, sign-in or sync
+H8.4 | gap-8 | Everything else is counted in the grid as "filtered by script, N rows, not read" so the gap is visible
+H8.5 | gap-8 | For each: if this path runs, does the user (or owner, or HQ) learn anything?
+H8.6 | gap-8 | A silent path that hides a failed promise = finding
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-400 | live | Join a gym by invite link or gym code (with the 18+ and terms tick box) | apps/mobile/src/shop/gymApi.ts:85
+F-phone-401 | hidden | Gym owner or desk staff unlock their gym in the member app with their mobile number and PIN | apps/mobile/src/shop/gymApi.ts:98
+F-phone-402 | live | Find my gym and sign in with my mobile number (WhatsApp check) | apps/mobile/src/shop/gymApi.ts:686
+F-phone-403 | live | Gym tab home: the gym's name and logo, its parts, and staying linked to the gym | apps/mobile/src/shop/gymTab.ts:1
+F-phone-404 | live | Gym shop: see products, fill the bag, place and cancel an order | apps/mobile/src/shop/gymApi.ts:152
+F-phone-405 | live | demo copy of Gym shop (the sample shop and its pretend orders, shown before joining a gym) | apps/mobile/src/shop/shopStore.ts:72
+F-phone-406 | live | Messages from the gym: the inbox behind the bell (holidays, timings, offers, events) | apps/mobile/src/shop/gymApi.ts:116
+F-phone-407 | behind switch | Gym messages pop up on the phone (15-minute background check and instant push; quiet pop-up during a workout) | apps/mobile/src/shop/noticeAlertsRun.ts:147
+F-phone-408 | behind switch | Automatic reminders from the gym (plan ending, birthday wishes and others), set on the phone itself | apps/mobile/src/shop/gymReminders.ts:286
+F-phone-409 | live | My membership: plan, end date, days left, and the "plan ends soon" card on the Workout tab | apps/mobile/src/shop/gymApi.ts:197
+F-phone-410 | live | Ask the desk to pause or renew my plan | apps/mobile/src/shop/gymApi.ts:308
+F-phone-411 | live | Check in by QR: scan the poster at the desk | apps/mobile/src/shop/gymApi.ts:186
+F-phone-412 | live | Workout plans sent by the gym | apps/mobile/src/shop/gymApi.ts:220
+F-phone-413 | live | The gym's workout of the day | apps/mobile/src/shop/gymApi.ts:231
+F-phone-414 | live | Watch your trainer: the gym's own form videos on an exercise | apps/mobile/src/shop/trainerVideo.ts:1
+F-phone-415 | live | Measurements taken by the gym's trainer and diet plans from the gym | apps/mobile/src/shop/gymApi.ts:242
+F-phone-416 | live | The gym's opening hours | apps/mobile/src/shop/gymApi.ts:261
+F-phone-417 | live | How busy the gym is right now | apps/mobile/src/shop/gymApi.ts:283
+F-phone-418 | behind switch | Busy times by exercise (which machines are usually free) | apps/mobile/src/shop/gymApi.ts:494
+F-phone-419 | live | Gym leaderboard and monthly challenge | apps/mobile/src/shop/gymApi.ts:272
+F-phone-420 | behind switch | Gym mate profiles: let my gym mates see my workouts, and see theirs | apps/mobile/src/shop/gymApi.ts:384
+F-phone-421 | behind switch | Share my workouts with my trainers (weekly summary and recent workouts; my start date at the gym) | apps/mobile/src/shop/gymApi.ts:514
+F-phone-422 | behind switch | Ask my trainer for help (one tap) | apps/mobile/src/shop/gymApi.ts:537
+F-phone-423 | live | Ask a trainer a workout question, and get a pop-up when the trainer replies | apps/mobile/src/shop/gymApi.ts:557
+F-phone-424 | live | Message your gym: a question, feedback or a complaint to the owner or a trainer, with the red unread count | apps/mobile/src/shop/gymApi.ts:632
+F-phone-425 | hidden | demo copy of Message your gym (the pretend gym in QA test builds; the page says the messages stay on the phone) | apps/mobile/src/shop/gymTalk.ts:129
+F-phone-426 | live | The gym's workout offer: join, share workout dates, leave, and show my workouts to the desk | apps/mobile/src/shop/gymApi.ts:435
+F-phone-427 | live | Send my workout report to the gym when the desk asks | apps/mobile/src/shop/gymApi.ts:354
+F-phone-428 | live | Bring a friend: my invite code, the free days and how many friends joined | apps/mobile/src/shop/gymApi.ts:622
+F-phone-429 | live | Leave the gym (open orders are cancelled first; an offline leave is sent again later) | apps/mobile/src/shop/gymApi.ts:461
+F-phone-430 | live | Add the gym's logo to the home screen | apps/mobile/src/shop/gymShortcut.ts:103
+F-phone-431 | behind switch | Pay the gym from the app: UPI QR, UPI app, or online payment for fees and shop orders | apps/mobile/src/shop/memberPay.ts:1
+F-phone-432 | live | Recommend MettleUp to your gym (share link on the no-gym screen) | apps/mobile/src/shop/recommendGym.ts:1
+F-phone-433 | behind switch | MettleUp Plus: paid extras lock 7 days after the plan ends | apps/mobile/src/shop/gymApi.ts:727
+## SILENT CATCH ROWS TO READ (kind,file,line,logs,tells_user,rethrows,text)
+catch,apps/mobile/src/shop/gymBody.ts,107,no,no,no,{ return {}; }
+catch,apps/mobile/src/shop/gymReminders.ts,140,no,no,no,(() => undefined)
+catch,apps/mobile/src/shop/leaderboardSync.ts,45,no,no,no,(() => true)
+catch,apps/mobile/src/shop/machineBusy.ts,224,no,no,no,{ // quiet: a damaged note only means a hidden tip may show again. return {}; }
+catch,apps/mobile/src/shop/machineBusySync.ts,70,no,no,no,(() => true)
+catch,apps/mobile/src/shop/mateSync.ts,43,no,no,no,(() => true)
+catch,apps/mobile/src/shop/mateSync.ts,60,no,no,no,(() => ({ bio: null as string | null }))
+catch,apps/mobile/src/shop/mateSync.ts,63,no,no,no,(() => new Map<string  { catalogKey?: string | null }>())
+catch,apps/mobile/src/shop/noticeAlertsRun.ts,95,no,no,no,(() => undefined)
+catch,apps/mobile/src/shop/noticeAlertsRun.ts,374,no,no,no,(() => undefined)
+catch,apps/mobile/src/shop/noticeTaskSync.ts,34,no,no,no,(() => undefined)
+catch,apps/mobile/src/shop/noticeTaskSync.ts,61,no,no,no,(() => undefined)
+catch,apps/mobile/src/shop/pendingLeave.ts,45,no,no,no,(() => undefined)
+catch,apps/mobile/src/shop/pushToken.ts,110,no,no,no,(() => undefined)
+catch,apps/mobile/src/shop/trainerSync.ts,214,no,no,no,(() => true)
+catch,apps/mobile/src/shop/trainerVideo.ts,77,no,no,no,{ // quiet: a broken saved list is the same as none (the next gym read writes it again). r
+## FALLBACK ROWS TO READ (files that write money, messages, alerts, sign-in or sync)
+fallback,apps/mobile/src/shop/gymApi.ts,124,-,-,-,return r.ok ? { ok: true  data: Number(r.data) || 0 } : r;
+fallback,apps/mobile/src/shop/gymApi.ts,149,-,-,-,return { ok: true  data: row && typeof row === 'object' ? (row as { pack?: unknown }).pack
+fallback,apps/mobile/src/shop/gymApi.ts,342,-,-,-,return { ok: true  data: Number(r.data) || 0 };
+fallback,apps/mobile/src/shop/gymMessages.ts,59,-,-,-,return sides[0] ?? null;
+fallback,apps/mobile/src/shop/gymMessages.ts,106,-,-,-,return Math.max(q.askedAt  q.answeredAt ?? 0);
+fallback,apps/mobile/src/shop/gymMessages.ts,116,-,-,-,...(talk ?? []).map((thread): MessageItem => ({ kind: 'talk'  id: `talk:${thread.id}`  at:
+fallback,apps/mobile/src/shop/gymMessages.ts,117,-,-,-,...(ask ?? []).map((question): MessageItem => ({ kind: 'ask'  id: `ask:${question.id}`  at
+fallback,apps/mobile/src/shop/gymMessages.ts,218,-,-,-,return o.mine ? TO_WORDS.mine(o.name ?? '') : (o.name ?? '');
+fallback,apps/mobile/src/shop/gymMessages.ts,218,-,-,-,return o.mine ? TO_WORDS.mine(o.name ?? '') : (o.name ?? '');
+fallback,apps/mobile/src/shop/gymMessages.ts,233,-,-,-,const gym = (gymName ?? '').replace(/\s+/g  ' ').trim().slice(0  60) || 'your gym';
+fallback,apps/mobile/src/shop/gymTalk.ts,143,-,-,-,const gym = (gymName ?? '').replace(/\s+/g  ' ').trim().slice(0  60) || 'your gym';
+fallback,apps/mobile/src/shop/gymTalk.ts,259,-,-,-,const m = (message ?? '').trim();
+fallback,apps/mobile/src/shop/gymTalkSync.ts,80,-,-,-,if (r.error.kind !== 'offline' && r.error.kind !== 'timeout') console.warn('[talk] could n
+fallback,apps/mobile/src/shop/gymTalkSync.ts,131,-,-,-,if (r.error.kind !== 'offline' && r.error.kind !== 'timeout') console.warn('[talk] could n
+fallback,apps/mobile/src/shop/gymTalkSync.ts,167,-,-,-,if (r.error.kind !== 'offline' && r.error.kind !== 'timeout') console.warn('[talk] the mes
+fallback,apps/mobile/src/shop/gymTalkSync.ts,189,-,-,-,if (r.error.kind !== 'offline' && r.error.kind !== 'timeout') console.warn('[talk] could n
+fallback,apps/mobile/src/shop/gymTalkSync.ts,209,-,-,-,if (r.error.kind !== 'offline' && r.error.kind !== 'timeout') console.warn('[talk] the mes
+fallback,apps/mobile/src/shop/gymTalkSync.ts,225,-,-,-,if (r.error.kind !== 'offline' && r.error.kind !== 'timeout') console.warn('[talk] the rep
+fallback,apps/mobile/src/shop/money.ts,30,-,-,-,return product.options.find((o) => o.id === optionId) ?? null;
+fallback,apps/mobile/src/shop/money.ts,91,-,-,-,return `${productId}::${optionId ?? ''}`;
+fallback,apps/mobile/src/shop/money.ts,167,-,-,-,const product = catalog.find((p) => p.id === line.productId) ?? null;
+## FILTERED BY SCRIPT
+138 other rows of _sources/silent.csv in this area: not read (write this number in the H8 evidence)

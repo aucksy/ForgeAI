@@ -1,0 +1,552 @@
+# A8-phone-cloud-backup-ai-1: coverage of 72 Tier 1 journeys (11 features, from A5-phone-cloud-backup-ai-1, A5-phone-cloud-backup-ai-2). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-phone-1511 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 9 journey phrase(s)
+F-phone-1511 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 8 journey phrase(s)
+F-phone-1511 | supabase/tests/0037_leaderboard.sql | db | 548 lines | asserts 8 journey phrase(s)
+F-phone-1511 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 7 journey phrase(s)
+F-phone-1511 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 7 journey phrase(s)
+F-phone-1511 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 7 journey phrase(s)
+F-phone-1511 | supabase/tests/0038_member_push.sql | db | 169 lines | asserts 7 journey phrase(s)
+F-phone-1511 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 6 journey phrase(s)
+F-phone-1511 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 6 journey phrase(s)
+F-phone-1511 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 6 journey phrase(s)
+F-phone-1511 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 6 journey phrase(s)
+F-phone-1511 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 6 journey phrase(s)
+F-phone-1512 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-1512 | apps/mobile/test/backup/backupRoundTrip.test.ts | unit | 432 lines | imports the code
+F-phone-1512 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-1512 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | asserts 2 journey phrase(s)
+F-phone-1512 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-phone-1512 | apps/dashboard/test/crm/assistant/answer.test.ts | unit | 191 lines | asserts 1 journey phrase(s)
+F-phone-1512 | apps/dashboard/test/crm/assistant/maskMatch.test.ts | unit | 87 lines | asserts 1 journey phrase(s)
+F-phone-1512 | apps/dashboard/test/crm/assistant/planExecute.test.ts | unit | 273 lines | asserts 1 journey phrase(s)
+F-phone-1512 | apps/dashboard/test/crm/local.test.ts | unit | 1070 lines | asserts 1 journey phrase(s)
+F-phone-1512 | apps/mobile/qa/invite-d.yaml | maestro | 36 lines | asserts 1 journey phrase(s)
+F-phone-1512 | apps/mobile/qa/sub-uat-r482-restore.yaml | maestro | 117 lines | asserts 1 journey phrase(s)
+F-phone-1512 | apps/mobile/qa/uat-bk.yaml | maestro | 229 lines | asserts 1 journey phrase(s)
+F-phone-1510 | apps/mobile/test/backup/zipStore.test.ts | unit | 67 lines | imports the code, file name
+F-phone-1510 | apps/mobile/test/backup/backupCoverage.test.ts | unit | 81 lines | imports the code
+F-phone-1510 | apps/mobile/test/backup/backupFormat.test.ts | unit | 136 lines | imports the code
+F-phone-1510 | apps/mobile/test/backup/backupRoundTrip.test.ts | unit | 432 lines | imports the code
+F-phone-1510 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-phone-1510 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 2 journey phrase(s)
+F-phone-1510 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-phone-1510 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-phone-1510 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-phone-1510 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-phone-1510 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-phone-1510 | apps/dashboard/test/crm/auditC7.test.ts | unit | 333 lines | asserts 1 journey phrase(s)
+F-phone-1520 | apps/mobile/test/cloud/accountWords.test.ts | unit | 62 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-phone-1520 | apps/mobile/test/cloud/accountGate.test.ts | unit | 42 lines | imports the code, file name
+F-phone-1520 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 3 journey phrase(s)
+F-phone-1520 | apps/mobile/test/cloud/cloudCopy.test.ts | unit | 548 lines | imports the code
+F-phone-1520 | apps/mobile/test/cloud/copyPlan.test.ts | unit | 205 lines | imports the code
+F-phone-1520 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 2 journey phrase(s)
+F-phone-1520 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 2 journey phrase(s)
+F-phone-1520 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 2 journey phrase(s)
+F-phone-1520 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 2 journey phrase(s)
+F-phone-1520 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-phone-1520 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 1 journey phrase(s)
+F-phone-1520 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 1 journey phrase(s)
+F-phone-1523 | apps/mobile/test/cloud/cloudCopy.test.ts | unit | 548 lines | imports the code
+F-phone-1523 | apps/mobile/test/cloud/copyPlan.test.ts | unit | 205 lines | imports the code
+F-phone-1523 | apps/mobile/test/onboarding/welcomeStart.test.ts | unit | 55 lines | asserts 3 journey phrase(s)
+F-phone-1523 | apps/mobile/test/cloud/accountGate.test.ts | unit | 42 lines | file name
+F-phone-1523 | apps/mobile/test/cloud/accountWords.test.ts | unit | 62 lines | file name
+F-phone-1523 | supabase/tests/0017_undo_import.sql | db | 86 lines | asserts 2 journey phrase(s)
+F-phone-1523 | supabase/tests/0037_leaderboard.sql | db | 548 lines | asserts 2 journey phrase(s)
+F-phone-1523 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 1 journey phrase(s)
+F-phone-1523 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 1 journey phrase(s)
+F-phone-1523 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-phone-1523 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-phone-1523 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-phone-1530 | apps/mobile/test/cloud/address.test.ts | unit | 87 lines | imports the code, file name
+F-phone-1530 | apps/mobile/test/cloud/cloudCopy.test.ts | unit | 548 lines | imports the code
+F-phone-1530 | apps/mobile/test/cloud/copyPlan.test.ts | unit | 205 lines | imports the code
+F-phone-1530 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | imports the code
+F-phone-1530 | apps/mobile/test/shop/c6OrderOnce.test.ts | unit | 208 lines | imports the code
+F-phone-1530 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | imports the code
+F-phone-1530 | apps/dashboard/test/lib/serverAddress.test.ts | unit | 81 lines | file name
+F-phone-1530 | supabase/tests/0030_plans_and_trials.sql | db | 136 lines | asserts 2 journey phrase(s)
+F-phone-1530 | supabase/tests/0032_member_cloud.sql | db | 217 lines | asserts 2 journey phrase(s)
+F-phone-1530 | supabase/tests/0053_ask_trainer_and_progress.sql | db | 232 lines | asserts 2 journey phrase(s)
+F-phone-1530 | supabase/tests/0085_friend_known_number.sql | db | 138 lines | asserts 2 journey phrase(s)
+F-phone-1530 | supabase/tests/0092_member_join_day.sql | db | 106 lines | asserts 2 journey phrase(s)
+F-phone-1522 | apps/mobile/test/cloud/copyPlan.test.ts | unit | 205 lines | imports the code, file name
+F-phone-1522 | apps/mobile/test/cloud/accountWords.test.ts | unit | 62 lines | imports the code
+F-phone-1522 | apps/mobile/test/cloud/cloudCopy.test.ts | unit | 548 lines | imports the code
+F-phone-1522 | apps/mobile/test/db/emptyWorkoutMemoryReal.test.ts | unit | 321 lines | imports the code
+F-phone-1522 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-phone-1522 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 1 journey phrase(s)
+F-phone-1522 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-phone-1522 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-phone-1522 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 1 journey phrase(s)
+F-phone-1522 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 1 journey phrase(s)
+F-phone-1522 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-phone-1522 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-phone-1521 | apps/mobile/test/cloud/copyPlan.test.ts | unit | 205 lines | imports the code, file name
+F-phone-1521 | apps/mobile/test/cloud/cloudCopy.test.ts | unit | 548 lines | imports the code
+F-phone-1521 | apps/mobile/test/db/emptyWorkoutMemoryReal.test.ts | unit | 321 lines | imports the code
+F-phone-1521 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-phone-1521 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 1 journey phrase(s)
+F-phone-1521 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 1 journey phrase(s)
+F-phone-1521 | apps/dashboard/e2e/trial.spec.mjs | e2e | 72 lines | asserts 1 journey phrase(s)
+F-phone-1521 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 1 journey phrase(s)
+F-phone-1521 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-phone-1521 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-phone-1521 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-phone-1521 | apps/mobile/qa/ios-first-screens.yaml | maestro | 131 lines | asserts 1 journey phrase(s)
+F-phone-1524 | apps/mobile/test/cloud/accountWords.test.ts | unit | 62 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-phone-1524 | apps/mobile/test/cloud/cloudCopy.test.ts | unit | 548 lines | imports the code
+F-phone-1524 | apps/mobile/test/cloud/copyPlan.test.ts | unit | 205 lines | imports the code
+F-phone-1524 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 2 journey phrase(s)
+F-phone-1524 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 2 journey phrase(s)
+F-phone-1524 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 1 journey phrase(s)
+F-phone-1524 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-phone-1524 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 1 journey phrase(s)
+F-phone-1524 | apps/dashboard/e2e/trial.spec.mjs | e2e | 72 lines | asserts 1 journey phrase(s)
+F-phone-1524 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 1 journey phrase(s)
+F-phone-1524 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-phone-1524 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-phone-1525 | apps/mobile/test/backup/driveBackup.test.ts | unit | 177 lines | imports the code, file name
+F-phone-1525 | apps/mobile/test/backup/driveUpload.test.ts | unit | 100 lines | imports the code, file name
+F-phone-1525 | apps/mobile/test/cloud/backupWords.test.ts | unit | 88 lines | imports the code, file name
+F-phone-1525 | apps/mobile/test/cloud/undoRestore.test.ts | unit | 143 lines | imports the code, asserts 2 journey phrase(s)
+F-phone-1525 | apps/mobile/qa/uat-rel-d7-age-tick.yaml | maestro | 272 lines | asserts 3 journey phrase(s)
+F-phone-1525 | apps/mobile/test/cloud/backupSafety.test.ts | unit | 95 lines | imports the code
+F-phone-1525 | apps/mobile/test/cloud/cloudCopy.test.ts | unit | 548 lines | imports the code
+F-phone-1525 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | imports the code
+F-phone-1525 | apps/mobile/test/cloud/restoreClockRepair.test.ts | unit | 80 lines | imports the code
+F-phone-1525 | apps/mobile/test/cloud/restoreRepairs.test.ts | unit | 233 lines | imports the code
+F-phone-1525 | apps/mobile/test/db/backupRoundTrip.test.ts | unit | 152 lines | imports the code
+F-phone-1525 | apps/mobile/test/db/historyChartReal.test.ts | unit | 116 lines | imports the code
+F-phone-1531 | apps/mobile/test/cloud/address.test.ts | unit | 87 lines | imports the code, file name
+F-phone-1531 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | imports the code
+F-phone-1531 | apps/dashboard/test/lib/serverAddress.test.ts | unit | 81 lines | file name
+F-phone-1531 | apps/mobile/test/tracker/exercisePictures.test.ts | unit | 210 lines | file name
+F-phone-1531 | apps/mobile/test/tracker/onePictureLook.test.ts | unit | 63 lines | file name
+F-phone-1531 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 1 journey phrase(s)
+F-phone-1531 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | asserts 1 journey phrase(s)
+F-phone-1531 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-phone-1531 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 1 journey phrase(s)
+F-phone-1531 | deploy/panel/helpPages.test.mjs | unit | 109 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-phone-1511-01 | type 1 | member | Settings, Your data, Backup and restore, a phone with workouts and a MettleUp backup ZIP saved in Files
+  s1 see: 'Choose a backup file made by MettleUp or the old ForgeAI app. You see what is inside before anything changes.'
+  s1 see: Button 'Choose backup file'
+  s1 not: Anything on the phone changed before a file is chosen
+  s2 see: Heading 'In this backup'
+  s2 see: A summary such as '512 workouts, 9 routines, 40 measurements and 12 photos, saved on 25 Oct 2026 by MettleUp ...'
+  s2 see: Buttons 'Replace everything on this phone', 'Add to what's here', 'Choose another file'
+  s2 not: Any workout, routine or setting changed just by opening the file
+  s3 see: Sheet titled 'Delete N workouts first?' saying the phone's workouts go, how many are not in the backup, and 'A copy is kept while you stay on this screen, so you can undo.'
+  s3 see: Button 'Replace'
+  s3 not: The phone's workouts deleted before 'Replace' is tapped
+  s4 see: 'Putting back 3 of 12 photos...', then 'Putting back your workouts and routines...', then 'Working out your records...'
+  s4 see: 'Restored N workouts, N routines, N measurements and N photos.'
+  s4 see: Button 'Undo restore'
+  s4 not: The phone number or gym link replaced from the file
+  s4 not: A half-restored phone when a step fails
+  s4 not: Photos already on the phone deleted
+J-F-phone-1511-02 | type 2 | member | Same, the member taps 'Add to what's here' instead
+  s1 see: 'In this backup' summary
+  s1 see: Note: 'Add to what's here': only what this phone doesn't have yet comes in; your settings stay.
+  s1 not: Settings or profile changed by opening the file
+  s2 see: 'Restored N workouts, ... N workouts were already here, so they were left out.'
+  s2 not: A workout already on the phone (same id, same content, or same day and start within 30 minutes) brought in twice
+  s2 not: The phone's settings or profile replaced
+J-F-phone-1511-03 | type 2 | member | First open of a new phone, welcome screen, a backup ZIP in Files
+  s1 see: 'In this backup' summary
+  s1 see: One button 'Restore' (nothing on the phone to add to)
+  s1 see: 'Your settings and profile come back too. Photos already on this phone stay.'
+  s1 not: A choice between Replace and Add on an empty phone
+  s2 see: 'Restored N workouts, ...' and the app opens as the member's own
+  s2 not: A 'Member' profile left behind when the restore fails
+  s2 not: An 'Undo restore' button that cannot work from the welcome screen
+J-F-phone-1511-04 | type 3 | member | Restore screen, the member picks a file that is not a MettleUp backup (a photo, a Hevy CSV, a ZIP repacked by another app)
+  s1 see: 'That file isn't a MettleUp backup, so nothing was changed. Pick the file that starts with "mettleup-backup".'
+  s1 see: Button 'Choose backup file' again
+  s1 not: A crash or endless spinner
+  s1 not: Anything on the phone changed
+  s2 see: 'This backup was packed again by another app, so MettleUp can't read it. Use the file exactly as MettleUp saved it. Nothing was changed.'
+  s2 not: The file read in part and restored half-way
+  s3 see: 'This backup was saved by a newer version of MettleUp. Update MettleUp, then restore it again. Nothing was changed.'
+  s3 not: The newer file restored with fields dropped silently
+J-F-phone-1511-05 | type 3 | member | Restore screen with a backup chosen, a workout in progress on the phone
+  s1 see: 'Finish your workout first: finish or discard the workout in progress, then restore.'
+  s1 not: The workout in progress deleted or overwritten
+  s2 see: 'Your phone is short of space: this needs about N MB and only N MB is free. Free up some space, then try again. Nothing was changed.'
+  s2 not: Some photos or the profile written before the space check
+J-F-phone-1511-06 | type 6 | member | Restore screen, a backup already restored in this visit
+  s1 see: The screen starts again at 'Choose backup file'
+  s1 see: No 'Undo restore' button any more
+  s1 not: An old undo copy applied later to a changed phone
+  s2 see: 'Restored 0 workouts ... N workouts were already here, so they were left out.'
+  s2 not: Every workout doubled
+J-F-phone-1511-07 | type 12 | member | Member sends the backup ZIP to someone else (WhatsApp, Drive)
+  s1 see: Workouts, routines, body weight, measurements, photos, profile and settings
+  s1 not: The phone number or the gym membership in the file
+  s1 not: Any other member's data in the file
+  s2 see: The other phone gets the workouts; its own phone number and gym link stay as they were
+  s2 not: The receiving phone's gym link, sign-in or membership changed by the file
+J-F-phone-1512-01 | type 1 | member | Settings, Restore from a backup, just after 'Replace' finished with 'Restored ...' shown
+  s1 see: Busy button 'Putting this phone back...'
+  s1 not: A second tap starting a second undo
+  s2 see: 'Done. This phone is back to how it was before the restore.'
+  s2 see: The 'Undo restore' button is gone
+  s2 see: Old workouts, routines, settings and profile are back
+  s2 not: The backup's photos left on the phone
+  s2 not: The backup's settings kept after the undo
+J-F-phone-1512-02 | type 2 | member | Same, after 'Add to what's here' finished
+  s1 see: 'Done. This phone is back to how it was before the restore.'
+  s1 see: Only the workouts the backup added are gone
+  s1 not: Workouts that were on the phone before the restore removed
+  s1 not: Settings changed (Add never changed them)
+J-F-phone-1512-03 | type 3 | member | Restore just finished from the welcome screen, or the member left the screen
+  s1 see: No 'Undo restore' button
+  s1 not: An undo button that wipes the only copy of the data
+  s2 see: 'Choose backup file' again, no undo
+  s2 not: An undo applied after the member logged new workouts, losing them
+  s3 see: 'Couldn't undo. Please try again.'
+  s3 not: The phone left half-way between backup and old state with no word
+J-F-phone-1512-04 | type 6 | member | Undo done once
+  s1 see: No undo button; the backup summary and note stay
+  s1 not: A second 'Undo restore' that applies the old copy again
+  s2 see: A new restore and a new 'Undo restore'
+  s2 not: The earlier undo copy reused
+J-F-phone-1510-01 | type 1 | member | Settings, Your data, Backup and restore, a member with workouts and photos
+  s1 see: 'One file with your workouts, routines in their order, your own exercises, rest times, body weight, measurements, photos, profile and settings. A copy for your own records...'
+  s1 see: 'Your phone number and your gym membership are never in the file.'
+  s1 see: Button 'Save the backup file'
+  s1 not: The file made before the button is tapped
+  s2 see: Busy button 'Saving 37 of 210 photos...'
+  s2 not: The screen freezing on a long video
+  s2 not: A second file started by a second tap
+  s3 see: 'Saved mettleup-backup-2026-11-20.zip (120 MB): N workouts and N photos.'
+  s3 not: 'Saved' shown when the share sheet was closed without saving the file anywhere
+  s3 not: The phone number or gym membership inside the file
+J-F-phone-1510-02 | type 3 | member | Download my data on a new phone with nothing logged, or on the sample member's data
+  s1 see: 'Nothing to back up yet. Log a workout or make a routine first.'
+  s1 not: An empty ZIP handed to the share sheet
+  s2 see: 'This is the sample member's made-up data, so there is nothing of yours to back up.'
+  s2 not: The demo data saved as the member's backup
+  s3 see: 'Your phone is short of space: this needs about N MB and only N MB is free. Free up some space, then try again. Nothing was changed.'
+  s3 not: A half-written file left in the phone's storage
+J-F-phone-1510-03 | type 6 | member | A backup was saved before today
+  s1 see: A new file named with today's date; the older one in the app's own folder is replaced
+  s1 not: Old backups piling up in the app's storage
+  s1 not: The file already handed to Drive or Files deleted
+  s2 see: '... 1 photo could not be read and was left out.'
+  s2 not: The whole save failing for one missing photo
+J-F-phone-1510-04 | type 12 | member | Member shares the saved ZIP
+  s1 see: The file holds only this member's own data
+  s1 not: The phone number, gym membership, sign-in or another member's data in the file
+  s2 see: Progress photos are inside the file the member chose to make
+  s2 not: The file sent anywhere by MettleUp itself; only the member's share-sheet choice moves it
+J-F-phone-1520-01 | type 1 | member | Settings, Backup and restore, card 'Keep your workouts on MettleUp', not signed in, a build with a real Google client id
+  s1 see: 'Sign in with Google to keep your workouts safe. MettleUp then saves your workouts, routines and body weight to your account by itself...'
+  s1 see: 'Only you can see what is saved. Your gym cannot. Progress photos stay on this phone.'
+  s1 see: The 18+ and terms tick box (first time)
+  s1 not: The card shown in a build without a Google client id
+  s2 see: 'Signed in as name@gmail.com'
+  s2 see: 'Your workouts will be saved on MettleUp in a moment.' then 'Your workouts are saved to your MettleUp account automatically. Last saved: ...'
+  s2 not: Google Drive permission asked
+  s2 not: Workouts sent before the server copy was brought back
+J-F-phone-1520-02 | type 2 | member | Welcome screen of a new phone, member used MettleUp before
+  s1 see: The app opens with the member's profile and 'N workouts brought back to this phone.'
+  s1 see: Or 'You are signed in. Nothing is saved yet, so answer the 3 questions to start.'
+  s1 not: The welcome questions asked again when a profile was kept
+J-F-phone-1520-03 | type 2 | member | Signed in, Settings card
+  s1 see: Question 'Sign out of MettleUp?' - 'Your workouts stay on this phone. New workouts are not saved on MettleUp until you sign in again.'
+  s1 not: Signed out without the question
+  s2 see: The card shows 'Continue with Google' again; workouts still on the phone
+  s2 not: Workouts deleted from the phone
+  s2 not: Google signed out while the Drive backup still uses that account
+J-F-phone-1520-04 | type 3 | member | Card 'Keep your workouts on MettleUp', various refusals
+  s1 see: The box's error line; Google's sheet does not open
+  s1 not: Signed in without the 18+ and terms agreement
+  s2 see: Card unchanged, no error
+  s2 not: An error for a simple cancel
+  s3 see: 'This phone has another person's workouts. To use a different Google account, first erase this phone in Settings -> "Erase or start over".'
+  s3 not: The other person's workouts sent to or merged into this account
+  s4 see: 'Google sign-in is not on iPhone yet. It comes in a later update.' / 'Could not sign in with Google. Check your internet and try again.'
+  s4 not: A broken Google sheet
+J-F-phone-1520-05 | type 6 | member | Signed in earlier, then signed out
+  s1 see: 'Signed in as ...'; the newest edits win; nothing doubled
+  s1 not: Workouts doubled after signing in again
+  s2 see: 'Sign in again to keep saving your workouts on MettleUp.' and a 'Continue with Google' button on the card
+  s2 not: Saving silently stopped with 'Last saved' still shown as fine
+  s3 see: 'Your space on MettleUp is full, so new workouts stay on this phone only. Please tell us in Settings -> "Help and feedback".'
+  s3 not: Workouts lost because the server refused them
+J-F-phone-1520-06 | type 12 | member | Signed in member at a gym
+  s1 see: 'Only you can see what is saved. Your gym cannot. Progress photos stay on this phone.'
+  s1 not: The gym panel showing the saved copy
+  s1 not: Progress photos sent to the server
+J-F-phone-1523-01 | type 1 | member | Signed in, Settings, Backup and restore, card 'Keep your workouts on MettleUp'
+  s1 see: Question 'Delete your MettleUp account?' - 'This deletes your account and everything saved on MettleUp's server. The workouts on this phone stay.'
+  s1 see: Red button 'Delete account'
+  s1 not: Anything deleted before the question is answered
+  s2 see: 'Your account and everything saved on MettleUp are deleted. Your workouts are still on this phone.'
+  s2 see: The card shows 'Continue with Google' again
+  s2 not: Workouts deleted from the phone
+  s2 not: The saved copy left on the server
+J-F-phone-1523-02 | type 2 | member | Signed in member whose Google account is also a gym owner's or trainer's sign-in
+  s1 see: 'Everything saved on MettleUp is deleted. Your Google sign-in stays, because your gym also uses it. Your workouts are still on this phone.'
+  s1 not: The owner's or trainer's gym sign-in deleted
+  s1 not: The saved workouts kept
+J-F-phone-1523-03 | type 2 | member | Settings, 'Erase or start over', choose 'Erase this phone and delete my MettleUp account'
+  s1 see: The account is deleted first, then the phone is erased and the welcome screen opens
+  s1 not: The phone erased while the account delete failed (an empty phone and a full account)
+J-F-phone-1523-04 | type 3 | member | Signed in, no internet or the server refuses
+  s1 see: 'No internet right now. Your workouts are safe on this phone. Try again when you are online.'
+  s1 see: Still signed in
+  s1 not: 'deleted' shown when the server was never reached
+  s1 not: The phone forgetting the account while the server copy remains
+  s2 see: Card unchanged
+  s2 not: Anything deleted
+J-F-phone-1523-05 | type 6 | member | Account just deleted
+  s1 see: A fresh, empty account; this phone's workouts are sent up again
+  s1 not: The deleted copy coming back
+  s2 see: Not signed in; the 'deleted' line once
+  s2 not: The 'Delete my account' button still shown
+J-F-phone-1523-06 | type 12 | member | Member deletes the account
+  s1 see: Nothing of the saved copy; backup copies expire within 7 days
+  s1 not: Saved workouts left on the server
+  s1 not: A gym's sign-in deleted for a shared Google account
+J-F-phone-1530-01 | type 1 | the system | Any server request from the app (join, check-in, shop, messages, account copy) in a build with app.mettleup.fit/sb listed first
+  s1 see: The request goes through the longest-serving address of ours; a harmless test call checks the newer one in the background
+  s1 not: The member's request sent to an unproven address
+  s2 see: Later requests use app.mettleup.fit/sb
+  s2 not: A request sent twice
+J-F-phone-1530-02 | type 2 | the system | A gym logo or shop photo saved with Supabase's own address
+  s1 see: The picture loads through the address of ours in use now
+  s1 not: A broken picture while Supabase's own address is blocked
+J-F-phone-1530-03 | type 3 | the system | Our address fails: no answer, a 10 s hang, or an answer without the gym server's stamp (Cloudflare's own page)
+  s1 see: The screen's own 'try again' words; the address rests for 10 minutes and the next one is used
+  s1 not: The check-in or order sent again automatically and made twice
+  s2 see: Requests go straight to Supabase's own address for 10 minutes
+  s2 not: The app stuck on a dead address
+J-F-phone-1530-04 | type 6 | the system | An address rested 10 minutes ago
+  s1 see: The address is tried again
+  s1 not: An address left resting forever after one failure
+  s2 see: The switch's memory starts fresh (proven list empty)
+  s2 not: The saved sign-in lost because the address changed
+J-F-phone-1530-05 | type 12 | the system | Requests through our own addresses
+  s1 see: The Worker passes it on to the gym server unchanged
+  s1 not: The member's sign-in or data kept or logged by the Worker beyond passing it on
+J-F-phone-1522-01 | type 1 | member | Settings, Backup and restore, MettleUp account card, signed in with Google, the server copy holds workouts this phone lacks
+  s1 see: 'Signed in as <email>'
+  s1 see: Button 'Bring back my workouts'
+  s1 not: The button missing for a signed-in member
+  s2 see: The background copy waits while the copy is read
+  s2 not: A second bring-back running at the same time
+  s2 not: Workouts sent up before the server copy is in
+  s3 see: '<n> workouts brought back to this phone.'
+  s3 not: The same workout shown twice in History
+  s3 not: An older server edit overwriting a newer edit made on this phone
+  s4 see: The brought-back workouts, with their records worked out again
+  s4 not: Old screens that need an app restart to show the new workouts
+J-F-phone-1522-02 | type 2 | member | Welcome screen on a new phone, member had saved workouts on MettleUp before
+  s1 see: Google's account picker
+  s1 not: Workouts of this phone sent before the server copy is read
+  s2 see: '<n> workouts brought back to this phone.'
+  s2 see: The app opens on the member's own profile when the copy holds one
+  s2 not: The 3 setup questions asked again when the profile came back
+  s2 not: Duplicate workouts after the profile is set up and the copy is merged a second time
+J-F-phone-1522-03 | type 2 | member | Signed-in phone right after a Google Drive restore replaced the data (bring-back pending)
+  s1 see: No message; the next background copy brings the server copy in first
+  s1 not: The restored older rows deleting or overwriting newer workouts on the server
+  s2 see: Workouts saved on the server after the Drive backup was made are back too
+  s2 not: Workouts lost because the restore was older
+J-F-phone-1522-04 | type 3 | member | A workout is in progress; Settings, MettleUp account card
+  s1 see: 'Finish your workout first, then try again.'
+  s1 not: The bring-back running and replacing exercises under the open workout
+J-F-phone-1522-05 | type 3 | member | Phone holds the demo data, or the phone is offline
+  s1 see: 'This phone has the demo data. Remove it first (Settings → "Erase or start over"), then try again.'
+  s1 not: Demo workouts mixed into the member's real copy
+  s2 see: 'No internet right now. Your workouts are safe on this phone. Try again when you are online.'
+  s2 not: A success line when nothing was read
+  s2 not: Any workout on the phone changed
+J-F-phone-1522-06 | type 6 | member | Settings, MettleUp account card, right after a bring-back that worked
+  s1 see: 'Everything was already on this phone.'
+  s1 not: Workouts added a second time
+  s1 not: A count of workouts brought back that are already on the phone
+  s2 see: The phone's newer edit stays
+  s2 not: The older server version replacing the edit made on this phone
+J-F-phone-1522-07 | type 12 | member | Phone with another person's workouts, Settings, sign in with a different Google account
+  s1 see: 'This phone has another person’s workouts. To use a different Google account, first erase this phone in Settings → "Erase or start over".'
+  s1 not: One person's workouts merged into, or sent to, another person's account
+  s1 not: Another member's or the gym's eyes on the brought-back copy
+J-F-phone-1521-01 | type 1 | member | Phone signed in with Google on MettleUp, online
+  s1 see: The finish screen as usual; no copy message
+  s1 not: The copy running during the workout and slowing its saves
+  s2 see: 'Your workouts are saved to your MettleUp account automatically. Last saved: <date>, <time>.'
+  s2 not: The workout missing from the server copy
+  s2 not: A copy of progress photos sent
+  s3 see: 'Last saved' moves to the new time
+  s3 not: The old version kept on the server
+  s3 not: Two server items for one workout
+J-F-phone-1521-02 | type 2 | member | Signed in, changes saved, app in use
+  s1 see: Nothing on screen
+  s1 not: The change waiting until the next app open when online
+  s2 see: Within a few seconds the waiting line clears in Settings
+  s2 not: The routine never copied after the internet returns
+J-F-phone-1521-03 | type 3 | member | Phone not signed in to MettleUp (or a build without the account)
+  s1 see: The workout saved on the phone only
+  s1 not: Any network call to the copy
+  s2 see: 'Keep your workouts on MettleUp'
+  s2 see: 'Sign in with Google to keep your workouts safe. MettleUp then saves your workouts, routines and body weight to your account by itself. On a new phone, sign in again and everything comes back.'
+  s2 see: Button 'Continue with Google'
+  s2 not: A 'Last saved' line for a phone that saves nothing
+J-F-phone-1521-04 | type 3 | member | Signed in, no internet
+  s1 see: '2 changes are waiting for the internet. They are saved by themselves when you are online.'
+  s1 not: A change lost
+  s1 not: A 'saved' line while nothing reached the server
+J-F-phone-1521-05 | type 6 | member | Signed in, many workouts already copied
+  s1 see: The workout gone from History
+  s1 not: The delete never reaching the server, so it comes back on a new phone
+  s2 see: No delete sent; the server copy is brought back first on the next copy
+  s2 not: The server copy emptied by one bad local state
+J-F-phone-1521-06 | type 12 | member | Signed in member who belongs to a gym
+  s1 see: The privacy line 'Only you can see what is saved. Your gym cannot. Progress photos stay on this phone.'
+  s1 not: The gym or its staff able to read member_items
+  s1 not: Progress photo files sent to the server
+J-F-phone-1521-07 | type 1 | the system | App start on a phone signed in to MettleUp, online
+  s1 see: Nothing visible
+  s1 not: Any listener or network call on a phone with no account
+  s2 see: Settings 'Last saved' updates
+  s2 not: A scan overlapping a workout save
+  s2 not: A scan started by the copy's own writes (an endless loop)
+J-F-phone-1521-08 | type 3 | the system | Server refuses one damaged or too-big item in a batch
+  s1 see: Nothing visible
+  s1 not: The other 99 held back by one bad item
+  s2 see: The rest copied; the refused one stays in the queue
+  s2 not: The refused item retried every few seconds
+J-F-phone-1521-09 | type 3 | the system | Server sign-in expired or the member's space is full
+  s1 see: Settings line 'Sign in again to keep saving your workouts on MettleUp.' (or the full line)
+  s1 not: The queue dropped
+  s1 not: A 'Last saved' line that hides the problem
+J-F-phone-1521-10 | type 6 | the system | Another phone on the same account already saved a newer edit of an item
+  s1 see: Server keeps its newer edit and names it
+  s1 not: The newer edit overwritten
+  s2 see: The newer edit brought to this phone before anything else is sent
+  s2 not: The older edit sent again and again
+J-F-phone-1521-11 | type 12 | the system | Phone holds the demo data and is signed in
+  s1 see: Nothing queued
+  s1 not: The sample member's made-up workouts sent to the server
+J-F-phone-1524-01 | type 1 | member | Signed in, online, every change already copied
+  s1 see: 'Keep your workouts on MettleUp'
+  s1 see: 'Signed in as <email>'
+  s1 see: 'Your workouts are saved to your MettleUp account automatically. Last saved: <date>, <time>.'
+  s1 see: 'Only you can see what is saved. Your gym cannot. Progress photos stay on this phone.'
+  s1 not: A time in another time zone or without the year
+  s1 not: A waiting count when nothing waits
+J-F-phone-1524-02 | type 2 | member | Signed in; the server said the sign-in is no longer valid
+  s1 see: 'Sign in again to keep saving your workouts on MettleUp.'
+  s1 see: Button 'Continue with Google'
+  s1 not: 'Last saved' shown as if all is fine
+  s2 see: The line goes back to 'Last saved: ...' after the next copy
+  s2 not: The waiting changes lost
+J-F-phone-1524-03 | type 2 | member | Signed in; the member's space on MettleUp is full
+  s1 see: 'Your space on MettleUp is full, so new workouts stay on this phone only. Please tell us in Settings → "Help and feedback".'
+  s1 not: New workouts claimed as saved
+J-F-phone-1524-04 | type 3 | member | Not signed in, or a build without the member account
+  s1 see: No status line; the card body and 'Continue with Google' (or no card at all on a build without the account)
+  s1 not: 'Your workouts will be saved on MettleUp in a moment.' for a phone that is not signed in
+J-F-phone-1524-05 | type 6 | member | Just signed in; then offline; then online again
+  s1 see: 'Your workouts will be saved on MettleUp in a moment.'
+  s1 not: 'Last saved' before anything was saved
+  s2 see: '1 change is waiting for the internet. They are saved by themselves when you are online.'
+  s2 not: Plural words for one change
+  s3 see: 'Last saved: <now>'
+  s3 not: The waiting line stuck after the copy went through
+J-F-phone-1524-06 | type 3 | member | Signed in and online; one item was refused by the server (too big or damaged) and stays in the queue
+  s1 see: Today: '1 change is waiting for the internet. They are saved by themselves when you are online.'
+  s1 not: A line blaming the internet while the phone is online and the server refused the item
+  s1 not: The 'Last saved' time hidden for good by one stuck item
+J-F-phone-1524-07 | type 12 | member | Signed in member at a gym
+  s1 see: 'Only you can see what is saved. Your gym cannot. Progress photos stay on this phone.'
+  s1 see: The member's own Google email
+  s1 not: The email or the saved copy visible to the gym panel
+J-F-phone-1525-01 | type 1 | member | Settings, Backup and restore, card 'Bring back a Google Drive backup', Drive not linked, an old backup on Drive
+  s1 see: 'Bring back a Google Drive backup'
+  s1 see: 'Backed up to Google Drive with an older version of MettleUp? Choose the same Google account to find that backup and bring it to this phone.'
+  s1 see: The 18+ and terms box above the button
+  s1 not: Google's sign-in opening before the box is ticked
+  s2 see: Button shows 'Working…'
+  s2 not: A second search started by a second tap
+  s3 see: Title 'Bring back your Drive backup?'
+  s3 see: 'This replaces what’s on this phone with your backup: <summary>.' with how many workouts on this phone it removes
+  s3 see: Button 'Bring it back'
+  s3 not: The phone's data replaced before 'Bring it back' is tapped
+  s4 see: 'Your workouts are back on this phone. To keep them safe from now on, sign in on the “Backup and restore” page.'
+  s4 see: 'Undo the last restore'
+  s4 not: A half-restored phone
+  s4 not: Newer workouts on the MettleUp server overwritten by the older backup
+J-F-phone-1525-02 | type 2 | member | Welcome screen on a new phone, an old backup on Drive
+  s1 see: 'Checking your Google Drive for a backup…'
+  s1 not: A Drive folder made when none exists
+  s2 see: 'We found your backup from <day> with <n> workouts.'-style line
+  s2 see: 'Bringing back your backup…'
+  s2 not: Other welcome buttons working while the restore runs
+  s3 see: The app opens on the restored history
+  s3 not: The 3 setup questions asked when the backup holds a profile
+J-F-phone-1525-03 | type 3 | member | Card 'Bring back a Google Drive backup', a Google account with no MettleUp backup
+  s1 see: 'There’s no MettleUp backup in this Google account. Try “Unlink Google Drive”, then another account.'
+  s1 see: Button 'Unlink Google Drive'
+  s1 not: Any data on the phone changed
+J-F-phone-1525-04 | type 3 | member | A workout is in progress
+  s1 see: 'Finish your workout first: finish or discard the workout in progress, then restore.'
+  s1 not: Google's sign-in opening
+  s1 not: The open workout's exercises replaced
+J-F-phone-1525-05 | type 3 | member | Drive linked earlier; Google's permission has since expired or was removed (Drive answers 401 or 403)
+  s1 see: Today: 'Google Drive needs you to sign in again. Tap Unlink Google, then Link Google Drive.'
+  s1 not: Words naming buttons the card does not have (the card has 'Unlink Google Drive' and 'Find my Drive backup')
+  s1 not: Any data on the phone changed
+J-F-phone-1525-06 | type 6 | member | Right after a Drive restore
+  s1 see: Title 'Undo the restore?'
+  s1 see: 'This puts back what was on this phone before the last restore.' plus how many newer workouts would be lost
+  s1 not: The undo running without the question
+  s2 see: 'Done. This phone is back to how it was before the restore.'
+  s2 not: Workouts from before the restore missing
+  s3 see: 'There’s nothing to undo.'
+  s3 not: A second undo changing data
+J-F-phone-1525-07 | type 12 | member | Card 'Bring back a Google Drive backup'
+  s1 see: 'Looking in the Google Drive of <email>. Bring your old backup to this phone.'
+  s1 not: Drive used for anything but finding and bringing back the backup
+  s1 not: Files in Drive this app did not make being read
+  s1 not: The gym seeing the restored data
+J-F-phone-1531-01 | type 1 | member | Member at a gym that uploaded a logo; the logo link is Supabase's storage address
+  s1 see: The gym's logo next to 'Your gym: <name>'
+  s1 not: A broken-picture mark
+  s1 not: Another gym's logo
+  s2 see: The gym header mark and product photos
+  s2 not: Photos blank because Supabase's own address is blocked on the member's network
+J-F-phone-1531-02 | type 2 | member | Opening screen and welcome card of a gym with a logo
+  s1 see: The same logo in the opening and the welcome card
+  s1 not: One screen loading the logo and the other not
+J-F-phone-1531-03 | type 3 | member | Gym with no logo, or a logo link that is not Supabase's
+  s1 see: A small accent dot in place of the logo (no logo), or the logo from its own link
+  s1 not: An empty gap that shifts the layout
+  s1 not: A non-Supabase link rewritten to our address
+J-F-phone-1531-04 | type 6 | member | Every address of ours failed in the last 10 minutes
+  s1 see: The logo loaded from Supabase's own address
+  s1 not: The logo blank because our address is resting
+  s2 see: The logo hidden, the gym name still shown
+  s2 not: A broken-picture mark
+J-F-phone-1531-05 | type 12 | member | Member of gym A
+  s1 see: Only gym A's logo and products
+  s1 not: Gym B's logo or product photos
+  s1 not: Member data sent along with the picture address
+J-F-phone-1531-06 | type 1 | the system | A picture link that starts with Supabase's address; an address of ours is in use
+  s1 see: The link with Supabase's address swapped for ours, path kept
+  s1 not: The path or file name changed
+  s1 not: A link to another host rewritten
+J-F-phone-1531-07 | type 3 | the system | No app config (tests) or an empty link
+  s1 see: The same empty value back
+  s1 not: A crash
+  s1 not: A made-up address
+J-F-phone-1531-08 | type 6 | the system | Our first address resting after a failure
+  s1 see: The next address of ours that is not resting, else Supabase's own address
+  s1 not: A resting address used
+  s1 not: No address at all

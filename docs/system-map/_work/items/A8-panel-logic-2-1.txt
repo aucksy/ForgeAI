@@ -1,0 +1,576 @@
+# A8-panel-logic-2-1: coverage of 96 Tier 1 journeys (9 features, from A5-panel-logic-2-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-700 | apps/dashboard/test/crm/sheets.test.ts | unit | 122 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-panel-700 | apps/dashboard/test/crm/importTerms.test.ts | unit | 285 lines | imports the code, file name
+F-panel-700 | apps/dashboard/test/crm/undoImport.test.ts | unit | 153 lines | imports the code, file name
+F-panel-700 | apps/dashboard/test/crm/auditC7Import.test.ts | unit | 323 lines | imports the code
+F-panel-700 | apps/dashboard/test/crm/importBranches.test.ts | unit | 362 lines | imports the code
+F-panel-700 | apps/dashboard/test/crm/importFixtures.test.ts | unit | 454 lines | imports the code
+F-panel-700 | apps/dashboard/test/crm/csv.test.ts | unit | 102 lines | asserts 2 journey phrase(s)
+F-panel-700 | apps/dashboard/test/crm/local.test.ts | unit | 1070 lines | asserts 2 journey phrase(s)
+F-panel-700 | apps/dashboard/test/crm/members.test.ts | unit | 336 lines | asserts 2 journey phrase(s)
+F-panel-700 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 1 journey phrase(s)
+F-panel-700 | apps/dashboard/test/crm/checkin.test.ts | unit | 137 lines | asserts 1 journey phrase(s)
+F-panel-700 | apps/dashboard/test/crm/collections.test.ts | unit | 401 lines | asserts 1 journey phrase(s)
+F-panel-702 | apps/dashboard/test/crm/memberCard.test.ts | unit | 127 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-panel-702 | supabase/tests/0026_hq_access.sql | db | 201 lines | asserts 2 journey phrase(s)
+F-panel-702 | apps/dashboard/e2e/r579-uat.spec.mjs | e2e | 298 lines | asserts 1 journey phrase(s)
+F-panel-702 | apps/dashboard/test/crm/membership.test.ts | unit | 446 lines | asserts 1 journey phrase(s)
+F-panel-702 | apps/dashboard/test/crm/pricesOneSource.test.ts | unit | 187 lines | asserts 1 journey phrase(s)
+F-panel-702 | apps/dashboard/test/crm/pt.test.ts | unit | 231 lines | asserts 1 journey phrase(s)
+F-panel-702 | apps/mobile/test/db/finishReal.test.ts | unit | 104 lines | asserts 1 journey phrase(s)
+F-panel-702 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-panel-702 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 1 journey phrase(s)
+F-panel-702 | apps/mobile/test/tracker/phase2ReviewFixes.test.ts | unit | 287 lines | asserts 1 journey phrase(s)
+F-panel-702 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 1 journey phrase(s)
+F-panel-702 | deploy/panel/helpPages.test.mjs | unit | 109 lines | asserts 1 journey phrase(s)
+F-panel-704 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-panel-705 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-panel-705 | apps/dashboard/test/crm/progressTrend.test.ts | unit | 245 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-panel-705 | apps/dashboard/e2e/progress-trend-uat.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-panel-705 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-705 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-705 | supabase/tests/0055_pass_members.sql | db | 79 lines | asserts 3 journey phrase(s)
+F-panel-705 | supabase/tests/0093_phone_sign_in.sql | db | 150 lines | asserts 3 journey phrase(s)
+F-panel-705 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 2 journey phrase(s)
+F-panel-705 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 2 journey phrase(s)
+F-panel-705 | apps/dashboard/test/crm/bodyMeasures.test.ts | unit | 114 lines | asserts 2 journey phrase(s)
+F-panel-705 | apps/mobile/test/shop/membership.test.ts | unit | 154 lines | asserts 2 journey phrase(s)
+F-panel-705 | apps/mobile/test/tracker/healthOnOff.test.ts | unit | 136 lines | asserts 2 journey phrase(s)
+F-panel-706 | apps/dashboard/test/crm/members.test.ts | unit | 336 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-panel-706 | apps/dashboard/test/crm/importMembers.test.ts | unit | 575 lines | imports the code, file name
+F-panel-706 | apps/dashboard/test/crm/mobileNumber.test.ts | unit | 201 lines | imports the code, asserts 2 journey phrase(s)
+F-panel-706 | apps/dashboard/test/crm/batches.test.ts | unit | 169 lines | imports the code
+F-panel-706 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 2 journey phrase(s)
+F-panel-706 | apps/dashboard/test/crm/membership.test.ts | unit | 446 lines | file name
+F-panel-706 | apps/dashboard/test/crm/passMembers.test.ts | unit | 199 lines | file name
+F-panel-706 | apps/mobile/test/shop/membership.test.ts | unit | 154 lines | file name
+F-panel-706 | supabase/tests/0023_member_membership.sql | db | 125 lines | file name
+F-panel-706 | supabase/tests/0055_pass_members.sql | db | 79 lines | file name
+F-panel-706 | supabase/tests/0083_ai_members.sql | db | 180 lines | file name
+F-panel-706 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-panel-707 | apps/dashboard/test/crm/membership.test.ts | unit | 446 lines | imports the code, file name
+F-panel-707 | apps/dashboard/test/crm/selling.test.ts | unit | 172 lines | imports the code, file name
+F-panel-707 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 3 journey phrase(s)
+F-panel-707 | apps/dashboard/test/crm/assistant/awayIdea.test.ts | unit | 316 lines | imports the code
+F-panel-707 | apps/dashboard/test/crm/attendance.test.ts | unit | 1063 lines | imports the code
+F-panel-707 | apps/dashboard/test/crm/audience.test.ts | unit | 177 lines | imports the code
+F-panel-707 | apps/dashboard/test/crm/auditC7.test.ts | unit | 333 lines | imports the code
+F-panel-707 | apps/dashboard/test/crm/auditC7Review.test.ts | unit | 96 lines | imports the code
+F-panel-707 | apps/dashboard/test/crm/auditC7Words.test.ts | unit | 35 lines | imports the code
+F-panel-707 | apps/dashboard/test/crm/demo.test.ts | unit | 300 lines | imports the code
+F-panel-707 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | imports the code
+F-panel-707 | apps/dashboard/test/crm/local.test.ts | unit | 1070 lines | imports the code
+F-panel-726 | apps/dashboard/test/crm/messageTemplates.test.ts | unit | 246 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-panel-726 | apps/dashboard/test/crm/sendQueue.test.ts | unit | 160 lines | imports the code, file name
+F-panel-726 | apps/dashboard/e2e/messages.spec.mjs | e2e | 191 lines | asserts 2 journey phrase(s)
+F-panel-726 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-726 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 1 journey phrase(s)
+F-panel-726 | apps/dashboard/e2e/r450-uat.spec.mjs | e2e | 331 lines | asserts 1 journey phrase(s)
+F-panel-726 | apps/dashboard/e2e/r534-training-progress-uat.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-panel-726 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 1 journey phrase(s)
+F-panel-726 | apps/dashboard/e2e/timings.spec.mjs | e2e | 130 lines | asserts 1 journey phrase(s)
+F-panel-726 | apps/mobile/test/db/finishReal.test.ts | unit | 104 lines | asserts 1 journey phrase(s)
+F-panel-726 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-panel-726 | apps/mobile/test/shop/gymBusy.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-panel-710 | apps/dashboard/test/crm/navGroups.test.ts | unit | 60 lines | imports the code, file name
+F-panel-710 | apps/mobile/test/db/finishReal.test.ts | unit | 104 lines | asserts 1 journey phrase(s)
+F-panel-710 | apps/mobile/test/tracker/phase2ReviewFixes.test.ts | unit | 287 lines | asserts 1 journey phrase(s)
+F-panel-710 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 1 journey phrase(s)
+F-panel-711 | apps/dashboard/test/crm/needsYou.test.ts | unit | 54 lines | imports the code, file name
+F-panel-711 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | imports the code
+F-panel-711 | apps/dashboard/test/crm/visiblePoll.test.ts | unit | 183 lines | imports the code
+F-panel-711 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 2 journey phrase(s)
+F-panel-711 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 2 journey phrase(s)
+F-panel-711 | apps/dashboard/e2e/pagechat-uat.spec.mjs | e2e | 272 lines | asserts 2 journey phrase(s)
+F-panel-711 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 2 journey phrase(s)
+F-panel-711 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 2 journey phrase(s)
+F-panel-711 | supabase/tests/0094_page_chat.sql | db | 200 lines | asserts 2 journey phrase(s)
+F-panel-711 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-panel-711 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-panel-711 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-700-01 | type 1 | owner | Import members screen, signed in as owner, an .xlsx from another software with name, mobile, plan name, start, end, total, paid, balance
+  s1 see: The sheet most like a member list is picked by itself (most different mobile numbers); empty or one-line sheets are not offered
+  s1 not: A payments sheet (one row per payment) picked as the member list
+  s2 see: Each row with an end date becomes a real membership: plan named as in the sheet (or 'Imported plan'), price = paid + balance when that is less than the total, paid = what the sheet says
+  s2 not: A due larger than the sheet's balance; a row with no end date and no plan length made into a membership
+  s3 see: Plan, start, end and paid amount as in the sheet; no joining fee is asked at the first renewal
+  s3 not: A false joining-fee due on an imported member; a date one day early
+J-F-panel-700-02 | type 1 | staff | Import members screen, signed in as staff, an .xlsx from another software with name, mobile, plan name, start, end, total, paid, balance
+  s1 see: The sheet most like a member list is picked by itself (most different mobile numbers); empty or one-line sheets are not offered
+  s1 not: A payments sheet (one row per payment) picked as the member list
+  s2 see: Each row with an end date becomes a real membership: plan named as in the sheet (or 'Imported plan'), price = paid + balance when that is less than the total, paid = what the sheet says
+  s2 not: A due larger than the sheet's balance; a row with no end date and no plan length made into a membership
+  s3 see: Plan, start, end and paid amount as in the sheet; no joining fee is asked at the first renewal
+  s3 not: A false joining-fee due on an imported member; a date one day early
+J-F-panel-700-03 | type 2 | owner | Import members screen as owner; another KIND of file: CSV, old .xls, or a web page saved as .xls with dates like 01/08/2026
+  s1 see: It is read like an Excel file; 01/08/2026 is read day-first (1 Aug); bold or colour tags inside a cell are dropped ('Riya Sharma', not 'RiyaSharma')
+  s1 not: 1 Aug read as 8 Jan; names glued together; a date a day early
+  s2 see: The same memberships as from an .xlsx of the same rows
+  s2 not: A different number of members or a different due than the .xlsx gives
+J-F-panel-700-04 | type 2 | staff | Import members screen as staff; another KIND of file: CSV, old .xls, or a web page saved as .xls with dates like 01/08/2026
+  s1 see: It is read like an Excel file; 01/08/2026 is read day-first (1 Aug); bold or colour tags inside a cell are dropped ('Riya Sharma', not 'RiyaSharma')
+  s1 not: 1 Aug read as 8 Jan; names glued together; a date a day early
+  s2 see: The same memberships as from an .xlsx of the same rows
+  s2 not: A different number of members or a different due than the .xlsx gives
+J-F-panel-700-05 | type 2 | owner | Import members screen as owner; a workbook with several sheets (members, payments, an empty sheet)
+  s1 see: Only sheets with a header row and at least one more row are offered; the member list is picked first; the others can be chosen
+  s1 not: The empty sheet offered; the payments sheet chosen by itself
+  s2 see: Payments repeat a member; with price and balance known, paid so far is price minus balance
+  s2 not: The same payment counted twice; paid more than the plan price shown as a minus due
+J-F-panel-700-06 | type 2 | staff | Import members screen as staff; a workbook with several sheets (members, payments, an empty sheet)
+  s1 see: Only sheets with a header row and at least one more row are offered; the member list is picked first; the others can be chosen
+  s1 not: The empty sheet offered; the payments sheet chosen by itself
+  s2 see: Payments repeat a member; with price and balance known, paid so far is price minus balance
+  s2 not: The same payment counted twice; paid more than the plan price shown as a minus due
+J-F-panel-700-07 | type 3 | owner | Import members screen as owner; wrong files: a PDF or a picture, a sheet with only a header row, a row whose start is after its end
+  s1 see: A plain message that this file is not a spreadsheet (exact words unknown: screen not read)
+  s1 not: A blank screen, an endless spinner, or a raw error
+  s2 see: Those rows import as members only, with no membership
+  s2 not: A membership with a made-up end date; a membership that ends before it starts
+J-F-panel-700-08 | type 3 | staff | Import members screen as staff; wrong files: a PDF or a picture, a sheet with only a header row, a row whose start is after its end
+  s1 see: A plain message that this file is not a spreadsheet (exact words unknown: screen not read)
+  s1 not: A blank screen, an endless spinner, or a raw error
+  s2 see: Those rows import as members only, with no membership
+  s2 not: A membership with a made-up end date; a membership that ends before it starts
+J-F-panel-700-09 | type 6 | owner | Import members screen as owner, one past import in the list; since the import the gym edited one imported member, took a receipt against ano
+  s1 see: The count of records it would still remove; the three used members and their plans and receipts are kept
+  s1 not: A member the gym edited, charged or checked in deleted; a voided imported receipt deleted
+  s2 see: Receipts go first, then memberships, members, plans; a plan still used by a kept membership stays
+  s2 not: A kept membership left pointing at a deleted plan or member
+  s3 see: The import leaves the list once nothing is left to undo; with only kept records it is not listed
+  s3 not: 'Undo this import' still shown with 0 records; a second undo removing kept records
+J-F-panel-700-10 | type 6 | staff | Import members screen as staff, one past import in the list; since the import the gym edited one imported member, took a receipt against ano
+  s1 see: The count of records it would still remove; the three used members and their plans and receipts are kept
+  s1 not: A member the gym edited, charged or checked in deleted; a voided imported receipt deleted
+  s2 see: Receipts go first, then memberships, members, plans; a plan still used by a kept membership stays
+  s2 not: A kept membership left pointing at a deleted plan or member
+  s3 see: The import leaves the list once nothing is left to undo; with only kept records it is not listed
+  s3 not: 'Undo this import' still shown with 0 records; a second undo removing kept records
+J-F-panel-700-11 | type 12 | owner | Import members screen as owner; a sheet with Aadhaar / PAN columns and other personal columns
+  s1 see: ID-number columns are not matched to any member field
+  s1 not: An Aadhaar or PAN number saved on a member, in notes or anywhere else
+  s2 see: Only rows of this gym carrying this import's id are removed
+  s2 not: A record of another import, or one the gym added by hand, removed
+J-F-panel-700-12 | type 12 | staff | Import members screen as staff; a sheet with Aadhaar / PAN columns and other personal columns
+  s1 see: ID-number columns are not matched to any member field
+  s1 not: An Aadhaar or PAN number saved on a member, in notes or anywhere else
+  s2 see: Only rows of this gym carrying this import's id are removed
+  s2 not: A record of another import, or one the gym added by hand, removed
+J-F-panel-702-01 | type 1 | owner | A member's page as owner; the member has a running plan, a batch and a desk photo
+  s1 see: A credit-card-size card: gym name, name, photo, 'No.' as 8 digits in two groups, 'Mobile' masked like 98XXX X3210, 'Plan', 'Valid till' (the last covered day, renewals included), 'Batch', and a QR
+  s1 not: The full mobile number on the card; 'Valid till' showing only the current term when a renewal is already bought
+  s2 see: One card at 85.6 x 54 mm
+  s2 not: The panel's menu or buttons on the printed page; a card cut over two pages
+J-F-panel-702-02 | type 1 | staff | A member's page as staff; the member has a running plan, a batch and a desk photo
+  s1 see: A credit-card-size card: gym name, name, photo, 'No.' as 8 digits in two groups, 'Mobile' masked like 98XXX X3210, 'Plan', 'Valid till' (the last covered day, renewals included), 'Batch', and a QR
+  s1 not: The full mobile number on the card; 'Valid till' showing only the current term when a renewal is already bought
+  s2 see: One card at 85.6 x 54 mm
+  s2 not: The panel's menu or buttons on the printed page; a card cut over two pages
+J-F-panel-702-03 | type 2 | owner | The same member's card as owner; other ways out: save as a picture, send on WhatsApp
+  s1 see: A file named member-card-<the 8 digits>.png
+  s1 not: A file name with the member's name or mobile in it
+  s2 see: WhatsApp opens to the member with 'Hi <first name>!' and 'Here is your <gym> member card (No. <number>). Please show it at the desk.'; the desk attaches the picture itself
+  s2 not: A message sent without the desk pressing send in WhatsApp; a claim that the picture is attached
+J-F-panel-702-04 | type 2 | staff | The same member's card as staff; other ways out: save as a picture, send on WhatsApp
+  s1 see: A file named member-card-<the 8 digits>.png
+  s1 not: A file name with the member's name or mobile in it
+  s2 see: WhatsApp opens to the member with 'Hi <first name>!' and 'Here is your <gym> member card (No. <number>). Please show it at the desk.'; the desk attaches the picture itself
+  s2 not: A message sent without the desk pressing send in WhatsApp; a claim that the picture is attached
+J-F-panel-702-05 | type 3 | owner | As owner, the card of a member with no running plan, no batch, no photo and a foreign or very short mobile number
+  s1 see: 'Plan' says 'No active plan'; no 'Valid till' row; no 'Batch' row; initials in place of the photo; a foreign number keeps its first two and last four digits with X between; 4 digits or fewer are all X; a blank number shows a dash
+  s1 not: An old end date shown as 'Valid till'; a broken-picture mark; more of the number than the mask allows
+J-F-panel-702-06 | type 3 | staff | As staff, the card of a member with no running plan, no batch, no photo and a foreign or very short mobile number
+  s1 see: 'Plan' says 'No active plan'; no 'Valid till' row; no 'Batch' row; initials in place of the photo; a foreign number keeps its first two and last four digits with X between; 4 digits or fewer are all X; a blank number shows a dash
+  s1 not: An old end date shown as 'Valid till'; a broken-picture mark; more of the number than the mask allows
+J-F-panel-702-07 | type 6 | owner | As owner, a member whose card was printed; then the plan is renewed, later it lapses
+  s1 see: 'Valid till' moves to the new last day; 'No.' is the same as before
+  s1 not: A new member number; the old date kept
+  s2 see: 'No active plan' and no 'Valid till'
+  s2 not: The lapsed plan still shown as valid
+J-F-panel-702-08 | type 6 | staff | As staff, a member whose card was printed; then the plan is renewed, later it lapses
+  s1 see: 'Valid till' moves to the new last day; 'No.' is the same as before
+  s1 not: A new member number; the old date kept
+  s2 see: 'No active plan' and no 'Valid till'
+  s2 not: The lapsed plan still shown as valid
+J-F-panel-702-09 | type 12 | owner | As owner, a printed card; someone scans its QR with any phone
+  s1 see: Only the member's id, a code that means nothing outside the panel
+  s1 not: Name, mobile or plan inside the QR
+  s2 see: Mobile masked; nothing about dues, address or date of birth
+  s2 not: Dues, address, date of birth or the full number on the card
+J-F-panel-702-10 | type 12 | staff | As staff, a printed card; someone scans its QR with any phone
+  s1 see: Only the member's id, a code that means nothing outside the panel
+  s1 not: Name, mobile or plan inside the QR
+  s2 see: Mobile masked; nothing about dues, address or date of birth
+  s2 not: Dues, address, date of birth or the full number on the card
+J-F-panel-704-01 | type 1 | owner | A saved member's page as owner, on a computer with a webcam, camera allowed
+  s1 see: The live camera preview
+  s1 not: A mirrored preview that flips after the picture is taken
+  s2 see: The centre square is kept, made small (400 px side or less, shrunk in steps until small enough) and shown on the member
+  s2 not: A stretched face; a small webcam picture blown up; a save shown as done when the server refused it
+J-F-panel-704-02 | type 1 | staff | A saved member's page as staff, on a computer with a webcam, camera allowed
+  s1 see: The live camera preview
+  s1 not: A mirrored preview that flips after the picture is taken
+  s2 see: The centre square is kept, made small (400 px side or less, shrunk in steps until small enough) and shown on the member
+  s2 not: A stretched face; a small webcam picture blown up; a save shown as done when the server refused it
+J-F-panel-704-03 | type 2 | owner | The same member as owner; the other way in: 'Upload a photo'
+  s1 see: The same square photo on the member
+  s1 not: A file accepted only by its name while it is not a picture; a photo over the server's size limit sent
+J-F-panel-704-04 | type 2 | staff | The same member as staff; the other way in: 'Upload a photo'
+  s1 see: The same square photo on the member
+  s1 not: A file accepted only by its name while it is not a picture; a photo over the server's size limit sent
+J-F-panel-704-05 | type 3 | owner | As owner: camera blocked, no camera, camera in use; then wrong files; then a member not yet on the server
+  s1 see: 'The camera is blocked. Tap the camera or lock icon next to the web address, choose Allow, then reload the page. Or tap Upload a photo.' / 'No camera was found on this computer. Tap Upload a photo to pick a picture instead.' / 'The camera is in use by another app. Close that app and tap Try again, or tap Upload a photo.' / 'This browser can’t use the camera. Tap Upload a photo to pick a picture instead.'
+  s1 not: A blank black box with no words; a prompt that returns on every tap
+  s2 see: 'That file has no picture in it. Pick another photo.' / 'That file is too big. Pick a photo under 25 MB.' / 'That file is not a photo. Pick a JPG or PNG picture.'
+  s2 not: The file opened and the page frozen
+  s3 see: 'This member is not saved yet. Check the internet, wait a minute, then add the photo on their page.'
+  s3 not: The photo lost with no word; the photo saved on another member
+J-F-panel-704-06 | type 3 | staff | As staff: camera blocked, no camera, camera in use; then wrong files; then a member not yet on the server
+  s1 see: 'The camera is blocked. Tap the camera or lock icon next to the web address, choose Allow, then reload the page. Or tap Upload a photo.' / 'No camera was found on this computer. Tap Upload a photo to pick a picture instead.' / 'The camera is in use by another app. Close that app and tap Try again, or tap Upload a photo.' / 'This browser can’t use the camera. Tap Upload a photo to pick a picture instead.'
+  s1 not: A blank black box with no words; a prompt that returns on every tap
+  s2 see: 'That file has no picture in it. Pick another photo.' / 'That file is too big. Pick a photo under 25 MB.' / 'That file is not a photo. Pick a JPG or PNG picture.'
+  s2 not: The file opened and the page frozen
+  s3 see: 'This member is not saved yet. Check the internet, wait a minute, then add the photo on their page.'
+  s3 not: The photo lost with no word; the photo saved on another member
+J-F-panel-704-07 | type 6 | owner | As owner, a member with a photo
+  s1 see: The new photo everywhere the member shows (page, list, member card)
+  s1 not: The old photo still on the card; both photos kept on the server
+  s2 see: Initials in place of the photo
+  s2 not: A broken-picture mark; the file left readable by its old address
+J-F-panel-704-08 | type 6 | staff | As staff, a member with a photo
+  s1 see: The new photo everywhere the member shows (page, list, member card)
+  s1 not: The old photo still on the card; both photos kept on the server
+  s2 see: Initials in place of the photo
+  s2 not: A broken-picture mark; the file left readable by its old address
+J-F-panel-704-09 | type 12 | owner | As owner; who can see the photo
+  s1 see: The photo shows for this gym's owner and staff
+  s1 not: The photo readable by another gym or by a plain web address that never ends
+  s2 see: The reason and the 'Upload a photo' way
+  s2 not: The camera light on after the sheet is closed
+J-F-panel-704-10 | type 12 | staff | As staff; who can see the photo
+  s1 see: The photo shows for this gym's owner and staff
+  s1 not: The photo readable by another gym or by a plain web address that never ends
+  s2 see: The reason and the 'Upload a photo' way
+  s2 not: The camera light on after the sheet is closed
+J-F-panel-705-01 | type 1 | owner | A member's page as owner; the member has 'Share my workouts with my trainers' on in the app and has trained for 12 weeks
+  s1 see: 12 weeks of kg lifted, oldest first, this week last (weeks start Monday; a week with no workout is 0), best lifts and new records
+  s1 not: A week missing from the chart instead of shown as 0; a week that starts on Sunday
+  s2 see: One point per day; a tag 'Steady', 'Dropping', the rising word, or 'Not enough data yet'
+  s2 not: A rising or dropping tag from too few workouts; a body-weight move scored in kg
+  s3 see: WhatsApp opens to that member with ready words; the owner presses send
+  s3 not: A message sent by itself; body weight or anything the member did not share in the words
+J-F-panel-705-02 | type 1 | trainer | My members list, signed in as a trainer with three members assigned who all share their workouts
+  s1 see: Only this trainer's own members; each with one line: a help request (shown for 7 days), quiet for 7 days or more, a new best (news for 14 days), or steady
+  s1 not: A member of another trainer; a member who has not switched sharing on
+  s2 see: The same Progress card and strength trend the owner sees
+  s2 not: Dues, payments, complaints or feedback of the member
+  s3 see: WhatsApp opens to that member with ready words
+  s3 not: A message sent by itself
+J-F-panel-705-03 | type 2 | owner | Other way in as owner: the list of all members' progress (the 'My members' list with every trainer's members)
+  s1 see: Every sharing member of the gym, with the trainer's name beside each
+  s1 not: Members who do not share listed with empty figures as if they never train
+  s2 see: Their Progress card
+  s2 not: Another member's card
+J-F-panel-705-04 | type 2 | trainer | Other way in as trainer: a member's page reached from the Members list or search, not from 'My members'
+  s1 see: The Progress card
+  s1 not: An empty card for an assigned, sharing member
+  s2 see: No progress (the server answers 'not allowed'); exact words unknown: screen not read
+  s2 not: The other trainer's member's workouts
+J-F-panel-705-05 | type 3 | owner | As owner; a member who has the app but sharing is off, and a member who never opened the app
+  s1 see: Words that the member has not switched on 'Share my workouts with my trainers' in their app; no chart, no workouts
+  s1 not: Any summary, recent workout or 'last updated' time for a member who does not share
+  s2 see: No Progress figures; a plain line why
+  s2 not: An endless spinner; an error
+J-F-panel-705-06 | type 3 | trainer | As trainer; a member who has the app but sharing is off, and a member who never opened the app
+  s1 see: Words that the member has not switched on 'Share my workouts with my trainers' in their app; no chart, no workouts
+  s1 not: Any summary, recent workout or 'last updated' time for a member who does not share
+  s2 see: No Progress figures; a plain line why
+  s2 not: An endless spinner; an error
+J-F-panel-705-07 | type 6 | owner | As owner; a member who was sharing, with the card open in the panel
+  s1 see: The chart, bests and workouts are gone; the not-sharing words show
+  s1 not: The last shared figures still on screen after a reload; the member still in 'My members'
+  s2 see: The card comes back with the new workout
+  s2 not: Old weeks lost; the same workout counted twice
+J-F-panel-705-08 | type 6 | trainer | As trainer; a member who was sharing, with the card open in the panel
+  s1 see: The chart, bests and workouts are gone; the not-sharing words show
+  s1 not: The last shared figures still on screen after a reload; the member still in 'My members'
+  s2 see: The card comes back with the new workout
+  s2 not: Old weeks lost; the same workout counted twice
+J-F-panel-705-09 | type 12 | owner | As owner; what the gym may see of a member's training
+  s1 see: Only what the summary carries: weekly kg, workout counts, best lifts, recent workouts
+  s1 not: Body weight, body measurements, photos or notes the member did not choose to share
+  s2 see: Whether the card shows is unknown (screen not read); the promise says a trainer sees only their own members
+  s2 not: A trainer seeing feedback or complaints; a non-assigned trainer seeing the workouts
+J-F-panel-705-10 | type 12 | trainer | As trainer; what the gym may see of a member's training
+  s1 see: Only what the summary carries: weekly kg, workout counts, best lifts, recent workouts
+  s1 not: Body weight, body measurements, photos or notes the member did not choose to share
+  s2 see: Whether the card shows is unknown (screen not read); the promise says a trainer sees only their own members
+  s2 not: A trainer seeing feedback or complaints; a non-assigned trainer seeing the workouts
+J-F-panel-706-01 | type 1 | owner | Members page as owner
+  s1 see: The form; joining date is today
+  s1 not: A joining date of yesterday near midnight
+  s2 see: The member in the list; the number kept as +91 and ten digits and read back as '+91 98765 43210'; a title such as 'Mr.' is not the first name
+  s2 not: The number saved with spaces, a leading 0 or the country code twice
+J-F-panel-706-02 | type 1 | staff | Members page as staff
+  s1 see: The form; joining date is today
+  s1 not: A joining date of yesterday near midnight
+  s2 see: The member in the list; the number kept as +91 and ten digits and read back as '+91 98765 43210'; a title such as 'Mr.' is not the first name
+  s2 not: The number saved with spaces, a leading 0 or the country code twice
+J-F-panel-706-03 | type 2 | owner | Another kind as owner: a member with a foreign number, and numbers typed in other shapes (Hindi digits, '0091 98765 43210', '098765 43210', 
+  s1 see: Each is understood as one clean number
+  s1 not: A valid number refused; a real mobile that begins with 91 cut short
+  s2 see: The number in the sheet as '91 98765 43210' or '971 501234567'
+  s2 not: A number shown as 9.71501E+11 or with an apostrophe in front
+J-F-panel-706-04 | type 2 | staff | Another kind as staff: a member with a foreign number, and numbers typed in other shapes (Hindi digits, '0091 98765 43210', '098765 43210', 
+  s1 see: Each is understood as one clean number
+  s1 not: A valid number refused; a real mobile that begins with 91 cut short
+  s2 see: The number in the sheet as '91 98765 43210' or '971 501234567'
+  s2 not: A number shown as 9.71501E+11 or with an apostrophe in front
+J-F-panel-706-05 | type 2 | owner | Other way in as owner: edit an existing member from their page
+  s1 see: The new values everywhere
+  s1 not: The 'same number' block firing against the member's own row
+J-F-panel-706-06 | type 2 | staff | Other way in as staff: edit an existing member from their page
+  s1 see: The new values everywhere
+  s1 not: The 'same number' block firing against the member's own row
+J-F-panel-706-07 | type 3 | owner | Add member form as owner; wrong input in several boxes at once
+  s1 see: Every wrong box named at once: 'Type the member’s name.' and 'Type their mobile number.'
+  s1 not: Only one error per press; 'looks wrong' for an empty box
+  s2 see: 'This mobile number looks wrong. Check it and type it again.', 'That email address doesn’t look right.', 'Date of birth can’t be in the future.', 'The emergency number looks wrong. Check it and type it again.', 'The name can be at most <n> letters.', 'The batch name can be at most <n> letters.'
+  s2 not: A member saved with any of these wrong values
+  s3 see: The save is stopped and the existing member is named (exact words unknown: screen not read)
+  s3 not: A second row for the same person, which splits their payments
+J-F-panel-706-08 | type 3 | staff | Add member form as staff; wrong input in several boxes at once
+  s1 see: Every wrong box named at once: 'Type the member’s name.' and 'Type their mobile number.'
+  s1 not: Only one error per press; 'looks wrong' for an empty box
+  s2 see: 'This mobile number looks wrong. Check it and type it again.', 'That email address doesn’t look right.', 'Date of birth can’t be in the future.', 'The emergency number looks wrong. Check it and type it again.', 'The name can be at most <n> letters.', 'The batch name can be at most <n> letters.'
+  s2 not: A member saved with any of these wrong values
+  s3 see: The save is stopped and the existing member is named (exact words unknown: screen not read)
+  s3 not: A second row for the same person, which splits their payments
+J-F-panel-706-09 | type 6 | owner | As owner, a saved member
+  s1 see: Stopped as a duplicate
+  s1 not: Two members with one number
+  s2 see: Each save is kept; the member's plans and payments stay with them
+  s2 not: Payments or plans left on the old number; the member shown twice
+  s3 see: What happens is unknown (not read): the duplicate check looks at every member it is given
+  s3 not: A silent second row, or a block with no way to bring the archived member back
+J-F-panel-706-10 | type 6 | staff | As staff, a saved member
+  s1 see: Stopped as a duplicate
+  s1 not: Two members with one number
+  s2 see: Each save is kept; the member's plans and payments stay with them
+  s2 not: Payments or plans left on the old number; the member shown twice
+  s3 see: What happens is unknown (not read): the duplicate check looks at every member it is given
+  s3 not: A silent second row, or a block with no way to bring the archived member back
+J-F-panel-706-11 | type 12 | owner | As owner; personal details typed on the form (mobile, email, date of birth, address, emergency contact, notes)
+  s1 see: The details only inside this gym's panel
+  s1 not: The details shown to another gym; the mobile shown in full on the member card
+J-F-panel-706-12 | type 12 | staff | As staff; personal details typed on the form (mobile, email, date of birth, address, emergency contact, notes)
+  s1 see: The details only inside this gym's panel
+  s1 not: The details shown to another gym; the mobile shown in full on the member card
+J-F-panel-707-01 | type 1 | owner | A new member's page as owner; a 3-month plan with a joining fee exists
+  s1 see: Start = today, end = the day before the same date three months on, the plan's price, the plan's joining fee
+  s1 not: An end date one day long or short; no joining fee for a first plan
+  s2 see: The plan on the member with paid and due adding up
+  s2 not: 'Amount received is more than the total.' missed; a receipt dated in the future
+J-F-panel-707-02 | type 1 | staff | A new member's page as front-desk staff; a 3-month plan with a joining fee exists
+  s1 see: Start = today, the plan's price and joining fee
+  s1 not: A lower default price than the plan's
+  s2 see: The plan saved
+  s2 not: A sale saved on this device that the server then refuses, with no word
+J-F-panel-707-03 | type 2 | owner | Another kind as owner: renew a member whose plan runs till a day next month (and one who also has a plan paid ahead)
+  s1 see: Start = the day after the last day they are covered (after the paid-ahead plan too); joining fee 0 because one was paid or the member was imported; a renewal starting then is not asked about even when 30+ days away
+  s1 not: A start date inside time already bought; a joining fee charged again
+  s2 see: Cover runs on without a gap or an overlap
+  s2 not: The member's expiry unchanged after paying
+J-F-panel-707-04 | type 2 | staff | Another kind as staff: renew a member whose plan runs till a day next month (and one who also has a plan paid ahead)
+  s1 see: Start = the day after the last day they are covered (after the paid-ahead plan too); joining fee 0 because one was paid or the member was imported; a renewal starting then is not asked about even when 30+ days away
+  s1 not: A start date inside time already bought; a joining fee charged again
+  s2 see: Cover runs on without a gap or an overlap
+  s2 not: The member's expiry unchanged after paying
+J-F-panel-707-05 | type 2 | owner | Another kind as owner: sell a personal-training pack to a member with a running gym plan; and extend a plan
+  s1 see: It starts today, on top of the gym plan; no overlap warning
+  s1 not: The PT pack pushed to after the gym plan; the gym plan's next start moved by the PT pack
+  s2 see: The new last day and a line in the plan's history
+  s2 not: The extension shown as a new sale or a new due
+J-F-panel-707-06 | type 2 | staff | Another kind as staff: sell a personal-training pack to a member with a running gym plan; and extend a plan
+  s1 see: It starts today, on top of the gym plan; no overlap warning
+  s1 not: The PT pack pushed to after the gym plan; the gym plan's next start moved by the PT pack
+  s2 see: The new last day and a line in the plan's history
+  s2 not: The extension shown as a new sale or a new due
+J-F-panel-707-07 | type 3 | owner | Sell sheet as owner; wrong input
+  s1 see: 'Pick a plan first.' / 'The price looks wrong. Type it again.' / 'The joining fee looks wrong. Type it again.' / 'The amount received looks wrong. Type it again.'
+  s1 not: A sale saved with an empty price
+  s2 see: 'They already have a plan from <day> to <day>. Start the new plan after that.' or 'Their plan already runs till <day>. Start the new plan after that.'
+  s2 not: Time sold twice
+  s3 see: One message with every reason, ending 'Tap again to save it anyway.'
+  s3 not: Saved on the first tap; only the first reason shown
+J-F-panel-707-08 | type 3 | staff | Sell sheet as front-desk staff; the desk's limits
+  s1 see: 'The front desk can start a plan at most <n> days back. Ask the owner for an older start date.'
+  s1 not: A back-dated plan saved by the desk
+  s2 see: 'The front desk can give at most 10% off. The lowest price is <amount>. Ask the owner for a bigger discount.'
+  s2 not: A bigger discount saved by the desk
+  s3 see: 'The joining fee for a new member is <amount>. Only the owner can remove it.'
+  s3 not: The fee removed by the desk
+J-F-panel-707-09 | type 6 | owner | As owner; a wrong plan sold to a new member a minute ago, nothing paid
+  s1 see: The joining fee is asked again (the cancelled plan took none); start = today
+  s1 not: The fee skipped because a cancelled, unpaid plan carried one; the cancelled plan's unpaid money in the dues total
+  s2 see: No fee on the renewal
+  s2 not: A fee on every renewal
+J-F-panel-707-10 | type 6 | staff | As staff; a wrong plan sold to a new member a minute ago, nothing paid
+  s1 see: The joining fee is asked again (the cancelled plan took none); start = today
+  s1 not: The fee skipped because a cancelled, unpaid plan carried one; the cancelled plan's unpaid money in the dues total
+  s2 see: No fee on the renewal
+  s2 not: A fee on every renewal
+J-F-panel-707-11 | type 12 | owner | As owner; the promise on the desk's limits
+  s1 see: Staff is refused in words; the owner may give any price, a free plan too
+  s1 not: A limit kept only on the screen and not by the server (not checked here)
+J-F-panel-707-12 | type 12 | staff | As staff; the promise on the desk's limits
+  s1 see: Staff is refused in words; the owner may give any price, a free plan too
+  s1 not: A limit kept only on the screen and not by the server (not checked here)
+J-F-panel-726-01 | type 1 | owner | 'Messages & offers' as owner; a gym with members who have valid mobile numbers
+  s1 see: The title 'Gym closed on <weekday day month>' and the message with the festival and the time said as members say it ('6 am', '12 noon')
+  s1 not: A box left as '[Closed on]' in what is sent; a time like 06:00
+  s2 see: Both = English then Hindi; the title is 'English / हिन्दी' when it fits 60 letters, else the English
+  s2 not: A title cut in the middle of a word
+  s3 see: The message in members' apps
+  s3 not: Sent twice; sent to members of another gym
+  s4 see: Members in name order; each opens WhatsApp with the title in bold, the message and the gym's name as the last line; the owner presses send each time; done members are remembered
+  s4 not: A WhatsApp sent by itself; the same number messaged twice; a member skipped without being counted
+J-F-panel-726-02 | type 2 | owner | Other kinds as owner: the groups 'Offers' and 'Events' (amount, discount, days, plan and date boxes), and coming back to a half-done list
+  s1 see: The words with the rupee amount and the date; an optional sentence drops out when its box is empty
+  s1 not: '[Label]' or an empty gap inside a sentence
+  s2 see: The list carries on at the first member not done
+  s2 not: The list starting from the top; a done member shown as not done
+J-F-panel-726-03 | type 3 | owner | As owner; boxes left empty, members without a usable number, members sharing one number
+  s1 see: The empty boxes are named and nothing is sent (exact words unknown: screen not read)
+  s1 not: A message with '[Open again on]' sent to members
+  s2 see: A count of members with no usable number and of shared numbers; a shared number gets the words once
+  s2 not: A wa.me link opened for a wrong number; the family messaged three times
+J-F-panel-726-04 | type 6 | owner | As owner; a list half done, then the words are changed, then 'Start the list again'
+  s1 see: A new list, nobody done (the memory knows the words changed); the old list is still remembered
+  s1 not: Members shown as done for words they never got
+  s2 see: That list is forgotten; other messages' lists are kept (the newest 20 per gym)
+  s2 not: Every remembered list wiped
+J-F-panel-726-05 | type 12 | owner | As owner; who gets these messages and where the done-list lives
+  s1 see: Only this gym's members; WhatsApp only goes when the owner presses send in WhatsApp
+  s1 not: A member's number shown to another member; a WhatsApp from a number that is not the owner's
+  s2 see: The done marks are kept only in the first browser
+  s2 not: Member ids or numbers of the done-list sent to a server
+J-F-panel-710-01 | type 1 | owner | Any panel page as owner, on a laptop (side menu) and on a phone ('More' page)
+  s1 see: The top rows first under no heading, then the groups in a fixed order, each with its title; only groups that have a row this person may open
+  s1 not: A heading with nothing under it; a row this role may not open
+  s2 see: That page
+  s2 not: A page that then says this role may not see it
+J-F-panel-710-02 | type 1 | staff | Any panel page as staff, on a laptop (side menu) and on a phone ('More' page)
+  s1 see: The top rows first under no heading, then the groups in a fixed order, each with its title; only groups that have a row this person may open
+  s1 not: A heading with nothing under it; a row this role may not open
+  s2 see: That page
+  s2 not: A page that then says this role may not see it
+J-F-panel-710-03 | type 1 | trainer | Any panel page as trainer, on a laptop (side menu) and on a phone ('More' page)
+  s1 see: The top rows first under no heading, then the groups in a fixed order, each with its title; only groups that have a row this person may open
+  s1 not: A heading with nothing under it; a row this role may not open
+  s2 see: That page
+  s2 not: A page that then says this role may not see it
+J-F-panel-710-04 | type 2 | owner | Other way in as owner: the 'More' page on a phone
+  s1 see: The same groups and rows as the side menu, in the same order
+  s1 not: A row in one and missing from the other
+J-F-panel-710-05 | type 2 | staff | Other way in as staff: the 'More' page on a phone
+  s1 see: The same groups and rows as the side menu, in the same order
+  s1 not: A row in one and missing from the other
+J-F-panel-710-06 | type 2 | trainer | Other way in as trainer: the 'More' page on a phone
+  s1 see: The same groups and rows as the side menu, in the same order
+  s1 not: A row in one and missing from the other
+J-F-panel-710-07 | type 3 | owner | As owner; a browser where storage is blocked (a private window)
+  s1 see: All groups open again; nothing breaks
+  s1 not: A crash or an empty menu because the folded state could not be kept or read
+J-F-panel-710-08 | type 3 | staff | As staff; a browser where storage is blocked (a private window)
+  s1 see: All groups open again; nothing breaks
+  s1 not: A crash or an empty menu because the folded state could not be kept or read
+J-F-panel-710-09 | type 3 | trainer | As trainer; a browser where storage is blocked (a private window)
+  s1 see: All groups open again; nothing breaks
+  s1 not: A crash or an empty menu because the folded state could not be kept or read
+J-F-panel-710-10 | type 6 | owner | As owner; fold and unfold
+  s1 see: The group's title shows one number: the sum of its rows' numbers; none at 0
+  s1 not: A waiting item hidden with no number; a '0' badge
+  s2 see: The group stays folded after the reload and opens on a tap
+  s2 not: The fold forgotten; a different group folded
+J-F-panel-710-11 | type 6 | staff | As staff; fold and unfold
+  s1 see: The group's title shows one number: the sum of its rows' numbers; none at 0
+  s1 not: A waiting item hidden with no number; a '0' badge
+  s2 see: The group stays folded after the reload and opens on a tap
+  s2 not: The fold forgotten; a different group folded
+J-F-panel-710-12 | type 6 | trainer | As trainer; fold and unfold
+  s1 see: The group's title shows one number: the sum of its rows' numbers; none at 0
+  s1 not: A waiting item hidden with no number; a '0' badge
+  s2 see: The group stays folded after the reload and opens on a tap
+  s2 not: The fold forgotten; a different group folded
+J-F-panel-710-13 | type 12 | owner | As owner; what the menu shows to whom on a shared desk browser
+  s1 see: Only the rows this role may open; the mark says steps done of all, like '3/8', with a ring filled by that share
+  s1 not: Owner-only rows (money, staff, settings) shown to staff or a trainer; a ring more than full, or '0/0' drawn broken
+  s2 see: That role's own rows; the folded groups carry over because they are kept per browser, not per person
+  s2 not: The rows of the person before still listed; a waiting number of a hidden row counted in a group's badge
+J-F-panel-710-14 | type 12 | staff | As staff; what the menu shows to whom on a shared desk browser
+  s1 see: Only the rows this role may open; the mark says steps done of all, like '3/8', with a ring filled by that share
+  s1 not: Owner-only rows (money, staff, settings) shown to staff or a trainer; a ring more than full, or '0/0' drawn broken
+  s2 see: That role's own rows; the folded groups carry over because they are kept per browser, not per person
+  s2 not: The rows of the person before still listed; a waiting number of a hidden row counted in a group's badge
+J-F-panel-710-15 | type 12 | trainer | As trainer; what the menu shows to whom on a shared desk browser
+  s1 see: Only the rows this role may open; the mark says steps done of all, like '3/8', with a ring filled by that share
+  s1 not: Owner-only rows (money, staff, settings) shown to staff or a trainer; a ring more than full, or '0/0' drawn broken
+  s2 see: That role's own rows; the folded groups carry over because they are kept per browser, not per person
+  s2 not: The rows of the person before still listed; a waiting number of a hidden row counted in a group's badge
+J-F-panel-711-01 | type 1 | owner | Today page as owner; waiting: 2 plan requests, 1 check-in number, 1 shop order, 3 member questions, 1 member message
+  s1 see: 'Needs you' with one line per kind: '2 plan requests from the app to approve', '1 check-in number to confirm', '1 new shop order to get ready', '3 member questions to answer', '1 member message to reply to'; the browser tab title starts '(8)'
+  s1 not: '1 plan requests'; a kind with nothing waiting shown as 0; a sound on opening for things that were already waiting
+  s2 see: Plan requests and check-in numbers jump to their place on Today; shop orders, questions and messages open their own page
+  s2 not: A line that goes nowhere
+  s3 see: The count goes down by one
+  s3 not: The count unchanged until a reload
+J-F-panel-711-02 | type 1 | staff | Today page as staff; waiting: 2 plan requests, 1 check-in number, 1 shop order, 3 member questions, 1 member message
+  s1 see: 'Needs you' with one line per kind: '2 plan requests from the app to approve', '1 check-in number to confirm', '1 new shop order to get ready', '3 member questions to answer', '1 member message to reply to'; the browser tab title starts '(8)'
+  s1 not: '1 plan requests'; a kind with nothing waiting shown as 0; a sound on opening for things that were already waiting
+  s2 see: Plan requests and check-in numbers jump to their place on Today; shop orders, questions and messages open their own page
+  s2 not: A line that goes nowhere
+  s3 see: The count goes down by one
+  s3 not: The count unchanged until a reload
+J-F-panel-711-03 | type 2 | owner | Other way in as owner: Today open in a tab with alerts on, and a new request comes in
+  s1 see: 'Alerts are on for this browser.'
+  s1 not: The browser's question asked again on every visit
+  s2 see: Within about a minute: a sound and a notice titled 'MettleUp: needs you' saying 'A member asked to pause or renew their plan.'; several at once: '<n> new things need you. Open Today to see them.'
+  s2 not: A member's name or number in the notice; two sounds for one request
+J-F-panel-711-04 | type 2 | staff | Other way in as staff: Today open in a tab with alerts on, and a new request comes in
+  s1 see: 'Alerts are on for this browser.'
+  s1 not: The browser's question asked again on every visit
+  s2 see: Within about a minute: a sound and a notice titled 'MettleUp: needs you' saying 'A member asked to pause or renew their plan.'; several at once: '<n> new things need you. Open Today to see them.'
+  s2 not: A member's name or number in the notice; two sounds for one request
+J-F-panel-711-05 | type 3 | owner | As owner; notifications blocked, and nothing waiting
+  s1 see: 'Alerts are blocked in this browser. Allow notifications for this site in the browser settings to get them.'
+  s1 not: The 'Turn on alerts' button that does nothing
+  s2 see: No lines; the plain tab title with no '(0)'
+  s2 not: '(0)' in the title; an empty 'Needs you' box that looks broken
+J-F-panel-711-06 | type 3 | staff | As staff; notifications blocked, and nothing waiting
+  s1 see: 'Alerts are blocked in this browser. Allow notifications for this site in the browser settings to get them.'
+  s1 not: The 'Turn on alerts' button that does nothing
+  s2 see: No lines; the plain tab title with no '(0)'
+  s2 not: '(0)' in the title; an empty 'Needs you' box that looks broken
+J-F-panel-711-07 | type 6 | owner | As owner; one desk answers an item while Today is open on another desk
+  s1 see: Its count goes down within five minutes without a reload (an answer makes no alert, so the lists are re-read every five minutes), or at once on 'Refresh'
+  s1 not: The item waiting for ever on the second desk
+  s2 see: It rings once as new
+  s2 not: No ring because the count is the same as before (questions and messages are counted, not listed)
+J-F-panel-711-08 | type 6 | staff | As staff; one desk answers an item while Today is open on another desk
+  s1 see: Its count goes down within five minutes without a reload (an answer makes no alert, so the lists are re-read every five minutes), or at once on 'Refresh'
+  s1 not: The item waiting for ever on the second desk
+  s2 see: It rings once as new
+  s2 not: No ring because the count is the same as before (questions and messages are counted, not listed)
+J-F-panel-711-09 | type 12 | owner | As owner; what the notice and the title give away on a shared desk screen
+  s1 see: Only the kind of thing waiting
+  s1 not: The member's name, number, question or complaint in the notice or the tab title
+  s2 see: Unknown whether 'Needs you' shows
+  s2 not: Complaints or feedback counted for a trainer
+J-F-panel-711-10 | type 12 | staff | As staff; what the notice and the title give away on a shared desk screen
+  s1 see: Only the kind of thing waiting
+  s1 not: The member's name, number, question or complaint in the notice or the tab title
+  s2 see: Unknown whether 'Needs you' shows
+  s2 not: Complaints or feedback counted for a trainer

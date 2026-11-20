@@ -1,0 +1,360 @@
+# A8-web-pages-3: coverage of 47 Tier 1 journeys (8 features, from A5-web-pages-3). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-web-121 | deploy/panel/crash.test.mjs | unit | 105 lines | imports the code, file name
+F-web-121 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-web-121 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-web-121 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-web-121 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-web-121 | deploy/panel/voice.test.mjs | unit | 161 lines | imports the code
+F-web-121 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-web-121 | apps/dashboard/test/crm/crashReport.test.ts | unit | 52 lines | file name
+F-web-121 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | file name
+F-web-121 | apps/mobile/test/tracker/watchInstall.test.ts | unit | 159 lines | asserts 2 journey phrase(s)
+F-web-121 | apps/mobile/test/tracker/watchUpdate.test.ts | unit | 240 lines | asserts 2 journey phrase(s)
+F-web-121 | deploy/panel/pageChat.test.mjs | unit | 354 lines | asserts 2 journey phrase(s)
+F-web-122 | deploy/panel/hqNews.test.mjs | unit | 58 lines | imports the code, file name
+F-web-122 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-web-122 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-web-122 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-web-122 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-web-122 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-web-122 | apps/dashboard/test/crm/hqNews.test.ts | unit | 54 lines | file name
+F-web-122 | apps/dashboard/e2e/gymdata.spec.mjs | e2e | 52 lines | asserts 1 journey phrase(s)
+F-web-122 | apps/dashboard/e2e/whatsnew.spec.mjs | e2e | 122 lines | asserts 1 journey phrase(s)
+F-web-122 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-web-122 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-web-122 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-web-123 | deploy/panel/aiMatch.test.mjs | unit | 678 lines | imports the code, file name
+F-web-123 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | imports the code
+F-web-123 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-web-123 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-web-123 | deploy/panel/assist.test.mjs | unit | 473 lines | imports the code
+F-web-123 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-web-123 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-web-123 | deploy/panel/voice.test.mjs | unit | 161 lines | imports the code
+F-web-123 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-web-123 | apps/dashboard/e2e/demo-showcase-uat.spec.mjs | e2e | 181 lines | asserts 1 journey phrase(s)
+F-web-123 | apps/dashboard/e2e/demo.spec.mjs | e2e | 142 lines | asserts 1 journey phrase(s)
+F-web-123 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 1 journey phrase(s)
+F-web-124 | deploy/panel/assist.test.mjs | unit | 473 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-web-124 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | file name, asserts 3 journey phrase(s)
+F-web-124 | deploy/panel/assistCatalogue.test.mjs | unit | 184 lines | imports the code, file name
+F-web-124 | deploy/panel/assistCredits.test.mjs | unit | 115 lines | imports the code, file name
+F-web-124 | deploy/panel/assistPlan.test.mjs | unit | 298 lines | imports the code, file name
+F-web-124 | apps/dashboard/test/crm/assistant/allowance.test.ts | unit | 54 lines | file name, asserts 2 journey phrase(s)
+F-web-124 | deploy/hq/hq.test.mjs | unit | 1084 lines | imports the code
+F-web-124 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-web-124 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-web-124 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-web-124 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-web-124 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-web-125 | deploy/panel/assistPlan.test.mjs | unit | 298 lines | imports the code, file name
+F-web-125 | supabase/tests/0092_member_join_day.sql | db | 106 lines | asserts 5 journey phrase(s)
+F-web-125 | apps/dashboard/e2e/assistant-uat.spec.mjs | e2e | 822 lines | asserts 4 journey phrase(s)
+F-web-125 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 4 journey phrase(s)
+F-web-125 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-web-125 | apps/dashboard/test/crm/messageTemplates.test.ts | unit | 246 lines | asserts 3 journey phrase(s)
+F-web-125 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-web-125 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-web-125 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-web-125 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-web-125 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-web-125 | supabase/tests/0033_terms_acceptance.sql | db | 98 lines | asserts 3 journey phrase(s)
+F-web-133 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code, file name
+F-web-133 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-web-133 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-web-133 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-web-133 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-web-133 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 2 journey phrase(s)
+F-web-133 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-web-133 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 1 journey phrase(s)
+F-web-133 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 1 journey phrase(s)
+F-web-133 | apps/dashboard/test/crm/needsYou.test.ts | unit | 54 lines | asserts 1 journey phrase(s)
+F-web-133 | apps/dashboard/test/crm/setupCards.test.ts | unit | 17 lines | asserts 1 journey phrase(s)
+F-web-133 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-web-116 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 7 journey phrase(s)
+F-web-116 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code, asserts 2 journey phrase(s)
+F-web-116 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code, file name
+F-web-116 | apps/dashboard/test/crm/invite.test.ts | unit | 105 lines | asserts 4 journey phrase(s)
+F-web-116 | apps/dashboard/test/crm/selfJoin.test.ts | unit | 174 lines | asserts 4 journey phrase(s)
+F-web-116 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code, asserts 1 journey phrase(s)
+F-web-116 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code, asserts 1 journey phrase(s)
+F-web-116 | apps/dashboard/e2e/hq-webpage-uat.spec.mjs | e2e | 166 lines | asserts 3 journey phrase(s)
+F-web-116 | apps/dashboard/test/crm/oneLink.test.ts | unit | 61 lines | asserts 3 journey phrase(s)
+F-web-116 | deploy/panel/pageChat.test.mjs | unit | 354 lines | imports the code
+F-web-116 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-web-116 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 2 journey phrase(s)
+F-web-140 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-web-140 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-web-140 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-web-140 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-web-140 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-web-140 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-web-140 | apps/dashboard/e2e/r534-training-progress-uat.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-web-140 | apps/dashboard/e2e/whatsapp-verify-uat.spec.mjs | e2e | 324 lines | asserts 1 journey phrase(s)
+F-web-140 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-web-140 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | asserts 1 journey phrase(s)
+F-web-140 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 1 journey phrase(s)
+F-web-140 | apps/dashboard/test/crm/gymReports.test.ts | unit | 140 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-web-121-01 | type 1 | system | Admin app open in a browser; an uncaught error happens on the Members screen
+  s1 see: Answer 201 {ok: true}
+  s1 not: The admin app stops working because the report failed
+  s1 not: A gym code, install id or device stored with the report
+  s2 see: One row labelled crash with the message, the app version and the screen
+  s2 not: The crash row shown in the normal feedback sorting as a new message
+J-F-web-121-02 | type 2 | system | Member phone app; a fatal error closes a screen
+  s1 see: Answer 201 {ok: true}
+  s1 see: Stored text starts with "[fatal] "
+  s1 not: The report refused because it came from the member app
+  s1 not: The fatal mark lost
+J-F-web-121-03 | type 3 | system | Anyone who can reach app.mettleup.fit/api/crash
+  s1 see: 405 "Use POST."
+  s1 not: A row saved
+  s2 see: 400 "Unknown app."
+  s2 see: 400 "No message."
+  s2 not: A row saved for an unknown app or an empty message
+  s3 see: 413 "Too long."
+  s3 not: The long body stored
+  s4 see: The 31st gets 429 "Too many reports today."
+  s4 not: More than 30 rows from one address in a day
+  s4 not: The free database flooded past 2,000 reports a day
+J-F-web-121-04 | type 6 | system | One crash already reported today from this network address
+  s1 see: 200 {ok: true, seen: true}
+  s1 not: A second row for the same crash
+  s1 not: An error answer that makes the app retry
+  s2 see: The crash row is gone from the feedback list
+  s2 not: A crash row older than 90 days still kept
+  s2 not: A normal feedback or help row deleted by the crash clean-up
+J-F-web-121-05 | type 12 | system | An error message that happens to contain an email, a phone number and a key
+  s1 see: Stored as "login failed for [email] [n] key [key]"
+  s1 not: The email, phone or key stored
+  s1 not: The network address stored as plain text (only a one-way daily hash)
+  s2 see: Only the scrubbed text and the signature
+  s2 not: A member's name, gym or phone in the bug list
+J-F-web-122-01 | type 1 | owner | Admin app signed in as owner; HQ sent two messages to every gym this month
+  s1 see: The bell opens with the group "From MettleUp"
+  s1 see: The two HQ messages, newest first, each with title, words and its link
+  s1 not: Another gym's own notices in "From MettleUp"
+  s1 not: An error in place of the list
+  s2 see: The page the message points to opens
+  s2 not: A broken or empty link opened
+J-F-web-122-02 | type 3 | owner | Admin app; HQ never sent a message, or the HQ messages table is not there yet
+  s1 see: No "From MettleUp" lines; the rest of the bell as usual
+  s1 not: A red error
+  s1 not: An endless spinner in the bell
+J-F-web-122-03 | type 6 | owner | Admin app; a message from HQ shows in the bell
+  s1 see: The message is gone
+  s1 not: The removed message still shown after a minute
+  s1 not: Other HQ messages gone with it
+  s2 see: Not shown
+  s2 not: Messages older than 120 days in the bell
+J-F-web-122-04 | type 12 | owner | Two gyms' admin apps open
+  s1 see: The same "From MettleUp" messages in both
+  s1 not: Anything of one gym shown to another
+  s1 not: A message that names a gym or a member
+J-F-web-122-05 | type 1 | staff | Admin app signed in as staff; HQ sent two messages to every gym this month
+  s1 see: The bell opens with the group "From MettleUp"
+  s1 see: The two HQ messages, newest first, each with title, words and its link
+  s1 not: Another gym's own notices in "From MettleUp"
+  s1 not: An error in place of the list
+  s2 see: The page the message points to opens
+  s2 not: A broken or empty link opened
+J-F-web-122-06 | type 3 | staff | Admin app; HQ never sent a message, or the HQ messages table is not there yet
+  s1 see: No "From MettleUp" lines; the rest of the bell as usual
+  s1 not: A red error
+  s1 not: An endless spinner in the bell
+J-F-web-122-07 | type 6 | staff | Admin app; a message from HQ shows in the bell
+  s1 see: The message is gone
+  s1 not: The removed message still shown after a minute
+  s1 not: Other HQ messages gone with it
+  s2 see: Not shown
+  s2 not: Messages older than 120 days in the bell
+J-F-web-122-08 | type 12 | staff | Two gyms' admin apps open
+  s1 see: The same "From MettleUp" messages in both
+  s1 not: Anything of one gym shown to another
+  s1 not: A message that names a gym or a member
+J-F-web-123-01 | type 1 | owner | Owner signed in, gym online; Members, Import from Excel; a member sheet with 12 columns
+  s1 see: The columns are matched by themselves, no button
+  s1 see: "We matched them from the column names and what is in them."
+  s1 not: A phone number or name sent to the AI
+  s1 not: The import blocked while the AI thinks
+  s2 see: Each column with the field it was matched to; unneeded ones say "AI says this column is not needed, so it is not kept."
+  s2 not: A column matched to a field not in the list
+  s2 not: Member data changed by the AI's answer
+J-F-web-123-02 | type 3 | owner | Owner; the gym already matched 20 sheets today (the normal daily limit)
+  s1 see: Matching by hand, with the words "Today's AI matches are used up. Match the columns yourself, or try tomorrow."
+  s1 not: The import stuck
+  s1 not: A 21st AI read taken
+  s2 see: Matching by hand ("At most 60 columns.")
+  s2 not: A crash or a blank column list
+  s3 see: Matching by hand ("AI matching is not on in the demo gym.")
+  s3 not: The demo sheet sent to the AI
+J-F-web-123-03 | type 6 | owner | Owner; HQ set this gym's AI matching limit to 0
+  s1 see: Matching by hand
+  s1 not: An AI read taken while the gym's limit is 0
+  s2 see: The columns are matched by themselves again
+  s2 not: The old 0 kept after HQ changed it
+  s3 see: "The AI did not answer. Match the columns yourself." and matching by hand
+  s3 not: A success shown with no matches
+J-F-web-123-04 | type 12 | owner | Owner; a sheet with names, mobiles, emails, addresses and ID numbers
+  s1 see: Columns matched as usual
+  s1 not: A mobile, email or ID number in what the AI is shown
+  s1 not: A name or address shown to the AI other than as [name] / [address]
+  s1 not: Anything from the file kept on the server
+J-F-web-123-05 | type 1 | staff | Staff member signed in; Import from Excel; a member sheet
+  s1 see: Matching by hand (the server answers "Only the owner can use AI matching.")
+  s1 not: The sheet sent to the AI for a staff login
+  s1 not: An AI read taken from the gym's daily limit
+J-F-web-123-06 | type 3 | staff | Staff member whose sign-in key has ended
+  s1 see: Matching by hand; the server answers "Sign in first."
+  s1 not: An AI read for an unknown key
+  s1 not: A crash
+J-F-web-123-07 | type 6 | staff | Staff member; the owner makes this person an owner
+  s1 see: The columns are matched by themselves
+  s1 not: Still refused after becoming an owner
+  s2 see: Matching by hand
+  s2 not: AI matching still on for a staff login
+J-F-web-123-08 | type 12 | staff | Staff member; a sheet with members' phone numbers
+  s1 see: Matching by hand
+  s1 not: Any cell of the sheet leaving the browser for the AI
+J-F-web-124-01 | type 1 | owner | Owner signed in, gym online, paid plan; AI Assistant open
+  s1 see: An answer card from the gym's own reports
+  s1 see: How many questions are left today
+  s1 not: A credit taken for a question
+  s1 not: The member list sent to the AI
+  s2 see: A message card that does nothing until its button is tapped; the button shows the credits it uses
+  s2 not: A message sent before the owner taps
+  s2 not: Credits spent before Send
+J-F-web-124-02 | type 2 | owner | AI Assistant open; the owner speaks instead of typing
+  s1 see: The words appear as text, then a message card
+  s1 not: The recording kept
+  s1 not: A clip of over 30 seconds taken
+J-F-web-124-03 | type 2 | owner | AI Assistant; a message card is open
+  s1 see: The same card with a shorter message in English and Hindi
+  s1 not: The message sent while rewriting
+  s1 not: An empty message when the rewrite fails
+J-F-web-124-04 | type 2 | owner | AI Assistant open
+  s1 see: A card that opens "Import from Excel"
+  s1 not: A page the AI invented
+  s1 not: An owner-only page offered to the wrong person
+J-F-web-124-05 | type 3 | owner | AI Assistant open
+  s1 see: "Type what you want done."
+  s1 not: A question used up
+  s2 see: "You have used today's free questions. Your credits are safe. Ask again tomorrow."
+  s2 not: Credits taken
+  s2 not: A red error
+  s3 see: "Your gym has no AI credits left. Tap your credits at the top to get more."
+  s3 not: The question answered and charged anyway
+  s4 see: "The AI Assistant is not on in the demo gym."
+  s4 not: The demo text sent to the AI
+  s5 see: "Too long. Keep it under 30 seconds."
+  s5 not: A long clip sent to the speech service
+J-F-web-124-06 | type 6 | owner | Owner of a gym in its free trial; AI Assistant open
+  s1 see: "The AI Assistant is resting till next month. Everything else works as usual."
+  s1 not: A paying gym stopped by the cap
+  s2 see: "AI answers are paused for your gym. Write to MettleUp from Help to turn them back on."
+  s2 not: The question answered while paused
+  s3 see: "The AI did not answer. Try again, or say it another way."
+  s3 not: The question counted as used against the gym's credits
+J-F-web-124-07 | type 12 | owner | Owner types a request with a member's phone and email
+  s1 see: The card shows the real phone and email back
+  s1 not: The phone or email sent to the AI (it sees [PHONE_1] and [EMAIL_1])
+  s1 not: Dues, visits or the member list sent to the AI
+  s2 see: No AI Assistant
+  s2 not: A staff login getting answers (the server says "Only the owner can use the AI Assistant.")
+J-F-web-125-01 | type 1 | owner | Owner signed in, gym online with its exercise list; AI Assistant open; member Asha exists
+  s1 see: A workout plan card that says "Writing the plan is free."
+  s1 not: Credits spent for writing
+  s1 not: Asha's name, phone or record sent to the AI
+  s2 see: The plan in Workout plans: 4 days, exercises only from the gym's list, no starting weights
+  s2 not: An exercise not in the gym's list
+  s2 not: Starting weights filled in by the AI
+  s3 see: The plan saved; 3 credits used
+  s3 not: More or less than 3 credits
+  s3 not: Two plans saved for one tap
+J-F-web-125-02 | type 3 | owner | AI Assistant open
+  s1 see: "Only workout plans can be written here."
+  s1 not: A diet plan written and charged
+  s2 see: "Days a week must be from 2 to 6."
+  s2 not: A 7-day plan
+  s3 see: "The gym's exercise list needs at least 8 exercises for the AI to write a plan."
+  s3 not: A plan of repeated exercises
+J-F-web-125-03 | type 6 | owner | Plan asked for 4 days
+  s1 see: "The AI wrote 2 usable days of 4 from your exercise list. Try again, or make it in Workout plans."
+  s1 not: A broken plan offered for 3 credits
+  s1 not: The question counted against the gym's credits
+  s2 see: Nothing saved
+  s2 not: Credits spent without Save
+J-F-web-125-04 | type 12 | owner | Owner adds "knee injury, call me on 98765 43210" to the focus words
+  s1 see: A plan that keeps the knee in mind
+  s1 not: The phone number sent to the AI
+  s1 not: The member's name, phone or record sent to the AI
+J-F-web-133-01 | type 1 | owner | Admin app on a laptop browser, signed in as owner; browser alerts not on yet
+  s1 see: Alerts turned on
+  s1 not: A turned-on message when the browser was not subscribed
+  s2 see: A browser pop-up "Open Member questions"
+  s2 not: A pop-up for another gym
+J-F-web-133-02 | type 3 | owner | HQ has not set up browser alerts (no key)
+  s1 see: A plain word that alerts are not available now
+  s1 not: "Alerts turned on" while the server said NOT_SET_UP
+  s1 not: A browser subscription saved with a wrong key
+J-F-web-133-03 | type 6 | owner | Browser alerts on in this browser
+  s1 see: Alerts off; no more pop-ups
+  s1 not: Pop-ups still coming
+  s2 see: Alerts on; one pop-up per alert
+  s2 not: Two pop-ups per alert from two subscriptions
+J-F-web-133-04 | type 1 | staff | Admin app on a laptop browser, signed in as staff; browser alerts not on yet
+  s1 see: Alerts turned on
+  s1 not: A turned-on message when the browser was not subscribed
+  s2 see: A browser pop-up "Open Member questions"
+  s2 not: A pop-up for another gym
+J-F-web-133-05 | type 3 | staff | HQ has not set up browser alerts (no key)
+  s1 see: A plain word that alerts are not available now
+  s1 not: "Alerts turned on" while the server said NOT_SET_UP
+  s1 not: A browser subscription saved with a wrong key
+J-F-web-133-06 | type 6 | staff | Browser alerts on in this browser
+  s1 see: Alerts off; no more pop-ups
+  s1 not: Pop-ups still coming
+  s2 see: Alerts on; one pop-up per alert
+  s2 not: Two pop-ups per alert from two subscriptions
+J-F-web-116-01 | type 1 | system | GYM_PAGES is live, JOIN_PAY and PAGE_AI are off
+  s1 see: {gymPages: true, joinPay: false, aiCharge: ..., pageAi: false}
+  s1 see: The "Your web page" row shows; "Take payments when people join online" does not
+  s1 not: A row for a feature that is switched off
+  s1 not: A cached old answer (the answer is never cached)
+J-F-web-116-02 | type 2 | system | JOIN_HOST is set to join.mettleup.fit
+  s1 see: {join: "https://join.mettleup.fit"}
+  s1 see: Invite and "Become a member" links use join.mettleup.fit
+  s1 not: Links on app.mettleup.fit after the switch
+  s2 see: {join: "https://app.mettleup.fit"}
+  s2 not: A link to the wrong host typed into JOIN_HOST
+J-F-web-116-03 | type 3 | system | A switch written as "on" or "true" instead of "live"
+  s1 see: That switch is false
+  s1 not: A feature shown as on by a value other than "live"
+  s2 see: pageAi false
+  s2 not: The web page chat shown with no web page
+J-F-web-116-04 | type 6 | system | GYM_PAGES live; the admin app is open
+  s1 see: The "Your web page" row and screen are gone without a reload
+  s1 not: The row still there after 5 minutes
+  s1 not: A var typed in the Cloudflare dashboard kept after the next deploy
+J-F-web-140-01 | type 1 | system | The free database holds crash reports, voice counts, sign-in codes and join-form counts of many ages
+  s1 see: Gone: crash reports older than 90 days, spoken-feedback counts older than 7 days, sign-in codes, code asks and "Verify with WhatsApp" taps older than 2 days, join-form address counts older than 2 days
+  s1 see: One log line per clean-up with how many went
+  s1 not: A normal feedback or help row deleted
+  s1 not: Column-matching or assistant counts deleted
+  s1 not: Today's rows deleted
+J-F-web-140-02 | type 2 | system | The other trigger, every 10 minutes
+  s1 see: Only the payment check runs
+  s1 not: The clean-up run every 10 minutes
+  s1 not: The payment check skipped because of the clean-up
+J-F-web-140-03 | type 3 | system | The database binding WEB is missing
+  s1 see: The log "[crash] clean-up skipped: D1 binding WEB missing" and nothing else
+  s1 not: A crash of the Worker
+  s1 not: A silent skip with no log
+J-F-web-140-04 | type 6 | system | The sign-in codes table was never made (migration 0012 not applied)
+  s1 see: A warning for the sign-in code clean-up; the crash, voice, inbound and friend clean-ups still run
+  s1 not: One failed clean-up stopping the others
+J-F-web-140-05 | type 12 | system | Privacy notice: spoken-feedback counts and crash reports are kept only for a short time
+  s1 see: Both are gone
+  s1 not: A count or report kept past what the notice says

@@ -1,0 +1,43 @@
+# B-run-web-pages-b: gap-8 x web / web/pages. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H8.1 | gap-8 | By script first: docs/system-map/_tools/silent.mjs lists every catch block with file:line and three flags: logs? (calls a log, report or crash function inside), tells_user? (sets an error state, toast or alert inside), rethrows?
+H8.2 | gap-8 | Output _sources/silent.csv
+H8.3 | gap-8 | Helpers read ONLY the rows where all three are "no", plus every fallback value (?? null, || [], ?? 0) that sits in a file named in a journey that writes money, messages, alerts, sign-in or sync
+H8.4 | gap-8 | Everything else is counted in the grid as "filtered by script, N rows, not read" so the gap is visible
+H8.5 | gap-8 | For each: if this path runs, does the user (or owner, or HQ) learn anything?
+H8.6 | gap-8 | A silent path that hides a failed promise = finding
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-web-100 | live | Open the right site at each MettleUp address: old and www addresses redirect, mettleup.fit shows the member site, gyms.m | deploy/panel/hosts.js:110
+F-web-102 | behind switch | Gym-owner marketing site (gyms.mettleup.fit, /home): what MettleUp does for a gym, English or Hindi, try your gym's name | apps/dashboard/public/home/index.html:1
+F-web-104 | behind switch | Member marketing site (mettleup.fit, /member-site): the free workout app for phone and watch, English or Hindi, 'Send to | apps/dashboard/public/member-site/index.html:1
+F-web-113 | behind switch | A gym's own free web page (join.mettleup.fit/<gym>): plans, timings, address and maps links, facilities, photos, WhatsAp | deploy/panel/gymPageServe.js:341
+F-web-114 | behind switch | Ask the gym a question, or report a page, from the gym's web page | deploy/panel/gymPageServe.js:353
+F-web-115 | behind switch | AI helper chat on the gym's web page: answers from the page only, else 'I will ask the gym'; the visitor can leave a num | deploy/panel/gymPageServe.js:356
+F-web-138 | live | Install the admin app on the device and open it with no internet (service worker) | apps/dashboard/public/sw.js:1
+F-web-139 | live | Company and legal pages: About, Contact, Privacy, Terms, Refunds, Shipping and delivery, Data agreement for gyms, Delete | apps/dashboard/public/about.html:1
+## SILENT CATCH ROWS TO READ (kind,file,line,logs,tells_user,rethrows,text)
+catch,apps/dashboard/public/gym-page/page.js,11,no,no,no,{ return {}; }
+catch,apps/dashboard/public/gym-page/page.js,115,no,no,no,(() => ({}))
+catch,apps/dashboard/public/gym-page/page.js,131,no,no,no,(() => ({}))
+catch,apps/dashboard/public/gym-page/page.js,190,no,no,no,{ if (e && e.name === 'AbortError') return; }
+catch,apps/dashboard/public/gym-page/page.js,197,no,no,no,{ prompt('Copy this link'  url); }
+catch,apps/dashboard/public/home/home.js,14,no,no,no,{ /* quiet: private window; the choice just isn't kept */ }
+catch,apps/dashboard/public/home/home.js,413,no,no,no,{ source = /[?&]from=member(&|$)/.test(location.search) ? 'member-referral' : ''; // quiet
+catch,apps/dashboard/public/home/home.js,500,no,no,no,(function () { return {}; })
+catch,apps/dashboard/public/member-site/member.js,16,no,no,no,{ /* quiet: private window; the choice just isn't kept */ }
+catch,apps/dashboard/public/member-site/member.js,147,no,no,no,{ fail(); }
+catch,apps/dashboard/public/member-site/member.js,155,no,no,no,(function (e) { if (e && e.name === 'AbortError') return; // the member closed the share s
+catch,deploy/panel/appLink.js,43,no,no,no,{ return ''; }
+catch,deploy/panel/friend.js,105,no,no,no,{ return refused(400  'BAD_REQUEST'  `not JSON (${e instanceof Error ? e.message : 'parse 
+catch,deploy/panel/gymPageServe.js,164,no,no,no,(() => {})
+catch,deploy/panel/gymPageServe.js,204,no,no,no,{ return refused(tag  400  'BAD_REQUEST'  `not JSON (${e instanceof Error ? e.message : 'p
+catch,deploy/panel/gymPageServe.js,329,no,no,no,(() => {})
+catch,deploy/panel/hosts.js,165,no,no,no,{ return signIn(); }
+catch,deploy/panel/leads.js,104,no,no,no,{ return refused(400  'Send a JSON object.'  `not JSON (${e instanceof Error ? e.message :
+catch,deploy/panel/pageChat.js,274,no,no,no,{ return { res: refused(tag  400  'BAD_REQUEST'  `not JSON (${e instanceof Error ? e.messa
+catch,deploy/panel/pageChat.js,384,no,no,no,{ return failed(scrub(e  env)); }
+catch,deploy/panel/selfJoin.js,132,no,no,no,{ // R-555: a fixed reason only: the parser's message can quote part of the body (a name  
+## FALLBACK ROWS TO READ (files that write money, messages, alerts, sign-in or sync)
+fallback,apps/dashboard/public/sw.js,74,-,-,-,const type = res.headers.get('Content-Type') || '';
+## FILTERED BY SCRIPT
+95 other rows of _sources/silent.csv in this area: not read (write this number in the H8 evidence)

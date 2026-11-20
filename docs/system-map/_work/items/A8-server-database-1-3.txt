@@ -1,0 +1,419 @@
+# A8-server-database-1-3: coverage of 79 Tier 1 journeys (9 features, from A5-server-database-1-3). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-server-320 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 3 journey phrase(s)
+F-server-320 | supabase/tests/0024_workout_plans.sql | db | 135 lines | file name
+F-server-320 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 1 journey phrase(s)
+F-server-320 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 1 journey phrase(s)
+F-server-320 | apps/dashboard/test/crm/whatsapp.test.ts | unit | 192 lines | asserts 1 journey phrase(s)
+F-server-320 | apps/mobile/qa/phase3-d.yaml | maestro | 763 lines | asserts 1 journey phrase(s)
+F-server-320 | apps/mobile/test/lib/retryRead.test.ts | unit | 127 lines | asserts 1 journey phrase(s)
+F-server-320 | apps/mobile/test/plan/memberPlan.test.ts | unit | 177 lines | asserts 1 journey phrase(s)
+F-server-320 | apps/mobile/test/shop/memberPay.test.ts | unit | 104 lines | asserts 1 journey phrase(s)
+F-server-320 | apps/mobile/test/tracker/historyScope.test.ts | unit | 100 lines | asserts 1 journey phrase(s)
+F-server-320 | apps/mobile/test/tracker/r61WorkoutScreen.test.ts | unit | 169 lines | asserts 1 journey phrase(s)
+F-server-320 | supabase/tests/0083_ai_members.sql | db | 180 lines | asserts 1 journey phrase(s)
+F-server-321 | apps/dashboard/e2e/r608-uat.spec.mjs | e2e | 208 lines | asserts 4 journey phrase(s)
+F-server-321 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 2 journey phrase(s)
+F-server-321 | supabase/tests/0025_workout_offer.sql | db | 305 lines | file name
+F-server-321 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-server-321 | apps/dashboard/test/crm/autoReminders.test.ts | unit | 107 lines | asserts 1 journey phrase(s)
+F-server-321 | apps/dashboard/test/crm/workoutOffer.test.ts | unit | 290 lines | asserts 1 journey phrase(s)
+F-server-321 | apps/mobile/qa/sub-uat-f194-choose.yaml | maestro | 31 lines | asserts 1 journey phrase(s)
+F-server-321 | apps/mobile/qa/uat-rel-f194-a-history.yaml | maestro | 139 lines | asserts 1 journey phrase(s)
+F-server-321 | apps/mobile/qa/uat-rel-r452-help-replies.yaml | maestro | 182 lines | asserts 1 journey phrase(s)
+F-server-321 | apps/mobile/qa/uat-rel-t74-gym-icon.yaml | maestro | 59 lines | asserts 1 journey phrase(s)
+F-server-321 | apps/mobile/test/cloud/accountWords.test.ts | unit | 62 lines | asserts 1 journey phrase(s)
+F-server-322 | supabase/tests/0025_workout_offer.sql | db | 305 lines | file name
+F-server-310 | supabase/tests/0018_staff_and_owner_rules.sql | db | 307 lines | file name
+F-server-310 | supabase/tests/0025_workout_offer.sql | db | 305 lines | file name
+F-server-323 | (no candidate found by the script)
+F-server-324 | supabase/tests/0027_hq_actions.sql | db | 207 lines | file name
+F-server-325 | supabase/tests/0027_hq_actions.sql | db | 207 lines | file name
+F-server-326 | supabase/tests/0027_hq_actions.sql | db | 207 lines | file name
+F-server-327 | supabase/tests/0028_hq_breakglass_and_logs.sql | db | 165 lines | file name
+F-server-327 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-server-327 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-server-327 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-server-327 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-server-327 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-server-320-01 | type 1 | owner | Admin app, owner signed in, a workout plan ready to send to two members
+  s1 see: The plan saved in the gym's plan list
+  s1 not: The plan saved under a maker name the device wrote instead of the signed-in owner
+  s2 see: The plan's routines shown as from the gym and the owner's name
+  s2 not: The plan missing for a picked member whose number was matched at a check-in
+J-F-server-320-02 | type 2 | owner | Admin app, owner signed in, a gym plan 'Monthly' with three members on it
+  s1 see: The plan saved
+  s1 not: Members on other gym plans getting it
+  s2 see: The plan shown
+  s2 not: The plan shown to a member whose membership ended yesterday or starts tomorrow
+J-F-server-320-03 | type 3 | owner | Admin app, owner signed in, making a plan
+  s1 see: The save refused with an error
+  s1 not: Part of the plan saved
+  s1 not: Members getting a plan that breaks their app
+  s2 see: The delete refused; the plan can only be withdrawn
+  s2 not: The plan removed with no record left
+J-F-server-320-04 | type 6 | owner | A plan already sent to a member
+  s1 see: The plan marked withdrawn in the list
+  s1 not: The plan deleted from the gym's records
+  s2 see: The plan no longer listed from the gym
+  s2 not: The withdrawn plan still listed
+  s3 see: The plan back on the member's Workout tab, still named for the person who first made it
+  s3 not: The maker's name changed to whoever saved last
+J-F-server-320-05 | type 12 | owner | Two members of the gym, a plan picked for member A only, a second gym with its own plans
+  s1 see: Only plans sent to them
+  s1 not: Member A's plan shown to member B
+  s1 not: Another gym's plan shown
+  s2 see: A message that the number is shared, no plans
+  s2 not: A's plan shown to the family member
+J-F-server-320-06 | type 1 | trainer | Admin app, a trainer signed in on a front-desk session
+  s1 see: The plan saved
+  s1 not: The save refused for a trainer
+  s1 not: The plan stamped with the owner's name
+  s2 see: The plan shown as from the gym and the trainer's own name
+  s2 not: Another staff member's name shown
+J-F-server-320-07 | type 3 | trainer | Admin app, trainer signed in, a plan the owner made
+  s1 see: The delete refused
+  s1 not: The plan removed
+  s2 see: The plan saved, still named for the owner who made it
+  s2 not: The maker name taken from the device
+J-F-server-320-08 | type 6 | trainer | A plan the trainer sent last week
+  s1 see: The newer plan saved
+  s1 not: A second copy of the plan made
+  s2 see: The changed plan with the new routine
+  s2 not: The old version kept beside the new one
+J-F-server-320-09 | type 1 | member | Member app, number matched at a check-in, first name matches the gym list, one plan sent to the member
+  s1 see: The plan's routines from the gym, with the maker's name
+  s1 not: An empty list when a plan was sent
+  s1 not: Another member's plan
+J-F-server-320-10 | type 2 | member | Member app, no plan picked for the member, but their gym plan 'Monthly' has one
+  s1 see: The 'Monthly' workout plan appears
+  s1 not: The plan missing after the renewal starts today
+J-F-server-320-11 | type 3 | member | Member app, the member never checked in with their number, or their first name differs from the gym list
+  s1 see: A message naming the gym and why no plans can be shown (no number matched, or the name does not match)
+  s1 not: Plans of the gym member with that number shown
+  s1 not: A crash or endless loading
+J-F-server-320-12 | type 6 | member | Member app showing a plan sent through the member's gym plan
+  s1 see: That plan no longer shown
+  s1 not: The plan still shown after the cover ended
+  s2 see: The second plan gone too
+  s2 not: A withdrawn plan still shown
+J-F-server-320-13 | type 12 | member | Member app, two family members share one mobile on the gym list
+  s1 see: A message that the number is shared, no plans
+  s1 not: One member's plan shown to the other
+J-F-server-321-01 | type 1 | owner | Admin app, Messages & offers, Offers, no running offer
+  s1 see: The offer listed as open with joined 0, in now 0, ready 0, given 0
+  s1 not: Two running offers at once
+  s1 not: The offer starting on another day than today
+  s2 see: The member shown as 'Ready for reward'
+  s2 not: The member shown ready with fewer than 10 matched days
+  s3 see: The member's plan last day moved 3 days later; plan shows 'Extended free by 3 days (reward)'
+  s3 not: A receipt or GST made for the reward
+  s3 not: The days added twice
+J-F-server-321-02 | type 2 | owner | Admin app, Offers, starting an offer that gives the days by themselves
+  s1 see: The words 'When a member reaches the target, the days are added to their plan at once. You see it in the list and on their page, and you can take it back.'
+  s1 not: The offer saved with giving by hand
+  s2 see: The member listed as given, given by 'Automatic'
+  s2 not: The member left as 'Ready for reward' while a plan is running
+J-F-server-321-03 | type 3 | owner | Admin app, Offers, one offer already running
+  s1 see: A refusal that one offer is already running
+  s1 not: A second running offer saved
+  s2 see: A refusal of the numbers
+  s2 not: The offer saved with numbers outside 4-30 workouts, 7-60 days, 1-7 reward days
+J-F-server-321-04 | type 6 | owner | Admin app, Offers, a running offer with a member already given 3 days
+  s1 see: Question 'Take back the 3 reward days from <name>? Their plan's last day goes back.'
+  s1 see: The plan's last day back by 3 days and a line 'Reward taken back' in its notes
+  s1 not: The plan's last day moved back after the plan was renewed or changed since the reward
+  s2 see: The days given again (owner only)
+  s2 not: The front desk able to give it again
+  s3 see: Question 'Stop this offer? Nobody new can join. Members already in keep their days to finish.'
+  s3 see: The offer no longer open
+  s3 not: Members already in losing their window or their reward
+J-F-server-321-05 | type 12 | owner | Admin app, Offers list with five members in the offer
+  s1 see: Each member with counted days, desk and app days side by side, and the reward state
+  s1 not: A member's mobile number, exercises, weights or workout length
+  s1 not: Members of another gym
+J-F-server-321-06 | type 1 | staff | Admin app, front desk signed in, Offers list shows a member 'Ready for reward'
+  s1 see: The member listed as given, given by the desk person's name; the plan's last day 3 days later
+  s1 not: The days added to a PT pack or a cancelled plan
+  s1 not: Days other than the offer's reward days
+J-F-server-321-07 | type 3 | staff | Admin app, front desk signed in, Offers
+  s1 see: A refusal that only the owner can
+  s1 not: The offer changed by the front desk
+  s2 see: A refusal that the reward was taken back
+  s2 not: The days given again by the desk
+  s3 see: A refusal that there is no plan to add the days to
+  s3 not: The days lost or marked given with no plan changed
+J-F-server-321-08 | type 6 | staff | Admin app, two desk phones, the same member 'Ready for reward'
+  s1 see: One give; the second phone told it was already given
+  s1 not: 6 days added
+  s1 not: Two notes lines
+J-F-server-321-09 | type 12 | staff | Admin app, front desk signed in, Offers list
+  s1 see: Counts of days and the reward state only
+  s1 not: Mobile numbers, exercises or body weight
+J-F-server-322-01 | type 1 | member | Member app, Offers card, the gym has an open offer, the member has a gym plan running today
+  s1 see: The card shows the member is in, with the last day of the window and 0 counted
+  s1 not: Joining without the consent screen
+  s1 not: A window longer than the offer's days
+  s2 see: Counted days go up by one per matched day
+  s2 not: A day with no check-in counted
+  s2 not: A future day counted
+  s3 see: The card shows the reward given and the plan's new last day
+  s3 not: The reward given twice
+J-F-server-322-02 | type 2 | member | Member app, member earned the reward while no gym plan was running; offer gives days by themselves
+  s1 see: The reward given on the renewed plan
+  s1 not: The reward lost because no plan ran on the day it was earned
+J-F-server-322-03 | type 3 | member | Member app, Offers card
+  s1 see: A message that a running plan is needed
+  s1 not: The member joined anyway
+  s2 see: A message that the offer is closed
+  s2 not: The member joined a closed offer
+  s3 see: The 21st refused as too many; days with no check-in not counted
+  s3 not: A count sent by the phone trusted
+J-F-server-322-04 | type 6 | member | Member app, in the offer with 4 counted days
+  s1 see: The card shows the member left; counted days gone
+  s1 not: The dates kept on the server
+  s2 see: Back in, with the same window end as before
+  s2 not: A fresh 30-day window
+J-F-server-322-05 | type 12 | member | Member app, member who has not joined any offer
+  s1 see: Nothing about workouts leaves the phone for the offer
+  s1 not: Dates sent before 'Join the offer'
+  s2 see: The member's offer dates deleted
+  s2 not: Exercise names, weights, sets, workout length or body weight stored by the gym
+J-F-server-310-01 | type 1 | owner | Admin app, Messages & offers, 40 app members
+  s1 see: The message at the top of the Sent list, seen by 0 of 40
+  s1 not: Recipients counted with members who left
+  s2 see: The Sent list shows seen by 10 of 40
+  s2 not: Seen counted from members who joined after the message
+J-F-server-310-02 | type 2 | owner | Admin app, Messages & offers, picking a group
+  s1 see: The Sent list shows the time it goes and that it went to a group, seen by 0 of 5
+  s1 not: Members outside the group getting it
+  s2 see: Seen by 3 of 5
+  s2 not: The message shown before 7 am
+J-F-server-310-03 | type 3 | owner | Admin app, Messages & offers
+  s1 see: A refusal naming the problem
+  s1 not: A cut-down message sent
+  s2 see: 'You already sent an offer or event today. Members get at most one a day in the app. Send it tomorrow, or on WhatsApp now.'
+  s2 not: A second offer reaching members that day
+  s3 see: A refusal that no one is in the group
+  s3 not: A message sent to nobody shown as sent
+J-F-server-310-04 | type 6 | owner | Admin app, Sent list with a message sent 2 minutes ago
+  s1 see: Question 'Take back “<title>”? It is removed from every member’s inbox.'
+  s1 see: The message marked taken back
+  s1 not: The message still in members' inboxes
+  s2 see: The send allowed, since the first was taken back within 10 minutes
+  s2 not: The taken-back message counted against the one-a-day limit
+J-F-server-310-05 | type 12 | owner | Admin app, a group message to 3 members
+  s1 see: Only messages meant for them
+  s1 not: The group message's text shown to a member outside the group
+  s2 see: The Sent list, no Send
+  s2 not: The front desk able to send to members
+J-F-server-310-06 | type 1 | staff | Admin app, front desk signed in, Messages & offers
+  s1 see: Every message of the gym with seen by x of y
+  s1 not: Messages of another gym
+J-F-server-310-07 | type 3 | staff | Admin app, front desk signed in
+  s1 see: A refusal that only the owner can
+  s1 not: The message sent or taken back by the desk
+J-F-server-310-08 | type 6 | staff | Admin app, front desk, a message the owner just took back
+  s1 see: The message marked taken back
+  s1 not: It still shown as live
+J-F-server-310-09 | type 1 | member | Member app, two unread messages from the gym
+  s1 see: Both messages, newest first, marked unread
+  s1 not: Messages of another gym
+  s2 see: Unread count goes to 0
+  s2 not: Seen marks for messages the member cannot see
+J-F-server-310-10 | type 2 | member | Member app, the gym set a message to appear at 7 am tomorrow and sent another to a group the member is in
+  s1 see: The group message only
+  s1 not: The 7 am message shown early
+  s2 see: Both messages, the timed one dated 7 am
+  s2 not: The timed one dated when it was written
+J-F-server-310-11 | type 3 | member | Member app with a changed or broken app sending wrong ids
+  s1 see: Nothing marked for the first two; the 101 refused
+  s1 not: A seen mark that raises another gym's count
+J-F-server-310-12 | type 6 | member | Member app, a message already read
+  s1 see: The message gone
+  s1 not: A taken-back message still shown
+J-F-server-310-13 | type 12 | member | Member app, joined the gym today
+  s1 see: Messages from the last 14 days before joining and after
+  s1 not: Older messages
+  s1 not: Group messages meant for others
+J-F-server-323-01 | type 1 | HQ admin | HQ app, signed in with a MettleUp Google account
+  s1 see: Every gym, newest first, with members, check-ins in 7 and 30 days, money this and last month, staff count, live devices, last activity
+  s1 not: A member's name or mobile
+  s1 not: A refusal for a correct HQ sign-in
+  s2 see: A new row 'view_all_gyms' with the HQ person's email and address
+  s2 not: The look missing from the log
+J-F-server-323-02 | type 2 | HQ admin | HQ app, home list
+  s1 see: Its counts, its owners' names and mobiles, the last 20 HQ actions on it
+  s1 not: The staff list or any member
+  s2 see: Database size against 500 MB and totals across gyms
+  s2 not: A per-gym member list
+  s3 see: 100 rows a page, older each page
+  s3 not: Rows of other gyms in the filtered view
+J-F-server-323-03 | type 3 | HQ admin | A gym's own admin app key or a member app key
+  s1 see: Refused before any HQ code runs
+  s1 not: Any gym's counts returned
+  s2 see: Refused: no actor, or gone
+  s2 not: A look with no name written down
+J-F-server-323-04 | type 6 | HQ admin | HQ audit log with rows
+  s1 see: Refused: append-only
+  s1 not: An audit row changed or removed younger than 2 years
+  s2 see: The look itself added as a row 'view_audit'
+  s2 not: Looks at the log left out
+J-F-server-323-05 | type 12 | HQ admin | HQ app, one gym open
+  s1 see: Only totals and the owners' business contact
+  s1 not: Who paid what
+  s1 not: Member names or mobiles
+  s2 see: The support looks inside windows they can see
+  s2 not: HQ claiming every look is shown to the owner when plain gym views are not
+J-F-server-324-01 | type 1 | HQ admin | HQ app, one active gym open
+  s1 see: The gym's status suspended with the time
+  s1 not: A suspend with no reason
+  s2 see: A row 'suspend_gym' with the reason, from active to suspended
+  s2 not: No audit row
+J-F-server-324-02 | type 3 | HQ admin | HQ app, one gym open
+  s1 see: Refused: a reason is needed
+  s1 not: The gym suspended
+  s2 see: Refused
+  s2 not: The gym set back to trial
+J-F-server-324-03 | type 6 | HQ admin | HQ app, a suspended gym, and a new trial gym
+  s1 see: Status active; audit row 'restore_gym'
+  s1 not: Writes still refused after restore
+  s2 see: Status active; audit row 'approve_gym'
+  s2 not: The approval logged as a restore
+J-F-server-324-04 | type 12 | HQ admin | A gym HQ suspended
+  s1 see: The status and the suspend with its reason and time
+  s1 not: The pause hidden from the owner
+J-F-server-324-05 | type 1 | owner | Admin app of a suspended gym
+  s1 see: Sign-in works; records shown; backup download works
+  s1 not: A sign-out or a blank list
+  s2 see: The save refused as the gym is paused
+  s2 not: A success message for a save the server refused
+J-F-server-324-06 | type 3 | owner | Admin app of a suspended gym
+  s1 see: Each refused as the gym is paused
+  s1 not: Any of them saved
+J-F-server-324-07 | type 6 | owner | Admin app, gym restored by HQ
+  s1 see: The save works
+  s1 not: Records saved on the device during the pause lost without a word
+J-F-server-324-08 | type 12 | owner | Admin app of a suspended gym
+  s1 see: The gym's status and HQ's reason
+  s1 not: A pause with no reason given to the owner
+J-F-server-324-09 | type 1 | staff | Admin app at the desk of a suspended gym
+  s1 see: Sign-in works; the check-in refused as the gym is paused
+  s1 not: The check-in shown as saved
+J-F-server-324-10 | type 3 | staff | Admin app at the desk of a suspended gym
+  s1 see: Both refused as the gym is paused
+  s1 not: The plan's last day moved
+  s1 not: A receipt saved
+J-F-server-324-11 | type 6 | staff | Admin app at the desk, gym restored
+  s1 see: The check-in saved
+  s1 not: The refused check-in saved twice
+J-F-server-324-12 | type 1 | member | Member app, the member's gym is suspended
+  s1 see: The inbox and offers card shown
+  s1 not: The app locked
+  s2 see: The order refused
+  s2 not: An order shown as placed
+J-F-server-324-13 | type 3 | member | Member app, gym suspended, an open offer
+  s1 see: Join refused
+  s1 not: The member joined while paused
+  s2 see: Days not counted
+  s2 not: Days counted while paused
+J-F-server-324-14 | type 6 | member | Member app, gym suspended, member in an offer
+  s1 see: The member left; days deleted
+  s1 not: Leaving refused while paused
+J-F-server-324-15 | type 12 | member | Member app, gym suspended
+  s1 see: Left; number removed; offer dates deleted
+  s1 not: Leaving refused while paused
+  s1 not: The member's number kept
+J-F-server-325-01 | type 1 | HQ admin | HQ app, a lead who wants a gym
+  s1 see: The gym, its join code, and the owner's 6-digit code with when it ends (30 minutes), shown once
+  s1 not: The code written into the audit log
+  s1 not: The gym made as trial
+  s2 see: The new gym opens
+  s2 not: The code working twice
+J-F-server-325-02 | type 2 | HQ admin | HQ app, a gym with 4 live devices and one old owner key
+  s1 see: 4 devices ended, 1 old owner key counted, not removed
+  s1 not: The old owner key removed
+  s1 not: Devices of another gym ended
+J-F-server-325-03 | type 3 | HQ admin | HQ app
+  s1 see: Refused: bad phone, or empty
+  s1 not: A gym made with no owner
+  s2 see: Refused: a reason is needed
+  s2 not: Devices ended with no reason written
+J-F-server-325-04 | type 6 | HQ admin | HQ app, a gym just signed out
+  s1 see: Asked to sign in again
+  s1 not: Still signed in
+  s2 see: 0 devices ended
+  s2 not: An error
+J-F-server-325-05 | type 12 | HQ admin | A gym HQ made and later signed out
+  s1 see: 'create_gym' and 'sign_out_gym' listed with time and reason
+  s1 not: The owner's full code or mobile in the audit details
+J-F-server-326-01 | type 1 | HQ admin | HQ app, a gym owner asked to delete the gym through the admin app's feedback box
+  s1 see: The request listed as day 1 with its due date (day 30)
+  s1 not: The due date counted from when HQ wrote it instead of when the gym asked
+  s2 see: Both steps shown with times
+  s2 not: The steps skipped
+  s3 see: The gym gone, every gym table empty for it, the list of pictures to remove returned, the request done
+  s3 not: Any gym row left
+  s3 not: Another gym's picture removed
+J-F-server-326-02 | type 2 | HQ admin | HQ app, a member asked to be deleted by email
+  s1 see: The request done
+  s1 not: The member request deleting the whole gym
+J-F-server-326-03 | type 3 | HQ admin | HQ app, an open gym delete request
+  s1 see: Refused: not called, or not reminded
+  s1 not: The gym deleted
+  s2 see: Refused: wrong code
+  s2 not: The gym deleted
+  s3 see: The first request given back
+  s3 not: A second request
+J-F-server-326-04 | type 6 | HQ admin | HQ app, an open request
+  s1 see: Closed, the reason in its note
+  s1 not: Cancelled with no reason
+  s2 see: Refused: closed
+  s2 not: The cancelled request reopened
+J-F-server-326-05 | type 12 | HQ admin | A gym deleted through the list
+  s1 see: The audit log, the request and sign-in times kept; names and devices in the access log blanked
+  s1 not: Member data left anywhere for that gym
+  s1 not: Staff names kept in the access log
+J-F-server-327-01 | type 1 | owner | Admin app, owner signed in, Help and feedback, 'MettleUp access'
+  s1 see: Sheet 'Let MettleUp support look?' saying support can read members, plans, receipts, check-ins, shop orders and staff list for the next hour
+  s1 not: The window opened without the sheet
+  s2 see: The window listed as open with its end time
+  s2 not: A window longer than 60 minutes
+J-F-server-327-02 | type 3 | owner | Admin app, front desk signed in
+  s1 see: Refused: owner only
+  s1 not: The desk opening the gym to support
+J-F-server-327-03 | type 6 | owner | Admin app, a support window open for 20 minutes
+  s1 see: The window listed as ended early
+  s1 not: Support still able to look
+  s2 see: A new hour starts; the old window and its looks stay listed
+  s2 not: Two open windows from the gym at once
+J-F-server-327-04 | type 12 | owner | Admin app, 'MettleUp access', HQ opened an emergency window last week
+  s1 see: Each window: who opened it, why, from when to when, and each look with what and how many rows
+  s1 not: An emergency look missing from the list
+  s1 not: Words saying support looks only when the owner lets them while an emergency window is listed
+J-F-server-327-05 | type 1 | HQ admin | HQ app, a gym whose owner opened support access
+  s1 see: Up to 200 member records, newest first, read-only, and the window's end time
+  s1 not: An edit button
+  s1 not: Records of another gym
+  s2 see: Each look written down with its kind and row count
+  s2 not: A look not written down
+J-F-server-327-06 | type 2 | HQ admin | HQ app, a gym with a fault stopping the desk, no window open
+  s1 see: A window of 30 minutes; audit row 'support_open'
+  s1 not: A window with no reason
+  s1 not: A window longer than 60 minutes
+J-F-server-327-07 | type 3 | HQ admin | HQ app, a gym with no window open
+  s1 see: Refused: no access
+  s1 not: Any record shown
+  s2 see: Refused
+  s2 not: A window opened
+J-F-server-327-08 | type 6 | HQ admin | HQ app, an open window
+  s1 see: Window ended; audit row 'support_close'
+  s1 not: Records still readable
+  s2 see: Refused: no access
+  s2 not: Records shown after the time is up
+J-F-server-327-09 | type 12 | HQ admin | HQ app, one gym's access log
+  s1 see: Only when and what (sign-in, push, pull) and counts
+  s1 not: Person, device or address shown
+  s2 see: Person, device and address, and the look listed for the owner
+  s2 not: A detailed look the owner cannot see

@@ -1,0 +1,10 @@
+# L12-panel-brand-shell: 12 x panel / panel/brand-shell. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L12.1 | 12 | Play policy (target API, billing, data safety form matches the real app, permissions justified, ads/health claims), Wear OS rules, Meta/WhatsApp rules, ASCI ad rules
+L12.2 | 12 | App Store when iPhone ships
+L12.3 | 12 | Also: rights to what we ship: exercise pictures and clips, music, voices, fonts, icons, open-source licences, the MettleUp name and logo
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1105 | live | Branding: gym logo and colours for the member app, logo upload, remove logo background, phone and shortcut preview | apps/dashboard/src/crm/brand/BrandingScreen.tsx:41
+F-panel-3101 | live | Branding: suggest a gym colour from the uploaded logo | apps/dashboard/src/crm/brand/brandLogic.ts:141
+## MACHINE FILES (docs/system-map/_sources/machine/)
+play-report.md: MISSING (items that need it = could-not-check)

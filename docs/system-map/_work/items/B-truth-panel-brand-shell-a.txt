@@ -1,0 +1,20 @@
+# B-truth-panel-brand-shell-a: 2 + 17 x panel / panel/brand-shell. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L2.1 | 2 | Every number shown (dues, counts, dates, streaks, records, credits) is recomputed independently and compared
+L2.2 | 2 | rounding
+L2.3 | 2 | time zone (IST)
+L2.4 | 2 | duplicates on double tap / two devices
+L2.5 | 2 | import and undo-import
+L2.6 | 2 | what happens to old data after every migration
+L2.7 | 2 | Also: AI answers (assistant, AI import, AI questions, coach): built only from that gym's real data
+L2.8 | 2 | Also: AI answers (assistant, AI import, AI questions, coach): what a wrong answer costs the owner
+L2.9 | 2 | Also: AI answers (assistant, AI import, AI questions, coach): what is sent to the AI company
+L17.1 | 17 | The same fact, word, colour, icon and rule is the same on panel, phone, watch, website and messages
+L17.2 | 17 | Trace every value a user enters on one device (watch, phone, panel) to every place that should hold it (the other device, the saved record, the server, Health Connect): it arrives unchanged and stays
+L17.3 | 17 | where a paired device cannot run in the cloud, trace it in the code
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1105 | live | Branding: gym logo and colours for the member app, logo upload, remove logo background, phone and shortcut preview | apps/dashboard/src/crm/brand/BrandingScreen.tsx:41
+F-panel-3101 | live | Branding: suggest a gym colour from the uploaded logo | apps/dashboard/src/crm/brand/brandLogic.ts:141
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1105 | live | Branding: gym logo and colours for the member app, logo upload, remove logo background, phone and shortcut preview | apps/dashboard/src/crm/brand/BrandingScreen.tsx:41
+F-panel-3101 | live | Branding: suggest a gym colour from the uploaded logo | apps/dashboard/src/crm/brand/brandLogic.ts:141

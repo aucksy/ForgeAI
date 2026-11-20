@@ -1,0 +1,808 @@
+# A8-panel-logic-2-4: coverage of 71 Tier 1 journeys (8 features, from A5-panel-logic-2-4). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-732 | apps/dashboard/test/crm/gymWod.test.ts | unit | 144 lines | imports the code
+F-panel-732 | apps/dashboard/e2e/assistant-uat.spec.mjs | e2e | 822 lines | asserts 1 journey phrase(s)
+F-panel-732 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-732 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 1 journey phrase(s)
+F-panel-732 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-panel-732 | apps/dashboard/e2e/r532-uat.spec.mjs | e2e | 143 lines | asserts 1 journey phrase(s)
+F-panel-732 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-panel-732 | apps/dashboard/test/crm/navNames.test.ts | unit | 61 lines | asserts 1 journey phrase(s)
+F-panel-732 | apps/dashboard/test/crm/ownerOnboarding.test.ts | unit | 115 lines | asserts 1 journey phrase(s)
+F-panel-732 | apps/dashboard/test/crm/sheets.test.ts | unit | 122 lines | asserts 1 journey phrase(s)
+F-panel-732 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 1 journey phrase(s)
+F-panel-732 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-panel-733 | apps/dashboard/e2e/trial.spec.mjs | e2e | 72 lines | file name, asserts 5 journey phrase(s)
+F-panel-733 | apps/dashboard/test/crm/trial.test.ts | unit | 140 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-panel-733 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-733 | apps/dashboard/test/crm/payMettleUp.test.ts | unit | 236 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-733 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | file name
+F-panel-733 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 2 journey phrase(s)
+F-panel-733 | apps/dashboard/e2e/pay-mettleup-uat.spec.mjs | e2e | 210 lines | asserts 2 journey phrase(s)
+F-panel-733 | apps/dashboard/test/crm/challenges.test.ts | unit | 388 lines | asserts 2 journey phrase(s)
+F-panel-733 | apps/dashboard/test/crm/gymState.test.ts | unit | 78 lines | asserts 2 journey phrase(s)
+F-panel-733 | apps/dashboard/test/crm/joinTrial.test.ts | unit | 160 lines | file name
+F-panel-733 | apps/mobile/test/shop/membership.test.ts | unit | 154 lines | asserts 2 journey phrase(s)
+F-panel-733 | supabase/tests/0030_plans_and_trials.sql | db | 136 lines | file name
+F-panel-734 | apps/dashboard/test/crm/webPush.test.ts | unit | 317 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-panel-734 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 6 journey phrase(s)
+F-panel-734 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-panel-734 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 4 journey phrase(s)
+F-panel-734 | apps/dashboard/e2e/test-alert-uat.spec.mjs | e2e | 338 lines | asserts 4 journey phrase(s)
+F-panel-734 | apps/dashboard/test/crm/bellGroups.test.ts | unit | 190 lines | imports the code
+F-panel-734 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 2 journey phrase(s)
+F-panel-734 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 2 journey phrase(s)
+F-panel-734 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-panel-734 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 2 journey phrase(s)
+F-panel-734 | apps/dashboard/e2e/entry-uat.spec.mjs | e2e | 187 lines | asserts 2 journey phrase(s)
+F-panel-734 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 2 journey phrase(s)
+F-panel-735 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 5 journey phrase(s)
+F-panel-735 | apps/dashboard/test/crm/launchFixes.test.ts | unit | 197 lines | imports the code
+F-panel-735 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-735 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 2 journey phrase(s)
+F-panel-735 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-735 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-panel-735 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-panel-735 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-735 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 1 journey phrase(s)
+F-panel-735 | apps/dashboard/e2e/friend-live-uat.spec.mjs | e2e | 262 lines | asserts 1 journey phrase(s)
+F-panel-735 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | asserts 1 journey phrase(s)
+F-panel-735 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-738 | apps/dashboard/test/crm/whatsNew.test.ts | unit | 208 lines | imports the code, file name
+F-panel-738 | apps/dashboard/e2e/whatsnew.spec.mjs | e2e | 122 lines | file name, asserts 2 journey phrase(s)
+F-panel-738 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 3 journey phrase(s)
+F-panel-738 | apps/dashboard/test/crm/newDots.test.ts | unit | 279 lines | imports the code
+F-panel-738 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 2 journey phrase(s)
+F-panel-738 | apps/mobile/test/lib/whatsNew.test.ts | unit | 116 lines | file name
+F-panel-738 | deploy/panel/whatsNewFeed.test.mjs | unit | 70 lines | file name
+F-panel-738 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 1 journey phrase(s)
+F-panel-738 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 1 journey phrase(s)
+F-panel-738 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 1 journey phrase(s)
+F-panel-738 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 1 journey phrase(s)
+F-panel-738 | apps/mobile/test/tracker/healthOnOff.test.ts | unit | 136 lines | asserts 1 journey phrase(s)
+F-panel-725 | apps/dashboard/test/crm/messageTemplates.test.ts | unit | 246 lines | imports the code, file name
+F-panel-725 | apps/dashboard/test/crm/whatsapp.test.ts | unit | 192 lines | imports the code, file name
+F-panel-725 | apps/mobile/qa/uat-e.yaml | maestro | 267 lines | asserts 4 journey phrase(s)
+F-panel-725 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | asserts 3 journey phrase(s)
+F-panel-725 | apps/dashboard/test/crm/assistant/awayIdea.test.ts | unit | 316 lines | asserts 3 journey phrase(s)
+F-panel-725 | apps/dashboard/test/crm/launchFixes.test.ts | unit | 197 lines | imports the code
+F-panel-725 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | imports the code
+F-panel-725 | apps/dashboard/test/crm/uatMoney.test.ts | unit | 592 lines | imports the code
+F-panel-725 | apps/dashboard/e2e/ai-questions-uat.spec.mjs | e2e | 434 lines | asserts 2 journey phrase(s)
+F-panel-725 | apps/dashboard/e2e/r608-uat.spec.mjs | e2e | 208 lines | asserts 2 journey phrase(s)
+F-panel-725 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 2 journey phrase(s)
+F-panel-725 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | file name
+F-panel-736 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 15 journey phrase(s)
+F-panel-736 | apps/dashboard/test/crm/workoutOffer.test.ts | unit | 290 lines | imports the code, file name, asserts 5 journey phrase(s)
+F-panel-736 | apps/dashboard/test/crm/challenges.test.ts | unit | 388 lines | imports the code
+F-panel-736 | apps/mobile/test/shop/offer.test.ts | unit | 266 lines | asserts 3 journey phrase(s)
+F-panel-736 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-736 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 2 journey phrase(s)
+F-panel-736 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | asserts 2 journey phrase(s)
+F-panel-736 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | asserts 2 journey phrase(s)
+F-panel-736 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-736 | apps/mobile/test/shop/r505AskPlan.test.ts | unit | 134 lines | asserts 2 journey phrase(s)
+F-panel-736 | deploy/panel/assistCatalogue.test.mjs | unit | 184 lines | asserts 2 journey phrase(s)
+F-panel-736 | apps/dashboard/e2e/ai-questions-uat.spec.mjs | e2e | 434 lines | asserts 1 journey phrase(s)
+F-panel-737 | apps/dashboard/test/crm/workoutPlans.test.ts | unit | 598 lines | imports the code, file name, asserts 3 journey phrase(s)
+F-panel-737 | apps/dashboard/test/crm/gymWod.test.ts | unit | 144 lines | imports the code
+F-panel-737 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-panel-737 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-737 | apps/dashboard/e2e/r532-uat.spec.mjs | e2e | 143 lines | asserts 2 journey phrase(s)
+F-panel-737 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 2 journey phrase(s)
+F-panel-737 | apps/mobile/qa/p2-pause-a.yaml | maestro | 64 lines | asserts 2 journey phrase(s)
+F-panel-737 | apps/mobile/test/tracker/engine/strengthLevel.test.ts | unit | 160 lines | asserts 2 journey phrase(s)
+F-panel-737 | supabase/tests/0035_trainer_measurements_diet.sql | db | 227 lines | asserts 2 journey phrase(s)
+F-panel-737 | supabase/tests/0073_member_push_more.sql | db | 147 lines | asserts 2 journey phrase(s)
+F-panel-737 | apps/dashboard/e2e/assistant-uat.spec.mjs | e2e | 822 lines | asserts 1 journey phrase(s)
+F-panel-737 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-732-01 | type 1 | owner | Workout plans, signed in as the owner, a saved plan with one exercise, gym online
+  s1 see: A box "Your video of it (YouTube link, optional)" with the hint "Members see “Watch your trainer” on this exercise in their app."
+  s1 not: The box is missing although the gym server has form videos switched on
+  s2 see: The link as typed, no red line under the box
+  s2 not: A red line for a real YouTube link
+  s3 see: The sheet closes; a short note "“<plan name>” updated."
+  s3 not: The link saved with http or without https
+  s3 not: The capital letters of the video id changed to small letters
+  s3 not: The plan saved twice
+J-F-panel-732-02 | type 3 | owner | Workout plans, the plan builder open on an exercise, signed in as the owner
+  s1 see: A red line under the box: "Paste a YouTube link (youtube.com or youtu.be)."
+  s1 not: No warning until Save
+  s2 see: The sheet stays open with "<exercise> (<day>): the video link must be a YouTube link (youtube.com or youtu.be)."
+  s2 not: The plan saved with the bad link
+  s2 not: The typed link wiped from the box
+  s2 not: The bad link reaching a member's phone
+  s3 see: The same refusal in plain words
+  s3 not: A link cut short and saved without a word
+J-F-panel-732-03 | type 6 | owner | A plan whose exercise already has a saved YouTube link, signed in as the owner
+  s1 see: The video box is already open on that exercise, with the saved link
+  s1 not: The box folded away so the saved link looks lost
+  s2 see: "“<plan name>” updated."
+  s2 not: The old link still sent to members
+  s2 not: A refusal because the box is empty
+  s3 see: "+ Add your video" on that exercise again
+  s3 not: The removed link back in the box
+  s4 see: "“<plan name>” updated."
+  s4 not: Two links kept for one exercise
+J-F-panel-732-04 | type 12 | owner | The plan builder, an exercise with the video box open
+  s1 see: The red line "Paste a YouTube link (youtube.com or youtu.be)." each time
+  s1 not: Any of the three accepted
+  s1 not: A member's phone opening a site that is not YouTube
+  s2 see: "“<plan name>” updated."
+  s2 not: The link shown to members the plan was not sent to
+  s2 not: The trainer's name or phone number sent along with the link
+J-F-panel-732-05 | type 1 | trainer | Workout plans, signed in as a trainer (a staff sign-in with the trainer tick), a saved plan with one exercise, gym online
+  s1 see: A box "Your video of it (YouTube link, optional)" with the hint "Members see “Watch your trainer” on this exercise in their app."
+  s1 not: The box is missing although the gym server has form videos switched on
+  s2 see: The link as typed, no red line under the box
+  s2 not: A red line for a real YouTube link
+  s3 see: The sheet closes; a short note "“<plan name>” updated."
+  s3 not: The link saved with http or without https
+  s3 not: The capital letters of the video id changed to small letters
+  s3 not: The plan saved twice
+J-F-panel-732-06 | type 3 | trainer | Workout plans, the plan builder open on an exercise, signed in as a trainer (a staff sign-in with the trainer tick)
+  s1 see: A red line under the box: "Paste a YouTube link (youtube.com or youtu.be)."
+  s1 not: No warning until Save
+  s2 see: The sheet stays open with "<exercise> (<day>): the video link must be a YouTube link (youtube.com or youtu.be)."
+  s2 not: The plan saved with the bad link
+  s2 not: The typed link wiped from the box
+  s2 not: The bad link reaching a member's phone
+  s3 see: The same refusal in plain words
+  s3 not: A link cut short and saved without a word
+J-F-panel-732-07 | type 6 | trainer | A plan whose exercise already has a saved YouTube link, signed in as a trainer (a staff sign-in with the trainer tick)
+  s1 see: The video box is already open on that exercise, with the saved link
+  s1 not: The box folded away so the saved link looks lost
+  s2 see: "“<plan name>” updated."
+  s2 not: The old link still sent to members
+  s2 not: A refusal because the box is empty
+  s3 see: "+ Add your video" on that exercise again
+  s3 not: The removed link back in the box
+  s4 see: "“<plan name>” updated."
+  s4 not: Two links kept for one exercise
+J-F-panel-733-01 | type 1 | owner | Owner signed in to an online gym (not the demo gym) on its free trial with more than 14 days left; no lapse or renew notice showing
+  s1 see: One calm line at the top: "Free trial: <n> days left (ends <day month year>)"
+  s1 see: No link beside it
+  s1 not: The banner in the demo gym
+  s1 not: Any page locked or greyed out
+  s1 not: A date in another time zone than India
+  s2 see: The same line
+  s2 not: A different number of days on the same day
+J-F-panel-733-02 | type 2 | owner | Other kind: a gym that already pays for a MettleUp plan (monthly or yearly), 7 days or less before the paid-until day
+  s1 see: A strong line: "Your MettleUp plan is paid until <date>. Pay for the next month or year to keep going."
+  s1 see: Two links: "Pay MettleUp" and "See prices"
+  s1 not: The free-trial words for a paying gym
+  s1 not: A line for a lifetime plan
+  s2 see: The Pay MettleUp page in Settings
+  s2 not: A page the owner cannot open
+  s3 see: The price list of the MettleUp website in a new tab
+  s3 not: The admin app replaced by the website
+  s4 see: "Your MettleUp plan was paid until <date>. Pay to keep going. Your members’ app keeps working."
+  s4 not: Members or the desk locked out
+J-F-panel-733-03 | type 3 | owner | Owner on Today when the trial cannot be read: the internet is off, the gym server is older, or the gym is browser-only
+  s1 see: Today as usual with no trial line at all
+  s1 not: An error box about the trial
+  s1 not: A spinner that never ends
+  s1 not: An old trial line from another gym
+  s2 see: No line
+  s2 not: A request to pay
+J-F-panel-733-04 | type 6 | owner | Owner of a trial gym, followed from 15 days left to after the end
+  s1 see: A strong line: "Free trial: 14 days left (ends <date>). Pick a MettleUp pack to keep going after that."
+  s1 see: "Pay MettleUp" and "See prices"
+  s1 not: Still the calm line
+  s1 not: No way to pay
+  s2 see: "1 day left", then "last day today"
+  s2 not: "1 days left"
+  s2 not: "0 days left"
+  s2 not: A minus number
+  s3 see: "Your free trial ended on <date>. Pick a MettleUp pack to keep going. Your members’ app keeps working."
+  s3 not: Any page locked
+  s3 not: The members' app stopped
+  s4 see: No trial line
+  s4 not: The "ended" line still there after a paid plan started
+J-F-panel-733-05 | type 12 | owner | The same trial gym, a front-desk sign-in on a second device
+  s1 see: Today with no trial or payment line
+  s1 not: The desk reading the gym's MettleUp plan, trial end or paid-until day
+  s2 see: The trial line
+  s2 see: After the end: the words "Your members’ app keeps working."
+  s2 not: Anything locked after the trial ends (the banner is words only)
+  s2 not: The line shown to members
+J-F-panel-734-01 | type 1 | owner | Owner in Settings on Chrome, online gym, alerts never turned on in this browser
+  s1 see: "Get a notice on this phone or computer when a member needs you, even when the admin app is closed. A tap opens the right page."
+  s1 see: Button "Turn on alerts on this device"
+  s1 not: The card in a gym whose server has no alerts yet
+  s2 see: "Alerts are on for this device."
+  s2 see: The button now reads "Turn off on this device"
+  s2 not: "On" shown although the browser address was not saved
+  s2 not: Two saved addresses for one browser
+  s3 see: "We are sending a test alert to this device. It can take up to a minute. You can close the admin app now to check that alerts come when it is closed."
+  s3 not: The test going to any other device
+  s3 not: A second test allowed at once
+  s4 see: A notice on the device within about a minute
+  s4 see: Back in Settings: "Sent. Did a notice pop up? It showed on this device at <time>."
+  s4 not: "Sent" shown when the device showed nothing
+  s4 not: A time on another clock than this device's
+J-F-panel-734-02 | type 2 | owner | Other way in: the bell at the top right, alerts off in this browser, card not closed before
+  s1 see: A card at the top "Turn on alerts": "Get a notice on this phone or computer when a member needs you, even when the admin app is closed."
+  s1 see: "If you close this card, you can still turn alerts on in Settings."
+  s1 not: The card where the browser cannot show alerts
+  s1 not: The card after alerts are already on
+  s2 see: The card goes; alerts are on for this device
+  s2 not: The card back on the next open
+  s3 see: The card goes and stays away on this device
+  s3 not: Alerts turned on without a yes
+  s3 not: The card gone on other devices too
+J-F-panel-734-03 | type 3 | owner | Owner in Settings, three browsers: notifications blocked; an iPhone in Safari; an old browser
+  s1 see: "Alerts are blocked in this browser. Allow notifications for this site in the browser settings, then come back here."
+  s1 not: A button that asks again and again
+  s1 not: "On" shown
+  s2 see: "On an iPhone or iPad, first add the admin app to your Home Screen (Share, then Add to Home Screen). Open it from there and turn alerts on."
+  s2 not: A dead "Turn on" button
+  s3 see: "This browser cannot show alerts when the admin app is closed. Use Chrome, Edge or Firefox."
+  s3 not: A crash or an empty card
+  s4 see: "You just sent a test. You can send another in <n> seconds."
+  s4 not: Two tests sent
+  s5 see: "Alerts could not be turned on. Check the internet and try again."
+  s5 not: "On" shown with nothing saved
+J-F-panel-734-04 | type 6 | owner | Owner in Settings, alerts on for this device
+  s1 see: "Saved."
+  s1 not: Save allowed with nothing changed
+  s1 not: The urgent kinds delayed too
+  s2 see: "Saved." each time
+  s2 not: The old choice back after a reload
+  s3 see: "Alerts are off for this device."
+  s3 not: Alerts still arriving on this device
+  s3 not: Other devices of the gym turned off too
+  s4 see: "Alerts are on for this device."
+  s4 not: A new permission question each time
+  s4 not: A double address so each alert comes twice
+J-F-panel-734-05 | type 12 | owner | Owner and one front-desk person, both with alerts on, each on their own device
+  s1 see: The owner's device gets it at once
+  s1 see: Owner card line: "These always come at once: complaints, new shop orders, a member waiting at the check-in poster, a friend who wants to join, and a pause or renew request when the plan is about to end."
+  s1 not: The desk's device getting a complaint meant for the owner only
+  s1 not: The member's words or phone number on a locked screen beyond what the bell shows
+  s2 see: Only the owner's device shows the test
+  s2 not: The desk's device or the owner's other browser showing the test
+  s3 see: unknown
+  s3 not: Alerts for this gym still arriving on a signed-out device (not checked in this pass)
+J-F-panel-734-06 | type 1 | staff | Front-desk sign-in in Settings on Chrome, alerts never turned on in this browser
+  s1 see: "Alerts are on for this device."
+  s1 not: The owner's device changed in any way
+  s2 see: "These always come at once: new shop orders, a member waiting at the check-in poster, a friend who wants to join, a pause or renew request when the plan is about to end, and complaints sent to "Gym admin"."
+  s2 see: "Your gym gets everything else together, every day at 11:00 am." (or the owner's choice)
+  s2 not: The owner's line that promises all complaints
+  s3 see: A notice on this device; later "Sent. Did a notice pop up? It showed on this device at <time>."
+  s3 not: The test on any other device
+J-F-panel-734-07 | type 3 | staff | Front-desk sign-in in Settings, alerts on
+  s1 see: No choices to change; "Only the owner can change when they come."
+  s1 not: A Save button the desk can press
+  s1 not: The gym's timing changed by a desk sign-in
+  s2 see: "Alerts are blocked in this browser. Allow notifications for this site in the browser settings, then come back here."
+  s2 not: "On" shown
+J-F-panel-734-08 | type 6 | staff | Front-desk sign-in, alerts on for this device
+  s1 see: "Alerts are off for this device."
+  s1 not: The owner's or another desk person's device turned off
+  s2 see: "Alerts are on for this device."
+  s2 not: Each alert arriving twice afterwards
+  s3 see: "Your gym gets everything else together, every <day> at <time>."
+  s3 not: The old daily line
+J-F-panel-734-09 | type 12 | staff | Front desk with alerts on; a member writes a complaint
+  s1 see: Nothing on the desk's device
+  s1 not: The complaint, its sender or its first words on the desk's device
+  s2 see: A notice on the desk's device at once
+  s2 not: It held back for the daily summary
+  s3 see: unknown
+  s3 not: The first person's alerts shown to the second person (not checked in this pass)
+J-F-panel-735-01 | type 1 | owner | Owner on Today on a Monday; last week has payments, check-ins, a new member and one enquiry
+  s1 see: "Send last week’s money, plans sold and check-ins to yourself or your partner on WhatsApp."
+  s1 see: Button "Share on WhatsApp"
+  s1 not: The card on any other weekday
+  s1 not: The card for a front-desk sign-in
+  s2 see: WhatsApp opens in a new tab with the words ready and no person picked
+  s2 see: First line "<gym name>: last week (<Mon date> to <Sun date>)"
+  s2 see: Lines: "Money collected: ₹..", "Plans sold: ..", "New members: ..", "Check-ins: ..", "New enquiries: ..", "Fees still due today: ₹.. from N members", "Plans ending this week: ..", "– from MettleUp"
+  s2 not: A message sent by itself
+  s2 not: This Monday's money counted in last week
+  s2 not: A cancelled receipt counted as money collected
+  s2 not: A member's name or phone number in the message
+J-F-panel-735-02 | type 3 | owner | Owner on Today; a new gym with no name typed and nothing recorded last week
+  s1 see: No "Last week at your gym" card
+  s1 not: Last week's card on a Tuesday
+  s2 see: First line "My gym: last week (.. to ..)"
+  s2 see: "Money collected: ₹0", "Plans sold: 0", "Fees still due today: none"
+  s2 not: An empty name before the colon
+  s2 not: "NaN" or a blank number
+  s2 not: "from 0 members"
+  s3 see: No card
+  s3 not: The gym's money total shown to the desk
+J-F-panel-735-03 | type 6 | owner | Owner on a Monday; last week has a receipt of ₹2,000 and a plan sold
+  s1 see: The total with the ₹2,000 in it
+  s1 not: unknown
+  s2 see: Money collected lower by ₹2,000; Plans sold lower by 1
+  s2 not: The cancelled receipt or plan still counted
+  s3 see: WhatsApp opens again with the same words
+  s3 not: A "sent" mark that hides the card (nothing is remembered)
+  s3 not: Different numbers on the same data
+  s4 see: "Plans sold" unchanged by the imported plans
+  s4 not: Imported old plans counted as sold last week
+J-F-panel-735-04 | type 12 | owner | Owner on a Monday with the ready message open in WhatsApp
+  s1 see: Only totals: money, counts, fees due and how many members owe
+  s1 not: A member's name, phone number or what one member owes
+  s2 see: The message goes from the owner's own WhatsApp
+  s2 not: The admin app sending anything itself
+  s2 not: The admin app keeping who it was sent to
+J-F-panel-738-01 | type 1 | owner | Owner in a browser that has used the admin app before; the admin app was updated since
+  s1 see: A number on the bell at the top right
+  s1 not: A "What's new" card on Today pushing the page down
+  s1 not: A number in the demo gym
+  s2 see: A group "What's new" with a short summary of the newest update, marked "New"
+  s2 see: A link to see what's new
+  s2 not: Updates not deployed yet
+  s2 not: More than the newest update in the summary
+  s3 see: The page "What's new": "Changes to the admin app, newest first. <version>."
+  s3 see: One card per day, for example "17 Nov 2026"
+  s3 not: An empty day card
+  s3 not: Days out of order
+  s4 see: No number for updates
+  s4 not: The same updates counted again after they were opened
+J-F-panel-738-02 | type 2 | owner | Other ways in: the last row of the left menu on a laptop, and More on a phone
+  s1 see: The page "What's new" with every update
+  s1 see: The version beside the menu row
+  s1 not: The row lying over "Help and feedback" on a 1366 x 768 window
+  s2 see: The same page
+  s2 not: A different list than on the laptop
+  s3 see: The page that line talks about
+  s3 not: A dead button
+  s3 not: A page that does not exist any more
+J-F-panel-738-03 | type 3 | owner | Owner; first visit, blocked storage, demo gym
+  s1 see: No number on the bell for updates
+  s1 not: Old updates announced to a brand-new browser
+  s2 see: The admin app works; no update number
+  s2 not: A crash or a blank page
+  s3 see: No bell
+  s3 not: Update news in the demo gym
+J-F-panel-738-04 | type 6 | owner | Owner; updates seen, then two more deploys, then site data cleared
+  s1 see: The newest update marked "New"; the number counts it once
+  s1 not: Updates seen before marked "New" again
+  s2 see: A number of at most 3 updates
+  s2 not: Five or more counted
+  s2 not: The oldest unseen shown instead of the newest
+  s3 see: No update number (the browser only remembers the newest update again)
+  s3 not: Every old update announced
+  s4 see: The full list, whatever was seen
+  s4 not: Seen updates removed from the list
+J-F-panel-738-05 | type 1 | staff | Front-desk sign-in in a browser that has used the admin app before; the admin app was updated since
+  s1 see: A number on the bell at the top right
+  s1 not: A "What's new" card on Today pushing the page down
+  s1 not: A number in the demo gym
+  s2 see: A group "What's new" with a short summary of the newest update, marked "New"
+  s2 see: A link to see what's new
+  s2 not: Updates not deployed yet
+  s2 not: More than the newest update in the summary
+  s3 see: The page "What's new": "Changes to the admin app, newest first. <version>."
+  s3 see: One card per day, for example "17 Nov 2026"
+  s3 not: An empty day card
+  s3 not: Days out of order
+  s4 see: No number for updates
+  s4 not: The same updates counted again after they were opened
+J-F-panel-738-06 | type 3 | staff | Front-desk sign-in; first visit, blocked storage, owner-only pages
+  s1 see: No number on the bell for updates
+  s1 not: Old updates announced to a brand-new browser
+  s2 see: The admin app works; no update number
+  s2 not: A crash or a blank page
+  s3 see: The line in words, with no button
+  s3 not: A button that leads to a page this sign-in cannot open
+J-F-panel-738-07 | type 6 | staff | Front-desk sign-in; updates seen, then two more deploys, then site data cleared
+  s1 see: The newest update marked "New"; the number counts it once
+  s1 not: Updates seen before marked "New" again
+  s2 see: A number of at most 3 updates
+  s2 not: Five or more counted
+  s2 not: The oldest unseen shown instead of the newest
+  s3 see: No update number (the browser only remembers the newest update again)
+  s3 not: Every old update announced
+  s4 see: The full list, whatever was seen
+  s4 not: Seen updates removed from the list
+J-F-panel-738-08 | type 1 | trainer | Trainer (a staff sign-in with the trainer tick) in a browser that has used the admin app before; the admin app was updated since
+  s1 see: A number on the bell at the top right
+  s1 not: A "What's new" card on Today pushing the page down
+  s1 not: A number in the demo gym
+  s2 see: A group "What's new" with a short summary of the newest update, marked "New"
+  s2 see: A link to see what's new
+  s2 not: Updates not deployed yet
+  s2 not: More than the newest update in the summary
+  s3 see: The page "What's new": "Changes to the admin app, newest first. <version>."
+  s3 see: One card per day, for example "17 Nov 2026"
+  s3 not: An empty day card
+  s3 not: Days out of order
+  s4 see: No number for updates
+  s4 not: The same updates counted again after they were opened
+J-F-panel-738-09 | type 3 | trainer | Trainer (a staff sign-in with the trainer tick); first visit, blocked storage, owner-only pages
+  s1 see: No number on the bell for updates
+  s1 not: Old updates announced to a brand-new browser
+  s2 see: The admin app works; no update number
+  s2 not: A crash or a blank page
+  s3 see: The line in words, with no button
+  s3 not: A button that leads to a page this sign-in cannot open
+J-F-panel-738-10 | type 6 | trainer | Trainer (a staff sign-in with the trainer tick); updates seen, then two more deploys, then site data cleared
+  s1 see: The newest update marked "New"; the number counts it once
+  s1 not: Updates seen before marked "New" again
+  s2 see: A number of at most 3 updates
+  s2 not: Five or more counted
+  s2 not: The oldest unseen shown instead of the newest
+  s3 see: No update number (the browser only remembers the newest update again)
+  s3 not: Every old update announced
+  s4 see: The full list, whatever was seen
+  s4 not: Seen updates removed from the list
+J-F-panel-725-01 | type 1 | owner | Owner on the page of a member whose monthly plan ends in 5 days; the gym has a UPI ID in Settings and a 12-month plan that saves more than ₹
+  s1 see: A sheet "WhatsApp <member name>"
+  s1 see: "Which message" with "Plan ending" first, then "Welcome"
+  s1 see: Language: English, हिन्दी, Both
+  s1 not: "Plan ended" or "Birthday wish" offered when they do not fit today
+  s2 see: "... your <plan> plan ends on <date>. Renew at the desk to keep training without a break."
+  s2 see: "Or take the 12-month plan for ₹.. and save ₹.. over paying month by month."
+  s2 see: "Pay ₹<renewal price> on UPI to <gym UPI ID>. Or tap this link to pay:" and a pay link with that exact amount
+  s2 see: The gym's sign-off line
+  s2 not: A price that is not the plan's price today
+  s2 not: A saving line when the saving is under ₹300
+  s2 not: A pay link to any UPI ID but the gym's
+  s2 not: The word "plan" twice ("Gold plan plan")
+  s3 see: WhatsApp opens in a new tab on this member's number with the words typed
+  s3 not: A message sent without the owner pressing send in WhatsApp
+  s3 not: Another member's number
+J-F-panel-725-02 | type 2 | owner | Other way in: Messages & offers, the personal message "Plan ending", sent down a list
+  s1 see: A sheet "Plan ending · one by one" with the first member's ready words
+  s1 not: Members with an incomplete mobile number in the list
+  s1 not: Members whose plan does not end soon
+  s2 see: The next member with their own name, date and price
+  s2 not: The previous member's name or amount in the next message
+  s3 see: The sheet closes
+  s3 not: A skipped member marked as sent
+J-F-panel-725-03 | type 2 | owner | Other kind: "Plan ended", for a member whose plan ended last week
+  s1 see: "Plan ended" picked
+  s1 see: "... your <plan> plan ended on <date>. We miss you at the gym. Renew and come back any day."
+  s1 see: The UPI line with the renewal price
+  s1 not: "Plan ending" offered for an ended plan
+  s1 not: An empty date
+  s2 see: The same message in Hindi with the date in Hindi month words
+  s2 not: English and Hindi mixed in one sentence
+  s2 not: Hand-typed changes kept in the wrong language
+J-F-panel-725-04 | type 2 | owner | Other kind: "Birthday wish", for a member whose birthday is today
+  s1 see: "Happy birthday, <first name>! Wishing you a great year and great workouts." and the sign-off
+  s1 not: A fee, a price or a pay link in a birthday wish
+  s1 not: "Mr" or "Dr" used as the first name
+  s2 see: English, a blank line, then Hindi, signed once at the end
+  s2 not: Two sign-off lines
+J-F-panel-725-05 | type 2 | owner | Other kind: "Haven’t seen you", for a member on the Away list with weeks left on the plan
+  s1 see: "... we haven’t seen you in <n> days. All well? Your plan runs till <date>. See you soon."
+  s1 not: Money, a price or an offer in this message
+  s1 not: "1 days"
+  s1 not: This choice for a member who is not on the Away list
+  s2 see: "... we haven’t seen you at the gym yet. All well? ..."
+  s2 not: "in null days"
+J-F-panel-725-06 | type 3 | owner | Owner; a member with a mobile number two digits short; a gym with no UPI ID; a member on a personal-training pack
+  s1 see: "This mobile number is not complete, so WhatsApp can’t open it. Tap Edit on their page to fix it."
+  s1 see: No "Send on WhatsApp" button
+  s1 not: WhatsApp opened on a wrong or half number
+  s2 see: The renew sentence with no UPI line and no pay link
+  s2 not: "Pay ₹.. on UPI to ." with an empty ID
+  s2 not: A broken link
+  s3 see: No renewal price and no longer-plan line
+  s3 not: A session pack priced as a monthly renewal
+  s4 see: unknown
+  s4 not: An empty WhatsApp message opened with no warning (not checked in this pass)
+J-F-panel-725-07 | type 6 | owner | Owner with the sheet open on "Plan ending" in English
+  s1 see: The ready Hindi words replace everything in the box
+  s1 not: Half English, half Hindi
+  s1 not: unknown: no question before typed words are dropped
+  s2 see: The language picked last time is still picked
+  s2 not: The first member's words in the second member's box
+  s3 see: "Plan ending" is gone; "Welcome" with "Your <plan> plan runs till <new date>."
+  s3 not: The old end date
+  s3 not: "Plan ending" still first
+  s4 see: WhatsApp opens both times
+  s4 not: A claim that it was sent (the single sheet keeps no record)
+J-F-panel-725-08 | type 12 | owner | Owner sending a fees reminder to a member who owes ₹500
+  s1 see: "... ₹500 of your fees is due. Please pay at the front desk or on UPI." and a pay link for exactly ₹500
+  s1 not: Another member's dues
+  s1 not: The gym's bank details beyond the UPI ID
+  s1 not: The amount in the link different from the amount in words
+  s2 see: The owner's own WhatsApp, on this member's number only
+  s2 not: The admin app sending it itself or copying it to anyone
+  s2 not: The message kept on the server
+  s3 see: Words about training only
+  s3 not: The ₹500 mentioned in it
+J-F-panel-725-09 | type 1 | staff | Front-desk sign-in on the page of a member whose plan ends today
+  s1 see: A sheet "WhatsApp <member name>" with "Plan ending" picked
+  s1 not: The sheet refused to the desk
+  s2 see: "... your <plan> plan ends today. Renew at the desk to keep training without a break." with the renewal price and the gym's UPI line
+  s2 not: "ends on <today's date>" instead of "today"
+  s2 not: The plan called ended on its last day
+  s3 see: WhatsApp opens on this member's number
+  s3 not: A message sent by itself
+J-F-panel-725-10 | type 2 | staff | Other kinds from a member's page as front desk: "Plan ended" and "Birthday wish"
+  s1 see: "Plan ended" with the end date and the renewal UPI line
+  s1 not: "Plan ending" offered
+  s2 see: "Happy birthday, <first name>! ..."
+  s2 not: Money in a birthday wish
+  s3 see: English then Hindi, the UPI line once
+  s3 not: The pay link twice
+J-F-panel-725-11 | type 3 | staff | Front-desk sign-in
+  s1 see: No Messages & offers page for the desk (only Workout offer and Automatic reminders open); an old link lands on Shop
+  s1 not: The owner-only list sender opened by the desk
+  s2 see: "This mobile number is not complete, so WhatsApp can’t open it. Tap Edit on their page to fix it."
+  s2 not: A send button
+J-F-panel-725-12 | type 6 | staff | Front-desk sign-in with a member's sheet open
+  s1 see: "Fees reminder" is gone from the choices
+  s1 not: A reminder for fees already paid
+  s2 see: The ready words again
+  s2 not: unknown: hand-typed words are dropped with no question
+J-F-panel-725-13 | type 12 | staff | Front-desk sign-in sending a fees reminder
+  s1 see: That one member's amount due and the gym's UPI ID
+  s1 not: The gym's money totals
+  s1 not: Another member's dues
+  s2 see: The desk person's own WhatsApp on the member's number
+  s2 not: The admin app recording that the desk messaged the member as if the gym server sent it
+J-F-panel-736-01 | type 1 | owner | Owner in Messages & offers > Workout offer; gym online; no offer running
+  s1 see: "Start a workout offer" with Workouts 10, Within 30 days, Reward 3 days, a "Members can join until" day 30 days ahead
+  s1 not: The form while another offer is running
+  s2 see: "When a member reaches the target, they show as “Ready for reward”. The owner or the front desk gives the days with one tap."
+  s2 see: "No receipt and no GST: free days are not a sale."
+  s2 not: Both choices pressed
+  s3 see: "Train 10 times in 30 days, get 3 extra days"
+  s3 see: "Check in at the gym and log a workout of 20+ minutes with 6+ sets."
+  s3 not: Words that differ from the numbers typed
+  s4 see: "Starting…" on the button, then "Offer started. Members see it in the MettleUp app now."
+  s4 see: A card with "Running" and "Joined 0 · Ready 0 · Rewarded 0"
+  s4 not: Two offers started by two taps
+  s4 not: The form still shown under the running offer
+J-F-panel-736-02 | type 2 | owner | Other way in: the Today card, when one member has reached the target
+  s1 see: A card "Workout offer": "1 reward to give" with a button "Give"
+  s1 not: The card with nothing to give
+  s1 not: "1 rewards to give"
+  s1 not: A reward the owner took back counted
+  s2 see: The Workout offer page with the member marked "Ready for reward"
+  s2 not: The reward given by this tap alone
+  s3 see: "Giving…", then "3 days added for <name>. New last day: <date>."
+  s3 see: The member now "Rewarded": "Extended free by 3 days (reward) · by <who> · new last day <date>"
+  s3 not: Days added twice
+  s3 not: A receipt or GST line made for the free days
+  s3 not: The Today card still saying 1 to give
+J-F-panel-736-03 | type 3 | owner | Owner on the start form, then on a member with no running plan, then with the gym not online
+  s1 see: "Workouts: a whole number from 4 to 30."
+  s1 see: "Start offer" cannot be pressed
+  s1 not: An offer started with numbers out of range
+  s2 see: "At most one workout counts a day: give more days than workouts."
+  s2 not: The offer started
+  s3 see: "Reward: a whole number of days from 1 to 7."
+  s3 see: "Members can join until: today or a day in the next 90 days."
+  s3 not: A silent correction of the numbers
+  s4 see: "No gym plan running. Give it when they renew."
+  s4 not: Days added to an ended plan
+  s4 not: The reward marked given
+  s5 see: "Workout offers need your gym online" and why
+  s5 not: A form that saves nowhere
+J-F-panel-736-04 | type 6 | owner | Owner with a running offer and one member "Rewarded"
+  s1 see: "Reward taken back. Last day: <old date>."
+  s1 see: The member reads "Reward taken back"
+  s1 not: The plan's last day unchanged
+  s1 not: A day lost that the member had before the reward
+  s1 not: The take-back done without the question
+  s2 see: "3 days added for <name>. ..."
+  s2 not: A refusal for the owner
+  s3 see: "The days are now given by themselves."
+  s3 not: Rewards already waiting given twice
+  s4 see: "Offer stopped. Members already in can still finish."
+  s4 see: The card reads "Stopped"; the start form is back
+  s4 not: Members already in losing their progress
+  s4 not: Rewards already given taken away
+  s5 see: The card reads "Joining closed"
+  s5 not: "Running" when nobody can join
+J-F-panel-736-05 | type 12 | owner | Owner reading the list of members in a running offer
+  s1 see: "6 of 10 workouts · desk 5 · app 1 · until <date>"
+  s1 not: What the member trained, weights or times (the phone sends only the dates)
+  s1 not: Members who did not tap "Join the offer"
+  s2 see: No new receipt
+  s2 not: A receipt, a sale or GST for the free days
+  s3 see: unknown
+  s3 not: Other members' names or progress shown to a member (not checked in this pass)
+J-F-panel-736-06 | type 1 | staff | Front-desk sign-in; the owner started an offer where the desk gives the days; one member is "Ready for reward"
+  s1 see: The offer card: "Running", "The desk gives the days with one tap."
+  s1 see: The member "Ready for reward" with "Give 3 days"
+  s1 not: The start form
+  s1 not: "Stop offer", "Take back" or the choice of how days are given
+  s2 see: "3 days added for <name>. New last day: <date>."
+  s2 see: The line now names who gave it
+  s2 not: Days added twice
+  s2 not: A receipt made
+J-F-panel-736-07 | type 2 | staff | Other way in for the desk: the Today card
+  s1 see: "Workout offer": "2 rewards to give" and "Give"
+  s1 not: unknown: whether a desk sign-in gets this card was not checked
+  s2 see: The Workout offer page
+  s2 not: A page the desk cannot open
+J-F-panel-736-08 | type 3 | staff | Front-desk sign-in; no offer running; later a reward the owner took back
+  s1 see: "No workout offer running": "The owner starts one in Messages & offers."
+  s1 not: A way for the desk to start an offer
+  s2 see: "Reward taken back" and no Give button
+  s2 not: The desk giving back what the owner took away
+  s3 see: One: "3 days added ..."; the other: "<name> already has the reward. New last day: <date>."
+  s3 not: Six days added
+  s4 see: "Their plan changed since; change the days by hand with Freeze / extra days."
+  s4 not: A wrong last day saved
+J-F-panel-736-09 | type 6 | staff | Front-desk sign-in, a running offer, one member moving through the states
+  s1 see: "In the offer" and "<n> of 10 workouts · ... · until <date>"
+  s1 not: A Give button before the target
+  s2 see: "Ready for reward" with "Give 3 days"
+  s2 not: More than "10 of 10" shown
+  s3 see: "Rewarded" with "Extended free by 3 days (reward) · by <desk name> · new last day <date>"
+  s3 not: A second Give button
+  s4 see: "Window over"; "Left the offer"
+  s4 not: A Give button on either
+J-F-panel-737-01 | type 1 | owner | Owner on Workout plans ("Send members their routines"); no plans yet
+  s1 see: "No workout plans yet": "Make a plan once (for example “Beginner 3 days”) and send it to members or to everyone on a membership plan."
+  s1 see: Button "+ New plan"
+  s1 not: The page refused to this sign-in
+  s2 see: A sheet "New workout plan" with a first day
+  s2 not: A saved plan before Save
+  s3 see: The exercise with its sets and rep range
+  s3 not: An exercise typed by hand accepted without its main muscle
+  s4 see: "Saving…", then "“<name>” saved and sent."
+  s4 see: The plan in the list with "Sent to 2 members" and "1 day · 1 exercise"
+  s4 not: Two plans saved by two taps
+  s4 not: "1 days" or "1 exercises"
+  s4 not: The plan saved without the name of who made it
+J-F-panel-737-02 | type 2 | owner | Other way in: a ready-made program, owner
+  s1 see: "Start from a ready plan and change anything you like, or start empty."
+  s1 see: A list of ready plans, then "Start empty"
+  s1 not: An empty list of ready plans
+  s2 see: The builder filled with its days and exercises, sets and rep ranges, no weights
+  s2 not: An exercise missing from a day
+  s2 not: Weights filled in that nobody typed
+  s3 see: "“<name>” saved. Tick members to send it."
+  s3 see: The plan reads "Not sent to anyone yet"
+  s3 not: The plan sent to someone
+  s3 not: The ready plan itself changed for next time
+J-F-panel-737-03 | type 2 | owner | Other way in: a member's page, "Send a plan"
+  s1 see: A sheet "Send a plan to <name>" with the gym's open plans; a plan they already get says so
+  s1 see: "Start from a ready plan" ("Beginner to advanced, filled in for you") and "Make a new plan"
+  s1 not: Withdrawn plans in the list
+  s2 see: The plan is sent; an Undo is offered
+  s2 not: The plan taken away from the members who already had it
+  s2 not: A change another desk made meanwhile overwritten
+  s3 see: The member no longer gets the plan
+  s3 not: Other members taken off the plan
+J-F-panel-737-04 | type 3 | owner | Owner in the plan builder
+  s1 see: "Give the plan a name."
+  s1 not: A nameless plan saved
+  s2 see: "Add at least one exercise to <day>."
+  s2 not: An empty day sent to members
+  s3 see: "<exercise> (<day>): the lowest reps can’t be more than the highest."
+  s3 not: The two numbers swapped silently
+  s4 see: "A plan can have at most 14 days."
+  s4 not: A plan the member app cannot read
+  s5 see: "This plan is too big to send. Split it into two plans, or shorten the notes."
+  s5 not: A plan cut short without a word
+J-F-panel-737-05 | type 6 | owner | Owner with one saved plan sent to two members
+  s1 see: "“<name>” updated."
+  s1 not: A second plan made instead of the change
+  s2 see: The builder with a copy, a new name
+  s2 not: The copy already sent to the same members without a look
+  s3 see: "Withdraw this plan?": "<name> will stop going to members. Routines already on their phones stay there, but get no more changes. You can’t send this plan again; make a copy of it instead."
+  s3 see: Buttons "Keep it" and "Withdraw"
+  s3 not: The plan withdrawn without the question
+  s4 see: "Plan withdrawn."
+  s4 see: The plan under "Withdrawn plans (1)" with only a copy button
+  s4 not: The plan deleted
+  s4 not: Routines removed from members' phones
+  s4 not: An Edit or send button on a withdrawn plan
+  s5 see: A refusal in plain words; the sheet stays open
+  s5 not: The other person's change overwritten silently
+J-F-panel-737-06 | type 12 | owner | Owner; a plan sent to one member by name and to everyone on the "Gold" membership plan
+  s1 see: "Sent to 1 member · Gold plan"
+  s1 not: "Gold plan plan"
+  s1 not: Membership plans that no longer exist named
+  s2 see: unknown
+  s2 not: New changes of the plan still going to a member whose membership ended (they get it only while a Gold plan covers today)
+  s3 see: No such routine
+  s3 not: The plan, its notes or the trainer's video shown to a member it was not sent to
+  s4 see: "Plan withdrawn."
+  s4 not: Routines already on phones deleted (the words say they stay)
+J-F-panel-737-07 | type 1 | staff | Front-desk sign-in on Workout plans ("Send members their routines"); no plans yet
+  s1 see: "No workout plans yet": "Make a plan once (for example “Beginner 3 days”) and send it to members or to everyone on a membership plan."
+  s1 see: Button "+ New plan"
+  s1 not: The page refused to this sign-in
+  s2 see: A sheet "New workout plan" with a first day
+  s2 not: A saved plan before Save
+  s3 see: The exercise with its sets and rep range
+  s3 not: An exercise typed by hand accepted without its main muscle
+  s4 see: "Saving…", then "“<name>” saved and sent."
+  s4 see: The plan in the list with "Sent to 2 members" and "1 day · 1 exercise"
+  s4 not: Two plans saved by two taps
+  s4 not: "1 days" or "1 exercises"
+  s4 not: The plan saved without the name of who made it
+J-F-panel-737-08 | type 2 | staff | Other way in: a ready-made program, front-desk sign-in
+  s1 see: "Start from a ready plan and change anything you like, or start empty."
+  s1 see: A list of ready plans, then "Start empty"
+  s1 not: An empty list of ready plans
+  s2 see: The builder filled with its days and exercises, sets and rep ranges, no weights
+  s2 not: An exercise missing from a day
+  s2 not: Weights filled in that nobody typed
+  s3 see: "“<name>” saved. Tick members to send it."
+  s3 see: The plan reads "Not sent to anyone yet"
+  s3 not: The plan sent to someone
+  s3 not: The ready plan itself changed for next time
+J-F-panel-737-09 | type 3 | staff | Front-desk sign-in in the plan builder
+  s1 see: "Give the plan a name."
+  s1 not: A nameless plan saved
+  s2 see: "Add at least one exercise to <day>."
+  s2 not: An empty day sent to members
+  s3 see: "<exercise> (<day>): the lowest reps can’t be more than the highest."
+  s3 not: The two numbers swapped silently
+  s4 see: "A plan can have at most 14 days."
+  s4 not: A plan the member app cannot read
+  s5 see: "This plan is too big to send. Split it into two plans, or shorten the notes."
+  s5 not: A plan cut short without a word
+J-F-panel-737-10 | type 6 | staff | Front-desk sign-in with one saved plan sent to two members
+  s1 see: "“<name>” updated."
+  s1 not: A second plan made instead of the change
+  s2 see: The builder with a copy, a new name
+  s2 not: The copy already sent to the same members without a look
+  s3 see: "Withdraw this plan?": "<name> will stop going to members. Routines already on their phones stay there, but get no more changes. You can’t send this plan again; make a copy of it instead."
+  s3 see: Buttons "Keep it" and "Withdraw"
+  s3 not: The plan withdrawn without the question
+  s4 see: "Plan withdrawn."
+  s4 see: The plan under "Withdrawn plans (1)" with only a copy button
+  s4 not: The plan deleted
+  s4 not: Routines removed from members' phones
+  s4 not: An Edit or send button on a withdrawn plan
+  s5 see: A refusal in plain words; the sheet stays open
+  s5 not: The other person's change overwritten silently
+J-F-panel-737-11 | type 1 | trainer | Trainer (a staff sign-in with the trainer tick) on Workout plans ("Send members their routines"); no plans yet
+  s1 see: "No workout plans yet": "Make a plan once (for example “Beginner 3 days”) and send it to members or to everyone on a membership plan."
+  s1 see: Button "+ New plan"
+  s1 not: The page refused to this sign-in
+  s2 see: A sheet "New workout plan" with a first day
+  s2 not: A saved plan before Save
+  s3 see: The exercise with its sets and rep range
+  s3 not: An exercise typed by hand accepted without its main muscle
+  s4 see: "Saving…", then "“<name>” saved and sent."
+  s4 see: The plan in the list with "Sent to 2 members" and "1 day · 1 exercise"
+  s4 not: Two plans saved by two taps
+  s4 not: "1 days" or "1 exercises"
+  s4 not: The plan saved without the name of who made it
+J-F-panel-737-12 | type 2 | trainer | Other way in: a ready-made program, trainer (a staff sign-in with the trainer tick)
+  s1 see: "Start from a ready plan and change anything you like, or start empty."
+  s1 see: A list of ready plans, then "Start empty"
+  s1 not: An empty list of ready plans
+  s2 see: The builder filled with its days and exercises, sets and rep ranges, no weights
+  s2 not: An exercise missing from a day
+  s2 not: Weights filled in that nobody typed
+  s3 see: "“<name>” saved. Tick members to send it."
+  s3 see: The plan reads "Not sent to anyone yet"
+  s3 not: The plan sent to someone
+  s3 not: The ready plan itself changed for next time
+J-F-panel-737-13 | type 3 | trainer | Trainer (a staff sign-in with the trainer tick) in the plan builder
+  s1 see: "Give the plan a name."
+  s1 not: A nameless plan saved
+  s2 see: "Add at least one exercise to <day>."
+  s2 not: An empty day sent to members
+  s3 see: "<exercise> (<day>): the lowest reps can’t be more than the highest."
+  s3 not: The two numbers swapped silently
+  s4 see: "A plan can have at most 14 days."
+  s4 not: A plan the member app cannot read
+  s5 see: "This plan is too big to send. Split it into two plans, or shorten the notes."
+  s5 not: A plan cut short without a word
+J-F-panel-737-14 | type 6 | trainer | Trainer (a staff sign-in with the trainer tick) with one saved plan sent to two members
+  s1 see: "“<name>” updated."
+  s1 not: A second plan made instead of the change
+  s2 see: The builder with a copy, a new name
+  s2 not: The copy already sent to the same members without a look
+  s3 see: "Withdraw this plan?": "<name> will stop going to members. Routines already on their phones stay there, but get no more changes. You can’t send this plan again; make a copy of it instead."
+  s3 see: Buttons "Keep it" and "Withdraw"
+  s3 not: The plan withdrawn without the question
+  s4 see: "Plan withdrawn."
+  s4 see: The plan under "Withdrawn plans (1)" with only a copy button
+  s4 not: The plan deleted
+  s4 not: Routines removed from members' phones
+  s4 not: An Edit or send button on a withdrawn plan
+  s5 see: A refusal in plain words; the sheet stays open
+  s5 not: The other person's change overwritten silently

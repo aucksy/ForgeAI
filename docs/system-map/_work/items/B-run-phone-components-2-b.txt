@@ -1,0 +1,60 @@
+# B-run-phone-components-2-b: gap-8 x phone / phone/components-2. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H8.1 | gap-8 | By script first: docs/system-map/_tools/silent.mjs lists every catch block with file:line and three flags: logs? (calls a log, report or crash function inside), tells_user? (sets an error state, toast or alert inside), rethrows?
+H8.2 | gap-8 | Output _sources/silent.csv
+H8.3 | gap-8 | Helpers read ONLY the rows where all three are "no", plus every fallback value (?? null, || [], ?? 0) that sits in a file named in a journey that writes money, messages, alerts, sign-in or sync
+H8.4 | gap-8 | Everything else is counted in the grid as "filtered by script, N rows, not read" so the gap is visible
+H8.5 | gap-8 | For each: if this path runs, does the user (or owner, or HQ) learn anything?
+H8.6 | gap-8 | A silent path that hides a failed promise = finding
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-1400 | live | Send help or feedback from the floating button (and the workout top-bar button) | apps/mobile/src/components/feedback/FeedbackButton.tsx:50
+F-phone-1401 | live | Speak your feedback: record, turn voice into text, check it, send | apps/mobile/src/components/feedback/FeedbackComposer.tsx:46
+F-phone-1402 | live | See your questions and the MettleUp team's replies (unread count on the button, 'New' tags) | apps/mobile/src/components/feedback/HelpQuestions.tsx:40
+F-phone-1403 | live | Quick automatic answer to a help question, with 'Did this solve it? Yes / No' | apps/mobile/src/components/feedback/HelpReply.tsx:15
+F-phone-1404 | live | Add my watch's screen log to a feedback message | apps/mobile/src/components/feedback/WatchLogSwitch.tsx:29
+F-phone-1405 | live | 'Are you sure?' question and one-button notices in the app's own sheet | apps/mobile/src/components/ui/ConfirmSheet.tsx:44
+F-phone-1406 | live | Workout tab shows one notice card at a time | apps/mobile/src/components/noticeSlot.ts:19
+F-phone-1407 | live | 'Couldn't save' banner (storage full, finish failed, save changes failed) | apps/mobile/src/components/saveProblemStore.ts:41
+F-phone-1408 | behind switch | MettleUp account: sign in with Google, keep workouts safe, bring the copy back, sign out, delete account | apps/mobile/src/components/settings/AccountCard.tsx:28
+F-phone-1409 | behind switch | AI coach: enter your own AI key (masked, kept in secure storage) | apps/mobile/src/components/settings/ApiKeyField.tsx:25
+F-phone-1410 | live | Save workouts or measurements as a spreadsheet | apps/mobile/src/components/settings/BackupCard.tsx:119
+F-phone-1411 | live | Bring back an old Google Drive backup (restore, undo the last restore, unlink Drive) | apps/mobile/src/components/settings/BackupCard.tsx:195
+F-phone-1412 | hidden | Android's own phone backup card with 'Include photos in my backup' (on a page no Settings row links to) | apps/mobile/src/components/settings/BackupCard.tsx:86
+F-phone-1413 | live | Download my data: save one backup file and share it | apps/mobile/src/components/settings/BackupFilePanels.tsx:90
+F-phone-1414 | live | Restore from a backup file (replace everything or add to what's here, undo restore); also on the welcome screen | apps/mobile/src/components/settings/BackupFilePanels.tsx:154
+F-phone-1415 | behind switch | Connect to your gym with email, password and gym code (cloud sync); disconnect; delete my cloud data | apps/mobile/src/components/settings/CloudCard.tsx:57
+F-phone-1416 | live | Erase all data or start over; remove demo data | apps/mobile/src/components/settings/DataCard.tsx:78
+F-phone-1417 | hidden | Hidden sales switch: hold the 'stored on this phone' line for 2 seconds to load demo data | apps/mobile/src/components/settings/DataCard.tsx:263
+F-phone-1418 | behind switch | Put my gym's logo on my home screen | apps/mobile/src/components/settings/GymSettings.tsx:66
+F-phone-1419 | live | Leave my gym, and open 'what my gym sees' | apps/mobile/src/components/settings/GymSettings.tsx:32
+F-phone-1420 | live | Switch gym reminders and gym messages on or off (with a 'notifications are off' way out) | apps/mobile/src/components/settings/GymSettings.tsx:93
+F-phone-1421 | live | Join your gym: scan the poster or type the gym's code | apps/mobile/src/components/settings/JoinGymCard.tsx:21
+F-phone-1422 | live | Edit your profile: mobile number, goal, experience, age, height, body figure (saves as you go) | apps/mobile/src/components/settings/ProfileCard.tsx:136
+F-phone-1423 | behind switch | Set daily calorie and protein, carbs, fat targets | apps/mobile/src/components/settings/ProfileCard.tsx:503
+F-phone-1424 | live | Settings menu: one page in six headed groups (You, Workouts, Your gym, Phone and watch, Your data, Help), with a dot on  | apps/mobile/src/components/settings/settingsLines.ts:90
+F-phone-1425 | behind switch | 'MettleUp Plus' row in Settings (where the member stands, what is free or paid) | apps/mobile/src/components/settings/settingsLines.ts:96
+F-phone-1426 | behind switch | iPhone build: reminders, watch, Health apps and widgets rows left out, with a 'Not on iPhone yet' line | apps/mobile/src/components/settings/settingsLines.ts:64
+F-phone-1427 | live | Undo bar after a delete (stays at least 6 seconds) | apps/mobile/src/components/ui/UndoBar.tsx:28
+F-phone-1428 | live | 'Couldn't load, try again' state and the short error line under a failed button | apps/mobile/src/components/ui/LoadError.tsx:23
+F-phone-1429 | live | Accessibility: text grows with the phone's font size (capped), 48 dp touch areas, screen-reader wording, less motion whe | apps/mobile/src/components/ui/a11y.ts:28
+## SILENT CATCH ROWS TO READ (kind,file,line,logs,tells_user,rethrows,text)
+catch,apps/mobile/src/components/settings/ApiKeyField.tsx,37,no,no,no,(() => { if (alive) setMasked('Not set'); })
+catch,apps/mobile/src/components/settings/ApiKeyField.tsx,55,no,no,no,{ void tell('Could not save key'  'Secure storage was unavailable — please try again.'); }
+catch,apps/mobile/src/components/settings/BackupCard.tsx,94,no,no,no,(() => live && setWorkouts(null))
+catch,apps/mobile/src/components/settings/BackupCard.tsx,232,no,no,no,(() => undefined)
+catch,apps/mobile/src/components/settings/BackupCard.tsx,297,no,no,no,(() => ({ available: true  newerWorkouts: 0 }))
+catch,apps/mobile/src/components/settings/BackupFilePanels.tsx,104,no,no,no,(() => false)
+catch,apps/mobile/src/components/settings/BackupFilePanels.tsx,209,no,no,no,(() => false)
+catch,apps/mobile/src/components/settings/BackupFilePanels.tsx,211,no,no,no,(() => ({ workouts: 0  folders: 0  measurements: 0 }))
+catch,apps/mobile/src/components/settings/BackupFilePanels.tsx,271,no,no,no,(() => ({ removed: phone.workouts  onlyHere: 0 }))
+catch,apps/mobile/src/components/settings/CloudCard.tsx,169,no,no,no,( (e: unknown) => void tell('Could not delete'  e instanceof Error ? e.message : 'Please t
+catch,apps/mobile/src/components/settings/DataCard.tsx,200,no,no,no,(() => 0)
+catch,apps/mobile/src/components/settings/PhotoBackupCard.tsx,51,no,no,no,(() => setLine(null))
+catch,apps/mobile/src/components/settings/ProfileCard.tsx,164,no,no,no,(() => null)
+catch,apps/mobile/src/components/settings/ProfileCard.tsx,173,no,no,no,(() => { /* no profile yet — the card simply stays empty; nothing to edit yet */ })
+catch,apps/mobile/src/components/settings/ProfileCard.tsx,261,no,no,no,(() => undefined)
+catch,apps/mobile/src/components/ui/useReduceMotion.ts,27,no,no,no,(() => {})
+## FALLBACK ROWS TO READ (files that write money, messages, alerts, sign-in or sync)
+(none)
+## FILTERED BY SCRIPT
+43 other rows of _sources/silent.csv in this area: not read (write this number in the H8 evidence)

@@ -1,0 +1,516 @@
+# A8-server-panel-worker-2: coverage of 99 Tier 1 journeys (8 features, from A5-server-panel-worker-2). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-server-104 | apps/dashboard/e2e/r579-uat.spec.mjs | e2e | 298 lines | asserts 3 journey phrase(s)
+F-server-104 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-104 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-server-104 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-server-104 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-server-104 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-server-104 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | asserts 2 journey phrase(s)
+F-server-104 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-server-104 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-server-104 | apps/dashboard/e2e/gyms-site-uat.spec.mjs | e2e | 242 lines | asserts 1 journey phrase(s)
+F-server-104 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 1 journey phrase(s)
+F-server-104 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-server-105 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-server-105 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code, asserts 1 journey phrase(s)
+F-server-105 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-server-105 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-105 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-server-105 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-server-105 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-server-105 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 2 journey phrase(s)
+F-server-105 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-server-105 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | asserts 2 journey phrase(s)
+F-server-105 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-server-105 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-server-106 | deploy/panel/friend.test.mjs | unit | 123 lines | imports the code, file name
+F-server-106 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | file name, asserts 1 journey phrase(s)
+F-server-106 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 3 journey phrase(s)
+F-server-106 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 3 journey phrase(s)
+F-server-106 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 3 journey phrase(s)
+F-server-106 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 3 journey phrase(s)
+F-server-106 | apps/dashboard/e2e/whatsapp-verify-uat.spec.mjs | e2e | 324 lines | asserts 3 journey phrase(s)
+F-server-106 | apps/mobile/qa/uat-e.yaml | maestro | 267 lines | asserts 3 journey phrase(s)
+F-server-106 | apps/mobile/test/shop/bringFriend.test.ts | unit | 104 lines | file name, asserts 1 journey phrase(s)
+F-server-106 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-106 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-server-106 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-server-107 | apps/mobile/qa/uat-e.yaml | maestro | 267 lines | asserts 5 journey phrase(s)
+F-server-107 | deploy/panel/selfJoin.test.mjs | unit | 256 lines | imports the code, file name
+F-server-107 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 4 journey phrase(s)
+F-server-107 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | file name, asserts 2 journey phrase(s)
+F-server-107 | apps/dashboard/test/crm/selfJoin.test.ts | unit | 174 lines | file name, asserts 2 journey phrase(s)
+F-server-107 | apps/dashboard/test/crm/oneLink.test.ts | unit | 61 lines | asserts 3 journey phrase(s)
+F-server-107 | apps/dashboard/test/crm/pin.test.ts | unit | 159 lines | asserts 3 journey phrase(s)
+F-server-107 | apps/mobile/qa/phase1-a.yaml | maestro | 320 lines | asserts 3 journey phrase(s)
+F-server-107 | apps/mobile/qa/real-workout-w1.yaml | maestro | 368 lines | asserts 3 journey phrase(s)
+F-server-107 | apps/mobile/qa/store-a.yaml | maestro | 219 lines | asserts 3 journey phrase(s)
+F-server-107 | apps/mobile/qa/uat-d.yaml | maestro | 342 lines | asserts 3 journey phrase(s)
+F-server-107 | apps/mobile/qa/uat-rel-1-seed.yaml | maestro | 237 lines | asserts 3 journey phrase(s)
+F-server-110 | deploy/panel/whatsNewFeed.test.mjs | unit | 70 lines | imports the code, file name
+F-server-110 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-110 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-server-110 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-server-110 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-server-110 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-server-110 | apps/mobile/qa/uat-rel-r401-whats-new.yaml | maestro | 96 lines | asserts 2 journey phrase(s)
+F-server-110 | apps/dashboard/e2e/pay-mettleup-uat.spec.mjs | e2e | 210 lines | asserts 1 journey phrase(s)
+F-server-110 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-server-110 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-server-110 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-server-110 | apps/mobile/qa/uat-rel-r336-b-offline.yaml | maestro | 33 lines | asserts 1 journey phrase(s)
+F-server-109 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-server-109 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code, asserts 2 journey phrase(s)
+F-server-109 | apps/dashboard/e2e/r579-uat.spec.mjs | e2e | 298 lines | asserts 3 journey phrase(s)
+F-server-109 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-server-109 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-server-109 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-server-109 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 2 journey phrase(s)
+F-server-109 | apps/dashboard/e2e/entry-uat.spec.mjs | e2e | 187 lines | asserts 1 journey phrase(s)
+F-server-109 | apps/dashboard/e2e/gyms-site-uat.spec.mjs | e2e | 242 lines | asserts 1 journey phrase(s)
+F-server-109 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-server-109 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-server-109 | apps/dashboard/test/crm/installSteps.test.ts | unit | 43 lines | asserts 1 journey phrase(s)
+F-server-111 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code, asserts 1 journey phrase(s)
+F-server-111 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code, asserts 1 journey phrase(s)
+F-server-111 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code, asserts 1 journey phrase(s)
+F-server-111 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-111 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-server-111 | apps/mobile/test/tracker/healthOnOff.test.ts | unit | 136 lines | asserts 1 journey phrase(s)
+F-server-111 | deploy/panel/aiMatch.test.mjs | unit | 678 lines | asserts 1 journey phrase(s)
+F-server-112 | deploy/panel/feedback.test.mjs | unit | 139 lines | imports the code, file name
+F-server-112 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-server-112 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-server-112 | deploy/panel/crash.test.mjs | unit | 105 lines | imports the code
+F-server-112 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-server-112 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-server-112 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-server-112 | apps/dashboard/e2e/feedback.spec.mjs | e2e | 34 lines | file name
+F-server-112 | apps/dashboard/test/crm/feedback.test.ts | unit | 91 lines | file name
+F-server-112 | apps/mobile/test/lib/feedback.test.ts | unit | 59 lines | file name
+F-server-112 | apps/mobile/test/lib/feedbackButton.test.ts | unit | 120 lines | file name
+F-server-112 | apps/mobile/test/lib/feedbackMemberKey.test.ts | unit | 43 lines | file name
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-server-104-01 | type 1 | prospect | WhatsApp chat with the gym's invite link app.mettleup.fit/j/<CODE>; an Android phone without the MettleUp app
+  s1 see: Title 'Join <gym> on MettleUp'
+  s1 see: Line '<gym> invites you to the MettleUp app. Tap to join. Gym code <CODE>.'
+  s1 see: The gym's logo
+  s1 not: Another gym's name or logo
+  s1 not: A plain MettleUp preview when the gym exists
+  s2 see: Page 'Join your gym' / 'on the MettleUp app' with the gym filled in
+  s2 see: 'First, get the MettleUp app' with three numbered steps
+  s2 see: Button 'Get it on Google Play'
+  s2 see: The gym code in the box under 'Or type your gym’s code in the app'
+  s2 not: An endless spinner
+  s2 not: A store redirect that loses the gym code
+  s3 see: The MettleUp listing in Google Play
+  s3 not: Another app's listing
+  s3 not: An error page
+J-F-server-104-02 | type 2 | prospect | The same link opened on an iPhone; APP_STORE_URL is empty (today)
+  s1 see: The gym page with 'The iPhone app is coming soon'
+  s1 see: 'Until then, the front desk at <gym> can add you as a member. You do not need the app for that.'
+  s1 not: A jump to Google Play
+  s1 not: A blank page
+J-F-server-104-03 | type 2 | prospect | The same link opened on a laptop browser
+  s1 see: 'Open this link on your phone'
+  s1 see: 'Scan this QR code with your phone’s camera.'
+  s1 see: Badges 'GET IT ON Google Play' and 'App Store Coming soon'
+  s1 not: A redirect to a store on the computer
+  s1 not: A QR code for another address
+J-F-server-104-04 | type 3 | prospect | A link with a code that is no gym (/j/ZZZ999) or with 7 letters
+  s1 see: The join page without any gym filled in; the server answers 'not found' (404) (the page's exact words for this case not read)
+  s1 not: Another gym's name, logo or code
+  s1 not: A server error page
+J-F-server-104-05 | type 6 | prospect | The owner has just changed the gym's name and logo; the link was opened before the change
+  s1 see: The old name and logo may still show (kept 5 minutes per code)
+  s1 not: A mix of old name and new logo for longer than 5 minutes
+  s2 see: 'Join <new name> on MettleUp' and the new logo
+  s2 not: The old name still shown
+J-F-server-104-06 | type 12 | prospect | Anyone who has the link opens it
+  s1 see: Only the gym's public name, logo and join code
+  s1 not: Any member's name or number
+  s1 not: The owner's phone number
+  s1 not: Another gym's data
+J-F-server-104-07 | type 1 | member | A member of the gym with the MettleUp app on an Android phone gets the gym's link
+  s1 see: The MettleUp app opens at joining <gym> (Android App Link; the app's words not read here)
+  s1 not: The browser page asking to install an app that is already installed
+J-F-server-104-08 | type 2 | member | The link opens in a browser on a phone that has the app (for example inside WhatsApp's own browser)
+  s1 see: The app opens on the join step for <gym>; without the app, Google Play opens instead
+  s1 not: A page that does nothing when tapped
+  s1 not: The gym code lost on the way
+J-F-server-104-09 | type 3 | member | The member types the link by hand with lower-case letters (/j/abc123) or with a wrong letter
+  s1 see: The same gym page (the code is read in capitals)
+  s1 not: A 'not found' for a right code in lower case
+  s2 see: The page without a gym (not found)
+  s2 not: A different gym that happens to have that code shown as if it were theirs without its name
+J-F-server-104-10 | type 6 | member | The gym has changed its logo since the member last opened the link
+  s1 see: The new logo within 5 minutes
+  s1 not: The old logo for longer than 5 minutes
+  s1 not: A broken picture
+J-F-server-105-01 | type 1 | member | A member with the MettleUp app on Android, at the gym, scans the check-in poster's QR code
+  s1 see: The app's 'Check in at <gym>' screen opens (Android App Link)
+  s1 not: The browser page asking to install the app
+  s1 not: Another gym's check-in screen
+J-F-server-105-02 | type 2 | member | The same poster scanned on an Android phone without the app
+  s1 see: 'Check in at your gym' / 'with the MettleUp app' with the gym filled in
+  s1 see: 'First, get the MettleUp app'
+  s1 see: 'Join your gym in the app, then scan the poster again.'
+  s1 see: Button 'Get it on Google Play'
+  s1 see: 'No app? No problem.' 'The front desk can check you in.'
+  s1 not: A check-in recorded with no app
+  s1 not: A blank page
+J-F-server-105-03 | type 2 | member | The same poster scanned on an iPhone
+  s1 see: 'MettleUp is an Android app for now'
+  s1 see: 'Check in at the front desk today.'
+  s1 not: A jump to Google Play on an iPhone
+J-F-server-105-04 | type 3 | member | An old poster whose code no longer matches a gym
+  s1 see: 'This poster doesn’t match a gym'
+  s1 see: 'Check in at the front desk, and ask them for a new poster.'
+  s1 not: A check-in at another gym
+  s1 not: An error code with no words
+J-F-server-105-05 | type 6 | member | The gym server could not be reached the first time, then is back
+  s1 see: 'Couldn’t reach the gym'
+  s1 see: 'Check your internet and scan again, or check in at the desk.'
+  s1 not: 'This poster doesn’t match a gym' for a right poster
+  s2 see: The page with 'Check in at <gym>'
+  s2 not: The failure kept and shown again for minutes
+J-F-server-105-06 | type 12 | member | Anyone who photographs the poster opens its link
+  s1 see: Only the gym's public name and code
+  s1 not: A check-in made by the link alone, from home
+  s1 not: Any member's name or number
+J-F-server-105-07 | type 1 | pass member | A day-pass holder with the MettleUp app on Android scans the poster
+  s1 see: The app opens its 'Check in at <gym>' screen; whether the pass is accepted is decided in the app (not read here)
+  s1 not: The install page on a phone that has the app
+J-F-server-105-08 | type 3 | pass member | A pass holder without the app scans the poster
+  s1 see: 'No app? No problem.' 'The front desk can check you in.'
+  s1 not: A message that the pass holder must install the app to train
+J-F-server-105-09 | type 6 | pass member | The pass holder scans the poster a second time the same day
+  s1 see: The same page or app screen as the first time; the link itself keeps nothing
+  s1 not: A second visit recorded by the link page itself
+J-F-server-106-01 | type 1 | prospect | A friend gets a member's invite link app.mettleup.fit/f/<CODE> on WhatsApp
+  s1 see: Title '<first name> invites you to <gym>'
+  s1 see: Line 'Leave your name and number, and <gym> will call you about joining.'
+  s1 not: The member's surname or number
+  s1 not: Another gym's name
+  s2 see: Boxes 'Your name', 'Mobile number'
+  s2 see: 'When would you like to train?' with Morning, Afternoon, Evening, Any time
+  s2 see: 'Only the gym sees your number. Your friend does not.'
+  s2 not: An install prompt (this page never opens an app)
+  s3 see: 'Sent. The gym will call you soon.'
+  s3 see: 'You can close this page now.'
+  s3 not: Two enquiries from one tap
+  s3 not: A success message when nothing was saved
+J-F-server-106-02 | type 3 | prospect | The friend page, open
+  s1 see: 'Type your name.'
+  s1 see: 'Type a 10-digit mobile number.'
+  s1 not: The form sent with a bad number
+J-F-server-106-03 | type 3 | prospect | Five sends already made today from the same network address (or 5 from this link, or 30 at this gym)
+  s1 see: 'Too many requests from this link today. Please try again tomorrow.'
+  s1 not: The enquiry saved anyway
+  s1 not: A page that says 'Sent'
+J-F-server-106-04 | type 3 | prospect | The member who shared the link has left the gym, or the code is wrong
+  s1 see: 'This invite link does not work any more'
+  s1 see: 'Ask your friend to send you a new link.'
+  s1 not: The form shown and then refused only after typing
+J-F-server-106-05 | type 6 | prospect | The friend's number is already a member of the gym, or already has an open enquiry there
+  s1 see: 'Sent. The gym will call you soon.'
+  s1 not: A second enquiry for the same number
+  s1 not: Any words that tell a stranger the number is already a member
+J-F-server-106-06 | type 12 | prospect | The friend has sent the form
+  s1 see: The name and number go only to that member's gym; MettleUp's page server keeps only a salted one-way code of the network address, deleted after 2 days
+  s1 not: The member who shared the link seeing the number
+  s1 not: Another gym getting the enquiry
+  s1 not: The number kept on MettleUp's own server
+J-F-server-106-07 | type 1 | member | A member shares their own invite link from the app (made in the app, another feature)
+  s1 see: '<member first name> invites you to <gym>'
+  s1 not: The member's full name or number in the preview
+J-F-server-106-08 | type 3 | member | The member has left the gym; a friend opens their old link
+  s1 see: 'This invite link does not work any more'
+  s1 not: The enquiry sent to the gym the member left, credited to them
+J-F-server-106-09 | type 6 | member | A friend sends the form twice from the member's link
+  s1 see: 'Sent. The gym will call you soon.' again; the gym still has one enquiry
+  s1 not: Two enquiries or two referrals counted for the member
+J-F-server-106-10 | type 12 | member | A friend has sent the form from the member's link
+  s1 see: Nothing about the friend's number reaches the member
+  s1 not: The friend's number shown to the member anywhere
+J-F-server-106-11 | type 1 | gym owner | A friend has just sent the form from one of the gym's members' links
+  s1 see: A new open enquiry with the friend's name and +91 number
+  s1 see: Interest 'Best time to train: Evening'
+  s1 see: Referred by the member's name; follow-up date today
+  s1 not: The enquiry in another gym
+  s1 not: The number without its +91
+  s1 not: No sign of which member sent the friend
+J-F-server-106-12 | type 2 | gym owner | The owner is in the panel when the friend sends
+  s1 see: An alert about a friend who wants to join (exact alert words not read here)
+  s1 not: The alert held back until the next day
+J-F-server-106-13 | type 3 | gym owner | 30 friend enquiries already came in today across the gym
+  s1 see: No new enquiry for that friend (the friend was told to try tomorrow)
+  s1 not: A half-made enquiry without a name or number
+J-F-server-106-14 | type 6 | gym owner | The owner closed the friend's enquiry; the same friend sends again from the link
+  s1 see: A new open enquiry for that friend (only an open enquiry stops a new one)
+  s1 not: The send refused, or the closed enquiry silently reopened
+J-F-server-106-15 | type 12 | gym owner | A friend enquiry is in the gym's Enquiries
+  s1 see: Only this gym's owner and desk see the friend's number; the member who shared the link does not
+  s1 not: The number visible to the member or to another gym
+J-F-server-106-16 | type 1 | staff | A friend has sent the form
+  s1 see: The friend's enquiry with name, number and best time to train
+  s1 not: The enquiry missing on the desk login while the owner sees it
+J-F-server-106-17 | type 3 | staff | The friend's send failed ('Could not send. Check your internet and try again.')
+  s1 see: No new enquiry
+  s1 not: A half-made enquiry with no name or number
+J-F-server-106-18 | type 6 | staff | The desk called the friend and closed the enquiry
+  s1 see: The enquiry stays closed; the referral for the member stays counted
+  s1 not: The enquiry back as open after a refresh
+J-F-server-106-19 | type 2 | prospect | The member's link made on the other address join.mettleup.fit/f/<CODE> (R-539; used once JOIN_HOST is set)
+  s1 see: The same friend page and the same 'Sent. The gym will call you soon.'
+  s1 not: A different page or a refusal on the other address
+  s1 not: The enquiry sent to another gym
+J-F-server-107-01 | type 1 | prospect | A person gets the gym's 'Become a member' link app.mettleup.fit/m/<CODE>; online payment is off (JOIN_PAY off today); no free trial
+  s1 see: Title 'Become a member of <gym>'
+  s1 see: Line 'Pick a plan and send your details to <gym>. Pay at the gym desk.'
+  s1 not: Another gym's name
+  s1 not: A price that is not the gym's
+  s2 see: 'Become a member'
+  s2 see: 'Join in 3 short steps. You pay at the gym desk.'
+  s2 see: 'Step 1 of 3' 'About you'
+  s2 not: An install prompt (this page never opens an app)
+  s3 see: 'Waiting for your WhatsApp message…' then the number confirmed
+  s3 not: The next step opened without the number proof
+  s4 see: 'Pick a plan' with the gym's plans and prices
+  s4 see: 'Start date'
+  s4 not: A plan of another gym
+  s4 not: A price changed by the page
+  s5 see: The request kept, with the gym, plan, start day and total the gym server worked out (exact success words not read)
+  s5 not: A request sent without the two ticks
+  s5 not: Two requests from one tap
+J-F-server-107-02 | type 2 | prospect | The gym has its free trial switched on (3 days)
+  s1 see: 'You can try <gym> free for 3 days, or pick a plan and send your details. Pay at the gym desk.'
+  s1 see: 'Join in 3 short steps, or try the gym free for 3 days.'
+  s1 not: '1 days' wording
+  s1 not: A trial offered when the gym has it off
+  s2 see: The trial's days and last day, as the gym server worked them out; no online payment offered for it
+  s2 not: A payment asked for the trial
+J-F-server-107-03 | type 3 | prospect | The number typed is already a member of this gym
+  s1 see: 'This number is already a member of this gym. You can renew your plan instead.'
+  s1 see: 'Renew at the gym desk, or in the MettleUp app: Gym → "My gym" → "Renew my plan".'
+  s1 see: Button 'Use another number'
+  s1 not: A second member or enquiry made for the number
+J-F-server-107-04 | type 3 | prospect | The gym is not taking sign-ups online, or the link's code is no gym
+  s1 see: Preview '<gym> is not taking sign-ups online right now.'
+  s1 see: 'Please join at the gym desk.'
+  s1 not: The form open for a closed gym
+  s2 see: 'This gym link does not work.'
+  s2 see: 'Ask the gym for a new link.'
+  s2 not: Another gym's plans
+J-F-server-107-05 | type 6 | prospect | The same number already used this gym's free trial
+  s1 see: A refusal that the trial was already used (TRIAL_USED; the page's words not read)
+  s1 not: A second free trial for the same number
+J-F-server-107-06 | type 12 | prospect | The person has sent the form
+  s1 see: Only that gym gets the name, number and plan; MettleUp's page server keeps only a salted one-way code of the network address; the number is proved by WhatsApp and kept in coded form by that check
+  s1 not: Another gym getting the request
+  s1 not: The page deciding the price
+J-F-server-107-07 | type 1 | gym owner | A person has just sent the 'Become a member' form
+  s1 see: 'Joined online' on Today
+  s1 see: The request in Enquiries with the name, number, plan and start date
+  s1 not: The request in another gym
+  s1 not: A price that differs from the gym's plan
+J-F-server-107-08 | type 2 | gym owner | A person asked for the free trial
+  s1 see: 'Free trial online: …' with the dates
+  s1 not: The trial shown as a paid member
+J-F-server-107-09 | type 3 | gym owner | 30 online requests already came in today
+  s1 see: No new request for that person (they were told 'too many')
+  s1 not: A half-made enquiry
+J-F-server-107-10 | type 6 | gym owner | The owner changes a plan's price while a person has the page open
+  s1 see: The request saved at the gym's current price (the gym server reads the price; the page's shown price may be up to 5 minutes old)
+  s1 not: The request saved at a price the page made up
+J-F-server-107-11 | type 12 | gym owner | An online request is in the gym's Enquiries
+  s1 see: Only this gym's owner and desk see the number
+  s1 not: The request visible to another gym or to MettleUp staff without the support window
+J-F-server-107-12 | type 1 | staff | A person sent the form and will come to the desk
+  s1 see: The online request with plan, start date and total
+  s1 not: The request missing on the desk login
+J-F-server-107-13 | type 3 | staff | The gym server could not be reached when the person sent
+  s1 see: No request (the person saw a try-again message)
+  s1 not: A half-made request
+J-F-server-107-14 | type 6 | staff | The same person sends again while their first request is still open
+  s1 see: One enquiry, the new request linked to it
+  s1 not: Two enquiries for one person
+J-F-server-110-01 | type 1 | member | A new MettleUp version is out; the member opens the app
+  s1 see: 'A new MettleUp is here' with up to 5 What's new lines of the newest release
+  s1 not: An empty list of lines when the release has them
+  s1 not: Lines of an older version
+J-F-server-110-02 | type 3 | member | GitHub does not answer and no last good copy is kept
+  s1 see: The server answers 'not available' (503); the app tries GitHub second (the app's fallback words not read)
+  s1 not: An app crash
+  s1 not: A screen stuck loading
+J-F-server-110-03 | type 6 | member | A release came out a few minutes ago
+  s1 see: The lines of the version kept in the last 10 minutes (possibly the previous release)
+  s1 not: The previous release's lines kept longer than 10 minutes after GitHub answers
+J-F-server-110-04 | type 1 | system | A request arrives with no fresh copy cached
+  s1 see: A version like 1.2.3 and its lines (blank lines dropped, at most 5)
+  s1 not: A file without a version passed on
+  s2 see: A fresh copy for 10 minutes and a last good copy for a week
+  s2 not: A bad answer kept as the last good copy
+J-F-server-110-05 | type 2 | system | GitHub's API refuses (for example its hourly limit for calls without a token)
+  s1 see: The same file read from the download link
+  s1 not: A 503 while the second door works
+J-F-server-110-06 | type 3 | system | The newest release has no whats-new.json, or a broken one
+  s1 see: The last good copy (cached 60 seconds) or 503 'not available'
+  s1 not: The broken file passed to the phones
+  s2 see: 'Method not allowed' (405)
+  s2 not: The cache changed by the POST
+J-F-server-110-07 | type 6 | system | GitHub has been down for more than a week
+  s1 see: 503 'not available'
+  s1 not: A copy older than a week served as fresh
+J-F-server-109-01 | type 1 | prospect | A person with an Android phone taps mettleup's app link app.mettleup.fit/app
+  s1 see: Google Play's MettleUp listing, straight away (no page in between)
+  s1 not: A page that asks them to tap again
+  s1 not: Another app's listing
+J-F-server-109-02 | type 2 | prospect | The same link tapped on an iPhone; APP_STORE_URL is empty (today)
+  s1 see: 'Get the MettleUp app'
+  s1 see: 'The iPhone app is coming soon'
+  s1 see: 'What you can do now'
+  s1 see: 'Have an Android phone too? Open this link on it to get the app.'
+  s1 not: A jump to Google Play on an iPhone
+  s1 not: A broken App Store link
+J-F-server-109-03 | type 2 | prospect | The same link opened on a computer
+  s1 see: 'Get the MettleUp app on your phone'
+  s1 see: 'Scan this QR code with your phone’s camera'
+  s1 see: 'app.mettleup.fit/app'
+  s1 see: 'GET IT ON Google Play' and 'App Store Coming soon'
+  s1 not: A store redirect on a computer
+J-F-server-109-04 | type 2 | prospect | The link is pasted into WhatsApp or Facebook (link preview fetcher)
+  s1 see: A preview titled 'Get the MettleUp app' with its picture
+  s1 not: A preview of the Google Play page or no preview at all
+J-F-server-109-05 | type 3 | prospect | APP_STORE_URL was set with a typo (not an apps.apple.com /app/ address)
+  s1 see: The 'coming soon' page as if no address were set
+  s1 not: A redirect to the wrong address
+J-F-server-109-06 | type 6 | prospect | The iPhone app comes out and APP_STORE_URL is set; later it is emptied again
+  s1 see: The App Store page straight away
+  s1 not: The 'coming soon' page served from a cache
+  s2 see: The 'coming soon' page again
+  s2 not: A cached redirect to the App Store
+J-F-server-109-07 | type 12 | prospect | Anyone taps the link
+  s1 see: The kind of device is judged from the browser's own description only; nothing is kept
+  s1 not: A cookie or anything personal put in the address
+J-F-server-109-08 | type 1 | member | A member's Android phone has no Google Play and opens app.mettleup.fit/app/apk
+  s1 see: The newest MettleUp APK starts downloading (mettleup-v<x>.apk of the latest release)
+  s1 not: An older version for more than 10 minutes after a release
+  s1 not: A file of another app
+J-F-server-109-09 | type 3 | member | GitHub could not be reached when the newest release was looked up
+  s1 see: GitHub's latest release page, where the APK can be picked by hand
+  s1 not: An error page with nothing to tap
+J-F-server-109-10 | type 6 | member | A new release was published 3 minutes ago
+  s1 see: The previous APK for up to 10 minutes, then the new one
+  s1 not: A link to an APK file that does not exist
+J-F-server-109-11 | type 1 | gym owner | The owner puts the /app link on a poster or in a message to members
+  s1 see: Android: Google Play; iPhone: the 'coming soon' page; computer: the QR page
+  s1 not: A gym-specific page (this link carries no gym)
+J-F-server-109-12 | type 3 | gym owner | The owner opens /app on an iPhone
+  s1 see: 'The iPhone app is coming soon'
+  s1 not: The owner thinking the app is installed
+J-F-server-109-13 | type 6 | gym owner | The get-app page could not be loaded from the site files
+  s1 see: Sent straight to Google Play instead of the QR page
+  s1 not: An error page
+J-F-server-111-01 | type 1 | HQ admin | Play Console's upload page for a new MettleUp release v<x>.<y>.<z>
+  s1 see: The release bundle mettleup-v<x>.<y>.<z>.aab streamed in, with its size
+  s1 not: Another version's bundle
+  s1 not: A browser block for play.google.com
+J-F-server-111-02 | type 2 | HQ admin | The same console page needs the store pictures
+  s1 see: The picture attached to that release
+  s1 not: A picture of another release
+J-F-server-111-03 | type 3 | HQ admin | A version that has no release, or a bundle file missing from the release
+  s1 see: 'Not found' (404)
+  s1 not: An empty file passed as a bundle
+  s1 not: The newest bundle in its place
+J-F-server-111-04 | type 6 | HQ admin | The release was deleted on GitHub after an earlier upload
+  s1 see: 'Not found' (404); nothing is cached here
+  s1 not: The old bundle served from a cache
+J-F-server-111-05 | type 12 | HQ admin | Any website or person asks for the address
+  s1 see: A browser page elsewhere cannot read it (allowed only for play.google.com); a direct download still works, as the release files are public anyway
+  s1 not: A file outside the release's bundle and store-*.png pictures reachable through this address
+J-F-server-111-06 | type 1 | system | A GET for /dl/<version>.aab
+  s1 see: Content type, size and 'no-store' set; the allow-origin header for play.google.com
+  s1 not: The file kept in a cache
+  s1 not: A token or secret sent to GitHub
+J-F-server-111-07 | type 3 | system | A request with another method or a path outside the pattern
+  s1 see: 'Method not allowed' (405)
+  s1 not: The file sent for a POST
+  s2 see: The site's normal not-found answer
+  s2 not: Any other GitHub file passed through
+J-F-server-111-08 | type 6 | system | The console page's browser asks first (OPTIONS) before the GET
+  s1 see: 204 with GET allowed for play.google.com
+  s1 not: The bundle fetched from GitHub for an OPTIONS ask
+J-F-server-112-01 | type 1 | member | Member app, the floating feedback button
+  s1 see: The app's thank-you (app words not read here); the server answers ok (201)
+  s1 not: The message lost while the app says it was sent
+  s1 not: The message saved twice
+J-F-server-112-02 | type 2 | member | Member app, the floating feedback button, speaking instead of typing
+  s1 see: The written text of the clip in the box; after Send the message is kept with how it was written (voice)
+  s1 not: The clip itself kept
+  s1 not: The text sent before Send is tapped
+J-F-server-112-03 | type 3 | member | The feedback box
+  s1 see: 'Write something first.'
+  s1 not: An empty message saved
+  s2 see: 'Keep it under 2000 letters.'
+  s2 not: The text cut and saved without a word
+  s3 see: 'Too many messages today. Try again tomorrow.'
+  s3 not: The message saved anyway
+J-F-server-112-04 | type 6 | member | The save failed once ('Could not save. Try again.')
+  s1 see: One message kept
+  s1 not: Two copies kept
+  s1 not: The first failure counted against the 20-a-day limit
+J-F-server-112-05 | type 12 | member | A member has sent feedback
+  s1 see: MettleUp reads it; it is kept on MettleUp's own small database, not the gym server; kept with the app version, phone, screen, gym code and a random install id, never a name or number; the network address only as a one-way code
+  s1 not: The gym owner or trainers reading it
+  s1 not: The member's name or number stored with it
+J-F-server-112-06 | type 1 | gym owner | Admin app, 'Send feedback'
+  s1 see: The app's thank-you; kept with source admin and the gym code
+  s1 not: The message saved without which app sent it
+J-F-server-112-07 | type 3 | gym owner | Admin app feedback box
+  s1 see: 'Keep it under 2000 letters.'
+  s1 not: A half message saved
+J-F-server-112-08 | type 6 | gym owner | The owner already sent 20 messages in the last 24 hours from this install
+  s1 see: 'Too many messages today. Try again tomorrow.'
+  s1 not: The message saved past the limit
+  s2 see: The message is kept
+  s2 not: The limit never lifting
+J-F-server-112-09 | type 12 | gym owner | The owner has sent feedback
+  s1 see: Only MettleUp reads it; the gym's desk and trainers do not; it is not in the gym server
+  s1 not: Staff of the gym reading the owner's feedback
+J-F-server-112-10 | type 1 | staff | Desk login, admin app 'Send feedback'
+  s1 see: The app's thank-you; kept with source admin and the gym code
+  s1 not: The message saved as the owner's with the owner's name
+J-F-server-112-11 | type 3 | staff | The feedback box
+  s1 see: 'Write something first.'
+  s1 not: An empty message saved
+J-F-server-112-12 | type 6 | staff | The gym's Wi-Fi is shared by members and staff; 20 messages already came from that network today
+  s1 see: 'Too many messages today. Try again tomorrow.' (the limit counts one network address)
+  s1 not: The message saved past the limit
+J-F-server-112-13 | type 1 | trainer | Trainer login, 'Send feedback'
+  s1 see: The app's thank-you; the message kept
+  s1 not: The message lost while the app says it was sent
+J-F-server-112-14 | type 3 | trainer | The feedback box
+  s1 see: 'Keep it under 2000 letters.'
+  s1 not: A cut message saved without a word
+J-F-server-112-15 | type 6 | trainer | Feedback is not set up on the server (database or secret missing)
+  s1 see: 'Feedback is not set up yet.'
+  s1 not: A thank-you for a message that was not kept
+  s2 see: The message is kept
+  s2 not: The old failure shown again
+J-F-server-112-16 | type 1 | HQ admin | New messages are in the feedback table
+  s1 see: Each message with its app, version, device, screen, gym code, how it was written (voice, typed or not said) and status new
+  s1 not: A message missing
+  s1 not: A crash report mixed into the 20-a-day feedback count
+  s2 see: The status and note saved with the sorting time
+  s2 not: The message text changed
+J-F-server-112-17 | type 3 | HQ admin | A message that tells the reader to do something (for example 'delete all members')
+  s1 see: It is stored and read as data only
+  s1 not: Anything done because the message said so
+J-F-server-112-18 | type 6 | HQ admin | A message is a year old
+  s1 see: Messages older than 1 year deleted by the sorting run
+  s1 not: Messages kept past a year
+J-F-server-112-19 | type 12 | HQ admin | HQ reads the messages
+  s1 see: No name and no number; an install id; the network address only as a one-way code
+  s1 not: A way to tie a message back to a person's number from this table alone

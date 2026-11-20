@@ -1,0 +1,434 @@
+# A8-server-database-1-1: coverage of 91 Tier 1 journeys (9 features, from A5-server-database-1-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-server-300 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-server-300 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-server-300 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-server-300 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 1 journey phrase(s)
+F-server-300 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 1 journey phrase(s)
+F-server-300 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-server-300 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-server-300 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-server-300 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-server-300 | apps/dashboard/test/crm/gymPageEditor.test.ts | unit | 226 lines | asserts 1 journey phrase(s)
+F-server-300 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 1 journey phrase(s)
+F-server-300 | apps/mobile/test/db/packetBCards.test.ts | unit | 145 lines | asserts 1 journey phrase(s)
+F-server-301 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 3 journey phrase(s)
+F-server-301 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 3 journey phrase(s)
+F-server-301 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 3 journey phrase(s)
+F-server-301 | apps/dashboard/e2e/terms.spec.mjs | e2e | 149 lines | asserts 3 journey phrase(s)
+F-server-301 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 3 journey phrase(s)
+F-server-301 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-server-301 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 2 journey phrase(s)
+F-server-301 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-server-301 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-server-301 | apps/dashboard/e2e/demo.spec.mjs | e2e | 142 lines | asserts 1 journey phrase(s)
+F-server-301 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-server-301 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 1 journey phrase(s)
+F-server-302 | apps/mobile/test/tracker/phase4RoutinesPure.test.ts | unit | 164 lines | asserts 3 journey phrase(s)
+F-server-302 | apps/dashboard/test/crm/plusLock.test.ts | unit | 92 lines | asserts 2 journey phrase(s)
+F-server-302 | supabase/tests/0018_staff_and_owner_rules.sql | db | 307 lines | file name
+F-server-302 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 1 journey phrase(s)
+F-server-302 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-server-302 | apps/dashboard/test/crm/demoGym.test.ts | unit | 109 lines | asserts 1 journey phrase(s)
+F-server-302 | apps/dashboard/test/crm/dietPlans.test.ts | unit | 248 lines | asserts 1 journey phrase(s)
+F-server-302 | apps/dashboard/test/crm/moveStart.test.ts | unit | 131 lines | asserts 1 journey phrase(s)
+F-server-302 | apps/dashboard/test/crm/shop.test.ts | unit | 391 lines | asserts 1 journey phrase(s)
+F-server-302 | apps/dashboard/test/crm/trial.test.ts | unit | 140 lines | asserts 1 journey phrase(s)
+F-server-302 | apps/dashboard/test/crm/workoutOffer.test.ts | unit | 290 lines | asserts 1 journey phrase(s)
+F-server-302 | apps/mobile/test/cloud/backupWords.test.ts | unit | 88 lines | asserts 1 journey phrase(s)
+F-server-304 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-server-305 | supabase/tests/0020_gym_side_retries.sql | db | 146 lines | file name
+F-server-305 | apps/mobile/test/shop/money.test.ts | unit | 282 lines | asserts 1 journey phrase(s)
+F-server-308 | apps/dashboard/test/crm/brand.test.ts | unit | 145 lines | imports the code
+F-server-308 | apps/mobile/test/shop/gymBrandContract.test.ts | unit | 106 lines | imports the code
+F-server-308 | supabase/tests/0018_staff_and_owner_rules.sql | db | 307 lines | file name
+F-server-308 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-server-309 | apps/mobile/test/shop/c9_34ShopButtons.test.ts | unit | 34 lines | asserts 3 journey phrase(s)
+F-server-309 | apps/dashboard/test/crm/assistant/messageLang.test.ts | unit | 175 lines | asserts 1 journey phrase(s)
+F-server-313 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-server-313 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 1 journey phrase(s)
+F-server-313 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 1 journey phrase(s)
+F-server-313 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 1 journey phrase(s)
+F-server-313 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 1 journey phrase(s)
+F-server-313 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 1 journey phrase(s)
+F-server-313 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 1 journey phrase(s)
+F-server-313 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-server-313 | apps/dashboard/test/crm/pin.test.ts | unit | 159 lines | asserts 1 journey phrase(s)
+F-server-313 | apps/mobile/test/db/finishReal.test.ts | unit | 104 lines | asserts 1 journey phrase(s)
+F-server-313 | apps/mobile/test/shop/trainerShare.test.ts | unit | 155 lines | asserts 1 journey phrase(s)
+F-server-313 | apps/mobile/test/tracker/phase2ReviewFixes.test.ts | unit | 287 lines | asserts 1 journey phrase(s)
+F-server-311 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | asserts 3 journey phrase(s)
+F-server-311 | supabase/tests/0031_branches.sql | db | 352 lines | file name, asserts 1 journey phrase(s)
+F-server-311 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 2 journey phrase(s)
+F-server-311 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-server-311 | apps/mobile/test/store/restoreImpact.test.ts | unit | 24 lines | asserts 2 journey phrase(s)
+F-server-311 | supabase/tests/0022_key_status.sql | db | 52 lines | file name
+F-server-311 | supabase/tests/0043_member_photos.sql | db | 135 lines | asserts 2 journey phrase(s)
+F-server-311 | apps/dashboard/e2e/bell-inbox-uat.spec.mjs | e2e | 401 lines | asserts 1 journey phrase(s)
+F-server-311 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-server-311 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-server-311 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-server-311 | apps/dashboard/e2e/signin.spec.mjs | e2e | 82 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-server-300-01 | type 1 | owner | A signed-in account (old cloud design) with no gym yet
+  s1 see: The gym comes back with a 6-letter join code
+  s1 not: Two gyms with the same join code
+  s1 not: The caller not made the gym's owner
+  s2 see: One row per member of this gym: last workout, 7-day and 30-day counts, streak
+  s2 not: Rows of another gym's members
+J-F-server-300-02 | type 3 | owner | The owner's account already owns a gym
+  s1 see: 'This account belongs to a gym owner or staff. Open the MettleUp admin app instead.'
+  s1 not: The owner silently turned into a member of the other gym
+  s1 not: The owner's own gym left without its owner
+J-F-server-300-03 | type 6 | owner | An owner account with a gym and members
+  s1 see: The call ends with no error; the account no longer belongs to the gym
+  s1 not: Members' summary rows of the gym deleted with the owner's
+  s1 not: The gym row deleted while members still belong to it
+  s2 see: Nothing: the account has no gym now
+  s2 not: The old gym's member rows still readable
+J-F-server-300-04 | type 12 | owner | An owner account of a gym whose members push their summary
+  s1 see: Weight, calories and protein today of each member who pushed them
+  s1 not: A member of another gym shown
+  s1 not: A member's row shown after that member erased their cloud data
+J-F-server-300-05 | type 1 | trainer | A signed-in account with role trainer in a gym (set by hand; no function makes a trainer)
+  s1 see: One row per member of the trainer's gym
+  s1 not: Rows from another gym
+  s1 not: A write allowed to a member's row
+J-F-server-300-06 | type 3 | trainer | A trainer account
+  s1 see: The change is refused (no write policy for staff since 0021 dropped gyms_owner_update)
+  s1 not: The gym renamed by a trainer
+  s1 not: A member's streak changed by a trainer
+J-F-server-300-07 | type 6 | trainer | A trainer account in a gym
+  s1 see: The account leaves the gym
+  s1 not: Members' rows deleted with the trainer's profile
+  s2 see: Nothing
+  s2 not: The gym's member rows still readable
+J-F-server-300-08 | type 12 | trainer | A trainer account in a gym
+  s1 see: Every member's weight and today's calories and protein, not only the trainer's own clients
+  s1 not: Rows of members of another gym
+J-F-server-300-09 | type 1 | member | A member signed in with an account, gym code 'AB12CD' from the desk
+  s1 see: The app links to the gym
+  s1 not: The member linked to another gym
+  s2 see: Nothing on screen; the gym's row for the member shows the new counts
+  s2 not: A second row for the same member
+  s2 not: An older retry overwriting newer counts
+J-F-server-300-10 | type 2 | member | A member already linked to gym A
+  s1 see: The app now names gym B
+  s1 not: Gym A still seeing the member's summary after the next push
+  s2 see: The summary row moves to gym B
+  s2 not: The push refused because the row still names gym A
+J-F-server-300-11 | type 3 | member | A member signed in with an account
+  s1 see: 'That gym code is not valid — check with your gym.'
+  s1 not: The member linked to a random gym
+  s1 not: A crash
+J-F-server-300-12 | type 6 | member | A linked member with a summary row
+  s1 see: The link is removed from the phone
+  s1 not: The phone says erased while the server row stays
+  s2 see: 'Could not delete your cloud data — connect to the internet and try again.'
+  s2 not: The phone forgets the link while the server row stays
+J-F-server-300-13 | type 12 | member | A linked member
+  s1 see: The gym's owner and trainers can read it
+  s1 not: Another member of the gym reading it
+  s1 not: Another gym reading it
+J-F-server-301-01 | type 1 | prospect | A gym owner trying MettleUp, no account
+  s1 see: A new gym 'Power House' with its join code opens in the panel
+  s1 not: A sign-up or password asked for
+  s1 not: Another person's gym opened
+  s2 see: 12 sample products such as 'Whey protein 1 kg' and 'Gym towel'
+  s2 not: An empty shop
+  s2 not: Prices or stock of another gym
+J-F-server-301-02 | type 3 | prospect | 300 or more demo gyms made in the last hour
+  s1 see: 'Many gyms are starting right now. Please try again in a few minutes.'
+  s1 not: A half-made gym with no owner key
+  s1 not: A raw BUSY code shown
+J-F-server-301-03 | type 3 | prospect | A prospect who leaves the name empty
+  s1 see: A gym called 'My Gym'
+  s1 not: A gym with an empty name
+  s1 not: An error with no words
+J-F-server-301-04 | type 6 | prospect | A prospect who already started one demo
+  s1 see: A second, separate gym with its own code and sample shop
+  s1 not: The first gym overwritten
+  s1 not: The first gym's key opening the second gym
+J-F-server-301-05 | type 12 | prospect | A demo gym just made
+  s1 see: The friend can join the demo gym from the app and see its sample shop
+  s1 not: The friend seeing who made the demo
+  s1 not: The owner key shown to anyone but this browser
+J-F-server-301-06 | type 1 | owner | The browser that started the demo holds the owner key
+  s1 see: The sample products with prices and stock
+  s1 not: Products of another gym
+  s2 see: Members who joined with the code, with their order counts
+  s2 not: Members of another gym
+J-F-server-301-07 | type 3 | owner | The owner key is wrong or was retired
+  s1 see: 'You were signed out. Sign in again with your mobile number.'
+  s1 not: Another gym opened
+  s1 not: A blank panel with no words
+J-F-server-301-08 | type 6 | owner | A demo gym that was put online (owner as a person)
+  s1 see: The gym keeps working with the person's session
+  s1 not: The gym locked when the key goes
+  s2 see: Signed-out words
+  s2 not: The old key still opening the gym
+J-F-server-301-09 | type 12 | owner | A demo gym
+  s1 see: Only a hash of the key is stored
+  s1 not: The key itself stored on the server
+  s1 not: The key sent to anyone but the starting browser
+J-F-server-302-01 | type 1 | owner | Owner signed in, shop open
+  s1 see: The product at the end of the list with stock 10
+  s1 not: A price stored in rupees instead of paise
+  s1 not: The product saved in another gym
+  s2 see: The new product
+  s2 not: The product missing while it is shown in the panel
+J-F-server-302-02 | type 2 | owner | A product the owner opened a minute ago
+  s1 see: The new price
+  s1 not: Stock or options changed without being touched
+J-F-server-302-03 | type 2 | owner | A product with flavours
+  s1 see: Chocolate stock up by 5; the product's total stock equals the sum of its flavours
+  s1 not: Stock below 0 or over 100000
+  s1 not: Total stock not matching the flavours
+J-F-server-302-04 | type 2 | owner | An active product
+  s1 see: The product stays in the panel, hidden
+  s1 not: The product deleted
+  s1 not: The product still in the member shop
+J-F-server-302-05 | type 3 | owner | Two owners open the same product
+  s1 see: Saved
+  s1 not: The save refused for the first owner
+  s2 see: A 'changed' refusal (CHANGED)
+  s2 not: The second save quietly overwriting the first
+J-F-server-302-06 | type 3 | owner | Owner adds a product
+  s1 see: A refusal
+  s1 not: A product at a price under 1 rupee
+  s1 not: A raw database error shown
+J-F-server-302-07 | type 6 | owner | A product with an open member order
+  s1 see: The product leaves the list and the member shop
+  s1 not: The open order losing its line or price
+  s2 see: The order cancelled
+  s2 not: An error because the product is gone
+J-F-server-302-08 | type 12 | owner | A hidden product
+  s1 see: Only active products of this gym
+  s1 not: A hidden product
+  s1 not: Another gym's product
+J-F-server-302-09 | type 1 | staff | A front-desk person signed in
+  s1 see: The gym's products with stock
+  s1 not: Another gym's products
+J-F-server-302-10 | type 3 | staff | A front-desk person signed in
+  s1 see: 'Only an owner can do this.'
+  s1 not: The price changed
+J-F-server-302-11 | type 6 | staff | A front-desk person, an active product
+  s1 see: 'Only an owner can do this.'
+  s1 not: The product hidden or deleted
+J-F-server-304-01 | type 1 | owner | A member placed order 12
+  s1 see: Order 12 with the member's name, lines and total, status Ordered
+  s1 not: Orders of another gym
+  s2 see: Ready, then Collected
+  s2 not: The order counted twice in spent money
+  s2 not: Stock taken again
+J-F-server-304-02 | type 2 | owner | An order marked ready by mistake
+  s1 see: Status Ordered
+  s1 not: The order stuck at Ready
+J-F-server-304-03 | type 3 | owner | A collected order
+  s1 see: A refusal (BAD_STEP)
+  s1 not: The order cancelled and its stock put back after the goods left
+J-F-server-304-04 | type 6 | owner | An order at Ready for 2 tubs of chocolate whey
+  s1 see: Status Cancelled, by the gym; chocolate stock up by 2
+  s1 not: Stock not put back
+  s1 not: The member still seeing Ready
+J-F-server-304-05 | type 12 | owner | A gym with orders
+  s1 see: Member names, phone numbers, order counts and money spent of this gym's members
+  s1 not: Members or orders of another gym
+  s2 see: Every shop order of the gym deleted within 30 days
+  s2 not: Orders kept on the server after the gym is gone
+J-F-server-304-06 | type 1 | staff | A front-desk person signed in, an order waiting
+  s1 see: Ready, then Collected
+  s1 not: 'Only an owner can do this.' shown for orders
+J-F-server-304-07 | type 2 | staff | An order still at Ordered, the member is at the desk
+  s1 see: Collected
+  s1 not: Having to mark it ready first
+J-F-server-304-08 | type 3 | staff | The member cancelled the order in the app a moment ago
+  s1 see: A refusal (BAD_STEP); the list shows Cancelled after refresh
+  s1 not: A cancelled order brought back
+J-F-server-304-09 | type 6 | staff | An order at Ready
+  s1 see: Cancelled by the gym; stock back
+  s1 not: Stock not put back
+J-F-server-304-10 | type 12 | staff | A front-desk person
+  s1 see: Member names on this gym's orders only
+  s1 not: Orders of another gym
+  s1 not: Members' phone numbers on an order
+J-F-server-305-01 | type 1 | member | A member joined to a gym with a shop
+  s1 see: The gym's active products with prices
+  s1 not: Hidden products
+  s1 not: Another gym's products
+  s2 see: Order with its number, status Ordered, total 2,499
+  s2 not: A price taken from the phone instead of the server
+  s2 not: Stock taken twice
+  s3 see: The order at the top
+  s3 not: Another member's orders
+J-F-server-305-02 | type 2 | member | The order's answer was lost on a weak network
+  s1 see: The same order number as the gym has
+  s1 not: A second order
+  s1 not: Stock taken twice
+J-F-server-305-03 | type 3 | member | Strawberry whey has 0 stock
+  s1 see: A sold-out message naming 'Whey protein 1 kg · Strawberry'
+  s1 not: An order for stock the gym does not have
+J-F-server-305-04 | type 3 | member | The member placed 15 orders in the last hour
+  s1 see: A too-many refusal (TOO_MANY)
+  s1 not: The order made
+  s1 not: A crash
+J-F-server-305-05 | type 6 | member | An order at Ordered
+  s1 see: Cancelled; stock back
+  s1 not: The gym still seeing it as Ordered
+  s2 see: A too-late refusal (TOO_LATE)
+  s2 not: A Ready order cancelled by the member
+J-F-server-305-06 | type 12 | member | A member with a pending order
+  s1 see: A question first, because switching cancels the waiting order
+  s1 not: The order cancelled with no question
+  s2 see: Only this member's own orders
+  s2 not: Other members' names or orders
+J-F-server-308-01 | type 1 | owner | Owner signed in
+  s1 see: The gym's name, join code and brand colours and logo
+  s1 not: Another gym's name or logo
+  s2 see: The new name everywhere in the panel
+  s2 not: The old name kept after reload
+J-F-server-308-02 | type 2 | owner | Owner edits the gym's details in the records (gym record)
+  s1 see: The gym name changes
+  s1 not: The record and the gym name disagreeing
+J-F-server-308-03 | type 3 | owner | Owner signed in
+  s1 see: 'Type the name.'
+  s1 not: A gym with no name
+J-F-server-308-04 | type 6 | owner | A gym renamed a moment ago
+  s1 see: The old name again
+  s1 not: Members' app still showing the in-between name after its refresh
+J-F-server-308-05 | type 12 | owner | A gym with a logo
+  s1 see: Name, code and look only
+  s1 not: The owner's name or number
+J-F-server-308-06 | type 1 | staff | A front-desk person signed in
+  s1 see: The gym's name, code and logo at the top
+  s1 not: Another gym's details
+J-F-server-308-07 | type 3 | staff | A front-desk person signed in
+  s1 see: 'Only an owner can do this.'
+  s1 not: The gym renamed by the desk
+J-F-server-308-08 | type 6 | staff | The owner renamed the gym on another device
+  s1 see: The new name
+  s1 not: The old name kept
+J-F-server-309-01 | type 1 | prospect | A person with the app taps the gym's link /j/AB12CD
+  s1 see: The gym's name and logo
+  s1 see: Button 'Join this gym'
+  s1 not: Another gym's name
+  s1 not: The member list or any phone number
+J-F-server-309-02 | type 2 | prospect | A person at the front desk
+  s1 see: The gym's name and logo before joining
+  s1 not: A join with no gym named first
+J-F-server-309-03 | type 3 | prospect | A person with a mistyped code
+  s1 see: The wrong code caught at once
+  s1 not: A crash
+  s1 not: A random gym shown
+J-F-server-309-04 | type 6 | prospect | The gym changed its name and logo after the poster was printed
+  s1 see: The new name and logo
+  s1 not: The old name kept
+J-F-server-309-05 | type 12 | prospect | Anyone with a join code
+  s1 see: Gym name, code and look only
+  s1 not: The owner, members or any number
+J-F-server-309-06 | type 1 | member | A member of gym A scans gym B's poster
+  s1 see: Gym B's name and logo
+  s1 see: Button 'Switch to this gym'
+  s1 not: Joined without a tap
+J-F-server-309-07 | type 2 | member | A member types gym B's code by hand
+  s1 see: Gym B named first
+  s1 not: A one-letter slip joining a stranger's gym
+J-F-server-309-08 | type 3 | member | A member types a wrong code
+  s1 see: The wrong code caught
+  s1 not: The member leaving their own gym
+J-F-server-309-09 | type 6 | member | A member scans their own gym's poster
+  s1 see: Their own gym; no switch offered
+  s1 not: A second join to the same gym
+J-F-server-309-10 | type 12 | member | A member with a waiting shop order
+  s1 see: A question first, because switching cancels the waiting order
+  s1 not: The order cancelled with no question
+J-F-server-313-01 | type 1 | owner | An owner-key gym in this browser
+  s1 see: The owner signed in as a person on this device
+  s1 not: The gym locked if the answer is lost
+  s1 not: A second owner row for the same mobile
+  s2 see: Ravi, owner
+  s2 not: The old owner key forgotten before the session works
+J-F-server-313-02 | type 2 | owner | The owner already did this once on this mobile
+  s1 see: A new session; the same person
+  s1 not: A second owner made
+J-F-server-313-03 | type 3 | owner | The mobile is already a front-desk person of this gym
+  s1 see: 'This mobile number is already on the list.'
+  s1 not: The desk person made owner
+J-F-server-313-04 | type 3 | owner | Owner types a bad mobile '12345'
+  s1 see: A bad-number refusal
+  s1 not: A person saved with that number
+J-F-server-313-05 | type 6 | owner | The gym is online
+  s1 see: The gym keeps working
+  s1 not: The person's session ended too
+  s2 see: Signed-out words
+  s2 not: The old key still working
+J-F-server-313-06 | type 12 | owner | Putting the gym online
+  s1 see: Only people the owner adds can sign in
+  s1 not: The mobile shown to members
+J-F-server-311-01 | type 1 | owner | Owner signed in on a laptop, a new phone
+  s1 see: A 6-digit code shown once
+  s1 not: The same code shown again later
+  s2 see: The gym opens on the phone
+  s2 not: The laptop signed out
+J-F-server-311-02 | type 2 | owner | Owner with a PIN
+  s1 see: The gym opens
+  s1 not: A PIN of another person with this mobile accepted
+J-F-server-311-03 | type 3 | owner | Owner types a wrong code
+  s1 see: 'That PIN or code is wrong, or the code has expired. ...' with tries left
+  s1 not: The try not counted
+  s2 see: 'Too many tries for this number. Wait 15 minutes, or get a new code.'
+  s2 not: Others' wrong tries locking this person out
+J-F-server-311-04 | type 6 | owner | A person signed in on two phones
+  s1 see: Their devices signed out
+  s1 not: The owner's own device signed out
+  s2 see: Signed-out words, not removed words
+  s2 not: 'Ask your gym owner for a new code' for a removed person
+J-F-server-311-05 | type 12 | owner | Owner adds a front-desk person
+  s1 see: Only the owner can add people or make codes
+  s1 not: Codes stored as typed
+  s1 not: A desk person able to make codes
+J-F-server-311-06 | type 1 | staff | A front-desk person got a code from the owner
+  s1 see: The gym opens
+  s1 not: An owner's screens shown
+J-F-server-311-07 | type 2 | staff | A desk person with a PIN
+  s1 see: The gym opens
+  s1 not: A locked PIN tried
+J-F-server-311-08 | type 3 | staff | A desk person signed in
+  s1 see: 'Only an owner can do this.'
+  s1 not: A code made
+J-F-server-311-09 | type 6 | staff | The owner removed this desk person
+  s1 see: Removed words (the key status says 'removed')
+  s1 not: 'Ask your gym owner for a new sign-in code'
+J-F-server-311-10 | type 12 | staff | A desk person
+  s1 see: The mobile and wrong tries are recorded
+  s1 not: The PIN kept in readable form
+J-F-server-311-11 | type 1 | trainer | A trainer (staff with trainer tick) got a code
+  s1 see: The gym opens
+  s1 not: Owner-only screens
+J-F-server-311-12 | type 3 | trainer | A trainer types an expired code
+  s1 see: 'That PIN or code is wrong, or the code has expired. ...'
+  s1 not: Signed in with an expired code
+J-F-server-311-13 | type 6 | trainer | A trainer signed in
+  s1 see: Back to Sign in
+  s1 not: Other devices of the trainer signed out
+  s2 see: Signed-out words
+  s2 not: The key still working
+J-F-server-311-14 | type 1 | HQ admin | An owner lost every device and called support
+  s1 see: A 6-digit code
+  s1 not: A code for a desk person
+  s1 not: A code made for a mobile that owns no gym
+  s2 see: The gym opens
+  s2 not: Another gym opened
+J-F-server-311-15 | type 2 | HQ admin | The mobile owns gyms in two unrelated groups
+  s1 see: A code for that gym
+  s1 not: A code for the wrong gym
+J-F-server-311-16 | type 3 | HQ admin | The mobile owns gyms in two unrelated groups
+  s1 see: A pick-a-gym refusal (PICK_GYM)
+  s1 not: A code for a random gym
+J-F-server-311-17 | type 6 | HQ admin | A support code already used
+  s1 see: Wrong-code words
+  s1 not: A second sign-in from one code
+J-F-server-311-18 | type 12 | HQ admin | Support makes a code
+  s1 see: A code that opens the whole gym
+  s1 not: A code made without the owner asking
+  s1 not: No record of support making it

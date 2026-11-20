@@ -1,0 +1,619 @@
+# A8-phone-shop-2-1: coverage of 79 Tier 1 journeys (8 features, from A5-phone-shop-2-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-phone-400 | apps/dashboard/test/crm/legalPages.test.ts | unit | 135 lines | imports the code
+F-phone-400 | apps/mobile/qa/uat-e.yaml | maestro | 267 lines | asserts 3 journey phrase(s)
+F-phone-400 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | imports the code
+F-phone-400 | apps/mobile/test/shop/askReplyAlerts.test.ts | unit | 226 lines | imports the code
+F-phone-400 | apps/mobile/test/shop/boardNameChoice.test.ts | unit | 79 lines | imports the code
+F-phone-400 | apps/mobile/test/shop/c6LeavePending.test.ts | unit | 104 lines | imports the code
+F-phone-400 | apps/mobile/test/shop/c6S3.test.ts | unit | 187 lines | imports the code
+F-phone-400 | apps/mobile/test/shop/c6S4.test.ts | unit | 132 lines | imports the code
+F-phone-400 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | imports the code
+F-phone-400 | apps/mobile/test/shop/gymBusy.test.ts | unit | 209 lines | imports the code
+F-phone-400 | apps/mobile/test/shop/gymReminders.test.ts | unit | 200 lines | imports the code
+F-phone-400 | apps/mobile/test/shop/gymRemindersErase.test.ts | unit | 36 lines | imports the code
+F-phone-406 | apps/mobile/test/shop/inbox.test.ts | unit | 109 lines | imports the code, file name, asserts 3 journey phrase(s)
+F-phone-406 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | imports the code, asserts 4 journey phrase(s)
+F-phone-406 | apps/dashboard/test/crm/messages.test.ts | unit | 189 lines | asserts 6 journey phrase(s)
+F-phone-406 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 5 journey phrase(s)
+F-phone-406 | apps/dashboard/test/crm/assistant/messageDay.test.ts | unit | 114 lines | asserts 4 journey phrase(s)
+F-phone-406 | apps/mobile/test/shop/gymBusy.test.ts | unit | 209 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-406 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-406 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 3 journey phrase(s)
+F-phone-406 | apps/mobile/qa/invite-e.yaml | maestro | 81 lines | asserts 3 journey phrase(s)
+F-phone-406 | apps/mobile/test/shop/askReplyAlerts.test.ts | unit | 226 lines | imports the code
+F-phone-406 | apps/mobile/test/shop/boardNameChoice.test.ts | unit | 79 lines | imports the code
+F-phone-406 | apps/mobile/test/shop/c6LeavePending.test.ts | unit | 104 lines | imports the code
+F-phone-404 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | imports the code, asserts 3 journey phrase(s)
+F-phone-404 | apps/mobile/test/shop/gym.test.ts | unit | 480 lines | imports the code, asserts 2 journey phrase(s)
+F-phone-404 | apps/mobile/test/shop/gymStore.test.ts | unit | 79 lines | imports the code, file name
+F-phone-404 | apps/mobile/test/shop/money.test.ts | unit | 282 lines | imports the code, file name
+F-phone-404 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | file name, asserts 1 journey phrase(s)
+F-phone-404 | apps/mobile/test/shop/askReplyAlerts.test.ts | unit | 226 lines | imports the code
+F-phone-404 | apps/mobile/test/shop/boardNameChoice.test.ts | unit | 79 lines | imports the code
+F-phone-404 | apps/mobile/test/shop/c6LeavePending.test.ts | unit | 104 lines | imports the code
+F-phone-404 | apps/mobile/test/shop/c6OrderOnce.test.ts | unit | 208 lines | imports the code
+F-phone-404 | apps/mobile/test/shop/c6S3.test.ts | unit | 187 lines | imports the code
+F-phone-404 | apps/mobile/test/shop/c6S4.test.ts | unit | 132 lines | imports the code
+F-phone-404 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | imports the code
+F-phone-411 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | imports the code, asserts 7 journey phrase(s)
+F-phone-411 | apps/mobile/test/shop/c6S4.test.ts | unit | 132 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-411 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 3 journey phrase(s)
+F-phone-411 | apps/dashboard/test/crm/challengesHinglish.test.ts | unit | 108 lines | asserts 3 journey phrase(s)
+F-phone-411 | apps/mobile/test/shop/askReplyAlerts.test.ts | unit | 226 lines | imports the code
+F-phone-411 | apps/mobile/test/shop/boardNameChoice.test.ts | unit | 79 lines | imports the code
+F-phone-411 | apps/mobile/test/shop/c6LeavePending.test.ts | unit | 104 lines | imports the code
+F-phone-411 | apps/mobile/test/shop/c6S3.test.ts | unit | 187 lines | imports the code
+F-phone-411 | apps/mobile/test/shop/gymBusy.test.ts | unit | 209 lines | imports the code
+F-phone-411 | apps/mobile/test/shop/gymReminders.test.ts | unit | 200 lines | imports the code
+F-phone-411 | apps/mobile/test/shop/gymRemindersErase.test.ts | unit | 36 lines | imports the code
+F-phone-411 | apps/mobile/test/shop/gymWod.test.ts | unit | 164 lines | imports the code
+F-phone-409 | apps/mobile/test/shop/membership.test.ts | unit | 154 lines | imports the code, file name, asserts 5 journey phrase(s)
+F-phone-409 | apps/mobile/test/shop/planEnds.test.ts | unit | 77 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-phone-409 | apps/mobile/test/shop/autoReminders.test.ts | unit | 395 lines | imports the code, asserts 2 journey phrase(s)
+F-phone-409 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-409 | apps/mobile/test/shop/r505AskPlan.test.ts | unit | 134 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-409 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 3 journey phrase(s)
+F-phone-409 | apps/mobile/qa/uat-rel-14-pass-member.yaml | maestro | 132 lines | asserts 3 journey phrase(s)
+F-phone-409 | apps/mobile/test/plan/memberPlan.test.ts | unit | 177 lines | imports the code
+F-phone-409 | apps/mobile/test/shop/askReplyAlerts.test.ts | unit | 226 lines | imports the code
+F-phone-409 | apps/mobile/test/shop/boardNameChoice.test.ts | unit | 79 lines | imports the code
+F-phone-409 | apps/mobile/test/shop/c6LeavePending.test.ts | unit | 104 lines | imports the code
+F-phone-409 | apps/mobile/test/shop/c6S3.test.ts | unit | 187 lines | imports the code
+F-phone-412 | apps/mobile/test/shop/gymPlans.test.ts | unit | 88 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-phone-412 | apps/mobile/test/shop/askReplyAlerts.test.ts | unit | 226 lines | imports the code
+F-phone-412 | apps/mobile/test/shop/boardNameChoice.test.ts | unit | 79 lines | imports the code
+F-phone-412 | apps/mobile/test/shop/c6LeavePending.test.ts | unit | 104 lines | imports the code
+F-phone-412 | apps/mobile/test/shop/c6S3.test.ts | unit | 187 lines | imports the code
+F-phone-412 | apps/mobile/test/shop/c6S4.test.ts | unit | 132 lines | imports the code
+F-phone-412 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | imports the code
+F-phone-412 | apps/mobile/test/shop/gymBusy.test.ts | unit | 209 lines | imports the code
+F-phone-412 | apps/mobile/test/shop/gymReminders.test.ts | unit | 200 lines | imports the code
+F-phone-412 | apps/mobile/test/shop/gymRemindersErase.test.ts | unit | 36 lines | imports the code
+F-phone-412 | apps/mobile/test/shop/gymWod.test.ts | unit | 164 lines | imports the code
+F-phone-412 | apps/mobile/test/shop/invite.test.ts | unit | 119 lines | imports the code
+F-phone-413 | apps/mobile/test/shop/gymWod.test.ts | unit | 164 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-phone-413 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-413 | apps/mobile/test/shop/askReplyAlerts.test.ts | unit | 226 lines | imports the code
+F-phone-413 | apps/mobile/test/shop/boardNameChoice.test.ts | unit | 79 lines | imports the code
+F-phone-413 | apps/mobile/test/shop/c6LeavePending.test.ts | unit | 104 lines | imports the code
+F-phone-413 | apps/mobile/test/shop/c6S3.test.ts | unit | 187 lines | imports the code
+F-phone-413 | apps/mobile/test/shop/c6S4.test.ts | unit | 132 lines | imports the code
+F-phone-413 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | imports the code
+F-phone-413 | apps/mobile/test/shop/gymBusy.test.ts | unit | 209 lines | imports the code
+F-phone-413 | apps/mobile/test/shop/gymReminders.test.ts | unit | 200 lines | imports the code
+F-phone-413 | apps/mobile/test/shop/gymRemindersErase.test.ts | unit | 36 lines | imports the code
+F-phone-413 | apps/mobile/test/shop/invite.test.ts | unit | 119 lines | imports the code
+F-phone-415 | apps/mobile/test/shop/gymBody.test.ts | unit | 148 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-phone-415 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-415 | apps/mobile/test/shop/askReplyAlerts.test.ts | unit | 226 lines | imports the code
+F-phone-415 | apps/mobile/test/shop/boardNameChoice.test.ts | unit | 79 lines | imports the code
+F-phone-415 | apps/mobile/test/shop/c6LeavePending.test.ts | unit | 104 lines | imports the code
+F-phone-415 | apps/mobile/test/shop/c6S3.test.ts | unit | 187 lines | imports the code
+F-phone-415 | apps/mobile/test/shop/c6S4.test.ts | unit | 132 lines | imports the code
+F-phone-415 | apps/mobile/test/shop/gymBusy.test.ts | unit | 209 lines | imports the code
+F-phone-415 | apps/mobile/test/shop/gymReminders.test.ts | unit | 200 lines | imports the code
+F-phone-415 | apps/mobile/test/shop/gymRemindersErase.test.ts | unit | 36 lines | imports the code
+F-phone-415 | apps/mobile/test/shop/gymWod.test.ts | unit | 164 lines | imports the code
+F-phone-415 | apps/mobile/test/shop/invite.test.ts | unit | 119 lines | imports the code
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-phone-400-01 | type 1 | prospect | A gym invite link (https://<gym-link host>/j/CODE) opened on a phone in no gym
+  s1 see: Screen 'Join your gym'
+  s1 see: 'Finding your gym…' with a spinner, then the gym's name and look
+  s1 not: Another gym's name or logo
+  s1 not: A join made before any tap
+  s2 see: 'Join to see your membership and your gym's messages here. Your workouts stay on this phone.'
+  s2 see: The leaderboard name note
+  s2 see: 'Your name' box filled from the profile name
+  s2 not: The name box filled with someone else's name
+  s3 see: The button shows it is busy
+  s3 see: The app moves on to the gym (or back to the check-in when opened from the poster)
+  s3 not: Two members made at the gym for one tap
+  s3 not: The join sent before the box is ticked
+J-F-phone-400-02 | type 2 | prospect | Welcome screen, 'Join my gym', no invite link
+  s1 see: The gym's name checked against the code
+  s1 see: A button 'Join <gym name>'
+  s1 not: A wrong code accepted without a word
+  s1 not: The member's name sent to a gym the code does not name
+  s2 see: The same 'Join your gym' screen with the tick box and name box
+  s2 not: A join without the 18+ tick
+J-F-phone-400-03 | type 3 | prospect | Invite screen open, the gym found
+  s1 see: 'Please tick the box above. You need to be 18 or older and agree to the terms and privacy notice.'
+  s1 not: Any call to the gym
+  s1 not: A member made at the gym
+  s2 see: 'Type your name so the desk knows whose order it is.'
+  s2 not: An empty-name member at the gym
+  s3 see: The 'gym not found' card with a way back to the code box
+  s3 not: A spinner that never ends
+  s3 not: A join attempt
+J-F-phone-400-04 | type 6 | prospect | Joined a gym by link, then the same link opened again
+  s1 see: 'You're already in <gym>. Nothing to do.' and 'Open your gym'
+  s1 not: A second member made at the gym
+  s1 not: The tick box asked again
+  s2 see: The same member is given back
+  s2 not: A second row for the same person on the gym's list
+J-F-phone-400-05 | type 12 | prospect | Invite screen, about to join
+  s1 see: The leaderboard note (other members see the name only if switched on)
+  s1 see: When the gym's trainer view is live: 'Your gym and your trainer see your workouts, so they can help you progress.'
+  s1 not: Workouts shared with the trainer without that line shown first
+  s1 not: The name shown to other members on the leaderboard without the member switching it on
+J-F-phone-400-06 | type 1 | member | Phone already in gym A; an invite link for gym B opened
+  s1 see: 'You're in <gym A> now. Switching takes you out of <gym A> on this phone.'
+  s1 see: A button 'Switch to this gym'
+  s1 not: The switch done before any tap
+  s2 see: A question about open shop orders at gym A when there are some
+  s2 see: Then gym B's screen
+  s2 not: Gym A's open orders left waiting at gym A's desk
+  s2 not: The phone left in no gym when the join to B fails
+J-F-phone-400-07 | type 2 | member | Phone in gym A; gym A's own invite link opened (for example from the check-in poster)
+  s1 see: 'You're already in <gym A>. Nothing to do.'
+  s1 see: 'Open your gym'
+  s1 not: A second member made at gym A
+  s1 not: A switch question
+J-F-phone-400-08 | type 3 | member | Phone in gym A; switching to gym B with no internet
+  s1 see: 'No internet. Try again when you're online.'
+  s1 not: The phone taken out of gym A
+  s1 not: Gym A's messages and plans wiped from the phone
+J-F-phone-400-09 | type 6 | member | Switched from gym A to gym B
+  s1 see: Gym B's name, look and messages only
+  s1 not: Gym A's messages, plans or diets still shown
+  s1 not: Gym A still listing this phone as a member after it confirms the leave
+J-F-phone-400-10 | type 12 | member | Phone in gym A, switching to gym B
+  s1 see: Gym B gets the name typed in the box only
+  s1 not: Gym A's records (plan, check-ins) sent to gym B
+  s1 not: Workouts shared with gym B's trainers without the line shown first
+J-F-phone-406-01 | type 1 | member | A member in a gym; the gym sent a 'Gym closed' message; the bell on the Gym tab shows 1
+  s1 see: Screen 'Messages', subtitle 'From <gym name>'
+  s1 see: A card: 'Gym closed', 'Just now' / '2 h ago', the title and the body
+  s1 not: Another gym's message
+  s1 not: A message the gym withdrew
+  s2 see: The bell's number gone
+  s2 not: The number still 1 after the message was on screen
+J-F-phone-406-02 | type 2 | member | A member in a gym; a pop-up 'News from your gym' on the phone
+  s1 see: The 'Messages' screen opens (route /shop/inbox) with the new message at the top
+  s1 not: An empty screen while the list loads
+  s1 not: A pop-up for a quiet (3rd or later of the day) message
+J-F-phone-406-03 | type 3 | member | A member in a gym; the internet is off
+  s1 see: The last messages kept on the phone
+  s1 see: 'No internet — showing the last messages.'
+  s1 not: An empty list that looks like 'No messages yet'
+  s1 not: A crash
+  s2 see: 'No messages yet' and 'When your gym sends news — a holiday, new timings, an offer — it shows here.'
+  s2 not: A spinner that never ends
+J-F-phone-406-04 | type 6 | member | A member in a gym; two unseen messages, one seen while offline
+  s1 see: Both shown as seen on the phone at once
+  s1 see: The gym is told again when the next refresh works
+  s1 not: The bell number coming back after reopening
+  s1 not: The gym never hearing the message was seen
+  s2 see: The messages go from the phone
+  s2 not: The old gym's messages shown after joining another gym
+J-F-phone-406-05 | type 12 | member | A member in a gym; the gym sends a message to one group only
+  s1 see: Only messages sent to everyone or to this member's group
+  s1 not: A message meant for another group
+  s1 not: Another member's name or number in a message list
+J-F-phone-406-06 | type 1 | pass member | A pass member (FITPASS / cultpass) in a gym; the gym sent a 'Gym closed' message; the bell on the Gym tab shows 1
+  s1 see: Screen 'Messages', subtitle 'From <gym name>'
+  s1 see: A card: 'Gym closed', 'Just now' / '2 h ago', the title and the body
+  s1 not: Another gym's message
+  s1 not: A message the gym withdrew
+  s2 see: The bell's number gone
+  s2 not: The number still 1 after the message was on screen
+J-F-phone-406-07 | type 2 | pass member | A pass member (FITPASS / cultpass) in a gym; a pop-up 'News from your gym' on the phone
+  s1 see: The 'Messages' screen opens (route /shop/inbox) with the new message at the top
+  s1 not: An empty screen while the list loads
+  s1 not: A pop-up for a quiet (3rd or later of the day) message
+J-F-phone-406-08 | type 3 | pass member | A pass member (FITPASS / cultpass) in a gym; the internet is off
+  s1 see: The last messages kept on the phone
+  s1 see: 'No internet — showing the last messages.'
+  s1 not: An empty list that looks like 'No messages yet'
+  s1 not: A crash
+  s2 see: 'No messages yet' and 'When your gym sends news — a holiday, new timings, an offer — it shows here.'
+  s2 not: A spinner that never ends
+J-F-phone-406-09 | type 6 | pass member | A pass member (FITPASS / cultpass) in a gym; two unseen messages, one seen while offline
+  s1 see: Both shown as seen on the phone at once
+  s1 see: The gym is told again when the next refresh works
+  s1 not: The bell number coming back after reopening
+  s1 not: The gym never hearing the message was seen
+  s2 see: The messages go from the phone
+  s2 not: The old gym's messages shown after joining another gym
+J-F-phone-406-10 | type 12 | pass member | A pass member (FITPASS / cultpass) in a gym; the gym sends a message to one group only
+  s1 see: Only messages sent to everyone or to this member's group
+  s1 not: A message meant for another group
+  s1 not: Another member's name or number in a message list
+J-F-phone-404-01 | type 1 | member | A member of a gym whose shop lists products; Gym tab, 'Shop'
+  s1 see: The product page with its price and options
+  s1 see: 'Add to bag'
+  s1 not: Another gym's products
+  s1 not: A hidden product
+  s2 see: 'Added 1 to your bag'
+  s2 see: Screen 'Bag' with the line, 'Total' and the rupee total
+  s2 not: A total that does not match price x quantity
+  s3 see: The button busy
+  s3 see: 'My orders' with 'Order <n> placed. Pay at the desk when you collect it.'
+  s3 not: Two orders for one tap
+  s3 not: The bag still holding the lines that were sent
+  s4 see: 'Cancelling…', then the order marked cancelled
+  s4 not: The order cancelled after the gym moved it on
+  s4 not: Stock not given back to the shop
+J-F-phone-404-02 | type 2 | member | A member; a product the gym's list changed since the bag was filled
+  s1 see: 'Order <n> placed. The price changed since your bag — total ₹<x>. Pay at the desk when you collect it.'
+  s1 not: The old total shown as the amount to pay
+J-F-phone-404-03 | type 3 | member | A member; Bag screen
+  s1 see: '<name> just sold out. It's out of your bag now.' or 'Only <n> left' words
+  s1 see: The shop list refreshed
+  s1 not: An order placed for stock that is gone
+  s2 see: 'No internet. Your bag is kept — try again when you're online.'
+  s2 not: The bag emptied
+  s2 not: A success line
+  s3 see: No 'Cancel order' button; a cancel that races gets 'The gym has already moved this order on, so it can no longer be cancelled here. Ask at the desk.'
+  s3 not: A ready order cancelled from the phone
+  s4 see: 'You've placed a lot of orders in the last hour. Ask at the desk, or try again later.'
+  s4 not: Orders without limit
+J-F-phone-404-04 | type 6 | member | A member; an order placed
+  s1 see: The status words change after a refresh
+  s1 see: 'Cancel order' only while ordered
+  s1 not: A cancelled order shown as still waiting
+  s1 not: A collected order that can still be cancelled
+  s2 see: 'Your bag is empty' and 'Add something from the shop and it shows here.' with 'Browse the shop'
+  s2 not: 'Place order' enabled with nothing in the bag
+  s3 see: A question first, because switching cancels it
+  s3 not: The waiting order left open at the old gym's desk
+J-F-phone-404-05 | type 12 | member | A member; My orders
+  s1 see: Only this member's own orders at this gym
+  s1 not: Another member's orders or name
+  s1 not: Card, UPI or bank details kept by MettleUp
+J-F-phone-404-06 | type 1 | pass member | A pass member of a gym whose shop lists products; Gym tab, 'Shop'
+  s1 see: The product page with its price and options
+  s1 see: 'Add to bag'
+  s1 not: Another gym's products
+  s1 not: A hidden product
+  s2 see: 'Added 1 to your bag'
+  s2 see: Screen 'Bag' with the line, 'Total' and the rupee total
+  s2 not: A total that does not match price x quantity
+  s3 see: The button busy
+  s3 see: 'My orders' with 'Order <n> placed. Pay at the desk when you collect it.'
+  s3 not: Two orders for one tap
+  s3 not: The bag still holding the lines that were sent
+  s4 see: 'Cancelling…', then the order marked cancelled
+  s4 not: The order cancelled after the gym moved it on
+  s4 not: Stock not given back to the shop
+J-F-phone-404-07 | type 2 | pass member | A pass member; a product the gym's list changed since the bag was filled
+  s1 see: 'Order <n> placed. The price changed since your bag — total ₹<x>. Pay at the desk when you collect it.'
+  s1 not: The old total shown as the amount to pay
+J-F-phone-404-08 | type 3 | pass member | A pass member; Bag screen
+  s1 see: '<name> just sold out. It's out of your bag now.' or 'Only <n> left' words
+  s1 see: The shop list refreshed
+  s1 not: An order placed for stock that is gone
+  s2 see: 'No internet. Your bag is kept — try again when you're online.'
+  s2 not: The bag emptied
+  s2 not: A success line
+  s3 see: No 'Cancel order' button; a cancel that races gets 'The gym has already moved this order on, so it can no longer be cancelled here. Ask at the desk.'
+  s3 not: A ready order cancelled from the phone
+  s4 see: 'You've placed a lot of orders in the last hour. Ask at the desk, or try again later.'
+  s4 not: Orders without limit
+J-F-phone-404-09 | type 6 | pass member | A pass member; an order placed
+  s1 see: The status words change after a refresh
+  s1 see: 'Cancel order' only while ordered
+  s1 not: A cancelled order shown as still waiting
+  s1 not: A collected order that can still be cancelled
+  s2 see: 'Your bag is empty' and 'Add something from the shop and it shows here.' with 'Browse the shop'
+  s2 not: 'Place order' enabled with nothing in the bag
+  s3 see: A question first, because switching cancels it
+  s3 not: The waiting order left open at the old gym's desk
+J-F-phone-404-10 | type 12 | pass member | A pass member; My orders
+  s1 see: Only this member's own orders at this gym
+  s1 not: Another member's orders or name
+  s1 not: Card, UPI or bank details kept by MettleUp
+J-F-phone-411-01 | type 1 | member | A member of the gym, number already confirmed, standing at the desk
+  s1 see: Screen 'Scan the gym poster' with 'Point your camera at the QR code on the poster at your gym's desk.'
+  s1 not: The photo camera app opening instead
+  s1 not: A picture saved
+  s2 see: Screen 'Gym check-in', 'Check in at <gym>' and 'Tap Check in when you are at the gym.'
+  s2 not: A check-in made without a tap
+  s3 see: 'Checking you in at <gym>…'
+  s3 see: 'You're checked in at 6:42 pm' and 'Checked in at <gym> as <first name>. Have a good workout.'
+  s3 see: A button to start today's workout
+  s3 not: Two visits for one day
+  s3 not: A visit dated on the wrong day
+J-F-phone-411-02 | type 2 | member | A member; scans the poster with the phone's own camera app (link /c/CODE)
+  s1 see: The app opens on 'Gym check-in' for that gym, with 'Check in'
+  s1 not: The browser left on a web page with no way into the app
+J-F-phone-411-03 | type 2 | member | A member; first check-in, the app does not know the mobile number
+  s1 see: 'Type the mobile number your gym has for you. The app asks only once.' and a box 'Your mobile number'
+  s1 not: The number asked again on the next visit
+  s2 see: 'First check-in: go to the front desk and ask them to confirm your mobile number. When they say it is done, tap Check in below. You do this only once.'
+  s2 not: A check-in on a number the desk has not confirmed
+  s2 not: Someone else's membership matched by a guessed number
+J-F-phone-411-04 | type 3 | member | A member; problems at the poster
+  s1 see: 'Wrong QR code. Scan the MettleUp poster at your gym's desk.'
+  s1 not: A web page or a payment opened
+  s2 see: 'That isn't a 10-digit mobile number. Check it and try again.'
+  s2 not: The wrong number sent
+  s3 see: 'You're not a member of <gym> in the app.' and 'Join this gym' / 'Not now'
+  s3 not: A visit written at the other gym without a join
+  s4 see: Plain words that the gym could not be reached, and 'Check in' to try again
+  s4 not: 'You're checked in' shown when nothing was saved
+J-F-phone-411-05 | type 6 | member | A member; already checked in today
+  s1 see: 'You were already checked in at <gym> today. Nothing more to do.'
+  s1 not: A second visit for today
+  s2 see: 'Your gym membership is not active today. Please see the desk.' under the check-in
+  s2 not: The visit not recorded
+  s2 not: A pass member told the membership is not active on every visit
+J-F-phone-411-06 | type 12 | member | A member; checked in
+  s1 see: Other members see only how busy the gym is
+  s1 not: Other members seeing who came
+  s1 not: The mobile number shown to other members
+J-F-phone-411-07 | type 1 | pass member | A pass member (no plan at the gym, comes on FITPASS / cultpass) of the gym, number already confirmed, standing at the desk
+  s1 see: Screen 'Scan the gym poster' with 'Point your camera at the QR code on the poster at your gym's desk.'
+  s1 not: The photo camera app opening instead
+  s1 not: A picture saved
+  s2 see: Screen 'Gym check-in', 'Check in at <gym>' and 'Tap Check in when you are at the gym.'
+  s2 not: A check-in made without a tap
+  s3 see: 'Checking you in at <gym>…'
+  s3 see: 'You're checked in at 6:42 pm' and 'Checked in at <gym> as <first name>. Have a good workout.'
+  s3 see: A button to start today's workout
+  s3 not: Two visits for one day
+  s3 not: A visit dated on the wrong day
+J-F-phone-411-08 | type 2 | pass member | A pass member (no plan at the gym, comes on FITPASS / cultpass); scans the poster with the phone's own camera app (link /c/CODE)
+  s1 see: The app opens on 'Gym check-in' for that gym, with 'Check in'
+  s1 not: The browser left on a web page with no way into the app
+J-F-phone-411-09 | type 2 | pass member | A pass member (no plan at the gym, comes on FITPASS / cultpass); first check-in, the app does not know the mobile number
+  s1 see: 'Type the mobile number your gym has for you. The app asks only once.' and a box 'Your mobile number'
+  s1 not: The number asked again on the next visit
+  s2 see: 'First check-in: go to the front desk and ask them to confirm your mobile number. When they say it is done, tap Check in below. You do this only once.'
+  s2 not: A check-in on a number the desk has not confirmed
+  s2 not: Someone else's membership matched by a guessed number
+J-F-phone-411-10 | type 3 | pass member | A pass member (no plan at the gym, comes on FITPASS / cultpass); problems at the poster
+  s1 see: 'Wrong QR code. Scan the MettleUp poster at your gym's desk.'
+  s1 not: A web page or a payment opened
+  s2 see: 'That isn't a 10-digit mobile number. Check it and try again.'
+  s2 not: The wrong number sent
+  s3 see: 'You're not a member of <gym> in the app.' and 'Join this gym' / 'Not now'
+  s3 not: A visit written at the other gym without a join
+  s4 see: Plain words that the gym could not be reached, and 'Check in' to try again
+  s4 not: 'You're checked in' shown when nothing was saved
+J-F-phone-411-11 | type 6 | pass member | A pass member (no plan at the gym, comes on FITPASS / cultpass); already checked in today
+  s1 see: 'You were already checked in at <gym> today. Nothing more to do.'
+  s1 not: A second visit for today
+  s2 see: Checked in, with no 'membership is not active' line when the pass is valid
+  s2 not: The visit not recorded
+  s2 not: A pass member told the membership is not active on every visit
+J-F-phone-411-12 | type 12 | pass member | A pass member (no plan at the gym, comes on FITPASS / cultpass); checked in
+  s1 see: Other members see only how busy the gym is
+  s1 not: Other members seeing who came
+  s1 not: The mobile number shown to other members
+J-F-phone-409-01 | type 1 | member | A member whose number is linked by a check-in; plan '3 months' ends in 12 days
+  s1 see: Card 'MY MEMBERSHIP', title '3 months'
+  s1 see: 'Ends 30 Nov · 12 days left'
+  s1 see: '<n> days at the gym this month.'
+  s1 see: 'Pause my plan' / 'Renew my plan'
+  s1 not: Another member's plan
+  s1 not: A day count that is off by one
+  s2 see: A small card 'Your plan ends on Friday, 6 Nov. Renew at the front desk.'
+  s2 see: The Gym tab card amber with 'Renew at the desk before it ends.'
+  s2 not: The card when a renewal is already on record
+J-F-phone-409-02 | type 2 | member | A member with a renewal already paid (next plan on record)
+  s1 see: 'Next: <plan>, from <date>.'
+  s1 see: No amber 'Renew' line
+  s1 not: 'Your plan ends …' card on the Workout tab
+J-F-phone-409-03 | type 3 | member | A member who never checked in by QR, or whose number the gym does not have
+  s1 see: 'Check in once to link your membership' and 'Scan <gym>'s check-in QR at the gym once. Then your plan or pass, and your visits, show here.'
+  s1 see: Or 'Your gym has a different number' / 'Ask the desk to check your name' / 'Your number is shared'
+  s1 not: Someone else's plan shown on a shared number
+  s1 not: A blank card
+  s2 see: 'Not available yet' and '<gym> doesn't keep its members' plans in MettleUp yet. Ask the desk.'
+  s2 not: 'No plan yet' said as if the member had none
+J-F-phone-409-04 | type 6 | member | A member whose plan ends today, then ended, then renewed
+  s1 see: 'Ends today, <date>'
+  s1 see: Workout tab: 'Your plan ends today. Renew at the front desk.'
+  s1 not: 'Your plan has ended' on the last paid day
+  s2 see: 'Your plan has ended', 'Ended <date>', 'Renew at the desk to keep training.'
+  s2 not: The plan still shown as running
+  s3 see: The new plan and its end date; the Workout tab card gone
+  s3 not: The old 'ends soon' reminder still firing
+J-F-phone-409-05 | type 12 | member | A member opening 'My membership'
+  s1 see: Only this member's own plan, visits and personal-training count
+  s1 not: Another member's plan on a shared number
+  s1 not: The gym's notes about the member
+J-F-phone-409-06 | type 1 | pass member | A FITPASS member linked by a check-in
+  s1 see: Title 'FITPASS member'
+  s1 see: 'You train at <gym> with FITPASS. There is no plan to renew.'
+  s1 see: 'Scan the gym's check-in QR when you arrive. The gym counts it as a FITPASS visit.'
+  s1 not: 'Pause my plan' / 'Renew my plan'
+  s1 not: An 'ends soon' card on the Workout tab
+J-F-phone-409-07 | type 3 | pass member | A pass member who has not checked in yet
+  s1 see: 'Check in once to link your membership' with neutral words ('your plan or pass')
+  s1 not: Words telling the member to buy a plan
+J-F-phone-409-08 | type 6 | pass member | A paying member moved to a pass by the desk while an old plan still runs
+  s1 see: The pass card, not the old plan
+  s1 not: 'Your plan ends …' card on the Workout tab
+  s1 not: A renew reminder
+J-F-phone-409-09 | type 12 | pass member | A pass member opening 'My membership'
+  s1 see: Only this member's own pass and visit count
+  s1 not: Other pass members' names or visits
+J-F-phone-412-01 | type 1 | member | A member linked by a check-in; the trainer sent a plan 'Fat loss 4 days'
+  s1 see: A new folder 'Fat loss 4 days' with 'From <gym> · <trainer>' under its name
+  s1 not: The plan followed by itself
+  s1 not: A plan meant for another member
+  s1 not: A folder with no exercises
+  s2 see: The trainer's routines with their exercises (and video links where the trainer added them)
+  s2 not: Routines the phone cannot read
+J-F-phone-412-02 | type 2 | member | A member; the trainer changes the plan
+  s1 see: The folder updated: rows the member changed keep the member's version, the rest take the trainer's
+  s1 not: The member's own edits lost
+  s1 not: A second copy of the folder
+J-F-phone-412-03 | type 3 | member | A member not yet linked (no check-in, or the gym has another number)
+  s1 see: No gym folder; nothing changes
+  s1 not: An error card
+  s1 not: A plan from the wrong member on a shared number
+  s2 see: The folders already on the phone, unchanged
+  s2 not: A folder removed
+  s2 not: A 'No longer sent' label because of the outage
+  s3 see: No new plans; plans already on the phone stay
+  s3 not: Plans already saved taken away
+J-F-phone-412-04 | type 6 | member | A member; a plan folder on the phone
+  s1 see: The folder stays, relabelled 'No longer sent by <gym>'
+  s1 not: Workout history that pointed at it broken
+  s1 not: The folder deleted
+  s2 see: The folder does not come back
+  s2 not: The deleted folder back on the next sync
+  s3 see: The folders stay as 'No longer sent by <gym>'
+  s3 see: The old gym's video links gone
+  s3 not: Updates still arriving from the old gym
+J-F-phone-412-05 | type 12 | member | A member; a plan from the trainer
+  s1 see: 'From <gym> · <trainer>' only
+  s1 not: Another member's plan arriving on this phone
+  s1 not: The member's edits sent back to the gym
+J-F-phone-412-06 | type 1 | pass member | A pass member linked by a check-in; the trainer sent a plan 'Fat loss 4 days'
+  s1 see: A new folder 'Fat loss 4 days' with 'From <gym> · <trainer>' under its name
+  s1 not: The plan followed by itself
+  s1 not: A plan meant for another member
+  s1 not: A folder with no exercises
+  s2 see: The trainer's routines with their exercises (and video links where the trainer added them)
+  s2 not: Routines the phone cannot read
+J-F-phone-412-07 | type 2 | pass member | A pass member; the trainer changes the plan
+  s1 see: The folder updated: rows the member changed keep the member's version, the rest take the trainer's
+  s1 not: The member's own edits lost
+  s1 not: A second copy of the folder
+J-F-phone-412-08 | type 3 | pass member | A pass member not yet linked (no check-in, or the gym has another number)
+  s1 see: No gym folder; nothing changes
+  s1 not: An error card
+  s1 not: A plan from the wrong member on a shared number
+  s2 see: The folders already on the phone, unchanged
+  s2 not: A folder removed
+  s2 not: A 'No longer sent' label because of the outage
+  s3 see: No new plans; plans already on the phone stay
+  s3 not: Plans already saved taken away
+J-F-phone-412-09 | type 6 | pass member | A pass member; a plan folder on the phone
+  s1 see: The folder stays, relabelled 'No longer sent by <gym>'
+  s1 not: Workout history that pointed at it broken
+  s1 not: The folder deleted
+  s2 see: The folder does not come back
+  s2 not: The deleted folder back on the next sync
+  s3 see: The folders stay as 'No longer sent by <gym>'
+  s3 see: The old gym's video links gone
+  s3 not: Updates still arriving from the old gym
+J-F-phone-412-10 | type 12 | pass member | A pass member; a plan from the trainer
+  s1 see: 'From <gym> · <trainer>' only
+  s1 not: Another member's plan arriving on this phone
+  s1 not: The member's edits sent back to the gym
+J-F-phone-413-01 | type 1 | member | A member linked by a check-in; the trainer set today's workout 'Leg day blast'
+  s1 see: A card 'Today at <gym>', 'Leg day blast', '6 exercises · from Ravi', the trainer's note
+  s1 see: 'Start this workout'
+  s1 not: Yesterday's workout shown as today's
+  s1 not: Another gym's workout
+  s2 see: The workout opens with the trainer's exercises
+  s2 see: The routine saved in the folder 'Workouts of the day'
+  s2 not: Two copies of the routine in the folder
+  s2 not: A workout started with no exercises
+J-F-phone-413-02 | type 3 | member | A member; no workout set, or the member is not linked
+  s1 see: No card
+  s1 not: An empty card
+  s1 not: An error
+  s2 see: 'Couldn’t start the workout' and 'Please try again.'
+  s2 not: A half-started workout
+  s3 see: No card
+  s3 not: A card that cannot start
+J-F-phone-413-03 | type 6 | member | A member; the trainer changes today's workout after the member saw it
+  s1 see: The changed exercises; rows the member edited keep the member's version
+  s1 not: The old version started
+  s1 not: The member's own edits lost
+  s2 see: Yesterday's card gone; the routine stays in 'Workouts of the day'
+  s2 not: Yesterday's card still shown as 'Today'
+J-F-phone-413-04 | type 12 | member | A member; today's workout card
+  s1 see: Only the gym's own workout and the trainer's first name
+  s1 not: Who else did it today
+  s1 not: The member's workouts sent to the gym because the card was used
+J-F-phone-413-05 | type 1 | pass member | A pass member linked by a check-in; the trainer set today's workout 'Leg day blast'
+  s1 see: A card 'Today at <gym>', 'Leg day blast', '6 exercises · from Ravi', the trainer's note
+  s1 see: 'Start this workout'
+  s1 not: Yesterday's workout shown as today's
+  s1 not: Another gym's workout
+  s2 see: The workout opens with the trainer's exercises
+  s2 see: The routine saved in the folder 'Workouts of the day'
+  s2 not: Two copies of the routine in the folder
+  s2 not: A workout started with no exercises
+J-F-phone-413-06 | type 3 | pass member | A pass member; no workout set, or the member is not linked
+  s1 see: No card
+  s1 not: An empty card
+  s1 not: An error
+  s2 see: 'Couldn’t start the workout' and 'Please try again.'
+  s2 not: A half-started workout
+  s3 see: No card
+  s3 not: A card that cannot start
+J-F-phone-413-07 | type 6 | pass member | A pass member; the trainer changes today's workout after the member saw it
+  s1 see: The changed exercises; rows the member edited keep the member's version
+  s1 not: The old version started
+  s1 not: The member's own edits lost
+  s2 see: Yesterday's card gone; the routine stays in 'Workouts of the day'
+  s2 not: Yesterday's card still shown as 'Today'
+J-F-phone-413-08 | type 12 | pass member | A pass member; today's workout card
+  s1 see: Only the gym's own workout and the trainer's first name
+  s1 not: Who else did it today
+  s1 not: The member's workouts sent to the gym because the card was used
+J-F-phone-415-01 | type 1 | member | A member linked by a check-in; the trainer took measurements and sent a diet plan
+  s1 see: The gym's entries beside the member's own, marked 'From <gym> · <trainer>'
+  s1 see: History note 'Ask your gym to change the ones they recorded.'
+  s1 not: The gym's entries editable
+  s1 not: A day counted twice when the member logged the same day
+  s2 see: Screen 'Diet plan' with the plan title, meals and times, '1,600 kcal · 120 g protein a day'
+  s2 see: 'Talk to a doctor if you have a health condition.'
+  s2 not: Another member's diet plan
+  s2 not: Calories shown without 'a day'
+J-F-phone-415-02 | type 2 | member | A member; two diet plans from the trainer
+  s1 see: '2 plans from your trainer'
+  s1 not: Only one plan shown
+  s2 see: Both plans, each with its meals
+  s2 not: Plans merged into one
+J-F-phone-415-03 | type 3 | member | A member not linked yet, or the gym sends nothing
+  s1 see: 'Check in once to see your diet plan' and 'Scan <gym>'s check-in QR at the gym. After that, the plan your trainer sends shows here.'
+  s1 not: A blank screen
+  s1 not: A diet plan of someone with the same number
+  s2 see: 'No diet plan yet' and 'When your trainer at <gym> sends you a diet plan, it shows here by itself. Ask them if you'd like one.'
+  s2 not: An error
+  s3 see: It cannot be changed; the history says to ask the gym
+  s3 not: The gym's number changed on the phone
+J-F-phone-415-04 | type 6 | member | A member; leaves the gym
+  s1 see: The gym's measurements already on the phone stay, marked with the old gym's name
+  s1 see: No diet plan row (diet plans go with the gym)
+  s1 not: The old gym's diet plan still shown
+  s1 not: The measurements lost
+  s2 see: The fixed value
+  s2 not: Both the old and the new value
+J-F-phone-415-05 | type 12 | member | A member; own measurements and photos on the phone
+  s1 see: The gym's list stays separate and read-only
+  s1 not: The member's own entries or photos sent to the gym
+  s1 not: Body weight in the trainer summary
+J-F-phone-415-06 | type 1 | pass member | A pass member linked by a check-in; the trainer took measurements and sent a diet plan
+  s1 see: The gym's entries beside the member's own, marked 'From <gym> · <trainer>'
+  s1 see: History note 'Ask your gym to change the ones they recorded.'
+  s1 not: The gym's entries editable
+  s1 not: A day counted twice when the member logged the same day
+  s2 see: Screen 'Diet plan' with the plan title, meals and times, '1,600 kcal · 120 g protein a day'
+  s2 see: 'Talk to a doctor if you have a health condition.'
+  s2 not: Another member's diet plan
+  s2 not: Calories shown without 'a day'
+J-F-phone-415-07 | type 2 | pass member | A pass member; two diet plans from the trainer
+  s1 see: '2 plans from your trainer'
+  s1 not: Only one plan shown
+  s2 see: Both plans, each with its meals
+  s2 not: Plans merged into one
+J-F-phone-415-08 | type 3 | pass member | A pass member not linked yet, or the gym sends nothing
+  s1 see: 'Check in once to see your diet plan' and 'Scan <gym>'s check-in QR at the gym. After that, the plan your trainer sends shows here.'
+  s1 not: A blank screen
+  s1 not: A diet plan of someone with the same number
+  s2 see: 'No diet plan yet' and 'When your trainer at <gym> sends you a diet plan, it shows here by itself. Ask them if you'd like one.'
+  s2 not: An error
+  s3 see: It cannot be changed; the history says to ask the gym
+  s3 not: The gym's number changed on the phone
+J-F-phone-415-09 | type 6 | pass member | A pass member; leaves the gym
+  s1 see: The gym's measurements already on the phone stay, marked with the old gym's name
+  s1 see: No diet plan row (diet plans go with the gym)
+  s1 not: The old gym's diet plan still shown
+  s1 not: The measurements lost
+  s2 see: The fixed value
+  s2 not: Both the old and the new value
+J-F-phone-415-10 | type 12 | pass member | A pass member; own measurements and photos on the phone
+  s1 see: The gym's list stays separate and read-only
+  s1 not: The member's own entries or photos sent to the gym
+  s1 not: Body weight in the trainer summary

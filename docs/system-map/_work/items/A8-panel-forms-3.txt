@@ -1,0 +1,706 @@
+# A8-panel-forms-3: coverage of 68 Tier 1 journeys (8 features, from A5-panel-forms-3). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-414 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 6 journey phrase(s)
+F-panel-414 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 5 journey phrase(s)
+F-panel-414 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-panel-414 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 4 journey phrase(s)
+F-panel-414 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 4 journey phrase(s)
+F-panel-414 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 3 journey phrase(s)
+F-panel-414 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 3 journey phrase(s)
+F-panel-414 | apps/dashboard/test/crm/sheet.test.ts | unit | 61 lines | imports the code
+F-panel-414 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 2 journey phrase(s)
+F-panel-414 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-panel-414 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 2 journey phrase(s)
+F-panel-414 | apps/dashboard/test/crm/sheets.test.ts | unit | 122 lines | asserts 2 journey phrase(s)
+F-panel-416 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 3 journey phrase(s)
+F-panel-416 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 3 journey phrase(s)
+F-panel-416 | apps/dashboard/test/crm/pt.test.ts | unit | 231 lines | asserts 3 journey phrase(s)
+F-panel-416 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 3 journey phrase(s)
+F-panel-416 | apps/dashboard/test/crm/sheet.test.ts | unit | 61 lines | imports the code
+F-panel-416 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 2 journey phrase(s)
+F-panel-416 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 2 journey phrase(s)
+F-panel-416 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 2 journey phrase(s)
+F-panel-416 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 2 journey phrase(s)
+F-panel-416 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-panel-416 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-416 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-415 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 3 journey phrase(s)
+F-panel-415 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 3 journey phrase(s)
+F-panel-415 | apps/dashboard/test/crm/sheet.test.ts | unit | 61 lines | imports the code
+F-panel-415 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-panel-415 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 2 journey phrase(s)
+F-panel-415 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 2 journey phrase(s)
+F-panel-415 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 2 journey phrase(s)
+F-panel-415 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 2 journey phrase(s)
+F-panel-415 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-panel-415 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-415 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 1 journey phrase(s)
+F-panel-415 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-419 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 3 journey phrase(s)
+F-panel-419 | apps/dashboard/test/crm/sheet.test.ts | unit | 61 lines | imports the code
+F-panel-419 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-panel-419 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-panel-419 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 2 journey phrase(s)
+F-panel-419 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-panel-419 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-419 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-419 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 1 journey phrase(s)
+F-panel-419 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 1 journey phrase(s)
+F-panel-419 | apps/dashboard/e2e/quickactions.spec.mjs | e2e | 23 lines | asserts 1 journey phrase(s)
+F-panel-419 | apps/dashboard/e2e/r495-uat.spec.mjs | e2e | 303 lines | asserts 1 journey phrase(s)
+F-panel-418 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 6 journey phrase(s)
+F-panel-418 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 3 journey phrase(s)
+F-panel-418 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 3 journey phrase(s)
+F-panel-418 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 3 journey phrase(s)
+F-panel-418 | apps/dashboard/test/crm/sheet.test.ts | unit | 61 lines | imports the code
+F-panel-418 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 2 journey phrase(s)
+F-panel-418 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-panel-418 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 2 journey phrase(s)
+F-panel-418 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 2 journey phrase(s)
+F-panel-418 | apps/dashboard/e2e/pay-mettleup-uat.spec.mjs | e2e | 210 lines | asserts 2 journey phrase(s)
+F-panel-418 | apps/dashboard/test/crm/payMettleUp.test.ts | unit | 236 lines | asserts 2 journey phrase(s)
+F-panel-418 | apps/mobile/test/shop/planRequest.test.ts | unit | 171 lines | asserts 2 journey phrase(s)
+F-panel-422 | apps/dashboard/test/crm/sheet.test.ts | unit | 61 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-422 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-panel-422 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-panel-422 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 1 journey phrase(s)
+F-panel-422 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-422 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 1 journey phrase(s)
+F-panel-422 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-422 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 1 journey phrase(s)
+F-panel-422 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 1 journey phrase(s)
+F-panel-422 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-panel-422 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 1 journey phrase(s)
+F-panel-422 | apps/dashboard/test/crm/navNames.test.ts | unit | 61 lines | asserts 1 journey phrase(s)
+F-panel-417 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 6 journey phrase(s)
+F-panel-417 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 4 journey phrase(s)
+F-panel-417 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 4 journey phrase(s)
+F-panel-417 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 3 journey phrase(s)
+F-panel-417 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 3 journey phrase(s)
+F-panel-417 | apps/dashboard/test/crm/sheet.test.ts | unit | 61 lines | imports the code
+F-panel-417 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 2 journey phrase(s)
+F-panel-417 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-panel-417 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 2 journey phrase(s)
+F-panel-417 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 2 journey phrase(s)
+F-panel-417 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-panel-417 | apps/dashboard/e2e/fonts.spec.mjs | e2e | 44 lines | asserts 1 journey phrase(s)
+F-panel-423 | apps/dashboard/test/crm/hqAccess.test.ts | unit | 81 lines | asserts 4 journey phrase(s)
+F-panel-423 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 3 journey phrase(s)
+F-panel-423 | deploy/panel/helpArticles.test.mjs | unit | 156 lines | asserts 3 journey phrase(s)
+F-panel-423 | supabase/tests/0064_billing_checks.sql | db | 133 lines | asserts 3 journey phrase(s)
+F-panel-423 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 2 journey phrase(s)
+F-panel-423 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 2 journey phrase(s)
+F-panel-423 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-panel-423 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 1 journey phrase(s)
+F-panel-423 | apps/dashboard/e2e/fonts.spec.mjs | e2e | 44 lines | asserts 1 journey phrase(s)
+F-panel-423 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 1 journey phrase(s)
+F-panel-423 | apps/dashboard/e2e/gymdata.spec.mjs | e2e | 52 lines | asserts 1 journey phrase(s)
+F-panel-423 | apps/dashboard/e2e/importcheck.spec.mjs | e2e | 62 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-414-01 | type 1 | owner | Member page of a member with no plan; the gym has at least one plan on sale
+  s1 see: Sheet titled 'Sell membership'
+  s1 see: 'For <member name>'
+  s1 see: 'Plan' list, each line '<plan name> — <price>'
+  s1 see: 'Starts on' set to today
+  s1 see: 'Valid till' with the last day and 'Last day they can train. The next plan can start <next day>.'
+  s1 not: The sheet titled Renew for a member who never had a plan
+  s1 not: A start day before today chosen by itself
+  s2 see: Hint 'Leave blank for the plan price. Type a lower number to give a discount.'
+  s2 see: Joining fee hint 'Charged once, on joining.'
+  s2 see: 'Total to pay' = plan price + joining fee
+  s2 not: Total shown as a dash or zero when both boxes are blank
+  s2 not: Joining fee left out of the total for a first-time member
+  s3 see: 'Received on' appears, set to today
+  s3 see: No 'Still due after this' line
+  s3 not: Paid by starting on UPI
+  s3 not: A dues line shown when the whole total is received
+  s4 see: Button reads 'Saving…' and cannot be pressed
+  s4 see: Sheet closes
+  s4 see: Message 'Membership saved. Receipt <number>.'
+  s4 see: The member page shows the plan with its dates and one receipt
+  s4 not: Two memberships or two receipts
+  s4 not: A membership saved without its receipt
+  s4 not: The receipt without the name of the person who took the money
+J-F-panel-414-02 | type 2 | owner | Enquiries, a 'Become a member' request that picked a plan and a start day; the person was just added as a member
+  s1 see: Sheet 'Sell membership' opens by itself on the plan they picked
+  s1 see: 'Starts on' is the day they picked, if it is today or later
+  s1 not: The first plan of the list shown instead of the picked plan while that plan is on sale
+  s1 not: A picked day in the past used as the start
+  s2 see: Sheet closes and the enquiry flow closes
+  s2 see: The member shows the new plan
+  s2 not: The enquiry left open as not joined
+  s2 not: A second member row for the same person
+J-F-panel-414-03 | type 2 | owner | Member page, section with 'No memberships yet'
+  s1 see: The same 'Sell membership' sheet as from the top button
+  s1 not: A different form or different defaults from the top button
+J-F-panel-414-04 | type 3 | owner | Sell membership sheet open for a member with no plan
+  s1 see: Under Plan price: 'The price looks wrong. Type it again.'
+  s1 see: Sheet stays open
+  s1 not: The sale saved at ₹123.40 or any guessed price
+  s2 see: 'Amount received is more than the total.'
+  s2 not: A receipt bigger than the sale
+  s2 not: A minus due
+  s3 see: 'The payment date can’t be in the future.'
+  s3 not: A receipt dated ahead of today
+  s4 see: A plain message at the top of the sheet, or the sale kept on this device with words that say so
+  s4 not: A 'saved' message for a sale that was not kept anywhere
+  s4 not: A second sale when Confirm is pressed again after the internet returns
+J-F-panel-414-05 | type 6 | owner | Member with one plan that was sold a minute ago by mistake and then cancelled, nothing paid
+  s1 see: Sheet 'Sell membership' (not Renew), starting today
+  s1 see: Joining fee placeholder shows the plan's joining fee and 'Charged once, on joining.'
+  s1 not: The joining fee dropped to zero because of the cancelled, unpaid plan
+  s1 not: A start pushed after the cancelled plan's end
+  s2 see: Now titled 'Renew membership'
+  s2 see: 'Starts on' is the day after the new plan ends, with the hint 'The day after their current plan ends (<day>).'
+  s2 see: Joining fee hint 'Already paid a joining fee before, so it is not charged again.'
+  s2 not: A second joining fee as the default
+  s2 not: A start inside the plan just sold
+J-F-panel-414-06 | type 12 | owner | A sale just saved with a note and money received
+  s1 see: The receipt and the plan show who took the money (the signed-in person)
+  s1 see: The note is shown to the gym only
+  s1 not: The receipt with no taker name
+  s1 not: The note shown to the member in the member app
+  s1 not: The sale visible to a login of another gym or another branch
+  s2 see: The receipt in today's list with the taker's name
+  s2 not: The receipt missing from the totals of the day in Received on
+J-F-panel-414-07 | type 1 | staff | Member page of a member with no plan; the gym has at least one plan on sale
+  s1 see: Sheet titled 'Sell membership'
+  s1 see: 'For <member name>'
+  s1 see: 'Plan' list, each line '<plan name> — <price>'
+  s1 see: 'Starts on' set to today
+  s1 see: 'Valid till' with the last day and 'Last day they can train. The next plan can start <next day>.'
+  s1 not: The sheet titled Renew for a member who never had a plan
+  s1 not: A start day before today chosen by itself
+  s2 see: Hint 'Leave blank for the plan price. The front desk can give at most 10% off.'
+  s2 see: Joining fee hint 'Charged once, on joining.'
+  s2 see: 'Total to pay' = plan price + joining fee
+  s2 not: Total shown as a dash or zero when both boxes are blank
+  s2 not: Joining fee left out of the total for a first-time member
+  s3 see: 'Received on' appears, set to today
+  s3 see: No 'Still due after this' line
+  s3 not: Paid by starting on UPI
+  s3 not: A dues line shown when the whole total is received
+  s4 see: Button reads 'Saving…' and cannot be pressed
+  s4 see: Sheet closes
+  s4 see: Message 'Membership saved. Receipt <number>.'
+  s4 see: The member page shows the plan with its dates and one receipt
+  s4 not: Two memberships or two receipts
+  s4 not: A membership saved without its receipt
+  s4 not: The receipt without the name of the person who took the money
+J-F-panel-414-08 | type 2 | staff | Enquiries, a 'Become a member' request that picked a plan and a start day; the person was just added as a member
+  s1 see: Sheet 'Sell membership' opens by itself on the plan they picked
+  s1 see: 'Starts on' is the day they picked, if it is today or later
+  s1 not: The first plan of the list shown instead of the picked plan while that plan is on sale
+  s1 not: A picked day in the past used as the start
+  s2 see: Sheet closes and the enquiry flow closes
+  s2 see: The member shows the new plan
+  s2 not: The enquiry left open as not joined
+  s2 not: A second member row for the same person
+J-F-panel-414-09 | type 2 | staff | Member page, section with 'No memberships yet'
+  s1 see: The same 'Sell membership' sheet as from the top button
+  s1 not: A different form or different defaults from the top button
+J-F-panel-414-10 | type 3 | staff | Sell membership sheet open for a member with no plan
+  s1 see: Under Plan price: 'The price looks wrong. Type it again.'
+  s1 see: Sheet stays open
+  s1 not: The sale saved at ₹123.40 or any guessed price
+  s2 see: 'Amount received is more than the total.'
+  s2 not: A receipt bigger than the sale
+  s2 not: A minus due
+  s3 see: 'The payment date can’t be in the future.'
+  s3 not: A receipt dated ahead of today
+  s4 see: A plain message at the top of the sheet, or the sale kept on this device with words that say so
+  s4 not: A 'saved' message for a sale that was not kept anywhere
+  s4 not: A second sale when Confirm is pressed again after the internet returns
+J-F-panel-414-11 | type 6 | staff | Member with one plan that was sold a minute ago by mistake and then cancelled, nothing paid
+  s1 see: Sheet 'Sell membership' (not Renew), starting today
+  s1 see: Joining fee placeholder shows the plan's joining fee and 'Charged once, on joining.'
+  s1 not: The joining fee dropped to zero because of the cancelled, unpaid plan
+  s1 not: A start pushed after the cancelled plan's end
+  s2 see: Now titled 'Renew membership'
+  s2 see: 'Starts on' is the day after the new plan ends, with the hint 'The day after their current plan ends (<day>).'
+  s2 see: Joining fee hint 'Already paid a joining fee before, so it is not charged again.'
+  s2 not: A second joining fee as the default
+  s2 not: A start inside the plan just sold
+J-F-panel-414-12 | type 12 | staff | A sale just saved with a note and money received
+  s1 see: The receipt and the plan show who took the money (the signed-in person)
+  s1 see: The note is shown to the gym only
+  s1 not: A name typed by the desk used in place of the signed-in person
+  s1 not: The note shown to the member in the member app
+  s1 not: The sale visible to a login of another gym or another branch
+  s2 see: Only the Dues tab
+  s2 not: Collections totals shown to the front desk after it took money
+J-F-panel-416-01 | type 1 | owner | Member page of a member whose gym plan is running; the gym sells a PT plan
+  s1 see: A line 'PT · <n> sessions · Trainer <name>' (or 'PT · 1 session') followed by '. It runs along with their gym plan.'
+  s1 see: 'Starts on' jumps to today, not to the day after the gym plan ends
+  s1 see: Price, joining fee and received boxes are emptied
+  s1 not: The PT pack started after the gym plan ends
+  s1 not: 'sessions' written for one session
+  s1 not: A typed price from the plan chosen before kept for this plan
+  s2 see: No refusal about the gym plan that is running
+  s2 see: Message 'Membership saved. Receipt <number>.'
+  s2 see: The member page shows the PT pack with its sessions beside the gym plan
+  s2 not: 'Their plan already runs till …' for a PT pack
+  s2 not: The gym plan's dates changed
+  s2 not: A PT pack saved without its sessions or trainer
+J-F-panel-416-02 | type 2 | owner | Member page, PT card of a member whose pack has run out; that PT plan is still on sale
+  s1 see: Sheet opens with that PT plan already picked
+  s1 see: Title 'Renew membership' while a PT pack that is not cancelled exists
+  s1 see: 'Starts on' today
+  s1 not: The first plan of the list picked instead
+  s1 not: The gym plan's renewal date used as the start
+  s2 see: A new pack with a fresh session count
+  s2 see: The old pack stays as it ended
+  s2 not: Unused sessions of the old pack added to or taken from the new one without a word
+  s2 not: Two new packs
+J-F-panel-416-03 | type 3 | owner | Member page of a member with a PT pack whose plan the owner has taken off sale
+  s1 see: No 'Renew PT' button
+  s1 not: A Renew PT button that opens the sheet on some other plan
+  s2 see: 'Amount received is more than the total.'
+  s2 not: A receipt bigger than the pack price
+  s3 see: The pack is saved free, no receipt, no due
+  s3 not: A due or a reminder for zero
+J-F-panel-416-04 | type 6 | owner | Member whose only PT pack was cancelled
+  s1 see: Title 'Sell membership' (a cancelled pack is not a renewal)
+  s1 see: 'Starts on' today
+  s1 not: Title 'Renew membership' for a member with no live pack
+  s2 see: Title 'Renew membership'
+  s2 see: Start is still today: a second pack may run beside the first
+  s2 not: The second pack refused as overlapping
+  s2 not: The joining fee asked again after one was paid
+J-F-panel-416-05 | type 1 | staff | Member page of a member whose gym plan is running; the gym sells a PT plan
+  s1 see: A line 'PT · <n> sessions · Trainer <name>' (or 'PT · 1 session') followed by '. It runs along with their gym plan.'
+  s1 see: 'Starts on' jumps to today, not to the day after the gym plan ends
+  s1 see: Price, joining fee and received boxes are emptied
+  s1 not: The PT pack started after the gym plan ends
+  s1 not: 'sessions' written for one session
+  s1 not: A typed price from the plan chosen before kept for this plan
+  s2 see: No refusal about the gym plan that is running
+  s2 see: Message 'Membership saved. Receipt <number>.'
+  s2 see: The member page shows the PT pack with its sessions beside the gym plan
+  s2 not: 'Their plan already runs till …' for a PT pack
+  s2 not: The gym plan's dates changed
+  s2 not: A PT pack saved without its sessions or trainer
+J-F-panel-416-06 | type 2 | staff | Member page, PT card of a member whose pack has run out; that PT plan is still on sale
+  s1 see: Sheet opens with that PT plan already picked
+  s1 see: Title 'Renew membership' while a PT pack that is not cancelled exists
+  s1 see: 'Starts on' today
+  s1 not: The first plan of the list picked instead
+  s1 not: The gym plan's renewal date used as the start
+  s2 see: A new pack with a fresh session count
+  s2 see: The old pack stays as it ended
+  s2 not: Unused sessions of the old pack added to or taken from the new one without a word
+  s2 not: Two new packs
+J-F-panel-416-07 | type 3 | staff | Member page of a member with a PT pack whose plan the owner has taken off sale
+  s1 see: No 'Renew PT' button
+  s1 not: A Renew PT button that opens the sheet on some other plan
+  s2 see: 'Amount received is more than the total.'
+  s2 not: A receipt bigger than the pack price
+  s3 see: 'The front desk can give at most 10% off. The lowest price is <amount>. Ask the owner for a bigger discount.'
+  s3 not: The desk selling PT below the limit
+J-F-panel-416-08 | type 6 | staff | Member whose only PT pack was cancelled
+  s1 see: Title 'Sell membership' (a cancelled pack is not a renewal)
+  s1 see: 'Starts on' today
+  s1 not: Title 'Renew membership' for a member with no live pack
+  s2 see: Title 'Renew membership'
+  s2 see: Start is still today: a second pack may run beside the first
+  s2 not: The second pack refused as overlapping
+  s2 not: The joining fee asked again after one was paid
+J-F-panel-415-01 | type 1 | owner | Member page of a member whose plan runs till a day next week and who paid a joining fee
+  s1 see: Sheet titled 'Renew membership'
+  s1 see: 'For <name> · valid till <day>'
+  s1 see: 'Starts on' is the day after the current plan ends, with 'The day after their current plan ends (<last day>).'
+  s1 see: Joining fee placeholder ₹0 and 'Already paid a joining fee before, so it is not charged again.'
+  s1 not: A start of today, inside days already paid for
+  s1 not: The joining fee in the total
+  s1 not: The hint naming the wrong last day
+  s2 see: 'Membership saved. Receipt <number>.'
+  s2 see: Valid till on the member page moves to the end of the new plan
+  s2 not: The current plan cut short or changed
+  s2 not: A question about a far start date for the usual renewal day
+J-F-panel-415-02 | type 2 | owner | Member whose plan ended last month (other kind: a lapsed member)
+  s1 see: Title 'Sell membership'
+  s1 see: 'Starts on' today
+  s1 see: Joining fee ₹0 with 'Already paid a joining fee before, so it is not charged again.'
+  s1 not: The start set to the day after the old plan ended (in the past)
+  s1 not: The joining fee charged a second time
+  s2 see: The member becomes active from today
+  s2 not: The gap days counted as paid
+J-F-panel-415-03 | type 2 | owner | Member brought in from the old register with one plan (other kind: imported member)
+  s1 see: Joining fee ₹0 and the 'Already paid a joining fee before' hint, although the imported plan carries no fee
+  s1 not: A joining fee due on the first renewal of an imported member
+J-F-panel-415-04 | type 3 | owner | Renew membership sheet open; current plan runs till the 20th
+  s1 see: Under Starts on: 'They already have a plan from <start> to <end>. Start the new plan after that.' or 'Their plan already runs till <day>. Start the new plan after that.'
+  s1 not: The same days sold twice
+  s2 see: 'The start date looks wrong. Pick it again.'
+  s2 not: A plan saved with an unreadable start day
+  s3 see: The sale is saved with the fee, with no question asked (the question only compares with the plan’s listed fee)
+  s3 not: A fee the member already paid charged without the person at the desk noticing
+J-F-panel-415-05 | type 6 | owner | Member who already renewed once: one plan running, one upcoming
+  s1 see: 'Starts on' is the day after the UPCOMING plan ends, not after the running one
+  s1 not: A third plan starting inside the renewal already bought
+  s2 see: 'Starts on' goes back to the day after the running plan
+  s2 not: A hole left where the cancelled plan was
+  s3 see: Title 'Renew membership'
+  s3 see: Start is the day after that upcoming plan ends
+  s3 not: The new plan started today on top of the weeks already paid for
+J-F-panel-415-06 | type 1 | staff | Member page of a member whose plan runs till a day next week and who paid a joining fee
+  s1 see: Sheet titled 'Renew membership'
+  s1 see: 'For <name> · valid till <day>'
+  s1 see: 'Starts on' is the day after the current plan ends, with 'The day after their current plan ends (<last day>).'
+  s1 see: Joining fee placeholder ₹0 and 'Already paid a joining fee before, so it is not charged again.'
+  s1 not: A start of today, inside days already paid for
+  s1 not: The joining fee in the total
+  s1 not: The hint naming the wrong last day
+  s2 see: 'Membership saved. Receipt <number>.'
+  s2 see: Valid till on the member page moves to the end of the new plan
+  s2 not: The current plan cut short or changed
+  s2 not: A question about a far start date for the usual renewal day
+J-F-panel-415-07 | type 2 | staff | Member whose plan ended last month (other kind: a lapsed member)
+  s1 see: Title 'Sell membership'
+  s1 see: 'Starts on' today
+  s1 see: Joining fee ₹0 with 'Already paid a joining fee before, so it is not charged again.'
+  s1 not: The start set to the day after the old plan ended (in the past)
+  s1 not: The joining fee charged a second time
+  s2 see: The member becomes active from today
+  s2 not: The gap days counted as paid
+J-F-panel-415-08 | type 2 | staff | Member brought in from the old register with one plan (other kind: imported member)
+  s1 see: Joining fee ₹0 and the 'Already paid a joining fee before' hint, although the imported plan carries no fee
+  s1 not: A joining fee due on the first renewal of an imported member
+J-F-panel-415-09 | type 3 | staff | Renew membership sheet open; current plan runs till the 20th
+  s1 see: Under Starts on: 'They already have a plan from <start> to <end>. Start the new plan after that.' or 'Their plan already runs till <day>. Start the new plan after that.'
+  s1 not: The same days sold twice
+  s2 see: 'The front desk can start a plan at most 31 days back. Ask the owner for an older start date.'
+  s2 not: The desk handing out more than 31 past days
+  s3 see: The sale is saved with the fee, with no question asked (the question only compares with the plan’s listed fee)
+  s3 not: A fee the member already paid charged without the person at the desk noticing
+J-F-panel-415-10 | type 6 | staff | Member who already renewed once: one plan running, one upcoming
+  s1 see: 'Starts on' is the day after the UPCOMING plan ends, not after the running one
+  s1 not: A third plan starting inside the renewal already bought
+  s2 see: 'Starts on' goes back to the day after the running plan
+  s2 not: A hole left where the cancelled plan was
+  s3 see: Title 'Renew membership'
+  s3 see: Start is the day after that upcoming plan ends
+  s3 not: The new plan started today on top of the weeks already paid for
+J-F-panel-419-01 | type 1 | staff | Signed in as staff; sell sheet open for a new member; plan price ₹1,500 with a joining fee
+  s1 see: 'Leave blank for the plan price. The front desk can give at most 10% off.'
+  s1 not: The owner's hint about any discount shown to staff
+  s2 see: The sale is saved
+  s2 see: 'Membership saved. Receipt <number>.'
+  s2 not: Exactly 10% off refused
+  s2 not: The sale saved under another person’s name
+J-F-panel-419-02 | type 2 | staff | Signed in as staff; 'Collect payment' sheet open for a member with dues
+  s1 see: Hint 'Today, or up to 31 days back.'
+  s1 not: No word about the limit before the refusal
+  s2 see: 'The front desk can date a payment at most 31 days back. Ask the owner to enter older payments.'
+  s2 not: A receipt dated 32 or more days back by the desk
+  s3 see: 'The payment date can’t be in the future.'
+  s3 not: A receipt dated ahead
+  s4 see: The receipt is saved with that date
+  s4 not: Day 31 refused
+J-F-panel-419-03 | type 3 | staff | Signed in as staff; sell sheet open for a brand-new member; plan ₹1,500, joining fee ₹500
+  s1 see: Under Plan price: 'The front desk can give at most 10% off. The lowest price is ₹1,350. Ask the owner for a bigger discount.'
+  s1 not: The sale saved below the limit
+  s1 not: The question about an unusual price shown instead of the refusal
+  s2 see: 'The joining fee for a new member is ₹500. Only the owner can remove it.'
+  s2 not: A new member saved with no joining fee by the desk
+  s3 see: 'The front desk can start a plan at most 31 days back. Ask the owner for an older start date.'
+  s3 not: Past days handed out by the desk
+  s4 see: 'The front desk can date a payment at most 31 days back. Ask the owner to enter older payments.'
+  s4 see: No hint under 'Received on' in this sheet (the Collect sheet has one)
+  s4 not: The receipt saved with the old date
+J-F-panel-419-04 | type 6 | staff | The same member and plan, first as staff, then as owner; then a member who already has a plan
+  s1 see: The 10% refusal
+  s1 not: The sale saved
+  s2 see: The sale is saved, no refusal
+  s2 not: The desk limit applied to the owner
+  s3 see: Saved: the fee rule is only for someone with no plan here yet
+  s3 not: A renewal refused for a missing joining fee
+  s4 see: Saved, although the sheet says a fee is due (the rule counts any earlier plan)
+  s4 not: The desk told one rule and held to another
+J-F-panel-419-05 | type 12 | staff | Staff rights line in Staff & sign-in, and a staff device that skips the sheet check (old page still open, or a sale kept offline)
+  s1 see: 'Staff can give at most 10% off a plan, and must charge the joining fee as listed. Every receipt shows who took the money. Staff can date a payment at most 31 days back, never ahead.'
+  s1 not: A promise the sheet or the server does not keep
+  s2 see: The server refuses it with plain words; nothing is saved
+  s2 not: The server accepting what the sheet refuses
+  s2 not: An offline receipt accepted later with a date older than the limit
+J-F-panel-418-01 | type 1 | owner | Sell sheet open; plan price ₹1,500
+  s1 see: Banner: 'The price ₹15,000 is more than the plan price, ₹1,500. Tap again to save it anyway.'
+  s1 see: The button now reads 'Yes, save'
+  s1 see: Nothing is saved yet
+  s1 not: The sale saved on the first tap
+  s1 not: A due of ₹13,500 made without a word
+  s2 see: 'Saving…', the sheet closes, 'Membership saved…'
+  s2 not: The question asked a second time for the same values
+  s2 not: Two sales
+J-F-panel-418-02 | type 2 | owner | Sell sheet open (other kinds of unusual value: joining fee above the plan’s, start far ahead)
+  s1 see: 'The joining fee <typed> is more than the plan’s joining fee, <listed>. Tap again to save it anyway.'
+  s1 not: Saved without the question
+  s2 see: 'This plan starts on <day>, <n> days from today. Tap again to save it anyway.'
+  s2 not: A paid member hidden as Upcoming for months without a question
+  s3 see: One banner with both reasons, then one more tap saves
+  s3 not: Only the first reason shown and the second saved unseen
+  s4 see: No question
+  s4 not: The usual renewal day questioned every time
+J-F-panel-418-03 | type 3 | owner | Sell sheet showing the question after a high price
+  s1 see: The banner goes when the price is edited, the button is Confirm again, and the question comes back with the new amount
+  s1 not: The new amount saved on the strength of the old yes
+  s2 see: 'Amount received is more than the total.', no question
+  s2 not: A wrong value turned into a question that one more tap passes
+  s3 see: Saved at once, no question
+  s3 not: A question for an ordinary sale
+J-F-panel-418-04 | type 6 | owner | Sell sheet showing the question 'The price … is more than the plan price …'
+  s1 see: The price, fee and received boxes are emptied
+  s1 see: Expected: the banner goes and the button reads 'Confirm'. Seen in code: the old banner and 'Yes, save' stay
+  s1 not: A banner about a price that is no longer in the form
+  s1 not: A 'Yes, save' that confirms something other than what the banner says
+  s2 see: The other plan is saved at its list price
+  s2 not: The person believing they confirmed ₹15,000 for the first plan
+  s3 see: A clean sheet, no banner
+  s3 not: The earlier yes remembered
+J-F-panel-418-05 | type 1 | staff | Sell sheet open; plan price ₹1,500
+  s1 see: Banner: 'The price ₹15,000 is more than the plan price, ₹1,500. Tap again to save it anyway.'
+  s1 see: The button now reads 'Yes, save'
+  s1 see: Nothing is saved yet
+  s1 not: The sale saved on the first tap
+  s1 not: A due of ₹13,500 made without a word
+  s2 see: 'Saving…', the sheet closes, 'Membership saved…'
+  s2 not: The question asked a second time for the same values
+  s2 not: Two sales
+J-F-panel-418-06 | type 2 | staff | Sell sheet open (other kinds of unusual value: joining fee above the plan’s, start far ahead)
+  s1 see: 'The joining fee <typed> is more than the plan’s joining fee, <listed>. Tap again to save it anyway.'
+  s1 not: Saved without the question
+  s2 see: 'This plan starts on <day>, <n> days from today. Tap again to save it anyway.'
+  s2 not: A paid member hidden as Upcoming for months without a question
+  s3 see: One banner with both reasons, then one more tap saves
+  s3 not: Only the first reason shown and the second saved unseen
+  s4 see: No question
+  s4 not: The usual renewal day questioned every time
+J-F-panel-418-07 | type 3 | staff | Sell sheet showing the question after a high price
+  s1 see: The banner goes when the price is edited, the button is Confirm again, and the question comes back with the new amount
+  s1 not: The new amount saved on the strength of the old yes
+  s2 see: The 10% refusal under the price, no question
+  s2 not: A wrong value turned into a question that one more tap passes
+  s3 see: Saved at once, no question
+  s3 not: A question for an ordinary sale
+J-F-panel-418-08 | type 6 | staff | Sell sheet showing the question 'The price … is more than the plan price …'
+  s1 see: The price, fee and received boxes are emptied
+  s1 see: Expected: the banner goes and the button reads 'Confirm'. Seen in code: the old banner and 'Yes, save' stay
+  s1 not: A banner about a price that is no longer in the form
+  s1 not: A 'Yes, save' that confirms something other than what the banner says
+  s2 see: The other plan is saved at its list price
+  s2 not: The person believing they confirmed ₹15,000 for the first plan
+  s3 see: A clean sheet, no banner
+  s3 not: The earlier yes remembered
+J-F-panel-422-01 | type 1 | owner | A new gym with no plan; member page of a member
+  s1 see: Sheet titled 'Sell membership'
+  s1 see: Banner 'You haven’t created any plans yet. Add a plan first, then you can sell it here.'
+  s1 see: No form and no Confirm button; only the close control
+  s1 not: A blank form with an empty Plan list
+  s1 not: A Confirm button that can save a sale with no plan
+  s2 see: The member page as before
+  s2 not: A membership row made
+J-F-panel-422-02 | type 3 | owner | A gym whose plans are all switched off (none on sale)
+  s1 see: The same banner 'You haven’t created any plans yet. Add a plan first, then you can sell it here.'
+  s1 see: The words say 'You haven’t created any plans yet' although plans exist but are off
+  s1 not: A plan that is off sale offered
+  s1 not: A sale on a plan that is off
+J-F-panel-422-03 | type 6 | owner | The no-plans sheet was just seen
+  s1 see: The full sell form with the new plan picked
+  s1 not: The banner still shown after a plan exists
+  s2 see: Expected: the form with the new plan picked and Confirm working
+  s2 not: A form that shows the plan but answers 'Pick a plan first.'
+  s2 not: A sale saved on no plan
+J-F-panel-422-04 | type 1 | staff | A new gym with no plan; member page of a member
+  s1 see: Sheet titled 'Sell membership'
+  s1 see: Banner 'There are no plans to sell yet. Ask the owner to add a plan.'
+  s1 see: No form and no Confirm button; only the close control
+  s1 not: The desk told to add a plan it cannot add
+  s1 not: A Confirm button that can save a sale with no plan
+  s2 see: The member page as before
+  s2 not: A membership row made
+J-F-panel-422-05 | type 3 | staff | A gym whose plans are all switched off (none on sale)
+  s1 see: The same banner 'There are no plans to sell yet. Ask the owner to add a plan.'
+  s1 see: Nothing more
+  s1 not: A plan that is off sale offered
+  s1 not: A sale on a plan that is off
+J-F-panel-422-06 | type 6 | staff | The no-plans sheet was just seen
+  s1 see: The full sell form with the new plan picked
+  s1 not: The banner still shown after a plan exists
+  s2 see: Expected: the form with the new plan picked and Confirm working
+  s2 not: A form that shows the plan but answers 'Pick a plan first.'
+  s2 not: A sale saved on no plan
+J-F-panel-417-01 | type 1 | owner | Sell sheet open; total to pay ₹2,000
+  s1 see: 'Received on' appears, set to today
+  s1 see: In the warning colour: 'Still due after this: ₹1,500'
+  s1 not: A due that does not equal total minus received
+  s1 not: The due line missing
+  s2 see: 'Membership saved. Receipt <number>.'
+  s2 see: The member page shows ₹500 received and ₹1,500 due
+  s2 see: The member is in Money → Dues with ₹1,500
+  s2 not: The plan shown as fully paid
+  s2 not: A receipt for ₹2,000
+  s2 not: The member missing from Dues
+J-F-panel-417-02 | type 2 | owner | Sell sheet open (other kind: nothing received now)
+  s1 see: 'Leave blank if they will pay later. It will show in Dues.'
+  s1 see: No 'Received on' box
+  s1 see: 'Still due after this: <whole total>'
+  s1 not: A receipt for zero
+  s2 see: 'Membership saved. No money taken yet.'
+  s2 see: The whole total is in Dues
+  s2 not: A receipt number used up
+  s2 not: A payment row of ₹0
+J-F-panel-417-03 | type 2 | owner | Sell sheet open in a gym with a UPI ID set (other kind: UPI QR at the sale)
+  s1 see: 'Paid by' changes to UPI
+  s1 see: 'Received now' fills with the whole total
+  s1 see: The QR is for the whole total
+  s1 not: Paid by left on Cash for a UPI payment
+  s1 not: A QR amount different from Received now
+  s2 see: The QR is for ₹500 and the due line stays ₹1,500
+  s2 not: The typed part amount replaced by the whole total
+  s3 see: A receipt for the amount in Received now
+  s3 not: A receipt made by itself when the QR is shown
+  s3 not: A receipt for money that never came, with no way to see it was unverified
+J-F-panel-417-04 | type 3 | owner | Sell sheet open; total ₹2,000
+  s1 see: 'Amount received is more than the total.'
+  s1 not: A receipt above the total
+  s1 not: An advance kept silently
+  s2 see: 'The amount received looks wrong. Type it again.'
+  s2 not: The text read as some amount
+  s3 see: Saved as nothing received: no receipt, whole total due
+  s3 not: A ₹0 receipt
+  s4 see: 'The payment date can’t be in the future.'
+  s4 not: A receipt dated ahead
+J-F-panel-417-05 | type 6 | owner | A plan sold with ₹500 of ₹2,000 received
+  s1 see: The due falls to zero and the member leaves Dues
+  s1 not: More than the remaining ₹1,500 accepted
+  s1 not: The first receipt changed
+  s2 see: The due goes back up by ₹500
+  s2 not: The cancelled ₹500 still counted as received
+  s3 see: The member is no longer chased for the rest
+  s3 not: A reminder for dues of a cancelled plan
+J-F-panel-417-06 | type 12 | owner | After a part payment at the sale
+  s1 see: ₹500 in the day’s collection under the taker’s name; ₹1,500 under Dues
+  s1 not: The ₹1,500 counted as income
+  s2 see: The plan with the amount still due, in the app’s own words
+  s2 not: Another member’s dues
+  s2 not: The gym’s note or the taker’s phone number
+J-F-panel-417-07 | type 1 | staff | Sell sheet open; total to pay ₹2,000
+  s1 see: 'Received on' appears, set to today
+  s1 see: In the warning colour: 'Still due after this: ₹1,500'
+  s1 not: A due that does not equal total minus received
+  s1 not: The due line missing
+  s2 see: 'Membership saved. Receipt <number>.'
+  s2 see: The member page shows ₹500 received and ₹1,500 due
+  s2 see: The member is in Money → Dues with ₹1,500
+  s2 not: The plan shown as fully paid
+  s2 not: A receipt for ₹2,000
+  s2 not: The member missing from Dues
+J-F-panel-417-08 | type 2 | staff | Sell sheet open (other kind: nothing received now)
+  s1 see: 'Leave blank if they will pay later. It will show in Dues.'
+  s1 see: No 'Received on' box
+  s1 see: 'Still due after this: <whole total>'
+  s1 not: A receipt for zero
+  s2 see: 'Membership saved. No money taken yet.'
+  s2 see: The whole total is in Dues
+  s2 not: A receipt number used up
+  s2 not: A payment row of ₹0
+J-F-panel-417-09 | type 2 | staff | Sell sheet open in a gym with a UPI ID set (other kind: UPI QR at the sale)
+  s1 see: 'Paid by' changes to UPI
+  s1 see: 'Received now' fills with the whole total
+  s1 see: The QR is for the whole total
+  s1 not: Paid by left on Cash for a UPI payment
+  s1 not: A QR amount different from Received now
+  s2 see: The QR is for ₹500 and the due line stays ₹1,500
+  s2 not: The typed part amount replaced by the whole total
+  s3 see: A receipt for the amount in Received now
+  s3 not: A receipt made by itself when the QR is shown
+  s3 not: A receipt for money that never came, with no way to see it was unverified
+J-F-panel-417-10 | type 3 | staff | Sell sheet open; total ₹2,000
+  s1 see: 'Amount received is more than the total.'
+  s1 not: A receipt above the total
+  s1 not: An advance kept silently
+  s2 see: 'The amount received looks wrong. Type it again.'
+  s2 not: The text read as some amount
+  s3 see: Saved as nothing received: no receipt, whole total due
+  s3 not: A ₹0 receipt
+  s4 see: 'The front desk can date a payment at most 31 days back. Ask the owner to enter older payments.'
+  s4 not: An old-dated receipt from the desk
+J-F-panel-417-11 | type 6 | staff | A plan sold with ₹500 of ₹2,000 received
+  s1 see: The due falls to zero and the member leaves Dues
+  s1 not: More than the remaining ₹1,500 accepted
+  s1 not: The first receipt changed
+  s2 see: No 'Cancel receipt' button for staff
+  s2 not: The desk undoing money it took
+  s3 see: The member is no longer chased for the rest
+  s3 not: A reminder for dues of a cancelled plan
+J-F-panel-417-12 | type 12 | staff | After a part payment at the sale
+  s1 see: Only the Dues tab, with this member and the amount due
+  s1 not: Collection totals or profit shown to the front desk
+  s2 see: The plan with the amount still due, in the app’s own words
+  s2 not: Another member’s dues
+  s2 not: The gym’s note or the taker’s phone number
+J-F-panel-423-01 | type 1 | owner | Signed in as owner, online; member page with a receipt for a plan that is not cancelled
+  s1 see: Sheet 'Cancel this receipt?'
+  s1 see: 'Receipt <number> for <amount>, taken on <day>, will no longer count as money received. The amount is added back to this member’s dues. The receipt stays in the list, marked cancelled. Its number is never used again.'
+  s1 see: 'Reason' box with the example 'Entered twice' and 'Saved with the receipt, so it is clear months later.'
+  s1 see: Red 'Cancel receipt' button that cannot be pressed yet; 'Keep it' beside it
+  s1 not: The receipt cancelled by the first tap, with no question
+  s1 not: A wrong receipt number, amount or day in the sentence
+  s2 see: 'Cancelling…'
+  s2 see: The sheet closes
+  s2 see: 'Receipt cancelled. The amount is back in their dues.'
+  s2 see: The row stays, amount struck through, no Cancel button on it
+  s2 see: The member’s due is higher by that amount
+  s2 not: The row deleted
+  s2 not: The amount still in the day’s collection
+  s2 not: The due unchanged
+J-F-panel-423-02 | type 2 | owner | Signed in as owner; Money → Collections, the list of receipts
+  s1 see: The same sheet with the same words
+  s1 not: A different rule or wording from the member page
+  s2 see: 'Receipt cancelled. The amount is back in their dues.'
+  s2 see: The collection total for that day falls by the amount
+  s2 not: The total unchanged until a reload
+J-F-panel-423-03 | type 2 | owner | Receipt of a plan that was later cancelled (other kind)
+  s1 see: '… will no longer count as money received. That membership is cancelled, so nothing is added back to their dues. The receipt stays in the list, marked cancelled. Its number is never used again.'
+  s1 not: A promise that the amount returns to dues
+  s2 see: 'Receipt cancelled.' with no word about dues
+  s2 see: Dues unchanged
+  s2 not: A due appearing for a cancelled plan
+J-F-panel-423-04 | type 2 | owner | Receipt that is not for a membership (other kind)
+  s1 see: 'This receipt is not for a membership, so no dues change.'
+  s1 not: The dues sentence shown
+  s2 see: 'Receipt cancelled.'
+  s2 not: Any member’s dues changed
+J-F-panel-423-05 | type 3 | owner | Cancel-receipt sheet open; then the same receipt as staff; then with no internet
+  s1 see: The 'Cancel receipt' button stays unpressable
+  s1 not: A cancel saved with no real reason
+  s2 see: The sheet closes, the receipt is as before
+  s2 not: The receipt cancelled
+  s2 not: The typed reason saved
+  s3 see: No 'Cancel receipt' button anywhere; Money shows only Dues
+  s3 not: The desk cancelling a receipt it took
+  s3 not: A staff request accepted by the server
+  s4 see: 'Cancel receipt' cannot be used while offline
+  s4 not: A cancel kept on the device and sent later
+  s5 see: The server's words in a banner, or 'Could not cancel this receipt. Please try again.'
+  s5 see: The sheet stays open with the reason still typed
+  s5 not: 'Receipt cancelled' shown for a failed cancel
+J-F-panel-423-06 | type 6 | owner | A receipt that has just been cancelled
+  s1 see: Amount struck through and faded, marked cancelled, with the reason
+  s1 see: No 'Cancel receipt' button on it
+  s1 not: A way to cancel it twice
+  s1 not: A way to un-cancel it without a trace
+  s2 see: A NEW receipt number, higher than every earlier one
+  s2 not: The cancelled number given out again
+  s3 see: One cancel; the first reason stays; both screens agree after a refresh
+  s3 not: The second reason overwriting the first
+  s3 not: The amount added to dues twice
+  s4 see: The due that had come back is no longer chased
+  s4 not: A reminder for it
+J-F-panel-423-07 | type 12 | owner | Terms of use and the cancel sheet
+  s1 see: No button, and the server refuses a direct try
+  s1 not: Any staff path to a cancel
+  s2 see: The reason is kept with the receipt and shown to the gym’s owner
+  s2 not: The reason shown to the member in the member app or on a shared receipt
+  s2 not: A cancelled receipt still sendable to the member as a valid receipt
+  s2 not: The cancelled receipt visible to another gym

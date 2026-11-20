@@ -1,0 +1,746 @@
+# A8-panel-shop-2: coverage of 76 Tier 1 journeys (12 features, from A5-panel-shop-2, A5-panel-small-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-803 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 2 journey phrase(s)
+F-panel-803 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-803 | apps/mobile/test/shop/gymBusy.test.ts | unit | 209 lines | asserts 2 journey phrase(s)
+F-panel-803 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-803 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-803 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 1 journey phrase(s)
+F-panel-803 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-803 | apps/dashboard/e2e/online.spec.mjs | e2e | 163 lines | asserts 1 journey phrase(s)
+F-panel-803 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-panel-803 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 1 journey phrase(s)
+F-panel-803 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-panel-803 | apps/dashboard/test/crm/freshness.test.ts | unit | 56 lines | asserts 1 journey phrase(s)
+F-panel-804 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 5 journey phrase(s)
+F-panel-804 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-panel-804 | apps/dashboard/e2e/online.spec.mjs | e2e | 163 lines | asserts 4 journey phrase(s)
+F-panel-804 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 4 journey phrase(s)
+F-panel-804 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 3 journey phrase(s)
+F-panel-804 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | imports the code
+F-panel-804 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | imports the code
+F-panel-804 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | imports the code
+F-panel-804 | apps/dashboard/test/crm/demoGym.test.ts | unit | 109 lines | imports the code
+F-panel-804 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-804 | apps/dashboard/test/crm/gymReports.test.ts | unit | 140 lines | imports the code
+F-panel-804 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 3 journey phrase(s)
+F-panel-805 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-panel-805 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 5 journey phrase(s)
+F-panel-805 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-panel-805 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 4 journey phrase(s)
+F-panel-805 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 4 journey phrase(s)
+F-panel-805 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 4 journey phrase(s)
+F-panel-805 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-805 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-805 | apps/dashboard/test/crm/r448.test.ts | unit | 76 lines | asserts 4 journey phrase(s)
+F-panel-805 | apps/mobile/qa/sub-uat-f194-choose.yaml | maestro | 31 lines | asserts 4 journey phrase(s)
+F-panel-805 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 4 journey phrase(s)
+F-panel-805 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-panel-806 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-panel-806 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-806 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 3 journey phrase(s)
+F-panel-806 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | imports the code
+F-panel-806 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | imports the code
+F-panel-806 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-806 | apps/dashboard/test/crm/gymReports.test.ts | unit | 140 lines | imports the code
+F-panel-806 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | imports the code
+F-panel-806 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | imports the code
+F-panel-806 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | imports the code
+F-panel-806 | apps/dashboard/test/crm/planRequests.test.ts | unit | 239 lines | imports the code
+F-panel-806 | apps/dashboard/test/crm/plusLock.test.ts | unit | 92 lines | imports the code
+F-panel-802 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | imports the code
+F-panel-802 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | imports the code
+F-panel-802 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | imports the code
+F-panel-802 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-802 | apps/dashboard/test/crm/gymReports.test.ts | unit | 140 lines | imports the code
+F-panel-802 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | imports the code
+F-panel-802 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | imports the code
+F-panel-802 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | imports the code
+F-panel-802 | apps/dashboard/test/crm/planRequests.test.ts | unit | 239 lines | imports the code
+F-panel-802 | apps/dashboard/test/crm/plusLock.test.ts | unit | 92 lines | imports the code
+F-panel-802 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | imports the code
+F-panel-802 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 2 journey phrase(s)
+F-panel-107 | apps/mobile/test/shop/gymHours.test.ts | unit | 201 lines | asserts 4 journey phrase(s)
+F-panel-107 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 3 journey phrase(s)
+F-panel-107 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 2 journey phrase(s)
+F-panel-107 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 2 journey phrase(s)
+F-panel-107 | apps/dashboard/test/crm/ownerNumbers.test.ts | unit | 316 lines | asserts 2 journey phrase(s)
+F-panel-107 | deploy/hq/english.test.mjs | unit | 351 lines | asserts 2 journey phrase(s)
+F-panel-107 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-panel-107 | apps/dashboard/e2e/demo-showcase-uat.spec.mjs | e2e | 181 lines | asserts 1 journey phrase(s)
+F-panel-107 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 1 journey phrase(s)
+F-panel-107 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-107 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 1 journey phrase(s)
+F-panel-107 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-panel-103 | apps/mobile/test/shop/gymHours.test.ts | unit | 201 lines | asserts 4 journey phrase(s)
+F-panel-103 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 3 journey phrase(s)
+F-panel-103 | apps/dashboard/test/crm/branches.test.ts | unit | 224 lines | imports the code
+F-panel-103 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 2 journey phrase(s)
+F-panel-103 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-103 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-103 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-103 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 1 journey phrase(s)
+F-panel-103 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 1 journey phrase(s)
+F-panel-103 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-panel-103 | apps/dashboard/e2e/r534-training-progress-uat.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-panel-103 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-panel-104 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 5 journey phrase(s)
+F-panel-104 | apps/dashboard/test/crm/branches.test.ts | unit | 224 lines | imports the code
+F-panel-104 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 2 journey phrase(s)
+F-panel-104 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-104 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 2 journey phrase(s)
+F-panel-104 | apps/dashboard/test/crm/ownerOnboarding.test.ts | unit | 115 lines | asserts 2 journey phrase(s)
+F-panel-104 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-104 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-104 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 1 journey phrase(s)
+F-panel-104 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 1 journey phrase(s)
+F-panel-104 | apps/dashboard/e2e/online.spec.mjs | e2e | 163 lines | asserts 1 journey phrase(s)
+F-panel-104 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 1 journey phrase(s)
+F-panel-105 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 4 journey phrase(s)
+F-panel-105 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-panel-105 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 3 journey phrase(s)
+F-panel-105 | apps/dashboard/test/crm/branches.test.ts | unit | 224 lines | imports the code
+F-panel-105 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 2 journey phrase(s)
+F-panel-105 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-panel-105 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 2 journey phrase(s)
+F-panel-105 | apps/dashboard/e2e/entry-uat.spec.mjs | e2e | 187 lines | asserts 2 journey phrase(s)
+F-panel-105 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 2 journey phrase(s)
+F-panel-105 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 2 journey phrase(s)
+F-panel-105 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 2 journey phrase(s)
+F-panel-105 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-panel-106 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | asserts 4 journey phrase(s)
+F-panel-106 | apps/dashboard/test/crm/challengesHinglish.test.ts | unit | 108 lines | asserts 3 journey phrase(s)
+F-panel-106 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 2 journey phrase(s)
+F-panel-106 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 2 journey phrase(s)
+F-panel-106 | apps/dashboard/e2e/offline.spec.mjs | e2e | 74 lines | asserts 2 journey phrase(s)
+F-panel-106 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 2 journey phrase(s)
+F-panel-106 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 2 journey phrase(s)
+F-panel-106 | apps/mobile/qa/phase7-bigtext.yaml | maestro | 326 lines | asserts 2 journey phrase(s)
+F-panel-106 | apps/mobile/qa/xc-2b-checkin-offline.yaml | maestro | 16 lines | asserts 2 journey phrase(s)
+F-panel-106 | apps/mobile/test/shop/offer.test.ts | unit | 266 lines | asserts 2 journey phrase(s)
+F-panel-106 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-panel-106 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-panel-3101 | apps/dashboard/e2e/logocolour.spec.mjs | e2e | 160 lines | asserts 8 journey phrase(s)
+F-panel-3101 | apps/dashboard/test/crm/logoColour.test.ts | unit | 130 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-3101 | apps/dashboard/e2e/r573-uat.spec.mjs | e2e | 218 lines | asserts 3 journey phrase(s)
+F-panel-3101 | apps/dashboard/test/crm/auditC7Words.test.ts | unit | 35 lines | imports the code
+F-panel-3101 | apps/dashboard/test/crm/brand.test.ts | unit | 145 lines | imports the code
+F-panel-3101 | apps/dashboard/test/crm/shortcutIcon.test.ts | unit | 112 lines | imports the code
+F-panel-3101 | apps/dashboard/test/lib/serverAddress.test.ts | unit | 81 lines | imports the code
+F-panel-3101 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-3101 | apps/dashboard/e2e/r495-uat.spec.mjs | e2e | 303 lines | asserts 1 journey phrase(s)
+F-panel-3101 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-panel-3101 | apps/dashboard/e2e/shortcut-uat.spec.mjs | e2e | 159 lines | asserts 1 journey phrase(s)
+F-panel-3101 | apps/dashboard/test/crm/local.test.ts | unit | 1070 lines | asserts 1 journey phrase(s)
+F-panel-125 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 4 journey phrase(s)
+F-panel-125 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-125 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 3 journey phrase(s)
+F-panel-125 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 3 journey phrase(s)
+F-panel-125 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 3 journey phrase(s)
+F-panel-125 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 3 journey phrase(s)
+F-panel-125 | apps/mobile/qa/uat-rel-r336-update.yaml | maestro | 229 lines | asserts 3 journey phrase(s)
+F-panel-125 | apps/mobile/test/lib/updatePrompt.test.ts | unit | 214 lines | asserts 3 journey phrase(s)
+F-panel-125 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 3 journey phrase(s)
+F-panel-125 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 2 journey phrase(s)
+F-panel-125 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 2 journey phrase(s)
+F-panel-125 | apps/mobile/qa/uat-rel-r401-whats-new.yaml | maestro | 96 lines | asserts 2 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-803-01 | type 1 | owner | Today page of a gym whose member app and shop are turned on; two new orders, one ready, one handed over today
+  s1 see: Card titled 'Shop today' with the button 'Open shop'
+  s1 see: Three figures: '2' over 'new orders', '1' over 'ready for pickup', a rupee amount over 'sold today'
+  s1 see: Each figure shows '…' until the orders have loaded
+  s1 not: A figure of 0 shown before the orders have loaded
+  s1 not: An order that was only placed, not handed over, counted in sold today
+  s2 see: The 'new orders' figure goes up by one within the poll time, in the bright colour
+  s2 see: A short message 'New order from <first name> — <amount>'
+  s2 not: The page jumping or redrawing when nothing changed
+  s2 not: The same order announced twice
+  s3 see: The Shop page on its Orders tab, with the same count of new orders
+  s3 not: A different count on the Shop page than on the card
+J-F-panel-803-02 | type 3 | owner | Today page of a gym that has not turned the member app on
+  s1 see: No 'Shop today' card at all
+  s1 see: The card 'Let members order from your gym in the MettleUp app.' with the button 'Turn on the shop' instead
+  s1 not: A 'Shop today' card with zeros for a shop that does not exist
+  s1 not: An error banner about orders
+  s2 see: The 'Shop today' card with '…' in every figure, or the last loaded figures
+  s2 not: Zeros shown as if there were no orders
+  s2 not: A rupee figure shown as NaN
+J-F-panel-803-03 | type 6 | owner | Today page, shop on, one order in each state
+  s1 see: 'new orders' one lower, 'ready for pickup' one higher
+  s1 see: 'sold today' unchanged
+  s1 not: The order counted in both figures
+  s1 not: Sold today rising before the order is handed over
+  s2 see: 'ready for pickup' one lower
+  s2 see: 'sold today' higher by the order total, in green
+  s2 not: The amount added twice
+  s2 not: The amount missing until a reload
+  s3 see: 'new orders' one lower at the next refresh
+  s3 not: A cancelled order still counted as new
+  s3 not: A cancelled order counted in sold today
+J-F-panel-803-04 | type 12 | owner | Today page, shop on, signed in as the owner
+  s1 see: The 'sold today' figure is shown because the owner may see money totals
+  s1 see: Counts and money of this gym only
+  s1 not: Another gym's orders or money in the figures
+  s1 not: Member names or phone numbers on the card itself
+J-F-panel-803-05 | type 1 | staff | Today page, signed in as front desk staff, shop on, two new orders and one ready
+  s1 see: Card titled 'Shop today' with the button 'Open shop'
+  s1 see: Two figures only: '2' over 'new orders' and '1' over 'ready for pickup'
+  s1 not: A 'sold today' figure shown to staff
+  s1 not: An empty third column left where the money figure would be
+  s2 see: The Shop page on Orders, the only tab staff has
+  s2 not: A Products tab shown to staff
+J-F-panel-803-06 | type 3 | staff | Today page as staff in a gym where the member app is not on
+  s1 see: No 'Shop today' card
+  s1 see: The line 'The member app and shop are not turned on yet. Only an owner can turn them on.'
+  s1 not: A 'Turn on the shop' button shown to staff
+  s1 not: A shop card with zeros
+J-F-panel-803-07 | type 6 | staff | Today page as staff, shop on, one new order
+  s1 see: 'new orders' 0 in the plain colour, 'ready for pickup' 1
+  s1 not: The bright colour left on a zero count
+  s2 see: 'ready for pickup' 0
+  s2 see: Still only two figures
+  s2 not: The money of the order shown anywhere on the card
+J-F-panel-803-08 | type 12 | staff | Today page as staff, shop on, orders handed over today
+  s1 see: Counts of orders only
+  s1 see: No 'sold today' figure and no rupee sign on the card
+  s1 not: The day's shop takings visible to staff on the card
+  s1 not: Another gym's order counts
+J-F-panel-804-01 | type 1 | prospect | Welcome page of the admin app, not signed in, no gym in this browser
+  s1 see: Words: 'Opens a sample gym with made-up members, payments and a shop.'
+  s1 see: Button 'Start demo'
+  s1 not: The demo button drawn as the bright main button (that is 'Sign in' or 'Create my gym')
+  s2 see: Button reads 'Starting your demo gym…' and every button on the page is off
+  s2 see: Then the Today page of a sample gym with made-up members, a gym code and a shop card
+  s2 not: Two demo gyms made by one tap
+  s2 not: A blank Today page
+  s2 not: Landing on the page the last gym was left on
+  s3 see: The order shows up in the demo Shop
+  s3 not: The phone joining a different gym than the one on screen
+J-F-panel-804-02 | type 2 | prospect | The demo address of the admin app (/demo), opened from the website
+  s1 see: A sample gym with made-up members, kept only on this page
+  s1 see: Parts that need the server are switched off with a plain line saying this is the demo
+  s1 not: Any call reaching the gym server
+  s1 not: The gym this device is signed in to being read, changed or signed out
+  s2 see: The sign-in page, or the gym this device was signed in to, untouched
+  s2 not: Demo members mixed into a real gym
+J-F-panel-804-03 | type 3 | prospect | Welcome page, internet off
+  s1 see: Error banner 'Can’t reach MettleUp. Check the internet and try again.'
+  s1 see: Button now reads 'Try again'
+  s1 see: A second button 'Open the demo without the shop. It works without internet.'
+  s1 not: An endless spinner
+  s1 not: A half-made demo gym left in this browser
+  s1 not: Raw server words on screen
+  s2 see: The sample gym opens with made-up members and no shop card
+  s2 not: A gym code shown for a gym that does not exist on the server
+J-F-panel-804-04 | type 6 | prospect | A browser that started a demo gym earlier
+  s1 see: The same demo gym with the same gym code, no question asked
+  s1 not: A new demo gym made on every visit
+  s1 not: The demo members gone while the gym code stays
+  s2 see: Back on the Welcome page with 'That demo gym is no longer available. Start a new one below.'
+  s2 see: An empty gym in place of the sample members
+  s2 not: Sample members left behind with a dead shop
+  s2 not: An error on every page with no way out
+  s3 see: The Welcome page again, where 'Start demo' makes a new one
+  s3 not: 'Start over' offered to a real gym that only turned the shop on
+J-F-panel-804-05 | type 12 | prospect | Welcome page, about to start a demo
+  s1 see: Made-up members stay in this browser
+  s1 see: The server gets only a gym named for the demo, its code and 12 sample products; this browser keeps the key that opens it
+  s1 not: Any real person’s name or number sent to the server
+  s1 not: The key shown on screen or put in a link
+  s1 not: Another visitor’s demo gym opening in this browser
+J-F-panel-804-06 | type 1 | owner | Today page of a real gym kept in this browser, member app not turned on
+  s1 see: Words: 'Turn on the shop to get your gym code. It comes with 12 sample products you can change or delete.'
+  s1 see: Button 'Turn on the shop'
+  s1 not: A gym code shown before the shop is on
+  s2 see: Button reads 'Turning on…' and is off
+  s2 see: Then 'Members join in the MettleUp app with this gym code:' with a 6-letter code
+  s2 see: The 'Shop today' card appears beside it
+  s2 not: Any member, plan or payment of the gym changed or erased
+  s2 not: Two gyms made by one tap
+  s2 not: A code that differs between Today and Settings
+  s3 see: 12 sample products
+  s3 not: An empty shop
+  s3 not: Another gym's products
+J-F-panel-804-07 | type 2 | owner | Settings, Branding, in a gym whose member app is not on
+  s1 see: A card titled 'Turn on the member app first' with the same 'Turn on the shop' button
+  s1 not: The branding form shown for a gym that has no app yet
+  s2 see: The branding form loads in place of the card
+  s2 not: A page that needs a reload to show the form
+J-F-panel-804-08 | type 3 | owner | The 'Turn on the shop' card, with the internet off or the server busy
+  s1 see: An error banner in plain words about the internet
+  s1 see: The button back to 'Turn on the shop'
+  s1 not: A gym code shown for a gym that was not made
+  s1 not: Raw server words
+  s1 not: The button left off for ever
+  s2 see: 'The member app and shop are not turned on yet. Only an owner can turn them on.' and no button
+  s2 not: Staff able to turn the shop on
+J-F-panel-804-09 | type 6 | owner | Settings of a real gym that turned the shop on in this browser
+  s1 see: 'Shop disconnected. Your members and payments are still here.'
+  s1 see: The 'Turn on the shop' card is back on Today
+  s1 not: Any member or payment erased
+  s1 not: A 'Start over' button offered to this real gym
+  s2 see: A gym code
+  s2 see: The owner is told plainly if this is a new code and members must join again
+  s2 not: Members who joined with the old code left in a gym nobody can open, with no word to the owner
+  s2 not: Old orders shown as lost without a reason
+  s3 see: The same gym code and shop, without tapping anything
+  s3 not: The shop turned off by a reload
+J-F-panel-804-10 | type 12 | owner | A real gym kept in this browser, shop just turned on
+  s1 see: Only the gym's name went to the server, with a new code and sample products
+  s1 see: Members, payments and visits stay in this browser
+  s1 not: Member names, phones or payments sent by turning the shop on
+  s1 not: The key that opens the gym shown on screen, in a link or in a share message
+  s2 see: No gym: the key lives only in the first browser
+  s2 not: The shop opening for anyone who only knows the gym code
+J-F-panel-805-01 | type 1 | owner | Settings, Branding, in a gym with the member app on and no look saved yet
+  s1 see: Title 'Branding' with 'Your gym's logo and colours in the MettleUp app. Your logo also shows at the top of this admin app.'
+  s1 see: 'Loading your gym’s look…' then the form with a phone preview
+  s1 not: A form that shows another gym’s colours
+  s1 not: The form reloading and wiping picks every few seconds
+  s2 see: 'Checking your logo…' then two logos side by side: 'Without the background' (Best for the app) and 'Keep my logo as it is'
+  s2 see: Button 'Upload this logo'
+  s2 not: The picked logo lost when the file window closes
+  s2 not: A logo over 1 MB accepted without a word
+  s3 see: The phone preview changes at once
+  s3 see: 'Easy to read?' lists what was checked, and says when a colour was changed so it can be read
+  s3 not: A half-typed colour code breaking the preview
+  s3 not: Save open while the code is not a colour
+  s4 see: 'Saving…' then 'Saved. New members see it at once. Members who already joined see it on a later visit to the app. The app checks at most once an hour, and never in the middle of a workout.'
+  s4 see: The logo shows at the top of the admin app at once
+  s4 see: 'Saved' with the date beside the button
+  s4 not: Saved shown when the server refused
+  s4 not: A different colour stored than the one picked
+  s4 not: The look of another gym changed
+J-F-panel-805-02 | type 3 | owner | Branding form open, wrong inputs
+  s1 see: 'Finish typing the colour code to check it.'
+  s1 see: 'Save' is off
+  s1 not: The half code saved
+  s1 not: The preview going blank
+  s2 see: 'Your logo has a photo or a pattern behind it.' with free ways to remove it
+  s2 see: The logo kept as it is
+  s2 not: A cut-up logo saved as if cleaned
+  s3 see: 'Can’t reach the internet. Check the connection and try again.'
+  s3 see: Every pick still on the form
+  s3 not: The toast 'Saved.'
+  s3 not: Picks wiped by the failure
+  s4 see: The page does not open for staff
+  s4 not: Staff able to change the look
+  s4 not: The server accepting a staff save
+J-F-panel-805-03 | type 6 | owner | Branding with a look already saved
+  s1 see: The unsaved pick is still on the form
+  s1 not: The form reset to the saved look by the background refresh
+  s2 see: 'Save' is off and 'Saved · <date>' shows
+  s2 not: Save left on with nothing changed
+  s3 see: 'Back to MettleUp’s look.'
+  s3 see: The logo leaves the top of the admin app
+  s3 see: The 'Use MettleUp’s look' button goes away
+  s3 not: The old logo still shown to members for good
+  s3 not: The clear done without the question
+  s4 see: The new look saved as in the happy path
+  s4 not: The cleared logo coming back by itself
+J-F-panel-805-04 | type 12 | owner | Branding saved for the gym
+  s1 see: The app shows the gym's name, logo and colours
+  s1 not: Another gym's logo or colours
+  s1 not: The look changing in the middle of a workout
+  s2 see: The logo is a public picture: anyone with its address can open it
+  s2 see: Only the owner can change it
+  s2 not: A logo address that names the gym id or the owner
+  s2 not: Staff or a member able to change the look
+J-F-panel-806-01 | type 1 | owner | Settings of a gym with the member app on
+  s1 see: The new name in the box, with its hint line
+  s1 not: The name saved before Save is tapped
+  s2 see: 'Saving…' then 'Saved.'
+  s2 see: The new name at the top of the admin app
+  s2 not: 'Saved.' when the server refused the name
+  s2 not: The join code changed by a rename
+  s2 not: Phone, address, GSTIN or UPI ID changed by the rename
+  s3 see: The new gym name, after the app next checks
+  s3 not: The old name left for good
+  s3 not: Members asked to join again
+J-F-panel-806-02 | type 3 | owner | Settings, gym details form
+  s1 see: 'Type the gym’s name.' on the name box
+  s1 see: No 'Saved.'
+  s1 not: An empty name saved
+  s1 not: The members’ app showing a blank gym name
+  s2 see: An error banner in plain words
+  s2 see: The new name stays in the box so it can be saved again
+  s2 not: 'Saved.' shown
+  s2 not: The admin app showing the new name while members still see the old one, with no warning
+  s3 see: The staff settings page, with no gym name box
+  s3 not: Staff able to rename the gym
+J-F-panel-806-03 | type 6 | owner | Settings, a gym renamed once already
+  s1 see: 'Saved.'
+  s1 see: No rename sent for the same name
+  s1 not: An error for an unchanged name
+  s2 see: 'Saved.'
+  s2 see: The first name everywhere again
+  s2 not: Two names in use on different screens
+  s3 see: The new name on the second device after it opens
+  s3 not: The second device saving the old name back over the new one
+J-F-panel-806-04 | type 12 | owner | Gym renamed in Settings
+  s1 see: Members of this gym see it in the app; it is on the invite poster and the join page
+  s1 see: Only the owner can change it
+  s1 not: Another gym renamed
+  s1 not: Staff or a member able to change the name
+  s1 not: The old name kept on receipts already issued being rewritten without a word
+J-F-panel-802-01 | type 1 | owner | Shop, Products tab, a product with the drawn picture and no photo
+  s1 see: The button reads 'Uploading…' and the card is busy
+  s1 see: Then 'Photo added to <product>. Members see it in the app now.'
+  s1 see: The photo on the card, upright
+  s1 not: The product lying on its side
+  s1 not: Price, stock or name changed by adding a photo
+  s1 not: The full 6 MB file sent
+  s2 see: The photo on the product tile
+  s2 not: The drawn picture still shown
+  s2 not: Another product's photo
+J-F-panel-802-02 | type 2 | owner | The product sheet ('+ Add product' or edit a product)
+  s1 see: 'Uploading photo…' and Save is off while it uploads
+  s1 see: The photo in the sheet, the button now 'Change photo'
+  s1 see: 'Members see this photo in the app. Remove it to show the drawn picture instead.'
+  s1 not: The product saved while the photo is still uploading
+  s1 not: A second upload started by a second pick
+  s2 see: The product in the list with its photo
+  s2 not: The photo lost on save
+  s2 not: The photo shown to members before the product is saved
+J-F-panel-802-03 | type 2 | owner | Set up your gym, the gym web page photos (the other kind this uploader serves)
+  s1 see: unknown: the gym web page has its own photo code in another folder, which this step did not open; no gym page screen was found calling the product photo uploader
+  s1 not: A gym page photo stored among product photos
+  s1 not: A photo over the size limit accepted
+J-F-panel-802-04 | type 3 | owner | Shop, Products tab, wrong files
+  s1 see: 'That file isn’t a photo. Pick a JPEG or PNG picture.'
+  s1 not: The file uploaded
+  s1 not: The product left busy
+  s2 see: 'This photo can’t be read here (iPhone HEIC photos often can’t). Save it as JPEG or PNG and try again.'
+  s2 not: A black or empty picture saved
+  s3 see: 'That photo is too big to use (over 40 MB). Pick a smaller one.'
+  s3 see: 'That file is empty. Pick another photo.'
+  s3 not: The browser freezing
+  s4 see: 'Can’t reach the internet, so the photo didn’t upload. Check the connection and try again.'
+  s4 see: The product as it was
+  s4 not: 'Photo added' shown
+  s4 not: The product pointing at a photo that is not there
+  s5 see: 'Too many photo uploads in the last few minutes. Wait a little and try again.'
+  s5 not: Raw server words
+J-F-panel-802-05 | type 6 | owner | A product with a photo
+  s1 see: The new photo on the card and in the app
+  s1 not: The old photo still shown to members after a reload
+  s2 see: The drawn picture again
+  s2 see: 'A clear photo on a plain background works best. You can also drag a photo onto the picture.'
+  s2 not: A broken-picture mark
+  s3 see: The photo back, under a new file name
+  s3 not: An error because the old file name is taken
+  s4 see: The product keeps its old picture
+  s4 not: The unsaved photo shown to members
+J-F-panel-802-06 | type 12 | owner | A product photo added
+  s1 see: Product photos are public pictures: anyone with the address can open one
+  s1 see: The photo is re-drawn in the browser before upload, so only the picture leaves the phone
+  s1 not: The place or time the photo was taken left inside the uploaded file
+  s1 not: A photo address that names the gym or the owner
+  s1 not: A person outside the gym able to put a photo on this gym’s product
+  s2 see: Members no longer see it in the app
+  s2 not: The owner told the file is deleted when it still opens by its address
+J-F-panel-802-07 | type 1 | staff | Shop page, signed in as front desk staff
+  s1 see: The Orders tab only
+  s1 see: No Products tab, no 'Add photo' and no '+ Add product'
+  s1 not: A way for staff to change a product picture
+  s2 see: The product with the photo the owner added
+  s2 not: A broken picture where the owner removed the photo
+J-F-panel-802-08 | type 3 | staff | Signed in as staff, the address /shop/products typed by hand
+  s1 see: The Orders tab opens instead
+  s1 not: The Products tab shown to staff
+  s1 not: A blank page
+  s2 see: The server refuses: only an owner gets a ticket
+  s2 not: A staff sign-in able to upload or attach a product photo
+J-F-panel-802-09 | type 6 | staff | Signed in as staff while the owner changes a product photo
+  s1 see: Still only Orders; pictures in orders follow the product
+  s1 not: An upload control appearing for staff after the change
+  s2 see: The Products tab and its photo buttons appear
+  s2 not: The owner tools missing after the role change
+  s2 not: The tools showing before the new sign-in
+J-F-panel-107-01 | type 1 | owner | Owner of a gym with 2 or more branches, online, any panel page
+  s1 see: Page title "All branches" with "<business name> · <n> branches"
+  s1 see: "Loading every branch…" while the other branches are read
+  s1 not: Only the open branch's numbers in the totals without a word
+  s1 not: The page switches the open branch
+  s2 see: Tiles "Active members", "Money in this month" (with "₹… today"), "Fees due" ("<n> people owe"), "Came in today", "Plans ending in 7 days", "Joined this month"
+  s2 see: One row per branch: "<n> active · <n> ending in 7 days · <n> came in today" and "₹… this month · ₹… due"; the open one has the pill "Open now"
+  s2 not: Totals that are not the sum of the branch rows
+  s2 not: A visit by a member of branch A at branch B counted at branch A
+  s3 see: Members of every branch with "<branch> · <mobile> · ₹… due", biggest amount first
+  s3 see: "And <n> more. Open a branch to see its full list." when over 60
+  s3 not: A member with nothing due on the list
+  s3 not: The count in "And <n> more" wrong
+  s4 see: Matching members of every branch with their branch name
+  s4 see: "Can train at every branch" for an all-branch member
+  s4 not: Archived members shown
+  s4 not: Results from only the open branch
+  s5 see: "Opening…" style busy buttons, then that branch's panel on the member's page
+  s5 not: The member page of a different member
+  s5 not: Two branches opened at once after a second tap
+J-F-panel-107-02 | type 2 | owner | Owner of a gym with 2 or more branches, on a phone, on More
+  s1 see: The same "All branches" page
+  s1 not: The row shown to an owner of a one-branch gym
+  s2 see: "Opening…" on that row, then that branch's Today page
+  s2 not: The other rows' Open buttons still pressable while opening
+  s3 see: The page again, now with "Open now" on the branch just opened
+  s3 not: "Open now" still on the old branch
+J-F-panel-107-03 | type 3 | owner | Owner of a gym with one branch types /branches in the address bar
+  s1 see: Title "All branches" and an empty state "One branch": "Your gym has one branch. Add another in Settings → Branches. Then this page shows every branch together."
+  s1 not: A spinner that never ends
+  s1 not: Zero tiles shown as if the gym had no members
+  s2 see: Nothing below the box for 2 letters
+  s2 see: "No member with that name or number." for the unknown name
+  s2 not: "No member" shown after only 1 or 2 letters
+J-F-panel-107-04 | type 3 | owner | Owner with 3 branches; one branch cannot be read (its key was signed out and a new one is refused, or the internet drops)
+  s1 see: A red banner "<branch>: <reason> Its numbers are not in the totals below. Tap “Refresh” to try again."
+  s1 see: The tiles and rows for the branches that did load
+  s1 not: The failed branch counted as zero without the banner
+  s1 not: The whole page blank because one branch failed
+  s2 see: A red banner with the reason, still on All branches
+  s2 not: The panel stuck on a half-opened branch
+  s2 not: The device signed out
+J-F-panel-107-05 | type 6 | owner | All branches open; a payment is then saved in another branch on another device
+  s1 see: Every branch read again; "Money in this month" and that branch's row go up by the payment
+  s1 not: The old figure kept for a branch opened earlier this visit
+  s2 see: "Open now" on the branch now open; the same totals
+  s2 not: A branch counted twice (as the open one and as another)
+  s3 see: "Money in this month" goes down by that amount
+  s3 not: A voided payment still counted
+J-F-panel-107-06 | type 12 | owner | Owner of a gym with branches; a front-desk person is signed in on the desk laptop
+  s1 see: Only the gym's name at the top, no Branch list; no "All branches" on More
+  s1 not: Money totals of any branch shown to the desk
+  s1 not: Members' mobiles of other branches shown to the desk
+  s2 see: Members of every branch with their mobile numbers, for the owner only
+  s2 not: Members of another business's gym in the lists
+J-F-panel-103-01 | type 1 | owner | Owner of a gym with 2 branches, online, nothing waiting to be sent, on Today
+  s1 see: "All branches" then each branch's name
+  s1 not: A branch of another owner's business listed
+  s2 see: "Opening the branch…" under the list
+  s2 see: The panel opens again on Today of that branch
+  s2 not: Screens still showing the first branch's members
+  s2 not: A sign-in screen
+  s3 see: Both branches with "Gym code … · receipts start …"; "Open now" on the branch just picked
+  s3 not: "Open now" on two branches
+J-F-panel-103-02 | type 2 | owner | Owner on All branches
+  s1 see: That branch's Today
+  s1 not: The open branch unchanged with no message
+  s2 see: The branch now selected
+  s2 not: The list showing the old branch
+J-F-panel-103-03 | type 2 | owner | Owner; the key this device kept for branch B was signed out from the device list
+  s1 see: "Opening the branch…", then branch B opens with no extra sign-in
+  s1 not: "Sign in first." or a sign-out of the whole device
+  s1 not: A red line when a fresh key could be made
+J-F-panel-103-04 | type 3 | owner | Owner with 2 branches, internet off or entries waiting to be sent
+  s1 see: The list is greyed out; its description says the internet is needed
+  s1 not: The list opens and a switch is tried offline
+  s2 see: "Another branch opens when everything saved on this device is sent." under the list
+  s2 not: The switch allowed while this branch's entries wait
+  s3 see: A red line with plain words, e.g. "Branches are not switched on for your gym yet. Message MettleUp on WhatsApp."
+  s3 not: A raw database message
+J-F-panel-103-05 | type 6 | owner | Owner switched to branch B
+  s1 see: Today of the first branch; "Open now" moves back in Settings → Branches
+  s1 not: Branch B's data on the first branch's screens
+  s2 see: The Branch list now has three names
+  s2 not: The new branch missing until a reload
+J-F-panel-103-06 | type 12 | owner | A gym with 2 branches; a front-desk person of branch A signed in
+  s1 see: Only the gym name, no Branch list
+  s1 not: A way to open branch B
+  s1 not: Branch B's members
+  s2 see: Only their own gym
+  s2 not: The owner's kept branch keys used for the new person
+J-F-panel-104-01 | type 1 | owner | Owner, gym online, server has branches, one branch with 4 plans, on Settings
+  s1 see: Sheet "Add a branch" with "Branch name", ticked "Copy this branch’s plans to the new branch" and six lines, e.g. "Every owner of this gym is an owner of the new branch too."
+  s1 not: The sheet opens with the last typed name
+  s2 see: "Adding…", then the sheet closes
+  s2 see: "Iron Temple, Vaishali Nagar is added. 4 plans were copied to it. Next: open it and add its front-desk staff." and a button "Open Iron Temple, Vaishali Nagar"
+  s2 not: Two branches made
+  s2 not: The open branch changes by itself
+  s3 see: The new row with its own gym code and "receipts start B2/<year>/0001"
+  s3 see: The Branch list appears at the top of the panel
+  s3 not: The new branch with the same receipt start as the first
+J-F-panel-104-02 | type 2 | owner | Owner adds a branch with plans not copied
+  s1 see: "<name> is added. Next: open it and add its front-desk staff." with no plans line
+  s1 not: Plans copied anyway
+  s2 see: The new branch opens on Settings → Staff & sign-in
+  s2 not: The first branch's staff in the new branch
+J-F-panel-104-03 | type 3 | owner | Owner in the "Add a branch" sheet
+  s1 see: Red banner "Type the branch’s name, like “Iron Temple, Vaishali Nagar”."
+  s1 not: A branch with a one-letter name
+  s2 see: "A branch with this name already exists. Pick another name."
+  s2 not: A second branch with the same name
+  s3 see: "You already have 10 branches, the most for now. Message MettleUp on WhatsApp if you need more."
+  s3 not: An 11th branch made
+J-F-panel-104-04 | type 3 | owner | Owner whose gym is not online, or whose server has no branches yet
+  s1 see: Not online: "Have more than one gym? Put your gym online first (Settings → Sign-in & data)…"
+  s1 see: No branches on the server: "Branches are not switched on for your gym yet. Message MettleUp on WhatsApp to switch them on."
+  s1 not: An "Add a branch" button that then fails
+J-F-panel-104-05 | type 6 | owner | Owner opened the "Add a branch" sheet and typed a name
+  s1 see: The sheet closes; the card unchanged
+  s1 not: A branch made
+  s1 not: An old error banner on the next open
+  s2 see: The card words change to "Each branch has its own members, plans, receipts, front desk and QR poster…"
+  s2 see: "Add a branch" turns into a quieter button
+  s2 not: The "is added" line still showing after a reload as if new
+J-F-panel-104-06 | type 12 | owner | Owner adds a second branch to a gym with 2 owners and 3 desk staff
+  s1 see: Both owners can open it
+  s1 see: No desk staff in it until added there
+  s1 not: The first branch's desk staff able to open the new branch
+  s1 not: Members or payments copied into it
+  s2 see: Its trial ends on the same day as the first branch's
+  s2 not: A new free trial starting today for the branch
+J-F-panel-105-01 | type 1 | owner | Owner of a gym with 2 branches, online, Settings → Branches
+  s1 see: The field holds the name the server last said; "Save name" turns on once it differs
+  s1 not: "Save name" pressable with the same name
+  s2 see: "Saving…", then a toast "Saved."
+  s2 not: "Saved." when the save failed
+  s3 see: Subtitle "<new name> · 2 branches"
+  s3 not: The old name still shown
+J-F-panel-105-02 | type 3 | owner | Owner in Settings → Branches
+  s1 see: "Save name" greyed out
+  s1 not: An empty business name saved
+  s2 see: No "Your business name" field
+  s2 not: A field that saves nowhere
+  s3 see: A toast with plain words
+  s3 not: A raw database message
+  s3 not: "Saved."
+J-F-panel-105-03 | type 6 | owner | Owner typed a new name but did not save
+  s1 see: The saved name again
+  s1 not: The unsaved name shown as if saved
+  s2 see: "Saved." each time; All branches follows
+  s2 not: "Save name" stays off after the first save
+J-F-panel-106-01 | type 1 | owner | Owner at branch A of a gym with 2 branches, online, Visits page on today
+  s1 see: "Looking…"
+  s1 see: "<First name> is a member of <branch B>. Their plan covers every branch." and a "Check in" button
+  s1 not: The member's full name, mobile or payments shown
+  s1 not: Members of another business's gym found
+  s2 see: A toast "<First name> (<branch B>) checked in."
+  s2 see: The box is cleared
+  s2 not: Two check-ins from a fast double tap
+  s2 not: The visit counted as a member of branch A
+  s3 see: A row with the time (IST), the first name, a "<branch B>" pill and "Undo"
+  s3 not: The row missing after the toast
+J-F-panel-106-02 | type 2 | owner | Owner at branch A; the member already checked in today, once at the desk and once from the member app
+  s1 see: "<First name> (<branch B>) is already checked in today." and no "Check in" button
+  s1 not: A second check-in offered
+  s2 see: The member's row with an "App" pill when they checked in from the app
+  s2 not: The app check-in missing from the list
+J-F-panel-106-03 | type 3 | owner | Owner in the card "Member from another branch"
+  s1 see: Red banner "Type their 10-digit mobile number, like 98290 12345."
+  s1 not: A lookup sent to the server
+  s2 see: "No member of your other branches has this number."
+  s2 not: A member of this branch shown as a visitor
+  s3 see: "<First name> is a member of <branch B>. Their plan is for that branch only. Ask them to go there, or ask the owner." and no button
+  s3 not: A "Check in" button
+  s4 see: "<First name> (<branch B>) has no plan running today. Ask them to renew at the desk."
+  s4 not: The words say renew while the check-in is still offered without a warning (see checkpoint)
+  s5 see: "This desk looked up 30 numbers of other branches in the last hour. Wait a little, then try again."
+  s5 not: The lookup carries on
+J-F-panel-106-04 | type 6 | owner | Owner checked in a member of branch B by mistake
+  s1 see: A toast "Check-in removed for <First name>."; the row goes
+  s1 not: The member's branch still counting the visit
+  s2 see: The row back, with the new time
+  s2 not: "already checked in" after the undo
+  s3 see: "From other branches today" empty
+  s3 not: Yesterday's visitors listed as today's
+J-F-panel-106-05 | type 1 | staff | Desk person at branch A of a gym with 2 branches, online, Visits page on today
+  s1 see: "Looking…"
+  s1 see: "<First name> is a member of <branch B>. Their plan covers every branch." and a "Check in" button
+  s1 not: The member's full name, mobile or payments shown
+  s1 not: Members of another business's gym found
+  s2 see: A toast "<First name> (<branch B>) checked in."
+  s2 see: The box is cleared
+  s2 not: Two check-ins from a fast double tap
+  s2 not: The visit counted as a member of branch A
+  s3 see: A row with the time (IST), the first name, a "<branch B>" pill and "Undo"
+  s3 not: The row missing after the toast
+J-F-panel-106-06 | type 2 | staff | Desk person at branch A; the member already checked in today, once at the desk and once from the member app
+  s1 see: "<First name> (<branch B>) is already checked in today." and no "Check in" button
+  s1 not: A second check-in offered
+  s2 see: The member's row with an "App" pill when they checked in from the app
+  s2 not: The app check-in missing from the list
+J-F-panel-106-07 | type 3 | staff | Desk person in the card "Member from another branch"
+  s1 see: Red banner "Type their 10-digit mobile number, like 98290 12345."
+  s1 not: A lookup sent to the server
+  s2 see: "No member of your other branches has this number."
+  s2 not: A member of this branch shown as a visitor
+  s3 see: "<First name> is a member of <branch B>. Their plan is for that branch only. Ask them to go there, or ask the owner." and no button
+  s3 not: A "Check in" button
+  s4 see: "<First name> (<branch B>) has no plan running today. Ask them to renew at the desk."
+  s4 not: The words say renew while the check-in is still offered without a warning (see checkpoint)
+  s5 see: "This desk looked up 30 numbers of other branches in the last hour. Wait a little, then try again."
+  s5 not: The lookup carries on
+J-F-panel-106-08 | type 6 | staff | Desk person checked in a member of branch B by mistake
+  s1 see: A toast "Check-in removed for <First name>."; the row goes
+  s1 not: The member's branch still counting the visit
+  s2 see: The row back, with the new time
+  s2 not: "already checked in" after the undo
+  s3 see: "From other branches today" empty
+  s3 not: Yesterday's visitors listed as today's
+J-F-panel-106-09 | type 12 | staff | Desk person of branch A only (not on branch B's staff list)
+  s1 see: Only the first name, the branch and whether the plan covers every branch
+  s1 not: Their surname, mobile, payments or plan price shown
+  s1 not: A way to open branch B
+  s2 see: First names and branch names only
+  s2 not: Branch B's other members
+J-F-panel-3101-01 | type 1 | gym owner | Gym owner on Settings → Branding with a saved logo that has a clear colour
+  s1 see: "Reading the colours in your logo…"
+  s1 see: A box "Colour from your logo" with an "Aa" sample, the colour code and "Use this colour"
+  s1 not: The logo sent to an AI or another server
+  s1 not: A colour not in the logo
+  s2 see: "Easy to read on the member app’s dark screens." or "Too dark to read…"
+  s2 see: "Prints clearly as the coloured bar on the white member ID card." or "Prints pale…"
+  s2 see: "Members see it after you press Save."
+  s2 not: A tick next to a colour that is too dark
+  s3 see: The button reads "Using this colour" and greys out; "Your brand colour" holds the code; the phone preview changes; "Saving…"
+  s3 not: The colour saved before Save is pressed
+  s3 not: A different code saved from the one shown
+J-F-panel-3101-02 | type 2 | gym owner | Gym owner on Branding uploads a new logo
+  s1 see: While it uploads, the colours are read; the box "Colour from your logo" appears with no extra tap
+  s1 not: The upload fails because the colours could not be read
+  s2 see: The swatch is marked; the brand colour field holds that code
+  s2 not: The main suggestion button still saying "Using this colour"
+J-F-panel-3101-03 | type 3 | gym owner | Gym owner on Branding
+  s1 see: No suggest button; only "Your brand colour"
+  s1 not: A suggest button that fails
+  s2 see: "Your logo is only black, white or grey, so there is no colour to suggest. Type or pick your colour below."
+  s2 not: Grey offered as the brand colour
+  s3 see: "We couldn’t read the colours in this logo. Type or pick your colour below."
+  s3 not: An endless "Reading…"
+J-F-panel-3101-04 | type 6 | gym owner | Gym owner used the suggested colour
+  s1 see: The suggestion button reads "Use this colour" again
+  s1 not: "Using this colour" while another colour is in the field
+  s2 see: The suggestion box goes
+  s2 not: The old logo's colours still offered
+  s3 see: "Your logo’s colour is <code>. We made it lighter so words in it are easy to read on the member app’s dark screens."
+  s3 not: The lighter colour shown without saying it was changed
+J-F-panel-125-01 | type 1 | owner | Owner whose Gym details hold a valid UPI ID, on Settings
+  s1 see: Title "Payments" and "Let members pay you online. The money goes straight to your own account."
+  s1 not: A sign-in or payment-company step needed to see the UPI card
+  s2 see: "Your UPI ID <id> is ready. Collect payment shows a QR with the amount; the member scans it with any UPI app."
+  s2 see: "The money comes to you directly. Tap Save payment when it shows in your UPI app or sound box."
+  s2 not: Another gym's UPI ID
+  s2 not: An "Add UPI ID" button while the ID is ready
+J-F-panel-125-02 | type 2 | owner | Owner types /settings/payments, or comes back from a payment company's sign-in page
+  s1 see: The same "Payments" page with the "UPI QR" card
+  s1 not: A blank page
+  s2 see: Settings
+  s2 not: The browser history broken
+J-F-panel-125-03 | type 3 | owner | Owner whose Gym details have no UPI ID, or a wrong one like "abc"
+  s1 see: "Add your gym’s UPI ID in Gym details. Then Collect payment can show a QR with the amount." and "Add UPI ID"
+  s1 not: "abc" called ready
+  s2 see: Settings, where Gym details holds the UPI ID box
+  s2 not: A page with no UPI ID box
+J-F-panel-125-04 | type 6 | owner | Owner with no UPI ID
+  s1 see: "Your UPI ID <id> is ready…"
+  s1 not: The old "Add your gym’s UPI ID" words
+  s2 see: The add words and the button again
+  s2 not: "is ready" with an empty ID
+J-F-panel-125-05 | type 1 | staff | Desk person; Gym details hold a valid UPI ID
+  s1 see: "Your UPI ID <id> is ready…" and the money words
+  s1 not: Buttons to connect or disconnect a payment company
+J-F-panel-125-06 | type 3 | staff | Desk person; no UPI ID set
+  s1 see: "Add your gym’s UPI ID in Gym details. Then Collect payment can show a QR with the amount."
+  s1 not: An "Add UPI ID" button for the desk
+J-F-panel-125-07 | type 6 | staff | Desk person on Payments; the owner adds the UPI ID on another device
+  s1 see: "Your UPI ID <id> is ready…"
+  s1 not: The add words for ever on the desk

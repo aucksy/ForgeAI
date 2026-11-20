@@ -1,0 +1,71 @@
+# B-truth-panel-screens-2-b: gap-9 x panel / panel/screens-2. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H9.1 | gap-9 | For each fact a user sees (count of alerts, dues, plan end, birthdays today, members using the app): list every place it shows (panel, Today, AI, bell, push, phone app, HQ, export) and compare the values on the Crispy Curves data and the ugly data pack
+H9.2 | gap-9 | Any difference = finding
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1100 | live | Panel frame: side menu, phone bottom bar and More, page routing, owner-only page block, 'needs internet' card, dark/ligh | apps/dashboard/src/crm/ui/screens/More.tsx:45
+F-panel-1106 | behind switch | Your web page: edit and publish the gym's free web page, photos, preview, share links, visitor AI chat shown on enquirie | apps/dashboard/src/crm/ui/screens/WebPage.tsx:66
+F-panel-1107 | live | Today home: tiles, quick action buttons, Needs you list, one set-up card at a time, Monday week summary on WhatsApp, Wha | apps/dashboard/src/crm/ui/screens/Today.tsx:72
+F-panel-1112 | live | Plans and memberships: make plans, sell or renew, extend, change start day, cancel a membership, decide members' plan re | apps/dashboard/src/crm/ui/screens/Plans.tsx:39
+F-panel-1113 | live | Money: collect a payment, dues and collections tabs, receipts with amount in words and GST, cancel (void) a receipt, rec | apps/dashboard/src/crm/ui/screens/Money.tsx:75
+F-panel-1118 | live | Set up your gym: first steps list with progress ring, hand-ticked steps | apps/dashboard/src/crm/ui/screens/SetupGym.tsx:10
+F-panel-1120 | live | Messages & offers: ready notices and offers to members, who gets it, WhatsApp one-by-one queue, personal WhatsApp messag | apps/dashboard/src/crm/ui/screens/Messages.tsx:27
+F-panel-1122 | behind switch | Member messages: questions, feedback and complaints members send from the app; reply and mark done | apps/dashboard/src/crm/ui/screens/MemberMessages.tsx:58
+F-panel-1123 | behind switch | Trainers: trainer pages, assign members, personal-training bookings week, PT session packs | apps/dashboard/src/crm/ui/screens/Trainers.tsx:174
+F-panel-1124 | behind switch | Training progress and Member questions: members' workout progress for owner and ticked trainers, answer Ask-a-trainer qu | apps/dashboard/src/crm/ui/screens/MyMembers.tsx:59
+F-panel-1125 | live | Workout plans: write, start and send plans to members, exercise list, ready programmes, trainer videos, workout of the d | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:94
+F-panel-1131 | live | Settings: gym details and name, Member app and Sign-in & data tabs, download all gym data, erase or start over, put the  | apps/dashboard/src/crm/ui/screens/Settings.tsx:88
+F-panel-1134 | behind switch | Paying MettleUp: Pay MettleUp page, receipts, pay online, free-trial line, stopped-paying banner, Starter/Pro pack and t | apps/dashboard/src/crm/ui/screens/MettleUpReceipt.tsx:31
+F-panel-300 | behind switch | Member messages: read what members sent from 'Message your gym' (questions, feedback, complaints), reply, mark as done,  | apps/dashboard/src/crm/ui/screens/MemberMessages.tsx:58
+F-panel-301 | live | Members list: search, filter by status / home tile / batch, open a member, add a member, go to Import from Excel, send W | apps/dashboard/src/crm/ui/screens/Members.tsx:64
+F-panel-302 | live | Members -> 'Joined in the app' tab: who has the MettleUp app on their phone | apps/dashboard/src/crm/ui/screens/Members.tsx:108
+F-panel-303 | live | Messages & offers page: owner sends notices, offers and wishes to members (app and WhatsApp); opens with a ready message | apps/dashboard/src/crm/ui/screens/Messages.tsx:27
+F-panel-304 | behind switch | Workout offer section of Messages & offers: rewards for members who train; desk gives earned rewards | apps/dashboard/src/crm/ui/screens/Messages.tsx:29
+F-panel-305 | live | Automatic reminders section of Messages & offers: owner switches what members get by themselves; desk may look | apps/dashboard/src/crm/ui/screens/Messages.tsx:30
+F-panel-306 | behind switch | MettleUp receipt: open one receipt for what the gym paid MettleUp, print or save as PDF | apps/dashboard/src/crm/ui/screens/MettleUpReceipt.tsx:31
+F-panel-307 | live | Money -> Collections: every receipt in a date range, totals by method, filter by who took it, export to Excel (CSV), voi | apps/dashboard/src/crm/ui/screens/Money.tsx:75
+F-panel-308 | live | Money -> Dues: who still owes, by age of the due, collect a payment, export the list | apps/dashboard/src/crm/ui/screens/Money.tsx:597
+F-panel-310 | live | More menu on a phone: rows to every page not on the bottom bar, with badges and the Set up your gym ring | apps/dashboard/src/crm/ui/screens/More.tsx:45
+F-panel-311 | behind switch | Training progress: per-member workout progress line and tag, open one member's full progress, send 'Well done' / 'How's  | apps/dashboard/src/crm/ui/screens/MyMembers.tsx:59
+F-panel-312 | behind switch | Set-up step 'Let people find and join your gym online': free web page on/off, one link and QR poster to share or print,  | apps/dashboard/src/crm/ui/screens/OnlineJourney.tsx:45
+F-panel-313 | live | Pass visits: visits each pass company (FITPASS, cultpass) owes for, month by month, download the month as an Excel file | apps/dashboard/src/crm/ui/screens/PassVisits.tsx:34
+F-panel-314 | behind switch | Pay MettleUp: pick Starter or Pro, monthly or yearly, pay by UPI QR or bank transfer, send the reference number, see wai | apps/dashboard/src/crm/ui/screens/PayMettleUp.tsx:88
+F-panel-315 | live | Membership plans (price list): add, edit, retire a plan, add starter plans, mark a plan as a PT pack with sessions and t | apps/dashboard/src/crm/ui/screens/Plans.tsx:39
+F-panel-317 | behind switch | MettleUp Plus lock switch (Settings -> Member app): lock the paid app extras 7 days after a member's plan ends, or keep  | apps/dashboard/src/crm/ui/screens/PlusLock.tsx:28
+F-panel-318 | behind switch | Member questions: 'Ask a trainer' questions for this person, reply, see answered and closed ones | apps/dashboard/src/crm/ui/screens/Questions.tsx:46
+F-panel-319 | live | Member receipt: printable receipt for one payment, send it to the member on WhatsApp (with pay link when a balance is le | apps/dashboard/src/crm/ui/screens/Receipt.tsx:41
+F-panel-320 | live | Settings -> Gym tab: gym or branch details (name, phone, address, GST), install the admin app, alerts, payments link, br | apps/dashboard/src/crm/ui/screens/Settings.tsx:88
+F-panel-321 | live | Settings -> Member app tab: gym app code, join trial, branding link, challenges link, busy machines, bring a friend, Met | apps/dashboard/src/crm/ui/screens/Settings.tsx:311
+F-panel-322 | live | Settings -> Sign-in & data tab: put the gym online / sign in, download a backup, import members, clear this device, load | apps/dashboard/src/crm/ui/screens/Settings.tsx:362
+F-panel-324 | live | Set up your gym page: the first steps of a new gym with progress | apps/dashboard/src/crm/ui/screens/SetupGym.tsx:10
+F-panel-325 | live | Today home: number tiles that open filtered lists, who to renew, who owes, who stopped coming, who came in, needs-you an | apps/dashboard/src/crm/ui/screens/Today.tsx:72
+F-panel-326 | behind switch | Today -> Your numbers section | apps/dashboard/src/crm/ui/screens/Today.tsx:429
+F-panel-327 | live | Today nudges: 'N birthdays today' / plans ending open the ready message; 'Give rewards' opens the workout offer | apps/dashboard/src/crm/ui/screens/Today.tsx:540
+F-panel-328 | live | Today person rows: 'Message' link opens a WhatsApp chat with that member (wa.me link built here, no ready text) | apps/dashboard/src/crm/ui/screens/Today.tsx:625
+F-panel-330 | behind switch | Trainers: list of trainers, the week's personal-training calendar and time grid, one trainer's page with hours, PT membe | apps/dashboard/src/crm/ui/screens/Trainers.tsx:174
+F-panel-331 | behind switch | Book a personal-training session: pick trainer, member, day, time and length from a free slot | apps/dashboard/src/crm/ui/screens/Trainers.tsx:529
+F-panel-332 | behind switch | See a personal-training booking, cancel it, open the member | apps/dashboard/src/crm/ui/screens/Trainers.tsx:718
+F-panel-333 | behind switch | Edit a trainer's profile: what they teach, working days and shifts, photo | apps/dashboard/src/crm/ui/screens/Trainers.tsx:953
+F-panel-334 | behind switch | Your web page: owner writes the gym's free public page (address, area, about, facilities, photos, map link, phone / What | apps/dashboard/src/crm/ui/screens/WebPage.tsx:66
+F-panel-335 | behind switch | 'See your page': preview of the web page from what is typed, before saving | apps/dashboard/src/crm/ui/screens/WebPage.tsx:630
+F-panel-336 | behind switch | Share the web page: copy link, 'Share on WhatsApp' (wa.me link with a ready line, no recipient) | apps/dashboard/src/crm/ui/screens/WebPage.tsx:563
+F-panel-337 | behind switch | Workout of the day: set one workout for everyone for today or a day in the next week (from a plan's day or built here),  | apps/dashboard/src/crm/ui/screens/WorkoutOfTheDay.tsx:52
+F-panel-338 | live | Workout plans list: the gym's plans, edit, copy, withdraw (asks first), withdrawn plans folded away | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:94
+F-panel-339 | live | Workout plan builder: name, note, days, exercises with starting weights, who gets it (members or everyone on a membershi | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:299
+F-panel-340 | live | New workout plan: start from a ready plan or empty | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:951
+F-panel-341 | live | Send a workout plan to one member (from Member detail): one tap on an existing plan, a ready plan, or build new | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:983
+F-panel-342 | behind switch | Your own video link (YouTube) on an exercise in a workout plan | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:337
+F-panel-504 | live | Set up your gym: the new gym's steps with a progress ring, and the 'find and join your gym online' journey (web page, on | apps/dashboard/src/crm/ui/screens/SetupGym.tsx:10
+F-panel-507 | live | Today: the first screen (who needs attention, quick action buttons the owner picks, WhatsApp a member from a row) | apps/dashboard/src/crm/ui/screens/Today.tsx:72
+F-panel-510 | live | Members: the list with search and filters, one member's page, add or edit a member, take the member's photo at the desk | apps/dashboard/src/crm/ui/screens/Members.tsx:64
+F-panel-513 | live | Money: collect dues, the cash book and who still owes, print a receipt, void a receipt | apps/dashboard/src/crm/ui/screens/Money.tsx:75
+F-panel-515 | live | Plans: the gym's price list (add or edit a plan) | apps/dashboard/src/crm/ui/screens/Plans.tsx:39
+F-panel-520 | live | Messages and offers: ready WhatsApp messages to one member or a group one by one, in English, Hindi or both | apps/dashboard/src/crm/ui/screens/Messages.tsx:27
+F-panel-522 | live | Member messages and Member questions: read and reply to what members sent from the app ('Message your gym', 'Ask a train | apps/dashboard/src/crm/ui/screens/MemberMessages.tsx:58
+F-panel-523 | behind switch | Training progress: members' workout progress for the owner or their trainer, ready messages, and a member's workout repo | apps/dashboard/src/crm/ui/screens/MyMembers.tsx:59
+F-panel-524 | live | Trainers: their profiles and hours, book or change a personal-training session | apps/dashboard/src/crm/ui/screens/Trainers.tsx:174
+F-panel-525 | live | Workout plans: build a routine, start from a ready plan, send it to members, and set the gym's workout of the day | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:94
+F-panel-528 | live | Settings: gym details and UPI ID, Member app tab, Sign-in and data tab, download all the gym's data, the 'leaving' actio | apps/dashboard/src/crm/ui/screens/Settings.tsx:88
+F-panel-530 | behind switch | Your web page: make, preview and publish the gym's free page, and share its link on WhatsApp | apps/dashboard/src/crm/ui/screens/WebPage.tsx:66
+F-panel-533 | hidden | MettleUp Plus lock: the owner decides whether a member's paid app extras lock 7 days after their plan ends | apps/dashboard/src/crm/ui/screens/PlusLock.tsx:28
+F-panel-534 | live | Pay MettleUp: the free-trial line on Today, pick Starter or Pro, pay by UPI or bank transfer and send the proof | apps/dashboard/src/crm/ui/screens/PayMettleUp.tsx:88

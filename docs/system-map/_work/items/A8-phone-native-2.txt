@@ -1,0 +1,366 @@
+# A8-phone-native-2: coverage of 46 Tier 1 journeys (8 features, from A5-phone-native-4). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-phone-1224 | apps/mobile/test/tracker/r72HealthSend.test.ts | unit | 52 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-phone-1224 | apps/mobile/test/tracker/healthOnOff.test.ts | unit | 136 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-phone-1224 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 5 journey phrase(s)
+F-phone-1224 | apps/mobile/test/tracker/healthOldForgeAi.test.ts | unit | 117 lines | imports the code, file name
+F-phone-1224 | apps/mobile/test/tracker/healthR267.test.ts | unit | 297 lines | imports the code, file name
+F-phone-1224 | apps/mobile/test/tracker/healthReadF55.test.ts | unit | 393 lines | imports the code, file name
+F-phone-1224 | apps/mobile/test/tracker/healthUnsent.test.ts | unit | 131 lines | imports the code, file name
+F-phone-1224 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | imports the code, asserts 2 journey phrase(s)
+F-phone-1224 | apps/mobile/test/tracker/historyExport.test.ts | unit | 414 lines | imports the code
+F-phone-1224 | apps/mobile/test/tracker/phase5Review.test.ts | unit | 85 lines | imports the code
+F-phone-1224 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | imports the code
+F-phone-1224 | apps/mobile/test/tracker/phase9Shortcuts.test.ts | unit | 85 lines | imports the code
+F-phone-1226 | apps/mobile/test/tracker/healthReadF55.test.ts | unit | 393 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-phone-1226 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-1226 | apps/mobile/test/tracker/shareText.test.ts | unit | 447 lines | asserts 5 journey phrase(s)
+F-phone-1226 | apps/mobile/qa/phase9-p.yaml | maestro | 364 lines | asserts 4 journey phrase(s)
+F-phone-1226 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 4 journey phrase(s)
+F-phone-1226 | apps/mobile/qa/uat-rel-r436-a-memory.yaml | maestro | 227 lines | asserts 3 journey phrase(s)
+F-phone-1226 | apps/mobile/test/tracker/healthR267.test.ts | unit | 297 lines | file name, asserts 1 journey phrase(s)
+F-phone-1226 | apps/mobile/test/tracker/phase9Shortcuts.test.ts | unit | 85 lines | imports the code
+F-phone-1226 | apps/mobile/test/tracker/progression.test.ts | unit | 507 lines | asserts 3 journey phrase(s)
+F-phone-1226 | apps/mobile/test/tracker/r350SimpleRule.test.ts | unit | 252 lines | asserts 3 journey phrase(s)
+F-phone-1226 | apps/mobile/test/tracker/r515GoalWords.test.ts | unit | 207 lines | asserts 3 journey phrase(s)
+F-phone-1226 | apps/mobile/test/tracker/unitsScreens.test.ts | unit | 118 lines | asserts 3 journey phrase(s)
+F-phone-1227 | apps/mobile/test/tracker/healthReadF55.test.ts | unit | 393 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-phone-1227 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-1227 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-1227 | apps/mobile/test/tracker/healthOldForgeAi.test.ts | unit | 117 lines | file name
+F-phone-1227 | apps/mobile/test/tracker/healthOnOff.test.ts | unit | 136 lines | file name
+F-phone-1227 | apps/mobile/test/tracker/healthR267.test.ts | unit | 297 lines | file name
+F-phone-1227 | apps/mobile/test/tracker/healthUnsent.test.ts | unit | 131 lines | file name
+F-phone-1227 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | asserts 2 journey phrase(s)
+F-phone-1227 | apps/mobile/test/tracker/r72HealthSend.test.ts | unit | 52 lines | file name
+F-phone-1227 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-phone-1227 | apps/dashboard/test/crm/local.test.ts | unit | 1070 lines | asserts 1 journey phrase(s)
+F-phone-1227 | apps/mobile/qa/invite-d.yaml | maestro | 36 lines | asserts 1 journey phrase(s)
+F-phone-1235 | apps/mobile/test/backup/backupCoverage.test.ts | unit | 81 lines | imports the code
+F-phone-1235 | apps/mobile/test/backup/backupRoundTrip.test.ts | unit | 432 lines | imports the code
+F-phone-1235 | apps/mobile/test/shop/askReplyAlerts.test.ts | unit | 226 lines | imports the code
+F-phone-1235 | apps/mobile/test/shop/boardNameChoice.test.ts | unit | 79 lines | imports the code
+F-phone-1235 | apps/mobile/test/shop/gymReminders.test.ts | unit | 200 lines | imports the code
+F-phone-1235 | apps/mobile/test/shop/noticeAlertsRun.test.ts | unit | 175 lines | imports the code
+F-phone-1235 | apps/mobile/test/shop/noticeAlertsSetting.test.ts | unit | 48 lines | imports the code
+F-phone-1235 | apps/mobile/test/shop/noticePush.test.ts | unit | 153 lines | imports the code
+F-phone-1235 | apps/mobile/test/shop/r501FrontPush.test.ts | unit | 202 lines | imports the code
+F-phone-1235 | apps/mobile/test/shop/r590GymRing.test.ts | unit | 181 lines | imports the code
+F-phone-1235 | apps/mobile/test/tracker/healthOldForgeAi.test.ts | unit | 117 lines | imports the code
+F-phone-1235 | apps/mobile/test/tracker/healthOnOff.test.ts | unit | 136 lines | imports the code
+F-phone-1234 | apps/mobile/test/tracker/phase9Shortcuts.test.ts | unit | 85 lines | imports the code, file name
+F-phone-1234 | apps/mobile/test/tracker/r320Widgets.test.ts | unit | 119 lines | imports the code, file name
+F-phone-1234 | apps/mobile/test/onboarding/startup.test.ts | unit | 185 lines | imports the code
+F-phone-1234 | apps/mobile/test/tracker/healthR267.test.ts | unit | 297 lines | imports the code
+F-phone-1234 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | imports the code
+F-phone-1234 | apps/mobile/test/tracker/phoneFeatures.test.ts | unit | 87 lines | imports the code
+F-phone-1234 | apps/mobile/test/tracker/phoneLook.test.ts | unit | 36 lines | imports the code
+F-phone-1234 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | imports the code
+F-phone-1234 | apps/mobile/test/tracker/todayPlan.test.ts | unit | 173 lines | imports the code
+F-phone-1234 | apps/mobile/test/shop/t74ShortcutSync.test.ts | unit | 126 lines | file name
+F-phone-1234 | apps/dashboard/e2e/friend-live-uat.spec.mjs | e2e | 262 lines | asserts 1 journey phrase(s)
+F-phone-1234 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | asserts 1 journey phrase(s)
+F-phone-1218 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | imports the code, asserts 7 journey phrase(s)
+F-phone-1218 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | imports the code, asserts 6 journey phrase(s)
+F-phone-1218 | apps/mobile/test/onboarding/startup.test.ts | unit | 185 lines | imports the code, asserts 2 journey phrase(s)
+F-phone-1218 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-phone-1218 | apps/mobile/test/tracker/remindersHiccup.test.ts | unit | 14 lines | imports the code, file name
+F-phone-1218 | apps/mobile/test/tracker/phoneFeatures.test.ts | unit | 87 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1218 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-phone-1218 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-1218 | apps/mobile/test/tracker/healthR267.test.ts | unit | 297 lines | imports the code
+F-phone-1218 | apps/mobile/test/tracker/phoneLook.test.ts | unit | 36 lines | imports the code
+F-phone-1218 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 2 journey phrase(s)
+F-phone-1218 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 2 journey phrase(s)
+F-phone-1228 | apps/mobile/test/tracker/sleepLink.test.ts | unit | 222 lines | imports the code, file name
+F-phone-1228 | apps/mobile/test/tracker/healthOldForgeAi.test.ts | unit | 117 lines | file name
+F-phone-1228 | apps/mobile/test/tracker/healthOnOff.test.ts | unit | 136 lines | file name
+F-phone-1228 | apps/mobile/test/tracker/healthR267.test.ts | unit | 297 lines | file name
+F-phone-1228 | apps/mobile/test/tracker/healthReadF55.test.ts | unit | 393 lines | file name
+F-phone-1228 | apps/mobile/test/tracker/healthUnsent.test.ts | unit | 131 lines | file name
+F-phone-1228 | apps/mobile/test/tracker/r72HealthSend.test.ts | unit | 52 lines | file name
+F-phone-1228 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-phone-1228 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-phone-1228 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-phone-1228 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/BrandColourTest.kt | watch | 84 lines | asserts 1 journey phrase(s)
+F-phone-1228 | apps/mobile/qa/v0270-i.yaml | maestro | 614 lines | asserts 1 journey phrase(s)
+F-phone-1221 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | imports the code, asserts 6 journey phrase(s)
+F-phone-1221 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | imports the code, asserts 2 journey phrase(s)
+F-phone-1221 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-phone-1221 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-phone-1221 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-phone-1221 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-phone-1221 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-phone-1221 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-phone-1221 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-phone-1221 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-1221 | apps/mobile/test/tracker/frontScreen.test.ts | unit | 20 lines | imports the code
+F-phone-1221 | apps/mobile/test/tracker/phase9Shortcuts.test.ts | unit | 85 lines | imports the code
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-phone-1224-01 | type 1 | member | Settings, Health apps: the Health Connect row is Off, with a Connect button
+  s1 see: Health Connect's own permission screen for MettleUp
+  s1 not: Workouts sent before the member allows it
+  s1 not: The app closing
+  s2 see: Caption 'On. Each workout you finish goes to Health Connect as strength training, with its calories (an estimate), so Google Health and Samsung Health can show it.'
+  s2 see: A 'Stop' button on the row
+  s2 not: The row still says Off after access was given
+  s2 not: Calories shown as exact rather than an estimate
+  s3 see: The workout shows in Google Health or Samsung Health as strength training
+  s3 see: A line saying when workouts last went to Health Connect
+  s3 not: The same workout in Health Connect twice
+  s3 not: A workout on demo data sent
+J-F-phone-1224-02 | type 2 | member | Health Connect is On; workouts were logged before it was switched on
+  s1 see: A question first: how many workouts, from when to when, and where they go, with a confirm button and 'Not now'
+  s1 not: Anything sent before the member says yes
+  s1 not: Workouts from before MettleUp's first run counted in without saying so
+  s2 see: The button counts up while sending
+  s2 see: A result line with how many were sent
+  s2 not: A second tap starting a second send
+  s2 not: A success line when some were refused
+  s3 see: A question that says they may show twice
+  s3 see: Those workouts sent after the yes
+  s3 not: Older workouts sent without the warning
+J-F-phone-1224-03 | type 2 | member | A workout already sent to Health Connect (sending On, or later Stopped)
+  s1 see: The workout gone from MettleUp's history
+  s1 not: The deleted workout still showing in Google Health or Samsung Health while MettleUp may still manage it
+  s2 see: The workout no longer listed
+  s2 not: A different workout removed
+  s2 not: An error shown to the member for a refused removal
+J-F-phone-1224-04 | type 3 | member | Settings, Health apps on a phone where access is refused or Health Connect is missing
+  s1 see: 'Nothing opened? Open Health Connect, find MettleUp and allow it there.'
+  s1 see: An 'Open Health Connect' button
+  s1 not: A Connect button that does nothing with no word
+  s1 not: The row saying On
+  s2 see: 'Health Connect is not available on this phone.' or 'Install or update Health Connect from the Play Store first.'
+  s2 not: A crash or a blank row
+  s3 see: A line saying where to find Health Connect instead
+  s3 not: Nothing happening with no word
+J-F-phone-1224-05 | type 6 | member | Health Connect On, with some refused workouts owed
+  s1 see: 'Sending…' then a result line
+  s1 not: Owed workouts sent while sending is off
+  s2 see: 'Stopped. New workouts will not go to Health Connect. Workouts already sent stay there. To remove them, open Health Connect.'
+  s2 see: A 'Turn on' button and 'Open Health Connect'
+  s2 not: The next finished workout still sent
+  s2 not: Owed workouts sent later by themselves
+  s3 see: Caption back to On; the new workout sent
+  s3 not: Workouts finished while stopped sent without asking
+J-F-phone-1224-06 | type 12 | member | Health Connect On, other health apps installed
+  s1 see: The workout as strength training with estimated calories, nothing else
+  s1 not: Sets, weights, notes, body weight or photos sent to Health Connect
+  s1 not: A workout on demo data sent
+  s2 see: Plain words that only workouts logged in MettleUp are sent, and that workouts already sent stay in Health Connect after Stop
+  s2 not: A promise that Stop removes what was sent
+J-F-phone-1226-01 | type 1 | member | Settings, Health Connect page: 'Weight from Health Connect' row, off
+  s1 see: 'Weigh-ins from your smart scale or another health app go into your body weight by themselves. A weight you typed yourself is never changed.'
+  s1 see: A 'Read my weight' button
+  s1 not: Weigh-ins read before the member taps
+  s2 see: Caption 'On. When you open MettleUp, new weigh-ins from Health Connect are added to your body weight. A weight you typed yourself is never changed.'
+  s2 see: 'Added 3 weigh-ins from Health Connect to your body weight.' or 'No new weigh-ins in Health Connect yet.'
+  s2 not: Readings older than 30 days pulled in on the first read
+  s2 not: A reading outside the allowed kg range added
+  s3 see: The new weigh-ins with the line 'Weight from Health Connect'
+  s3 not: Two weigh-ins for one day
+  s3 not: A typed weight replaced
+J-F-phone-1226-02 | type 2 | member | Weight reading On; a new weigh-in arrived on the scale app
+  s1 see: The new weigh-in in the body-weight log; a line only when something was added
+  s1 not: A line every time the app opens
+  s1 not: The weigh-in added twice
+J-F-phone-1226-03 | type 3 | member | Weight row, Health Connect refuses Weight or the phone holds demo data
+  s1 see: 'Health Connect isn't letting MettleUp read your weight yet. Tap "Open Health Connect" below and turn on "Weight".'
+  s1 see: 'Read my weight' and 'Open Health Connect' buttons
+  s1 not: The row claiming On
+  s1 not: A crash
+  s2 see: No weigh-ins added
+  s2 not: Real weigh-ins mixed into demo data
+  s3 see: 'Couldn't read your weight from Health Connect. MettleUp will try again the next time you open it.'
+  s3 not: The 10-minute wait started by a failed read
+J-F-phone-1226-04 | type 6 | member | Weight reading On, weigh-ins already added
+  s1 see: 'Stopped. New weigh-ins are no longer added. Weigh-ins already added stay in your body weight.'
+  s1 not: Weigh-ins already added deleted
+  s1 not: New weigh-ins still added
+  s2 see: The typed weight kept
+  s2 not: The typed weight overwritten by the scale
+  s3 see: The member's change kept
+  s3 not: The member's edit silently replaced
+J-F-phone-1226-05 | type 12 | member | Weight reading On, member linked to a gym
+  s1 see: Body weight on this phone only
+  s1 not: Body weight from Health Connect sent to the gym, a trainer, advertisers or any AI
+  s2 see: No body weight
+  s2 not: Body weight shown to the gym
+J-F-phone-1227-01 | type 1 | member | Settings, Health Connect page: 'Steps today' row, off
+  s1 see: 'See how many steps your phone or watch counted today, through Health Connect. Your steps stay on this phone.'
+  s1 see: A 'Show my steps' button
+  s1 not: Steps read before the member taps
+  s2 see: The row turns on with a Stop button
+  s2 not: The row saying On while access is refused
+  s3 see: '6,240 steps so far today.'
+  s3 not: Phone and watch steps for the same walk counted twice
+  s3 not: Yesterday's steps
+J-F-phone-1227-02 | type 2 | member | Steps today On, the member walked since
+  s1 see: A fresh step count
+  s1 not: The old count kept until a restart
+J-F-phone-1227-03 | type 3 | member | Steps row, refused or no steps
+  s1 see: 'Health Connect isn't letting MettleUp read your steps yet. Tap "Open Health Connect" below and turn on "Steps".'
+  s1 not: A count of 0 shown as if read
+  s2 see: 'Couldn't read your steps from Health Connect. Please try again later.'
+  s2 not: A crash or an endless spinner
+  s3 see: 'No steps recorded today yet.'
+  s3 not: '0 steps so far today.'
+J-F-phone-1227-04 | type 6 | member | Steps today On
+  s1 see: The row back to off with 'Show my steps'
+  s1 not: Steps still read in the background
+  s2 see: The count again, no second permission ask if still allowed
+  s2 not: A permission screen every time
+J-F-phone-1227-05 | type 12 | member | Steps today On, member linked to a gym
+  s1 see: Steps shown only on this page of this phone
+  s1 not: Steps sent to the gym, to MettleUp's server or to any AI
+J-F-phone-1235-01 | type 1 | member | Settings, Your gym, What my gym can see; member linked to a gym
+  s1 see: The switch on
+  s1 not: The board showing a full name rather than first name and initial
+  s2 see: The switch still on
+  s2 not: The switch back to off
+  s2 not: The gym told something different from the switch
+J-F-phone-1235-02 | type 2 | member | Settings, Your gym and Reminders; the gym has Busy machines and trainer view on
+  s1 see: Both on by default; each keeps the member's choice
+  s1 not: Gym reminders or message pop-ups shown while switched off
+  s2 see: Shown only when the gym switched Busy machines on
+  s2 not: The switch shown for a gym without Busy machines
+  s3 see: Shown only when the gym uses trainer view
+  s3 not: A trainer seeing the summary while the switch is off
+J-F-phone-1235-03 | type 3 | member | What my gym can see, phone offline
+  s1 see: The switch off at once
+  s1 not: The switch jumping back
+  s1 not: An error with no way on
+  s2 see: The gym's board now shows 'A member'
+  s2 not: The gym never told (name still shown)
+J-F-phone-1235-04 | type 6 | member | 'Let my gym mates see my workouts' On, workouts shared
+  s1 see: The switch off; the shared workouts deleted at once
+  s1 not: Gym mates still able to open the workouts
+  s2 see: Sharing again from now
+  s2 not: Old shares coming back without the member choosing
+J-F-phone-1235-05 | type 12 | member | New member, linked to a gym, never opened these switches
+  s1 see: Name on leaderboard off, gym mates off, trainers off; 'Share which machines I use' on
+  s1 not: The name, workouts or trainer summary shared before the member chose
+  s1 not: Body weight, photos or notes shared by any switch
+  s2 see: Only while 'Show my name on my gym's leaderboard' is on
+  s2 not: Workouts open to gym mates with the name switch off
+J-F-phone-1234-01 | type 1 | member | Settings, Data card; reminders on, Health Connect on, widgets placed, a workout logged
+  s1 see: The welcome screen
+  s1 not: Any old screen or number left showing
+  s2 see: Widgets blank; app-icon shortcuts gone
+  s2 not: Old workout or routine names on a widget or shortcut
+  s3 see: No 'Time to train'; Health Connect row Off
+  s3 not: A reminder still arriving
+  s3 not: New workouts still sent to Health Connect
+J-F-phone-1234-02 | type 2 | member | Settings, Data card, signed in with a MettleUp account
+  s1 see: The welcome screen; account deleted too
+  s1 not: The cloud copy left behind
+J-F-phone-1234-03 | type 3 | member | Settings, Data card
+  s1 see: Everything as before
+  s1 not: Reminders or Health Connect switched off anyway
+  s2 see: 'Could not delete your MettleUp account, so nothing was erased.'
+  s2 not: The phone erased while the account stays
+J-F-phone-1234-04 | type 6 | member | A workout open, reminders on, Health Connect on
+  s1 see: The open workout gone; the widget no longer offers Resume
+  s1 not: A widget Resume that opens nothing
+  s2 see: Workouts sent before the erase still there
+  s2 not: The app saying the erase removed them from Health Connect
+J-F-phone-1234-05 | type 12 | member | Member who shared with the gym and sent workouts to Health Connect, erases this phone only
+  s1 see: Nothing of the member's left on the phone
+  s1 not: Workout names on widgets or shortcuts after the erase
+  s2 see: Clear words on what leaves this phone and what stays elsewhere
+  s2 not: A claim that everything everywhere is deleted
+J-F-phone-1218-01 | type 1 | member | Profile: 'Workout reminders' switch off
+  s1 see: Days and time set to the member's usual training days and time
+  s1 not: Default days replacing a slot the member chose before
+  s2 see: The permission question once
+  s2 not: The question on every tap
+  s3 see: 'Next: Thu 6:00 pm. None on a day you already trained or while a workout is open.'
+  s3 not: 'Set.' when setting failed
+J-F-phone-1218-02 | type 2 | member | Workout reminders On
+  s1 see: Picked days highlighted; caption shows the new next one
+  s1 not: Two reminders on one day
+  s2 see: Sheet 'Reminder time'; caption with the new time
+  s2 not: The old time still firing
+J-F-phone-1218-03 | type 3 | member | Workout reminders On, notifications refused or nothing picked
+  s1 see: 'Notifications are off for MettleUp, so no reminder can arrive.' and 'Turn on notifications'
+  s1 not: 'Next: …' while nothing can arrive
+  s2 see: 'Pick at least one day.'
+  s2 not: A reminder still set
+  s3 see: "Couldn't set reminders. Try again." and 'Try again'
+  s3 not: 'Set.'
+J-F-phone-1218-04 | type 6 | member | Workout reminders On
+  s1 see: 'A quiet reminder on your usual training days, at your usual time.'
+  s1 not: A scheduled reminder still arriving
+  s2 see: The member's own days and time kept
+  s2 not: Usual days replacing the member's choice
+J-F-phone-1218-05 | type 12 | member | Workout reminders On, phone locked
+  s1 see: 'Time to train' and 'Next: <routine name>' only
+  s1 not: Body weight, sets or other personal figures on the lock screen
+J-F-phone-1218-06 | type 1 | the system | A chosen day at the chosen time, no workout yet today
+  s1 see: Notification 'Time to train', 'Next: Push day' (or 'Open MettleUp to start your workout')
+  s1 not: Two notifications
+  s1 not: A wrong routine name
+  s2 see: The Workout tab
+  s2 not: A blank screen
+J-F-phone-1218-07 | type 2 | the system | Member opens the app or comes back to it
+  s1 see: Reminders set again only when something changed; the next one names the next routine
+  s1 not: All reminders cancelled and not set again
+J-F-phone-1218-08 | type 3 | the system | A chosen day, member already trained today
+  s1 see: No reminder today; the next chosen day still set
+  s1 not: 'Time to train' after a finished workout
+J-F-phone-1218-09 | type 6 | the system | A chosen day, a workout open at the time
+  s1 see: No reminder
+  s1 not: A reminder during the workout
+  s2 see: Today's reminder may come back (not trained)
+  s2 not: Today counted as trained after a discard
+J-F-phone-1218-10 | type 12 | the system | Reminder set
+  s1 see: Only on the phone; no server call
+  s1 not: The routine name or schedule sent to the gym or any server
+J-F-phone-1228-01 | type 1 | member | Settings, Health apps: 'Sleep and workouts' off; a sleep app writes to Health Connect
+  s1 see: "On. After a lighter workout, MettleUp checks last night's sleep. Your sleep stays on this phone and is never sent anywhere."
+  s1 not: Sleep read before the switch is on
+  s2 see: Under the finish card: 'You slept … last night. A weaker day after short sleep is normal. Aim for 7 hours or more tonight.'
+  s2 not: A sleep line after a heavier workout
+  s2 not: A sleep line in an easy week
+J-F-phone-1228-02 | type 2 | member | Sleep and workouts On, slept well or no sleep data
+  s1 see: One protein tip instead, at most once in its spacing
+  s1 not: A number about what the member ate
+  s1 not: A tip and a sleep line together
+J-F-phone-1228-03 | type 3 | member | Sleep and workouts switch refused or off
+  s1 see: 'Health Connect isn't letting MettleUp read your sleep yet. Tap "Open Health Connect" below and turn on "Sleep".'
+  s1 not: A sleep line from made-up data
+  s2 see: No sleep line
+  s2 not: Sleep read while the switch is off
+J-F-phone-1228-04 | type 6 | member | Protein tip shown today
+  s1 see: No second tip
+  s1 not: The same tip twice in a row
+  s2 see: The next tip in turn
+  s2 not: The tip order reset
+J-F-phone-1228-05 | type 12 | member | Sleep and workouts On, member linked to a gym
+  s1 see: Sleep used only for that line on this phone
+  s1 not: Sleep sent to the gym, a trainer, MettleUp's server or any AI
+  s1 not: Sleep counted in muscle readiness
+J-F-phone-1221-01 | type 1 | member | Home screen: MettleUp's Today widget shows Start for today's routine; no workout open
+  s1 see: The live workout of that routine, started at once
+  s1 not: A second workout started
+  s1 not: A routine other than the one shown
+  s2 see: The widget redrawn (with a fresh key)
+  s2 not: The same link able to start another workout
+J-F-phone-1221-02 | type 2 | member | A live workout is open
+  s1 see: The open workout
+  s1 not: The open workout replaced or discarded
+J-F-phone-1221-03 | type 3 | member | A start link without the widget's key (another app, a replayed link) or a deleted routine
+  s1 see: Screen 'Start <routine>?' with 'Start <routine>' and 'Not now'
+  s1 not: A workout started with no tap
+  s2 see: The Workout tab
+  s2 not: The correction replaced
+J-F-phone-1221-04 | type 6 | member | Widget Start, the start fails
+  s1 see: "Couldn't start <routine>." with 'Try again'
+  s1 not: A silent Workout tab
+  s2 see: The workout starts
+  s2 not: The spent key used again
+J-F-phone-1221-05 | type 12 | member | Widget placed on the home screen
+  s1 see: Only a one-tap question; nothing starts
+  s1 not: Sets, weights or text carried in the link
+  s1 not: Another app starting a workout

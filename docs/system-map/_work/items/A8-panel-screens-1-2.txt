@@ -1,0 +1,944 @@
+# A8-panel-screens-1-2: coverage of 88 Tier 1 journeys (10 features, from A5-panel-screens-1-2). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-211 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 11 journey phrase(s)
+F-panel-211 | apps/dashboard/e2e/whatsapp-verify-uat.spec.mjs | e2e | 324 lines | asserts 8 journey phrase(s)
+F-panel-211 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 6 journey phrase(s)
+F-panel-211 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 4 journey phrase(s)
+F-panel-211 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 3 journey phrase(s)
+F-panel-211 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 3 journey phrase(s)
+F-panel-211 | apps/dashboard/e2e/friend-live-uat.spec.mjs | e2e | 262 lines | asserts 3 journey phrase(s)
+F-panel-211 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-panel-211 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | asserts 2 journey phrase(s)
+F-panel-211 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 2 journey phrase(s)
+F-panel-211 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-panel-211 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 2 journey phrase(s)
+F-panel-213 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 11 journey phrase(s)
+F-panel-213 | apps/dashboard/test/crm/enquiries.test.ts | unit | 182 lines | file name, asserts 1 journey phrase(s)
+F-panel-213 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-panel-213 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-panel-213 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 2 journey phrase(s)
+F-panel-213 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | asserts 2 journey phrase(s)
+F-panel-213 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 2 journey phrase(s)
+F-panel-213 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 2 journey phrase(s)
+F-panel-213 | apps/dashboard/test/crm/needsYou.test.ts | unit | 54 lines | asserts 2 journey phrase(s)
+F-panel-213 | apps/mobile/qa/uat-rel-f147-bring-friend.yaml | maestro | 56 lines | asserts 2 journey phrase(s)
+F-panel-213 | apps/mobile/qa/xj-2-order-cancel.yaml | maestro | 34 lines | asserts 2 journey phrase(s)
+F-panel-213 | apps/mobile/test/shop/gym.test.ts | unit | 480 lines | asserts 2 journey phrase(s)
+F-panel-214 | apps/dashboard/e2e/whatsapp-verify-uat.spec.mjs | e2e | 324 lines | asserts 8 journey phrase(s)
+F-panel-214 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 6 journey phrase(s)
+F-panel-214 | apps/mobile/test/tracker/r454RepFloor.test.ts | unit | 533 lines | asserts 6 journey phrase(s)
+F-panel-214 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 4 journey phrase(s)
+F-panel-214 | apps/dashboard/e2e/pagechat-uat.spec.mjs | e2e | 272 lines | asserts 3 journey phrase(s)
+F-panel-214 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 2 journey phrase(s)
+F-panel-214 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-panel-214 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 2 journey phrase(s)
+F-panel-214 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | asserts 2 journey phrase(s)
+F-panel-214 | apps/dashboard/test/crm/enquiries.test.ts | unit | 182 lines | file name
+F-panel-214 | apps/mobile/qa/uat-rel-f203-phone-sign-in.yaml | maestro | 483 lines | asserts 2 journey phrase(s)
+F-panel-214 | apps/mobile/test/tracker/lib/kgTarget.test.ts | unit | 197 lines | asserts 2 journey phrase(s)
+F-panel-212 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 11 journey phrase(s)
+F-panel-212 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 6 journey phrase(s)
+F-panel-212 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 3 journey phrase(s)
+F-panel-212 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 3 journey phrase(s)
+F-panel-212 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 3 journey phrase(s)
+F-panel-212 | apps/dashboard/e2e/whatsapp-verify-uat.spec.mjs | e2e | 324 lines | asserts 3 journey phrase(s)
+F-panel-212 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-panel-212 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-panel-212 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 2 journey phrase(s)
+F-panel-212 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 2 journey phrase(s)
+F-panel-212 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-panel-212 | apps/dashboard/e2e/r450-uat.spec.mjs | e2e | 331 lines | asserts 2 journey phrase(s)
+F-panel-205 | apps/dashboard/test/crm/enquiries.test.ts | unit | 182 lines | file name, asserts 1 journey phrase(s)
+F-panel-205 | apps/dashboard/e2e/aiimport.spec.mjs | e2e | 169 lines | asserts 1 journey phrase(s)
+F-panel-205 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-panel-205 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-panel-205 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 1 journey phrase(s)
+F-panel-205 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-205 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-panel-205 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-panel-205 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 1 journey phrase(s)
+F-panel-205 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-panel-205 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-panel-205 | apps/mobile/qa/brand-welcome.yaml | maestro | 149 lines | asserts 1 journey phrase(s)
+F-panel-215 | apps/dashboard/e2e/entry-uat.spec.mjs | e2e | 187 lines | asserts 9 journey phrase(s)
+F-panel-215 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-panel-215 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 3 journey phrase(s)
+F-panel-215 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | asserts 3 journey phrase(s)
+F-panel-215 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | asserts 3 journey phrase(s)
+F-panel-215 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-panel-215 | apps/mobile/test/db/workoutPhotosReal.test.ts | unit | 327 lines | asserts 3 journey phrase(s)
+F-panel-215 | supabase/tests/0043_member_photos.sql | db | 135 lines | asserts 3 journey phrase(s)
+F-panel-215 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 2 journey phrase(s)
+F-panel-215 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 2 journey phrase(s)
+F-panel-215 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 2 journey phrase(s)
+F-panel-215 | apps/dashboard/e2e/online.spec.mjs | e2e | 163 lines | asserts 2 journey phrase(s)
+F-panel-216 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 11 journey phrase(s)
+F-panel-216 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 6 journey phrase(s)
+F-panel-216 | apps/dashboard/e2e/entry-uat.spec.mjs | e2e | 187 lines | asserts 6 journey phrase(s)
+F-panel-216 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 4 journey phrase(s)
+F-panel-216 | apps/dashboard/test/crm/moveStart.test.ts | unit | 131 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-216 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 3 journey phrase(s)
+F-panel-216 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 3 journey phrase(s)
+F-panel-216 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-216 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-panel-216 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 2 journey phrase(s)
+F-panel-216 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 2 journey phrase(s)
+F-panel-216 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 2 journey phrase(s)
+F-panel-217 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 10 journey phrase(s)
+F-panel-217 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-panel-217 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 4 journey phrase(s)
+F-panel-217 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | asserts 3 journey phrase(s)
+F-panel-217 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-panel-217 | supabase/tests/0043_member_photos.sql | db | 135 lines | asserts 3 journey phrase(s)
+F-panel-217 | supabase/tests/0098_alerts_done_and_read.sql | db | 375 lines | asserts 3 journey phrase(s)
+F-panel-217 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 2 journey phrase(s)
+F-panel-217 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 2 journey phrase(s)
+F-panel-217 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 2 journey phrase(s)
+F-panel-217 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 2 journey phrase(s)
+F-panel-217 | apps/dashboard/e2e/quickactions.spec.mjs | e2e | 23 lines | asserts 2 journey phrase(s)
+F-panel-218 | apps/dashboard/e2e/feedback.spec.mjs | e2e | 34 lines | file name, asserts 1 journey phrase(s)
+F-panel-218 | apps/mobile/test/lib/helpHistory.test.ts | unit | 207 lines | asserts 3 journey phrase(s)
+F-panel-218 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 2 journey phrase(s)
+F-panel-218 | apps/dashboard/e2e/whatsapp-verify-uat.spec.mjs | e2e | 324 lines | asserts 2 journey phrase(s)
+F-panel-218 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 2 journey phrase(s)
+F-panel-218 | apps/dashboard/test/crm/feedback.test.ts | unit | 91 lines | file name
+F-panel-218 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 2 journey phrase(s)
+F-panel-218 | apps/mobile/test/lib/feedback.test.ts | unit | 59 lines | file name
+F-panel-218 | apps/mobile/test/lib/feedbackButton.test.ts | unit | 120 lines | file name
+F-panel-218 | apps/mobile/test/lib/feedbackMemberKey.test.ts | unit | 43 lines | file name
+F-panel-218 | apps/mobile/test/lib/feedbackVoice.test.ts | unit | 147 lines | file name
+F-panel-218 | apps/mobile/test/tracker/r72HealthSend.test.ts | unit | 52 lines | asserts 2 journey phrase(s)
+F-panel-219 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 10 journey phrase(s)
+F-panel-219 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 5 journey phrase(s)
+F-panel-219 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 5 journey phrase(s)
+F-panel-219 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-panel-219 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-panel-219 | apps/dashboard/e2e/feedback.spec.mjs | e2e | 34 lines | file name
+F-panel-219 | apps/dashboard/test/crm/feedback.test.ts | unit | 91 lines | file name
+F-panel-219 | apps/mobile/qa/xj-2-order-cancel.yaml | maestro | 34 lines | asserts 2 journey phrase(s)
+F-panel-219 | apps/mobile/test/lib/feedback.test.ts | unit | 59 lines | file name
+F-panel-219 | apps/mobile/test/lib/feedbackButton.test.ts | unit | 120 lines | file name
+F-panel-219 | apps/mobile/test/lib/feedbackMemberKey.test.ts | unit | 43 lines | file name
+F-panel-219 | apps/mobile/test/lib/feedbackVoice.test.ts | unit | 147 lines | file name
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-211-01 | type 1 | owner | Enquiries screen, one enquiry with a call-back day of today and a phone number
+  s1 see: Title 'Enquiries', under it 'People who asked about joining'
+  s1 see: Chips labelled 'Show enquiries', each with a count
+  s1 see: The row shows the name, the number, a 'Today' pill and 'Call back <day> · <how far>'
+  s1 see: Buttons 'Call', 'WhatsApp', 'Add as member', 'Follow-up date', 'Not interested'
+  s1 not: A count on a chip that differs from the rows shown under it
+  s1 not: An enquiry due today missing from the first list
+  s2 see: WhatsApp opens in a new tab with a ready follow-up message that names the gym
+  s2 see: The Enquiries screen is still open behind it
+  s2 not: The message sent by itself without the person pressing send in WhatsApp
+  s2 not: Another person's number in the WhatsApp address
+  s3 see: Sheet titled 'Call <name> again'
+  s3 see: Line 'Pick a day. One tap saves it.'
+  s3 see: Quick day buttons, 'Or pick a date', buttons 'Cancel' and 'Save date'
+  s3 not: A day in the past offered as a quick pick
+  s4 see: The sheet closes
+  s4 see: The row leaves the call-today list and shows the new call-back day under the later list
+  s4 not: The old call-back day still shown after a refresh
+  s4 not: Two rows for the same person
+J-F-panel-211-02 | type 2 | owner | Enquiries screen, an open enquiry; the other ways: Call, and a hand-picked date
+  s1 see: The phone's dialler opens with the person's number, with the country code
+  s1 not: A number without the country code, or a different number from the one on the row
+  s2 see: Under the date box a line saying how far the day is
+  s2 see: The sheet closes and the row shows the new day
+  s2 not: The date saved a day early or late
+  s2 not: The sheet closing when the save failed
+J-F-panel-211-03 | type 3 | owner | Enquiries screen, an open enquiry; and one enquiry that came from a web chat with no number
+  s1 see: Under the box: 'Pick a date.'
+  s1 see: The sheet stays open
+  s1 not: The call-back day wiped
+  s1 not: The sheet closing as if saved
+  s2 see: Under the box: 'The follow-up date can’t be in the past.'
+  s2 not: A past day saved
+  s3 see: 'No number left yet' in place of the number
+  s3 see: No 'Call' and no 'WhatsApp' button on that row
+  s3 not: A Call or WhatsApp button that opens with an empty number
+  s4 see: 'Add as member', 'Follow-up date', 'Not interested' and 'Reopen' cannot be used until the internet is back
+  s4 not: A change shown as saved that never reached the server
+J-F-panel-211-04 | type 6 | owner | Enquiries screen, an open enquiry
+  s1 see: A bar at the bottom: '<name>: marked not interested.' with an undo button, for 8 seconds
+  s1 see: The row leaves the call-today list
+  s1 not: The enquiry deleted
+  s1 not: No way back once the bar is gone
+  s2 see: The row is back as an open enquiry with its old call-back day
+  s2 see: The bar is gone
+  s2 not: A second copy of the enquiry
+  s2 not: The call-back day lost
+  s3 see: The row with a grey 'Not interested' pill and a 'Reopen' button
+  s3 see: A box 'Why did <name> not join? (optional)' showing 'Not known'
+  s3 not: 'Add as member' or 'Follow-up date' still offered on a not-interested row
+  s4 see: The box shows the reason picked; its first choice now reads 'Clear the reason'
+  s4 not: The reason shown on a different enquiry
+  s5 see: The row is an open enquiry again
+  s5 see: The reason is cleared
+  s5 not: The old reason kept on a reopened enquiry
+  s5 not: The row stuck in the not-interested list after a refresh
+J-F-panel-211-05 | type 12 | owner | Enquiries screen, one enquiry a member invited from the member app
+  s1 see: 'Referred by <member's name>' on the row
+  s1 see: The friend's own name and number
+  s1 not: The inviting member's phone number on the row
+  s1 not: Enquiries of another gym or another branch in the list
+  s2 see: The ready message opens in the gym person's own WhatsApp, to the friend's number only
+  s2 not: The message sent from a MettleUp number
+  s2 not: The friend added to any list they did not ask for
+J-F-panel-211-06 | type 1 | staff | Enquiries screen, one enquiry with a call-back day of today and a phone number
+  s1 see: Title 'Enquiries', under it 'People who asked about joining'
+  s1 see: Chips labelled 'Show enquiries', each with a count
+  s1 see: The row shows the name, the number, a 'Today' pill and 'Call back <day> · <how far>'
+  s1 see: Buttons 'Call', 'WhatsApp', 'Add as member', 'Follow-up date', 'Not interested'
+  s1 not: A count on a chip that differs from the rows shown under it
+  s1 not: An enquiry due today missing from the first list
+  s2 see: WhatsApp opens in a new tab with a ready follow-up message that names the gym
+  s2 see: The Enquiries screen is still open behind it
+  s2 not: The message sent by itself without the person pressing send in WhatsApp
+  s2 not: Another person's number in the WhatsApp address
+  s3 see: Sheet titled 'Call <name> again'
+  s3 see: Line 'Pick a day. One tap saves it.'
+  s3 see: Quick day buttons, 'Or pick a date', buttons 'Cancel' and 'Save date'
+  s3 not: A day in the past offered as a quick pick
+  s4 see: The sheet closes
+  s4 see: The row leaves the call-today list and shows the new call-back day under the later list
+  s4 not: The old call-back day still shown after a refresh
+  s4 not: Two rows for the same person
+J-F-panel-211-07 | type 2 | staff | Enquiries screen, an open enquiry; the other ways: Call, and a hand-picked date
+  s1 see: The phone's dialler opens with the person's number, with the country code
+  s1 not: A number without the country code, or a different number from the one on the row
+  s2 see: Under the date box a line saying how far the day is
+  s2 see: The sheet closes and the row shows the new day
+  s2 not: The date saved a day early or late
+  s2 not: The sheet closing when the save failed
+J-F-panel-211-08 | type 3 | staff | Enquiries screen, an open enquiry; and one enquiry that came from a web chat with no number
+  s1 see: Under the box: 'Pick a date.'
+  s1 see: The sheet stays open
+  s1 not: The call-back day wiped
+  s1 not: The sheet closing as if saved
+  s2 see: Under the box: 'The follow-up date can’t be in the past.'
+  s2 not: A past day saved
+  s3 see: 'No number left yet' in place of the number
+  s3 see: No 'Call' and no 'WhatsApp' button on that row
+  s3 not: A Call or WhatsApp button that opens with an empty number
+  s4 see: 'Add as member', 'Follow-up date', 'Not interested' and 'Reopen' cannot be used until the internet is back
+  s4 not: A change shown as saved that never reached the server
+J-F-panel-211-09 | type 6 | staff | Enquiries screen, an open enquiry
+  s1 see: A bar at the bottom: '<name>: marked not interested.' with an undo button, for 8 seconds
+  s1 see: The row leaves the call-today list
+  s1 not: The enquiry deleted
+  s1 not: No way back once the bar is gone
+  s2 see: The row is back as an open enquiry with its old call-back day
+  s2 see: The bar is gone
+  s2 not: A second copy of the enquiry
+  s2 not: The call-back day lost
+  s3 see: The row with a grey 'Not interested' pill and a 'Reopen' button
+  s3 see: A box 'Why did <name> not join? (optional)' showing 'Not known'
+  s3 not: 'Add as member' or 'Follow-up date' still offered on a not-interested row
+  s4 see: The box shows the reason picked; its first choice now reads 'Clear the reason'
+  s4 not: The reason shown on a different enquiry
+  s5 see: The row is an open enquiry again
+  s5 see: The reason is cleared
+  s5 not: The old reason kept on a reopened enquiry
+  s5 not: The row stuck in the not-interested list after a refresh
+J-F-panel-211-10 | type 12 | staff | Enquiries screen, one enquiry a member invited from the member app
+  s1 see: 'Referred by <member's name>' on the row
+  s1 see: The friend's own name and number
+  s1 not: The inviting member's phone number on the row
+  s1 not: Enquiries of another gym or another branch in the list
+  s2 see: The ready message opens in the gym person's own WhatsApp, to the friend's number only
+  s2 not: The message sent from a MettleUp number
+  s2 not: The friend added to any list they did not ask for
+J-F-panel-213-01 | type 1 | owner | Enquiries screen, an open enquiry typed in by hand, number not on the member list
+  s1 see: The usual Add member form, with the name and the number already filled in
+  s1 not: An empty form
+  s1 not: The number changed or cut
+  s2 see: The form closes
+  s2 see: The new member's page opens
+  s2 not: Two members made from one save
+  s2 not: The member saved while the enquiry stays open with no word about it
+  s3 see: The row with a green 'Joined' pill and an 'Open member' button
+  s3 not: 'Add as member' still offered on the joined row
+  s3 not: The row linked to a different member
+J-F-panel-213-02 | type 2 | owner | Today screen, 'Joined online' card: a person asked to join online and picked a plan
+  s1 see: The Add member form with the name and number filled in
+  s1 not: A different person's details in the form
+  s2 see: The Sell membership sheet opens by itself, on the plan and the start day they picked online
+  s2 not: The flow closing before Sell membership opens
+  s2 not: A plan picked that is not the one they asked for
+  s3 see: The new member's page opens
+  s3 not: Money shown as collected when nothing was paid at the desk
+  s3 not: Two memberships sold from one tap
+J-F-panel-213-03 | type 2 | owner | Enquiries screen, an open enquiry whose number already belongs to a member on the list
+  s1 see: Sheet titled 'Already a member'
+  s1 see: '<member's name> is already a member with <number>.'
+  s1 see: Buttons 'Cancel' and 'Mark joined and open'
+  s1 not: The Add member form opened for a number that would be refused
+  s2 see: The enquiry closes as joined, linked to that member
+  s2 see: That member's page opens
+  s2 not: A second member with the same number
+  s2 not: The button pressable twice while it saves
+J-F-panel-213-04 | type 2 | owner | Enquiries screen, an open enquiry whose number belongs to an archived member
+  s1 see: Sheet titled 'Already a member (archived)'
+  s1 see: '<name> already has <number>, but they were archived, so they are not in the list.'
+  s1 see: Buttons 'Cancel' and 'Bring back and mark joined'
+  s1 not: The archived member left hidden with no way to link them
+  s2 see: The member is back on the member list
+  s2 see: The enquiry is joined and linked to them
+  s2 see: Their page opens
+  s2 not: The member brought back while the enquiry stays open and no message says so
+  s2 not: The sheet swapping to 'Already a member' half-way
+J-F-panel-213-05 | type 3 | owner | Enquiries screen, one open enquiry, one joined, one not interested
+  s1 see: Back on Enquiries; the enquiry is still open
+  s1 not: A member saved
+  s1 not: The enquiry marked joined
+  s2 see: No 'Add as member' button on either
+  s2 not: A joined enquiry that can be made a member a second time
+  s3 see: A red line on Enquiries: the server's words, or 'The member was saved, but the enquiry was not closed.'
+  s3 not: The member lost
+  s3 not: A message that everything was saved
+J-F-panel-213-06 | type 6 | owner | Enquiries screen, an enquiry made a member a minute ago
+  s1 see: The row shows 'Joined' and 'Open member'; no call-back line
+  s1 not: A 'Reopen' button on a joined row
+  s1 not: The enquiry still counted under call today
+  s2 see: That member's page
+  s2 not: Another member's page
+  s2 not: A blank page when the member was archived later
+J-F-panel-213-07 | type 12 | owner | Enquiries screen, a person who took a free trial on the gym's web page
+  s1 see: 'Free trial online: <n> days, <first day> to <last day>. Nothing paid.'
+  s1 not: The person already on the member list before anyone taps Add as member
+  s1 not: The word 'Paid' on a trial
+  s2 see: Sell membership opens with no plan picked for them, when the gym has an active plan
+  s2 not: A plan sold by itself
+  s2 not: A receipt made for the free trial
+J-F-panel-213-08 | type 1 | staff | Enquiries screen, an open enquiry typed in by hand, number not on the member list
+  s1 see: The usual Add member form, with the name and the number already filled in
+  s1 not: An empty form
+  s1 not: The number changed or cut
+  s2 see: The form closes
+  s2 see: The new member's page opens
+  s2 not: Two members made from one save
+  s2 not: The member saved while the enquiry stays open with no word about it
+  s3 see: The row with a green 'Joined' pill and an 'Open member' button
+  s3 not: 'Add as member' still offered on the joined row
+  s3 not: The row linked to a different member
+J-F-panel-213-09 | type 2 | staff | Today screen, 'Joined online' card: a person asked to join online and picked a plan
+  s1 see: The Add member form with the name and number filled in
+  s1 not: A different person's details in the form
+  s2 see: The Sell membership sheet opens by itself, on the plan and the start day they picked online
+  s2 not: The flow closing before Sell membership opens
+  s2 not: A plan picked that is not the one they asked for
+  s3 see: The new member's page opens
+  s3 not: Money shown as collected when nothing was paid at the desk
+  s3 not: Two memberships sold from one tap
+J-F-panel-213-10 | type 2 | staff | Enquiries screen, an open enquiry whose number already belongs to a member on the list
+  s1 see: Sheet titled 'Already a member'
+  s1 see: '<member's name> is already a member with <number>.'
+  s1 see: Buttons 'Cancel' and 'Mark joined and open'
+  s1 not: The Add member form opened for a number that would be refused
+  s2 see: The enquiry closes as joined, linked to that member
+  s2 see: That member's page opens
+  s2 not: A second member with the same number
+  s2 not: The button pressable twice while it saves
+J-F-panel-213-11 | type 2 | staff | Enquiries screen, an open enquiry whose number belongs to an archived member
+  s1 see: Sheet titled 'Already a member (archived)'
+  s1 see: '<name> already has <number>, but they were archived, so they are not in the list.'
+  s1 see: Buttons 'Cancel' and 'Bring back and mark joined'
+  s1 not: The archived member left hidden with no way to link them
+  s2 see: The member is back on the member list
+  s2 see: The enquiry is joined and linked to them
+  s2 see: Their page opens
+  s2 not: The member brought back while the enquiry stays open and no message says so
+  s2 not: The sheet swapping to 'Already a member' half-way
+J-F-panel-213-12 | type 3 | staff | Enquiries screen, one open enquiry, one joined, one not interested
+  s1 see: Back on Enquiries; the enquiry is still open
+  s1 not: A member saved
+  s1 not: The enquiry marked joined
+  s2 see: No 'Add as member' button on either
+  s2 not: A joined enquiry that can be made a member a second time
+  s3 see: A red line on Enquiries: the server's words, or 'The member was saved, but the enquiry was not closed.'
+  s3 not: The member lost
+  s3 not: A message that everything was saved
+J-F-panel-213-13 | type 6 | staff | Enquiries screen, an enquiry made a member a minute ago
+  s1 see: The row shows 'Joined' and 'Open member'; no call-back line
+  s1 not: A 'Reopen' button on a joined row
+  s1 not: The enquiry still counted under call today
+  s2 see: That member's page
+  s2 not: Another member's page
+  s2 not: A blank page when the member was archived later
+J-F-panel-213-14 | type 12 | staff | Enquiries screen, a person who took a free trial on the gym's web page
+  s1 see: 'Free trial online: <n> days, <first day> to <last day>. Nothing paid.'
+  s1 not: The person already on the member list before anyone taps Add as member
+  s1 not: The word 'Paid' on a trial
+  s2 see: Sell membership opens with no plan picked for them, when the gym has an active plan
+  s2 not: A plan sold by itself
+  s2 not: A receipt made for the free trial
+J-F-panel-214-01 | type 1 | owner | Enquiries screen; gym web pages are open and the web page AI helper is on; one visitor chat needs the gym
+  s1 see: The chats that need the gym come first in the list
+  s1 see: On the row: 'Chat on your web page', a status line in the warning colour, and the whole chat with 'Visitor: ' and 'AI helper: ' in front of each line, newest last
+  s1 not: A chat that needs the gym below ordinary rows
+  s1 not: Lines of another visitor's chat in this row
+  s2 see: 'Call' and 'WhatsApp' open with the visitor's number
+  s2 not: The panel answering the visitor by itself
+  s3 see: The 'Mark as done' button is gone
+  s3 see: The status line ends with ' · Done' in the quiet colour
+  s3 see: The row leaves the top of the list
+  s3 not: The chat deleted
+  s3 not: The enquiry itself closed or marked not interested
+J-F-panel-214-02 | type 2 | owner | Enquiries screen; gym web pages are open; a visitor left a question with the form on the page
+  s1 see: 'Asked on your web page' and under it the question in quotation marks
+  s1 see: The question is not shown a second time as the interest line
+  s1 not: The question shown twice
+  s1 not: Line breaks of the question lost
+J-F-panel-214-03 | type 3 | owner | Enquiries screen; an enquiry that has a web chat and a web question; then the switches are turned off
+  s1 see: No 'Chat on your web page' block
+  s1 see: No 'Mark as done' button
+  s1 see: Rows in their ordinary order
+  s1 not: The chat block left half drawn
+  s1 not: A blank screen
+  s2 see: No 'Asked on your web page' block on the row
+  s2 not: An error in place of the row
+  s2 not: The name and number of the visitor lost
+  s3 see: 'No number left yet'; no 'Call' or 'WhatsApp'
+  s3 not: A call button with no number
+J-F-panel-214-04 | type 6 | owner | Enquiries screen; a chat marked done earlier
+  s1 see: The row is at the top again with the warning colour and the 'Mark as done' button
+  s1 not: A chat that stays done after the visitor asks again
+  s2 see: 'Chat on your web page', the status line, then 'The chat's messages were deleted 90 days after the last one.'
+  s2 not: Old messages still shown after 90 days
+  s2 not: An empty box with no words
+J-F-panel-214-05 | type 12 | owner | Enquiries screen; a visitor chatted on the gym's web page
+  s1 see: The whole chat of the visitor, readable by the owner and by front desk staff of this gym
+  s1 not: The chat of another gym's visitor
+  s1 not: The chat readable without signing in
+  s2 see: Only the line that the messages were deleted
+  s2 not: Chat text kept past 90 days
+J-F-panel-214-06 | type 1 | staff | Enquiries screen; gym web pages are open and the web page AI helper is on; one visitor chat needs the gym
+  s1 see: The chats that need the gym come first in the list
+  s1 see: On the row: 'Chat on your web page', a status line in the warning colour, and the whole chat with 'Visitor: ' and 'AI helper: ' in front of each line, newest last
+  s1 not: A chat that needs the gym below ordinary rows
+  s1 not: Lines of another visitor's chat in this row
+  s2 see: 'Call' and 'WhatsApp' open with the visitor's number
+  s2 not: The panel answering the visitor by itself
+  s3 see: The 'Mark as done' button is gone
+  s3 see: The status line ends with ' · Done' in the quiet colour
+  s3 see: The row leaves the top of the list
+  s3 not: The chat deleted
+  s3 not: The enquiry itself closed or marked not interested
+J-F-panel-214-07 | type 2 | staff | Enquiries screen; gym web pages are open; a visitor left a question with the form on the page
+  s1 see: 'Asked on your web page' and under it the question in quotation marks
+  s1 see: The question is not shown a second time as the interest line
+  s1 not: The question shown twice
+  s1 not: Line breaks of the question lost
+J-F-panel-214-08 | type 3 | staff | Enquiries screen; an enquiry that has a web chat and a web question; then the switches are turned off
+  s1 see: No 'Chat on your web page' block
+  s1 see: No 'Mark as done' button
+  s1 see: Rows in their ordinary order
+  s1 not: The chat block left half drawn
+  s1 not: A blank screen
+  s2 see: No 'Asked on your web page' block on the row
+  s2 not: An error in place of the row
+  s2 not: The name and number of the visitor lost
+  s3 see: 'No number left yet'; no 'Call' or 'WhatsApp'
+  s3 not: A call button with no number
+J-F-panel-214-09 | type 6 | staff | Enquiries screen; a chat marked done earlier
+  s1 see: The row is at the top again with the warning colour and the 'Mark as done' button
+  s1 not: A chat that stays done after the visitor asks again
+  s2 see: 'Chat on your web page', the status line, then 'The chat's messages were deleted 90 days after the last one.'
+  s2 not: Old messages still shown after 90 days
+  s2 not: An empty box with no words
+J-F-panel-214-10 | type 12 | staff | Enquiries screen; a visitor chatted on the gym's web page
+  s1 see: The whole chat of the visitor, readable by the owner and by front desk staff of this gym
+  s1 not: The chat of another gym's visitor
+  s1 not: The chat readable without signing in
+  s2 see: Only the line that the messages were deleted
+  s2 not: Chat text kept past 90 days
+J-F-panel-212-01 | type 1 | owner | Enquiries screen
+  s1 see: Sheet titled 'Add enquiry'
+  s1 see: Boxes 'Name', 'Code', 'Mobile number', 'Interested in (optional)', 'Where did they hear about us? (optional)' (showing 'Not asked'), 'Follow-up date'
+  s1 see: Quick day buttons under the date
+  s1 see: Buttons 'Cancel' and 'Save enquiry'
+  s1 not: The button usable with the internet off
+  s2 see: Under the date: 'Call back on <day> (<how far>)'
+  s2 not: The quick day not shown as picked
+  s3 see: The button reads 'Saving…' and cannot be pressed
+  s3 see: The sheet closes
+  s3 see: The new row is in the list for its day
+  s3 not: Two rows from one press
+  s3 not: The sheet closing when the save failed
+J-F-panel-212-02 | type 2 | owner | The Add enquiry sheet opened straight away by another screen, and the button inside the empty list
+  s1 see: Enquiries opens with the 'Add enquiry' sheet already open
+  s1 not: The sheet opening again by itself after it is closed
+  s2 see: 'No enquiries yet'
+  s2 see: 'When someone walks in or calls to ask about joining, add them here with a day to call back.'
+  s2 see: A '+ Add enquiry' button inside the empty list
+  s2 not: A blank card
+J-F-panel-212-03 | type 3 | owner | Add enquiry sheet; one open enquiry and one member already use known numbers
+  s1 see: Under Name: 'Type their name.'
+  s1 not: An enquiry saved with no name
+  s2 see: Under the date: 'The follow-up date can’t be in the past.'
+  s2 not: A past call-back day saved
+  s3 see: A warning line: '<name> already asked from this number (call back <day>). You can still save.'
+  s3 not: The save blocked
+  s3 not: No warning at all
+  s4 see: A warning line: '<member's name> is already a member with this number.'
+  s4 not: The warning naming a member of another gym
+  s5 see: Under the box: 'Use at most <n> letters.'
+  s5 not: The text cut and saved without a word
+J-F-panel-212-04 | type 6 | owner | Add enquiry sheet with a name and number typed
+  s1 see: The sheet closes; no new row
+  s1 not: A half-saved enquiry
+  s2 see: Under the date: 'No date: it goes under Later.'
+  s2 not: The values typed before still in the boxes as if saved
+  s3 see: A red line in the sheet with the reason; the typed values stay
+  s3 see: After the second press the sheet closes and one row is in the later list
+  s3 not: Two rows after the second press
+  s3 not: The typed values lost on the failed save
+J-F-panel-212-05 | type 12 | owner | Add enquiry sheet; the person is not a member and has not used any MettleUp page
+  s1 see: The row on Enquiries for the owner and the front desk of this gym
+  s1 not: The person sent any message by MettleUp because they were added
+  s1 not: The row visible to another gym or branch
+  s2 see: 'Not interested' closes the enquiry; the name and number stay on the not-interested list
+  s2 not: The name and number shown anywhere a member can see
+J-F-panel-212-06 | type 1 | staff | Enquiries screen
+  s1 see: Sheet titled 'Add enquiry'
+  s1 see: Boxes 'Name', 'Code', 'Mobile number', 'Interested in (optional)', 'Where did they hear about us? (optional)' (showing 'Not asked'), 'Follow-up date'
+  s1 see: Quick day buttons under the date
+  s1 see: Buttons 'Cancel' and 'Save enquiry'
+  s1 not: The button usable with the internet off
+  s2 see: Under the date: 'Call back on <day> (<how far>)'
+  s2 not: The quick day not shown as picked
+  s3 see: The button reads 'Saving…' and cannot be pressed
+  s3 see: The sheet closes
+  s3 see: The new row is in the list for its day
+  s3 not: Two rows from one press
+  s3 not: The sheet closing when the save failed
+J-F-panel-212-07 | type 2 | staff | The Add enquiry sheet opened straight away by another screen, and the button inside the empty list
+  s1 see: Enquiries opens with the 'Add enquiry' sheet already open
+  s1 not: The sheet opening again by itself after it is closed
+  s2 see: 'No enquiries yet'
+  s2 see: 'When someone walks in or calls to ask about joining, add them here with a day to call back.'
+  s2 see: A '+ Add enquiry' button inside the empty list
+  s2 not: A blank card
+J-F-panel-212-08 | type 3 | staff | Add enquiry sheet; one open enquiry and one member already use known numbers
+  s1 see: Under Name: 'Type their name.'
+  s1 not: An enquiry saved with no name
+  s2 see: Under the date: 'The follow-up date can’t be in the past.'
+  s2 not: A past call-back day saved
+  s3 see: A warning line: '<name> already asked from this number (call back <day>). You can still save.'
+  s3 not: The save blocked
+  s3 not: No warning at all
+  s4 see: A warning line: '<member's name> is already a member with this number.'
+  s4 not: The warning naming a member of another gym
+  s5 see: Under the box: 'Use at most <n> letters.'
+  s5 not: The text cut and saved without a word
+J-F-panel-212-09 | type 6 | staff | Add enquiry sheet with a name and number typed
+  s1 see: The sheet closes; no new row
+  s1 not: A half-saved enquiry
+  s2 see: Under the date: 'No date: it goes under Later.'
+  s2 not: The values typed before still in the boxes as if saved
+  s3 see: A red line in the sheet with the reason; the typed values stay
+  s3 see: After the second press the sheet closes and one row is in the later list
+  s3 not: Two rows after the second press
+  s3 not: The typed values lost on the failed save
+J-F-panel-212-10 | type 12 | staff | Add enquiry sheet; the person is not a member and has not used any MettleUp page
+  s1 see: The row on Enquiries for the owner and the front desk of this gym
+  s1 not: The person sent any message by MettleUp because they were added
+  s1 not: The row visible to another gym or branch
+  s2 see: 'Not interested' closes the enquiry; the name and number stay on the not-interested list
+  s2 not: The name and number shown anywhere a member can see
+J-F-panel-205-01 | type 1 | owner | Enquiries screen; an open enquiry a member invited; the gym set free days in Settings → Member app; the member has a plan running
+  s1 see: Sheet titled 'Thank <member>'
+  s1 see: '<friend> joined. <member> invited them from the MettleUp app.'
+  s1 see: '<member>’s plan ends on <day>. With <n> free days it ends on <later day>.'
+  s1 see: 'You set these free days in Settings → Member app. If you tap Not now, you can still give them later from this enquiry.'
+  s1 see: Buttons 'Not now' and 'Give <n> free days'
+  s1 not: The days added before the owner taps
+  s1 not: The new member's page opening first
+  s2 see: Sheet titled 'Free days added'
+  s2 see: '<member> got <n> free days. Their plan now ends on <later day>.'
+  s2 see: Button 'Open <friend>'
+  s2 not: The days added twice
+  s2 not: A receipt or a charge made for the free days
+  s2 not: The sheet saying added when the plan did not move
+  s3 see: The new member's page
+  s3 not: The inviting member's page instead
+J-F-panel-205-02 | type 2 | owner | Enquiries screen, joined list; a referred friend joined earlier and the owner tapped 'Not now'
+  s1 see: The 'Thank <member>' sheet with the same two plan dates
+  s1 not: The button on a row that was already thanked
+  s2 see: 'Free days added'
+  s2 see: Back on the list the row reads '<member> got <n> free days for this friend.' and the button is gone
+  s2 not: The button still there after giving
+J-F-panel-205-03 | type 2 | owner | Today screen, 'Joined online' card; the person who asked to join online was invited by a member
+  s1 see: The 'Thank <member>' sheet opens before the new member's page
+  s1 not: The flow closing and skipping the thank-you
+  s1 not: The thank-you opening for a friend whose inviter has no plan
+  s2 see: 'Free days added', then the new member's page
+  s2 not: The Today card still asking to make the same person a member
+J-F-panel-205-04 | type 3 | owner | Enquiries screen, joined list; three referred friends whose inviters cannot get days
+  s1 see: '<member> is not on your member list, so the <n> free days cannot be added here.'
+  s1 see: No 'Give free days' button
+  s1 not: Days added to a different member with the same name
+  s2 see: '<member> has no plan running, so there is nothing to add the <n> free days to. Add them by hand when <member> renews.'
+  s2 not: Days added to an ended plan or a personal training pack
+  s3 see: No thank-you sheet; the new member's page opens
+  s3 see: No 'Give free days' button on the row
+  s3 not: A thank-you offering 0 days
+  s4 see: No thank-you sheet and no 'Give free days' button for staff
+  s4 not: Staff able to add the free days
+J-F-panel-205-05 | type 6 | owner | Thank sheet open for a referred friend who just joined
+  s1 see: The new member's page opens
+  s1 see: On Enquiries the joined row still has 'Give free days'
+  s1 not: The offer gone for good
+  s2 see: First a red line: the reason, or 'Could not add the free days. Try again.'
+  s2 see: On the second tap 'Free days added'
+  s2 not: The days added a second time on the retry
+  s3 see: '<member> got <n> free days for this friend.'; no button
+  s3 not: The offer back after a refresh
+J-F-panel-205-06 | type 12 | owner | Enquiries screen; a friend invited from the member app
+  s1 see: Only the inviting member's name: 'Referred by <name>', 'Thank <name>'
+  s1 not: The inviting member's phone number
+  s1 not: The friend told how many days the member got
+  s2 see: 'Referred by <name>'; no give button; the note of why days cannot be given is hidden, the note that days were given is shown
+  s2 not: Staff able to give or change free days
+J-F-panel-215-01 | type 1 | owner | Settings; the gym is online and entry machines are ready on the server; no machine added yet
+  s1 see: Title 'Entry machines', under it 'Finger or face machines at your gym’s door'
+  s1 see: 'No entry machines yet' and how it works
+  s1 see: Button 'Add a machine'
+  s1 see: Button 'Back to Settings'
+  s1 not: An endless Loading…
+  s2 see: Sheet 'Add a machine'
+  s2 see: 'Your machine’s brand' with the brands; a brand not ready reads '<brand>: coming soon' and cannot be picked
+  s2 see: 'Step 1: find the serial number' to 'Step 4: give each member their number'
+  s2 see: Boxes 'Serial number' and 'Machine name' with the hint 'Leave it empty to call it "<default name>".'
+  s2 not: A coming-soon brand that can be picked
+  s3 see: The button reads 'Saving…'
+  s3 see: A short message: 'Saved. <name> shows Online within a minute of its first call.'
+  s3 see: A card for the machine with its brand, serial, an Online or Offline pill and when it last called
+  s3 not: Two cards from one press
+  s3 not: The machine shown Online before it ever called
+J-F-panel-215-02 | type 2 | owner | Entry machines screen with one machine already listed
+  s1 see: The same 'Add a machine' sheet
+  s1 not: The first machine replaced by the second
+  s2 see: Two cards, each with its own pill and lines
+  s2 not: The same serial accepted twice
+J-F-panel-215-03 | type 3 | owner | Add a machine sheet; and gyms where the feature cannot work
+  s1 see: Under the serial: 'Type the serial number from Menu > System Info on the machine.'
+  s1 not: A machine saved with no serial
+  s2 see: 'A serial number has only letters and numbers, like CJDE231560123. Check it on the machine.'
+  s2 not: The odd letters dropped and saved without a word
+  s3 see: 'This machine is already on your list.'
+  s3 not: A second card for one machine
+  s4 see: Under the name: 'Keep the name short: <n> letters at most.'
+  s4 not: The name cut without a word
+  s5 see: 'Entry machines are not ready for your gym yet'
+  s5 see: 'MettleUp cannot talk to entry machines yet. Nothing you do here is saved. Message MettleUp on WhatsApp if you want it for your gym.'
+  s5 see: No add button
+  s5 not: An add sheet that looks as if it saved
+  s6 see: 'Put your gym online first (Settings → Sign-in & data).'
+  s6 not: An add button that fails later
+  s7 see: 'Could not load your machines', the reason, and 'Try again'
+  s7 not: An empty list shown as if there were no machines
+J-F-panel-215-04 | type 6 | owner | Entry machines screen with one machine
+  s1 see: Within about 30 seconds the pill changes from Online to Offline by itself
+  s1 not: A machine shown Online for minutes after it stopped
+  s2 see: Sheet 'Remove <name>?'
+  s2 see: 'MettleUp stops reading entries from this machine. Entries already in the register stay. Members and their fingers stay on the machine itself.'
+  s2 see: Buttons 'Remove machine' and 'Keep it'
+  s2 not: The machine removed before the second tap
+  s3 see: 'Removing…', then a short message '<name> removed.'
+  s3 see: The card is gone
+  s3 not: Past entries removed from the attendance register
+  s3 not: The card back after a refresh
+J-F-panel-215-05 | type 12 | owner | Entry machines screen with a machine that refused entries today
+  s1 see: A red line with the entries refused today, a line about the last one refused, and a line about unknown numbers
+  s1 not: A member of another gym named on the card
+  s1 not: Finger or face pictures shown or stored by MettleUp
+  s2 see: 'Members and their fingers stay on the machine itself.'
+  s2 not: A promise that fingers are wiped from the machine
+J-F-panel-215-06 | type 1 | staff | Settings as front desk staff; the gym has one entry machine
+  s1 see: The machine card with its Online or Offline pill, last call and refused entries
+  s1 see: 'Only the gym owner can add or remove a machine.'
+  s1 see: No 'Add a machine' and no 'Remove' button
+  s1 not: An add or remove button for staff
+J-F-panel-215-07 | type 3 | staff | Settings as staff; the gym has no machine yet
+  s1 see: 'No entry machines yet', how it works, and 'Only the gym owner can add or remove a machine.'
+  s1 see: No button
+  s1 not: A button that opens the add sheet and then fails
+  s2 see: 'Entry machines are not ready for your gym yet'
+  s2 not: A blank screen
+J-F-panel-215-08 | type 6 | staff | Entry machines screen open as staff while the owner removes the machine elsewhere
+  s1 see: Within about 30 seconds the card goes and the empty words show
+  s1 see: The pill follows the machine: Online, then Offline
+  s1 not: A removed machine still listed as Online
+J-F-panel-215-09 | type 12 | staff | Entry machines screen as staff
+  s1 see: Only the line 'Only the gym owner can add or remove a machine.'
+  s1 not: A staff sign-in able to add or remove a machine by any path
+J-F-panel-216-01 | type 1 | owner | A member's page; the gym has an entry machine; this member has no machine number
+  s1 see: 'No machine number yet.'
+  s1 see: Button 'Give a number'
+  s1 not: The card on the page of an archived member
+  s2 see: Sheet 'Machine number for <name>'
+  s2 see: Box 'Machine number' already filled with a free number
+  s2 see: Buttons 'Save number' and 'Cancel'
+  s2 not: A number offered that another member already has
+  s3 see: 'Saving…'
+  s3 see: A short message starting 'Saved.' that says how to enrol the finger or face on the machine with that number
+  s3 see: The card reads 'Machine number: <n>' with the enrol line under it
+  s3 not: Two members with the same number
+  s3 not: The number shown on the card but not saved
+J-F-panel-216-02 | type 2 | owner | A member's page; the member already has a machine number
+  s1 see: The sheet with the present number in the box
+  s1 not: An empty box
+  s2 see: 'Saved. Enrol the finger or face again on the machine with number <n>.'
+  s2 see: The card shows the new number
+  s2 not: The old number still letting the member in
+  s2 not: The old number given away with no word that the finger must be enrolled again
+J-F-panel-216-03 | type 3 | owner | Machine number sheet; and pages where the card must not show
+  s1 see: 'Type a machine number from 1 to 999999999, with no letters or spaces.'
+  s1 not: Letters dropped and the rest saved
+  s2 see: 'Number <n> is already <that member>’s. Pick another number.'
+  s2 not: The other member's number taken from them
+  s3 see: No 'Entry machine' card
+  s3 not: A card that offers a number that no machine will use
+J-F-panel-216-04 | type 6 | owner | A member's page; the member has a machine number
+  s1 see: The sheet closes; no message; nothing changed
+  s1 not: A 'Saved' message and a re-enrol instruction when nothing changed
+  s2 see: The card still shows the old number
+  s2 not: A typed number kept without saving
+J-F-panel-216-05 | type 12 | owner | Machine number sheet
+  s1 see: The message names the member of this gym who has it
+  s1 not: A member of another gym named
+  s1 not: A fingerprint or face picture shown or sent to MettleUp
+J-F-panel-216-06 | type 1 | staff | A member's page; the gym has an entry machine; this member has no machine number
+  s1 see: 'No machine number yet.'
+  s1 see: Button 'Give a number'
+  s1 not: The card on the page of an archived member
+  s2 see: Sheet 'Machine number for <name>'
+  s2 see: Box 'Machine number' already filled with a free number
+  s2 see: Buttons 'Save number' and 'Cancel'
+  s2 not: A number offered that another member already has
+  s3 see: 'Saving…'
+  s3 see: A short message starting 'Saved.' that says how to enrol the finger or face on the machine with that number
+  s3 see: The card reads 'Machine number: <n>' with the enrol line under it
+  s3 not: Two members with the same number
+  s3 not: The number shown on the card but not saved
+J-F-panel-216-07 | type 2 | staff | A member's page; the member already has a machine number
+  s1 see: The sheet with the present number in the box
+  s1 not: An empty box
+  s2 see: 'Saved. Enrol the finger or face again on the machine with number <n>.'
+  s2 see: The card shows the new number
+  s2 not: The old number still letting the member in
+  s2 not: The old number given away with no word that the finger must be enrolled again
+J-F-panel-216-08 | type 3 | staff | Machine number sheet; and pages where the card must not show
+  s1 see: 'Type a machine number from 1 to 999999999, with no letters or spaces.'
+  s1 not: Letters dropped and the rest saved
+  s2 see: 'Number <n> is already <that member>’s. Pick another number.'
+  s2 not: The other member's number taken from them
+  s3 see: No 'Entry machine' card
+  s3 not: A card that offers a number that no machine will use
+J-F-panel-216-09 | type 6 | staff | A member's page; the member has a machine number
+  s1 see: The sheet closes; no message; nothing changed
+  s1 not: A 'Saved' message and a re-enrol instruction when nothing changed
+  s2 see: The card still shows the old number
+  s2 not: A typed number kept without saving
+J-F-panel-216-10 | type 12 | staff | Machine number sheet
+  s1 see: The message names the member of this gym who has it
+  s1 not: A member of another gym named
+  s1 not: A fingerprint or face picture shown or sent to MettleUp
+J-F-panel-217-01 | type 1 | owner | Expenses screen as the owner, this month, some fees collected
+  s1 see: Title 'Expenses', under it 'What went out, and what the gym kept'
+  s1 see: The month name with 'This month' under it and arrows for the month before and after
+  s1 see: Three figures: 'Collected', 'Expenses', 'Profit'
+  s1 see: 'Expenses this month'
+  s1 not: Collected showing receipts that were cancelled
+  s1 not: The next-month arrow usable from this month
+  s2 see: Sheet 'Add expense'
+  s2 see: Boxes 'Amount' with ₹, 'What for', 'Date' (today), 'Note (optional)'
+  s2 see: Buttons 'Cancel' and 'Save expense'
+  s2 not: The date empty
+  s3 see: 'Saving…', then the sheet closes and a short message 'Expense added.'
+  s3 see: The row in 'Expenses this month' with the day, the note and ₹5,000
+  s3 see: 'Expenses' up by 5,000 and 'Profit' down by 5,000
+  s3 see: 'By category' with the count and a bar
+  s3 not: Two rows from one press
+  s3 not: Profit that is not Collected minus Expenses
+J-F-panel-217-02 | type 2 | owner | Expenses screen; the month arrows, and an expense dated in an older month
+  s1 see: That month's name and its three figures
+  s1 see: A link 'Back to this month'
+  s1 not: This month's expenses counted in the older month
+  s2 see: The screen jumps to that month and shows the new row
+  s2 see: 'Expense added.'
+  s2 not: The expense landing in the month on screen instead of its own
+  s3 see: This month again with 'This month' under the name
+  s3 not: Figures of the older month left on screen
+J-F-panel-217-03 | type 3 | owner | Add expense sheet
+  s1 see: Under Amount: 'Type how much was spent.'
+  s1 not: An expense of ₹0 saved
+  s2 see: 'That amount looks wrong. Type it again.'
+  s2 not: A guessed amount saved
+  s3 see: 'Type an amount more than zero.'
+  s3 not: A zero row in the list
+  s4 see: A red line: 'The expense date can’t be in the future.'
+  s4 not: A future expense saved
+  s5 see: 'That date looks wrong. Check the year.'
+  s5 not: A row in a month nobody can reach
+J-F-panel-217-04 | type 6 | owner | Expenses screen with one expense this month
+  s1 see: Sheet 'Remove this expense?'
+  s1 see: '<amount> · <what for> (<day>) will be removed for good. You can’t get it back. You would have to add it again.'
+  s1 see: Buttons 'Keep it' and 'Remove'
+  s1 not: The expense removed before the second tap
+  s2 see: The row is still there
+  s2 not: The row gone
+  s3 see: A short message 'Expense removed.'
+  s3 see: The row is gone; 'Expenses' falls and 'Profit' rises by that amount
+  s3 see: 'No expenses this month' with its add button
+  s3 not: The row back after a refresh
+  s3 not: 'Expense removed.' when the remove failed
+  s4 see: 'Profit' in red, with 'Spent more than collected'
+  s4 not: A loss shown as a profit
+J-F-panel-217-05 | type 12 | owner | The Expenses address typed while signed in as front desk staff
+  s1 see: The screen is refused: staff have no Expenses in the menu and the address does not open it
+  s1 not: The gym's collection, expenses or profit shown to staff
+  s2 see: Every figure and every Remove button
+  s2 not: Expenses of another branch or gym mixed in
+J-F-panel-218-01 | type 1 | owner | More → Help and feedback, signed in to an online gym that has AI credits
+  s1 see: Title 'Help and feedback'
+  s1 see: A box 'Your message'
+  s1 see: A 'Send' button that cannot be pressed while the box is empty
+  s1 see: 'Your questions' with 'Questions you send from this browser show here, with their answers.'
+  s1 not: A Send button that works with nothing typed
+  s2 see: The button reads 'Sending…'
+  s2 see: 'Sending. The answer usually takes a few seconds.'
+  s2 see: The question at once in 'Your questions' with 'Waiting for the answer. It usually takes a few seconds.'
+  s2 not: The question sent twice by a second tap
+  s3 see: A box with the answer and under it 'Answer written by AI from our help pages.'
+  s3 see: 'Did this solve it?' with 'Yes' and 'No'
+  s3 see: The message box is empty again
+  s3 not: An answer about another gym
+  s3 not: Credits taken twice for one question
+  s4 see: 'Great! Glad it helped.'
+  s4 see: In 'Your questions': 'You said this solved it.'
+  s4 not: Yes and No both still pressable
+J-F-panel-218-02 | type 2 | owner | Help and feedback; the gym has no AI credit left (the other kind of answer)
+  s1 see: A box with an answer from the help pages
+  s1 see: A button 'Open AI Assistant'
+  s1 see: No 'Did this solve it?' line under this kind of answer
+  s1 not: A credit taken when there is none
+  s2 see: The AI Assistant screen, where the credits are
+  s2 not: A dead link
+J-F-panel-218-03 | type 3 | owner | Help and feedback
+  s1 see: 'Send' cannot be pressed
+  s1 not: An empty message sent
+  s2 see: The box holds the first 2,000 letters only
+  s2 not: The message sent cut with the person never told
+  s3 see: A red line saying it could not be sent
+  s3 see: The typed message is still in the box
+  s3 not: The typed message lost
+  s3 not: 'Thanks! We read every message.' for a message that did not go
+J-F-panel-218-04 | type 6 | owner | Help and feedback with an AI answer on screen
+  s1 see: 'Got it. We reply as soon as we can.'
+  s1 see: In 'Your questions': 'You said this did not solve it. The MettleUp team will reply here.'
+  s1 not: The answer rated twice
+  s2 see: Under the question a box 'Reply from the MettleUp team' with a 'New' mark and a coloured edge
+  s2 not: The reply shown under another question
+  s3 see: The reply is still there; the 'New' mark is gone
+  s3 not: 'New' shown every time
+  s4 see: The question with its answer, or still waiting and checked again every few seconds
+  s4 not: A question stuck on waiting for ever
+J-F-panel-218-05 | type 12 | owner | Help and feedback on a desk computer that the owner and the staff both sign in to
+  s1 see: Only what the words promise: 'Questions you send from this browser show here, with their answers.'
+  s1 not: Questions sent from this browser under another gym's sign-in
+  s1 not: A member's name or number added to the message by the app
+  s2 see: 'Thanks! We read every message.'
+  s2 not: The gym's sign-in key shown or kept in 'Your questions'
+J-F-panel-218-06 | type 1 | staff | More → Help and feedback, signed in to an online gym that has AI credits
+  s1 see: Title 'Help and feedback'
+  s1 see: A box 'Your message'
+  s1 see: A 'Send' button that cannot be pressed while the box is empty
+  s1 see: 'Your questions' with 'Questions you send from this browser show here, with their answers.'
+  s1 not: A Send button that works with nothing typed
+  s2 see: The button reads 'Sending…'
+  s2 see: 'Sending. The answer usually takes a few seconds.'
+  s2 see: The question at once in 'Your questions' with 'Waiting for the answer. It usually takes a few seconds.'
+  s2 not: The question sent twice by a second tap
+  s3 see: A box with the answer and under it 'Answer written by AI from our help pages.'
+  s3 see: 'Did this solve it?' with 'Yes' and 'No'
+  s3 see: The message box is empty again
+  s3 not: An answer about another gym
+  s3 not: Credits taken twice for one question
+  s4 see: 'Great! Glad it helped.'
+  s4 see: In 'Your questions': 'You said this solved it.'
+  s4 not: Yes and No both still pressable
+J-F-panel-218-07 | type 2 | staff | Help and feedback; the gym has no AI credit left (the other kind of answer)
+  s1 see: A box with an answer from the help pages
+  s1 see: No 'Open AI Assistant' button for staff
+  s1 see: No 'Did this solve it?' line under this kind of answer
+  s1 not: A button for staff that leads to buying credits
+J-F-panel-218-08 | type 3 | staff | Help and feedback
+  s1 see: 'Send' cannot be pressed
+  s1 not: An empty message sent
+  s2 see: The box holds the first 2,000 letters only
+  s2 not: The message sent cut with the person never told
+  s3 see: A red line saying it could not be sent
+  s3 see: The typed message is still in the box
+  s3 not: The typed message lost
+  s3 not: 'Thanks! We read every message.' for a message that did not go
+J-F-panel-218-09 | type 6 | staff | Help and feedback with an AI answer on screen
+  s1 see: 'Got it. We reply as soon as we can.'
+  s1 see: In 'Your questions': 'You said this did not solve it. The MettleUp team will reply here.'
+  s1 not: The answer rated twice
+  s2 see: Under the question a box 'Reply from the MettleUp team' with a 'New' mark and a coloured edge
+  s2 not: The reply shown under another question
+  s3 see: The reply is still there; the 'New' mark is gone
+  s3 not: 'New' shown every time
+  s4 see: The question with its answer, or still waiting and checked again every few seconds
+  s4 not: A question stuck on waiting for ever
+J-F-panel-218-10 | type 12 | staff | Help and feedback on a desk computer that the owner and the staff both sign in to
+  s1 see: Only what the words promise: 'Questions you send from this browser show here, with their answers.'
+  s1 not: Questions sent from this browser under another gym's sign-in
+  s1 not: A member's name or number added to the message by the app
+  s2 see: 'Thanks! We read every message.'
+  s2 not: The gym's sign-in key shown or kept in 'Your questions'
+J-F-panel-219-01 | type 1 | owner | More → Help and feedback as the owner of an online gym that MettleUp has never opened
+  s1 see: 'MettleUp sees only your gym’s totals (how many members, check-ins and money in all), never a member’s name or number. MettleUp support can look at your records only when you let them, for one hour at most, and only to read. Every look is listed here.'
+  s1 see: Button 'Let MettleUp support look (1 hour)'
+  s1 see: 'MettleUp has never opened your records.'
+  s1 not: Access already open without the owner asking
+  s2 see: Sheet 'Let MettleUp support look?'
+  s2 see: 'MettleUp support can read your members, plans, receipts, check-ins, shop orders and staff list for the next hour, to help with what you asked. They cannot change anything. It closes by itself after an hour, and every look is listed here.'
+  s2 see: Buttons 'Cancel' and 'Yes, for 1 hour'
+  s2 not: Access opened by the first tap
+  s3 see: The sheet closes
+  s3 see: The button now reads 'Close it now'
+  s3 see: A new line in the list for this access
+  s3 not: A window longer than one hour
+  s3 not: Two windows from two taps
+  s3 not: The sheet closing as if opened when the server refused
+J-F-panel-219-02 | type 3 | owner | Help and feedback in the cases where the card must not work
+  s1 see: No 'MettleUp access' card
+  s1 not: Staff able to open the gym to MettleUp support
+  s2 see: No card
+  s2 not: A button that fails
+  s3 see: The card with 'MettleUp access is not switched on for your gym yet.' and no button
+  s3 not: A button that looks as if it opened access
+  s4 see: The sheet closes; nothing opened; the list is unchanged
+  s4 not: Access opened on Cancel
+  s5 see: A red line with the reason; the ask button cannot be pressed
+  s5 not: 'MettleUp has never opened your records.' shown when the list was not read
+J-F-panel-219-03 | type 6 | owner | MettleUp access card with a support window open
+  s1 see: The button goes back to 'Let MettleUp support look (1 hour)'
+  s1 see: The line in the list shows the window as closed
+  s1 not: Support still able to read after it was closed
+  s2 see: The ask button again; the window listed as ended
+  s2 not: A window still open after an hour
+  s3 see: One line for each look and each other MettleUp action on the gym
+  s3 not: A look by support that is not in the list
+  s3 not: 'MettleUp has never opened your records.' after a look
+J-F-panel-219-04 | type 12 | owner | MettleUp access card; the promises on it
+  s1 see: Support reads only; the look appears in the list
+  s1 not: Support able to change a member, a plan or a receipt
+  s1 not: Support reading without an open window and without a line in the list
+  s2 see: Nothing new for support to read; no new look in the list
+  s2 not: Records read after the window closed
+  s2 not: Member names or numbers visible to MettleUp outside a window

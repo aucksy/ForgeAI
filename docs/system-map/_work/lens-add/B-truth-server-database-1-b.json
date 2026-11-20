@@ -1,0 +1,1 @@
+{"id":"B-truth-server-database-1-b","step":"B-truth","item":"B-truth (Same fact, every place) x server / server/database-1: 2 items","needs":["CAL-score"],"checkpoint":"_work/B-truth-server-database-1-b.md","out_file":"_work/out/B-truth-server-database-1-b.jsonl","surface":"server","area":"server/database-1","lenses":["gap-9"],"lens_items":["H9.1","H9.2"]}

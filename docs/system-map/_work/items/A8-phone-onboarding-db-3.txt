@@ -1,0 +1,403 @@
+# A8-phone-onboarding-db-3: coverage of 69 Tier 1 journeys (8 features, from A5-phone-onboarding-db-3). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-phone-1612 | apps/mobile/qa/uat-e.yaml | maestro | 267 lines | asserts 5 journey phrase(s)
+F-phone-1612 | apps/mobile/test/db/workoutPhotosReal.test.ts | unit | 327 lines | imports the code, asserts 2 journey phrase(s)
+F-phone-1612 | apps/mobile/test/onboarding/dataActions.test.ts | unit | 504 lines | imports the code, file name
+F-phone-1612 | apps/mobile/test/onboarding/onboardingStore.test.ts | unit | 255 lines | imports the code, file name
+F-phone-1612 | apps/mobile/test/onboarding/startup.test.ts | unit | 185 lines | imports the code, asserts 2 journey phrase(s)
+F-phone-1612 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-phone-1612 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 4 journey phrase(s)
+F-phone-1612 | apps/mobile/test/onboarding/demoSandbox.test.ts | unit | 260 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1612 | apps/mobile/test/onboarding/welcomeIntro.test.ts | unit | 355 lines | asserts 4 journey phrase(s)
+F-phone-1612 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-phone-1612 | apps/mobile/qa/ios-first-screens.yaml | maestro | 131 lines | asserts 3 journey phrase(s)
+F-phone-1612 | apps/mobile/qa/phase1-a.yaml | maestro | 320 lines | asserts 3 journey phrase(s)
+F-phone-1603 | apps/mobile/test/onboarding/welcomeResume.test.ts | unit | 28 lines | imports the code, file name
+F-phone-1603 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-phone-1603 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-phone-1603 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-phone-1603 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-phone-1603 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-phone-1603 | apps/mobile/test/lib/retryRead.test.ts | unit | 127 lines | asserts 1 journey phrase(s)
+F-phone-1603 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-phone-1603 | apps/mobile/test/tracker/historyScope.test.ts | unit | 100 lines | asserts 1 journey phrase(s)
+F-phone-1603 | apps/mobile/test/tracker/r61WorkoutScreen.test.ts | unit | 169 lines | asserts 1 journey phrase(s)
+F-phone-1623 | apps/mobile/test/cloud/accountWords.test.ts | unit | 62 lines | imports the code
+F-phone-1623 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 2 journey phrase(s)
+F-phone-1623 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-phone-1623 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 1 journey phrase(s)
+F-phone-1623 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-phone-1623 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-phone-1623 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 1 journey phrase(s)
+F-phone-1623 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 1 journey phrase(s)
+F-phone-1623 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-phone-1623 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-phone-1623 | apps/dashboard/e2e/trial.spec.mjs | e2e | 72 lines | asserts 1 journey phrase(s)
+F-phone-1623 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 1 journey phrase(s)
+F-phone-1624 | apps/mobile/test/cloud/undoRestore.test.ts | unit | 143 lines | imports the code, asserts 2 journey phrase(s)
+F-phone-1624 | apps/mobile/test/store/restoreImpact.test.ts | unit | 24 lines | imports the code, file name
+F-phone-1624 | apps/mobile/test/backup/driveBackup.test.ts | unit | 177 lines | imports the code
+F-phone-1624 | apps/mobile/test/cloud/restoreClockRepair.test.ts | unit | 80 lines | imports the code
+F-phone-1624 | apps/mobile/test/cloud/restoreRepairs.test.ts | unit | 233 lines | imports the code
+F-phone-1624 | apps/mobile/test/shop/c6LeavePending.test.ts | unit | 104 lines | imports the code
+F-phone-1624 | apps/mobile/test/shop/gymRemindersErase.test.ts | unit | 36 lines | imports the code
+F-phone-1624 | apps/mobile/test/shop/offerErase.test.ts | unit | 31 lines | imports the code
+F-phone-1624 | apps/mobile/test/shop/shopErase.test.ts | unit | 53 lines | imports the code
+F-phone-1624 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 2 journey phrase(s)
+F-phone-1624 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 1 journey phrase(s)
+F-phone-1624 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-phone-1621 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-1621 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-phone-1621 | apps/mobile/test/onboarding/startup.test.ts | unit | 185 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1621 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-phone-1621 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-phone-1621 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-phone-1621 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-phone-1621 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-phone-1621 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-phone-1621 | apps/mobile/test/lib/dashboardError.test.ts | unit | 52 lines | imports the code
+F-phone-1621 | apps/mobile/test/onboarding/demoRemovalLeave.test.ts | unit | 60 lines | imports the code
+F-phone-1621 | apps/mobile/test/onboarding/onboardingStore.test.ts | unit | 255 lines | imports the code
+F-phone-1627 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-phone-1627 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-phone-1627 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-phone-1627 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-phone-1627 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-phone-1627 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-phone-1627 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-phone-1627 | apps/mobile/test/backup/backupCoverage.test.ts | unit | 81 lines | imports the code
+F-phone-1627 | apps/mobile/test/backup/backupRoundTrip.test.ts | unit | 432 lines | imports the code
+F-phone-1627 | apps/mobile/test/tracker/switcherLine.test.ts | unit | 38 lines | asserts 3 journey phrase(s)
+F-phone-1627 | supabase/tests/0039_gym_busy.sql | db | 167 lines | asserts 3 journey phrase(s)
+F-phone-1627 | supabase/tests/0043_member_photos.sql | db | 135 lines | asserts 3 journey phrase(s)
+F-phone-1625 | apps/mobile/test/theme/gymTheme.test.ts | unit | 312 lines | imports the code
+F-phone-1625 | apps/mobile/test/theme/lightPalette.test.ts | unit | 207 lines | imports the code
+F-phone-1625 | apps/mobile/test/theme/popupBars.test.ts | unit | 49 lines | imports the code
+F-phone-1625 | apps/mobile/test/tracker/phoneLook.test.ts | unit | 36 lines | imports the code
+F-phone-1625 | apps/mobile/test/tracker/shareMark.test.ts | unit | 96 lines | imports the code
+F-phone-1625 | apps/mobile/qa/uat-rel-f198-dots.yaml | maestro | 328 lines | asserts 2 journey phrase(s)
+F-phone-1625 | apps/mobile/qa/ios-first-screens.yaml | maestro | 131 lines | asserts 1 journey phrase(s)
+F-phone-1625 | apps/mobile/qa/uat-rel-look-chips.yaml | maestro | 72 lines | asserts 1 journey phrase(s)
+F-phone-1625 | apps/mobile/qa/uat-rel-look.yaml | maestro | 246 lines | asserts 1 journey phrase(s)
+F-phone-1626 | apps/mobile/test/theme/gymTheme.test.ts | unit | 312 lines | imports the code, file name
+F-phone-1626 | apps/mobile/test/shop/boardNameChoice.test.ts | unit | 79 lines | imports the code
+F-phone-1626 | apps/mobile/test/shop/c6LeavePending.test.ts | unit | 104 lines | imports the code
+F-phone-1626 | apps/mobile/test/shop/c6OrderOnce.test.ts | unit | 208 lines | imports the code
+F-phone-1626 | apps/mobile/test/shop/c6S3.test.ts | unit | 187 lines | imports the code
+F-phone-1626 | apps/mobile/test/shop/c6S4.test.ts | unit | 132 lines | imports the code
+F-phone-1626 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | imports the code
+F-phone-1626 | apps/mobile/test/shop/invite.test.ts | unit | 119 lines | imports the code
+F-phone-1626 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | imports the code
+F-phone-1626 | apps/mobile/test/theme/lightPalette.test.ts | unit | 207 lines | imports the code
+F-phone-1626 | apps/mobile/test/tracker/phoneLook.test.ts | unit | 36 lines | imports the code
+F-phone-1626 | apps/mobile/test/tracker/shareMark.test.ts | unit | 96 lines | imports the code
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-phone-1612-01 | type 1 | member | A phone with MettleUp set up (a profile and workouts), app fully closed
+  s1 see: The splash, then the app on the member's own workouts (Workout tab)
+  s1 not: The welcome screen shown over real training
+  s1 not: A "demo data" badge on real data
+J-F-phone-1612-02 | type 2 | member | Fresh install, no profile on this phone
+  s1 see: Welcome titled 'Get stronger every week'
+  s1 see: 'Log every set at the gym. See what you lifted the previous time.'
+  s1 not: Any workouts or a profile that the member did not make
+  s1 not: An error screen on a healthy empty phone
+J-F-phone-1612-03 | type 3 | member | A phone whose storage is full, with real workouts on it
+  s1 see: Title 'Your phone's storage is full'
+  s1 see: 'Your phone's storage is full. Free some space, then tap Try again.'
+  s1 see: Buttons 'Try again' and 'Save my data file', and 'Details'
+  s1 not: The welcome screen (a first run over real training)
+  s1 not: Any workout deleted or changed
+  s2 see: The button shows it is working, then the app opens on the member's own workouts
+  s2 not: Two start-ups running at once
+  s2 not: The same failure shown again because the first failed open was remembered
+J-F-phone-1612-04 | type 6 | member | A phone where the member tapped "Load demo data" earlier, app closed
+  s1 see: The app opens on the demo, still marked as demo data
+  s1 not: The demo treated as the member's real data (no demo badge)
+  s2 see: The welcome screen (no profile is left)
+  s2 not: The demo badge left over
+  s2 not: The demo person's workouts still shown
+J-F-phone-1612-05 | type 12 | member | Any phone, first launch of this version
+  s1 see: Nothing new on screen; the app notes when it was first opened on this phone
+  s1 not: That time sent to MettleUp or the gym
+  s1 not: That time overwritten on a later launch
+  s2 see: By default only workouts started after that first opening are offered
+  s2 not: Workouts from the old ForgeAI app sent a second time by default
+J-F-phone-1612-06 | type 1 | pass member | A pass member's phone, joined to a gym, with a profile
+  s1 see: The app opens on the member's own workouts, in the gym's look when the gym has one
+  s1 not: The welcome screen
+  s1 not: The gym link lost by the start-up
+J-F-phone-1612-07 | type 3 | pass member | Same phone, the first database read fails
+  s1 see: Title 'MettleUp could not start'
+  s1 see: 'MettleUp couldn't read your data. Your workouts are still on this phone. Tap Try again.'
+  s1 not: The welcome screen (a first run over real training)
+  s1 not: The gym link or workouts removed
+J-F-phone-1612-08 | type 6 | pass member | Same phone, on the error screen after a failed open
+  s1 see: The app opens on the member's own workouts
+  s1 not: The old failed open handed back again, so Try again can never work
+J-F-phone-1612-09 | type 12 | pass member | Same phone on the error screen
+  s1 see: 'Keep this file somewhere safe. If you need help, send it to your gym, who can pass it to MettleUp to open.'
+  s1 not: The file sent anywhere by itself
+  s1 not: The file sent without the member choosing where
+J-F-phone-1612-10 | type 1 | system | App process starts on any phone
+  s1 see: Nothing on screen yet (the splash)
+  s1 not: A second database handle opened by a parallel start
+  s2 see: The app goes on to read whether a profile exists
+  s2 not: The first-open time overwritten
+  s2 not: Screens reading the database before this finishes
+J-F-phone-1612-11 | type 3 | system | An upgrade step fails (a column cannot be added)
+  s1 see: The member sees 'MettleUp could not start' and 'MettleUp couldn't finish updating your data. Your workouts are still on this phone. Tap Try again.'
+  s1 not: The app opening on a half-upgraded database
+  s1 not: The open handle left open
+J-F-phone-1612-12 | type 6 | system | A start-up that failed once
+  s1 see: A fresh open of the database is tried
+  s1 not: The earlier failed attempt remembered and handed back
+  s2 see: The first-open time stays as it was
+  s2 not: The first-open time moved to today
+J-F-phone-1603-01 | type 1 | member | Fresh install, welcome screen, the 3 setup steps
+  s1 see: Step 2, kg or lb
+  s1 not: The name or number lost when the step changes
+  s2 see: Nothing (the app is gone)
+  s2 not: The answers kept only on screen
+  s3 see: The welcome opens on the same step with the name, number and kg already filled
+  s3 not: The start view shown again with empty boxes
+  s3 not: Answers from another person
+  s4 see: 'Setting up…', then the app opens
+  s4 not: The saved answers left behind after the profile is made
+J-F-phone-1603-02 | type 2 | member | Welcome, the member picked Bring workouts, From Hevy, then the 3 steps
+  s1 see: Nothing (the app is gone)
+  s1 not: The answers lost
+  s2 see: The same step with the answers kept, and 'Your Hevy workouts and routines come in right after you tap Start training.'
+  s2 not: The Hevy import forgotten without a word after the restart
+J-F-phone-1603-03 | type 3 | member | Welcome, the saved answers are damaged (a broken record on the phone)
+  s1 see: The welcome starts clean, with no error
+  s1 not: A crash or an error screen
+  s1 not: A goal or level the app does not know put into the boxes
+J-F-phone-1603-04 | type 6 | member | Welcome, answers saved, then Start training fails once
+  s1 see: 'Could not save your details. Please try again.'
+  s1 not: The saved answers cleared although no profile was made
+  s2 see: The app opens on the new profile
+  s2 not: The answers offered again later on this phone
+J-F-phone-1603-05 | type 12 | member | Welcome, name and mobile number typed, app closed
+  s1 see: The same answers, kept on this phone only
+  s1 not: The name or number sent to MettleUp or the gym before Start training
+J-F-phone-1623-01 | type 1 | member | Settings, Your data, Backup and restore, signed out, workouts on the phone and on MettleUp
+  s1 see: Card 'Keep your workouts on MettleUp'
+  s1 see: 'Sign in with Google to keep your workouts safe. ...'
+  s1 see: 'Only you can see what is saved. Your gym cannot. Progress photos stay on this phone.'
+  s1 not: The card missing when sign-in is set up
+  s2 see: '12 workouts brought back to this phone.' (or 'Everything was already on this phone.')
+  s2 see: 'Signed in as <email>'
+  s2 not: A workout on the phone twice
+  s2 not: This phone's state sent up before the server copy came in
+J-F-phone-1623-02 | type 2 | member | Welcome screen on a new phone, the member used MettleUp before
+  s1 see: The app opens as theirs, with their profile and workouts back
+  s1 not: The phone number or body weight taken from the copy
+  s1 not: The 3 questions asked when a kept profile exists
+  s2 see: 'You are signed in. Nothing is saved yet, so answer the 3 questions to start.'
+  s2 not: An empty app opened with no profile
+J-F-phone-1623-03 | type 2 | member | Settings account card, signed in, a workout open
+  s1 see: 'Finish your workout first, then try again.'
+  s1 not: The open workout replaced or merged mid-set
+  s2 see: 'N workouts brought back to this phone.'
+  s2 not: Workouts doubled
+J-F-phone-1623-04 | type 3 | member | Settings account card, signed out
+  s1 see: 'Could not sign in with Google. Check your internet and try again.'
+  s1 not: The member shown as signed in
+  s2 see: 'This phone has the demo data. Remove it first (Settings → "Erase or start over"), then try again.'
+  s2 not: Demo workouts sent to MettleUp
+  s3 see: 'This phone has another person’s workouts. To use a different Google account, first erase this phone in Settings → "Erase or start over".'
+  s3 not: One person's workouts merged into another's account
+J-F-phone-1623-05 | type 6 | member | Settings account card, signed in
+  s1 see: 'Your workouts stay on this phone. New workouts are not saved on MettleUp until you sign in again.'
+  s1 see: The card back to 'Continue with Google'
+  s1 not: Workouts removed from the phone
+  s1 not: New workouts still sent after sign-out
+  s2 see: 'Your account and everything saved on MettleUp are deleted. Your workouts are still on this phone.'
+  s2 not: Workouts on the phone deleted
+  s2 not: Anything left on the server copy
+J-F-phone-1623-06 | type 12 | member | Signed in, member of a gym
+  s1 see: The gym sees none of the saved copy
+  s1 not: The gym's admin app showing the member's saved workouts
+  s1 not: Progress photos uploaded
+J-F-phone-1624-01 | type 1 | member | New phone, welcome screen, a MettleUp backup in the member's Google Drive
+  s1 see: 'Checking your Google Drive for a backup…'
+  s1 see: Button 'Restore my backup' and 'Not now'
+  s1 not: Anything on the phone changed by looking
+  s2 see: 'Bringing back your backup…'
+  s2 see: The app opens on the restored workouts
+  s2 not: A half-restored phone when a step fails
+  s2 not: The welcome left waiting with no word
+J-F-phone-1624-02 | type 2 | member | Settings, Backup and restore, 30 workouts on the phone, 2 of them not in the Drive backup
+  s1 see: The question says '2 workouts on this phone are not in this backup and will be removed. A copy of this phone is kept first, so you can undo it.'
+  s1 not: Workouts removed without being counted first
+  s2 see: 'This puts back what was on this phone before the last restore.'
+  s2 see: With workouts saved since: 'N workouts saved since the restore will be lost.'
+  s2 not: Undo offered with no copy behind it
+  s2 not: Newer workouts lost without that line
+J-F-phone-1624-03 | type 2 | member | Drive holds a backup an older version wrote (database only)
+  s1 see: The workouts come back the old way; photos stay as they are
+  s1 not: A corrupt or foreign file restored
+  s1 not: The member told photos came back
+J-F-phone-1624-04 | type 3 | member | Welcome, Google account with no MettleUp backup; and a phone short of room
+  s1 see: 'No MettleUp backup in your Google Drive yet. Tap Next to set up the app.'
+  s1 not: An endless spinner
+  s2 see: 'Could not save a copy of this phone’s data first (is the phone full?), so nothing was changed.' or a line saying how much room is needed
+  s2 not: The phone data replaced with no safety copy
+  s3 see: The back-up is refused with a plain reason
+  s3 not: An empty phone pushing over a real backup in Drive
+J-F-phone-1624-05 | type 6 | member | A restore made 25 hours ago
+  s1 see: Undo is no longer offered
+  s1 not: An old copy put back that takes newer training away
+  s2 see: The demo comes back, marked as demo
+  s2 not: The demo coming back as real data
+J-F-phone-1624-06 | type 12 | member | Member with a Drive backup, also in a gym
+  s1 see: The backup is read from the member's own Google Drive only
+  s1 not: The gym seeing the backup or its contents
+  s1 not: A new backup quietly written to Drive
+J-F-phone-1621-01 | type 1 | member | Phone with workouts; the member finishes a workout
+  s1 see: The summary is read again from the phone (no screen in the app reads the summary today: see the finding)
+  s1 not: The summary still showing the totals from before the workout
+J-F-phone-1621-02 | type 3 | member | The summary read fails (the database is busy or damaged)
+  s1 see: Expected: 'Couldn't load your summary' with 'Try again' (no screen in the app reads the summary today: see the finding)
+  s1 not: A skeleton that never ends
+  s1 not: An old error left on screen while Try again runs
+J-F-phone-1621-03 | type 6 | member | An import fails part-way and is rolled back
+  s1 see: The summary is read again at once
+  s1 not: Totals that count workouts the rolled-back import never kept
+J-F-phone-1621-04 | type 2 | member | Other ways the summary is read again
+  s1 see: The summary is read again after each
+  s1 not: A refresh that throws and breaks the save that called it
+J-F-phone-1621-05 | type 1 | pass member | Phone with workouts; the member finishes a workout
+  s1 see: The summary is read again from the phone (no screen in the app reads the summary today: see the finding)
+  s1 not: The summary still showing the totals from before the workout
+J-F-phone-1621-06 | type 3 | pass member | The summary read fails (the database is busy or damaged)
+  s1 see: Expected: 'Couldn't load your summary' with 'Try again' (no screen in the app reads the summary today: see the finding)
+  s1 not: A skeleton that never ends
+  s1 not: An old error left on screen while Try again runs
+J-F-phone-1621-07 | type 6 | pass member | An import fails part-way and is rolled back
+  s1 see: The summary is read again at once
+  s1 not: Totals that count workouts the rolled-back import never kept
+J-F-phone-1621-08 | type 12 | pass member | A pass member whose phone was linked to a gym before gym sync was hidden
+  s1 see: The summary refreshes on the phone only
+  s1 not: The summary sent to the gym while gym sync is switched off
+J-F-phone-1627-01 | type 1 | member | Settings, Units, set to kg, km
+  s1 see: Page titled 'Units' with 'kg, km' and 'lb, miles'
+  s1 see: 'lb, miles' selected
+  s1 not: Stored weights converted and saved again (they stay metric)
+  s2 see: Weights shown in lb
+  s2 not: The choice back to kg, km after the restart
+J-F-phone-1627-02 | type 3 | member | The kept settings are from an older version (no model field) or damaged
+  s1 see: kg or lb and the other choices as last set, with any new field at its default
+  s1 not: A crash
+  s1 not: All choices reset to defaults
+J-F-phone-1627-03 | type 6 | member | Voice choices while the AI coach switch is off
+  s1 see: No AI provider, model or voice choices shown (the coach is switched off)
+  s1 not: A voice switch that does nothing on screen
+J-F-phone-1627-04 | type 2 | member | Another kind of setting: the language
+  s1 see: unknown: no screen found that sets the language on the phone
+  s1 not: English left on a button after Hinglish is picked
+J-F-phone-1627-05 | type 12 | member | Settings with an AI key added on an older build
+  s1 see: Units, language, AI provider and model, voice choices
+  s1 not: An API key kept in the plain settings store (keys belong in the phone's secure store)
+J-F-phone-1627-06 | type 1 | pass member | Settings, Units, set to kg, km
+  s1 see: Page titled 'Units' with 'kg, km' and 'lb, miles'
+  s1 see: 'lb, miles' selected
+  s1 not: Stored weights converted and saved again (they stay metric)
+  s2 see: Weights shown in lb
+  s2 not: The choice back to kg, km after the restart
+J-F-phone-1627-07 | type 3 | pass member | The kept settings are from an older version (no model field) or damaged
+  s1 see: kg or lb and the other choices as last set, with any new field at its default
+  s1 not: A crash
+  s1 not: All choices reset to defaults
+J-F-phone-1627-08 | type 6 | pass member | Voice choices while the AI coach switch is off
+  s1 see: No AI provider, model or voice choices shown (the coach is switched off)
+  s1 not: A voice switch that does nothing on screen
+J-F-phone-1625-01 | type 1 | member | Settings, phone in dark mode, look set to 'Same as phone'
+  s1 see: Page titled 'Light or dark' with 'Same as phone', 'Light', 'Dark'
+  s1 see: The app re-draws in the light look at once
+  s1 not: A white flash or a part left dark
+  s1 not: The gym's colours lost
+  s2 see: The very first frame is already light
+  s2 not: A dark first frame that then flips
+J-F-phone-1625-02 | type 3 | member | 'Same as phone', a workout open, the phone switches to dark at sunset
+  s1 see: The look stays as it was
+  s1 not: A re-draw that drops the open sheet or a running hold timer mid-set
+  s2 see: The app now follows the phone and turns dark
+  s2 not: The look left out of step with the phone
+J-F-phone-1625-03 | type 6 | member | Look set to 'Dark'
+  s1 see: The app turns light; the saved choice is cleared
+  s1 not: The old Dark choice coming back next launch
+J-F-phone-1625-04 | type 2 | member | 'Same as phone', the app open, the member changes the phone's setting
+  s1 see: The app follows to light
+  s1 not: The app staying dark
+J-F-phone-1625-05 | type 1 | pass member | Settings, phone in dark mode, look set to 'Same as phone'
+  s1 see: Page titled 'Light or dark' with 'Same as phone', 'Light', 'Dark'
+  s1 see: The app re-draws in the light look at once with the gym's colours on top
+  s1 not: A white flash or a part left dark
+  s1 not: The gym's colours lost
+  s2 see: The very first frame is already light
+  s2 not: A dark first frame that then flips
+J-F-phone-1625-06 | type 3 | pass member | 'Same as phone', a workout open, the phone switches to dark at sunset
+  s1 see: The look stays as it was
+  s1 not: A re-draw that drops the open sheet or a running hold timer mid-set
+  s2 see: The app now follows the phone and turns dark
+  s2 not: The look left out of step with the phone
+J-F-phone-1625-07 | type 6 | pass member | Look set to 'Dark'
+  s1 see: The app turns light; the saved choice is cleared
+  s1 not: The old Dark choice coming back next launch
+J-F-phone-1626-01 | type 1 | member | MettleUp look, the member joins a gym that has its own colours and logo
+  s1 see: The gym's logo opening, then the whole app in the gym's colours and name
+  s1 not: A blank frame where the logo should be
+  s1 not: Another gym's logo
+J-F-phone-1626-02 | type 2 | member | Joined a branded gym earlier, app fully closed
+  s1 see: The first frame already in the gym's colours, then the logo opening (about 1.3 s)
+  s1 not: MettleUp's look for a moment, then a flip
+J-F-phone-1626-03 | type 3 | member | Joining a gym with no colours set, and a gym whose logo will not load
+  s1 see: MettleUp's look stays, the gym's name shows
+  s1 not: A broken colour or the app failing to draw
+  s2 see: The opening shows the gym's name instead
+  s2 not: A broken-picture mark
+J-F-phone-1626-04 | type 6 | member | In a branded gym
+  s1 see: MettleUp's look comes back at once
+  s1 not: The gym's colours left on any screen
+  s2 see: The new colours wait until the workout ends and the app has been away a minute, or the next launch
+  s2 not: A re-draw mid-workout
+J-F-phone-1626-05 | type 12 | member | Member moves from gym A (branded) to gym B
+  s1 see: Only gym B's name, colours and logo
+  s1 not: Gym A's logo or name shown after leaving
+J-F-phone-1626-06 | type 1 | pass member | Pass member joining a branded gym
+  s1 see: The gym's logo opening, then the gym's colours and name
+  s1 not: Another gym's look
+J-F-phone-1626-07 | type 3 | pass member | The gym drops this phone (left on another phone) while a workout is open
+  s1 see: The gym look stays until the workout ends and the app has been away a minute, or the next launch
+  s1 not: A re-draw mid-set
+J-F-phone-1626-08 | type 6 | pass member | Pass member in a branded gym
+  s1 see: MettleUp's look comes back at once
+  s1 not: The gym look left behind
+J-F-phone-1626-09 | type 1 | owner | Phone app signed in as the owner of a branded gym
+  s1 see: unknown: whether the app takes the gym's colours for the owner (the look follows the gym link of the member app)
+  s1 not: Another gym's colours or logo
+J-F-phone-1626-10 | type 3 | owner | Same, the gym has no colours set
+  s1 see: MettleUp's look
+  s1 not: A broken colour
+J-F-phone-1626-11 | type 6 | owner | Same, the owner changes the colours in the admin app
+  s1 see: The new colours, or on the next launch
+  s1 not: A re-draw during an open workout
+J-F-phone-1626-12 | type 1 | trainer | Phone app signed in as a trainer of a branded gym
+  s1 see: unknown: whether the app takes the gym's colours for a trainer (the look follows the gym link of the member app)
+  s1 not: Another gym's colours or logo
+J-F-phone-1626-13 | type 3 | trainer | Same, the gym has no colours set
+  s1 see: MettleUp's look
+  s1 not: A broken colour
+J-F-phone-1626-14 | type 6 | trainer | Same, the owner changes the colours in the admin app
+  s1 see: The new colours, or on the next launch
+  s1 not: A re-draw during an open workout
+J-F-phone-1626-15 | type 1 | staff | Phone app signed in as desk staff of a branded gym
+  s1 see: unknown: whether the app takes the gym's colours for desk staff (the look follows the gym link of the member app)
+  s1 not: Another gym's colours or logo
+J-F-phone-1626-16 | type 3 | staff | Same, the gym has no colours set
+  s1 see: MettleUp's look
+  s1 not: A broken colour
+J-F-phone-1626-17 | type 6 | staff | Same, the owner changes the colours in the admin app
+  s1 see: The new colours, or on the next launch
+  s1 not: A re-draw during an open workout

@@ -1,0 +1,642 @@
+# A8-panel-assistant-1: coverage of 58 Tier 1 journeys (9 features, from A5-panel-assistant-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-910 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | imports the code, asserts 6 journey phrase(s)
+F-panel-910 | apps/dashboard/test/crm/assistant/allowance.test.ts | unit | 54 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-panel-910 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-panel-910 | apps/dashboard/test/crm/assistant/screenWords.test.ts | unit | 188 lines | imports the code
+F-panel-910 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-panel-910 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 2 journey phrase(s)
+F-panel-910 | apps/mobile/test/db/workoutPhotosReal.test.ts | unit | 327 lines | asserts 2 journey phrase(s)
+F-panel-910 | apps/mobile/test/onboarding/eraseLeftBehind.test.ts | unit | 59 lines | asserts 2 journey phrase(s)
+F-panel-910 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 2 journey phrase(s)
+F-panel-910 | apps/mobile/test/onboarding/startup.test.ts | unit | 185 lines | asserts 2 journey phrase(s)
+F-panel-910 | apps/mobile/test/tracker/auditC9Words.test.ts | unit | 51 lines | asserts 2 journey phrase(s)
+F-panel-910 | apps/mobile/test/tracker/phase4ImportsC.test.ts | unit | 443 lines | asserts 2 journey phrase(s)
+F-panel-901 | apps/dashboard/test/crm/assistant/answer.test.ts | unit | 191 lines | imports the code, file name
+F-panel-901 | apps/dashboard/test/crm/assistant/awayIdea.test.ts | unit | 316 lines | imports the code
+F-panel-901 | apps/dashboard/test/crm/assistant/planWriter.test.ts | unit | 218 lines | imports the code
+F-panel-901 | apps/dashboard/test/crm/assistant/screenWords.test.ts | unit | 188 lines | imports the code
+F-panel-901 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 2 journey phrase(s)
+F-panel-901 | apps/dashboard/e2e/tapcards.spec.mjs | e2e | 36 lines | file name
+F-panel-901 | apps/dashboard/test/crm/setupCards.test.ts | unit | 17 lines | file name
+F-panel-901 | apps/mobile/test/db/packetBCards.test.ts | unit | 145 lines | file name
+F-panel-901 | apps/mobile/test/tracker/phase8cSameAnswers.test.ts | unit | 276 lines | file name
+F-panel-901 | deploy/panel/assistCatalogue.test.mjs | unit | 184 lines | asserts 2 journey phrase(s)
+F-panel-901 | apps/dashboard/e2e/gyms-site-uat.spec.mjs | e2e | 242 lines | asserts 1 journey phrase(s)
+F-panel-901 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 1 journey phrase(s)
+F-panel-917 | apps/dashboard/test/crm/assistant/maskMatch.test.ts | unit | 87 lines | imports the code, file name
+F-panel-917 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | imports the code
+F-panel-917 | apps/dashboard/test/crm/assistant/planWriter.test.ts | unit | 218 lines | imports the code
+F-panel-917 | apps/dashboard/test/crm/assistant/screenWords.test.ts | unit | 188 lines | imports the code
+F-panel-917 | apps/dashboard/test/crm/assistant/todayApiVoice.test.ts | unit | 165 lines | imports the code
+F-panel-917 | apps/dashboard/test/crm/gymPagesOpen.test.ts | unit | 95 lines | imports the code
+F-panel-917 | apps/dashboard/test/crm/autoReminders.test.ts | unit | 107 lines | asserts 1 journey phrase(s)
+F-panel-916 | apps/dashboard/test/crm/assistant/answer.test.ts | unit | 191 lines | imports the code, file name
+F-panel-916 | apps/dashboard/test/crm/assistant/awayIdea.test.ts | unit | 316 lines | imports the code, asserts 2 journey phrase(s)
+F-panel-916 | apps/dashboard/test/crm/assistant/maskMatch.test.ts | unit | 87 lines | imports the code, file name
+F-panel-916 | apps/dashboard/test/crm/assistant/planWriter.test.ts | unit | 218 lines | imports the code
+F-panel-916 | apps/dashboard/test/crm/assistant/screenWords.test.ts | unit | 188 lines | imports the code
+F-panel-916 | apps/dashboard/e2e/tapcards.spec.mjs | e2e | 36 lines | file name
+F-panel-916 | apps/dashboard/test/crm/claimMatch.test.ts | unit | 65 lines | file name
+F-panel-916 | apps/dashboard/test/crm/setupCards.test.ts | unit | 17 lines | file name
+F-panel-916 | apps/mobile/test/db/packetBCards.test.ts | unit | 145 lines | file name
+F-panel-916 | apps/mobile/test/tracker/phase8cSameAnswers.test.ts | unit | 276 lines | file name
+F-panel-916 | deploy/panel/aiMatch.test.mjs | unit | 678 lines | file name
+F-panel-916 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 1 journey phrase(s)
+F-panel-903 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 11 journey phrase(s)
+F-panel-903 | apps/dashboard/test/crm/assistant/planExecute.test.ts | unit | 273 lines | imports the code, file name
+F-panel-903 | apps/dashboard/test/crm/assistant/planWriter.test.ts | unit | 218 lines | imports the code, file name
+F-panel-903 | apps/dashboard/test/crm/assistant/messageDay.test.ts | unit | 114 lines | imports the code
+F-panel-903 | apps/dashboard/test/crm/assistant/screenWords.test.ts | unit | 188 lines | imports the code
+F-panel-903 | apps/dashboard/test/crm/planRequests.test.ts | unit | 239 lines | file name, asserts 1 journey phrase(s)
+F-panel-903 | apps/dashboard/test/crm/workoutPlans.test.ts | unit | 598 lines | file name, asserts 1 journey phrase(s)
+F-panel-903 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-panel-903 | apps/mobile/test/shop/r505AskPlan.test.ts | unit | 134 lines | file name, asserts 1 journey phrase(s)
+F-panel-903 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-panel-903 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-panel-903 | apps/dashboard/e2e/tapcards.spec.mjs | e2e | 36 lines | file name
+F-panel-902 | apps/dashboard/test/crm/assistant/messageDay.test.ts | unit | 114 lines | imports the code, asserts 4 journey phrase(s)
+F-panel-902 | apps/dashboard/test/crm/assistant/planExecute.test.ts | unit | 273 lines | imports the code, file name
+F-panel-902 | apps/dashboard/test/crm/assistant/planWriter.test.ts | unit | 218 lines | imports the code, file name
+F-panel-902 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-panel-902 | apps/dashboard/test/crm/assistant/screenWords.test.ts | unit | 188 lines | imports the code
+F-panel-902 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-panel-902 | apps/dashboard/e2e/aiimport.spec.mjs | e2e | 169 lines | asserts 2 journey phrase(s)
+F-panel-902 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 2 journey phrase(s)
+F-panel-902 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 2 journey phrase(s)
+F-panel-902 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-panel-902 | apps/dashboard/e2e/tapcards.spec.mjs | e2e | 36 lines | file name
+F-panel-902 | apps/dashboard/test/crm/dietPlans.test.ts | unit | 248 lines | file name
+F-panel-904 | apps/dashboard/e2e/assistant-uat.spec.mjs | e2e | 822 lines | asserts 10 journey phrase(s)
+F-panel-904 | apps/dashboard/test/crm/assistant/planExecute.test.ts | unit | 273 lines | imports the code, file name
+F-panel-904 | apps/dashboard/test/crm/assistant/planWriter.test.ts | unit | 218 lines | imports the code, file name
+F-panel-904 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 4 journey phrase(s)
+F-panel-904 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | asserts 3 journey phrase(s)
+F-panel-904 | apps/dashboard/test/crm/assistant/messageDay.test.ts | unit | 114 lines | imports the code
+F-panel-904 | apps/dashboard/test/crm/assistant/screenWords.test.ts | unit | 188 lines | imports the code
+F-panel-904 | apps/dashboard/test/crm/workoutPlans.test.ts | unit | 598 lines | file name, asserts 1 journey phrase(s)
+F-panel-904 | apps/mobile/test/shop/r505AskPlan.test.ts | unit | 134 lines | file name, asserts 1 journey phrase(s)
+F-panel-904 | apps/dashboard/e2e/friend-live-uat.spec.mjs | e2e | 262 lines | asserts 2 journey phrase(s)
+F-panel-904 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-904 | apps/dashboard/e2e/tapcards.spec.mjs | e2e | 36 lines | file name
+F-panel-911 | apps/dashboard/e2e/r608-uat.spec.mjs | e2e | 208 lines | asserts 5 journey phrase(s)
+F-panel-911 | apps/dashboard/test/crm/assistant/awayIdea.test.ts | unit | 316 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-911 | apps/dashboard/test/crm/assistant/screenWords.test.ts | unit | 188 lines | imports the code
+F-panel-911 | apps/dashboard/test/crm/assistant/todayApiVoice.test.ts | unit | 165 lines | imports the code
+F-panel-911 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-panel-911 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-911 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 1 journey phrase(s)
+F-panel-911 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-911 | apps/dashboard/e2e/messages.spec.mjs | e2e | 191 lines | asserts 1 journey phrase(s)
+F-panel-911 | apps/dashboard/e2e/progress-trend-uat.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-panel-911 | apps/dashboard/e2e/trial.spec.mjs | e2e | 72 lines | asserts 1 journey phrase(s)
+F-panel-911 | apps/mobile/test/db/finishReal.test.ts | unit | 104 lines | asserts 1 journey phrase(s)
+F-panel-900 | supabase/tests/0098_alerts_done_and_read.sql | db | 375 lines | asserts 4 journey phrase(s)
+F-panel-900 | apps/dashboard/e2e/assistant-uat.spec.mjs | e2e | 822 lines | asserts 3 journey phrase(s)
+F-panel-900 | apps/dashboard/test/crm/assistant/screenWords.test.ts | unit | 188 lines | imports the code
+F-panel-900 | apps/mobile/test/tracker/phase4Review.test.ts | unit | 183 lines | asserts 3 journey phrase(s)
+F-panel-900 | apps/dashboard/e2e/ai-questions-uat.spec.mjs | e2e | 434 lines | asserts 2 journey phrase(s)
+F-panel-900 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-panel-900 | apps/mobile/qa/uat-rel-r461-plus.yaml | maestro | 365 lines | asserts 2 journey phrase(s)
+F-panel-900 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 2 journey phrase(s)
+F-panel-900 | apps/mobile/test/shop/gym.test.ts | unit | 480 lines | asserts 2 journey phrase(s)
+F-panel-900 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-panel-900 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-panel-900 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-910-01 | type 1 | owner | AI Assistant open on the Ask tab, owner signed in online, 6 questions left today
+  s1 see: "Thinking…"
+  s1 see: An answer card
+  s1 see: Above the box: "5 free questions left today."
+  s1 not: The line shows while more than 5 are left
+  s1 not: The number goes up after a question
+  s1 not: A credit is taken for the question
+  s2 see: The number falls by one each time
+  s2 see: At one left: "1 free question left today."
+  s2 not: "1 free questions left today."
+  s2 not: The line stays on an old number
+  s3 see: A calm line (not red): "You have used today's {n} free questions. Your credits are safe. Ask again tomorrow."
+  s3 see: The box is greyed out with "No more free questions today. Ask again tomorrow."
+  s3 see: The microphone and send buttons are off
+  s3 not: A red error
+  s3 not: The credit balance changes
+  s3 not: The box still takes typing
+  s3 not: The line above the box still says a number left
+J-F-panel-910-02 | type 2 | owner | A message card is open in the chat; the last question of the day was just used
+  s1 see: The card says today's questions are used up, in the same calm words
+  s1 see: The ask box locks at once
+  s1 not: The card says only "Try again"
+  s1 not: The Send button of the card stays stuck on busy
+  s1 not: The typed message words are lost
+  s2 see: The same calm line on the card
+  s2 see: The card goes back to how it was
+  s2 not: A plan is written
+  s2 not: Credits are taken
+  s2 not: The card shows "Writing…" for ever
+J-F-panel-910-03 | type 3 | owner | The ask box is locked: today's questions are used up
+  s1 see: A plain word that no more questions can be asked today
+  s1 not: A new question goes out
+  s1 not: The tap does nothing at all with no word why
+  s1 not: A credit is taken
+  s2 see: The member list card
+  s2 not: The list is refused because of the day limit
+  s3 see: The message is sent and 1 credit is used
+  s3 not: Sending a ready task is blocked by the question limit
+J-F-panel-910-04 | type 6 | owner | The ask box is locked: today's questions are used up
+  s1 see: The box is locked, or it opens and the next question brings the same calm line and locks it again
+  s1 not: A question is answered after the limit
+  s1 not: A red "You have asked a lot today"
+  s2 see: The box is open, no "left today" line
+  s2 not: Yesterday's lock or yesterday's number still shows
+  s3 see: An answer, and the count starts again
+  s3 not: The first answer of the day says 0 left
+J-F-panel-910-05 | type 12 | owner | A gym with an owner and a front-desk login; the owner has used today's questions
+  s1 see: No floating button, no menu entry, no count
+  s1 not: Staff see how many questions the owner asked
+  s1 not: Staff can use up the owner's questions
+  s2 see: The limit holds there too once a question is tried
+  s2 not: A second device gives a fresh allowance
+  s2 not: The line says the credits were used
+J-F-panel-901-01 | type 1 | owner | AI Assistant open, a gym with members, some of whom owe money
+  s1 see: The question in a bubble
+  s1 see: "Thinking…"
+  s1 not: Two bubbles for one press
+  s1 not: The box keeps the old words
+  s2 see: A card "Fees due: {n} members" with the rupee total in big figures
+  s2 see: One row a member: name, "{amount} · owed for {days} days"
+  s2 see: A link "Open Dues" (or "See all {n} in Dues")
+  s2 see: A button "Send them a fee reminder"
+  s2 see: "Free. Questions never use credits."
+  s2 not: A total that differs from the Dues page
+  s2 not: A member who paid in full
+  s2 not: The credits number goes down
+  s2 not: A member of another gym
+  s3 see: That member's profile; on a phone the assistant closes first
+  s3 not: The wrong member opens
+  s3 not: The chat is lost on coming back
+J-F-panel-901-02 | type 2 | owner | AI Assistant open on the start view (no chat yet)
+  s1 see: The words go into the box; nothing is asked yet
+  s1 not: The question is sent before the owner can change it
+  s2 see: A sheet "What the AI Assistant can do": "Tap one to put it in the box. Change it, then ask."
+  s2 see: Groups: "Messages to members", "Members and plans", "Money", "Questions about the gym", "Help with settings"
+  s2 not: A diet plan example (not built)
+  s2 not: A count {n} that differs from the lines listed
+  s3 see: The sheet closes, the answer card comes
+  s3 not: The unchanged example is asked
+J-F-panel-901-03 | type 2 | owner | AI Assistant open on a phone or computer with a microphone
+  s1 see: The heard words shown before anything is asked
+  s1 not: The words are asked before the owner sees them
+  s1 not: "Nothing was heard" shown as a crash
+  s2 see: The bubble marked as spoken
+  s2 see: A one-member card for Rahul with the plan and its end day
+  s2 not: The answer is about a different Rahul without asking which one
+  s2 not: A credit is used
+J-F-panel-901-04 | type 2 | owner | AI Assistant open; the gym uses batches
+  s1 see: A card "Members with a running plan, by batch" with a big figure and one row a batch with its count
+  s1 not: The big figure is the number of batches while the heading says members
+  s1 not: Members with no batch counted in a batch
+  s2 see: A money card, an attendance card, a week card, each with a link to its page
+  s2 not: A figure that differs from Reports for the same days
+  s2 not: Refunded money counted as income
+J-F-panel-901-05 | type 3 | owner | AI Assistant open
+  s1 see: The send button is off
+  s1 not: An empty question is sent or counted
+  s2 see: "The AI Assistant did not understand. Say it another way."
+  s2 not: A made-up answer
+  s2 not: "Thinking…" for ever
+  s3 see: The box stops at 600 letters
+  s3 not: The text is cut later without the owner seeing it
+  s4 see: A calm line that the internet is needed; the box works again
+  s4 not: The question vanishes
+  s4 not: The turn stays on "Thinking…"
+  s4 not: It counts as a question of the day
+J-F-panel-901-06 | type 6 | owner | A chat with two answered questions
+  s1 see: Both questions with their cards, newest lowest; the newest scrolls to the top on arrival
+  s1 not: A card hidden under the ask box
+  s2 see: The start view again: "Today for you" and "Try saying"
+  s2 not: Old cards come back
+  s2 not: The button works while a question is being answered
+  s3 see: Only tasks show (drafts, sent, saved); plain questions are not listed
+  s3 not: A question listed with a credit against it
+J-F-panel-901-07 | type 12 | owner | The owner asks about a named member
+  s1 see: A card for that member worked out from the gym's own records
+  s1 not: The member list, phone numbers, dues or visits are sent to the AI
+  s1 not: A name the owner did not say is sent
+  s2 see: What is typed or said goes to Claude; a member's name goes only if the owner says it
+  s2 not: The notice says less than what is sent (the gym name, plan names and prices, batch names and trainers' first names also go)
+J-F-panel-917-01 | type 1 | owner | AI Assistant open
+  s1 see: The bubble shows the sentence as typed
+  s1 not: The bubble shows [PHONE_1] or [EMAIL_1]
+  s2 see: Name "Ramesh Kumar", Mobile with the number exactly as typed
+  s2 not: [PHONE_1] on the card
+  s2 not: A changed or shortened number
+  s2 not: The number or the email seen by the AI company
+  s3 see: The member is saved with that mobile number
+  s3 not: A placeholder saved as the mobile number
+J-F-panel-917-02 | type 2 | owner | A workout plan card is open
+  s1 see: The plan is written
+  s1 not: The number reaches the AI
+  s1 not: The number or a placeholder appears inside the written plan
+J-F-panel-917-03 | type 2 | owner | A message card is open with words that hold the gym's phone number
+  s1 see: Shorter words with the same number in the same place
+  s1 not: The number dropped, changed or shown as [PHONE_1]
+  s1 not: The number sent to the AI as digits
+  s2 see: The heard words with the number
+  s2 not: The recording kept by MettleUp or by the speech company
+J-F-panel-917-04 | type 3 | owner | AI Assistant open
+  s1 see: The card comes back with the number as typed
+  s1 not: An odd shape slips through to the AI because only one check caught it
+  s2 see: Amounts used as amounts
+  s2 not: An amount hidden as a phone number and lost
+  s3 see: It is hidden too and comes back as typed
+  s3 not: A long number reaches the AI
+J-F-panel-917-05 | type 6 | owner | AI Assistant open
+  s1 see: One member card with one number
+  s1 not: Two different placeholders mixed up so the wrong number lands in a field
+  s2 see: Each number in its own field
+  s2 not: The two numbers swapped
+  s3 see: The request as typed, kept for the owner
+  s3 not: A placeholder shown in History instead of the words
+J-F-panel-917-06 | type 12 | owner | The owner reads the privacy notice and uses the assistant
+  s1 see: A draft card with all three
+  s1 not: The mobile or email leaves the browser unhidden
+  s1 not: They appear in an error log
+  s2 see: Names go only when said; mobile numbers and emails are hidden
+  s2 not: The saved request (kept 400 days) is said to be hidden when it holds the number as typed
+J-F-panel-916-01 | type 1 | owner | A gym with one member called Preeti Sharma
+  s1 see: A one-member card for Preeti Sharma straight away
+  s1 not: "Which one?" when only one fits
+  s1 not: A member invented by the AI
+  s1 not: An archived member
+  s2 see: A renew card with Member "Preeti Sharma" in bold
+  s2 not: A member whose name is one letter off used without the card naming who
+J-F-panel-916-02 | type 2 | owner | A gym with three members whose first name is Rahul
+  s1 see: A card with "3 members are called Rahul. Which one?" and one button a member: full name and plan
+  s1 see: Members with a running plan first
+  s1 not: One of them picked silently
+  s1 not: A count that differs from the buttons shown
+  s1 not: A Rahul left out with no way to reach him
+  s2 see: The payment card for that member
+  s2 not: The card for another Rahul
+  s2 not: The question asked to the AI again (a second count of the day)
+J-F-panel-916-03 | type 2 | owner | A member called Rahul Singh; the owner speaks in Hindi
+  s1 see: The card for Rahul Singh
+  s1 not: "Nobody called राहुल सिंह is on your members list"
+  s2 see: The right member each time
+  s2 not: A title or a spelling habit makes the member not found
+J-F-panel-916-04 | type 3 | owner | No member called Zoya on the list
+  s1 see: A card "No member found": "Nobody called “Zoya” is on your members list."
+  s1 see: A button "Add Zoya as a new member"
+  s1 not: Figures for a different member
+  s1 not: A blank card
+  s2 see: An add-member card with Name "Zoya", nothing saved yet
+  s2 not: The member saved at once
+  s3 see: The message card says nobody of that name was found, with no add button
+  s3 not: A message drafted for everyone instead
+J-F-panel-916-05 | type 6 | owner | A member called Imran Khan was archived last month
+  s1 see: A plain word that he is archived, or the choice to bring him back
+  s1 not: Only "Add Imran as a new member", which makes a second record for the same person
+  s1 not: A payment saved against an archived member without a word
+  s2 see: Found by the new name after the sync
+  s2 not: Only the old name works
+J-F-panel-916-06 | type 12 | owner | The owner names a member in a request
+  s1 see: The match is made on the device against the gym's own list
+  s1 not: The members list is sent to the AI to find her
+  s1 not: Other members' names are sent as choices
+J-F-panel-903-01 | type 1 | owner | AI Assistant open, the owner has credits; member Asha Verma has a plan that ended
+  s1 see: A card with rows Member (bold), Plan "name · 3 months", Dates "start → end", Price (bold), Paid now "₹4,500 cash"
+  s1 see: A button ending "· 1 credit", "Change something", "Cancel"
+  s1 see: "A receipt is made, the same as when you renew by hand."
+  s1 not: Anything saved before the button is tapped
+  s1 not: A price that differs from the plan with no "(list price …)" note
+  s1 not: Dates that overlap the running plan without a warning
+  s2 see: The rows show the new amount
+  s2 not: The old amount is saved
+  s2 not: The edit fields stay open over the buttons
+  s3 see: The button shows it is busy
+  s3 see: A done line in green
+  s3 see: The credits number is one lower
+  s3 not: Two renewals or two payments
+  s3 not: A credit taken with nothing saved
+  s3 not: No receipt
+  s4 see: The request, what it did, the India time, "Done · 1 credit"
+  s4 not: "Not sent" for a saved task
+  s4 not: Two credits
+J-F-panel-903-02 | type 2 | owner | No member called Zoya; the "No member found" card is on screen
+  s1 see: An add-member card: Name, Mobile, Plan, Dates, Price, Paid now
+  s1 see: "A receipt is made, the same as when you add a member by hand."
+  s1 not: A second member with a mobile number already on the list
+  s1 not: The joining fee left out of the price
+  s2 see: The member, the plan and the payment are saved; 1 credit
+  s2 not: The member saved without the plan and no word
+  s2 not: Three credits for the three parts
+J-F-panel-903-03 | type 2 | owner | A "who owes" card for one member is on screen
+  s1 see: A payment card with the member and the full amount owed
+  s1 see: "A receipt is made, the same as when you record a payment by hand."
+  s1 not: Paise turned into wrong rupees
+  s1 not: The payment put against the wrong plan term
+  s2 see: Saved; the member still owes the rest on Dues
+  s2 not: The member shown as fully paid
+  s2 not: An amount above what is owed taken without a word
+J-F-panel-903-04 | type 2 | owner | AI Assistant open
+  s1 see: A card with the member, the days and the reason
+  s1 not: The end day moved before Save
+  s2 see: An enquiry card and an expense card, each with its own save button and 1 credit
+  s2 not: Both saved by one tap
+  s2 not: An expense with no amount saved
+J-F-panel-903-05 | type 3 | owner | A change card is open; the owner has 0 credits
+  s1 see: "You have no AI credits left. Ask MettleUp for credits to send this."
+  s1 see: The credits sheet opens with the way to get more
+  s1 see: The card stays open with its values
+  s1 not: The change is saved
+  s1 not: The balance goes below zero
+  s1 not: The card is closed or its edits are lost
+  s2 see: "The price must be more than ₹0." or "Pick a plan." and the save is stopped before any credit
+  s2 not: A credit taken for a save that was refused
+  s3 see: A word that the number already exists
+  s3 not: A second member with the same number
+J-F-panel-903-06 | type 3 | owner | A change card is open; the owner has credits; the save will fail on the server
+  s1 see: The reason in calm words, then "Your credit was given back."
+  s1 see: The card is open again
+  s1 not: The credit kept with nothing saved and no word
+  s1 not: A raw error text
+  s2 see: A real second try
+  s2 not: The first failure shown again without trying
+  s2 not: "This was done already." when nothing was saved
+  s2 not: A second credit taken
+J-F-panel-903-07 | type 6 | owner | A change card is open and not saved
+  s1 see: "Cancelled. Nothing was sent or saved, and no credit was used."
+  s1 not: A credit used
+  s1 not: The card can still be saved
+  s2 see: The task with "Cancelled"; a card left alone shows "Not sent"
+  s2 not: "Done" for a cancelled task
+  s3 see: The request goes back in the box to ask again
+  s3 not: The old draft is saved straight away
+  s4 see: "This was done already."
+  s4 not: A second save or a second credit
+J-F-panel-903-08 | type 12 | owner | The owner saves a change by asking
+  s1 see: Nothing in the member's record
+  s1 not: A change made by the AI without the owner's tap
+  s2 see: The request and its credits are kept 400 days; a credit is used only on Save
+  s2 not: A front-desk login can see the owner's requests
+  s2 not: The request kept longer than said
+J-F-panel-902-01 | type 1 | owner | AI Assistant open, the owner has credits; some members have the app, some do not
+  s1 see: A card "Message to your members"
+  s1 see: Who gets it: "Everyone · {n} members" and "{n} have the app"
+  s1 see: Type "Gym closed", the day with its date in words
+  s1 see: Language: English / Hindi / Both
+  s1 see: The message words
+  s1 not: A closure message with no day
+  s1 not: The closure day used as the send time
+  s1 not: Archived members counted
+  s1 not: Anything sent yet
+  s2 see: The words as typed
+  s2 not: A later rewrite throws the typed words away without a word
+  s3 see: The button shows it is busy
+  s3 see: A done line: "Sent to {n} in the app." and, when some have no app, how many are ready on WhatsApp
+  s3 see: Credits one lower
+  s3 not: Two messages from a double tap
+  s3 not: A credit taken with nothing sent
+  s3 not: A WhatsApp sent by itself
+  s4 see: A list of members without the app, one tap a person, in the owner's own WhatsApp
+  s4 not: One member twice for one number
+  s4 not: A member who has the app on the WhatsApp list
+J-F-panel-902-02 | type 2 | owner | A message card in English is open
+  s1 see: The send button waits and says the Hindi is being written
+  s1 see: Then the Hindi words show and the Hindi chip is on
+  s1 not: The chip moves before the Hindi words are there
+  s1 not: The message can be sent in English while Hindi is chosen
+  s1 not: A credit used for the Hindi
+  s2 see: New words each time; the send button comes into view
+  s2 not: Dates, prices or names changed by the rewrite
+  s2 not: Endless rewrites with no word when the limit is reached
+  s3 see: A line where the owner tapped that the Hindi was not written, with a button to try again
+  s3 not: "Try again" with no button
+  s3 not: The chip left on Hindi
+J-F-panel-902-03 | type 2 | owner | AI Assistant open
+  s1 see: The card with the day and time; the button says the day and time it goes, not "Send now"
+  s1 not: The message goes at once
+  s1 not: A time in the past accepted
+  s2 see: A done line that it will go at that time; 1 credit
+  s2 not: The message never goes
+  s2 not: It goes twice
+  s3 see: Who gets it: "2 members"; a "Which one?" step when a name fits several
+  s3 not: The message goes to everyone
+  s3 not: A name not found is skipped silently
+J-F-panel-902-04 | type 2 | owner | A "Fees due" answer card is on screen
+  s1 see: A message card for the members who owe: "{n} members", "{n} have the app"
+  s1 not: A member who paid today on the list
+  s1 not: The amount of one member shown to another
+  s2 see: Sent in the app; the rest ready on WhatsApp
+  s2 not: A reminder to a member who owes nothing
+J-F-panel-902-05 | type 3 | owner | AI Assistant open
+  s1 see: "This group could not be found." and the send is stopped
+  s1 not: The message drafted for everyone
+  s2 see: "Write the message."
+  s2 not: An empty message sent
+  s2 not: A credit taken
+  s3 see: "You have no AI credits left. Ask MettleUp for credits to send this." and the credits sheet
+  s3 not: The message sent
+  s3 not: The draft lost
+  s4 see: "The app list could not load." and a clear word on what will happen
+  s4 not: A done line with a wrong count
+J-F-panel-902-06 | type 6 | owner | A message card is open and not sent
+  s1 see: "Cancelled. Nothing was sent or saved, and no credit was used."
+  s1 not: A message sent
+  s1 not: A credit used
+  s2 see: "This was done already."
+  s2 not: A second message to members
+  s2 not: A second credit
+  s3 see: A warning that this is the third message today; send still works
+  s3 not: No warning
+  s3 not: The send blocked with no reason
+J-F-panel-902-07 | type 12 | owner | The owner sends a message to a group
+  s1 see: Only those members get it
+  s1 not: A member outside the group gets it
+  s1 not: Members of another branch or gym get it
+  s1 not: The list of who owes is sent to the AI
+  s2 see: The member sees it in the app inbox; members without the app only if the owner sends the WhatsApp himself
+  s2 not: A WhatsApp sent from MettleUp's number without the owner's tap
+  s2 not: A phone number shown to another member
+J-F-panel-904-01 | type 1 | owner | AI Assistant open, the owner has 3 or more credits; member Asha Verma exists
+  s1 see: A card "Workout plan": For "Asha Verma"
+  s1 see: Goal, Level, Days a week filled in
+  s1 see: "Anything to keep in mind (optional)" with the hint "Knee pain, no running"
+  s1 see: A button "Write the plan"
+  s1 see: "Writing the plan is free. Saving it uses 3 credits."
+  s1 not: A plan written before the tap
+  s1 not: Credits taken
+  s2 see: "Writing…" and "The AI is writing the plan from your gym’s exercises. This takes up to a minute."
+  s2 not: The button can be tapped twice
+  s2 not: A wait with no word
+  s3 see: A sheet "Workout plan by the AI": "Check it, change anything you like, then save. Nothing goes to members before you save."
+  s3 see: The plan named with the member's name
+  s3 see: A save button "Save plan · 3 credits"
+  s3 not: Exercises the gym does not have
+  s3 not: The plan given to other members
+  s3 not: Credits taken yet
+  s4 see: A done card with "Open Workout plans"
+  s4 see: Credits three lower
+  s4 not: The plan saved twice
+  s4 not: The change lost
+  s4 not: Three credits taken with no plan saved
+J-F-panel-904-02 | type 2 | owner | AI Assistant open on the start view
+  s1 see: The card with For "Nobody yet"
+  s1 not: A diet plan example in the list
+  s1 not: A member picked by guess
+  s2 see: Saved for the members picked
+  s2 not: Saved for nobody without a word
+  s2 not: More than 3 credits
+J-F-panel-904-03 | type 2 | owner | A plan was written; the sheet was closed without saving
+  s1 see: The plan name and a short summary, buttons "Open the plan" and "Write it again"
+  s1 not: The written plan is gone
+  s2 see: The plan with the changes made before closing
+  s2 not: The first version without the changes
+  s3 see: A new plan for the new goal; still free
+  s3 not: The old plan saved
+  s3 not: A credit for the second writing
+J-F-panel-904-04 | type 3 | owner | A written plan is open; the owner has 2 credits
+  s1 see: "Ask MettleUp for credits"
+  s1 not: "Save plan · 3 credits" that then fails
+  s2 see: The plan sheet closes and the credits sheet opens; the plan stays on the card
+  s2 not: The plan lost
+  s2 not: The plan saved for free
+  s3 see: "Nobody called “{name}” is on your members list. You can pick members in the plan before you save it."
+  s3 not: The plan refused
+  s3 not: A member made up
+  s4 see: "The AI wrote a plan that could not be used. Try again." or a calm internet line; the card is as before
+  s4 not: A broken plan opened
+  s4 not: "Writing…" for ever
+J-F-panel-904-05 | type 6 | owner | A plan was written and opened
+  s1 see: The reason and "Your credits were given back."; the plan is still open to try again
+  s1 not: Three credits kept with no plan
+  s1 not: The plan text lost
+  s2 see: The done card
+  s2 not: Six credits in total
+  s3 see: Only "Open Workout plans"
+  s3 not: A second copy of the plan
+  s3 not: More credits
+  s4 see: The request with "Done · 3 credits"; a plan written but never saved shows "Not sent"
+  s4 not: A written but unsaved plan shown with credits
+J-F-panel-904-06 | type 12 | owner | The owner asks for a plan for a named member with an injury note
+  s1 see: The plan
+  s1 not: The member's name, record or phone number sent to the AI with the injury
+  s1 not: A mobile number in the note sent as digits
+  s2 see: Nothing in the member's app
+  s2 not: The member sees a plan that was never saved
+J-F-panel-911-01 | type 1 | owner | AI Assistant open on the start view; three plans end this week
+  s1 see: At most four rows, most useful first
+  s1 see: "Plans ending this week: 3" with the members named
+  s1 see: A button "Write a renewal reminder" and "See who"
+  s1 not: More than four rows
+  s1 not: A row with a zero count
+  s1 not: A count that differs from the Members page
+  s2 see: A list card with the three members, worked out on the device, free
+  s2 not: A question counted or a credit used
+  s2 not: A member whose plan ended already
+  s3 see: The request in a bubble, then a message card for those three members
+  s3 not: The message sent at once
+  s3 not: A different group than the row counted
+J-F-panel-911-02 | type 2 | owner | A festival is 3 days away
+  s1 see: "{festival} is in 3 days"; for a moon-dated day "is around 3 days away"; one day away "is tomorrow"
+  s1 see: A button "Write a {festival} greeting"
+  s1 not: "1 days"
+  s1 not: A moon-dated day stated as certain
+  s1 not: A festival that has passed
+  s2 see: A greeting message card for everyone
+  s2 not: A closure message
+  s2 not: A wrong festival name
+J-F-panel-911-03 | type 2 | owner | Two members have a birthday today; the automatic birthday wish is on; one of them has the app
+  s1 see: "Birthdays today, no automatic wish: 1" naming only the member the automatic wish will not reach
+  s1 not: Both members counted
+  s1 not: The row shown before the switch is known, with a wrong count
+  s2 see: A wish for that one member
+  s2 not: A second wish to the member who gets the automatic one
+J-F-panel-911-04 | type 2 | owner | It is Monday; the Today page shows the AI Assistant card
+  s1 see: The assistant opens with that idea asked, or its list shown
+  s1 not: The idea is lost on the way
+  s1 not: It is asked twice
+  s2 see: "Your week in numbers" with "Show the summary"
+  s2 not: The row on other days of the week
+  s3 see: Last week's figures
+  s3 not: This week's part-figures
+  s3 not: Sunday counted in the wrong week
+J-F-panel-911-05 | type 3 | owner | A new gym with no members, no festival near, not a Monday
+  s1 see: No "Today for you" heading at all; "Try saying" shows
+  s1 not: An empty "Today for you" box
+  s1 not: Rows with zero
+  s2 see: The rows are greyed out
+  s2 not: A second question sent
+  s3 see: A plain word why nothing happens
+  s3 not: A dead tap with no word
+  s3 not: A credit taken
+J-F-panel-911-06 | type 6 | owner | An idea "Not seen for {days}+ days: 4" is showing
+  s1 see: Sent
+  s1 not: A message to a member who joined today
+  s1 not: A member who came yesterday
+  s2 see: A sign that this was done today, or the same row
+  s2 not: The same members messaged a second time with no warning on the card
+  s3 see: The count is one lower
+  s3 not: The old count
+J-F-panel-911-07 | type 12 | owner | Ideas show members by name and the money owed
+  s1 see: Shown to the owner only
+  s1 not: Shown to front desk or a trainer
+  s1 not: Shown on the demo gym with real names
+  s2 see: A fixed sentence is asked
+  s2 not: The members' names or the amount owed are sent to the AI when the owner did not type them
+J-F-panel-900-01 | type 1 | owner | Owner signed in online on a computer, any page but the assistant page
+  s1 see: A round orange button with a sparkle and "AI Assistant"
+  s1 not: The button over a page button or a sheet
+  s1 not: The button before the server has answered about credits
+  s2 see: A side panel on the right; the page moves over to make room
+  s2 see: Header "AI Assistant", the credits number, a × to close
+  s2 see: Tabs "Ask" and "History"
+  s2 see: "Today for you" (when there are ideas), "Try saying", "See all {n} things it can do"
+  s2 see: "Asking is free. A task uses credits only when you send or save it."
+  s2 see: The box "Ask or give a task, in Hindi or English"
+  s2 not: The panel covers the page content
+  s2 not: The floating button still shows over the panel
+  s3 see: The panel closes, the button is back, the page has its width again
+  s3 not: The chat is lost on opening again
+J-F-panel-900-02 | type 2 | owner | Owner signed in online on a phone
+  s1 see: The assistant as a full page; the floating button is gone on that page
+  s1 not: A side panel squeezed onto the phone
+  s2 see: The button shrinks to a round sparkle while scrolling down and shows its words again going up
+  s2 not: The button covers the bottom bar
+  s2 not: The button hides for good
+  s3 see: The button is hidden while typing and while a sheet is open
+  s3 not: The button over the keyboard or over a sheet's buttons
+J-F-panel-900-03 | type 2 | owner | Owner signed in online; the menu is open
+  s1 see: The assistant page, centred, with the same header, tabs and box
+  s1 not: A blank page
+  s1 not: A second panel on top of the page
+  s2 see: The side panel closes; only the page shows
+  s2 not: Two chats side by side
+J-F-panel-900-04 | type 3 | owner | A front-desk login, a trainer login, the demo gym, and an owner whose gym works without the server
+  s1 see: Neither is there
+  s1 not: The button shows and then fails
+  s1 not: Staff reach the assistant by typing its address
+  s2 see: Button, menu entry and Today card all go away
+  s2 not: A button that opens an error
+  s2 not: A half-drawn panel
+  s3 see: Nothing shows until they can
+  s3 not: "0 credits" shown as a fact
+J-F-panel-900-05 | type 6 | owner | The side panel is open on a computer
+  s1 see: The panel closes; the floating button stays
+  s1 not: A panel wider than the window
+  s1 not: The page left pushed aside
+  s2 see: "Loading…", then the tasks newest first: the request, what it did, the India time, "Not sent", "Done", "Cancelled" or "Did not work", and the credits of a done task
+  s2 see: With none: "Nothing yet. Tasks you give the AI Assistant show here."
+  s2 see: With no internet: "History could not load. Check the internet and try again."
+  s2 not: The ask box under History
+  s2 not: A time in another zone
+  s2 not: More than 30 rows with no word that older ones exist
+  s3 see: The Ask tab with that request in the box, not yet asked
+  s3 not: The task done again by the tap
+  s4 see: That gym's credits and history only
+  s4 not: The first gym's credits, chat or history for a moment
+J-F-panel-900-06 | type 12 | owner | A gym with an owner and staff; the owner has used the assistant
+  s1 see: No AI Assistant anywhere
+  s1 not: Staff read the owner's requests or the credits
+  s2 see: Requests of the last 400 days
+  s2 not: Requests older than 400 days still listed with their words

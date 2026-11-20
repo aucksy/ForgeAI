@@ -1,0 +1,79 @@
+# B-words-server-database-3: 10 + gap-10 x server / server/database-3. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L10.1 | 10 | Every user string in English and Hinglish: plain, true, consistent names for the same thing, no inside words, no banned words, no claims that are not live, Hindi read-aloud list for him
+H10.1 | gap-10 | Every switch label, help article, What's new line and button that says what happens ("Members get a birthday wish", "Done items leave the bell"): read the code path end to end and confirm it happens for EVERY member the words cover
+H10.2 | gap-10 | Words wider than reality = finding (tie to the promise register)
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-server-500 | behind switch | Gym owner buys or renews a MettleUp plan online (pay link, webhook makes it a plan, upgrade and founding offer). Migrati | supabase/migrations/0063_gym_checkout.sql:378
+F-server-501 | hidden | Numbered receipt for every MettleUp plan payment (owner opens a receipt; plan name on it, retired AI pack shown as Pro). | supabase/migrations/0063_gym_checkout.sql:368
+F-server-502 | behind switch | Nightly MettleUp billing job: plan-end reminders 7, 3 and 1 days before, and a booked downgrade to Starter starts when P | supabase/migrations/0063_gym_checkout.sql:527
+F-server-503 | hidden | HQ 'Payments to check': list plan payments that could not become a plan, mark refunded or applied by hand, open pay link | supabase/migrations/0064_billing_checks.sql:66
+F-server-504 | live | Trainer profiles and personal-training bookings (week schedule, save a trainer page, book and cancel a PT class) | supabase/migrations/0065_trainer_schedule.sql:93
+F-server-505 | live | Nightly delete of the phone tests' own 'QA ...' gyms (at most 100 a night, older than 1 day) | supabase/migrations/0066_purge_qa_gyms.sql:18
+F-server-506 | live | Agree to the new MettleUp terms at sign-in (the list of valid terms versions, now with 2026-11-10) | supabase/migrations/0067_terms_version_2026_11_10.sql:20
+F-server-507 | live | Find my gym by my number (member proves the number with WhatsApp, sees gyms that have it, links the number to the gym's  | supabase/migrations/0068_member_find_gym.sql:57
+F-server-508 | live | Message your gym (member sends a question, feedback or complaint and replies) and Member messages (gym reads, replies, m | supabase/migrations/0069_member_messages.sql:244
+F-server-509 | live | Member picks who reads the message (gym owner, one trainer, or gym admin = owner and front desk) | supabase/migrations/0096_message_recipient.sql:206
+F-server-510 | live | MettleUp Plus lock switch: owner decides whether the member app's paid extras lock 7 days after a member's plan ends | supabase/migrations/0070_member_plus_lock.sql:40
+F-server-511 | live | AI Assistant credits wallet for gym owners (balance, free welcome and monthly credits, save a task, spend, refund, task  | supabase/migrations/0071_ai_assistant.sql:217
+F-server-512 | behind switch | AI questions counted against the gym's AI credits (10 answers = 1 credit for members and page visitors, daily limits, gi | supabase/migrations/0078_ai_questions.sql:221
+F-server-513 | live | Owner's switch 'Members can get AI answers' and a monthly credit limit for members' AI answers, with one alert when the  | supabase/migrations/0083_ai_members.sql:227
+F-server-514 | live | Gym news pops up on the member's phone (new or changed workout plan, diet plan, body measurements, new challenge, a fee  | supabase/migrations/0073_member_push_more.sql:112
+F-server-515 | live | Ask about your workout (member questions): only a member on a running paid gym plan may send a question; the member's qu | supabase/migrations/0074_ask_trainer_paid_plan.sql:38
+F-server-516 | live | Gym alerts list (the bell): one alert for each thing a member does that the gym should hear about (question, message, pl | supabase/migrations/0075_gym_alerts.sql:67
+F-server-517 | live | Alerts reach staff browsers with the admin app closed (turn browser alerts on or off, choose instant, daily or weekly su | supabase/migrations/0076_panel_web_push.sql:83
+F-server-518 | live | Send a test alert to this browser and see whether it showed | supabase/migrations/0095_test_alert.sql:87
+F-server-519 | live | Join online: a new person fills their own form on the gym's link, proves the number, picks a plan and start day, and it  | supabase/migrations/0089_trial_alert_words.sql:20
+F-server-520 | behind switch | Free trial when joining online (owner sets Off, 1, 3 or 7 days; one trial per number per gym; the gym gets a trial alert | supabase/migrations/0088_join_trial.sql:46
+F-server-521 | behind switch | Pay online when joining: the panel Worker asks which gym a join code is, so a join payment is tied to the right gym and  | supabase/migrations/0081_join_pay.sql:123
+F-server-522 | live | Job name for a person on Staff & sign-in (Owner, Staff, Trainer or a typed job; access stays two levels) | supabase/migrations/0079_staff_job_title.sql:34
+F-server-523 | behind switch | The gym's own free web page (owner edits and publishes words, photos, address and plans; visitors read the public page) | supabase/migrations/0090_gym_page_switch.sql:44
+F-server-524 | behind switch | Visitor sends the gym a question from its web page (daily limits per gym and per number) | supabase/migrations/0080_gym_page.sql:327
+F-server-525 | behind switch | Report this page (visitor reports a gym web page) and HQ takes a gym page down | supabase/migrations/0080_gym_page.sql:385
+F-server-526 | live | HQ's switch to turn one gym's web page part on or off (on by default; off hides 'Your web page' in the admin app) | supabase/migrations/0090_gym_page_switch.sql:86
+F-server-527 | behind switch | Gym web page photos (owner gets an upload slot; storage rules for who may add and read a photo) | supabase/migrations/0082_gym_page_photos.sql:73
+F-server-528 | live | Training progress: the member's phone shares up to 12 months of workouts with the gym's trainers | supabase/migrations/0084_progress_year.sql:61
+F-server-529 | live | Bring a friend: a friend's form whose number the gym already knows now adds a note or an alert for the gym | supabase/migrations/0085_friend_known_number.sql:26
+F-server-530 | hidden | Challenges that count check-in days (the ready-made 'Check-in habit'), with the leaderboard and results. Migration 0091  | supabase/migrations/0091_challenge_checkins.sql:269
+F-server-531 | hidden | The phone asks the gym for the member's join day, so long-time members share workouts 'since joining'. Migration 0092 he | supabase/migrations/0092_member_join_day.sql:24
+F-server-532 | live | Sign in with your phone number: the app finds your gym and your role (owner, trainer, desk or member) | supabase/migrations/0093_phone_sign_in.sql:35
+F-server-533 | hidden | AI helper on the gym web page: every visitor chat lands in the gym's Enquiries, with alerts only when the owner must act | supabase/migrations/0094_page_chat.sql:159
+F-server-534 | hidden | Record of every direct read of gym data made with the database owner login, kept 2 years; the gym owner sees the ones th | supabase/migrations/0097_direct_read_log.sql:162
+F-server-535 | hidden | The bell knows what is done and what each person has read (alerts leave when the thing is handled; read state per person | supabase/migrations/0098_alerts_done_and_read.sql:428
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-server-500 | behind switch | Gym owner buys or renews a MettleUp plan online (pay link, webhook makes it a plan, upgrade and founding offer). Migrati | supabase/migrations/0063_gym_checkout.sql:378
+F-server-501 | hidden | Numbered receipt for every MettleUp plan payment (owner opens a receipt; plan name on it, retired AI pack shown as Pro). | supabase/migrations/0063_gym_checkout.sql:368
+F-server-502 | behind switch | Nightly MettleUp billing job: plan-end reminders 7, 3 and 1 days before, and a booked downgrade to Starter starts when P | supabase/migrations/0063_gym_checkout.sql:527
+F-server-503 | hidden | HQ 'Payments to check': list plan payments that could not become a plan, mark refunded or applied by hand, open pay link | supabase/migrations/0064_billing_checks.sql:66
+F-server-504 | live | Trainer profiles and personal-training bookings (week schedule, save a trainer page, book and cancel a PT class) | supabase/migrations/0065_trainer_schedule.sql:93
+F-server-505 | live | Nightly delete of the phone tests' own 'QA ...' gyms (at most 100 a night, older than 1 day) | supabase/migrations/0066_purge_qa_gyms.sql:18
+F-server-506 | live | Agree to the new MettleUp terms at sign-in (the list of valid terms versions, now with 2026-11-10) | supabase/migrations/0067_terms_version_2026_11_10.sql:20
+F-server-507 | live | Find my gym by my number (member proves the number with WhatsApp, sees gyms that have it, links the number to the gym's  | supabase/migrations/0068_member_find_gym.sql:57
+F-server-508 | live | Message your gym (member sends a question, feedback or complaint and replies) and Member messages (gym reads, replies, m | supabase/migrations/0069_member_messages.sql:244
+F-server-509 | live | Member picks who reads the message (gym owner, one trainer, or gym admin = owner and front desk) | supabase/migrations/0096_message_recipient.sql:206
+F-server-510 | live | MettleUp Plus lock switch: owner decides whether the member app's paid extras lock 7 days after a member's plan ends | supabase/migrations/0070_member_plus_lock.sql:40
+F-server-511 | live | AI Assistant credits wallet for gym owners (balance, free welcome and monthly credits, save a task, spend, refund, task  | supabase/migrations/0071_ai_assistant.sql:217
+F-server-512 | behind switch | AI questions counted against the gym's AI credits (10 answers = 1 credit for members and page visitors, daily limits, gi | supabase/migrations/0078_ai_questions.sql:221
+F-server-513 | live | Owner's switch 'Members can get AI answers' and a monthly credit limit for members' AI answers, with one alert when the  | supabase/migrations/0083_ai_members.sql:227
+F-server-514 | live | Gym news pops up on the member's phone (new or changed workout plan, diet plan, body measurements, new challenge, a fee  | supabase/migrations/0073_member_push_more.sql:112
+F-server-515 | live | Ask about your workout (member questions): only a member on a running paid gym plan may send a question; the member's qu | supabase/migrations/0074_ask_trainer_paid_plan.sql:38
+F-server-516 | live | Gym alerts list (the bell): one alert for each thing a member does that the gym should hear about (question, message, pl | supabase/migrations/0075_gym_alerts.sql:67
+F-server-517 | live | Alerts reach staff browsers with the admin app closed (turn browser alerts on or off, choose instant, daily or weekly su | supabase/migrations/0076_panel_web_push.sql:83
+F-server-518 | live | Send a test alert to this browser and see whether it showed | supabase/migrations/0095_test_alert.sql:87
+F-server-519 | live | Join online: a new person fills their own form on the gym's link, proves the number, picks a plan and start day, and it  | supabase/migrations/0089_trial_alert_words.sql:20
+F-server-520 | behind switch | Free trial when joining online (owner sets Off, 1, 3 or 7 days; one trial per number per gym; the gym gets a trial alert | supabase/migrations/0088_join_trial.sql:46
+F-server-521 | behind switch | Pay online when joining: the panel Worker asks which gym a join code is, so a join payment is tied to the right gym and  | supabase/migrations/0081_join_pay.sql:123
+F-server-522 | live | Job name for a person on Staff & sign-in (Owner, Staff, Trainer or a typed job; access stays two levels) | supabase/migrations/0079_staff_job_title.sql:34
+F-server-523 | behind switch | The gym's own free web page (owner edits and publishes words, photos, address and plans; visitors read the public page) | supabase/migrations/0090_gym_page_switch.sql:44
+F-server-524 | behind switch | Visitor sends the gym a question from its web page (daily limits per gym and per number) | supabase/migrations/0080_gym_page.sql:327
+F-server-525 | behind switch | Report this page (visitor reports a gym web page) and HQ takes a gym page down | supabase/migrations/0080_gym_page.sql:385
+F-server-526 | live | HQ's switch to turn one gym's web page part on or off (on by default; off hides 'Your web page' in the admin app) | supabase/migrations/0090_gym_page_switch.sql:86
+F-server-527 | behind switch | Gym web page photos (owner gets an upload slot; storage rules for who may add and read a photo) | supabase/migrations/0082_gym_page_photos.sql:73
+F-server-528 | live | Training progress: the member's phone shares up to 12 months of workouts with the gym's trainers | supabase/migrations/0084_progress_year.sql:61
+F-server-529 | live | Bring a friend: a friend's form whose number the gym already knows now adds a note or an alert for the gym | supabase/migrations/0085_friend_known_number.sql:26
+F-server-530 | hidden | Challenges that count check-in days (the ready-made 'Check-in habit'), with the leaderboard and results. Migration 0091  | supabase/migrations/0091_challenge_checkins.sql:269
+F-server-531 | hidden | The phone asks the gym for the member's join day, so long-time members share workouts 'since joining'. Migration 0092 he | supabase/migrations/0092_member_join_day.sql:24
+F-server-532 | live | Sign in with your phone number: the app finds your gym and your role (owner, trainer, desk or member) | supabase/migrations/0093_phone_sign_in.sql:35
+F-server-533 | hidden | AI helper on the gym web page: every visitor chat lands in the gym's Enquiries, with alerts only when the owner must act | supabase/migrations/0094_page_chat.sql:159
+F-server-534 | hidden | Record of every direct read of gym data made with the database owner login, kept 2 years; the gym owner sees the ones th | supabase/migrations/0097_direct_read_log.sql:162
+F-server-535 | hidden | The bell knows what is done and what each person has read (alerts leave when the thing is handled; read state per person | supabase/migrations/0098_alerts_done_and_read.sql:428

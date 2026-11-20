@@ -1,0 +1,1 @@
+{"id":"A6","step":"A6","item":"impact map by script: _tools/impact.mjs -> impact.json (lossless index; top 20 lists printed)","needs":[],"status":"done","checkpoint":"-","out_file":"impact.json","cost_tokens":0,"result_line":"impact.json: 24,646 journeys (7,839 Tier 1), 97 entities read, 393 code files shared by 2+ features, 2.5 MB; 20 s, one process"}

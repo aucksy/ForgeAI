@@ -1,0 +1,106 @@
+# B-run-phone-onboarding-db-b: gap-8 x phone / phone/onboarding-db. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H8.1 | gap-8 | By script first: docs/system-map/_tools/silent.mjs lists every catch block with file:line and three flags: logs? (calls a log, report or crash function inside), tells_user? (sets an error state, toast or alert inside), rethrows?
+H8.2 | gap-8 | Output _sources/silent.csv
+H8.3 | gap-8 | Helpers read ONLY the rows where all three are "no", plus every fallback value (?? null, || [], ?? 0) that sits in a file named in a journey that writes money, messages, alerts, sign-in or sync
+H8.4 | gap-8 | Everything else is counted in the grid as "filtered by script, N rows, not read" so the gap is visible
+H8.5 | gap-8 | For each: if this path runs, does the user (or owner, or HQ) learn anything?
+H8.6 | gap-8 | A silent path that hides a failed promise = finding
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-1600 | live | First welcome screen: pick a way in (phone number, Google, join my gym, bring workouts, use without an account, demo) | apps/mobile/src/onboarding/components/WelcomeScreen.tsx:252
+F-phone-1601 | live | Intro screens shown once before the welcome (beat your last workout, we found your watch, your gym in your pocket; Skip; | apps/mobile/src/onboarding/components/IntroSlides.tsx:1
+F-phone-1602 | live | Set up the app in 3 steps (name and optional mobile number, kg or lb, goal and experience, Start training) | apps/mobile/src/onboarding/components/WelcomeScreen.tsx:252
+F-phone-1603 | live | Setup answers survive the app closing (carry on where you left the 3 steps) | apps/mobile/src/onboarding/welcomeResume.ts:61
+F-phone-1604 | live | Continue with your phone number (check with WhatsApp; the app finds your gym and your role, then Join <gym>) | apps/mobile/src/onboarding/components/WelcomePhone.tsx:1
+F-phone-1605 | live | A member the gym knows goes straight into the gym (no setup questions), with a one-time Workout-tab note 'We set you up  | apps/mobile/src/onboarding/phoneSignInApi.ts:120
+F-phone-1606 | live | Continue with Google on the welcome (finds the newest backup in the member's Google Drive and offers to restore it; a gy | apps/mobile/src/onboarding/components/WelcomeGoogle.tsx:64
+F-phone-1607 | live | Join my gym from the welcome (scan the gym's poster or type the gym code; the code is checked and kept, the gym's join s | apps/mobile/src/onboarding/components/WelcomeGymCode.tsx:1
+F-phone-1608 | live | Load demo data (the sample member Arjun: 13 weeks of workouts, records, body weight, meals, a plan and a coach chat) fro | apps/mobile/src/onboarding/components/WelcomeScreen.tsx:729
+F-phone-1609 | live | Remove demo data (the sample member goes, your own workouts stay, then you add your details) | apps/mobile/src/onboarding/demoRemoval.ts:23
+F-phone-1610 | live | Erase all data (this phone only, or this phone and the MettleUp account; clears the database, files, AI keys, gym link,  | apps/mobile/src/onboarding/eraseWords.ts:48
+F-phone-1611 | live | Start-up error screen when the app cannot open its data (says what failed, Try again, Save my data file, Details) | apps/mobile/src/onboarding/components/BootErrorScreen.tsx:28
+F-phone-1612 | live | App start: opens on the welcome (no profile yet), on your own data, or on the error screen; notes when the app was first | apps/mobile/src/onboarding/store/onboardingStore.ts:206
+F-phone-1613 | live | Import safety: says how many workouts a Replace import removes, keeps a copy first, and Undo import puts everything back | apps/mobile/src/onboarding/db/importSafety.ts:60
+F-phone-1614 | live | Exercise library a new member starts with (the bundled 400+ exercises; find an exercise by name or Hindi/Hinglish alias; | apps/mobile/src/onboarding/db/catalog.ts:55
+F-phone-1615 | live | Workouts saved on the phone (save a workout and its sets, workout history, one exercise's history, delete a workout, str | apps/mobile/src/db/repos/workoutRepo.ts:103
+F-phone-1616 | live | Personal records (a finished workout is checked for a new best weight and best estimated one-rep max; record list and hi | apps/mobile/src/db/repos/prRepo.ts:76
+F-phone-1617 | live | My profile and body weight (change name, goal, experience and targets; log body weight; body weight history) | apps/mobile/src/db/repos/userRepo.ts:79
+F-phone-1618 | hidden | Food log (log a meal, the day's calories and protein, delete a meal) | apps/mobile/src/db/repos/nutritionRepo.ts:43
+F-phone-1619 | hidden | AI coach chat (send a message or photo to the coach, saved conversation, clear the chat) | apps/mobile/src/store/chatStore.ts:31
+F-phone-1620 | live | Active workout plan (the plan's days and exercises in rotation order, read for today's workout) | apps/mobile/src/db/repos/planRepo.ts:95
+F-phone-1621 | live | Home summary (loads and refreshes the home screen's numbers; 'Couldn't load your summary, Try again' on a failed read) | apps/mobile/src/store/dashboardStore.ts:26
+F-phone-1622 | hidden | Old gym sync (sign in with email and password plus a gym code, re-sign in, disconnect, delete my cloud data) | apps/mobile/src/store/cloudStore.ts:43
+F-phone-1623 | live | MettleUp account (sign in with Google to keep workouts on MettleUp, bring the copy back, sign out, delete my account) | apps/mobile/src/store/accountStore.ts:100
+F-phone-1624 | live | Google Drive backup and restore (link Google, back up now, find a backup, restore it after saying how many workouts go,  | apps/mobile/src/store/backupStore.ts:253
+F-phone-1625 | live | Light or dark look (Same as phone, Light or Dark; follows the phone, waits while a workout is open) | apps/mobile/src/theme/appearance.ts:98
+F-phone-1626 | live | The gym's colours and logo across the whole app (after joining; the logo opening at launch; MettleUp's look comes back o | apps/mobile/src/theme/gymTheme.ts:153
+F-phone-1627 | live | App settings kept on the phone (kg or lb, language, AI provider and model, voice on or off, speak replies) | apps/mobile/src/store/settingsStore.ts:24
+## SILENT CATCH ROWS TO READ (kind,file,line,logs,tells_user,rethrows,text)
+catch,apps/mobile/src/db/index.ts,68,no,no,no,(() => undefined)
+catch,apps/mobile/src/db/index.ts,87,no,no,no,(() => null)
+catch,apps/mobile/src/db/index.ts,88,no,no,no,(() => undefined)
+catch,apps/mobile/src/db/repos/exerciseRepo.ts,22,no,no,no,{ return []; }
+catch,apps/mobile/src/db/repos/planRepo.ts,53,no,no,no,{ return []; }
+catch,apps/mobile/src/db/repos/workoutRepo.ts,78,no,no,no,{ return []; }
+catch,apps/mobile/src/db/writeQueue.ts,46,no,no,no,(() => undefined)
+catch,apps/mobile/src/db/writeQueue.ts,99,no,no,no,{ // a listener's own failure never turns into the job's }
+catch,apps/mobile/src/onboarding/bootFailure.ts,22,no,no,no,{ return String(e); }
+catch,apps/mobile/src/onboarding/components/WelcomeGoogle.tsx,191,no,no,no,(() => signOutDrive())
+catch,apps/mobile/src/onboarding/db/dataActions.ts,297,no,no,no,{ // Records catch up on the next edit; the removal itself has committed. }
+catch,apps/mobile/src/onboarding/db/dataActions.ts,381,no,no,no,(() => undefined)
+catch,apps/mobile/src/onboarding/db/dataActions.ts,389,no,no,no,(() => undefined)
+catch,apps/mobile/src/onboarding/db/dataActions.ts,422,no,no,no,(() => undefined)
+catch,apps/mobile/src/onboarding/db/dataActions.ts,427,no,no,no,(() => undefined)
+catch,apps/mobile/src/onboarding/db/dataActions.ts,430,no,no,no,(() => undefined)
+catch,apps/mobile/src/onboarding/db/importSafety.ts,103,no,no,no,{ // fall through to the full parse }
+catch,apps/mobile/src/onboarding/db/importSafety.ts,202,no,no,no,(() => undefined)
+catch,apps/mobile/src/onboarding/db/importSafety.ts,222,no,no,no,(() => new Set<string>())
+catch,apps/mobile/src/onboarding/demoRemoval.ts,24,no,no,no,(() => 0)
+catch,apps/mobile/src/onboarding/demoRemoval.ts,35,no,no,no,(() => undefined)
+catch,apps/mobile/src/onboarding/eraseDevice.ts,139,no,no,no,(() => undefined)
+catch,apps/mobile/src/onboarding/eraseDevice.ts,285,no,no,no,{ // no file system (tests); the other steps still run }
+catch,apps/mobile/src/onboarding/phoneSignIn.ts,158,no,no,no,{ // quiet: a broken %-escape in a test link; that one word is left out  as a link with it
+catch,apps/mobile/src/onboarding/services/saveDataFile.ts,52,no,no,no,(() => undefined)
+catch,apps/mobile/src/onboarding/services/saveDataFile.ts,57,no,no,no,(() => undefined)
+catch,apps/mobile/src/onboarding/services/saveDataFile.ts,60,no,no,no,(() => undefined)
+catch,apps/mobile/src/onboarding/store/onboardingStore.ts,107,no,no,no,{ /* caches only — the committed write stands */ }
+catch,apps/mobile/src/onboarding/store/onboardingStore.ts,131,no,no,no,(() => undefined)
+catch,apps/mobile/src/onboarding/store/onboardingStore.ts,137,no,no,no,(() => undefined)
+catch,apps/mobile/src/onboarding/store/onboardingStore.ts,143,no,no,no,(() => undefined)
+catch,apps/mobile/src/onboarding/store/onboardingStore.ts,160,no,no,no,{ // tries again next launch }
+catch,apps/mobile/src/onboarding/store/onboardingStore.ts,166,no,no,no,{ // tries again next launch }
+catch,apps/mobile/src/onboarding/store/onboardingStore.ts,173,no,no,no,(() => false)
+catch,apps/mobile/src/onboarding/store/onboardingStore.ts,173,no,no,no,(() => false)
+catch,apps/mobile/src/onboarding/store/onboardingStore.ts,222,no,no,no,{ /* leave the last known value — this only drives a badge */ }
+catch,apps/mobile/src/store/backupStore.ts,111,no,no,no,(() => ({ exists: false }))
+catch,apps/mobile/src/store/backupStore.ts,118,no,no,no,{ file = null; }
+catch,apps/mobile/src/store/backupStore.ts,122,no,no,no,(() => undefined)
+catch,apps/mobile/src/store/backupStore.ts,198,no,no,no,(() => 0)
+catch,apps/mobile/src/store/backupStore.ts,200,no,no,no,(() => undefined)
+catch,apps/mobile/src/store/backupStore.ts,201,no,no,no,(() => undefined)
+catch,apps/mobile/src/store/backupStore.ts,235,no,no,no,(() => null)
+catch,apps/mobile/src/store/backupStore.ts,406,no,no,no,(() => undefined)
+catch,apps/mobile/src/store/backupStore.ts,446,no,no,no,(() => null)
+catch,apps/mobile/src/store/backupStore.ts,465,no,no,no,(() => undefined)
+catch,apps/mobile/src/store/backupStore.ts,478,no,no,no,(() => undefined)
+catch,apps/mobile/src/store/backupStore.ts,479,no,no,no,(() => undefined)
+catch,apps/mobile/src/store/backupStore.ts,480,no,no,no,(() => undefined)
+catch,apps/mobile/src/store/chatStore.ts,26,no,no,no,{ set({ loaded: true }); }
+catch,apps/mobile/src/store/cloudStore.ts,69,no,no,no,(() => {})
+catch,apps/mobile/src/store/dashboardStore.ts,46,no,no,no,(() => undefined)
+catch,apps/mobile/src/store/dashboardStore.ts,61,no,no,no,{ // The last good summary (if any) stays on screen; with none  Home shows LoadError. if (
+catch,apps/mobile/src/theme/appearance.ts,48,no,no,no,(() => undefined)
+catch,apps/mobile/src/theme/appearance.ts,49,no,no,no,{ // ignore }
+catch,apps/mobile/src/theme/bootTheme.ts,21,no,no,no,{ // The dark look stays. }
+catch,apps/mobile/src/theme/bootTheme.ts,29,no,no,no,{ boot = null; }
+catch,apps/mobile/src/theme/logoPrefetch.ts,18,no,no,no,(() => { last = null; })
+catch,apps/mobile/src/theme/logoPrefetch.ts,21,no,no,no,{ last = null; }
+catch,apps/mobile/src/theme/lookChoice.ts,32,no,no,no,{ return 'system'; }
+catch,apps/mobile/src/theme/lookChoice.ts,42,no,no,no,{ // ignore }
+catch,apps/mobile/src/theme/themeMirror.ts,43,no,no,no,{ // ignore }
+## FALLBACK ROWS TO READ (files that write money, messages, alerts, sign-in or sync)
+fallback,apps/mobile/src/onboarding/phoneSignIn.ts,148,-,-,-,const m = /^[a-z][a-z0-9+.-]*:\/\/\/?qa-signin\/?(?:\?(.*))?$/i.exec(String(url ?? '').tri
+fallback,apps/mobile/src/onboarding/phoneSignIn.ts,151,-,-,-,for (const part of (m[1] ?? '').split('&')) {
+fallback,apps/mobile/src/onboarding/phoneSignIn.ts,173,-,-,-,rows.push({ gymId: `qa-signin-${n || '1'}`  gymName: gym  joinCode: p[`code${n}`] ?? 'QAGY
+## FILTERED BY SCRIPT
+148 other rows of _sources/silent.csv in this area: not read (write this number in the H8 evidence)

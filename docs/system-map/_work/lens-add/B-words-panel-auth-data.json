@@ -1,0 +1,1 @@
+{"id":"B-words-panel-auth-data","step":"B-words","item":"B-words (Language and words + 1 more) x panel / panel/auth-data: 3 items","needs":["CAL-score"],"checkpoint":"_work/B-words-panel-auth-data.md","out_file":"_work/out/B-words-panel-auth-data.jsonl","surface":"panel","area":"panel/auth-data","lenses":["10","gap-10"],"lens_items":["L10.1","H10.1","H10.2"]}

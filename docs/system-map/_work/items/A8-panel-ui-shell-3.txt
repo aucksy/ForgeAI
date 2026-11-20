@@ -1,0 +1,478 @@
+# A8-panel-ui-shell-3: coverage of 32 Tier 1 journeys (3 features, from A5-panel-ui-shell-2b). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-529 | apps/mobile/test/shop/gymHours.test.ts | unit | 201 lines | asserts 11 journey phrase(s)
+F-panel-529 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 8 journey phrase(s)
+F-panel-529 | apps/dashboard/e2e/timings.spec.mjs | e2e | 130 lines | asserts 8 journey phrase(s)
+F-panel-529 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 7 journey phrase(s)
+F-panel-529 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 7 journey phrase(s)
+F-panel-529 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 6 journey phrase(s)
+F-panel-529 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 6 journey phrase(s)
+F-panel-529 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 6 journey phrase(s)
+F-panel-529 | apps/dashboard/test/crm/assistant/messageDay.test.ts | unit | 114 lines | asserts 6 journey phrase(s)
+F-panel-529 | apps/dashboard/test/crm/messages.test.ts | unit | 189 lines | asserts 6 journey phrase(s)
+F-panel-529 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 6 journey phrase(s)
+F-panel-529 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-panel-519 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-panel-519 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-panel-519 | apps/dashboard/e2e/aiimport.spec.mjs | e2e | 169 lines | asserts 2 journey phrase(s)
+F-panel-519 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 2 journey phrase(s)
+F-panel-519 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | asserts 2 journey phrase(s)
+F-panel-519 | apps/dashboard/test/crm/importMembers.test.ts | unit | 575 lines | file name
+F-panel-519 | apps/mobile/test/db/workoutPhotosReal.test.ts | unit | 327 lines | asserts 2 journey phrase(s)
+F-panel-519 | apps/mobile/test/onboarding/eraseLeftBehind.test.ts | unit | 59 lines | asserts 2 journey phrase(s)
+F-panel-519 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 2 journey phrase(s)
+F-panel-519 | apps/mobile/test/onboarding/startup.test.ts | unit | 185 lines | asserts 2 journey phrase(s)
+F-panel-519 | apps/mobile/test/tracker/auditC9Words.test.ts | unit | 51 lines | asserts 2 journey phrase(s)
+F-panel-519 | apps/mobile/test/tracker/phase4ImportsC.test.ts | unit | 443 lines | asserts 2 journey phrase(s)
+F-panel-522 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | file name, asserts 10 journey phrase(s)
+F-panel-522 | apps/dashboard/e2e/member-messages-uat.spec.mjs | e2e | 236 lines | asserts 10 journey phrase(s)
+F-panel-522 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | file name, asserts 8 journey phrase(s)
+F-panel-522 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 10 journey phrase(s)
+F-panel-522 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 9 journey phrase(s)
+F-panel-522 | apps/dashboard/e2e/ai-questions-uat.spec.mjs | e2e | 434 lines | file name, asserts 6 journey phrase(s)
+F-panel-522 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 8 journey phrase(s)
+F-panel-522 | apps/mobile/test/tracker/muscleTipsRoutines.test.ts | unit | 525 lines | asserts 6 journey phrase(s)
+F-panel-522 | supabase/tests/0078_ai_questions.sql | db | 198 lines | file name, asserts 4 journey phrase(s)
+F-panel-522 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 5 journey phrase(s)
+F-panel-522 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | file name, asserts 3 journey phrase(s)
+F-panel-522 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 5 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-529-01 | type 1 | owner | Gym is online, no timings saved yet; Settings, button to Gym timings
+  s1 see: Title 'Gym timings'
+  s1 see: 'When your gym is open, for members to see'
+  s1 see: Card 'Start from' with 'Pick the one closest to your gym, then change any day.'
+  s1 not: A blank page or an endless 'Loading…'
+  s1 not: The read-only card 'Only the owner can change the gym timings.' shown to the owner
+  s2 see: 'Right now members see: …' line
+  s2 see: Section 'Every week' with Monday to Sunday, each with Closed / Times / 24 hours
+  s2 see: Button 'Save and show members'
+  s2 not: Anything saved before Save is tapped
+  s2 not: A day with no times and no 'Closed' word
+  s3 see: Tuesday to Saturday show Monday's times
+  s3 see: Sunday shows Closed
+  s3 see: The 'Right now members see' line follows the change
+  s3 not: Sunday overwritten by the copy
+  s3 not: The preview line still showing the old times
+  s4 see: Button reads 'Saving…', then 'Saved ✓'
+  s4 see: Toast 'Gym timings saved. Members see them in the MettleUp app (Gym tab) within 10 minutes.'
+  s4 see: 'These timings are saved (…) and members see them. Change any time above to save again.'
+  s4 not: The toast shown when the server refused the save
+  s4 not: Two saves from a double tap
+  s4 not: Times stored in a zone other than India time
+J-F-panel-529-02 | type 2 | owner | More menu, row 'Gym timings' ('When you are open, for members to see'); timings already saved; other kind: a special day
+  s1 see: The editor with the saved week
+  s1 see: 'Last saved <date> by <name>.'
+  s1 see: Greyed button 'Saved ✓'
+  s1 not: The 'Start from' card when timings exist
+  s1 not: Another branch's timings
+  s2 see: A new block 'Special day 1: date' set to tomorrow by default
+  s2 see: 'Add holidays like Diwali, or days with other times. Members see them on the Gym tab 7 days before.'
+  s2 see: Button turns to 'Save timings'
+  s2 not: A special day dated in the past accepted with no word
+  s2 not: A 31st special day (the add button is off at 30)
+  s3 see: Toast 'Gym timings saved. Members see them in the MettleUp app (Gym tab) within 10 minutes.'
+  s3 see: Button back to 'Saved ✓'
+  s3 not: The weekly times changed by saving a special day
+  s3 not: The note cut short without a word
+J-F-panel-529-03 | type 3 | owner | Gym timings editor open; and the same page when the gym is not online
+  s1 see: A red line with the problem in plain words
+  s1 see: 'Fix the times below to see what members will see.' in place of the preview
+  s1 see: Nothing sent to the server
+  s1 not: A save with a broken time
+  s1 not: The toast 'Gym timings saved…'
+  s1 not: Members seeing half-set times
+  s2 see: The save button waits for the internet, or a red line says the save did not go through
+  s2 see: The typed times are still on the page
+  s2 not: A 'saved' message for a save that failed
+  s2 not: The draft thrown away
+  s3 see: 'Gym timings need your gym online'
+  s3 see: 'Members’ phones read the timings from your gym’s server. Put your gym online first (Settings → Sign-in & data).'
+  s3 not: An editor that looks as if it saves
+  s3 not: A crash or a blank page
+  s4 see: 'Gym timings are not switched on for your gym yet'
+  s4 see: 'They will appear here once your gym’s server has them.'
+  s4 not: A raw server error text
+  s4 not: An endless 'Loading…'
+J-F-panel-529-04 | type 6 | owner | Timings saved and seen by members
+  s1 see: Button turns from 'Saved ✓' to 'Save timings'
+  s1 see: The 'These timings are saved…' line goes away
+  s1 not: Members seeing the new time before Save
+  s2 see: Button returns to 'Saved ✓' (greyed)
+  s2 see: 'These timings are saved (…) and members see them. Change any time above to save again.'
+  s2 not: A save button left active with nothing changed
+  s3 see: Sheet 'Remove the gym timings?'
+  s3 see: 'Members will no longer see when your gym is open. You can add the timings again at any time.'
+  s3 see: Buttons 'Keep them' and 'Remove'
+  s3 not: Timings removed before 'Remove' is tapped
+  s4 see: After 'Keep them': the editor unchanged
+  s4 see: After 'Remove': the 'Start from' card and toast 'Gym timings removed. Members no longer see them.'
+  s4 not: Members still shown 'Open now' after removal (beyond the phone's refresh time)
+  s4 not: The Get started tick lost or a crash on the empty state
+  s5 see: Toast 'Gym timings saved…'
+  s5 see: 'Last saved <today> by <name>.'
+  s5 not: Old special days or the old note coming back by themselves
+J-F-panel-529-05 | type 12 | owner | Gym with two branches; owner signed in
+  s1 see: Subtitle 'When <branch A> is open. Each branch has its own timings.'
+  s1 see: 'Members see these on the Gym tab of the MettleUp app: “Open now · closes 10:00 pm”, and the whole week. Times are India time.'
+  s1 not: Branch B's timings shown or changed
+  s1 not: Another gym's timings
+  s2 see: 'Last saved <date> by <owner name>.'
+  s2 not: A staff person's phone number or any member detail on this page
+  s3 see: Read-only card; 'Only the owner can change the gym timings.'
+  s3 not: A front-desk session able to change timings (the server answers OWNER_ONLY)
+J-F-panel-529-06 | type 1 | staff | Front desk signed in, gym online, owner has saved timings; More menu row 'Gym timings' ('When the gym is open')
+  s1 see: Title 'Gym timings'
+  s1 see: Card 'Your gym’s timings'
+  s1 see: 'Right now members see: <Open now · closes …>'
+  s1 not: The editor with Save or 'Remove timings' buttons
+  s1 not: An endless 'Loading…'
+  s2 see: Day groups with their times (for example 'Mon to Sat' and the times)
+  s2 see: Coming special days as a list
+  s2 see: The owner's note under them
+  s2 see: 'Only the owner can change the gym timings.'
+  s2 not: Special days already past still listed
+  s2 not: Times different from what the member app shows
+  s3 see: The Settings page
+  s3 not: A sign-out or a blank page
+J-F-panel-529-07 | type 3 | staff | Front desk signed in; wants to change a time
+  s1 see: Read-only card only
+  s1 see: 'Only the owner can change the gym timings.'
+  s1 not: Any time box, Save or Remove button
+  s1 not: A change that reaches the server (it answers OWNER_ONLY)
+  s2 see: 'Gym timings need your gym online' with the line about Settings → Sign-in & data
+  s2 not: Old timings shown as if they were current
+  s3 see: A red line with the reason and the button 'Try again'
+  s3 not: A blank card with no way to retry
+J-F-panel-529-08 | type 6 | staff | Front desk signed in; owner has not saved timings, then saves, then removes them
+  s1 see: Card 'Your gym’s timings'
+  s1 see: 'No timings yet.'
+  s1 see: 'Only the owner can change the gym timings.'
+  s1 not: A made-up default week
+  s1 not: 'Right now members see: Closed'
+  s2 see: 'Right now members see: …' and the week
+  s2 not: Still 'No timings yet.' after reopening the page
+  s3 see: 'No timings yet.'
+  s3 not: The removed times still shown
+J-F-panel-519-01 | type 1 | owner | Members page, button to import (or Settings, or the growth card); an Excel sheet with names, mobiles, plans and fees
+  s1 see: Title 'Import members from Excel'
+  s1 see: 'Bring in your members from an Excel sheet or your old gym software'
+  s1 see: Card 'Your file' with 'Nothing is saved until you check the list and tap Add.'
+  s1 see: Buttons 'Choose file' and 'Download sample file'
+  s1 not: Any member saved at this point
+  s1 not: A page that needs a plan upgrade
+  s2 see: 'Reading the file… a big sheet can take a few seconds.'
+  s2 see: Then 'Which column is which' with a box per detail (name * and mobile *)
+  s2 see: One line about the AI matching (owner only)
+  s2 not: Names, mobiles or addresses sent to the AI in full (only masked column names and example shapes)
+  s2 not: A frozen page with no word
+  s3 see: Counts of rows to add, to skip and to check
+  s3 see: Card 'Plans and payments': '<n> members come with their plan and its dates (<n> plan names), and ₹… already paid as receipts. Expiry reminders work for them from day one.'
+  s3 not: A paid total that counts a running 'paid so far' twice
+  s3 not: Rows with a bad mobile counted as ready
+  s4 see: 'Adding members…' with a progress bar
+  s4 see: Then 'Import finished' and '<n> added, <n> skipped'
+  s4 see: '<n> plans with their dates · <n> receipts · …'
+  s4 see: Buttons to open Members, download skipped rows, start over
+  s4 not: A member added twice
+  s4 not: A receipt for money not in the file
+  s4 not: WhatsApp or SMS sent to imported members
+  s4 not: The Add button usable again while it runs
+  s5 see: The new members with their plans, end dates and dues
+  s5 not: Members without the plan the file gave them
+  s5 not: An expiry date shifted by a day
+J-F-panel-519-02 | type 2 | owner | Other kinds: a CSV from old software where some members are already in the gym, and a file with several sheets; reached from Settings
+  s1 see: 'Which column is which'
+  s1 see: 'Column names are on row' box when the names are not on row 1
+  s1 not: Dates like 15/08/2026 read as month 15
+  s1 not: Wrong letters for Hindi names in a CSV
+  s2 see: Choices 'Skip them' and 'Fill in their blank details'
+  s2 see: 'Only empty details are filled in. Their name, mobile and joining date stay as they are.'
+  s2 see: Button reads 'Add <a> members, update <b>' or 'Update <b> members'
+  s2 not: An existing member's name, mobile or joining date overwritten
+  s2 not: A second member with the same mobile
+  s3 see: '<n> added, <n> skipped, <n> filled in'
+  s3 see: The next sheet opens at 'Which column is which'
+  s3 not: The sheet just imported offered again
+  s3 not: Rows of the first sheet added twice
+J-F-panel-519-03 | type 3 | owner | Import page open
+  s1 see: 'That file is over 5 MB. It is too big for a member list. Pick the Excel or CSV file with your members.'
+  s1 see: Back on 'Your file'
+  s1 not: The browser hanging on a huge file
+  s1 not: Any row saved
+  s2 see: A plain red line saying the file could not be read or has no rows
+  s2 see: 'Choose file' usable again
+  s2 not: A blank 'Check the list'
+  s2 not: A raw error text
+  s3 see: 'Rows to check' with each row and a box to fix it, plus 'Skip row <n>'
+  s3 see: The Aadhaar column marked as never imported ('ID numbers are never imported.')
+  s3 see: The Add button counts only good rows
+  s3 not: A member saved without a mobile
+  s3 not: An Aadhaar or PAN number stored anywhere
+  s3 not: Two members from the same mobile in one file
+  s4 see: 'Row <n> checked again.'
+  s4 see: After Add: rows that could not be saved are listed under 'Rows to check' with 'Try again'
+  s4 not: 'Import finished' counting rows that were not saved
+  s4 not: A retry that adds the saved rows a second time
+J-F-panel-519-04 | type 6 | owner | An import has just finished; 'Past imports' card under the page
+  s1 see: Each import with its date and '<n> members · <n> plans with dates · <n> receipts'
+  s1 see: Button 'Undo this import'
+  s1 not: Imports of another branch in this list
+  s1 not: An import already undone still listed
+  s2 see: What will go and what stays, with 'Yes, undo it' and a way to cancel
+  s2 not: Anything removed before 'Yes, undo it'
+  s3 see: Button 'Undoing…'
+  s3 see: 'Import undone: <n> members, <n> plans with dates, <n> receipts and <n> plan names removed.' plus what was kept
+  s3 not: Members who checked in or paid since the import removed
+  s3 not: Members from before the import removed
+  s3 not: Money totals still counting removed receipts
+  s4 see: The same counts as the first time
+  s4 not: 'already a member' for rows that were undone
+  s4 not: Double receipts
+  s5 see: 'The import was not fully undone. Check the internet and tap Undo again. What is already removed stays removed.'
+  s5 not: A success line for a half-done undo
+J-F-panel-519-05 | type 12 | owner | A member sheet with Aadhaar, PAN, address and blood-group columns
+  s1 see: 'Aadhaar and PAN numbers are never imported.' on the first card
+  s1 see: The ID columns shown as not kept
+  s1 see: Other columns (locker number, blood group) offered as extra details with a name box
+  s1 not: An ID number kept as an extra detail
+  s1 not: ID numbers or full names sent to the AI column matcher
+  s2 see: The extra detail on the member's page under the name typed
+  s2 not: Health-type details visible to roles that may not open the member
+  s2 not: A detail kept that was not ticked
+  s3 see: No 'Past imports' card and no AI line
+  s3 see: Plans card says 'Only the owner can add plans and payments.'
+  s3 not: Front desk able to undo an import or add receipts
+J-F-panel-519-06 | type 1 | staff | Front desk signed in; Members page, import button; a sheet with names, mobiles and plans
+  s1 see: Title 'Import members from Excel'
+  s1 see: 'Which column is which' filled by the panel's own rules (no AI line)
+  s1 not: An AI request made for a staff session
+  s1 not: A refusal to open the page
+  s2 see: '<n> members have a plan in this file. Only the owner can add plans and payments. Members are added now. Plans are added when the owner imports the same file.'
+  s2 not: A paid total or receipt count shown to staff
+  s2 not: A button that says plans will be added
+  s3 see: 'Adding members…'
+  s3 see: 'Import finished' and '<n> added, <n> skipped'
+  s3 see: A line that only the owner can add the plans and payments in this file
+  s3 not: A membership or receipt saved by the staff session
+  s3 not: Members saved with no word that their plans are still missing
+  s4 see: The new members, with no plan yet
+  s4 not: Members shown as paid or active on a plan
+J-F-panel-519-07 | type 3 | staff | Front desk signed in; import page
+  s1 see: Add button greyed (nothing to add for staff: plans do not count for the front desk)
+  s1 see: The 'Only the owner can add plans and payments.' card
+  s1 not: A button 'Add <n> plans and payments' usable by staff
+  s2 see: Neither is on the page for staff
+  s2 not: Front desk able to undo an import
+  s3 see: 'That file is over 5 MB. It is too big for a member list. Pick the Excel or CSV file with your members.'
+  s3 not: Any row saved
+J-F-panel-519-08 | type 6 | staff | Front desk has imported members; the owner then imports the same file
+  s1 see: Back to 'Your file' with 'Choose file'
+  s1 not: The finished import run again
+  s2 see: Every row counted as already a member; nothing to add
+  s2 not: Second copies of the members
+  s3 see: '<n> members come with their plan and its dates…'
+  s3 see: Button 'Add <n> plans and payments'
+  s3 see: After it: '<n> plans with their dates · <n> receipts'
+  s3 not: Second copies of the members staff added
+  s3 not: Plans attached to the wrong member with a like name (matching is by mobile)
+  s4 see: The owner's import, with 'Undo this import'
+  s4 not: Undo of the owner's import removing members used since
+J-F-panel-519-09 | type 12 | staff | Front desk signed in; a sheet with Aadhaar and fee columns
+  s1 see: 'Aadhaar and PAN numbers are never imported.'
+  s1 see: ID columns not kept
+  s1 not: An ID number stored
+  s1 not: The sheet sent to the AI (owner only)
+  s2 see: Members added; the owner-only line about plans and payments
+  s2 not: Fee amounts from the file saved as receipts by a staff session
+  s2 not: Money figures of the gym shown that the front desk may not see
+J-F-panel-522-01 | type 1 | owner | Gym online; a member has sent a question from 'Message your gym'; More menu row 'Member messages' with a count
+  s1 see: Title 'Member messages'
+  s1 see: 'Members write to you from "Message your gym" on the Gym tab of their app. Your reply shows in their app, and on their phone if notifications are on.'
+  s1 see: Chips All / Questions / Feedback / Complaints with counts
+  s1 see: 'Waiting for a reply (1)'
+  s1 not: Messages of another gym or branch
+  s1 not: An endless 'Loading…'
+  s2 see: Member's name (a link), pill 'Question', 'To: Gym owner' or 'To: Gym admin', the mobile, the text and when it was sent
+  s2 not: A phone number on a message sent without the name
+  s2 not: Text running out of the card
+  s3 see: Hint 'The member reads it in their app and can write back. <n> of 1000 letters'
+  s3 see: 'Send reply' becomes usable
+  s3 not: More than 1000 letters accepted
+  s3 not: 'Send reply' usable for spaces only
+  s4 see: Button 'Sending…'
+  s4 see: 'Reply sent.'
+  s4 see: The card moves under 'Replied', the reply shown with '<name> replied'
+  s4 see: 'The member has not opened your reply yet.'
+  s4 see: The menu count goes down
+  s4 not: Two replies from a double tap
+  s4 not: 'Reply sent.' when the server refused
+  s4 not: The typed text lost on a failure
+  s5 see: The card under 'Done' with 'Marked as done by <name>, <when>. If the member writes again, it moves back to Waiting for a reply.'
+  s5 not: The conversation deleted
+  s5 not: The member told it was closed in rude words
+J-F-panel-522-02 | type 2 | owner | Other entry: More menu row 'Member questions' ('Workout questions members send from the app'); a member asked 'any trainer or the owner'
+  s1 see: Title 'Member questions'
+  s1 see: 'Members ask from the MettleUp app. Your reply shows in their app, with a notification on their phone.'
+  s1 see: 'Waiting for your reply (1)'
+  s1 not: The row missing for the owner when the server has questions
+  s1 not: 'Only trainers and the owner can see questions…' shown to the owner
+  s2 see: Member name (link), pill 'To any trainer or the owner' (or 'To <trainer>'), 'Today, 5:42 pm', the question
+  s2 not: A time in a zone other than India
+  s2 not: A question the member took back shown as open
+  s3 see: Hint 'Short and clear. The member cannot reply back; they can ask a new question. <n> of 1000 letters'
+  s3 see: 'Sending…', then the card under 'Answered and closed' with '<name> replied · Today, …'
+  s3 see: The count in the menu goes down
+  s3 not: A second answer to the same question
+  s3 not: The reply box still open after answering
+  s4 see: The member's page
+  s4 not: A page of a different member
+  s4 not: A dead link for a member who left
+J-F-panel-522-03 | type 3 | owner | Member messages page
+  s1 see: 'Send reply' greyed
+  s1 not: An empty reply sent
+  s2 see: 'This conversation is full. The member can send a new message.'
+  s2 see: No reply box; 'Mark as done' still there
+  s2 not: A reply accepted and then dropped
+  s3 see: A red line at the top with the reason; the list reloads without that card
+  s3 not: 'Reply sent.'
+  s3 not: A reply delivered to a person no longer in the gym
+  s4 see: 'Member messages need your gym online' and 'Put your gym online first (Settings → Sign-in & data).'
+  s4 see: 'Member messages are not switched on for your gym yet.'
+  s4 see: A red line and 'Try again'
+  s4 not: A blank page
+  s4 not: A raw error text
+J-F-panel-522-04 | type 6 | owner | A conversation the owner replied to and marked as done
+  s1 see: 'Marked as done by <name>, <when>. If the member writes again, it moves back to Waiting for a reply.'
+  s1 see: Button 'Mark as not done'
+  s1 not: The reply box gone for a done conversation that is not full
+  s2 see: The card moves back to 'Replied' (or 'Waiting for a reply' if the member wrote last)
+  s2 not: The done line still shown
+  s2 not: The count in the menu wrong
+  s3 see: First 'The member has read your reply.'
+  s3 see: After the new message: the card back under 'Waiting for a reply' and the menu count up by one (the page refreshes itself when the count changes)
+  s3 not: A new message hidden under 'Done'
+  s3 not: The page jumping or losing a half-typed reply on refresh
+  s4 see: The same list, up to date
+  s4 not: An error line left over from before
+  s5 see: The conversation is gone
+  s5 see: 'Messages are deleted 180 days after the last one in a conversation, or as soon as the member leaves the gym.'
+  s5 not: Old conversations kept longer than promised
+J-F-panel-522-05 | type 12 | owner | A member sent feedback without their name, and another a complaint to the owner only
+  s1 see: Name 'A member (name hidden)' with no link
+  s1 see: 'The member sent this without their name. You can still reply here.'
+  s1 see: No mobile number
+  s1 not: The member's name, mobile or a link to their page
+  s1 not: A way to find who it was from the time or the reply
+  s2 see: 'Reply sent.'
+  s2 not: The reply shown to any other member
+  s3 see: The complaint with 'To: Gym owner'
+  s3 not: This complaint visible to front desk or trainers
+  s4 see: 'Messages are deleted 180 days after the last one in a conversation, or as soon as the member leaves the gym.'
+  s4 not: Messages of a member who left still listed
+J-F-panel-522-06 | type 1 | staff | Front desk signed in (no Trainer tick); a member sent feedback and a question to 'Gym admin'
+  s1 see: Title 'Member messages'
+  s1 see: 'Messages a member sent only to the owner or to a trainer are not shown here. Complaints show here only when the member picked "Gym admin".'
+  s1 see: Chips All / Questions / Feedback (Complaints only when one is visible)
+  s1 not: Messages sent only to the owner
+  s1 not: The Complaints chip with nothing behind it
+  s2 see: Name, pill 'Question' or 'Feedback', the text
+  s2 not: A message marked 'To: Gym owner' or 'To: <trainer>'
+  s3 see: 'Sending…', 'Reply sent.'
+  s3 see: The reply shown with '<desk person> replied'
+  s3 not: The reply shown as from the owner
+  s3 not: Two replies
+  s4 see: The card under 'Done' with 'Marked as done by <desk person>, …'
+  s4 not: The owner unable to see or reopen it
+J-F-panel-522-07 | type 2 | staff | Other entry: the Member questions page, opened by a front-desk person without the Trainer tick (by link; the menu row is hidden)
+  s1 see: 'Only trainers and the owner can see questions. Ask the owner to tick you as a trainer.'
+  s1 not: Any question text
+  s1 not: A reply box
+  s2 see: No 'Member questions' row
+  s2 not: A count of waiting questions shown to the front desk
+J-F-panel-522-08 | type 3 | staff | Front desk on Member messages
+  s1 see: 'Send reply' greyed
+  s1 not: An empty reply sent
+  s2 see: The list on 'All'
+  s2 not: An empty page with no chips
+  s2 not: Owner-only complaints
+  s3 see: A red line at the top; the list reloads without it
+  s3 not: 'Reply sent.'
+  s4 see: A red line and 'Try again'
+  s4 not: A blank page
+J-F-panel-522-09 | type 6 | staff | Front desk; a conversation the owner already replied to
+  s1 see: The card under 'Replied' with the owner's line '<owner> replied'
+  s1 see: 'The member has not opened your reply yet.' or 'The member has read your reply.'
+  s1 not: The owner's reply hidden from the desk on a 'Gym admin' message
+  s2 see: The card moves to 'Done', then back
+  s2 not: The busy button usable twice at once
+  s2 not: The other card's buttons frozen
+  s3 see: The card moves to 'Waiting for a reply' when the count changes
+  s3 not: A half-typed reply in another card wiped by the refresh
+J-F-panel-522-10 | type 12 | staff | Front desk; members have sent: a complaint to the owner, feedback without a name, a question to one trainer
+  s1 see: Only messages for 'Gym admin' plus older feedback and questions
+  s1 see: The staff note about what is not shown
+  s1 not: A complaint the member did not send to 'Gym admin'
+  s1 not: A question sent to one trainer or to the owner only
+  s2 see: 'A member (name hidden)' and 'The member sent this without their name. You can still reply here.'
+  s2 not: Name, mobile or member link
+  s3 see: 'Messages are deleted 180 days after the last one in a conversation, or as soon as the member leaves the gym.'
+  s3 not: Messages from members who have left
+J-F-panel-522-11 | type 1 | trainer | Staff person with the Trainer tick signed in; a member asked this trainer a workout question; More menu row 'Member questions' with a count
+  s1 see: Title 'Member questions'
+  s1 see: 'Waiting for your reply (1)'
+  s1 not: Questions sent only to another trainer or only to the owner
+  s1 not: The not-allowed message for a ticked trainer
+  s2 see: Member name, pill 'To you', when it was asked, the question
+  s2 not: 'To <own name>' in place of 'To you'
+  s2 not: Member's payment or plan details on this card
+  s3 see: Hint 'Short and clear. The member cannot reply back; they can ask a new question. <n> of 1000 letters'
+  s3 not: More than 1000 letters accepted
+  s4 see: 'Sending…'
+  s4 see: The card under 'Answered and closed' with '<trainer> replied · Today, …'
+  s4 see: The menu count down by one
+  s4 not: Two answers
+  s4 not: The member not told
+  s4 not: The question still open for other trainers
+J-F-panel-522-12 | type 2 | trainer | Other entry: the Member messages page as a trainer
+  s1 see: 'Feedback and complaints never go to trainers, so they are not shown here. Neither are questions a member sent only to the owner or another trainer.'
+  s1 see: Chips All / Questions only
+  s1 not: A Feedback or Complaints chip
+  s1 not: Any feedback or complaint card
+  s2 see: 'Reply sent.'
+  s2 see: The reply with '<trainer> replied'
+  s2 not: A reply possible on a message the trainer may not see
+  s3 see: The card under 'Done'
+  s3 not: The member's message deleted
+J-F-panel-522-13 | type 3 | trainer | Trainer on Member questions
+  s1 see: A red line with the reason; the list reloads and the card shows the other trainer's answer under 'Answered and closed'
+  s1 not: A second answer saved over the first
+  s1 not: The typed reply sent to the member
+  s2 see: 'The member took this question back.'
+  s2 see: 'Closed with no reply after 14 days.'
+  s2 see: No reply box on either
+  s2 not: A reply sent to a closed question
+  s3 see: 'Only trainers and the owner can see questions. Ask the owner to tick you as a trainer.'
+  s3 not: Questions still readable after the tick is gone
+  s4 see: 'Questions need your gym online' and 'Put your gym online first (Settings → Sign-in & data).'
+  s4 not: A blank page
+J-F-panel-522-14 | type 6 | trainer | Trainer; questions in every state
+  s1 see: 'No questions yet. Members find "Ask about your workout" on the Gym tab of their app.'
+  s1 not: An error or a zero that looks like a fault
+  s2 see: 'Waiting for your reply (1)' and the card
+  s2 not: The new question missing until sign-out
+  s3 see: 'Waiting for your reply (0)' with 'No questions are waiting.'
+  s3 see: The card under 'Answered and closed'
+  s3 not: A way to edit or take back the answer that the member is not told about
+  s3 not: The open count going below zero
+  s4 see: Pill 'To <name> (no longer a trainer)'
+  s4 not: The question lost or stuck with nobody able to answer
+J-F-panel-522-15 | type 12 | trainer | Trainer; members have sent feedback, a complaint, a question to another trainer and a question to this trainer
+  s1 see: Only questions this trainer may read
+  s1 see: The trainer note
+  s1 not: Feedback, even without a name
+  s1 not: A complaint
+  s1 not: A question sent only to the owner or another trainer
+  s2 see: Questions 'To you' and 'To any trainer or the owner'
+  s2 not: Questions 'To <other trainer>' (only the person picked sees them)
+  s3 see: Their questions and messages are gone
+  s3 not: A left member's question still readable

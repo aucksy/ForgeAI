@@ -1,0 +1,10 @@
+# L14-panel-brand-shell: 14 x panel / panel/brand-shell. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L14.1 | 14 | How a gym is set up, moved (data import), helped (support window), billed, and offboarded
+L14.2 | 14 | what the owner (you) does each day
+L14.3 | 14 | help articles match the screens
+L14.4 | 14 | every "contact us" path reaches someone
+L14.5 | 14 | Also: keys, accounts and the one-person risk: every account, domain, signing key and token: who holds it, when it expires, what breaks if the laptop is lost, is there a written way back in
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1105 | live | Branding: gym logo and colours for the member app, logo upload, remove logo background, phone and shortcut preview | apps/dashboard/src/crm/brand/BrandingScreen.tsx:41
+F-panel-3101 | live | Branding: suggest a gym colour from the uploaded logo | apps/dashboard/src/crm/brand/brandLogic.ts:141

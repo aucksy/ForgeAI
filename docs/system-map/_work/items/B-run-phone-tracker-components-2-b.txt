@@ -1,0 +1,70 @@
+# B-run-phone-tracker-components-2-b: gap-8 x phone / phone/tracker-components-2. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H8.1 | gap-8 | By script first: docs/system-map/_tools/silent.mjs lists every catch block with file:line and three flags: logs? (calls a log, report or crash function inside), tells_user? (sets an error state, toast or alert inside), rethrows?
+H8.2 | gap-8 | Output _sources/silent.csv
+H8.3 | gap-8 | Helpers read ONLY the rows where all three are "no", plus every fallback value (?? null, || [], ?? 0) that sits in a file named in a journey that writes money, messages, alerts, sign-in or sync
+H8.4 | gap-8 | Everything else is counted in the grid as "filtered by script, N rows, not read" so the gap is visible
+H8.5 | gap-8 | For each: if this path runs, does the user (or owner, or HQ) learn anything?
+H8.6 | gap-8 | A silent path that hides a failed promise = finding
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-800 | live | Pick a rest length (per exercise or the default, up to 10:00 or custom) | apps/mobile/src/tracker/components/RestPickerSheet.tsx:89
+F-phone-801 | live | Rest timer bar in a workout (countdown, -15s, +15s, Skip, alerts-off and on-time alert prompts) | apps/mobile/src/tracker/components/RestTimerBar.tsx:157
+F-phone-802 | live | Log a set (weight, reps, time or distance, tick it done, swipe to delete, start a set timer, fix a typo, see why a targe | apps/mobile/src/tracker/components/SetRow.tsx:132
+F-phone-803 | live | Change a set type (normal, warm-up, drop set, failure) or remove the set | apps/mobile/src/tracker/components/SetTypeSheet.tsx:34
+F-phone-804 | behind switch | Rate how hard a set felt (RPE, one tap) | apps/mobile/src/tracker/components/RpeSheet.tsx:18
+F-phone-805 | live | Superset two exercises (pair, join or leave) | apps/mobile/src/tracker/components/SupersetSheet.tsx:18
+F-phone-806 | live | Swap an exercise for one that fits | apps/mobile/src/tracker/components/SwapSheet.tsx:13
+F-phone-807 | live | Share as a picture (size, background, gym logo and name shown or hidden) | apps/mobile/src/tracker/components/ShareSheet.tsx:85
+F-phone-808 | live | Share a workout, month or year as text | apps/mobile/src/tracker/components/ShareTextRow.tsx:27
+F-phone-809 | live | Share a routine or a folder (as text or as a file) | apps/mobile/src/tracker/components/ShareRoutineSheet.tsx:14
+F-phone-810 | live | Bring routines in after a Hevy or Strong import, or from a Hevy share link (step by step) | apps/mobile/src/tracker/components/RoutineImportSteps.tsx:135
+F-phone-811 | live | Coming from Hevy or Strong? card (welcome screen and empty Home) | apps/mobile/src/tracker/components/SwitcherCard.tsx:24
+F-phone-812 | live | Workout recap after finishing (totals, new records, muscle split, sets) | apps/mobile/src/tracker/components/SessionSummary.tsx:26
+F-phone-813 | live | Saved workout page (stats, note, muscle split, every set, records) | apps/mobile/src/tracker/components/WorkoutDetail.tsx:32
+F-phone-814 | live | Workout history list (one card per saved workout) | apps/mobile/src/tracker/components/WorkoutCard.tsx:23
+F-phone-815 | live | Lighter-day line on the finish screen (short sleep last night, or a protein tip) | apps/mobile/src/tracker/components/ShortDayLine.tsx:18
+F-phone-816 | live | Strength level on an exercise (level in words, who you are compared with) | apps/mobile/src/tracker/components/StrengthLevelLine.tsx:44
+F-phone-817 | live | Bottom tab bar (Workout, Gym, Profile; unread count on Gym; new dots) | apps/mobile/src/tracker/components/TrackerTabBar.tsx:252
+F-phone-818 | live | Demo data strip with Remove, above the tabs while demo data is loaded | apps/mobile/src/tracker/components/TrackerTabBar.tsx:195
+F-phone-819 | live | Watch your trainer (YouTube link a gym trainer gave an exercise) | apps/mobile/src/tracker/components/TrainerVideoLink.tsx:18
+F-phone-820 | live | Up next card on the Workout tab (the one answer for today and its buttons) | apps/mobile/src/tracker/components/UpNextCard.tsx:20
+F-phone-821 | live | Install MettleUp on your watch (one-time card at workout start) | apps/mobile/src/tracker/components/WatchStartCard.tsx:34
+F-phone-822 | live | Minimised workout bar above the tabs (elapsed time or rest countdown, tap to return) | apps/mobile/src/tracker/components/WorkoutMiniBar.tsx:29
+F-phone-823 | live | Workout photos (up to 4, camera or gallery, full screen with pinch to zoom, remove) | apps/mobile/src/tracker/components/WorkoutPhotos.tsx:48
+F-phone-824 | live | Settings: weekly workout goal (off, or 1 to 7 a week) | apps/mobile/src/tracker/components/WorkoutPrefsCard.tsx:133
+F-phone-825 | live | Settings: rest timer and sounds (default rest, workout sounds, rest-over sound, ring through Do Not Disturb on Android,  | apps/mobile/src/tracker/components/WorkoutPrefsCard.tsx:175
+F-phone-826 | live | Settings: open MettleUp on my watch when a workout starts | apps/mobile/src/tracker/components/WorkoutPrefsCard.tsx:159
+F-phone-827 | live | Settings: how the app picks your next weight (weight step, reps to aim for, easy weeks) | apps/mobile/src/tracker/components/WorkoutPrefsCard.tsx:300
+F-phone-828 | live | Settings: last time's numbers (where Previous, the Target and notes come from) | apps/mobile/src/tracker/components/WorkoutPrefsCard.tsx:408
+F-phone-829 | live | Settings: rate how hard each set felt, and AI coach notes | apps/mobile/src/tracker/components/WorkoutPrefsCard.tsx:447
+F-phone-830 | live | Settings: muscle tips on Up next, and bring back muscles you asked to skip | apps/mobile/src/tracker/components/WorkoutPrefsCard.tsx:476
+F-phone-831 | live | Keep an open workout alive across the app (restore on launch, lock-screen card, Done on the rest card) and open the righ | apps/mobile/src/tracker/components/WorkoutPresenceHost.tsx:26
+F-phone-832 | live | Routines and folders on the Workout tab (start empty workout, new routine, find a plan, new folder, rename, move, copy,  | apps/mobile/src/tracker/components/WorkoutRoutines.tsx:218
+F-phone-833 | live | Easy weeks for a plan (every 6 weeks, take one now, train normally this week) | apps/mobile/src/tracker/components/WorkoutRoutines.tsx:658
+F-phone-834 | live | New or edit your own exercise: Details rows (pick one choice per row, pick muscles) | apps/mobile/src/tracker/components/exerciseForm/DetailRows.tsx:115
+F-phone-835 | live | Add your own photo or video to an exercise (gallery, photo, video, change, remove) | apps/mobile/src/tracker/components/exerciseForm/MediaPicker.tsx:161
+F-phone-836 | live | Badges row on the Profile (earned count, newest marks, opens the shelf) | apps/mobile/src/tracker/components/profile/BadgeShelf.tsx:42
+F-phone-837 | live | Profile workouts feed (card per workout with photo or letter, stats, photos; menu: save as routine, repeat, edit, share, | apps/mobile/src/tracker/components/profile/FeedCard.tsx:59
+F-phone-838 | live | Profile history chart (duration, kg lifted, reps over time; tap a point to see those workouts) and the Today goal card | apps/mobile/src/tracker/components/profile/HistoryChartCard.tsx:61
+## SILENT CATCH ROWS TO READ (kind,file,line,logs,tells_user,rethrows,text)
+catch,apps/mobile/src/tracker/components/RoutineImportSteps.tsx,193,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/components/RoutineImportSteps.tsx,257,no,no,no,(() => ({ followingName: null  updatingName: null }))
+catch,apps/mobile/src/tracker/components/RoutineImportSteps.tsx,259,no,no,no,(() => null)
+catch,apps/mobile/src/tracker/components/RoutineImportSteps.tsx,265,no,no,no,(() => [])
+catch,apps/mobile/src/tracker/components/RoutineImportSteps.tsx,282,no,no,no,(() => [])
+catch,apps/mobile/src/tracker/components/RoutineImportSteps.tsx,285,no,no,no,(() => [] as NameSuggestion[])
+catch,apps/mobile/src/tracker/components/SetRow.tsx,288,no,no,no,(() => false)
+catch,apps/mobile/src/tracker/components/ShareRoutineSheet.tsx,35,no,no,no,(fail)
+catch,apps/mobile/src/tracker/components/ShareRoutineSheet.tsx,47,no,no,no,(fail)
+catch,apps/mobile/src/tracker/components/ShareSheet.tsx,185,no,no,no,{ fail(e); }
+catch,apps/mobile/src/tracker/components/ShareSheet.tsx,194,no,no,no,{ // toDataURL itself threw (the drawing was not ready): say so instead of spinning. if (s
+catch,apps/mobile/src/tracker/components/ShareTextRow.tsx,22,no,no,no,{ await tell( Couldn't share it as text   'Please try again.'); }
+catch,apps/mobile/src/tracker/components/WorkoutPresenceHost.tsx,31,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/components/WorkoutPresenceHost.tsx,45,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/components/WorkoutPresenceHost.tsx,80,no,no,no,(() => undefined)
+catch,apps/mobile/src/tracker/components/WorkoutRoutines.tsx,334,no,no,no,{ void tell('Could not create routine'  'Please try again.'); }
+catch,apps/mobile/src/tracker/components/WorkoutRoutines.tsx,456,no,no,no,(() => null)
+## FALLBACK ROWS TO READ (files that write money, messages, alerts, sign-in or sync)
+(none)
+## FILTERED BY SCRIPT
+61 other rows of _sources/silent.csv in this area: not read (write this number in the H8 evidence)

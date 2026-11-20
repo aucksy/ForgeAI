@@ -1,0 +1,752 @@
+# A8-phone-tracker-components-1-2: coverage of 76 Tier 1 journeys (16 features, from A5-phone-tracker-components-1-3, A5-phone-tracker-components-1-4). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-phone-726 | apps/mobile/qa/sub-uat-r576-routine.yaml | maestro | 59 lines | asserts 2 journey phrase(s)
+F-phone-726 | apps/mobile/qa/uat-rel-f194-a-history.yaml | maestro | 139 lines | asserts 2 journey phrase(s)
+F-phone-726 | apps/mobile/qa/uat-rel-r366-reps.yaml | maestro | 97 lines | asserts 2 journey phrase(s)
+F-phone-726 | apps/mobile/qa/uat-rel-r439-a-history.yaml | maestro | 166 lines | asserts 2 journey phrase(s)
+F-phone-726 | apps/mobile/qa/uat-rel-r454-a-history.yaml | maestro | 290 lines | asserts 2 journey phrase(s)
+F-phone-726 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-phone-726 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-phone-726 | apps/dashboard/test/crm/brand.test.ts | unit | 145 lines | asserts 1 journey phrase(s)
+F-phone-726 | apps/dashboard/test/crm/messages.test.ts | unit | 189 lines | asserts 1 journey phrase(s)
+F-phone-726 | apps/dashboard/test/crm/pin.test.ts | unit | 159 lines | asserts 1 journey phrase(s)
+F-phone-726 | apps/mobile/qa/uat-f3.yaml | maestro | 87 lines | asserts 1 journey phrase(s)
+F-phone-726 | apps/mobile/test/db/auditC3RoutinesReal.test.ts | unit | 201 lines | asserts 1 journey phrase(s)
+F-phone-729 | apps/mobile/qa/uat-f3.yaml | maestro | 87 lines | asserts 3 journey phrase(s)
+F-phone-729 | apps/mobile/qa/uat-f4.yaml | maestro | 93 lines | asserts 3 journey phrase(s)
+F-phone-729 | apps/mobile/test/tracker/homeStart.test.ts | unit | 124 lines | asserts 3 journey phrase(s)
+F-phone-729 | apps/mobile/test/tracker/phase2PacketE.test.ts | unit | 288 lines | asserts 3 journey phrase(s)
+F-phone-729 | apps/dashboard/e2e/trial.spec.mjs | e2e | 72 lines | asserts 2 journey phrase(s)
+F-phone-729 | apps/mobile/qa/p2-pause-a.yaml | maestro | 64 lines | asserts 2 journey phrase(s)
+F-phone-729 | apps/mobile/qa/phase1-b.yaml | maestro | 171 lines | asserts 2 journey phrase(s)
+F-phone-729 | apps/mobile/qa/phase7-bigtext.yaml | maestro | 326 lines | asserts 2 journey phrase(s)
+F-phone-729 | apps/mobile/qa/sub-workout-fresh.yaml | maestro | 51 lines | asserts 2 journey phrase(s)
+F-phone-729 | apps/mobile/qa/uat-a2.yaml | maestro | 136 lines | asserts 2 journey phrase(s)
+F-phone-729 | apps/mobile/qa/uat-f5.yaml | maestro | 121 lines | asserts 2 journey phrase(s)
+F-phone-729 | apps/mobile/qa/uat-rel-r358-c-real.yaml | maestro | 80 lines | asserts 2 journey phrase(s)
+F-phone-730 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-phone-730 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 5 journey phrase(s)
+F-phone-730 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-phone-730 | apps/mobile/test/tracker/v0290.test.ts | unit | 240 lines | imports the code
+F-phone-730 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 2 journey phrase(s)
+F-phone-730 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 2 journey phrase(s)
+F-phone-730 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 2 journey phrase(s)
+F-phone-730 | apps/mobile/test/db/workoutPhotosReal.test.ts | unit | 327 lines | asserts 2 journey phrase(s)
+F-phone-730 | apps/mobile/test/onboarding/eraseLeftBehind.test.ts | unit | 59 lines | asserts 2 journey phrase(s)
+F-phone-730 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 2 journey phrase(s)
+F-phone-730 | apps/mobile/test/onboarding/startup.test.ts | unit | 185 lines | asserts 2 journey phrase(s)
+F-phone-730 | apps/mobile/test/tracker/auditC9Words.test.ts | unit | 51 lines | asserts 2 journey phrase(s)
+F-phone-705 | apps/mobile/test/tracker/vsLastTime.test.ts | unit | 179 lines | asserts 18 journey phrase(s)
+F-phone-705 | apps/mobile/test/tracker/r147KgHero.test.ts | unit | 137 lines | asserts 13 journey phrase(s)
+F-phone-705 | apps/mobile/test/tracker/r366RepsLastTime.test.ts | unit | 130 lines | asserts 9 journey phrase(s)
+F-phone-705 | apps/mobile/test/tracker/r499KgWords.test.ts | unit | 101 lines | asserts 9 journey phrase(s)
+F-phone-705 | apps/mobile/test/tracker/r499NextGoal.test.ts | unit | 329 lines | asserts 9 journey phrase(s)
+F-phone-705 | apps/mobile/test/tracker/r454RepFloor.test.ts | unit | 533 lines | asserts 8 journey phrase(s)
+F-phone-705 | apps/mobile/test/tracker/r498GreenLine.test.ts | unit | 132 lines | asserts 8 journey phrase(s)
+F-phone-705 | apps/mobile/test/tracker/lib/kgTarget.test.ts | unit | 197 lines | asserts 7 journey phrase(s)
+F-phone-705 | apps/mobile/test/tracker/r454OneGreenRule.test.ts | unit | 148 lines | asserts 7 journey phrase(s)
+F-phone-705 | apps/mobile/test/tracker/r60RepsToBeat.test.ts | unit | 103 lines | asserts 6 journey phrase(s)
+F-phone-705 | apps/mobile/test/tracker/workoutCompare.test.ts | unit | 125 lines | imports the code, asserts 3 journey phrase(s)
+F-phone-705 | apps/mobile/test/tracker/lib/todayGoal.test.ts | unit | 130 lines | asserts 5 journey phrase(s)
+F-phone-732 | apps/mobile/qa/audit3-n.yaml | maestro | 301 lines | asserts 5 journey phrase(s)
+F-phone-732 | apps/mobile/qa/uat-v.yaml | maestro | 265 lines | asserts 5 journey phrase(s)
+F-phone-732 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 4 journey phrase(s)
+F-phone-732 | apps/mobile/qa/uat-h.yaml | maestro | 430 lines | asserts 3 journey phrase(s)
+F-phone-732 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 3 journey phrase(s)
+F-phone-732 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 3 journey phrase(s)
+F-phone-732 | apps/dashboard/e2e/terms.spec.mjs | e2e | 149 lines | asserts 2 journey phrase(s)
+F-phone-732 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | asserts 2 journey phrase(s)
+F-phone-732 | apps/dashboard/test/crm/pricesOneSource.test.ts | unit | 187 lines | asserts 2 journey phrase(s)
+F-phone-732 | apps/mobile/qa/p2-pause-a.yaml | maestro | 64 lines | asserts 2 journey phrase(s)
+F-phone-732 | apps/mobile/qa/phase7-bigtext.yaml | maestro | 326 lines | asserts 2 journey phrase(s)
+F-phone-732 | apps/mobile/qa/sub-workout-fresh.yaml | maestro | 51 lines | asserts 2 journey phrase(s)
+F-phone-733 | apps/mobile/test/tracker/cardioMachine.test.ts | unit | 202 lines | asserts 2 journey phrase(s)
+F-phone-733 | supabase/tests/0040_gym_mate_profiles.sql | db | 168 lines | asserts 1 journey phrase(s)
+F-phone-733 | supabase/tests/0085_friend_known_number.sql | db | 138 lines | asserts 1 journey phrase(s)
+F-phone-734 | apps/mobile/test/tracker/machineInUse.test.ts | unit | 257 lines | imports the code, file name, asserts 5 journey phrase(s)
+F-phone-734 | apps/mobile/qa/uat-h.yaml | maestro | 430 lines | asserts 5 journey phrase(s)
+F-phone-734 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/NextSetTextTest.kt | watch | 47 lines | asserts 4 journey phrase(s)
+F-phone-734 | apps/mobile/qa/uat-rel-15-inuse-journey.yaml | maestro | 521 lines | asserts 4 journey phrase(s)
+F-phone-734 | apps/mobile/test/ai/unitsCoach.test.ts | unit | 62 lines | asserts 4 journey phrase(s)
+F-phone-734 | apps/mobile/test/tracker/r320Widgets.test.ts | unit | 119 lines | asserts 4 journey phrase(s)
+F-phone-734 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 3 journey phrase(s)
+F-phone-734 | apps/mobile/qa/uat-d.yaml | maestro | 342 lines | asserts 3 journey phrase(s)
+F-phone-734 | apps/mobile/test/theme/popupBars.test.ts | unit | 49 lines | imports the code
+F-phone-734 | supabase/tests/security.sql | db | 250 lines | asserts 3 journey phrase(s)
+F-phone-734 | apps/mobile/qa/uat-g.yaml | maestro | 275 lines | asserts 2 journey phrase(s)
+F-phone-734 | apps/mobile/qa/uat-rel-r355-a-last-set.yaml | maestro | 289 lines | asserts 2 journey phrase(s)
+F-phone-721 | apps/mobile/qa/sub-uat-f194-choose.yaml | maestro | 31 lines | asserts 7 journey phrase(s)
+F-phone-721 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-phone-721 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 5 journey phrase(s)
+F-phone-721 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 4 journey phrase(s)
+F-phone-721 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 4 journey phrase(s)
+F-phone-721 | apps/dashboard/e2e/r608-uat.spec.mjs | e2e | 208 lines | asserts 4 journey phrase(s)
+F-phone-721 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 4 journey phrase(s)
+F-phone-721 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-phone-721 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 3 journey phrase(s)
+F-phone-721 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 3 journey phrase(s)
+F-phone-721 | apps/dashboard/test/crm/r448.test.ts | unit | 76 lines | asserts 3 journey phrase(s)
+F-phone-721 | apps/dashboard/test/crm/webPush.test.ts | unit | 317 lines | asserts 3 journey phrase(s)
+F-phone-735 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 1 journey phrase(s)
+F-phone-735 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-phone-735 | apps/dashboard/test/crm/expenses.test.ts | unit | 128 lines | asserts 1 journey phrase(s)
+F-phone-735 | apps/mobile/qa/phase3-d.yaml | maestro | 763 lines | asserts 1 journey phrase(s)
+F-phone-735 | apps/mobile/test/db/historyFeed.test.ts | unit | 214 lines | asserts 1 journey phrase(s)
+F-phone-735 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-phone-735 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-phone-735 | apps/mobile/test/tracker/r3Screens.test.ts | unit | 173 lines | asserts 1 journey phrase(s)
+F-phone-736 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-736 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-phone-736 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-phone-736 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-phone-736 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-phone-736 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-phone-736 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-phone-736 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-phone-736 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 3 journey phrase(s)
+F-phone-736 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-736 | apps/mobile/test/tracker/switcherLine.test.ts | unit | 38 lines | asserts 3 journey phrase(s)
+F-phone-736 | supabase/tests/0039_gym_busy.sql | db | 167 lines | asserts 3 journey phrase(s)
+F-phone-727 | apps/mobile/test/tracker/workoutTabR4.test.ts | unit | 280 lines | asserts 6 journey phrase(s)
+F-phone-727 | apps/mobile/test/tracker/freshEyes5Nov.test.ts | unit | 36 lines | asserts 3 journey phrase(s)
+F-phone-727 | apps/mobile/qa/redesign-r.yaml | maestro | 1131 lines | asserts 2 journey phrase(s)
+F-phone-727 | apps/mobile/qa/store-a.yaml | maestro | 219 lines | asserts 2 journey phrase(s)
+F-phone-727 | apps/mobile/test/tracker/finishFlow.test.ts | unit | 268 lines | asserts 2 journey phrase(s)
+F-phone-727 | apps/mobile/test/tracker/historyExport.test.ts | unit | 414 lines | asserts 2 journey phrase(s)
+F-phone-727 | apps/mobile/test/tracker/historyScope.test.ts | unit | 100 lines | asserts 2 journey phrase(s)
+F-phone-727 | apps/mobile/test/tracker/previousSource.test.ts | unit | 147 lines | asserts 2 journey phrase(s)
+F-phone-727 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-phone-727 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-phone-727 | apps/mobile/qa/phase9-p.yaml | maestro | 364 lines | asserts 1 journey phrase(s)
+F-phone-727 | apps/mobile/qa/real-workout-w4.yaml | maestro | 228 lines | asserts 1 journey phrase(s)
+F-phone-720 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | asserts 3 journey phrase(s)
+F-phone-720 | apps/mobile/test/tracker/phase3Review.test.ts | unit | 235 lines | asserts 3 journey phrase(s)
+F-phone-720 | apps/mobile/test/tracker/plateSetup.test.ts | unit | 272 lines | asserts 3 journey phrase(s)
+F-phone-720 | supabase/tests/0043_member_photos.sql | db | 135 lines | asserts 3 journey phrase(s)
+F-phone-720 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 2 journey phrase(s)
+F-phone-720 | apps/mobile/qa/uat-r.yaml | maestro | 368 lines | asserts 2 journey phrase(s)
+F-phone-720 | apps/mobile/qa/uat-rel-r344-c-states.yaml | maestro | 160 lines | asserts 2 journey phrase(s)
+F-phone-720 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-phone-720 | apps/mobile/test/store/restoreImpact.test.ts | unit | 24 lines | asserts 2 journey phrase(s)
+F-phone-720 | apps/mobile/test/tracker/profilePhoto.test.ts | unit | 57 lines | asserts 2 journey phrase(s)
+F-phone-720 | apps/mobile/test/tracker/workoutPhase1.test.ts | unit | 271 lines | asserts 2 journey phrase(s)
+F-phone-720 | supabase/tests/0098_alerts_done_and_read.sql | db | 375 lines | asserts 2 journey phrase(s)
+F-phone-722 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-phone-722 | apps/dashboard/e2e/r608-uat.spec.mjs | e2e | 208 lines | asserts 4 journey phrase(s)
+F-phone-722 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 4 journey phrase(s)
+F-phone-722 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 4 journey phrase(s)
+F-phone-722 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-phone-722 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-phone-722 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-phone-722 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-phone-722 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-phone-722 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-phone-722 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 3 journey phrase(s)
+F-phone-722 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 3 journey phrase(s)
+F-phone-704 | apps/mobile/qa/uat-k4.yaml | maestro | 33 lines | asserts 3 journey phrase(s)
+F-phone-704 | apps/mobile/test/tracker/engine/readiness.test.ts | unit | 133 lines | asserts 3 journey phrase(s)
+F-phone-704 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-phone-704 | apps/mobile/qa/uat-rel-f59-ready.yaml | maestro | 164 lines | asserts 1 journey phrase(s)
+F-phone-704 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-phone-704 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-phone-706 | apps/mobile/test/ai/unitsCoach.test.ts | unit | 62 lines | asserts 3 journey phrase(s)
+F-phone-706 | apps/mobile/test/tracker/machineInUse.test.ts | unit | 257 lines | asserts 3 journey phrase(s)
+F-phone-706 | supabase/tests/security.sql | db | 250 lines | asserts 3 journey phrase(s)
+F-phone-706 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/NextSetTextTest.kt | watch | 47 lines | asserts 2 journey phrase(s)
+F-phone-706 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-phone-706 | apps/dashboard/test/crm/progressTrend.test.ts | unit | 245 lines | asserts 1 journey phrase(s)
+F-phone-706 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchNextExerciseTest.kt | watch | 74 lines | asserts 1 journey phrase(s)
+F-phone-706 | apps/mobile/qa/gate-anim.yaml | maestro | 82 lines | asserts 1 journey phrase(s)
+F-phone-706 | apps/mobile/qa/phase3-d.yaml | maestro | 763 lines | asserts 1 journey phrase(s)
+F-phone-706 | apps/mobile/qa/phase3-e.yaml | maestro | 341 lines | asserts 1 journey phrase(s)
+F-phone-706 | apps/mobile/qa/real-workout-w3.yaml | maestro | 282 lines | asserts 1 journey phrase(s)
+F-phone-706 | apps/mobile/qa/store-b.yaml | maestro | 134 lines | asserts 1 journey phrase(s)
+F-phone-737 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 2 journey phrase(s)
+F-phone-737 | apps/mobile/test/tracker/phase2RestTimer.test.ts | unit | 293 lines | asserts 2 journey phrase(s)
+F-phone-737 | apps/dashboard/e2e/bell-inbox-uat.spec.mjs | e2e | 401 lines | asserts 1 journey phrase(s)
+F-phone-737 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-phone-737 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-phone-737 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 1 journey phrase(s)
+F-phone-737 | apps/dashboard/e2e/whatsnew.spec.mjs | e2e | 122 lines | asserts 1 journey phrase(s)
+F-phone-737 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-phone-737 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-phone-737 | apps/dashboard/test/crm/installSteps.test.ts | unit | 43 lines | asserts 1 journey phrase(s)
+F-phone-737 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-phone-737 | apps/dashboard/test/crm/setupCards.test.ts | unit | 17 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-phone-726-01 | type 1 | member | Routines tab, member with two or more folders, one of them the followed plan
+  s1 see: Sheet titled 'Where should the routine go?'
+  s1 see: Line 'Your plan only changes if you pick it.'
+  s1 see: First row 'My routines' with 'Not in your plan' (and the routine count when the folder exists)
+  s1 not: The followed plan offered first
+  s1 not: A routine created before a folder is picked
+  s2 see: The sheet closes and the routine editor opens with a routine named 'New routine'
+  s2 not: The new routine placed in the followed plan
+  s2 not: Two routines made from one tap
+  s3 see: 'My routines' is open and shows the new routine; the plan has the same routines as before
+  s3 not: Up next or Today changed by this routine
+J-F-phone-726-02 | type 2 | member | A finished workout opened from the feed or history, its menu open
+  s1 see: Sheet titled 'Where should the routine go?' with the same rows: My routines first, other folders with their routine counts, the plan last
+  s1 not: A different order of rows than from New routine
+  s2 see: The sheet closes; the routine is saved into that folder
+  s2 not: The routine saved twice
+  s2 not: The routine saved into the plan
+J-F-phone-726-03 | type 3 | member | Routines tab, two or more folders
+  s1 see: The Routines tab as before
+  s1 not: A routine called 'New routine' made anyway
+  s1 not: A plan change
+  s2 see: A message 'Could not create routine' with 'Please try again.'
+  s2 not: The editor opening on a routine that was never saved
+  s2 not: No message at all
+J-F-phone-726-04 | type 6 | member | Routines tab, member follows a plan named e.g. 'PPL'
+  s1 see: Last row is the plan name with 'Your plan · Up next will include it' and a tick mark
+  s1 not: The plan row without saying it changes Up next
+  s2 see: The routine editor opens; back on Routines the plan shows one more routine
+  s2 not: The routine also added to My routines
+  s3 see: First row reads 'Other routines' with 'Not in your plan'
+  s3 not: A first row called 'My routines' that is really the followed plan
+J-F-phone-729-01 | type 1 | member | Workout open, a timed exercise (Plank) with a goal of 0:45 from last time, set 1 not done
+  s1 see: Sheet titled 'Plank · Set 1'
+  s1 see: Line 'Countdown from 0:45. The set saves itself at zero.'
+  s1 see: Buttons '−5 s', 'Stopwatch', '+5 s' and 'Start'
+  s1 not: The sheet opening with a clock already running
+  s2 see: The clock counts down; the main button reads 'Pause'; 'Stop and save' shows the time so far
+  s2 not: The goal buttons still shown while it runs
+  s3 see: Bell and buzz; the sheet closes; set 1 shows 0:45 and is ticked; the rest timer starts
+  s3 not: The set saved twice
+  s3 not: The set saved with a time other than the goal
+J-F-phone-729-02 | type 2 | member | Workout open, a timed exercise with no goal time on the set
+  s1 see: Line 'Stopwatch. Stop when you finish the set.'
+  s1 see: Main button 'Start'
+  s1 not: A countdown from zero that ends at once
+  s2 see: The sheet closes; the set shows 0:52 and is ticked
+  s2 not: The time rounded up to a goal
+  s2 not: The set left unticked
+  s3 see: The line changes to the stopwatch line and the goal buttons go away
+  s3 not: The old goal still used at save
+J-F-phone-729-03 | type 3 | member | Timer sheet open in countdown, not started
+  s1 see: The goal stops at 0:05
+  s1 not: A goal of 0:00 or a minus time
+  s2 see: 'Stop and save' is greyed and cannot be tapped before one second
+  s2 not: A set saved with 0 seconds
+  s3 see: Nothing opens; the button is disabled
+  s3 not: A second time written over the done set
+J-F-phone-729-04 | type 6 | member | Countdown running on a plank, phone on the floor
+  s1 see: Nothing happens; the clock keeps running
+  s1 not: The sheet closing and the time lost
+  s2 see: 'Stop the timer?' with 'Keep 0:42', 'Discard' and 'Keep going'; the clock still runs
+  s2 not: The clock stopping while it asks
+  s3 see: The sheet closes with nothing saved; reopened it shows a fresh clock and 'Start'
+  s3 not: The old time written to the set
+  s3 not: The old clock still counting
+  s4 see: Pause stops the clock; the main button reads 'Resume'; Resume carries on from the same time
+  s4 not: The clock jumping by the paused time
+J-F-phone-730-01 | type 1 | member | Settings, card 'Bring in your workouts from another app', member with a Hevy export .csv on the phone
+  s1 see: Card heading 'Bring in your workouts from another app'
+  s1 see: 'Which app are you moving from?' with Hevy ('Your workout file, or a link to a shared routine.') and Strong
+  s1 see: Then the screen 'Import from Hevy' with the three export steps
+  s1 not: The screen opening for Strong
+  s2 see: Button reads 'Reading…' then a preview: Workouts, Sets, Exercises, Date range
+  s2 not: A preview with counts that do not match the file
+  s2 not: Anything imported before the import button is tapped
+  s3 see: The chosen chip shows a tick; the line says 'Say “Yes” and its history joins MettleUp’s exercise.'
+  s3 not: Both chips ticked at once
+  s3 not: A name without a match shown with a Yes question
+  s4 see: 'Importing 5 / 40 workouts' then 'Your Hevy history is now in MettleUp.' with Workouts added, Sets logged, New exercises created
+  s4 see: Buttons 'Bring my routines in' and 'Not now'
+  s4 not: Workouts counted twice
+  s4 not: A success screen when the import rolled back
+J-F-phone-730-02 | type 2 | member | Import from Hevy screen, member has a shared Hevy folder link copied
+  s1 see: Screen 'Import routines' with a paste box and 'Read link' (greyed while empty)
+  s1 not: The link read before 'Read link' is tapped
+  s2 see: 'Reading your Hevy link…' and 'This takes a few seconds.' with a Cancel button
+  s2 not: A visible Hevy web page
+  s2 not: Hevy's app or another site opened
+  s3 see: 'We found 4 routines in “PPL”' and 'Copied exactly as saved in Hevy: warm-ups, sets, reps and rest.'
+  s3 not: Routines missing without a word (a part read says so and offers 'Try again' or 'Use these N')
+  s4 see: 'We add them to your exercises with the same name, so your Hevy history and these routines stay together.'
+  s4 see: 'Your plan only changes if you pick it.'
+  s4 see: 'Follow these as your plan?'
+  s4 not: The followed plan replaced without the member picking it
+J-F-phone-730-03 | type 2 | member | Settings import card, member has a Strong export .csv
+  s1 see: Screen 'Import from Strong'; a preview and a units question 'Kilograms and km' / 'Pounds and miles' with an example set
+  s1 not: Weights guessed as kg without asking
+  s2 see: The button reads 'Choose kg or lb first'
+  s2 not: An import that can start before kg or lb is chosen
+  s3 see: The result screen; a 100 lb set shows as 45.4 kg
+  s3 not: Pounds saved as kilograms
+J-F-phone-730-04 | type 3 | member | Import from Hevy screen
+  s1 see: 'This file isn’t a Hevy or Strong export. In Hevy: Settings → Export & Backup Data. In Strong: Settings → Export Strong Data.'
+  s1 not: A preview of a random file
+  s1 not: A crash
+  s2 see: 'No workouts were found in that file.'
+  s2 not: An import button for zero workouts
+  s3 see: 'That isn’t a Hevy share link. It looks like hevy.com/folder/… or hevy.com/routine/…'
+  s3 not: The page opened anyway
+  s4 see: A plain message that the link was not found, back on the paste box
+  s4 not: An endless 'Reading your Hevy link…' (the reader gives up after 35 s)
+J-F-phone-730-05 | type 6 | member | Member already imported the same Hevy file once, and also has own MettleUp workouts
+  s1 see: Row 'Already in MettleUp' with the count, and a note that the file is already here
+  s1 not: The same workouts offered as new
+  s2 see: 'Every workout in this file was already in MettleUp.' with 'Already imported (skipped)'
+  s2 not: Duplicate workouts in history
+  s3 see: Ask 'Delete 12 workouts first?' with a red 'Replace' button
+  s3 not: Workouts deleted without asking
+  s4 see: 'Undoing…' then the history exactly as before
+  s4 not: Imported workouts left behind
+  s4 not: Own workouts lost after undo
+J-F-phone-730-06 | type 12 | member | Settings import card
+  s1 see: 'Your file is read on your phone. Nothing is uploaded.'
+  s1 not: The file sent to a MettleUp server
+  s2 see: Only the Hevy page is opened, hidden, in a private browser that keeps no cache
+  s2 not: Hevy sign-in asked
+  s2 not: Another site loaded from the page
+  s3 see: Imported workouts sent to Health Connect only as the member's Health setting allows
+  s3 not: Imported workouts sent to Health Connect when the member chose not to send past workouts
+  s3 not: Imported workouts visible to the gym beyond what the member already shares
+J-F-phone-705-01 | type 1 | member | Member finishes a 'Push 1' workout, heavier than the previous Push 1 on 15 Oct
+  s1 see: Card with 'Kg lifted', the big number '1,925 kg', and in green '+45 kg more than previous'
+  s1 see: Line 'Previous: 1,880 kg in Push 1 on 15 Oct' with a chevron
+  s1 not: Warm-up sets counted in the kg
+  s1 not: Red text for any number
+  s2 see: The card opens: each exercise with its tag, green when up, grey when down, 'Not done this time' or 'Not in that workout' where it fits; the link reads 'Hide exercises'
+  s2 not: The words 'volume', 'PR' or 'session'
+  s2 not: An exercise listed twice
+J-F-phone-705-02 | type 2 | member | Workout-complete screen with a previous workout to compare
+  s1 see: That earlier workout opens, to see what was done then
+  s1 not: Another workout opened than the one named
+  s2 see: Label 'Reps done', big '120 reps', compared with the previous body-weight workout
+  s2 not: A '0 kg' headline
+  s2 not: Reps compared with a weighted workout
+  s3 see: The compared workout opens
+  s3 not: A dead link
+J-F-phone-705-03 | type 3 | member | Workout-complete screen in three cases
+  s1 see: The total and 'Your number to beat next time.'; no 'Previous' line
+  s1 not: A made-up previous number
+  s1 not: '+1,925 kg more than previous'
+  s2 see: 'A shorter workout than the previous one. Every workout counts.' and no 'Previous' line
+  s2 not: 'Lighter than previous' against a full workout
+  s3 see: No kg card at all
+  s3 not: A card showing '0 reps' or '0 kg'
+J-F-phone-705-04 | type 6 | member | Workout-complete screen, the same routine done before
+  s1 see: Grey 'Lighter than previous. Every workout counts.'; card border plain, not green
+  s1 not: Red text or a warning mark
+  s2 see: 'Easy week: lighter on purpose.'
+  s2 not: The plain 'Lighter' line in an easy week
+  s3 see: 'Same as previous'
+  s3 not: '+0 kg more than previous'
+  s4 see: The list closes; the chevron turns back
+  s4 not: The list reopening by itself
+J-F-phone-705-05 | type 12 | member | Workout-complete screen after beating the previous time, member opens Share
+  s1 see: Only the brag '+45 kg more than previous' from the card is used, and only when today beat the previous time
+  s1 not: The brag on a picture when today was lighter
+  s1 not: Numbers on the picture that let someone work out the member's body weight
+  s2 see: The card is shown only on the member's own phone
+  s2 not: The kg comparison sent to the gym or anyone else by this card
+J-F-phone-732-01 | type 1 | member | Profile, member follows a plan with routines Push 1, Pull 1, Legs; no workout open
+  s1 see: Sheet 'Log a past workout' with 'Pick the day, when it started and how long it lasted.'
+  s1 see: A month calendar with yesterday picked, Started at 18 : 00, Minutes 60
+  s1 see: Button 'Log <yesterday with year> · 18:00'
+  s1 not: Today or a future day picked by default
+  s2 see: The button now names that day and '07:30'; the Push 1 chip is selected
+  s2 not: The button still naming the old day or time
+  s3 see: The normal workout editor opens for that day
+  s3 not: A workout saved before the editor's Save
+  s3 not: The editor opening on today's date
+  s4 see: The workout appears on that day in Calendar, named Push 1; Today moves on as after any Push 1
+  s4 not: The workout dated today
+  s4 not: Two copies of the workout
+J-F-phone-732-02 | type 2 | member | Log a past workout sheet open, member follows a plan
+  s1 see: The editor opens; after Save, Today is unchanged
+  s1 not: Today moved by a workout marked None
+  s2 see: The second tap un-picks it; no chip selected
+  s2 not: Pull 1 still used
+  s3 see: After Save, Today is placed by the exercises done
+  s3 not: The workout given a routine name the member never picked
+J-F-phone-732-03 | type 3 | member | Log a past workout sheet open
+  s1 see: Future days greyed and not tappable; the 'Next month' arrow disabled
+  s1 not: A future day that can be picked
+  s2 see: 'Use a time from 00:00 to 23:59.'
+  s2 not: The time quietly changed to 23
+  s3 see: 'A workout lasts at least 1 minute.' then 'Up to 600 minutes (10 hours).'
+  s3 not: A workout saved with 0 or 999 minutes
+  s4 see: 'That time hasn't come yet.' then 'With 120 minutes it would end after now. Start earlier or make it shorter.'
+  s4 not: The time slid back to fit without a word
+  s5 see: 'Type how long it lasted.' and the editor does not open
+  s5 not: The editor opening with no length
+J-F-phone-732-04 | type 6 | member | A workout with 3 ticked sets is still open; Calendar, Log a past workout sheet filled in
+  s1 see: Ask 'A workout is already open' with 'Resume it, or discard it and start this one. Discarding deletes its 3 sets.' and buttons 'Discard it and log the past one' and 'Resume workout'
+  s1 not: The open workout lost without asking
+  s2 see: The open workout comes back as it was
+  s2 not: The past workout started as well
+  s3 see: Ask 'You are editing a saved workout' with 'Resume editing'
+  s3 not: The saved workout changed by discarding
+  s4 see: Yesterday picked again, no routine chip picked, no error shown
+  s4 not: The old error or chip still shown
+J-F-phone-732-05 | type 12 | member | Member who joined a MettleUp gym on 10 Nov, logging a workout of 2 Nov
+  s1 see: It shows in the member's own Calendar and history
+  s1 not: The 2 Nov workout counted in the gym's figures for this member, which start on the day they joined
+  s2 see: Only workouts allowed by the gym's rules count
+  s2 not: A backdated workout used to win an offer or move up the board when the rules leave it out
+J-F-phone-733-01 | type 1 | member | Workout open with Treadmill (library exercise) logged by time, set 1 not done
+  s1 see: Two small boxes, one labelled 'km/h' and one '% incline', lined up under the set's own boxes
+  s1 not: Boxes filled with a guess the member never typed
+  s2 see: The boxes keep 8.5 and 6; the set is ticked
+  s2 not: The values cleared by the tick
+  s2 not: The incline saved as speed
+  s3 see: Set 1 reads '8.5 km/h · incline 6%'
+  s3 not: The details missing after save
+  s3 not: A different number than typed
+J-F-phone-733-02 | type 2 | member | Workout with a bike, a rower and own exercises
+  s1 see: One box labelled 'level'
+  s1 not: Speed or incline boxes on a bike
+  s2 see: The km/h and % incline boxes show
+  s2 not: No boxes for an own treadmill exercise logged by time
+  s3 see: No machine boxes for either
+  s3 not: Speed boxes under a weighted lunge
+J-F-phone-733-03 | type 3 | member | Treadmill set row with its two boxes
+  s1 see: Only digits, a point or a comma stay; at most 5 characters
+  s1 not: Letters in the box
+  s2 see: Saved as 8.5 km/h
+  s2 not: The comma read as nothing
+  s3 see: A clear sign that 45 is not kept
+  s3 not: The box still showing 45 while the set is saved with no speed and no word to the member
+J-F-phone-733-04 | type 6 | member | A saved workout with a treadmill set '8.5 km/h · incline 6%'
+  s1 see: The boxes show 8.5 and 6
+  s1 not: Empty boxes for a set that has details
+  s2 see: History reads '8.5 km/h' only
+  s2 not: The old incline still shown
+  s3 see: The set saves exactly like a set without machine details
+  s3 not: A '0 km/h' or 'incline 0%' line for blank boxes
+J-F-phone-734-01 | type 1 | member | Workout open, Bench Press set 2 just ticked, rest of 2:00 counting under the exercise
+  s1 see: Full screen: 'BENCH' over 'IN USE', 'Bench Press', 'Previous 60 kg × 8' in grey, 'Next 62.5 kg × 8', 'Resting · back in' with the big clock counting, the MettleUp logo
+  s1 see: In the foot: the button 'I'm back' and the tick 'Show after every set of this exercise'
+  s1 not: The rest clock stopping or starting again
+  s1 not: 'I'm back' below the screen edge
+  s2 see: The clock keeps counting; the screen stays on
+  s2 not: The screen closing by itself before the rest ends
+  s3 see: The workout screen with the rest timer still counting
+  s3 not: The rest timer cleared
+  s3 not: The next set ticked
+J-F-phone-734-02 | type 2 | member | Same workout, Bench Press, IN USE screen open
+  s1 see: The tick shows; under the rest clock the line later reads 'In use opens after each set'
+  s1 not: The screen closing on the tick
+  s2 see: IN USE opens by itself as the rest starts; a record pop-up for the set, if any, shows on top
+  s2 not: IN USE hiding the record pop-up
+  s3 see: Exercises follow the switch and their own remembered tick
+  s3 not: A tick for one exercise changing another exercise
+J-F-phone-734-03 | type 3 | member | IN USE screen open, the member away from the phone
+  s1 see: Nothing closes
+  s1 not: The sign closing on a stranger's tap
+  s2 see: The sign closes
+  s2 not: Back doing nothing
+  s3 see: Plain 'IN USE' with no kit line
+  s3 not: An empty line above IN USE
+J-F-phone-734-04 | type 6 | member | Bench Press with 'Show after every set' ticked
+  s1 see: The sign closes by itself at the end of the rest
+  s1 not: The sign staying up after the rest
+  s2 see: The next rest does not open it; the line under the clock reads 'Tap to show Bench in use' or 'Tap to show In use'
+  s2 not: The line under the clock vanishing
+  s3 see: Settings' switch turns on too, so the tick works
+  s3 not: A ticked box that does nothing
+J-F-phone-734-05 | type 12 | member | IN USE screen open on a bench, people nearby reading it
+  s1 see: Only the kit, 'IN USE', the lift name, the previous and next weight and reps, the rest clock and the MettleUp logo
+  s1 not: The member's name, photo, phone number, body weight or gym details on the sign
+  s2 see: The workout screen, only for the member
+  s2 not: The workout screen opened by a stranger's tap on the sign
+J-F-phone-721-01 | type 1 | member | Settings, Plates and bars, member who uses cable and machine exercises
+  s1 see: Value 'Automatic' and the line 'The app learns each machine's steps from the weights you log.'
+  s1 not: An empty value
+  s2 see: Sheet 'Machine and cable steps' with 'How much the weight goes up on your gym's machines and cables.'
+  s2 see: Choices 'Automatic' (recommended), '2.5 kg', '5 kg'
+  s2 see: Under them: 'The app then suggests only weights your machines and cables really have. Barbells and dumbbells keep their own steps.'
+  s2 not: The footnote cut off
+  s3 see: The sheet closes; the row reads '5 kg' and 'Your gym's machines and cables go up 5 kg at a time.'
+  s3 not: The choice not kept after the app restarts
+  s4 see: Suggested weights on the 5 kg grid, e.g. 35, 40, 45 kg
+  s4 not: A suggestion such as 42.5 kg on a 5 kg grid
+J-F-phone-721-02 | type 2 | member | Settings, Plates and bars, choice '5 kg'
+  s1 see: Row reads '2.5 kg'; machine suggestions now go up by 2.5 kg
+  s1 not: Barbell or dumbbell suggestions changed by this choice
+  s2 see: Suggestions follow the weights logged on each machine, e.g. 35, 40, 45 kg when that is what was logged
+  s2 not: The 2.5 kg grid still used
+J-F-phone-721-03 | type 3 | member | Settings, Plates and bars
+  s1 see: The row keeps its old value
+  s1 not: The choice reset to Automatic
+  s2 see: Bench suggestions follow the plates and bar, not the 5 kg grid
+  s2 not: A barbell suggestion forced to the machine grid
+J-F-phone-721-04 | type 6 | member | Settings, choice '2.5 kg', a cable exercise with history
+  s1 see: Each choice is shown on the row after reopening and is used for the next suggestion
+  s1 not: A suggestion from the earlier choice after the change
+J-F-phone-721-05 | type 12 | member | Member on a gym whose machines go up 5 kg, choice '5 kg'
+  s1 see: Only weights the machines really have, as the sheet promises
+  s1 not: Any suggestion between the 5 kg steps
+  s1 not: The choice shared with anyone; it stays a setting on the member's phone
+J-F-phone-735-01 | type 1 | member | Progress, this month's report, the member trained on 3 days this month, not yet today
+  s1 see: Section heading "Days you trained · 3"
+  s1 see: A calendar headed M T W T F S S, Monday first
+  s1 see: The 3 trained days filled in the accent colour
+  s1 see: Today shown with a thin ring
+  s1 not: A trained day left empty
+  s1 not: A day filled that has no workout
+  s1 not: The number in the heading differs from the filled days
+  s1 not: The first of the month under the wrong weekday
+  s2 see: Today now filled
+  s2 see: "Days you trained · 4"
+  s2 not: Today still only ringed
+  s2 not: Two workouts on one day counted as two days
+J-F-phone-735-02 | type 2 | member | Progress, a past month that is over (October 2026), the member trained on 12 days
+  s1 see: Title "October 2026"
+  s1 see: "Against September" tiles
+  s1 see: "Days you trained · 12" with 12 filled days
+  s1 not: A ring on a day of October as if it were today
+  s1 not: Days of November filled in the October calendar
+J-F-phone-735-03 | type 3 | member | Progress, the current month with no workout logged yet
+  s1 see: "No workouts yet this month"
+  s1 see: "Workouts you log this month will show here."
+  s1 not: An empty calendar with "Days you trained · 0"
+  s1 not: An error or an endless spinner
+J-F-phone-735-04 | type 6 | member | This month's report, a day trained once; the member then deletes that one workout
+  s1 see: 10 Nov no longer filled
+  s1 see: The heading count one lower
+  s1 not: 10 Nov still filled
+  s1 not: The count unchanged
+  s1 not: Other days lose their fill
+J-F-phone-736-01 | type 1 | member | Workout tab on the home day of the Legs routine; none of the member's routines trains the calves; Muscle tips on
+  s1 see: "Smart suggestion" with an (i)
+  s1 see: "None of your routines trains your calves. Add 3 sets of Standing Calf Raise to your Legs routine?"
+  s1 see: Buttons "Add" and "Not now"
+  s1 see: Underlined "I skip this on purpose"
+  s1 not: Red text or the word "missing"
+  s1 not: A Swap button on an add-only tip
+  s1 not: The tip in an easy week
+  s2 see: "Adding…" on the button
+  s2 see: The tip goes away
+  s2 see: An undo bar above the tab bar saying the exercise was added to the Legs routine
+  s2 not: The exercise added twice after a fast double tap
+  s2 not: The tip still showing after the add
+  s2 not: The undo bar hidden inside the page
+  s3 see: The Legs routine as it was before
+  s3 not: The calf raise still in the routine
+  s3 not: Another exercise removed
+J-F-phone-736-02 | type 2 | member | Workout tab; the routines give the shoulders 3 sets a week and the chest 12
+  s1 see: "Your routines give your shoulders 3 sets a week and your chest 12. Add 3 sets of Dumbbell Shoulder Press to your Push routine, or swap Incline Dumbbell Press for it?"
+  s1 see: Buttons "Add", "Swap", "Not now"
+  s1 see: "Keep as is"
+  s1 not: Only Swap offered (Add must take nothing away)
+  s2 see: "Swapping…"
+  s2 see: An undo bar naming the swap
+  s2 not: Incline Dumbbell Press kept as well
+  s2 not: The sets of the swapped row lost
+J-F-phone-736-03 | type 2 | member | Workout tab with a muscle tip showing
+  s1 see: A sheet explaining why: the routines counted, sets a week per muscle with the tip's muscle in the accent colour, how a set counts, why it matters, that nothing changes until Add or Swap
+  s1 not: The routine changed by opening the sheet
+  s1 not: A muscle row with no number
+  s2 see: The same tip, unchanged
+  s2 not: The tip gone or snoozed
+J-F-phone-736-04 | type 3 | member | Workout tab with a tip showing; saving the routine fails
+  s1 see: A message "Couldn't add it" with "Please try again."
+  s1 see: The tip still there, button back to "Add"
+  s1 not: An undo bar or success line
+  s1 not: The tip removed as if it worked
+  s2 see: "Your routine has changed" with "Nothing was swapped. Open the routine to change it yourself."
+  s2 not: A half-swapped routine
+  s2 not: A swap of a different row
+J-F-phone-736-05 | type 6 | member | Workout tab with a calves tip showing for the first time
+  s1 see: The tip goes away
+  s1 see: A screen reader hears "Not now. Ask again in 4 weeks"
+  s1 not: The same group back the next day
+  s1 not: A different group shown the same day
+  s2 see: The tip goes away
+  s2 see: Screen reader label was "Not now. Don't suggest it again"
+  s2 not: The calves tip ever again without turning it back on
+  s3 see: The calves tip may show again on its home day
+  s3 not: Tips still quiet after bringing them back
+J-F-phone-727-01 | type 1 | member | Workout tab, routines list, no folder named Push yet
+  s1 see: A sheet titled "New folder"
+  s1 see: An empty box with "Folder name"
+  s1 see: The keyboard open
+  s1 see: "Create folder" greyed out
+  s1 not: The box pre-filled with an old name
+  s1 not: The button active while the box is empty
+  s2 see: The sheet closes
+  s2 see: A folder "Push" in the list, opened
+  s2 not: Two "Push" folders after a fast double tap
+  s2 not: The name saved with spaces around it
+J-F-phone-727-02 | type 2 | member | Workout tab, folder "Push" exists
+  s1 see: A sheet titled "Rename folder"
+  s1 see: The box holds "Push"
+  s1 see: Button "Save name"
+  s1 not: An empty box
+  s1 not: Title "New folder"
+  s2 see: The folder now called "Push day"
+  s2 not: A new folder made instead of a rename
+  s2 not: The old name still shown
+J-F-phone-727-03 | type 2 | member | A past workout's summary screen
+  s1 see: A sheet titled "Rename workout" with the current name
+  s1 see: Button "Save name"
+  s1 not: The folder sheet words
+  s2 see: The summary shows the new name
+  s2 not: The name lost without a word if the save fails (it must say "Could not rename" and "The workout keeps its name. Try again.")
+J-F-phone-727-04 | type 3 | member | "New folder" sheet open
+  s1 see: "Create folder" stays greyed out
+  s1 not: A folder with a blank name
+  s1 not: A folder called "Folder" made silently
+  s2 see: The box stops at 60 letters
+  s2 not: The app saving more than shown
+  s2 not: The button pushed off the sheet
+J-F-phone-727-05 | type 6 | member | Folder "Push" exists
+  s1 see: The folder still called "Push"
+  s1 not: The half-typed name saved
+  s2 see: The box holds "Push" again, not the typed text
+  s2 not: The old typed text left in the box
+  s2 not: The button stuck as already pressed
+J-F-phone-720-01 | type 1 | member | Settings, Workouts, Plates and bars, units kg, standard set
+  s1 see: "PLATES (KG)" with one switch row per plate, all on
+  s1 see: "Turn off the plates your gym doesn't have. The plate calculator uses only the ones that are on."
+  s1 see: "BAR" with the 20 kg bar picked
+  s1 not: A plate list in lb while units are kg
+  s1 not: A plate off that the member never turned off
+  s2 see: The 2.5 kg switch off
+  s2 not: The plate calculator still using 2.5 kg plates
+  s3 see: "0.5 kg" row with "Added by you" and "Remove"
+  s3 not: The typed text left in the box
+  s3 not: The plate added twice
+  s4 see: "15 kg" in the bar list, picked
+  s4 not: The 20 kg bar still picked
+J-F-phone-720-02 | type 2 | member | The plate calculator during a barbell lift
+  s1 see: The "Plates and bars" page
+  s1 not: A different settings page
+  s1 not: Changes not used when going back to the calculator
+J-F-phone-720-03 | type 3 | member | Plates and bars open, kg
+  s1 see: "Type a plate weight, like 1.25."
+  s1 not: A 0 kg plate added
+  s2 see: A line starting "Too heavy for a plate."
+  s2 not: An 80 kg plate added
+  s3 see: "20 kg plates are already on the list."
+  s3 not: A second 20 kg row
+  s4 see: "Too light for a bar. Use 1 kg or more."
+  s4 not: A 0.5 kg bar picked
+J-F-phone-720-04 | type 6 | member | Plates and bars with 2.5 kg off, a 0.5 kg plate added and a 15 kg bar
+  s1 see: "No plates are on. The calculator will show just the bar."
+  s1 not: The calculator still showing plates
+  s2 see: Every standard plate on, no "Added by you" rows, the 20 kg bar picked
+  s2 not: The kg reset also wiping the lb list
+  s2 not: An extra plate left over
+  s3 see: The 1.25 kg switch on again
+  s3 not: A second 1.25 kg row
+J-F-phone-720-05 | type 12 | member | Plates and bars changed
+  s1 see: The setup used only by this phone's calculator and suggested weights
+  s1 not: The gym panel showing the member's plate setup
+  s1 not: The setup sent anywhere
+J-F-phone-722-01 | type 1 | member | Settings, How the app picks your next weight; Weight step is Standard
+  s1 see: Sheet "Weight step"
+  s1 see: Rows "Small" (About 2.5% more each time), "Standard" with "Recommended" and a tick, "Large" (About 10% more each time)
+  s1 not: Two rows ticked
+  s1 not: No row ticked
+  s2 see: The sheet closes
+  s2 see: The row now shows Large
+  s2 not: The sheet staying open with the old tick
+  s2 not: The next weight suggestion still using Standard
+J-F-phone-722-02 | type 2 | member | Settings, Rest timer and sounds; Rest-over sound is MettleUp chime
+  s1 see: Sheet "Rest-over sound" with "The sound when your rest is over. The MettleUp chime is the default."
+  s1 see: Rows MettleUp chime (Recommended), Bell, Double beep, Whistle
+  s1 not: A missing sound from the four
+  s2 see: The bell plays
+  s2 see: The sheet stays open with Bell ticked
+  s2 not: The sheet closing before the sound can be compared
+  s2 not: No sound with sounds on
+J-F-phone-722-03 | type 2 | member | Settings, Plates and bars; Machine and cable steps is Automatic
+  s1 see: Sheet "Machine and cable steps"
+  s1 see: "Automatic" Recommended, "2.5 kg", "5 kg"
+  s1 see: The sheet closes, the row says 5 kg
+  s1 not: Suggested machine weights not in 5 kg steps afterwards
+J-F-phone-722-04 | type 2 | member | Settings, How the app picks your next weight; Reps to aim for is Match my goal
+  s1 see: Rows Match my goal (Recommended), Strength, Muscle, Higher reps, each with one line
+  s1 see: A footnote under the rows
+  s1 see: The sheet closes, the row says Strength
+  s1 not: Rep ranges inside routines changed without the footnote saying so
+J-F-phone-722-05 | type 3 | member | Weight step sheet open, Standard ticked
+  s1 see: The sheet closes, nothing changes
+  s1 see: No buzz
+  s1 not: A change saved or the value reset
+  s2 see: The old value kept
+  s2 not: A value picked by closing
+J-F-phone-722-06 | type 6 | member | Weight step set to Large
+  s1 see: Standard ticked with "Recommended"
+  s1 not: Large still ticked
+  s1 not: A saved value the app does not know falling back silently to another choice
+J-F-phone-704-01 | type 1 | member | Workout tab, a member with workouts logged in the last days, no workout open
+  s1 see: No "Muscles ready today" card (switched off by the owner on 5 Nov 2026)
+  s1 not: A half-drawn card
+  s1 not: A link to the body map or the quick workout from the Workout tab
+J-F-phone-704-02 | type 3 | member | Workout tab, a new member with nothing logged
+  s1 see: No resting card
+  s1 not: "Every muscle is rested" for a member with no history
+  s1 not: An error line
+J-F-phone-704-03 | type 6 | member | The card switched back on in a later version; a member trained chest yesterday
+  s1 see: "Muscles ready today"
+  s1 see: "Still resting: Chest. … Everything else is ready."
+  s1 see: "See the body map" and "Quick workout for the time you have"
+  s1 not: Chest shown as ready
+  s1 not: The card while a workout is open
+  s2 see: "Every muscle is rested" with "Your logged workouts leave nothing resting. Train what you like today."
+  s2 not: Chest still resting days later
+J-F-phone-706-01 | type 1 | member | An open workout, bench press, the member's best so far is 60 kg × 8
+  s1 see: Confetti falling from the top for about 2 seconds
+  s1 see: A pop-up "New record · Bench Press" with a medal
+  s1 see: One line per record beaten, like "Heaviest weight · 62.5 kg × 8"
+  s1 see: An × to close
+  s1 not: A record pop-up for a set that beat nothing
+  s1 not: "62.5" on one line and "kg" on the next
+  s1 not: The confetti taking a tap meant for the set rows
+  s2 see: The pop-up fades after about 6 seconds
+  s2 not: The pop-up staying on top of the set rows
+J-F-phone-706-02 | type 2 | member | An open workout, same set last time was 60 kg × 8, best is 70 kg × 8
+  s1 see: A quieter pill line like "+2.5 kg on last time · Bench Press"
+  s1 see: No medal, no confetti
+  s1 see: Goes after about 5 seconds
+  s1 not: A medal or confetti for a not-a-record set
+  s1 not: The line spoken twice by the screen reader
+J-F-phone-706-03 | type 2 | member | The "In use" screen after a set on a machine
+  s1 see: The same record pop-up on the "In use" screen
+  s1 not: Two pop-ups, one on each screen
+  s1 not: No pop-up for the record
+J-F-phone-706-04 | type 3 | member | An open workout
+  s1 see: No pop-up
+  s1 not: "New record" for a warm-up
+  s1 not: A "last time" line that shows a drop as a gain
+J-F-phone-706-05 | type 6 | member | A record pop-up showing
+  s1 see: The pop-up closes at once
+  s1 not: It coming back for the same set
+  s2 see: At most one pop-up for that set
+  s2 not: A second record counted for the same set
+  s2 not: The record kept after the set was unticked
+J-F-phone-737-01 | type 1 | member | Android phone, notifications on, "Alarms & reminders" off for MettleUp
+  s1 see: A row "Rest alerts: May be late — tap to fix"
+  s1 see: "Tap to turn on "Alarms & reminders" in your phone's settings, so "Rest is over" rings on time"
+  s1 not: No row while alerts may be late
+  s1 not: A red error
+  s2 see: The Android "Alarms & reminders" page
+  s2 see: Back in the app the row is gone
+  s2 not: The row still saying May be late
+  s2 not: The app restarting
+J-F-phone-737-02 | type 2 | member | Android phone, the "Rest is over" sound muted for MettleUp in Android
+  s1 see: "Rest alerts: Silent — tap to fix" with "Android muted "Rest is over" for MettleUp. Turn its sound back on"
+  s1 see: Android's page for that sound
+  s1 not: The general app page when the sound page exists
+J-F-phone-737-03 | type 2 | member | Android phone, Android holding MettleUp back in the background
+  s1 see: "Rest alerts: May be late — tap to fix" with "Android is holding MettleUp back in the background. Allow it"
+  s1 not: No row
+J-F-phone-737-04 | type 3 | member | Android phone, notifications blocked for MettleUp
+  s1 see: "Rest alerts: Off — notifications are blocked" with "Tap to turn them on"
+  s1 not: "May be late" shown instead
+  s1 not: No row while blocked
+  s2 see: Android's notification page for MettleUp
+  s2 not: Nothing happening on tap
+J-F-phone-737-05 | type 6 | member | Android phone, everything allowed
+  s1 see: No rest-alerts row
+  s1 not: "Rest alerts: On time" row taking space
+  s1 not: A row on an iPhone or the web
+  s2 see: The "Off — notifications are blocked" row appears without reopening the page
+  s2 not: The page still showing nothing

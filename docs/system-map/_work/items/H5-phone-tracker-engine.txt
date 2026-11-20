@@ -1,0 +1,41 @@
+# H5-phone-tracker-engine: gap-5 x phone / phone/tracker-engine. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H5.1 | gap-5 | For every feature in features.json: is it on main, deployed, behind a switch, or waiting for a migration?
+H5.2 | gap-5 | Compare code on main with what the live panel, HQ, website, phone app (Play version) and database really run (check the live version labels, list_migrations/catalog, switches)
+H5.3 | gap-5 | Any feature the notes or What's new call live that is not live = finding
+H5.4 | gap-5 | Output docs/system-map/LIVE-STATE.md (one row per feature: main / live panel / live DB / Play app), so he can always see what is really live
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-900 | live | Exercise demo clips: a short looping film of the exercise, downloaded the first time it is opened and kept on the phone  | apps/mobile/src/tracker/clips/clipManifest.ts:38
+F-phone-901 | live | Ask your own AI: a plain text of my last 4 weeks of training to share to any AI app (no name, phone or body weight in it | apps/mobile/src/tracker/engine/aiSummary.ts:85
+F-phone-902 | live | Badge shelf: 16 badges earned once each from workouts, weeks in a row, heavy lifts and records, with how to earn the loc | apps/mobile/src/tracker/engine/badges.ts:131
+F-phone-903 | live | Balance check and focus block: after 4 weeks the Charts page names one muscle that gets few sets and offers one exercise | apps/mobile/src/tracker/engine/balanceBlock.ts:123
+F-phone-904 | live | Body weight typo question: asks 'Keep it?' when a weigh-in is far from the last one, and asks before replacing the same  | apps/mobile/src/tracker/engine/bodyCheck.ts:41
+F-phone-906 | live | Body map: a body drawing shaded by how many sets each muscle got, with the muscles I skipped | apps/mobile/src/tracker/engine/bodyMap.ts:33
+F-phone-907 | live | Treadmill and cycle details: log speed, incline or machine level on a cardio machine's set | apps/mobile/src/tracker/engine/cardioMachine.ts:62
+F-phone-908 | live | Headline numbers that match on every screen: 'N lifts beat their best' and body-weight change with its time span | apps/mobile/src/tracker/engine/headline.ts:21
+F-phone-909 | live | Profile history chart: duration, kg lifted or reps over the last 3 months, 12 months or all time, with a tap on a bar | apps/mobile/src/tracker/engine/historyChart.ts:124
+F-phone-910 | live | Exercise log types: log a set as weight and reps, reps only, added or assisted weight, time, distance, or distance and t | apps/mobile/src/tracker/engine/logTypes.ts:70
+F-phone-911 | live | Body measurements: log body fat and nine lengths (neck to calf) in cm or inches, one value a day | apps/mobile/src/tracker/engine/measurements.ts:77
+F-phone-912 | live | Missing-muscle tip: one calm suggestion when my planned week leaves a muscle group out; a group can be muted or snoozed | apps/mobile/src/tracker/engine/muscleBalance.ts:118
+F-phone-913 | live | Progress leads with the answer: this week against my usual week, the lift that went up most, and my most-trained lifts | apps/mobile/src/tracker/engine/progressTop.ts:171
+F-phone-914 | live | Target line on each exercise: what to lift today (one more rep, or the next weight) worked out from last time, the rep r | apps/mobile/src/tracker/engine/progression.ts:360
+F-phone-915 | live | Which muscles are ready today: ready, almost or resting for each muscle, worked out only from logged workouts | apps/mobile/src/tracker/engine/readiness.ts:58
+F-phone-916 | live | Personal records: eight kinds of best per exercise (heaviest, 1-rep max, best set, best workout, most reps, longest time | apps/mobile/src/tracker/engine/records.ts:144
+F-phone-917 | live | Rep range: a default rep range for each new routine exercise from my goal and the kind of exercise, and the 'Rep range'  | apps/mobile/src/tracker/engine/repRanges.ts:28
+F-phone-918 | live | Monthly report and year in review, with a short coach note written by fixed rules (no AI call) | apps/mobile/src/tracker/engine/reports.ts:66
+F-phone-919 | live | Real rest taken before each set, and the 'long rest' mark: a set done after a much longer rest than planned never raises | apps/mobile/src/tracker/engine/restTaken.ts:47
+F-phone-920 | live | Statistics screen: sets per muscle group over time, this period against the one before, and the period's totals | apps/mobile/src/tracker/engine/statistics.ts:58
+F-phone-921 | live | Strength level on the exercise page: Beginner, Intermediate, Advanced or Elite for each main lift (the level only, never | apps/mobile/src/tracker/engine/strengthLevel.ts:135
+F-phone-922 | live | Kg lifted and sets per muscle: the one rule every screen uses (body weight counted on pull-ups and dips, both dumbbells  | apps/mobile/src/tracker/engine/volume.ts:38
+F-phone-923 | live | Your own weight ladder: a suggested weight is always one I have logged or can load, and the 'Machine and cable steps' se | apps/mobile/src/tracker/engine/weightLadder.ts:48
+F-phone-924 | live | Plan builder: answer goal, level, equipment, days, time and sore areas and get a set of routines built by rules (no AI,  | apps/mobile/src/tracker/plans/builder.ts:211
+F-phone-925 | live | Swap an exercise for another that fits my equipment, sore areas and 'never give me' list | apps/mobile/src/tracker/plans/builder.ts:244
+F-phone-926 | live | Easy weeks: every 6 weeks of a followed plan one lighter week (half the sets, same weights) that stays out of records; t | apps/mobile/src/tracker/plans/easyWeek.ts:43
+F-phone-927 | live | Effort per plan week (reps to leave in the tank, shown to members who log RPE) and an early easy-week offer when 3 lifts | apps/mobile/src/tracker/plans/effort.ts:28
+F-phone-928 | live | Ready programs: a library of programs for a full gym, dumbbells only and home, beginner to advanced, to add and follow | apps/mobile/src/tracker/plans/programs.ts:393
+F-phone-929 | live | Quick workout: 'I have 20, 30, 45 or 60 minutes', pick body parts (the most ready by default) and get a workout that fit | apps/mobile/src/tracker/plans/quickWorkout.ts:126
+F-phone-930 | live | Share a routine or a folder as text or as a file, and import a routine file (also the format the gym's plans and workout | apps/mobile/src/tracker/plans/routineFile.ts:115
+F-phone-931 | live | Routine sets: each set of a routine exercise can be a warm-up, normal, drop or failure set with its own target reps, wei | apps/mobile/src/tracker/plans/routineSets.ts:52
+F-phone-932 | live | Today's routine: one answer for Home, the Workout tab, the Today page, reminders and widgets for which routine is next i | apps/mobile/src/tracker/plans/todayPlan.ts:180
+## MACHINE FILES (docs/system-map/_sources/machine/)
+live-state.csv: MISSING (items that need it = could-not-check)

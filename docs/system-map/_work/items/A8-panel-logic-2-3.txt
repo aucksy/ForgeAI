@@ -1,0 +1,754 @@
+# A8-panel-logic-2-3: coverage of 67 Tier 1 journeys (8 features, from A5-panel-logic-2-3). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-722 | apps/dashboard/e2e/quickactions.spec.mjs | e2e | 23 lines | file name, asserts 5 journey phrase(s)
+F-panel-722 | apps/dashboard/test/crm/quickActions.test.ts | unit | 25 lines | imports the code, file name
+F-panel-722 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 3 journey phrase(s)
+F-panel-722 | apps/dashboard/test/crm/challengesHinglish.test.ts | unit | 108 lines | asserts 3 journey phrase(s)
+F-panel-722 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | imports the code
+F-panel-722 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | asserts 3 journey phrase(s)
+F-panel-722 | apps/dashboard/e2e/offline.spec.mjs | e2e | 74 lines | asserts 2 journey phrase(s)
+F-panel-722 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 2 journey phrase(s)
+F-panel-722 | apps/mobile/qa/phase7-bigtext.yaml | maestro | 326 lines | asserts 2 journey phrase(s)
+F-panel-722 | apps/mobile/qa/xc-2b-checkin-offline.yaml | maestro | 16 lines | asserts 2 journey phrase(s)
+F-panel-722 | apps/mobile/test/shop/offer.test.ts | unit | 266 lines | asserts 2 journey phrase(s)
+F-panel-722 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 1 journey phrase(s)
+F-panel-723 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 15 journey phrase(s)
+F-panel-723 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | imports the code, file name, asserts 8 journey phrase(s)
+F-panel-723 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 7 journey phrase(s)
+F-panel-723 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 6 journey phrase(s)
+F-panel-723 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 6 journey phrase(s)
+F-panel-723 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 6 journey phrase(s)
+F-panel-723 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 6 journey phrase(s)
+F-panel-723 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 6 journey phrase(s)
+F-panel-723 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 5 journey phrase(s)
+F-panel-723 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 5 journey phrase(s)
+F-panel-723 | apps/dashboard/e2e/test-alert-uat.spec.mjs | e2e | 338 lines | asserts 5 journey phrase(s)
+F-panel-723 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | asserts 5 journey phrase(s)
+F-panel-709 | apps/dashboard/test/crm/receiptDoc.test.ts | unit | 324 lines | imports the code, file name, asserts 3 journey phrase(s)
+F-panel-709 | apps/dashboard/test/crm/receipts.test.ts | unit | 112 lines | imports the code, file name, asserts 3 journey phrase(s)
+F-panel-709 | apps/dashboard/test/crm/words.test.ts | unit | 78 lines | imports the code, file name, asserts 3 journey phrase(s)
+F-panel-709 | apps/dashboard/test/crm/branches.test.ts | unit | 224 lines | imports the code, asserts 3 journey phrase(s)
+F-panel-709 | apps/dashboard/test/crm/offlinePayments.test.ts | unit | 582 lines | imports the code, asserts 3 journey phrase(s)
+F-panel-709 | apps/dashboard/test/crm/uatMoney.test.ts | unit | 592 lines | imports the code, asserts 2 journey phrase(s)
+F-panel-709 | apps/dashboard/test/crm/whatsapp.test.ts | unit | 192 lines | imports the code, file name
+F-panel-709 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 4 journey phrase(s)
+F-panel-709 | apps/dashboard/test/crm/auditC7.test.ts | unit | 333 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-709 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 3 journey phrase(s)
+F-panel-709 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 3 journey phrase(s)
+F-panel-709 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 3 journey phrase(s)
+F-panel-724 | apps/dashboard/test/crm/referrals.test.ts | unit | 133 lines | imports the code, file name
+F-panel-724 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | asserts 4 journey phrase(s)
+F-panel-724 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 4 journey phrase(s)
+F-panel-724 | apps/dashboard/test/crm/challenges.test.ts | unit | 388 lines | asserts 2 journey phrase(s)
+F-panel-724 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-724 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 1 journey phrase(s)
+F-panel-724 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-724 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 1 journey phrase(s)
+F-panel-724 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 1 journey phrase(s)
+F-panel-724 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-724 | apps/dashboard/e2e/r495-uat.spec.mjs | e2e | 303 lines | asserts 1 journey phrase(s)
+F-panel-724 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 1 journey phrase(s)
+F-panel-701 | apps/dashboard/test/crm/joinPay.test.ts | unit | 223 lines | imports the code, file name, asserts 3 journey phrase(s)
+F-panel-701 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | file name, asserts 3 journey phrase(s)
+F-panel-701 | apps/dashboard/test/crm/selfJoin.test.ts | unit | 174 lines | imports the code, file name
+F-panel-701 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 4 journey phrase(s)
+F-panel-701 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | file name, asserts 1 journey phrase(s)
+F-panel-701 | apps/dashboard/test/crm/joinTrial.test.ts | unit | 160 lines | imports the code
+F-panel-701 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-panel-701 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 2 journey phrase(s)
+F-panel-701 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 2 journey phrase(s)
+F-panel-701 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 2 journey phrase(s)
+F-panel-701 | apps/dashboard/test/crm/planRequests.test.ts | unit | 239 lines | asserts 2 journey phrase(s)
+F-panel-701 | deploy/panel/joinPay.test.mjs | unit | 374 lines | file name
+F-panel-727 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | imports the code, file name, asserts 4 journey phrase(s)
+F-panel-727 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 4 journey phrase(s)
+F-panel-727 | apps/dashboard/test/crm/plusLock.test.ts | unit | 92 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-727 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | imports the code
+F-panel-727 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-727 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | asserts 2 journey phrase(s)
+F-panel-727 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-727 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 1 journey phrase(s)
+F-panel-727 | apps/dashboard/e2e/entry-uat.spec.mjs | e2e | 187 lines | asserts 1 journey phrase(s)
+F-panel-727 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-727 | apps/dashboard/e2e/hq-webpage-uat.spec.mjs | e2e | 166 lines | asserts 1 journey phrase(s)
+F-panel-727 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-729 | apps/dashboard/test/crm/setupCards.test.ts | unit | 17 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-panel-729 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 3 journey phrase(s)
+F-panel-729 | apps/dashboard/e2e/r495-uat.spec.mjs | e2e | 303 lines | asserts 2 journey phrase(s)
+F-panel-729 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchLayoutTest.kt | watch | 387 lines | asserts 2 journey phrase(s)
+F-panel-729 | apps/mobile/test/onboarding/welcomeIntro.test.ts | unit | 355 lines | asserts 2 journey phrase(s)
+F-panel-729 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-729 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 1 journey phrase(s)
+F-panel-729 | apps/dashboard/e2e/test-alert-uat.spec.mjs | e2e | 338 lines | asserts 1 journey phrase(s)
+F-panel-729 | apps/dashboard/test/crm/installSteps.test.ts | unit | 43 lines | asserts 1 journey phrase(s)
+F-panel-729 | apps/mobile/qa/brand-welcome.yaml | maestro | 149 lines | asserts 1 journey phrase(s)
+F-panel-729 | apps/mobile/qa/sub-after-join.yaml | maestro | 58 lines | asserts 1 journey phrase(s)
+F-panel-729 | apps/mobile/qa/uat-k1.yaml | maestro | 99 lines | asserts 1 journey phrase(s)
+F-panel-730 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 10 journey phrase(s)
+F-panel-730 | apps/dashboard/test/crm/staffJobs.test.ts | unit | 115 lines | imports the code, file name, asserts 4 journey phrase(s)
+F-panel-730 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 9 journey phrase(s)
+F-panel-730 | supabase/tests/0087_feedback_owner_desk.sql | db | 143 lines | asserts 6 journey phrase(s)
+F-panel-730 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 5 journey phrase(s)
+F-panel-730 | supabase/tests/0050_trainer_view.sql | db | 213 lines | asserts 5 journey phrase(s)
+F-panel-730 | supabase/tests/0053_ask_trainer_and_progress.sql | db | 232 lines | asserts 5 journey phrase(s)
+F-panel-730 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 4 journey phrase(s)
+F-panel-730 | apps/dashboard/e2e/trainers-uat.spec.mjs | e2e | 282 lines | asserts 4 journey phrase(s)
+F-panel-730 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-panel-730 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 3 journey phrase(s)
+F-panel-730 | apps/dashboard/e2e/r450-uat.spec.mjs | e2e | 331 lines | asserts 3 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-722-01 | type 1 | owner | Today, signed in as the owner, nothing chosen yet on this browser
+  s1 see: Four buttons in this order: 'New member', 'Collect dues', 'Check in', 'Shop orders'
+  s1 see: A small link 'Change buttons' under them
+  s1 not: No buttons and no way to pick any
+  s1 not: A button for a page that does not exist
+  s2 see: Sheet titled 'Quick buttons'
+  s2 see: 'Pick up to 6 buttons and put them in order. Staff see only the ones they may use.'
+  s2 see: Eight rows with a tick box each: New member, Collect dues, Check in, Shop orders, New enquiry, Add expense, Invite poster, Workout plans
+  s2 not: A row ticked that is not shown on Today
+  s2 not: The sheet opening for the front desk
+  s3 see: 'Add expense' is ticked and has an up and a down arrow
+  s3 see: The button moves two places earlier on Today
+  s3 not: The order changing for a button that was not tapped
+  s3 not: The same button twice on Today
+  s4 see: Today with five buttons in the new order
+  s4 not: The old order back after the sheet closes
+  s5 see: The Expenses page opens
+  s5 not: Another page opening
+  s5 not: A page the owner is told he may not open
+J-F-panel-722-02 | type 3 | owner | Sheet 'Quick buttons' with six buttons already ticked
+  s1 see: The two rows that are off are greyed and their boxes cannot be ticked
+  s1 not: A seventh button on Today
+  s1 not: A ticked box with no button on Today
+  s2 see: Today shows no buttons, only 'Change buttons'
+  s2 not: The 'Change buttons' link gone, so the buttons can never come back
+  s2 not: The four starting buttons coming back by themselves on the next visit
+  s3 see: Both arrows are greyed; nothing moves
+  s3 not: A button dropping off the list
+J-F-panel-722-03 | type 6 | owner | Today, the owner has picked his own buttons on this browser
+  s1 see: The same buttons in the same order
+  s1 not: The starting four back
+  s1 not: Another gym's or another branch's choice shown
+  s2 see: The button leaves Today, then comes back as the last one
+  s2 not: It coming back in its old place while the sheet says otherwise
+  s3 see: The starting four buttons there: the choice is kept in each browser on its own
+  s3 not: A message that the choice was saved for the whole gym when it was not
+J-F-panel-722-04 | type 12 | owner | Sheet 'Quick buttons'
+  s1 see: 'Pick up to 6 buttons and put them in order. Staff see only the ones they may use.'
+  s1 not: The front desk shown a button for a page it may not open
+  s2 see: The front desk sees the chosen buttons, minus any whose page it may not open
+  s2 not: The front desk able to change the buttons
+  s2 not: Any member or money fact kept in the browser by this choice: only the list of button names is kept
+J-F-panel-722-05 | type 1 | staff | Today, signed in as front desk staff
+  s1 see: The big buttons chosen on this browser (or the starting four), only those whose page the front desk may open
+  s1 see: No 'Change buttons' link
+  s1 not: A button that opens a page the front desk may not use
+  s1 not: The 'Change buttons' link
+  s2 see: The Dues list under Money opens
+  s2 not: Money totals for the gym shown on the way
+  s3 see: The Add member form opens straight away
+  s3 not: The Members list first, needing one more tap
+J-F-panel-722-06 | type 3 | staff | Today as front desk staff; the owner has ticked a button whose page the front desk may not open
+  s1 see: That button is not drawn; the others are
+  s1 not: The button drawn and leading to a refusal page
+  s1 not: An empty gap where the button would be
+  s2 see: None: only the owner has it
+  s2 not: The sheet opening from the keyboard or a link
+J-F-panel-722-07 | type 6 | staff | Front desk device; the owner changes the buttons on this same device and signs out
+  s1 see: The owner’s new set of buttons, in his order
+  s1 not: The starting four, as if nothing was chosen
+  s2 see: The starting four buttons (the choice does not travel between devices)
+  s2 not: A half set, or buttons in a mixed order
+J-F-panel-723-01 | type 1 | owner | Challenges page, gym online, no challenge running or waiting
+  s1 see: Section 'Ready-made challenges'
+  s1 see: 'These challenges are ready to use. Turn one on, and members see it with their progress on the leaderboard in the MettleUp app. Only one challenge runs at a time, so members always have one clear goal.'
+  s1 see: Card 'Easy start' with the pill 'Off', 'Members log 5 workouts in the MettleUp app within 14 days.', 'Everyone who reaches the goal wins 2 free days on their membership. You check each winner before the days are added.' and 'This challenge is off. Members do not see it.'
+  s1 not: A card marked On when no challenge runs
+  s1 not: Check-in cards shown on a gym server that cannot count check-ins
+  s2 see: The button reads 'Saving…' and every other card button is greyed
+  s2 see: Toast 'Turned on. Members see “Easy start” in the MettleUp app within 10 minutes.'
+  s2 not: Two challenges saved
+  s2 not: A success toast when the save failed
+  s3 see: Pill 'On'
+  s3 see: 'This challenge is on. It runs until <last day>, and members see their progress on the leaderboard in the MettleUp app.'
+  s3 see: Button 'Turn off'; no 'Turn on', no 'Change'
+  s3 not: A last day that is not start day + 13 days
+  s3 not: A 'Change' button on a challenge that has started
+J-F-panel-723-02 | type 2 | owner | Challenges page, another challenge is running and ends in 10 days (other kind: a card that has to wait)
+  s1 see: 'Only one challenge runs at a time, so this one would start on <day>, after “<other>” ends.'
+  s1 see: Button 'Turn on from <day>'
+  s1 not: A plain Turn on that the server then refuses for overlapping
+  s1 not: A start day inside the running challenge
+  s2 see: Toast 'Turned on. “<title>” starts on <day>.'
+  s2 see: Card pill 'On' with 'This challenge is on. It starts on <start> and runs until <end>.'
+  s2 see: Buttons 'Change' and 'Turn off'
+  s2 not: The running challenge ended or changed
+  s2 not: The toast saying members see it within 10 minutes when it starts later
+J-F-panel-723-03 | type 2 | owner | Challenges page, an off card (other kind: change the numbers first)
+  s1 see: Form with 'Members see this challenge as “<title>”. Change the goal, the days or the reward, and then turn it on.'
+  s1 see: The name and what is counted cannot be changed
+  s1 not: The name box open for typing, so the card no longer matches its challenge
+  s2 see: Toast as for Turn on
+  s2 see: The card now shows the saved numbers, not the ready-made ones
+  s2 not: The card still showing the ready-made goal while members see another
+  s3 see: Form line 'Members see this challenge as “<title>”. You can change it until the day it starts.'
+  s3 see: Toast 'Saved. “<title>” starts on <day>.'
+  s3 not: A second challenge made instead of the first one changed
+J-F-panel-723-04 | type 3 | owner | Challenges page in the states where a card cannot be turned on
+  s1 see: 'Challenges need your gym online'
+  s1 see: 'Members’ phones read the challenge from your gym’s server. Put your gym online first (Settings → Sign-in & data).'
+  s1 not: Cards with buttons that cannot work
+  s2 see: 'Challenges are not switched on for your gym yet'
+  s2 see: 'They will appear here once your gym’s server has them.'
+  s2 not: An error code
+  s2 not: An endless Loading…
+  s3 see: 'Another challenge takes up the next 60 days, so this one cannot be turned on yet.'
+  s3 see: No 'Turn on' and no 'Change' button
+  s3 not: A Turn on button that always fails
+  s4 see: The button is not usable while offline, with the usual no-internet word
+  s4 not: A toast that it was turned on
+J-F-panel-723-05 | type 6 | owner | Challenges page, the card 'Easy start' is on
+  s1 see: Sheet 'Turn off this challenge?'
+  s1 see: 'Members will no longer see “Easy start”, and nobody gets the reward for it. You can turn it on again later, but it starts again from zero.'
+  s1 see: Buttons 'Keep it on' and 'Turn off'
+  s1 not: The challenge turned off without the question
+  s2 see: The sheet closes; the card is still On
+  s2 not: The challenge cancelled
+  s3 see: Toast 'Turned off. Members no longer see “Easy start”.'
+  s3 see: Pill 'Off', 'This challenge is off. Members do not see it.'
+  s3 not: Winners of the cancelled challenge still offered free days
+  s3 not: The card still On after a refresh
+  s4 see: A new challenge that starts today; progress starts from zero
+  s4 not: Workouts from the first run counted in the second
+J-F-panel-723-06 | type 12 | owner | Challenges page; then the same page as front desk staff
+  s1 see: The reward is free days given by the gym, and each winner is checked by the gym before days are added
+  s1 not: Money offered as a prize
+  s1 not: Free days added to a winner with no check by the gym
+  s2 see: 'Only the owner can turn these challenges on or off.'
+  s2 see: No 'Turn on', 'Change' or 'Turn off' on any card
+  s2 not: Any button that changes a challenge for the front desk
+  s3 see: The challenge name is the same in every language, because members see it in their app
+  s3 not: A member's name on the leaderboard when that member switched their name off
+J-F-panel-709-01 | type 1 | owner | Money, a fee was just collected from a member on a running plan
+  s1 see: Title 'Receipt <number>' with the member’s name and the day under it
+  s1 see: Buttons 'Back', 'Send on WhatsApp', 'Print'
+  s1 not: A receipt of another member
+  s1 not: The words 'Receipt not found' for a payment just saved
+  s2 see: Heading 'Payment receipt' (or 'Tax invoice' when the gym had a GST number on the payment day)
+  s2 see: 'Received with thanks from' and the member’s name
+  s2 see: '<Plan> membership' with '<first day> to <last day>' as sold
+  s2 see: The amount, and in words like 'Rupees One Thousand Four Hundred Ninety Nine Only'
+  s2 see: 'Balance on this membership as on <today>:' with what is still due
+  s2 see: 'Computer-generated receipt. Valid without a signature.'
+  s2 not: Words that do not match the figures
+  s2 not: Free days given later printed as days paid for
+  s2 not: GST worked out at today’s rate for an old payment
+  s2 not: Today's GST number on a payment taken before the gym had one
+  s3 see: The browser’s print window with only the receipt sheet
+  s3 not: The buttons or the menu printed on the paper
+  s3 not: A different number on a second print
+J-F-panel-709-02 | type 2 | owner | Receipt page of a live payment, member has a valid mobile number, internet on (other way: the receipt on WhatsApp)
+  s1 see: WhatsApp opens in a new tab on the member’s number
+  s1 see: Text: '<Hello name> we received your ₹<amount> on <day> (<method>). Receipt no. <number>. Received by <name>. Thank you!'
+  s1 see: When money is still due: '₹<due> is still due.' with the gym’s UPI ID and pay link, then the gym’s sign-off line
+  s1 not: The message sent by itself without the person pressing send in WhatsApp
+  s1 not: Another member’s number
+  s1 not: A still-due line when nothing is due
+  s2 see: No 'Send on WhatsApp' link
+  s2 not: A thank-you sent for a cancelled receipt
+J-F-panel-709-03 | type 1 | staff | Money, a fee was just collected from a member on a running plan by the front desk
+  s1 see: Title 'Receipt <number>' with the member’s name and the day under it
+  s1 see: Buttons 'Back', 'Send on WhatsApp', 'Print'
+  s1 not: A receipt of another member
+  s1 not: The words 'Receipt not found' for a payment just saved
+  s2 see: Heading 'Payment receipt' (or 'Tax invoice' when the gym had a GST number on the payment day)
+  s2 see: 'Received with thanks from' and the member’s name
+  s2 see: '<Plan> membership' with '<first day> to <last day>' as sold
+  s2 see: The amount, and in words like 'Rupees One Thousand Four Hundred Ninety Nine Only'
+  s2 see: 'Balance on this membership as on <today>:' with what is still due
+  s2 see: 'Computer-generated receipt. Valid without a signature.'
+  s2 see: 'Received by' the name of the person who took the money
+  s2 not: Words that do not match the figures
+  s2 not: Free days given later printed as days paid for
+  s2 not: GST worked out at today’s rate for an old payment
+  s2 not: Today's GST number on a payment taken before the gym had one
+  s3 see: The browser’s print window with only the receipt sheet
+  s3 not: The buttons or the menu printed on the paper
+  s3 not: A different number on a second print
+J-F-panel-709-04 | type 2 | staff | Receipt page of a live payment, member has a valid mobile number, internet on (other way: the receipt on WhatsApp)
+  s1 see: WhatsApp opens in a new tab on the member’s number
+  s1 see: Text: '<Hello name> we received your ₹<amount> on <day> (<method>). Receipt no. <number>. Received by <name>. Thank you!'
+  s1 see: When money is still due: '₹<due> is still due.' with the gym’s UPI ID and pay link, then the gym’s sign-off line
+  s1 not: The message sent by itself without the person pressing send in WhatsApp
+  s1 not: Another member’s number
+  s1 not: A still-due line when nothing is due
+  s2 see: No 'Send on WhatsApp' link
+  s2 not: A thank-you sent for a cancelled receipt
+J-F-panel-709-05 | type 2 | owner | Collect fees across a year end and in a second branch (other kind: how the number is made)
+  s1 see: Numbers like '2025-26/0412' and then '2026-27/0001'
+  s1 not: The new year carrying on from the old count
+  s1 not: Two receipts with one number
+  s2 see: A number that starts with the branch’s code, like 'B2/2026-27/0001'
+  s2 not: The same number as a receipt of the first branch
+  s3 see: Their own series, like 'IMP/2026-27/0001'
+  s3 not: Imported receipts taking numbers in the desk’s series
+  s3 not: A number longer than 16 characters
+J-F-panel-709-06 | type 2 | staff | Front desk device with no internet, a member pays (other kind: a receipt taken offline)
+  s1 see: A number from this device’s own series, like '2026-27/D1-0001'
+  s1 not: A number that changes when the internet is back
+  s1 not: The same number as another desk device
+  s2 see: 'Not confirmed yet: the internet dropped while this was saved. Its receipt number is sure once it is sent, so print it after that.'
+  s2 see: 'Print' is greyed
+  s2 not: A print of a number that may still change
+J-F-panel-709-07 | type 3 | owner | Collect dues sheet for a member who owes ₹500
+  s1 see: 'That is more than the ₹500 due on this membership.'
+  s1 not: A receipt bigger than what is owed
+  s2 see: 'Type an amount more than zero, with at most two digits after the point.'
+  s2 not: A receipt for zero
+  s2 not: An amount rounded without a word
+  s3 see: 'The payment date can’t be in the future.'
+  s3 not: A receipt dated ahead
+  s4 see: The owner’s receipt is saved with that day
+  s4 not: The 31-day limit of the front desk applied to the owner
+  s5 see: 'Receipt not found'
+  s5 see: 'This receipt is not here any more. It may be from a gym you erased.'
+  s5 see: Button 'Back to Money'
+  s5 not: A blank page
+  s5 not: Another gym's receipt
+J-F-panel-709-08 | type 3 | staff | Collect dues sheet as front desk staff
+  s1 see: 'The front desk can date a payment at most 31 days back. Ask the owner to enter older payments.'
+  s1 not: The receipt saved with the old day
+  s2 see: 'The payment date can’t be in the future.'
+  s2 not: A receipt dated ahead
+  s3 see: 'This membership is fully paid. Nothing is due on it.'
+  s3 not: A receipt on a plan that owes nothing
+J-F-panel-709-09 | type 6 | owner | A receipt that was printed last month
+  s1 see: 'Write why this receipt is cancelled (at least 3 letters), so it is clear later.'
+  s1 not: A cancel saved with no real reason
+  s2 see: On the receipt: 'CANCELLED — THIS RECEIPT DOES NOT COUNT' with the reason
+  s2 see: No 'Send on WhatsApp'
+  s2 not: The cancelled money still in the totals
+  s2 not: The receipt number used again for a new receipt
+  s3 see: The same number and the dates as sold
+  s3 see: A line 'Extended free by 3 days (gift) to <day>'
+  s3 see: The balance labelled 'as on <today>'
+  s3 not: The old receipt saying the free days were paid for
+  s3 not: A balance with no day, which would not match the copy handed over last month
+J-F-panel-709-10 | type 6 | staff | A receipt the owner cancelled, opened by front desk staff
+  s1 see: 'CANCELLED — THIS RECEIPT DOES NOT COUNT' with the reason
+  s1 see: No 'Send on WhatsApp'
+  s1 not: The receipt looking valid on paper
+  s2 see: None for the front desk
+  s2 not: A cancel button for the front desk
+J-F-panel-709-11 | type 12 | owner | Receipt page
+  s1 see: The member’s name and mobile number, the gym’s name, address, phone and GST number, and who took the money
+  s1 not: Other members’ payments
+  s1 not: Health or body facts of the member
+  s2 see: The Money page of the same gym
+  s2 not: The panel left for an empty tab
+  s2 not: The receipt shown to someone not signed in to this gym
+  s3 see: It goes only to the number on the member’s own record
+  s3 not: The gym’s totals or another member’s dues in the message
+J-F-panel-709-12 | type 12 | staff | Receipt page as front desk staff
+  s1 see: The same sheet as the owner sees for this one payment
+  s1 not: Money totals of the gym
+  s1 not: A list of all receipts with a sum
+  s2 see: It goes only to the member’s own number, with the staff person’s name as the one who received it only when the receipt carries it
+  s2 not: The staff person’s own mobile number in the message
+J-F-panel-724-01 | type 1 | owner | Settings > Member app, no free days set; an enquiry in Enquiries that came through member Asha’s invite link
+  s1 see: Under the box: 'Type how many free days a member gets, with one tap from you, for each friend who joins through their invite link, or leave it empty to give none.'
+  s1 see: Button 'Save free days' becomes usable
+  s1 not: Days given to anyone just by saving this number
+  s2 see: Toast 'Saved. A member gets 7 free days for each friend who joins.'
+  s2 not: A saved toast when the save failed
+  s3 see: Sheet 'Thank Asha' with buttons 'Not now' and 'Give 7 free days'
+  s3 not: The free days added before the owner taps
+  s3 not: The sheet when Asha has no running plan
+  s4 see: Sheet 'Free days added'
+  s4 see: 'Asha got 7 free days. Their plan now ends on <old last day + 7>.'
+  s4 see: Button 'Open <friend’s name>'
+  s4 not: The days added twice
+  s4 not: The words shown when no days were added
+  s4 not: A receipt or GST made for the free days
+  s5 see: The new member’s page
+  s5 not: Asha’s page instead
+J-F-panel-724-02 | type 2 | owner | Today, card 'Joined online', a request from a person a member invited (other way in: Make member on Today)
+  s1 see: The same sheet 'Thank <member>' with 'Not now' and 'Give <n> free days'
+  s1 not: The thank-you skipped because the friend joined from Today
+  s2 see: The new member’s page opens; nothing is added
+  s2 not: The offer lost for good
+  s3 see: Sheet 'Thank <member>', then 'Free days added'
+  s3 not: The row saying the days were given when they were not
+J-F-panel-724-03 | type 3 | owner | Settings > Member app and Enquiries, the cases where days cannot be set or given
+  s1 see: 'Type a whole number of days from 1 to 60, or leave it empty.'
+  s1 not: A number over 60 saved
+  s1 not: A greyed button with no reason
+  s2 see: Toast 'Saved. No free days for a friend who joins.'
+  s2 not: The old number still used for the next friend
+  s3 see: '<Member> is not on your member list, so the <n> free days cannot be added here.'
+  s3 not: Days added to a different member with a like name
+  s4 see: '<Member> has no plan running, so there is nothing to add the <n> free days to. Add them by hand when <Member> renews.'
+  s4 not: Days added to an ended or cancelled plan, or to a personal training pack
+J-F-panel-724-04 | type 6 | owner | Enquiries, a friend whose thank-you was given
+  s1 see: '<Member> got 7 free days for this friend.'
+  s1 see: No Give button
+  s1 not: A second offer for the same friend
+  s2 see: The row still says 7 free days for this friend
+  s2 not: The given reward restated as 14
+  s3 see: The days are on the plan once; the row is marked given
+  s3 not: The plan extended twice
+  s4 see: 7 more days on the member’s plan, and the new last day in the words
+  s4 not: 'Free days added' shown while the plan did not move (see finding FN-A5-panel-logic-2-3-01)
+J-F-panel-724-05 | type 12 | owner | Enquiries as the owner, then as front desk staff
+  s1 see: The new member’s page; no thank-you sheet
+  s1 not: The front desk able to give free days
+  s2 see: A line like 'Extended free by 7 days (reward) to <day>'
+  s2 not: The friend’s name printed on the other member’s receipt
+  s2 not: The free days shown as paid for
+  s3 see: The member sees the new last day in their app
+  s3 not: The friend’s phone number shown to the member who invited
+J-F-panel-701-01 | type 1 | owner | Today, a person filled the gym’s 'Become a member' page and chose to pay at the desk
+  s1 see: Card 'Joined online'
+  s1 see: 'They filled your "Become a member" page. Make them members when they come in and pay.'
+  s1 see: A row with the name, '<plan> · starts <date>' and '₹<total> to pay at the desk · Not paid yet'
+  s1 see: Button 'Make member'
+  s1 not: The person already on the member list before anyone tapped
+  s1 not: A request of another gym
+  s2 see: The Add member form with their name, mobile number and gender filled in
+  s2 not: An empty form
+  s2 not: A member saved before the form is confirmed
+  s3 see: The Sell membership sheet on the plan they picked, starting on the day they picked (today when that day has passed)
+  s3 not: A start day in the past
+  s3 not: A plan the gym no longer sells picked by itself
+  s3 not: Money marked as collected
+  s4 see: The new member’s page; the row is gone from Today
+  s4 not: The row still on Today
+  s4 not: Two members for one request
+J-F-panel-701-02 | type 2 | owner | Today, the person paid on the join page and the payment company confirmed it (other kind: paid online)
+  s1 see: '₹<total> paid online'
+  s1 see: 'Approve makes them a member, with their plan and receipt.'
+  s1 see: Buttons 'Approve' and 'Make member'
+  s1 not: 'Paid' shown for a payment that only started
+  s1 not: Approve offered for a test payment as if it were money
+  s2 see: 'Approving…', the other buttons greyed
+  s2 see: Then the new member’s page with the plan and a receipt dated the day they paid, with the payment company’s reference
+  s2 not: Two receipts for one online payment
+  s2 not: A receipt dated after today
+  s2 not: More collected than the plan costs
+J-F-panel-701-03 | type 2 | owner | Today, the person paid by plain UPI and tapped that they have paid (other kind: nobody confirmed it)
+  s1 see: '₹<total> paid by UPI, they say · Check your bank before approving'
+  s1 not: The row shown as surely paid
+  s2 see: A question: 'Can you see ₹<amount> from <name> in your bank or UPI app? Approve saves it as paid.'
+  s2 not: A receipt made before the question is answered
+  s3 see: Nothing changes; the row stays
+  s3 not: A member or a receipt made
+  s4 see: The new member’s page with plan and receipt
+  s4 not: The payment saved twice
+J-F-panel-701-04 | type 2 | owner | Today, a person picked the free trial on the join page (other kind: free trial; only when the owner switched it on)
+  s1 see: 'Free trial, 3 days · <from> to <to>'
+  s1 see: 'Let them in until <date> · Nothing paid'
+  s1 see: Card line 'People on a free trial may visit until the day shown. Make them members when they join.'
+  s1 not: The person counted as a member
+  s1 not: An amount to collect for the trial
+  s2 see: 'Trial ended on <date> · Not a member yet'
+  s2 not: 'Let them in' still shown after the last day
+  s2 not: The row gone with no word
+  s3 see: The Add member form filled in, then Sell membership with no plan picked and the usual start day
+  s3 not: The trial’s start day used as the plan’s start day
+J-F-panel-701-05 | type 1 | staff | Today, a person filled the gym’s 'Become a member' page and chose to pay at the desk
+  s1 see: Card 'Joined online'
+  s1 see: 'They filled your "Become a member" page. Make them members when they come in and pay.'
+  s1 see: A row with the name, '<plan> · starts <date>' and '₹<total> to pay at the desk · Not paid yet'
+  s1 see: Button 'Make member'
+  s1 not: The person already on the member list before anyone tapped
+  s1 not: A request of another gym
+  s2 see: The Add member form with their name, mobile number and gender filled in
+  s2 not: An empty form
+  s2 not: A member saved before the form is confirmed
+  s3 see: The Sell membership sheet on the plan they picked, starting on the day they picked (today when that day has passed)
+  s3 not: A start day in the past
+  s3 not: A plan the gym no longer sells picked by itself
+  s3 not: Money marked as collected
+  s4 see: The new member’s page; the row is gone from Today
+  s4 not: The row still on Today
+  s4 not: Two members for one request
+J-F-panel-701-06 | type 2 | staff | Today, the person paid on the join page and the payment company confirmed it (other kind: paid online)
+  s1 see: '₹<total> paid online'
+  s1 see: 'Approve makes them a member, with their plan and receipt.'
+  s1 see: Buttons 'Approve' and 'Make member'
+  s1 not: 'Paid' shown for a payment that only started
+  s1 not: Approve offered for a test payment as if it were money
+  s2 see: 'Approving…', the other buttons greyed
+  s2 see: Then the new member’s page with the plan and a receipt dated the day they paid, with the payment company’s reference
+  s2 not: Two receipts for one online payment
+  s2 not: A receipt dated after today
+  s2 not: More collected than the plan costs
+J-F-panel-701-07 | type 2 | staff | Today, the person paid by plain UPI and tapped that they have paid (other kind: nobody confirmed it)
+  s1 see: '₹<total> paid by UPI, they say · Check your bank before approving'
+  s1 not: The row shown as surely paid
+  s2 see: A question: 'Can you see ₹<amount> from <name> in your bank or UPI app? Approve saves it as paid.'
+  s2 not: A receipt made before the question is answered
+  s3 see: Nothing changes; the row stays
+  s3 not: A member or a receipt made
+  s4 see: The new member’s page with plan and receipt
+  s4 not: The payment saved twice
+J-F-panel-701-08 | type 2 | staff | Today, a person picked the free trial on the join page (other kind: free trial; only when the owner switched it on)
+  s1 see: 'Free trial, 3 days · <from> to <to>'
+  s1 see: 'Let them in until <date> · Nothing paid'
+  s1 see: Card line 'People on a free trial may visit until the day shown. Make them members when they join.'
+  s1 not: The person counted as a member
+  s1 not: An amount to collect for the trial
+  s2 see: 'Trial ended on <date> · Not a member yet'
+  s2 not: 'Let them in' still shown after the last day
+  s2 not: The row gone with no word
+  s3 see: The Add member form filled in, then Sell membership with no plan picked and the usual start day
+  s3 not: The trial’s start day used as the plan’s start day
+J-F-panel-701-09 | type 3 | owner | Today, card 'Joined online', the cases that must refuse
+  s1 see: 'The plan they picked is no longer sold. Tap Make member and pick a plan.'
+  s1 not: A member on a plan that is not sold
+  s1 not: A receipt with no plan
+  s2 see: 'This online payment was refunded, so nothing was saved. Ask them how they will pay.'
+  s2 not: A member and a receipt for refunded money
+  s3 see: '₹<total> paid in test mode · No real money came in · Collect it at the desk'
+  s3 see: 'Approve makes them a member with their plan. Nothing is saved as paid.'
+  s3 not: A receipt for test money
+  s4 see: '₹<paid> paid online, but the plan is ₹<total> · Check before approving'
+  s4 see: On Approve: '<name> paid ₹<paid>, but the plan is ₹<total>. Approve saves ₹<paid> as paid; the rest stays due.'
+  s4 not: The full plan marked paid
+  s5 see: '₹<total> · The online payment did not go through · Not paid'
+  s5 see: '₹<total> · Started paying online, did not finish · Not paid'
+  s5 not: Approve offered for either
+  s6 see: '<name> has just paid online. Tap Approve instead.'
+  s6 not: The fee collected at the desk and online for the same plan
+J-F-panel-701-10 | type 3 | staff | Today as front desk staff, card 'Joined online'
+  s1 see: 'Someone else at the desk is approving this person now. Wait a minute and look again.'
+  s1 not: Two members or two receipts
+  s2 see: 'Could not approve. Check your internet and try again.'
+  s2 not: A member saved on the device with no receipt on the server
+  s3 see: 'Could not check their online payment. Check your internet and try again.'
+  s3 not: The form opening while an online payment may still land
+  s4 see: 'Their name or number could not be saved. Tap Make member to check them.'
+  s4 not: A member with a broken number
+J-F-panel-701-11 | type 6 | owner | Today, card 'Joined online' with one waiting request
+  s1 see: The row leaves the card; with no rows left the whole card goes
+  s1 not: An empty card titled Joined online
+  s2 see: The same person as a joined enquiry
+  s2 not: The request listed as still open
+  s3 see: One member, one plan, one receipt
+  s3 not: A second receipt for the same online payment
+  s4 see: The plan starts on the usual day (today), not on the passed day
+  s4 not: A plan that starts in the past and has already lost days
+J-F-panel-701-12 | type 6 | staff | Today, card 'Joined online' with one waiting request
+  s1 see: The row leaves the card; with no rows left the whole card goes
+  s1 not: An empty card titled Joined online
+  s2 see: The same person as a joined enquiry
+  s2 not: The request listed as still open
+  s3 see: One member, one plan, one receipt
+  s3 not: A second receipt for the same online payment
+  s4 see: The plan starts on the usual day (today), not on the passed day
+  s4 not: A plan that starts in the past and has already lost days
+J-F-panel-701-13 | type 12 | owner | Today, card 'Joined online'
+  s1 see: The person’s name, plan, start day and what they paid or owe
+  s1 not: Their health answers or their full mobile number shown to people who are not signed in to this gym
+  s2 see: No member exists until someone at the desk taps Make member or Approve
+  s2 not: A member made by the server alone
+  s2 not: A member left behind by a failed or refunded payment
+  s3 see: The person is not on the member list and cannot check in as a member
+  s3 not: A trial person counted in member totals
+J-F-panel-701-14 | type 12 | staff | Today as front desk staff, card 'Joined online'
+  s1 see: Each person’s own amount only
+  s1 not: The gym’s money totals
+  s1 not: Online payments of people who are not on this card
+  s2 see: The receipt carries the staff person’s name as the one who took it
+  s2 not: The receipt saved with no taker or with the owner’s name
+J-F-panel-727-01 | type 1 | owner | Settings > Gym details, one branch, gym web pages on
+  s1 see: 'This name shows in your members’ MettleUp app and on your receipts.'
+  s1 not: No line
+  s1 not: Two sentences or a line that ends without a full stop
+  s2 see: 'This number is printed on your receipts, and your web page can show it with a Call button.'
+  s2 see: 'If your gym is registered for GST, this number shows on your receipts.'
+  s2 see: 'This address shows on your receipts and on your web page.'
+  s2 not: A line that says something the receipt does not do
+  s3 see: 'Fee reminders, renewal messages and receipts show this UPI ID with a link that opens the member’s UPI app with the amount already filled in.'
+  s3 not: The UPI line shown where no UPI box is
+J-F-panel-727-02 | type 2 | owner | The other settings screens (other kinds: tick boxes and boxes on Payments, Branding, Branches, Member app, Gym timings, Web page, Entry mach
+  s1 see: 'Tick this box to show members a Pay now button in the MettleUp app for what they owe, or leave it unticked so that they pay at the desk.'
+  s1 see: 'Tick this box to let people who join with your join link pay for their plan online, or leave it unticked so that they pay at the desk.'
+  s1 not: The line and the tick box saying opposite things
+  s2 see: 'Tick this box to stop the paid features <n> days after a member’s plan ends until they renew, while their workouts are always kept.' with the real number of days
+  s2 see: 'Tick this box to show members one tip on the Gym tab of their app, for example “Leg day is quieter on Tuesday”.'
+  s2 see: 'Type how many free days a member gets, with one tap from you, for each friend who joins through their invite link, or leave it empty to give none.'
+  s2 not: '{n}' shown as it is, not as a number
+  s3 see: 'Tick this box to let anyone with the link see your web page, and untick it at any time to hide the page.'
+  s3 see: 'Tick this box so that Google may show your web page in search results, or leave it unticked so that only people with the link find it.'
+  s3 not: A line under a box that is greyed with no reason
+  s4 see: 'You find this number on the machine under Menu > System Info > Serial Number.'
+  s4 see: 'Type up to 120 letters here to tell members something they should know about your gym timings.'
+  s4 not: A letter limit in the line that differs from what the box takes
+J-F-panel-727-03 | type 3 | owner | Settings > Gym details in the two cases where the usual line would be untrue
+  s1 see: Under Phone: 'This number is printed on your receipts.'
+  s1 see: Under Address: 'This address shows on your receipts.'
+  s1 not: A line that talks about a web page the gym cannot have
+  s2 see: 'Members of this branch see this name in their MettleUp app and on its receipts.'
+  s2 see: 'If this branch is registered for GST, this number shows on its receipts.'
+  s2 not: The one-branch wording in a branch
+J-F-panel-727-04 | type 6 | owner | Settings > Member app, the Plus lock tick box
+  s1 see: The same sentence under the box both times
+  s1 not: The line vanishing when the box is off
+  s2 see: The Hinglish sentence under the box
+  s2 not: English under one box and Hinglish under the next
+J-F-panel-727-05 | type 12 | owner | Settings, the lines that make a promise
+  s1 see: '… while their workouts are always kept.'
+  s1 not: A member’s workouts removed or hidden when the paid features lock
+  s2 see: '… untick it at any time to hide the page.'
+  s2 see: '… so that only people with the link find it.'
+  s2 not: The page still open after the box is unticked
+  s2 not: The page offered to Google while the box is off
+  s3 see: '… with one tap from you …'
+  s3 not: Free days given without the owner’s tap
+J-F-panel-727-06 | type 1 | staff | A settings screen the front desk may open (which ones: not checked)
+  s1 see: The same one sentence under each setting as the owner sees
+  s1 not: A different wording for the front desk
+  s1 not: A line under a setting the front desk cannot change, with no word that it is the owner’s
+J-F-panel-727-07 | type 3 | staff | Settings as front desk staff
+  s1 see: The usual refusal or the screen without its owner-only parts
+  s1 not: The setting and its line shown as if the front desk could change it
+J-F-panel-727-08 | type 6 | staff | A settings screen the front desk may open, panel language changed by the owner to Hinglish
+  s1 see: The Hinglish sentence under each setting
+  s1 not: The English line left behind for the front desk
+J-F-panel-729-01 | type 1 | owner | Today on an Android phone in Chrome, the admin app is not on the home screen, the card was never closed
+  s1 see: One set-up card: 'Put the admin app on your phone'
+  s1 see: 'It sits on your home screen and opens full screen, in one tap.'
+  s1 see: Buttons 'Install the admin app' and 'Not now'
+  s1 not: Two set-up cards stacked
+  s1 not: The card above the things that wait for the desk
+  s2 see: Chrome’s own install sheet
+  s2 not: Nothing happening on the tap
+  s3 see: The card leaves Today
+  s3 not: The card still asking to install
+  s3 not: The card back on the next visit from the home-screen app
+J-F-panel-729-02 | type 2 | owner | Today on a phone where the browser cannot open an install sheet, for example an iPhone (other kind: steps instead of a sheet)
+  s1 see: The card with one button 'Show me how' and 'Not now'
+  s1 not: A button 'Install the admin app' that cannot install
+  s2 see: Numbered steps for this phone and browser in a marked box
+  s2 see: The 'Show me how' button is gone
+  s2 not: A button that stays and does nothing on a second tap
+  s2 not: Steps for another kind of phone
+J-F-panel-729-03 | type 3 | owner | Today in the cases where no card may show
+  s1 see: No set-up card on Today (the full card is in Settings: 'Install the admin app on this computer')
+  s1 not: A card that says 'on your phone' on a computer
+  s2 see: No set-up card
+  s2 not: An offer to install what is already open
+  s3 see: None: 'Turn on alerts' now sits at the top of the bell panel
+  s3 not: The alerts offer both on Today and in the bell panel
+J-F-panel-729-04 | type 6 | owner | Today on a phone, the card is showing
+  s1 see: The card goes at once
+  s1 not: Another set-up card jumping into its place with no pause
+  s2 see: Still no card
+  s2 not: The card back after every reload
+  s3 see: The full card is still there, with the steps or the install button
+  s3 not: No way left to find the install steps
+  s4 see: The card may come back (a private window cannot remember)
+  s4 not: An error because the choice could not be kept
+J-F-panel-729-05 | type 1 | staff | Today on an Android phone in Chrome, the admin app is not on the home screen, the card was never closed
+  s1 see: One set-up card: 'Put the admin app on your phone'
+  s1 see: 'It sits on your home screen and opens full screen, in one tap.'
+  s1 see: Buttons 'Install the admin app' and 'Not now'
+  s1 not: Two set-up cards stacked
+  s1 not: The card above the things that wait for the desk
+  s2 see: Chrome’s own install sheet
+  s2 not: Nothing happening on the tap
+  s3 see: The card leaves Today
+  s3 not: The card still asking to install
+  s3 not: The card back on the next visit from the home-screen app
+J-F-panel-729-06 | type 2 | staff | Today on a phone where the browser cannot open an install sheet, for example an iPhone (other kind: steps instead of a sheet)
+  s1 see: The card with one button 'Show me how' and 'Not now'
+  s1 not: A button 'Install the admin app' that cannot install
+  s2 see: Numbered steps for this phone and browser in a marked box
+  s2 see: The 'Show me how' button is gone
+  s2 not: A button that stays and does nothing on a second tap
+  s2 not: Steps for another kind of phone
+J-F-panel-729-07 | type 3 | staff | Today in the cases where no card may show
+  s1 see: No set-up card on Today (the full card is in Settings: 'Install the admin app on this computer')
+  s1 not: A card that says 'on your phone' on a computer
+  s2 see: No set-up card
+  s2 not: An offer to install what is already open
+  s3 see: None: 'Turn on alerts' now sits at the top of the bell panel
+  s3 not: The alerts offer both on Today and in the bell panel
+J-F-panel-729-08 | type 6 | staff | Today on a phone, the card is showing
+  s1 see: The card goes at once
+  s1 not: Another set-up card jumping into its place with no pause
+  s2 see: Still no card
+  s2 not: The card back after every reload
+  s3 see: The full card is still there, with the steps or the install button
+  s3 not: No way left to find the install steps
+  s4 see: The card may come back (a private window cannot remember)
+  s4 not: An error because the choice could not be kept
+J-F-panel-730-01 | type 1 | owner | Settings > Staff & sign-in, gym online, signed in as the owner
+  s1 see: Sheet 'Add a person' with a name box, 'Mobile number' with +91, and 'What is their job?' with Owner, Staff (front desk), Trainer, Other
+  s1 not: The sheet for someone who is not an owner
+  s2 see: Under the list: 'Adds members, collects fees and checks members in. Never sees money totals.' (in a gym with branches: 'Works only at this branch: adds members, collects fees and checks members in. Never sees money totals.')
+  s2 not: The owner’s hint under the Staff choice
+  s3 see: 'Adding…'
+  s3 see: Toast '<name> added. Now make a sign-in code for them.'
+  s3 see: A new row with the pill 'Staff', the number as +91 … and 'Make sign-in code'
+  s3 not: Two rows for one tap
+  s3 not: The person able to sign in before a code is made
+  s3 not: Owner powers for a Staff choice
+J-F-panel-730-02 | type 2 | owner | Sheet 'Add a person' (other kind: Owner)
+  s1 see: 'Can do everything, including money totals.' (with branches: 'Can do everything in every branch, including money totals.')
+  s1 not: No word that this person will see the money
+  s2 see: Toast '<name> added. Now make a sign-in code for them.'
+  s2 see: Row pill 'Owner'
+  s2 not: The person saved as front desk
+J-F-panel-730-03 | type 2 | owner | Sheet 'Add a person' (other kind: Trainer)
+  s1 see: 'Same access as the front desk, plus the workout progress of the members you give them.'
+  s1 not: A promise of more access than the front desk has
+  s2 see: Toast '<name> added. Now make a sign-in code for them.'
+  s2 see: Row pill 'Trainer' and the Trainer tick on
+  s2 not: The person added but not ticked as a trainer, with the plain "added" toast
+  s3 see: Toast '<name> added with front desk access, but not marked as a trainer yet. Tick Trainer on their row.'
+  s3 not: The person lost
+  s3 not: A second person added on a retry
+J-F-panel-730-04 | type 2 | owner | Sheet 'Add a person' (other kind: Other, with a typed job)
+  s1 see: A box 'Type the job (for example Manager, Cleaner)'
+  s1 see: 'Same access as the front desk. The job only shows next to their name.'
+  s1 not: A typed job that changes what the person may do
+  s2 see: Toast '<name> added. Now make a sign-in code for them.'
+  s2 see: Row pill 'Manager'
+  s2 not: The pill 'Staff' while a job was typed
+  s2 not: The job shown to members
+J-F-panel-730-05 | type 3 | owner | Sheet 'Add a person', wrong or missing input; and people who may not add
+  s1 see: 'Type their name.'
+  s1 not: A person with an empty name
+  s2 see: 'Type a 10-digit mobile number, like 98290 12345.'
+  s2 not: A person saved with a number nobody can sign in with
+  s3 see: Under the job box: 'Type their job, like Manager or Cleaner.'
+  s3 not: The person added as Other with no job
+  s3 not: The message under the wrong box
+  s4 see: The server’s plain refusal in the sheet; the typed values stay
+  s4 not: Two people with one mobile number
+  s4 not: The sheet closing as if it worked
+  s5 see: No 'Add a person' button
+  s5 not: The front desk adding an owner
+  s6 see: 'Put your gym online first (Settings → Sign-in & data). Then you and your staff can sign in with a mobile number, on any phone or computer.'
+  s6 not: An Add button that cannot work
+J-F-panel-730-06 | type 6 | owner | Staff & sign-in, a person added as Other with the job 'Manager' on a gym server that cannot yet keep typed jobs
+  s1 see: Pill 'Manager'
+  s1 not: Pill 'Staff' on the browser that typed the job
+  s2 see: Pill 'Staff': the job is kept on the first browser only for now
+  s2 not: A wrong job from another person
+  s3 see: The job is sent once, and the pill reads Manager on every device
+  s3 not: The job sent again on every visit
+  s3 not: A job the owner later cleared on the server coming back from the browser
+  s4 see: The row and its kept job are gone
+  s4 not: The job showing on a new person who gets the same place
+J-F-panel-730-07 | type 12 | owner | Sheet 'Add a person' and the rows
+  s1 see: Only Owner says "including money totals"; Staff says "Never sees money totals."
+  s1 not: Trainer or Other given owner powers
+  s1 not: A Staff, Trainer or Other person seeing money totals
+  s2 see: Their name and mobile number are kept for sign-in; they get in only with a code the owner makes
+  s2 not: The mobile number shown to members
+  s2 not: A sign-in code sent to anyone by itself
+  s3 see: They see workout progress only of members the owner gives them
+  s3 not: Every member’s workout progress open to a new trainer

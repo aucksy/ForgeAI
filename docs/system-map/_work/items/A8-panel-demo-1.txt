@@ -1,0 +1,846 @@
+# A8-panel-demo-1: coverage of 91 Tier 1 journeys (16 features, from A5-panel-demo-1, A5-panel-demo-2). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-108 | apps/dashboard/e2e/demo.spec.mjs | e2e | 142 lines | asserts 6 journey phrase(s)
+F-panel-108 | apps/dashboard/e2e/demo-showcase-uat.spec.mjs | e2e | 181 lines | asserts 3 journey phrase(s)
+F-panel-108 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-108 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 2 journey phrase(s)
+F-panel-108 | apps/dashboard/e2e/r495-uat.spec.mjs | e2e | 303 lines | asserts 2 journey phrase(s)
+F-panel-108 | apps/dashboard/test/crm/demoGym.test.ts | unit | 109 lines | asserts 2 journey phrase(s)
+F-panel-108 | apps/dashboard/e2e/entry-uat.spec.mjs | e2e | 187 lines | asserts 1 journey phrase(s)
+F-panel-108 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-108 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-108 | apps/dashboard/e2e/logocolour.spec.mjs | e2e | 160 lines | asserts 1 journey phrase(s)
+F-panel-108 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 1 journey phrase(s)
+F-panel-108 | apps/dashboard/e2e/r573-uat.spec.mjs | e2e | 218 lines | asserts 1 journey phrase(s)
+F-panel-109 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 3 journey phrase(s)
+F-panel-109 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-109 | apps/dashboard/e2e/demo-showcase-uat.spec.mjs | e2e | 181 lines | asserts 2 journey phrase(s)
+F-panel-109 | apps/dashboard/e2e/demo.spec.mjs | e2e | 142 lines | asserts 2 journey phrase(s)
+F-panel-109 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-panel-109 | apps/dashboard/e2e/online.spec.mjs | e2e | 163 lines | asserts 2 journey phrase(s)
+F-panel-109 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 2 journey phrase(s)
+F-panel-109 | apps/mobile/test/cloud/copyPlan.test.ts | unit | 205 lines | asserts 2 journey phrase(s)
+F-panel-109 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-109 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 1 journey phrase(s)
+F-panel-109 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-109 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-110 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 9 journey phrase(s)
+F-panel-110 | supabase/tests/0087_feedback_owner_desk.sql | db | 143 lines | asserts 6 journey phrase(s)
+F-panel-110 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 5 journey phrase(s)
+F-panel-110 | supabase/tests/0050_trainer_view.sql | db | 213 lines | asserts 5 journey phrase(s)
+F-panel-110 | supabase/tests/0053_ask_trainer_and_progress.sql | db | 232 lines | asserts 5 journey phrase(s)
+F-panel-110 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 4 journey phrase(s)
+F-panel-110 | apps/dashboard/e2e/progress-trend-uat.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-panel-110 | apps/dashboard/e2e/trainers-uat.spec.mjs | e2e | 282 lines | asserts 4 journey phrase(s)
+F-panel-110 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-panel-110 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 3 journey phrase(s)
+F-panel-110 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 3 journey phrase(s)
+F-panel-110 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-111 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 3 journey phrase(s)
+F-panel-111 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 3 journey phrase(s)
+F-panel-111 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-111 | apps/dashboard/e2e/member-messages-uat.spec.mjs | e2e | 236 lines | asserts 2 journey phrase(s)
+F-panel-111 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 2 journey phrase(s)
+F-panel-111 | apps/mobile/test/lib/helpHistory.test.ts | unit | 207 lines | asserts 2 journey phrase(s)
+F-panel-111 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-111 | apps/mobile/test/tracker/r72HealthSend.test.ts | unit | 52 lines | asserts 2 journey phrase(s)
+F-panel-111 | apps/dashboard/e2e/bell-inbox-uat.spec.mjs | e2e | 401 lines | asserts 1 journey phrase(s)
+F-panel-111 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-111 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 1 journey phrase(s)
+F-panel-111 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 1 journey phrase(s)
+F-panel-112 | apps/dashboard/e2e/member-messages-uat.spec.mjs | e2e | 236 lines | asserts 11 journey phrase(s)
+F-panel-112 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 9 journey phrase(s)
+F-panel-112 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 8 journey phrase(s)
+F-panel-112 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 6 journey phrase(s)
+F-panel-112 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-panel-112 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-panel-112 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-panel-112 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-panel-112 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-panel-112 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-panel-112 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 3 journey phrase(s)
+F-panel-112 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-panel-113 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 11 journey phrase(s)
+F-panel-113 | apps/dashboard/e2e/messages.spec.mjs | e2e | 191 lines | asserts 3 journey phrase(s)
+F-panel-113 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-113 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-panel-113 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-panel-113 | apps/mobile/qa/xj-2-order-cancel.yaml | maestro | 34 lines | asserts 2 journey phrase(s)
+F-panel-113 | apps/mobile/test/shop/gym.test.ts | unit | 480 lines | asserts 2 journey phrase(s)
+F-panel-113 | apps/mobile/test/tracker/r72HealthSend.test.ts | unit | 52 lines | asserts 2 journey phrase(s)
+F-panel-113 | supabase/tests/0098_alerts_done_and_read.sql | db | 375 lines | asserts 2 journey phrase(s)
+F-panel-113 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-panel-113 | apps/dashboard/e2e/fonts.spec.mjs | e2e | 44 lines | asserts 1 journey phrase(s)
+F-panel-113 | apps/dashboard/e2e/gymdata.spec.mjs | e2e | 52 lines | asserts 1 journey phrase(s)
+F-panel-114 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 6 journey phrase(s)
+F-panel-114 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-114 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-114 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-114 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-114 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-114 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 1 journey phrase(s)
+F-panel-114 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-114 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-114 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 1 journey phrase(s)
+F-panel-114 | apps/dashboard/e2e/r495-uat.spec.mjs | e2e | 303 lines | asserts 1 journey phrase(s)
+F-panel-114 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-panel-115 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-115 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 2 journey phrase(s)
+F-panel-115 | apps/mobile/test/cloud/copyPlan.test.ts | unit | 205 lines | asserts 2 journey phrase(s)
+F-panel-115 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-115 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-panel-115 | apps/dashboard/e2e/demo-showcase-uat.spec.mjs | e2e | 181 lines | asserts 1 journey phrase(s)
+F-panel-115 | apps/dashboard/e2e/demo.spec.mjs | e2e | 142 lines | asserts 1 journey phrase(s)
+F-panel-115 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 1 journey phrase(s)
+F-panel-115 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-115 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-115 | apps/dashboard/e2e/messages.spec.mjs | e2e | 191 lines | asserts 1 journey phrase(s)
+F-panel-115 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 1 journey phrase(s)
+F-panel-116 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 5 journey phrase(s)
+F-panel-116 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-116 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-panel-116 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-panel-116 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 2 journey phrase(s)
+F-panel-116 | apps/dashboard/test/crm/permissions.test.ts | unit | 157 lines | asserts 2 journey phrase(s)
+F-panel-116 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 2 journey phrase(s)
+F-panel-116 | apps/mobile/qa/xj-1-collected.yaml | maestro | 14 lines | asserts 2 journey phrase(s)
+F-panel-116 | apps/mobile/qa/xj-2-order-cancel.yaml | maestro | 34 lines | asserts 2 journey phrase(s)
+F-panel-116 | apps/mobile/test/shop/gym.test.ts | unit | 480 lines | asserts 2 journey phrase(s)
+F-panel-116 | apps/mobile/test/shop/money.test.ts | unit | 282 lines | asserts 2 journey phrase(s)
+F-panel-116 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-panel-117 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 7 journey phrase(s)
+F-panel-117 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-117 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-117 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-117 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-117 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 1 journey phrase(s)
+F-panel-117 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-117 | apps/dashboard/e2e/online.spec.mjs | e2e | 163 lines | asserts 1 journey phrase(s)
+F-panel-117 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 1 journey phrase(s)
+F-panel-117 | apps/dashboard/e2e/r495-uat.spec.mjs | e2e | 303 lines | asserts 1 journey phrase(s)
+F-panel-117 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-panel-117 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-panel-118 | apps/dashboard/e2e/r532-uat.spec.mjs | e2e | 143 lines | asserts 5 journey phrase(s)
+F-panel-118 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-118 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-118 | apps/mobile/qa/p2-pause-a.yaml | maestro | 64 lines | asserts 2 journey phrase(s)
+F-panel-118 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-118 | supabase/tests/0035_trainer_measurements_diet.sql | db | 227 lines | asserts 2 journey phrase(s)
+F-panel-118 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-118 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 1 journey phrase(s)
+F-panel-118 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-118 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-panel-118 | apps/dashboard/test/crm/dietPlans.test.ts | unit | 248 lines | asserts 1 journey phrase(s)
+F-panel-118 | apps/dashboard/test/crm/getStarted.test.ts | unit | 99 lines | asserts 1 journey phrase(s)
+F-panel-119 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 9 journey phrase(s)
+F-panel-119 | apps/dashboard/e2e/trainers-uat.spec.mjs | e2e | 282 lines | asserts 7 journey phrase(s)
+F-panel-119 | supabase/tests/0087_feedback_owner_desk.sql | db | 143 lines | asserts 6 journey phrase(s)
+F-panel-119 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 5 journey phrase(s)
+F-panel-119 | supabase/tests/0050_trainer_view.sql | db | 213 lines | asserts 5 journey phrase(s)
+F-panel-119 | supabase/tests/0053_ask_trainer_and_progress.sql | db | 232 lines | asserts 5 journey phrase(s)
+F-panel-119 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 4 journey phrase(s)
+F-panel-119 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 4 journey phrase(s)
+F-panel-119 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-panel-119 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-119 | apps/dashboard/test/crm/pt.test.ts | unit | 231 lines | asserts 3 journey phrase(s)
+F-panel-119 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 3 journey phrase(s)
+F-panel-120 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 7 journey phrase(s)
+F-panel-120 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 3 journey phrase(s)
+F-panel-120 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-120 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 3 journey phrase(s)
+F-panel-120 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-120 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 2 journey phrase(s)
+F-panel-120 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-panel-120 | apps/dashboard/e2e/fonts.spec.mjs | e2e | 44 lines | asserts 1 journey phrase(s)
+F-panel-120 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | asserts 1 journey phrase(s)
+F-panel-120 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-120 | apps/dashboard/e2e/gymdata.spec.mjs | e2e | 52 lines | asserts 1 journey phrase(s)
+F-panel-120 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 1 journey phrase(s)
+F-panel-121 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-panel-121 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 5 journey phrase(s)
+F-panel-121 | apps/dashboard/e2e/timings.spec.mjs | e2e | 130 lines | asserts 5 journey phrase(s)
+F-panel-121 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 5 journey phrase(s)
+F-panel-121 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 4 journey phrase(s)
+F-panel-121 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 4 journey phrase(s)
+F-panel-121 | apps/mobile/qa/sub-uat-f194-choose.yaml | maestro | 31 lines | asserts 4 journey phrase(s)
+F-panel-121 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 4 journey phrase(s)
+F-panel-121 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-panel-121 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 3 journey phrase(s)
+F-panel-121 | apps/dashboard/e2e/whatsnew.spec.mjs | e2e | 122 lines | asserts 3 journey phrase(s)
+F-panel-121 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-122 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | asserts 3 journey phrase(s)
+F-panel-122 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-122 | apps/dashboard/test/crm/challenges.test.ts | unit | 388 lines | asserts 2 journey phrase(s)
+F-panel-122 | apps/mobile/qa/uat-rel-f147-bring-friend.yaml | maestro | 56 lines | asserts 2 journey phrase(s)
+F-panel-122 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-panel-122 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-122 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-122 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 1 journey phrase(s)
+F-panel-122 | apps/dashboard/e2e/r495-uat.spec.mjs | e2e | 303 lines | asserts 1 journey phrase(s)
+F-panel-122 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 1 journey phrase(s)
+F-panel-122 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 1 journey phrase(s)
+F-panel-122 | apps/dashboard/test/crm/enquiries.test.ts | unit | 182 lines | asserts 1 journey phrase(s)
+F-panel-123 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-123 | apps/dashboard/test/crm/joinPay.test.ts | unit | 223 lines | asserts 2 journey phrase(s)
+F-panel-123 | apps/dashboard/test/crm/planRequests.test.ts | unit | 239 lines | asserts 2 journey phrase(s)
+F-panel-123 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 2 journey phrase(s)
+F-panel-123 | supabase/tests/0054_member_alerts.sql | db | 139 lines | asserts 2 journey phrase(s)
+F-panel-123 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-panel-123 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-panel-123 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-123 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 1 journey phrase(s)
+F-panel-123 | apps/dashboard/e2e/hq-webpage-uat.spec.mjs | e2e | 166 lines | asserts 1 journey phrase(s)
+F-panel-123 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 1 journey phrase(s)
+F-panel-123 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-108-01 | type 1 | prospect | A phone or laptop with no gym signed in; the address app.mettleup.fit/demo
+  s1 see: Orange strip at the top: "Demo gym: made-up data. Nothing you do here is saved."
+  s1 see: Button "Leave the demo"
+  s1 see: The Today screen of the sample gym with its name
+  s1 not: A sign-in or set-up screen
+  s1 not: A real gym of this device opens
+  s1 not: A call to the gym server
+  s2 see: The same sample gym name on every screen
+  s2 see: The strip stays on top
+  s2 not: The strip scrolls away or hides a header
+  s2 not: An empty gym with no members
+J-F-panel-108-02 | type 2 | prospect | A device already signed in to a real gym; the address app.mettleup.fit/demo
+  s1 see: "Demo gym: made-up data. Nothing you do here is saved."
+  s1 see: Button "Back to my gym"
+  s1 see: The sample gym, not the signed-in gym
+  s1 not: The real gym name, members or join code anywhere
+  s1 not: The real gym is signed out
+  s2 see: A full page load into the real gym, still signed in
+  s2 not: The sample members show inside the real gym
+  s2 not: A sign-in screen
+J-F-panel-108-03 | type 2 | prospect | The address app.mettleup.fit/demo?as=desk (the front desk kind of the demo)
+  s1 see: The same strip and sample gym
+  s1 see: The signed-in person is the front desk person Sunita, not the owner Vikram
+  s1 not: Owner-only screens work as for the owner
+  s1 not: The owner name shows as "You"
+  s2 see: The menu also has "Workout offer" as its own line (desk only)
+  s2 not: A blank menu
+  s2 not: An error about the gym not being online
+J-F-panel-108-04 | type 3 | prospect | Demo gym open as the owner; a screen that needs a real gym
+  s1 see: Page title "Branding"
+  s1 see: Card "This works in your own gym"
+  s1 see: Body ends "The demo gym is made-up data kept only on this page, so this part is switched off here."
+  s1 see: Button "Back to Today"
+  s1 not: A logo upload form that seems to work
+  s1 not: An endless spinner
+  s1 not: A raw error such as "Could not find the function"
+  s2 see: The Today screen of the sample gym
+  s2 not: Leaving the demo
+J-F-panel-108-05 | type 6 | prospect | Demo gym open; the prospect has changed something (for example answered a member question)
+  s1 see: The sample gym starts over: the change is gone
+  s1 see: "Demo gym: made-up data. Nothing you do here is saved." still on top
+  s1 not: The change kept after the refresh
+  s1 not: Anything written into the browser storage for the demo
+  s2 see: The landing page gyms.mettleup.fit
+  s2 not: A gym is created or signed in on this device
+J-F-panel-108-06 | type 12 | prospect | A device signed in to a real gym with real members; demo opened in the same browser
+  s1 see: Only made-up people and numbers of the sample gym
+  s1 not: A real member name, phone number or payment
+  s1 not: The real join code or sign-in key
+  s1 not: A request leaving the page to the gym server
+  s2 see: The real gym exactly as it was
+  s2 not: The real gym changed by what was done in the demo
+J-F-panel-109-01 | type 1 | prospect | Demo gym open as the owner; Settings > Staff & sign-in
+  s1 see: Page title "Staff & sign-in", "Who can open this gym, on which phone"
+  s1 see: Card "People who can sign in" with five people: the owner (pill "You"), the front desk, two trainers, a manager
+  s1 see: Each row: +91 phone, last seen, PIN words
+  s1 not: The card "This works in your own gym"
+  s1 not: "Loading…" that never ends
+  s1 not: A real person or phone number
+  s2 see: The Trainer tick is on for both
+  s2 not: A row with no role pill
+  s2 not: A person shown as locked out of their PIN
+J-F-panel-109-02 | type 2 | prospect | Demo gym open at /demo?as=desk (front desk)
+  s1 see: "Only an owner can add people or make sign-in codes. Ask your gym owner."
+  s1 see: The PIN part for the desk person: a PIN is set
+  s1 not: The list "People who can sign in" with other people's phones
+  s1 not: A raw "OWNER_ONLY" word
+J-F-panel-109-03 | type 3 | prospect | Demo gym as the owner; Staff & sign-in list open
+  s1 see: A plain message: "This is the demo gym, so this does nothing here. It works in your own gym."
+  s1 not: A sign-in code shown
+  s1 not: A WhatsApp opened or sent
+  s1 not: A silent nothing
+  s1 not: A raw "DEMO_REFUSED" word
+  s2 see: "This is the demo gym, so this does nothing here. It works in your own gym."
+  s2 see: The trainer is still in the list
+  s2 not: The person disappears
+  s2 not: A success message
+J-F-panel-109-04 | type 6 | prospect | Demo gym as the owner; Staff & sign-in list open; the owner row shows "Sign out other devices"
+  s1 see: "This is the demo gym, so this does nothing here. It works in your own gym."
+  s1 not: The demo closes or signs out
+  s1 not: The button vanishes as if it worked
+  s2 see: The same five people, same last-seen words, PIN still set
+  s2 not: A changed device count
+  s2 not: A person shown twice
+J-F-panel-109-05 | type 12 | prospect | Demo gym as the owner; Staff & sign-in list open
+  s1 see: Made-up names and numbers only
+  s1 not: A phone number of a real person or of this device's own gym staff
+  s1 not: A real sign-in code or PIN
+J-F-panel-110-01 | type 1 | prospect | Demo gym as the owner; menu > Training progress
+  s1 see: Page title "Training progress"
+  s1 see: Nine members, each with a trainer name and a weekly summary
+  s1 see: One member marked as asking for help
+  s1 see: "Members can switch sharing off in their app at any time. Body weight, photos and notes are never shared."
+  s1 not: "Training progress is not ready for your gym yet"
+  s1 not: "No members to show yet"
+  s1 not: A member with no trainer name
+  s2 see: Workouts per week, strength per main exercise, the recent shared workouts
+  s2 not: Body weight, photos or notes
+  s2 not: An empty progress card
+  s2 not: "NaN" in a figure
+J-F-panel-110-02 | type 2 | prospect | Demo gym as the owner; Settings > Staff & sign-in (trainer setup, make a trainer)
+  s1 see: The tick stays on; the pill on the row changes to Trainer
+  s1 not: "Only the owner can change this."
+  s1 not: The demo locked words
+  s1 not: The tick springs back
+  s2 see: The tick is off again
+  s2 not: The two seeded trainers lose their tick
+J-F-panel-110-03 | type 2 | prospect | Demo gym as the owner; a member page of a member with the app (assign a member)
+  s1 see: The new trainer stays picked
+  s1 see: "The trainer sees this member's workout progress in Training progress, if the member shares it from the app."
+  s1 not: An error
+  s1 not: The pick lost on leaving and coming back in the same visit
+  s2 see: That member now shows the new trainer name
+  s2 not: The old trainer name still shown
+  s3 see: The shared progress for a member who shares; nothing for one who does not
+  s3 not: Progress shown for a member who never shared
+J-F-panel-110-04 | type 3 | prospect | Demo gym at /demo?as=desk (front desk, not a trainer)
+  s1 see: "Only trainers and the owner see this"
+  s1 see: "Ask the owner to tick you as a trainer in Staff & sign-in."
+  s1 not: The nine members and their workouts
+  s1 not: A raw "TRAINER_ONLY" word
+  s2 see: No "Progress" card and no "Trainer" picker
+  s2 not: The member's shared workouts shown to the desk
+J-F-panel-110-05 | type 6 | prospect | Demo gym as the owner; a member with a trainer assigned
+  s1 see: The member has no trainer
+  s1 not: An error
+  s1 not: Another member loses their trainer
+  s2 see: The trainer name returns on the member page and in Training progress
+  s2 not: Two trainers for one member
+  s3 see: The seeded trainers and assignments are back as at the start
+  s3 not: The change kept after the refresh
+J-F-panel-110-06 | type 12 | prospect | Demo gym as the owner; Training progress open
+  s1 see: Workout counts, strength scores and shared workouts only
+  s1 see: "Body weight, photos and notes are never shared."
+  s1 not: A body weight, a photo or a private note on any member
+  s1 not: A real member
+J-F-panel-111-01 | type 1 | prospect | Demo gym as the owner; the menu shows "Member questions" with badge 2
+  s1 see: Title "Member questions"
+  s1 see: "Members ask from the MettleUp app. Your reply shows in their app, with a notification on their phone."
+  s1 see: Section "Waiting for your reply" with 2 cards
+  s1 see: Section "Answered and closed" with 2 cards and their replies
+  s1 not: "Member questions are not switched on for your gym yet."
+  s1 not: A badge that differs from the cards waiting
+  s2 see: "… of 1000 letters" counts up
+  s2 see: Button "Send reply" becomes active
+  s2 not: More than 1000 letters taken
+  s3 see: "Sending…" then the card moves to "Answered and closed" with "Vikram … replied"
+  s3 see: The menu badge falls to 1
+  s3 not: The card stays under waiting
+  s3 not: A second reply box on the answered card
+  s3 not: A real notification to anyone
+J-F-panel-111-02 | type 2 | prospect | Demo gym as the owner; the Today screen
+  s1 see: The Member questions page with the same 2 waiting
+  s1 not: A different count on Today and on the page
+  s2 see: That sample member's page
+  s2 not: "Member not found"
+J-F-panel-111-03 | type 3 | prospect | Demo gym at /demo?as=desk (front desk, not a trainer)
+  s1 see: No badge; the page says "Only trainers and the owner can see questions. Ask the owner to tick you as a trainer."
+  s1 not: The questions and member phones shown
+  s1 not: A raw "TRAINER_ONLY" word
+J-F-panel-111-04 | type 3 | prospect | Demo gym as the owner; Member questions open, one question waiting
+  s1 see: "Send reply" stays greyed out
+  s1 not: An empty reply saved and the question closed
+  s2 see: The box stops at 1000; the counter says "1000 of 1000 letters"
+  s2 not: A cut reply sent without the counter showing it
+J-F-panel-111-05 | type 6 | prospect | Demo gym as the owner; a question just answered
+  s1 see: The reply text, who replied and when; no reply box
+  s1 not: A way to send a second reply
+  s1 not: The question open again
+  s2 see: Still under "Answered and closed"; badge still 1
+  s2 not: Back under waiting
+  s3 see: Both seeded questions wait again; badge 2
+  s3 not: The typed reply kept after the refresh
+J-F-panel-111-06 | type 12 | prospect | Demo gym as the owner; Member questions open
+  s1 see: Made-up members only
+  s1 see: The health-type question (back pain) belongs to a made-up person
+  s1 not: A real member's question or number
+  s1 not: A real notification or message leaving the page after "Send reply"
+J-F-panel-112-01 | type 1 | prospect | Demo gym as the owner; the menu shows "Member messages" with badge 3
+  s1 see: Title "Member messages"
+  s1 see: Filter "Show": All, Questions, Feedback, Complaints
+  s1 see: "Waiting for a reply (3)": a complaint about the AC, a question about Sunday, a feedback from "A member (name hidden)"
+  s1 see: Section "Done" with 2 conversations
+  s1 see: "Messages are deleted 180 days after the last one in a conversation, or as soon as the member leaves the gym."
+  s1 not: "Member messages are not switched on for your gym yet."
+  s1 not: A name or phone on the hidden-name feedback
+  s2 see: "Sending…" then "Reply sent."
+  s2 see: The card moves to "Replied" with "Vikram … replied"
+  s2 see: "The member has not opened your reply yet."
+  s2 see: Badge falls to 2
+  s2 not: The card still under waiting
+  s2 not: A real push or WhatsApp
+  s3 see: The card moves to "Done" with "Marked as done by Vikram …. If the member writes again, it moves back to Waiting for a reply."
+  s3 not: Another card marked done
+J-F-panel-112-02 | type 2 | prospect | Demo gym as the owner; Today screen with a line about complaints waiting
+  s1 see: Member messages opens with "Complaints" picked and only the AC complaint
+  s1 not: The filter on All
+  s1 not: A count on Today that differs from the page
+J-F-panel-112-03 | type 2 | prospect | Demo gym at /demo?as=desk (front desk kind)
+  s1 see: The note "Messages a member sent only to the owner or to a trainer are not shown here. Complaints show here only when the member picked "Gym admin"."
+  s1 see: Waiting: the Sunday question and the hidden-name feedback (2)
+  s1 see: No complaint card
+  s1 not: The AC complaint shown to the desk
+  s1 not: A menu badge that says 3 while 2 cards wait
+  s2 see: "Reply sent." with the desk person's name on the line
+  s2 not: The owner's name on the reply
+J-F-panel-112-04 | type 3 | prospect | Demo gym as the owner; Member messages open
+  s1 see: "Send reply" greyed out; "Mark as done" still works
+  s1 not: An empty line added to the conversation
+  s2 see: The counter stops at "1000 of 1000 letters"
+  s2 not: Text over the limit sent
+J-F-panel-112-05 | type 6 | prospect | Demo gym as the owner; one conversation marked done
+  s1 see: It leaves "Done"; a conversation whose last line is the gym's goes to "Replied", one whose last line is the member's goes to "Waiting for a reply" and the badge goes up
+  s1 not: The done stamp still shown
+  s1 not: The badge not matching the waiting cards
+  s2 see: The reply is added
+  s2 not: The reply lost
+  s2 not: The card in two sections at once
+  s3 see: The five seeded conversations as at the start; badge 3
+  s3 not: Replies kept after the refresh
+J-F-panel-112-06 | type 12 | prospect | Demo gym as the owner; the feedback sent without a name
+  s1 see: "A member (name hidden)"
+  s1 see: "The member sent this without their name. You can still reply here."
+  s1 see: No phone number
+  s1 not: A name, phone or link to a member page on this card
+  s2 see: Made-up members and numbers only
+  s2 see: The 180-day line at the bottom
+  s2 not: A real member's message
+J-F-panel-113-01 | type 1 | prospect | Demo gym as the owner; menu > Messages & offers
+  s1 see: "Pick a message", box "Kind of message", "Who gets it"
+  s1 see: List "Sent in the app" with five made-up messages (Zumba batch, Bring a friend, Gym closed, Sunday timings, New dumbbell rack), each with how many members have seen it
+  s1 not: "Nothing sent yet"
+  s1 not: "Loading…" that never ends
+  s1 not: An offer-limit warning with no reason
+  s2 see: A question such as "Goes to … members in the app. Send now?" with "Yes, send" and "Not yet"
+  s2 not: The message sent before the question
+  s3 see: "Sending…" then "Sent to … members in the app."
+  s3 see: The new message on top of "Sent in the app" with 0 seen
+  s3 see: Pill "Sent in the app" in place of the button
+  s3 not: A real push to any phone
+  s3 not: Two copies in the list
+  s3 not: A member count that differs from the question
+J-F-panel-113-02 | type 2 | prospect | Demo gym as the owner; Messages & offers, the "When" box in "In the MettleUp app" (a timed message, another kind)
+  s1 see: "Goes out … to … members in the app."
+  s1 see: The message in the list with "Goes out …" and a "Cancel" button
+  s1 see: Pill "To a group"
+  s1 not: It shows as already sent
+  s1 not: The count is every member, not the group
+  s2 see: Pill "Cancelled"; the card fades
+  s2 not: Pill "Taken back" on a message that never went out
+J-F-panel-113-03 | type 3 | prospect | Demo gym at /demo?as=desk (front desk)
+  s1 see: A plain refusal that only the owner can send
+  s1 see: Nothing new in "Sent in the app"
+  s1 not: "Sent to … members in the app."
+  s1 not: A raw "OWNER_ONLY" word
+  s2 see: A plain refusal; the message is not marked "Taken back"
+  s2 not: The message shown as taken back for the desk
+J-F-panel-113-04 | type 3 | prospect | Demo gym as the owner; Messages & offers
+  s1 see: "Send in the app" greyed out, with the reason in words
+  s1 not: An untitled message sent
+  s2 see: "Members get at most one offer or event a day in the app, and three a week." and the button greyed out
+  s2 not: A second offer sent the same day
+J-F-panel-113-05 | type 6 | prospect | Demo gym as the owner; a message sent a moment ago
+  s1 see: Question "Take back “…”? It is removed from every member’s inbox."
+  s1 not: Taken back with no question
+  s2 see: Pill "Taken back"; the card fades; no "Take back" button any more
+  s2 not: The message gone from the list
+  s2 not: A way to take it back twice
+  s3 see: The five seeded messages only; none taken back
+  s3 not: The sent or taken-back message kept
+J-F-panel-113-06 | type 12 | prospect | Demo gym as the owner; Messages & offers, "Who gets it"
+  s1 see: Made-up members only; counts of the sample gym
+  s1 not: A real member, a real phone number, a real send on WhatsApp or push
+  s2 see: WhatsApp opens with a made-up number, or the demo words; nothing is sent by itself
+  s2 not: A message sent to a real person without the prospect pressing send in WhatsApp
+J-F-panel-114-01 | type 1 | prospect | Demo gym as the owner; Messages & offers, section "Automatic reminders"
+  s1 see: The reminder rows, with plan ends soon, plan ends today, plan ended, birthday, welcome, miss you and low PT sessions switched on
+  s1 see: No "Save changes" pressable yet
+  s1 not: "Automatic reminders are not switched on for your gym yet."
+  s1 not: "Automatic reminders need your gym online"
+  s1 not: Every switch off
+  s2 see: "Save changes" becomes pressable; "Undo changes" appears
+  s2 not: The change saved before pressing Save
+  s3 see: "Saving…" then "Saved. Members' phones pick this up the next time they open MettleUp."
+  s3 see: The rows keep the new values; "Save changes" greyed again
+  s3 not: The old values spring back
+  s3 not: A real reminder sent to anyone
+J-F-panel-114-02 | type 3 | prospect | Demo gym at /demo?as=desk (front desk)
+  s1 see: The same rows, read-only
+  s1 see: "Only the owner can change these."
+  s1 see: No "Save changes" button
+  s1 not: Switches the desk can flip
+  s1 not: A save that works for the desk
+J-F-panel-114-03 | type 3 | prospect | Demo gym as the owner; "Automatic reminders" open
+  s1 see: An error under that row in plain words; "Save changes" greyed out
+  s1 not: A reminder saved with no days
+  s1 not: The other rows blocked without a reason
+J-F-panel-114-04 | type 6 | prospect | Demo gym as the owner; a reminder changed but not saved
+  s1 see: The rows go back to the last saved values; "Undo changes" disappears
+  s1 not: A half-undone row
+  s2 see: The saved values are still there in this visit
+  s2 not: The seeded values back without a refresh
+  s3 see: The seeded settings again
+  s3 not: The saved change kept after the refresh
+J-F-panel-114-05 | type 12 | prospect | Demo gym as the owner; "Automatic reminders" saved once
+  s1 see: The sample gym name in the preview; the saved-by name is a made-up person
+  s1 not: A reminder really sent to a phone
+  s1 not: A real gym name or member in a preview
+J-F-panel-115-01 | type 1 | prospect | Demo gym as the owner; Messages & offers, section "Workout offer"
+  s1 see: The running offer "Train 12 days in 30 days, get 3 free days"
+  s1 see: Counts: 14 joined, how many still in, 2 ready for their days, 1 given
+  s1 see: The members list with days counted from the desk and the app
+  s1 not: "No workout offer running"
+  s1 not: "Workout offers in the app are not switched on for your gym yet."
+  s1 not: Counts that do not add up to 14
+  s2 see: 3 days given by the front desk person, today
+  s2 not: "Given" with no name or day
+  s2 not: A real member
+J-F-panel-115-02 | type 2 | prospect | Demo gym at /demo?as=desk; the menu line "Workout offer" (desk only)
+  s1 see: The same offer and its 14 members on a page of their own
+  s1 not: "The owner starts one in Messages & offers." while an offer runs
+  s1 not: A start-an-offer form for the desk
+J-F-panel-115-03 | type 3 | prospect | Demo gym as the owner; the running offer shown
+  s1 see: "This is the demo gym, so this does nothing here. It works in your own gym."
+  s1 see: The member still shows as ready
+  s1 not: The member shown as given
+  s1 not: A plan end date changed
+  s1 not: A raw "DEMO_REFUSED" word
+  s2 see: "This is the demo gym, so this does nothing here. It works in your own gym."
+  s2 see: The offer still running
+  s2 not: The offer shown as stopped
+J-F-panel-115-04 | type 6 | prospect | Demo gym as the owner; the member whose days were already given
+  s1 see: "This is the demo gym, so this does nothing here. It works in your own gym."
+  s1 see: The member still shows 3 days given
+  s1 not: The days shown as taken back
+  s1 not: A second give button
+  s2 see: "This is the demo gym, so this does nothing here. It works in your own gym."
+  s2 see: The choice stays on the desk giving them
+  s2 not: The choice flips as if saved
+J-F-panel-115-05 | type 12 | prospect | Demo gym as the owner; the offer members list
+  s1 see: Made-up members only
+  s1 not: A real member's visits or plan dates
+  s1 not: Any plan end date really moved
+J-F-panel-116-01 | type 1 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; More menu
+  s1 see: Page "Shop", "What members order in the MettleUp app, and what you sell"
+  s1 see: Tabs "Orders · 2 new" and "Products"
+  s1 see: Filter chips New 2, Ready 1, Collected, Cancelled 1, All
+  s1 not: The "No orders yet" empty state
+  s1 not: A call to the real gym server, or a change that lasts after the page reloads
+  s2 see: "Saving…" on the button, then "Order <n> is ready. <member> can see this in the app."
+  s2 see: The order leaves New and shows under Ready
+  s2 not: The order stays New with no message
+  s2 not: Two orders change
+  s3 see: "Order <n> collected. ₹<total> taken."
+  s3 see: Pill "Collected" and no buttons on the card
+  s3 not: A payment link or QR that sends a real payment request
+  s3 not: The total differs from the sum of the lines
+J-F-panel-116-02 | type 2 | prospect | The demo gym at app.mettleup.fit/demo?as=desk, signed in as the front desk Sunita Joshi; More menu
+  s1 see: Page "Shop", "What members order in the MettleUp app"
+  s1 see: The Orders list with no Orders/Products tabs
+  s1 not: A Products tab or prices the desk may not change
+  s1 not: An error that the gym is not online
+  s2 see: "Order <n> is ready. <member> can see this in the app."
+  s2 not: A refusal for the front desk, who hands over orders
+  s2 not: A call to the real gym server, or a change that lasts after the page reloads
+J-F-panel-116-03 | type 2 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Shop page
+  s1 see: The made-up products with prices and stock
+  s1 not: An empty product list
+  s1 not: A real gym's products
+  s2 see: A plain line that this is the demo gym, so saving does nothing here and works in your own gym
+  s2 not: A silent save that looks real
+  s2 not: A technical error such as "Could not find the function"
+J-F-panel-116-04 | type 3 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Shop, New orders
+  s1 see: Sheet "Cancel order <n>?" saying the items go back into stock and the member sees "Cancelled"
+  s1 see: Buttons "Keep it" and "Cancel order"
+  s1 not: The order is cancelled before the sheet is answered
+  s2 see: The sheet closes; the order is still New
+  s2 not: The order shows as Cancelled
+  s3 see: Order with pill "Cancelled by member" and no buttons
+  s3 not: "Mark ready" or "Collected (paid)" on a cancelled order
+J-F-panel-116-05 | type 6 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Shop, an order marked ready
+  s1 see: "Order <n> is back to new."
+  s1 see: The order shows under New again
+  s1 not: The order stays Ready
+  s2 see: "Cancelling…", then "Order <n> cancelled. Stock is back."
+  s2 see: Pill "Cancelled"; Cancelled count goes up by one
+  s2 not: A cancelled order that still offers "Mark ready"
+  s2 not: Cancelled by member shown for a gym cancel
+  s3 see: The demo starts again with the first set of orders
+  s3 not: The cancelled order is still cancelled after the reload
+J-F-panel-116-06 | type 12 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Shop
+  s1 see: Made-up member names and made-up amounts only
+  s1 not: A real member's name or phone
+  s1 not: Any order sent to a member's phone
+  s2 see: The toast says money was taken, in the pretend gym only
+  s2 not: A real payment request or receipt sent to anyone
+J-F-panel-117-01 | type 1 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Members, a personal-training member
+  s1 see: Entries newest first with the change since last time
+  s1 see: "Measured by Arjun Rawat" or "Measured by Kavita Shekhawat"
+  s1 see: Button "+ Add"
+  s1 not: "Measurements are not switched on for your gym yet"
+  s1 not: "Put your gym online first"
+  s2 see: Sheet "Add measurements" with "Day measured", "Body weight (kg)", "Body fat (%)", "Tape measurements (cm)" and "Desk note (only your gym sees it)"
+  s2 not: A day other than today filled in
+  s3 see: "Measurements saved. <member> sees them in the MettleUp app."
+  s3 see: The new entry at the top, measured by Vikram Rathore
+  s3 not: The entry saved under another member
+  s3 not: A call to the real gym server, or a change that lasts after the page reloads
+J-F-panel-117-02 | type 2 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Members, a member who was never measured
+  s1 see: "No measurements yet"
+  s1 see: "Measure <member> at the desk: body weight, body fat and the tape measurements. Members see these in their MettleUp app (Progress → Body) after they check in at the gym once."
+  s1 not: Another member's measurements
+  s1 not: A blank card
+  s2 see: "Measurements saved. <member> sees them in the MettleUp app."
+  s2 not: The empty state stays after the save
+J-F-panel-117-03 | type 2 | prospect | The demo gym at app.mettleup.fit/demo?as=desk, signed in as the front desk Sunita Joshi; Members, a personal-training member
+  s1 see: The "Body measurements" card with "+ Add"
+  s1 not: The card hidden from the front desk, who may measure members
+  s2 see: "Measurements saved. <member> sees them in the MettleUp app."
+  s2 see: "Measured by Sunita Joshi"
+  s2 not: "Measured by" the owner's name
+J-F-panel-117-04 | type 3 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; a member with an entry dated today
+  s1 see: "Type at least one measurement."
+  s1 not: An empty entry in the list
+  s2 see: A refusal that this day already has measurements, as the real gym gives
+  s2 not: Two entries for the same day in the list
+  s2 not: The old entry silently replaced
+J-F-panel-117-05 | type 6 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; a member with measurements
+  s1 see: Sheet "Fix measurements"
+  s1 see: "Measurements updated."
+  s1 not: A second entry made instead of the fix
+  s2 see: "Deleting…", then "Measurements deleted."
+  s2 see: The entry is gone and the change line of the next entry is worked out again
+  s2 not: The entry still listed
+  s3 see: The demo starts again with the first set of measurements
+  s3 not: The deleted entry stays deleted after the reload
+J-F-panel-117-06 | type 12 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; a member's measurements
+  s1 see: The label says "Desk note (only your gym sees it)"
+  s1 see: The note shown on the entry in the panel
+  s1 not: The note sent to a member's phone
+  s1 not: A real member's body data shown
+J-F-panel-118-01 | type 1 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; More menu
+  s1 see: Page "Diet plans", "Send members what to eat"
+  s1 see: Three made-up plans with "Edit", "Make a copy" and "Withdraw"
+  s1 see: Button "+ New plan"
+  s1 not: "Diet plans need your gym online"
+  s1 not: An empty list
+  s2 see: Sheet "New diet plan" with "Veg", "Non-veg" and "Start empty"
+  s2 see: The builder filled from the ready-made plan
+  s2 not: An empty builder after picking a ready-made plan
+  s3 see: "Saving…", then "“<title>” saved and sent."
+  s3 see: The plan at the top of the list
+  s3 not: A call to the real gym server, or a change that lasts after the page reloads
+  s3 not: The plan sent to a real phone
+J-F-panel-118-02 | type 2 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Diet plans list
+  s1 see: The builder with the copy
+  s1 see: A new plan at the top; the first plan unchanged
+  s1 not: The first plan changed by the copy
+J-F-panel-118-03 | type 2 | prospect | The demo gym at app.mettleup.fit/demo?as=desk, signed in as the front desk Sunita Joshi; More menu
+  s1 see: "“<title>” saved. Tick members to send it." when no one is ticked
+  s1 not: A refusal for the front desk, who may send plans
+  s1 not: The plan shown as by Vikram Rathore
+J-F-panel-118-04 | type 3 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Diet plans, the builder
+  s1 see: A plain line that says what is missing
+  s1 not: A plan with no title in the list
+  s2 see: The list unchanged
+  s2 not: A half plan saved
+J-F-panel-118-05 | type 6 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Diet plans list
+  s1 see: "“<title>” updated."
+  s1 not: A second copy of the plan
+  s2 see: The sheet says the plan stops showing in members' apps and cannot be sent again
+  s2 see: "Plan withdrawn."
+  s2 see: "Withdrawn plans (1)" folded under the list
+  s2 not: The withdrawn plan still has "Edit"
+  s2 not: The plan deleted from the list
+  s3 see: The plan with "Make a copy" only
+  s3 not: "Withdraw" offered again
+J-F-panel-118-06 | type 12 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Diet plans list
+  s1 see: Made-up member names only; "by Kavita Shekhawat" or "by Arjun Rawat"
+  s1 not: A real member's name
+  s1 not: A plan delivered to any phone
+J-F-panel-119-01 | type 1 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; More menu
+  s1 see: "Personal training this week" with Arjun Rawat and Kavita Shekhawat
+  s1 see: Cells marked Free, Booked, Off and Already over
+  s1 see: "This week" and "Next week"
+  s1 not: "Open Staff & sign-in and tick "Trainer" next to each trainer."
+  s1 not: An empty week
+  s2 see: Sheet "Book personal training" with the day and time filled in
+  s2 not: A time already over
+  s3 see: "Booking…", then "Booked: <member> with Arjun Rawat, <day>, <time>."
+  s3 see: The cell now Booked
+  s3 not: Two bookings made
+  s3 not: A call to the real gym server, or a change that lasts after the page reloads
+J-F-panel-119-02 | type 2 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Trainers
+  s1 see: "Trainer", what he teaches, his hours, "Bookings this week"
+  s1 not: Kavita Shekhawat's bookings on his page
+  s2 see: "Booked: <member> with Arjun Rawat, <day>, <time>."
+  s2 not: The booking under the other trainer
+J-F-panel-119-03 | type 2 | prospect | The demo gym at app.mettleup.fit/demo?as=desk, signed in as the front desk Sunita Joshi; Trainers
+  s1 see: The same week and the booking sheet
+  s1 not: A refusal for the front desk
+  s2 see: The booking sheet with "Booked by Sunita Joshi"
+  s2 see: "This booking has started, so only the gym owner can cancel it."
+  s2 not: "Cancel booking" offered to the front desk
+J-F-panel-119-04 | type 3 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Trainers, the booking sheet
+  s1 see: "Pick the member first."
+  s1 not: A booking with no member
+  s2 see: "This time has already passed. Pick a time later than now."
+  s2 not: A booking in the past
+  s3 see: "This is outside Arjun Rawat’s working hours. Press "Book anyway" if Arjun Rawat agreed."
+  s3 see: Button "Book anyway"
+  s3 not: The booking made without the warning
+J-F-panel-119-05 | type 6 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Trainers, a booked cell
+  s1 see: Sheet "<member> with Arjun Rawat"
+  s1 see: Button "Cancel booking"
+  s1 not: No way to cancel for the owner
+  s2 see: "Cancelling…", then "Booking cancelled."
+  s2 see: The cell is Free again
+  s2 not: The booking still shown
+  s3 see: Bookings up to four days ahead shown in the right week
+  s3 not: This week's bookings repeated in next week
+J-F-panel-119-06 | type 12 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Trainers, a trainer's page
+  s1 see: A plain line that this is the demo gym, so saving does nothing here and works in your own gym
+  s1 not: The change looks saved
+  s1 not: A real trainer's photo or phone shown
+J-F-panel-120-01 | type 1 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; More menu
+  s1 see: Page "Challenges", "A challenge for your members. Everyone who reaches the goal wins."
+  s1 see: The running "Workout habit" challenge, goal 20 workouts
+  s1 see: Button "New challenge"
+  s1 not: "No challenge is running"
+  s1 not: "Challenges need your gym online"
+  s2 see: Its seven winners with free days already added
+  s2 not: Give or Skip asked again for rewards already added
+  s3 see: "<n> of your members trained in the last 30 days."
+  s3 see: Top 10 made-up members by workouts
+  s3 not: "Nobody to show yet."
+  s3 not: Ranks out of order
+J-F-panel-120-02 | type 2 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Challenges, leaderboard
+  s1 see: The same top 10 ranked by kg lifted
+  s1 not: The workouts numbers shown as kg
+J-F-panel-120-03 | type 2 | prospect | The demo gym at app.mettleup.fit/demo?as=desk, signed in as the front desk Sunita Joshi; More menu
+  s1 see: "Only the owner can start, change or cancel a challenge. You can see who has reached the goal."
+  s1 see: "Only the owner can turn these challenges on or off."
+  s1 see: The leaderboard with no hide buttons
+  s1 not: "New challenge" or a cancel button for the desk
+J-F-panel-120-04 | type 3 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Challenges
+  s1 see: A plain line that this is the demo gym, so saving does nothing here and works in your own gym
+  s1 not: A second running challenge appears
+  s1 not: A technical error
+J-F-panel-120-05 | type 6 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Challenges, the running challenge and the leaderboard
+  s1 see: The demo line that this does nothing here
+  s1 not: "Challenge cancelled. Members no longer see it." when nothing changed
+  s2 see: The demo line that this does nothing here
+  s2 see: The member stays on the board
+  s2 not: "<name> is hidden from the leaderboard." when nothing changed
+J-F-panel-120-06 | type 12 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Challenges, leaderboard
+  s1 see: Full made-up names
+  s1 see: "List copied. You can paste it into WhatsApp."
+  s1 not: A real member's name or phone in the copied list
+J-F-panel-121-01 | type 1 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; More menu
+  s1 see: Page "Gym timings", "When your gym is open, for members to see"
+  s1 see: Monday to Saturday 5:30 am to 10:30 pm, Sunday 6 am to 12 noon
+  s1 see: Note "Ladies batch 11 am to 12 noon, Monday to Saturday."
+  s1 see: "Last saved <day> by Vikram Rathore."
+  s1 not: "No timings yet."
+  s1 not: "Gym timings need your gym online"
+  s2 see: The save button changes to "Save timings"
+  s2 not: "Saved ✓" while a change is waiting
+  s3 see: "Saving…", then "Gym timings saved. Members see them in the MettleUp app (Gym tab) within 10 minutes."
+  s3 see: The button reads "Saved ✓"
+  s3 not: A call to the real gym server, or a change that lasts after the page reloads
+J-F-panel-121-02 | type 2 | prospect | The demo gym at app.mettleup.fit/demo?as=desk, signed in as the front desk Sunita Joshi; More menu
+  s1 see: "Your gym’s timings"
+  s1 see: "Right now members see: <open or closed line>"
+  s1 see: "Only the owner can change the gym timings."
+  s1 not: An editor or a save button for the front desk
+J-F-panel-121-03 | type 3 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Gym timings editor
+  s1 see: A plain line under the save button that says why it waits
+  s1 not: The wrong times saved
+  s1 not: A save button that looks broken with no reason
+  s2 see: "+ Add a special day" greyed out
+  s2 not: A 31st special day
+J-F-panel-121-04 | type 6 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Gym timings editor with saved timings
+  s1 see: "Gym timings removed. Members no longer see them."
+  s1 see: The save button reads "Save and show members"
+  s1 not: The old timings still shown
+  s2 see: The demo starts again with the first timings
+  s2 not: The removed timings stay removed after the reload
+J-F-panel-121-05 | type 12 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Gym timings
+  s1 see: Members see these on the Gym tab of the MettleUp app, in India time
+  s1 not: The demo timings shown on any real gym page
+J-F-panel-122-01 | type 1 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Settings
+  s1 see: "Members can send a friend a link from the MettleUp app. The friend leaves a name and number, and it shows in Enquiries with the member’s name."
+  s1 see: "Friends who left their number: <n> · Friends who joined: <m>"
+  s1 not: The card missing
+  s1 not: Counts of 0 when the demo Enquiries list has friends
+  s2 see: "Saved. A member gets 7 free days for each friend who joins."
+  s2 not: The friend counts change because of the save
+J-F-panel-122-02 | type 2 | prospect | The demo gym at app.mettleup.fit/demo?as=desk, signed in as the front desk Sunita Joshi; Settings
+  s1 see: The same two counts as the owner sees
+  s1 not: Different counts for the front desk
+  s1 not: Friend names or phone numbers in the summary
+J-F-panel-122-03 | type 3 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Settings, Bring a friend
+  s1 see: A plain line under the box that says what to type
+  s1 not: The wrong value saved
+  s1 not: The counts disappear
+J-F-panel-122-04 | type 6 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Enquiries, a friend enquiry that is still open
+  s1 see: "Friends who joined" one higher
+  s1 not: The old count after the friend joined
+  s2 see: "Saved. No free days for a friend who joins."
+  s2 not: The counts reset
+J-F-panel-122-05 | type 12 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Settings, Bring a friend
+  s1 see: Only two counts, no names
+  s1 not: A friend's name or phone in the summary
+  s1 not: Real referrals of another gym counted
+J-F-panel-123-01 | type 1 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Today
+  s1 see: Card "Requests from the app" with two members
+  s1 see: "Renew: Quarterly" and "The member pays at the desk. Approving adds the fee to what they owe."
+  s1 see: A "Pause <day> - <day> (10 days)" request
+  s1 see: Buttons "Decline" and "Approve"
+  s1 not: The card missing while two requests wait
+  s2 see: "Saving…"
+  s2 see: "Renewed by Vikram Rathore: <start> - <end>. Collect the fee at the desk."
+  s2 see: The member's dues go up by the plan fee
+  s2 not: Only "Approved by Vikram Rathore." with no dates
+  s2 not: Money marked as collected
+J-F-panel-123-02 | type 2 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Today, the pause request
+  s1 see: "Paused by Vikram Rathore. Plan now ends <date>."
+  s1 see: The member's plan end moves out by 10 days
+  s1 not: Only "Approved by Vikram Rathore." with no new end date
+  s1 not: The days added twice
+J-F-panel-123-03 | type 2 | prospect | The demo gym at app.mettleup.fit/demo?as=desk, signed in as the front desk Sunita Joshi; Today
+  s1 see: "Renewed by Sunita Joshi: <start> - <end>. Collect the fee at the desk."
+  s1 not: "by Vikram Rathore" for the desk's answer
+J-F-panel-123-04 | type 3 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Today, two pending requests
+  s1 see: Both buttons greyed while "Saving…"
+  s1 see: One answer only
+  s1 not: Two plans sold for one renewal
+  s2 see: "This member has no gym plan to pause. Decline it, or sell a plan first."
+  s2 not: A pause added to a personal-training plan
+J-F-panel-123-05 | type 6 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Today, a pending request
+  s1 see: "Declined by Vikram Rathore."
+  s1 see: The request moves under the pending ones, with no buttons
+  s1 not: "Approve" still offered
+  s1 not: A plan sold
+  s2 see: Both requests pending again
+  s2 not: The answer kept after the reload
+J-F-panel-123-06 | type 12 | prospect | The demo gym at app.mettleup.fit/demo, signed in as the owner Vikram Rathore; Today, Requests from the app
+  s1 see: Made-up member names and plans
+  s1 not: A real member's request
+  s1 not: A reply sent to any member's phone

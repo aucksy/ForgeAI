@@ -1,0 +1,625 @@
+# A8-server-database-2-1: coverage of 108 Tier 1 journeys (9 features, from A5-server-database-2-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-server-400 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | imports the code
+F-server-400 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | imports the code
+F-server-400 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-server-400 | supabase/tests/0034_signin_pin.sql | db | 205 lines | file name
+F-server-400 | supabase/tests/0048_security_fixes.sql | db | 198 lines | file name
+F-server-400 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-server-400 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-server-400 | apps/dashboard/test/crm/assistant/answer.test.ts | unit | 191 lines | asserts 1 journey phrase(s)
+F-server-400 | apps/dashboard/test/crm/assistant/maskMatch.test.ts | unit | 87 lines | asserts 1 journey phrase(s)
+F-server-400 | apps/dashboard/test/crm/assistant/planExecute.test.ts | unit | 273 lines | asserts 1 journey phrase(s)
+F-server-401 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-server-401 | supabase/tests/0034_signin_pin.sql | db | 205 lines | file name
+F-server-401 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-server-401 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-server-401 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 1 journey phrase(s)
+F-server-401 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-server-401 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 1 journey phrase(s)
+F-server-401 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 1 journey phrase(s)
+F-server-401 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 1 journey phrase(s)
+F-server-401 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 1 journey phrase(s)
+F-server-401 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 1 journey phrase(s)
+F-server-401 | apps/dashboard/test/crm/assistant/answer.test.ts | unit | 191 lines | asserts 1 journey phrase(s)
+F-server-402 | supabase/tests/0060_pay_mettleup.sql | db | 317 lines | asserts 5 journey phrase(s)
+F-server-402 | supabase/tests/0083_ai_members.sql | db | 180 lines | asserts 5 journey phrase(s)
+F-server-402 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 4 journey phrase(s)
+F-server-402 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 4 journey phrase(s)
+F-server-402 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-server-402 | supabase/tests/0035_trainer_measurements_diet.sql | db | 227 lines | file name, asserts 2 journey phrase(s)
+F-server-402 | supabase/tests/0062_plan_features.sql | db | 233 lines | file name, asserts 2 journey phrase(s)
+F-server-402 | supabase/tests/0080_gym_page.sql | db | 269 lines | asserts 4 journey phrase(s)
+F-server-402 | supabase/tests/0098_alerts_done_and_read.sql | db | 375 lines | asserts 4 journey phrase(s)
+F-server-402 | apps/dashboard/test/crm/pricesOneSource.test.ts | unit | 187 lines | imports the code
+F-server-402 | supabase/tests/0050_trainer_view.sql | db | 213 lines | asserts 3 journey phrase(s)
+F-server-402 | supabase/tests/0053_ask_trainer_and_progress.sql | db | 232 lines | asserts 3 journey phrase(s)
+F-server-403 | apps/dashboard/test/crm/pricesOneSource.test.ts | unit | 187 lines | imports the code
+F-server-403 | supabase/tests/0035_trainer_measurements_diet.sql | db | 227 lines | file name
+F-server-403 | supabase/tests/0062_plan_features.sql | db | 233 lines | file name
+F-server-404 | apps/dashboard/e2e/timings.spec.mjs | e2e | 130 lines | asserts 3 journey phrase(s)
+F-server-404 | supabase/tests/0036_gym_timings.sql | db | 161 lines | file name
+F-server-404 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-server-404 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 1 journey phrase(s)
+F-server-404 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-server-404 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-server-404 | apps/dashboard/test/crm/gymTimings.test.ts | unit | 125 lines | asserts 1 journey phrase(s)
+F-server-404 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-server-404 | apps/dashboard/test/crm/navNames.test.ts | unit | 61 lines | asserts 1 journey phrase(s)
+F-server-404 | apps/dashboard/test/crm/ownerOnboarding.test.ts | unit | 115 lines | asserts 1 journey phrase(s)
+F-server-404 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-server-404 | apps/dashboard/test/crm/sheets.test.ts | unit | 122 lines | asserts 1 journey phrase(s)
+F-server-405 | supabase/tests/0037_leaderboard.sql | db | 548 lines | file name, asserts 5 journey phrase(s)
+F-server-405 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 5 journey phrase(s)
+F-server-405 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 3 journey phrase(s)
+F-server-405 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 3 journey phrase(s)
+F-server-405 | supabase/tests/0075_gym_alerts.sql | db | 150 lines | asserts 3 journey phrase(s)
+F-server-405 | apps/dashboard/e2e/friend-live-uat.spec.mjs | e2e | 262 lines | asserts 2 journey phrase(s)
+F-server-405 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | asserts 2 journey phrase(s)
+F-server-405 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 2 journey phrase(s)
+F-server-405 | apps/dashboard/e2e/r579-uat.spec.mjs | e2e | 298 lines | asserts 2 journey phrase(s)
+F-server-405 | apps/dashboard/test/crm/branches.test.ts | unit | 224 lines | asserts 2 journey phrase(s)
+F-server-405 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 2 journey phrase(s)
+F-server-405 | apps/dashboard/test/crm/needsYou.test.ts | unit | 54 lines | asserts 2 journey phrase(s)
+F-server-406 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | imports the code, asserts 6 journey phrase(s)
+F-server-406 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 6 journey phrase(s)
+F-server-406 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | imports the code, asserts 1 journey phrase(s)
+F-server-406 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 3 journey phrase(s)
+F-server-406 | apps/dashboard/test/crm/challenges.test.ts | unit | 388 lines | imports the code
+F-server-406 | apps/dashboard/test/crm/pricesOneSource.test.ts | unit | 187 lines | imports the code
+F-server-406 | supabase/tests/0047_challenge_rewards.sql | db | 214 lines | file name, asserts 1 journey phrase(s)
+F-server-406 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 2 journey phrase(s)
+F-server-406 | apps/dashboard/e2e/pay-mettleup-uat.spec.mjs | e2e | 210 lines | asserts 2 journey phrase(s)
+F-server-406 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 2 journey phrase(s)
+F-server-406 | apps/dashboard/test/crm/payMettleUp.test.ts | unit | 236 lines | asserts 2 journey phrase(s)
+F-server-406 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-server-407 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-server-407 | supabase/tests/0038_member_push.sql | db | 169 lines | file name
+F-server-407 | supabase/tests/0053_ask_trainer_and_progress.sql | db | 232 lines | file name
+F-server-407 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-server-407 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-server-407 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-server-407 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | asserts 1 journey phrase(s)
+F-server-407 | deploy/hq/push.test.mjs | unit | 382 lines | asserts 1 journey phrase(s)
+F-server-407 | deploy/panel/assistCatalogue.test.mjs | unit | 184 lines | asserts 1 journey phrase(s)
+F-server-408 | apps/mobile/test/shop/gymBusy.test.ts | unit | 209 lines | asserts 4 journey phrase(s)
+F-server-408 | apps/mobile/test/tracker/r320Widgets.test.ts | unit | 119 lines | asserts 2 journey phrase(s)
+F-server-408 | supabase/tests/0039_gym_busy.sql | db | 167 lines | file name
+F-server-408 | apps/dashboard/e2e/timings.spec.mjs | e2e | 130 lines | asserts 1 journey phrase(s)
+F-server-408 | deploy/hq/readLogAlert.test.mjs | unit | 265 lines | asserts 1 journey phrase(s)
+F-server-408 | scripts/watch/watch.test.mjs | unit | 159 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-server-400-01 | type 1 | owner | Admin app sign-in page; the owner has a PIN already
+  s1 see: The gym opens on Today
+  s1 not: Another gym of the same mobile opened when its PIN differs
+  s1 not: The PIN shown back in any box or message
+  s2 see: Line '· PIN set'
+  s2 not: The old PIN still signs in afterwards
+  s2 not: The new PIN set in one branch only when the owner has branches
+J-F-server-400-02 | type 2 | owner | Sign-in page; owner has forgotten the PIN and has a one-time code (from WhatsApp or another signed-in device)
+  s1 see: The gym opens
+  s1 see: Offer 'Choose a new PIN?'
+  s1 not: The code accepted a second time
+  s1 not: The code refused because a PIN exists
+  s2 see: '· PIN set'
+  s2 see: No box asking for the old PIN
+  s2 not: The old PIN asked for within 15 minutes of a code sign-in
+J-F-server-400-03 | type 3 | owner | Sign-in page; someone types wrong PINs for the owner's mobile
+  s1 see: A wrong-PIN line with the tries left
+  s1 not: The tries-left number going up
+  s2 see: 'Too many tries right now. Wait a little, then try again.'
+  s2 not: A 6th try checked
+  s2 not: The right PIN signing in while locked
+  s3 see: The lock lasts 1 hour, not 15 minutes
+  s3 not: The lock never growing
+  s4 see: The PIN refused as easy to guess
+  s4 not: 123456 or the last 6 digits of the mobile saved
+J-F-server-400-04 | type 6 | owner | Owner with two branches and no PIN yet ('· No PIN yet')
+  s1 see: '· PIN set'
+  s1 not: Branch B still shows '· No PIN yet'
+  s2 see: Branch B opens with the same PIN
+  s2 not: A second PIN needed for branch B
+  s3 see: The old PIN refused as wrong
+  s3 not: Both PINs working
+J-F-server-400-05 | type 12 | owner | Owner opens Staff & sign-in to see who has a PIN
+  s1 see: '· PIN set' or '· No PIN yet'
+  s1 see: A lock time when a PIN is locked
+  s1 not: Any PIN or part of a PIN shown
+  s1 not: Another gym's people listed
+  s2 see: Only: has a PIN, when set, whether the current one is needed, lock time
+  s2 not: The PIN or its coded form sent to the device
+J-F-server-400-06 | type 1 | staff | A new front-desk person got a one-time code from the owner
+  s1 see: The gym opens
+  s1 see: 'Choose a 6-digit PIN'
+  s1 not: The owner's own screens shown to the desk
+  s2 see: '· PIN set'
+  s2 not: The PIN set for the owner instead
+  s3 see: The gym opens
+  s3 not: A new code needed every day
+J-F-server-400-07 | type 2 | staff | Desk person reopens the admin app on a device already signed in
+  s1 see: The gym opens without asking for the PIN
+  s1 see: The demo-gym flag is false for a real gym
+  s1 not: The sign-in page shown while the session is live
+  s1 not: Another gym's name
+J-F-server-400-08 | type 3 | staff | Desk person changes the PIN in Settings
+  s1 see: The PIN refused as easy to guess
+  s1 not: The weak PIN saved
+  s2 see: Wrong-PIN line with tries left, then a lock message
+  s2 not: The PIN changed without the right current PIN
+J-F-server-400-09 | type 6 | staff | Desk person has a PIN; the owner removes them from Staff & sign-in
+  s1 see: The person gone from the list
+  s1 not: The person still listed
+  s2 see: A wrong-PIN answer
+  s2 not: The old PIN still opening the gym
+J-F-server-400-10 | type 12 | staff | Desk person opens Settings
+  s1 see: Only the own PIN state
+  s1 not: Any other person's PIN state or phone shown to the desk
+J-F-server-401-01 | type 1 | owner | Staff & sign-in; a desk person who lost the phone
+  s1 see: The person's devices count goes to 0
+  s1 see: Their row shows '· No PIN yet'
+  s1 not: The owner's own device signed out
+  s1 not: The person's old PIN still working
+  s2 see: A wrong-PIN answer
+  s2 not: The gym opens
+J-F-server-401-02 | type 2 | owner | Staff & sign-in; the owner's own row, signed in on a laptop and a phone
+  s1 see: The other devices signed out
+  s1 see: This device stays signed in
+  s1 not: This device signed out
+  s1 not: The owner left with no PIN and no word about it
+J-F-server-401-03 | type 3 | owner | A desk person, or a person already removed
+  s1 see: The request refused
+  s1 not: The desk signing out the owner
+  s2 see: A 'gone' answer
+  s2 not: An error with code words
+J-F-server-401-04 | type 6 | owner | A desk person was signed out everywhere
+  s1 see: Gym opens
+  s1 see: 'Choose a 6-digit PIN'
+  s1 not: The old PIN asked for
+  s2 see: Devices 0 and '· No PIN yet' again
+  s2 not: The second sign-out doing nothing
+J-F-server-401-05 | type 12 | owner | Owner looks at Staff & sign-in
+  s1 see: Name, phone, role, devices count, last seen, PIN state
+  s1 not: People of another gym
+  s1 not: Device names or places of another person shown to the desk
+J-F-server-401-06 | type 1 | HQ admin | HQ app, a gym whose owner cannot sign in; HQ has called the gym's own number
+  s1 see: Owner's name, phone and a new 6-digit code with its end time
+  s1 not: A code made without the tick
+  s1 not: The owner's old PIN still working
+  s2 see: Owner's gym opens, then '· PIN set'
+  s2 not: The code working for another gym
+J-F-server-401-07 | type 2 | HQ admin | HQ app, a gym with two owners
+  s1 see: Asked to pick the owner
+  s1 not: The code made for a random owner
+  s2 see: That owner's code
+  s2 not: The other owner's PIN cleared
+J-F-server-401-08 | type 3 | HQ admin | HQ app reset with mistakes
+  s1 see: Refused: confirm the call first
+  s1 not: A code made
+  s2 see: Refused: too many
+  s2 not: A 6th code made
+  s3 see: Refused
+  s3 not: Any code returned
+J-F-server-401-09 | type 6 | HQ admin | Owner was reset once today
+  s1 see: '· PIN set'
+  s1 not: Code usable again after use
+  s2 see: New code; the new PIN cleared too
+  s2 not: The PIN set after the first reset still working
+J-F-server-401-10 | type 12 | HQ admin | HQ app after a reset
+  s1 see: Who did it, when, 'called the gym and the owner confirmed', the last 4 digits of the owner phone
+  s1 not: The full phone or the code kept in the log
+J-F-server-402-01 | type 1 | owner | Owner at the desk with a member on the gym's list (Pro plan)
+  s1 see: The entry at the top of the list with the date and 'the owner's name' as who measured
+  s1 not: The entry saved for another member
+  s1 not: Who measured taken from the device instead of the sign-in
+  s2 see: The entry 'From <gym>'
+  s2 not: The desk note shown to the member
+J-F-server-402-02 | type 3 | owner | Owner saves bad measurements
+  s1 see: Told that day already has an entry; edit it instead
+  s1 not: Two entries for one day
+  s2 see: Refused with a plain line
+  s2 not: An empty or future entry saved
+  s3 see: A Pro-only refusal
+  s3 not: The entry saved on a Basic plan
+J-F-server-402-03 | type 6 | owner | Owner fixes a mistyped entry
+  s1 see: 'Measurements updated.'
+  s1 not: Who measured changed to the editor without a word
+  s2 see: 'Measurements deleted.'
+  s2 not: The entry still in the member's app after its next read
+J-F-server-402-04 | type 12 | owner | Owner writes a desk note on a measurement
+  s1 see: 'Desk note (only your gym sees it)'
+  s1 not: The note in the member's app
+  s1 not: Another gym able to read the entry
+J-F-server-402-05 | type 1 | staff | Desk person at the desk with a member on the gym's list (Pro plan)
+  s1 see: The entry at the top of the list with the date and 'the person's name' as who measured
+  s1 not: The entry saved for another member
+  s1 not: Who measured taken from the device instead of the sign-in
+  s2 see: The entry 'From <gym>'
+  s2 not: The desk note shown to the member
+J-F-server-402-06 | type 3 | staff | Desk person saves bad measurements
+  s1 see: Told that day already has an entry; edit it instead
+  s1 not: Two entries for one day
+  s2 see: Refused with a plain line
+  s2 not: An empty or future entry saved
+  s3 see: A Pro-only refusal
+  s3 not: The entry saved on a Basic plan
+J-F-server-402-07 | type 6 | staff | Desk person fixes a mistyped entry
+  s1 see: 'Measurements updated.'
+  s1 not: Who measured changed to the editor without a word
+  s2 see: 'Measurements deleted.'
+  s2 not: The entry still in the member's app after its next read
+J-F-server-402-08 | type 1 | trainer | Trainer at the desk with a member on the gym's list (Pro plan)
+  s1 see: The entry at the top of the list with the date and 'the person's name' as who measured
+  s1 not: The entry saved for another member
+  s1 not: Who measured taken from the device instead of the sign-in
+  s2 see: The entry 'From <gym>'
+  s2 not: The desk note shown to the member
+J-F-server-402-09 | type 3 | trainer | Trainer saves bad measurements
+  s1 see: Told that day already has an entry; edit it instead
+  s1 not: Two entries for one day
+  s2 see: Refused with a plain line
+  s2 not: An empty or future entry saved
+  s3 see: A Pro-only refusal
+  s3 not: The entry saved on a Basic plan
+J-F-server-402-10 | type 6 | trainer | Trainer fixes a mistyped entry
+  s1 see: 'Measurements updated.'
+  s1 not: Who measured changed to the editor without a word
+  s2 see: 'Measurements deleted.'
+  s2 not: The entry still in the member's app after its next read
+J-F-server-402-11 | type 1 | member | Member app joined to the gym, matched at a check-in; the desk measured them
+  s1 see: The gym's entry marked 'From <gym>' with weight and tape numbers
+  s1 not: The desk note shown
+  s1 not: Another member's numbers
+J-F-server-402-12 | type 3 | member | Member whose number is shared with another member on the gym's list
+  s1 see: No gym entries; the own entries only
+  s1 not: Entries of the other member with the same number
+  s2 see: Own entries only
+  s2 not: The old gym's entries still read
+J-F-server-402-13 | type 6 | member | Gym deletes a mistyped entry
+  s1 see: The entry gone
+  s1 not: The deleted entry kept on the phone
+  s2 see: 'Ask your gym to change the ones they recorded.'
+  s2 not: The member editing the gym's entry
+J-F-server-402-14 | type 12 | member | Member's own entries on the phone
+  s1 see: The entry on the phone
+  s1 not: The member's own entries sent to the gym
+J-F-server-403-01 | type 1 | owner | Owner on 'Diet plans' (Pro plan)
+  s1 see: The plan form with meals
+  s1 not: A meal saved with no food line
+  s2 see: The plan in the list with who made it
+  s2 not: The plan sent to members not picked
+  s3 see: The meals and the trainer's name
+  s3 not: Another gym's plan
+J-F-server-403-02 | type 2 | owner | Owner sends a plan to everyone on a membership plan
+  s1 see: The plan saved
+  s1 not: Members whose membership ended or was cancelled getting it
+  s2 see: The plan
+  s2 not: A member on another plan seeing it
+J-F-server-403-03 | type 3 | owner | Owner saves a bad plan
+  s1 see: 'Give the diet a name.'
+  s1 not: A plan with no name saved
+  s2 see: Refused with a plain line
+  s2 not: An unreadable plan sent
+  s3 see: A Pro-only refusal
+  s3 not: The plan saved
+J-F-server-403-04 | type 6 | owner | Owner withdraws a plan
+  s1 see: The plan marked withdrawn, still in the list
+  s1 not: The plan deleted
+  s2 see: Told to make a copy instead
+  s2 not: The withdrawn plan sent again
+  s3 see: The plan gone
+  s3 not: The withdrawn plan still shown after the next read
+J-F-server-403-05 | type 12 | owner | Owner sends a plan to one member
+  s1 see: Only plans sent to them
+  s1 not: Plans meant for others
+  s1 not: The list of who got the plan
+J-F-server-403-06 | type 1 | staff | Desk person on 'Diet plans' (Pro plan)
+  s1 see: The plan form with meals
+  s1 not: A meal saved with no food line
+  s2 see: The plan in the list with who made it
+  s2 not: The plan sent to members not picked
+  s3 see: The meals and the trainer's name
+  s3 not: Another gym's plan
+J-F-server-403-07 | type 3 | staff | Desk person saves a bad plan
+  s1 see: 'Give the diet a name.'
+  s1 not: A plan with no name saved
+  s2 see: Refused with a plain line
+  s2 not: An unreadable plan sent
+  s3 see: A Pro-only refusal
+  s3 not: The plan saved
+J-F-server-403-08 | type 6 | staff | Desk person withdraws a plan
+  s1 see: The plan marked withdrawn, still in the list
+  s1 not: The plan deleted
+  s2 see: Told to make a copy instead
+  s2 not: The withdrawn plan sent again
+  s3 see: The plan gone
+  s3 not: The withdrawn plan still shown after the next read
+J-F-server-403-09 | type 1 | trainer | Trainer on 'Diet plans' (Pro plan)
+  s1 see: The plan form with meals
+  s1 not: A meal saved with no food line
+  s2 see: The plan in the list with who made it
+  s2 not: The plan sent to members not picked
+  s3 see: The meals and the trainer's name
+  s3 not: Another gym's plan
+J-F-server-403-10 | type 3 | trainer | Trainer saves a bad plan
+  s1 see: 'Give the diet a name.'
+  s1 not: A plan with no name saved
+  s2 see: Refused with a plain line
+  s2 not: An unreadable plan sent
+  s3 see: A Pro-only refusal
+  s3 not: The plan saved
+J-F-server-403-11 | type 6 | trainer | Trainer withdraws a plan
+  s1 see: The plan marked withdrawn, still in the list
+  s1 not: The plan deleted
+  s2 see: Told to make a copy instead
+  s2 not: The withdrawn plan sent again
+  s3 see: The plan gone
+  s3 not: The withdrawn plan still shown after the next read
+J-F-server-403-12 | type 1 | member | Member matched to the gym's list; a plan was sent by name
+  s1 see: Plan title, meals with times, food lines, notes, who made it
+  s1 not: A plan for another member
+J-F-server-403-13 | type 2 | member | Member on the membership plan the trainer sent to
+  s1 see: The plan sent to that membership plan
+  s1 not: Nothing shown although the membership covers today
+J-F-server-403-14 | type 3 | member | Member not matched (no check-in yet, or name differs)
+  s1 see: A plain line saying the gym must match them first
+  s1 not: A blank screen
+  s1 not: Someone else's plan
+J-F-server-403-15 | type 6 | member | Member's membership ended yesterday; a plan came by membership plan
+  s1 see: The plan gone
+  s1 not: The plan still shown
+  s2 see: The plan back
+  s2 not: Renewal not picked up
+J-F-server-403-16 | type 12 | member | Member reads a plan
+  s1 see: The trainer's name only
+  s1 not: The list of other members the plan was sent to
+J-F-server-404-01 | type 1 | owner | Owner opens 'Gym timings'
+  s1 see: 'Saved ✓'
+  s1 see: 'Members see them in the MettleUp app (Gym tab) within 10 minutes.'
+  s1 not: Sunday saved as open
+  s1 not: The hours of another branch changed
+  s2 see: The same hours
+  s2 not: Old hours after 10 minutes
+J-F-server-404-02 | type 2 | owner | Owner adds a special day
+  s1 see: 'Saved ✓'
+  s1 not: The special day lost on save
+  s2 see: 'Closed Sun 8 Nov · Diwali'
+  s2 not: Normal Sunday hours on that date
+J-F-server-404-03 | type 3 | owner | Owner types bad hours
+  s1 see: Refused: at least one day must be open
+  s1 not: Saved with every day closed
+  s2 see: Refused as a likely am/pm slip
+  s2 not: Saved
+  s3 see: Refused
+  s3 not: Saved
+J-F-server-404-04 | type 6 | owner | Owner has saved timings and an old special day
+  s1 see: The old special day dropped
+  s1 not: Yesterday's late hours dropped too early
+  s2 see: 'Gym timings removed. Members no longer see them.'
+  s2 not: Members still seeing them
+J-F-server-404-05 | type 12 | owner | Who can see the timings
+  s1 see: The hours
+  s1 not: Who last changed them shown to members
+  s2 see: Read-only hours and who changed them
+  s2 not: A save button for the desk
+J-F-server-404-06 | type 1 | staff | Desk person opens 'Gym timings'
+  s1 see: The hours and who last changed them
+  s1 not: Empty page when hours exist
+J-F-server-404-07 | type 3 | staff | Desk person tries to change the hours
+  s1 see: 'Only the owner can change the gym timings.'
+  s1 not: The change saved
+J-F-server-404-08 | type 6 | staff | Owner changes the hours while the desk page is open
+  s1 see: The new hours and the owner's name
+  s1 not: The old hours after reopening
+J-F-server-404-09 | type 1 | member | Member app joined to the gym; the gym set hours
+  s1 see: 'Open now · closes 10:00 pm'
+  s1 see: The week's hours
+  s1 not: Another gym's hours
+J-F-server-404-10 | type 2 | member | A special day set by the gym
+  s1 see: 'Closed Sun 8 Nov · Diwali'
+  s1 not: Normal hours
+J-F-server-404-11 | type 3 | member | Gym has no timings, or the member left
+  s1 see: No hours card, or a plain line
+  s1 not: A blank card
+  s1 not: An error with code words
+J-F-server-404-12 | type 6 | member | Owner removed the hours
+  s1 see: No hours
+  s1 not: The removed hours
+J-F-server-404-13 | type 12 | member | Member reads the hours
+  s1 see: Hours and the gym note
+  s1 not: Who changed them
+J-F-server-405-01 | type 1 | member | Member app joined to the gym, with workouts in the last 30 days
+  s1 see: Nothing new on screen
+  s1 not: Exercises, sets or body weight sent
+  s2 see: Top 10 by workouts
+  s2 see: 'A member' for those who did not switch their name on
+  s2 see: Your own place and number
+  s2 not: Members who left in the list
+  s2 not: A member with 0 listed
+J-F-server-405-02 | type 2 | member | Member turns on the name switch and views kg
+  s1 see: Own row shows 'Rahul S.'
+  s1 not: Full surname shown
+  s2 see: Top 10 by kg
+  s2 not: Workout counts under the kg heading
+J-F-server-405-03 | type 3 | member | Odd numbers from a phone
+  s1 see: That day not counted
+  s1 not: 5 workouts counted
+  s2 see: A plain line
+  s2 not: A crash
+  s3 see: The gym list gone
+  s3 not: The old gym's list
+J-F-server-405-04 | type 6 | member | The owner hides the member, then the member leaves
+  s1 see: Own number and place still shown
+  s1 not: Own row in anyone's top 10
+  s2 see: Numbers deleted
+  s2 not: Numbers kept on the server
+J-F-server-405-05 | type 12 | member | Another member looks at the list
+  s1 see: First name and initial only for those who switched on
+  s1 not: Phone numbers
+  s1 not: A full name
+  s1 not: Any name of a member who kept the switch off
+J-F-server-405-06 | type 1 | owner | Owner opens Challenges, 'Leaderboard · last 30 days'
+  s1 see: Full names, phone and value; hidden members marked
+  s1 not: Members who left
+  s1 not: Only switched-on names shown to the owner
+J-F-server-405-07 | type 3 | owner | Owner hides a member who just left
+  s1 see: Refused
+  s1 not: A row made for a member who left
+J-F-server-405-08 | type 6 | owner | Owner hides then unhides
+  s1 see: The member in 'Leaderboard se chhupaye gaye' / hidden list
+  s1 not: The member still in members' top 10
+  s2 see: Back in members' lists
+  s2 not: Stuck hidden
+J-F-server-405-09 | type 12 | owner | Owner reads the board
+  s1 see: Full name to the gym
+  s1 not: That name shown in the member app
+J-F-server-405-10 | type 1 | staff | Desk person opens the leaderboard
+  s1 see: Names, phone, values
+  s1 not: Hide buttons that work
+J-F-server-405-11 | type 3 | staff | Desk person tries to hide a member
+  s1 see: Owner-only refusal
+  s1 not: The member hidden
+J-F-server-405-12 | type 6 | staff | Owner hid a member
+  s1 see: The member marked hidden
+  s1 not: No mark
+J-F-server-406-01 | type 1 | owner | Owner on 'Challenges' (Pro plan), no challenge this month
+  s1 see: The challenge listed as upcoming or running
+  s1 not: Two challenges on the same days
+  s2 see: The challenge card with the goal
+  s2 not: Old goal after 10 minutes
+J-F-server-406-02 | type 2 | owner | The challenge ended; winners wait for the owner
+  s1 see: Each winner with name, phone, value and a give or skip choice
+  s1 not: Free days added before the owner chose
+  s2 see: 'The free days were added to each winner’s plan by themselves.' or 'The free days will be added soon.'
+  s2 not: Days added twice
+  s2 not: A winner who left given days
+  s3 see: That winner marked skipped; no message
+  s3 not: A message sent to the skipped winner
+J-F-server-406-03 | type 3 | owner | Owner makes mistakes
+  s1 see: Refused
+  s1 not: Saved
+  s2 see: Refused: overlap
+  s2 not: Saved
+  s3 see: 'A challenge that has started can only be cancelled.'
+  s3 not: Goal changed mid-way
+  s4 see: 'Challenges are not switched on for your gym yet'
+  s4 not: Saved
+J-F-server-406-04 | type 6 | owner | A running challenge
+  s1 see: 'Challenge cancelled. Members no longer see it.'
+  s1 not: Winners kept for a cancelled one
+  s2 see: Refused
+  s2 not: Its winners wiped
+J-F-server-406-05 | type 12 | owner | Owner reads the winners of a finished challenge
+  s1 see: Name and value, no phone
+  s1 not: The phone of a member who left
+J-F-server-406-06 | type 1 | member | Member in a running challenge
+  s1 see: Challenge card: title, goal, my value, how many hit it
+  s1 not: Other members' names on the card
+  s2 see: 'You hit the goal: {prizeDays} free ...'
+  s2 not: The prize promised before the challenge ended without saying it is after
+J-F-server-406-07 | type 2 | member | Owner gave the free days
+  s1 see: '... 3 free days were added to your membership.' or 'Ask at the front desk to add them'
+  s1 not: Two messages for one win
+J-F-server-406-08 | type 3 | member | Phone sends old days after the challenge ended
+  s1 see: My value just under the goal; not a winner
+  s1 not: A late winner
+J-F-server-406-09 | type 6 | member | Challenge cancelled; then a finished one older than 7 days
+  s1 see: No challenge card
+  s1 not: The cancelled challenge
+J-F-server-406-10 | type 12 | member | Member's card
+  s1 see: Only a count of who hit the goal
+  s1 not: Winners' names or phones
+J-F-server-406-11 | type 1 | system | First read of Challenges after a challenge's last India day
+  s1 see: Each winner line 'confirm' when free days are set, else 'none'
+  s1 not: Members who left copied
+  s1 not: Copy run twice
+J-F-server-406-12 | type 2 | system | The first read after the end comes from a member's Ranking
+  s1 see: The same copy made
+  s1 not: A different winner list from the owner's read
+J-F-server-406-13 | type 3 | system | Winner cannot be matched, has no plan, or left
+  s1 see: Line 'by hand' with reason no_match, no_plan or left
+  s1 not: Days invented on no plan
+  s1 not: A message to a member who left
+J-F-server-406-14 | type 6 | system | Gym paused by HQ when the owner gives
+  s1 see: Lines stay pending
+  s1 not: Days added while paused
+  s2 see: Days added once; plan note '+3 days (Reward - Gym challenge)'
+  s2 not: Days added twice
+J-F-server-407-01 | type 1 | member | Member app joined to the gym, notifications allowed
+  s1 see: 'Get a pop-up when {name} sends news, like a holiday, new timings or an offer. It can take a few minutes to reach you.'
+  s1 not: The switch on but no address saved
+  s2 see: A pop-up with the gym's name and the message title
+  s2 not: Two pop-ups for one message
+J-F-server-407-02 | type 2 | member | The gym starts a workout offer, or a trainer answers the member's question
+  s1 see: A pop-up with the offer title
+  s1 not: A pop-up for a stopped offer
+  s2 see: A pop-up with the trainer's first name and the answer
+  s2 not: The answer sent to other members' phones
+J-F-server-407-03 | type 3 | member | Notifications blocked, or switch off
+  s1 see: 'No message from your gym can pop up. Turn them on in your phone's settings.'
+  s1 not: Pop-ups still arriving
+  s2 see: No pop-ups
+  s2 not: Address kept on the server
+J-F-server-407-04 | type 6 | member | Member leaves the gym
+  s1 see: No more pop-ups from that gym
+  s1 not: A pop-up from the old gym
+  s2 see: The oldest phone stops getting pop-ups
+  s2 not: More than 5 addresses kept
+J-F-server-407-05 | type 12 | member | Member reads a group message meant for others
+  s1 see: Pop-up only on phones of that group
+  s1 not: Pop-up on phones outside the group
+J-F-server-407-06 | type 1 | system | Owner sends a message from the admin app
+  s1 see: One push job made, due at the send time
+  s1 not: The send failing because the job failed
+J-F-server-407-07 | type 2 | system | Owner saves a workout offer; a trainer answers
+  s1 see: One push job of kind offer
+  s1 not: Two jobs for one offer
+J-F-server-407-08 | type 3 | system | Message taken back before it went; sender 7 hours late
+  s1 see: The job closed as withdrawn or late; nothing sent
+  s1 not: A withdrawn message popped up
+J-F-server-407-09 | type 6 | system | A big gym with 1000 addresses
+  s1 see: The job moves on each time; done when the last batch is short
+  s1 not: A phone sent twice
+  s1 not: A phone skipped
+  s2 see: Finished job deleted
+  s2 not: Jobs kept forever
+J-F-server-407-10 | type 1 | HQ admin | HQ push sender runs every minute
+  s1 see: Gym name, title, body and up to 40 addresses
+  s1 not: Addresses of members who left
+  s2 see: Dead addresses deleted
+  s2 not: Dead addresses kept
+J-F-server-407-11 | type 2 | HQ admin | Admin app asks the sender to run at once after a send
+  s1 see: The pop-up within seconds
+  s1 not: Wait of a full minute
+J-F-server-407-12 | type 3 | HQ admin | A gym key or anon key calls the sender functions
+  s1 see: Refused
+  s1 not: Addresses returned
+  s2 see: Refused: too many
+  s2 not: Deleted
+J-F-server-407-13 | type 6 | HQ admin | Sender dies mid-way
+  s1 see: The job carries on after the last batch
+  s1 not: The same batch again
+J-F-server-407-14 | type 12 | HQ admin | Sender reads a group message
+  s1 see: Only addresses of the group's members
+  s1 not: Workout data or names with the addresses
+J-F-server-408-01 | type 1 | member | Member app joined to a gym with 8 weeks of timed check-ins
+  s1 see: 'Quiet right now' or 'Busy'
+  s1 see: Bars for the usual week
+  s1 see: 'Quietest later today: 2 pm to 4 pm'
+  s1 not: Names or check-in times of anyone
+  s1 not: An exact small number
+J-F-server-408-02 | type 2 | member | Gym closed this hour by its weekly hours
+  s1 see: 'Closed right now'
+  s1 not: 'Quiet right now' at a closed hour
+J-F-server-408-03 | type 3 | member | New gym with under 40 timed check-ins, or member left
+  s1 see: No busy card (still learning)
+  s1 not: A busy level from 3 check-ins
+  s2 see: Nothing from the old gym
+  s2 not: Old gym's levels
+J-F-server-408-04 | type 6 | member | Gym adds weekly hours; old paper register imported
+  s1 see: Closed hours show no bar
+  s1 see: Imported visits (no time) not counted
+  s1 not: Bars for closed hours
+J-F-server-408-05 | type 12 | member | Only a few people came
+  s1 see: A level only; no count under 5
+  s1 see: Hours with fewer than 3 check-ins show 0
+  s1 not: A number that tells one person was there

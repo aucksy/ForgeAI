@@ -1,0 +1,710 @@
+# A8-phone-lib-core-1: coverage of 86 Tier 1 journeys (17 features, from A5-phone-lib-core-1, A5-phone-lib-core-2). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-phone-1720 | apps/mobile/test/engine/overload.test.ts | unit | 142 lines | imports the code, file name
+F-phone-1720 | apps/mobile/test/tracker/coachTargets.test.ts | unit | 82 lines | imports the code, file name
+F-phone-1720 | apps/dashboard/test/crm/progressTrend.test.ts | unit | 245 lines | imports the code
+F-phone-1720 | apps/mobile/test/db/phase3ReviewFixes.test.ts | unit | 306 lines | imports the code
+F-phone-1720 | apps/mobile/test/db/todayReal.test.ts | unit | 200 lines | imports the code
+F-phone-1720 | apps/mobile/test/db/upNextReal.test.ts | unit | 180 lines | imports the code
+F-phone-1720 | apps/mobile/test/tracker/audit13OctV037.test.ts | unit | 356 lines | imports the code
+F-phone-1720 | apps/mobile/test/tracker/phase4Review.test.ts | unit | 183 lines | imports the code
+F-phone-1720 | apps/mobile/test/tracker/phase4Stall.test.ts | unit | 65 lines | imports the code
+F-phone-1720 | apps/mobile/test/tracker/progression.test.ts | unit | 507 lines | imports the code
+F-phone-1720 | apps/mobile/test/ai/auditC3Coach.test.ts | unit | 74 lines | file name
+F-phone-1720 | apps/mobile/test/ai/unitsCoach.test.ts | unit | 62 lines | file name
+F-phone-1727 | apps/mobile/test/lib/linkNotice.test.ts | unit | 14 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-phone-1727 | apps/mobile/test/lib/alertRoute.test.ts | unit | 20 lines | imports the code, file name
+F-phone-1727 | apps/mobile/test/lib/launchLink.test.ts | unit | 79 lines | imports the code, file name
+F-phone-1727 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | imports the code
+F-phone-1727 | apps/mobile/test/tracker/f199ProgressInProfile.test.ts | unit | 267 lines | imports the code
+F-phone-1727 | apps/mobile/test/tracker/redesignR5.test.ts | unit | 276 lines | imports the code
+F-phone-1727 | apps/mobile/test/tracker/finishFlow.test.ts | unit | 268 lines | asserts 2 journey phrase(s)
+F-phone-1727 | apps/mobile/test/tracker/auditPhase5Body.test.ts | unit | 469 lines | asserts 1 journey phrase(s)
+F-phone-1727 | apps/mobile/test/tracker/firstRoutine.test.ts | unit | 116 lines | asserts 1 journey phrase(s)
+F-phone-1727 | apps/mobile/test/tracker/historyCard.test.ts | unit | 86 lines | asserts 1 journey phrase(s)
+F-phone-1727 | apps/mobile/test/tracker/historyExport.test.ts | unit | 414 lines | asserts 1 journey phrase(s)
+F-phone-1727 | apps/mobile/test/tracker/historyScope.test.ts | unit | 100 lines | asserts 1 journey phrase(s)
+F-phone-1726 | apps/mobile/qa/audit3-n.yaml | maestro | 301 lines | asserts 11 journey phrase(s)
+F-phone-1726 | apps/mobile/qa/phase7-bigtext.yaml | maestro | 326 lines | asserts 9 journey phrase(s)
+F-phone-1726 | apps/mobile/qa/uat-h.yaml | maestro | 430 lines | asserts 9 journey phrase(s)
+F-phone-1726 | apps/mobile/qa/uat-v.yaml | maestro | 265 lines | asserts 9 journey phrase(s)
+F-phone-1726 | apps/mobile/test/tracker/f199ProgressInProfile.test.ts | unit | 267 lines | imports the code, asserts 6 journey phrase(s)
+F-phone-1726 | apps/dashboard/test/crm/gymReports.test.ts | unit | 140 lines | asserts 7 journey phrase(s)
+F-phone-1726 | apps/mobile/qa/real-workout-w4.yaml | maestro | 228 lines | asserts 7 journey phrase(s)
+F-phone-1726 | apps/mobile/qa/uat-f5.yaml | maestro | 121 lines | asserts 7 journey phrase(s)
+F-phone-1726 | apps/mobile/test/lib/goBack.test.ts | unit | 32 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-phone-1726 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | imports the code, asserts 4 journey phrase(s)
+F-phone-1726 | apps/mobile/test/tracker/r319ImportEraseCharts.test.ts | unit | 136 lines | asserts 7 journey phrase(s)
+F-phone-1726 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 6 journey phrase(s)
+F-phone-1706 | apps/dashboard/test/crm/freshness.test.ts | unit | 56 lines | asserts 9 journey phrase(s)
+F-phone-1706 | apps/mobile/test/lib/appUpdate.test.ts | unit | 87 lines | imports the code, file name
+F-phone-1706 | apps/mobile/test/lib/installSource.test.ts | unit | 70 lines | imports the code, file name
+F-phone-1706 | apps/mobile/qa/uat-rel-r336-update.yaml | maestro | 229 lines | asserts 3 journey phrase(s)
+F-phone-1706 | apps/mobile/qa/uat-rel-r440-popup-bars.yaml | maestro | 76 lines | asserts 3 journey phrase(s)
+F-phone-1706 | apps/mobile/test/lib/whatsNew.test.ts | unit | 116 lines | imports the code
+F-phone-1706 | apps/mobile/test/tracker/shareFrame.test.ts | unit | 238 lines | asserts 3 journey phrase(s)
+F-phone-1706 | apps/mobile/test/tracker/watchUpdateCard.test.ts | unit | 324 lines | asserts 3 journey phrase(s)
+F-phone-1706 | apps/dashboard/e2e/whatsnew.spec.mjs | e2e | 122 lines | asserts 2 journey phrase(s)
+F-phone-1706 | apps/dashboard/test/crm/machines/adms.test.ts | unit | 141 lines | asserts 2 journey phrase(s)
+F-phone-1706 | apps/mobile/qa/real-workout-w4.yaml | maestro | 228 lines | asserts 2 journey phrase(s)
+F-phone-1706 | apps/mobile/qa/store-b.yaml | maestro | 134 lines | asserts 2 journey phrase(s)
+F-phone-1710 | apps/mobile/test/lib/safekeepNudge.test.ts | unit | 107 lines | imports the code, asserts 5 journey phrase(s)
+F-phone-1710 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 3 journey phrase(s)
+F-phone-1710 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 3 journey phrase(s)
+F-phone-1710 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 3 journey phrase(s)
+F-phone-1710 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 3 journey phrase(s)
+F-phone-1710 | apps/mobile/test/cloud/backupWords.test.ts | unit | 88 lines | asserts 2 journey phrase(s)
+F-phone-1710 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 2 journey phrase(s)
+F-phone-1710 | apps/dashboard/e2e/move.spec.mjs | e2e | 141 lines | asserts 1 journey phrase(s)
+F-phone-1710 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-phone-1710 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 1 journey phrase(s)
+F-phone-1710 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-phone-1710 | apps/dashboard/e2e/r450-uat.spec.mjs | e2e | 331 lines | asserts 1 journey phrase(s)
+F-phone-1719 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | imports the code, file name
+F-phone-1719 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-phone-1719 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-phone-1719 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 2 journey phrase(s)
+F-phone-1719 | apps/dashboard/test/crm/crashReport.test.ts | unit | 52 lines | file name
+F-phone-1719 | apps/mobile/test/db/workoutPhotosReal.test.ts | unit | 327 lines | asserts 2 journey phrase(s)
+F-phone-1719 | apps/mobile/test/onboarding/eraseLeftBehind.test.ts | unit | 59 lines | asserts 2 journey phrase(s)
+F-phone-1719 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 2 journey phrase(s)
+F-phone-1719 | apps/mobile/test/onboarding/startup.test.ts | unit | 185 lines | asserts 2 journey phrase(s)
+F-phone-1719 | apps/mobile/test/tracker/auditC9Words.test.ts | unit | 51 lines | asserts 2 journey phrase(s)
+F-phone-1719 | apps/mobile/test/tracker/phase4ImportsC.test.ts | unit | 443 lines | asserts 2 journey phrase(s)
+F-phone-1719 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-phone-1729 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | asserts 8 journey phrase(s)
+F-phone-1729 | apps/dashboard/test/crm/assistant/screenWords.test.ts | unit | 188 lines | asserts 7 journey phrase(s)
+F-phone-1729 | apps/dashboard/test/crm/pricesOneSource.test.ts | unit | 187 lines | asserts 7 journey phrase(s)
+F-phone-1729 | supabase/tests/0078_ai_questions.sql | db | 198 lines | asserts 6 journey phrase(s)
+F-phone-1729 | apps/dashboard/e2e/ai-questions-uat.spec.mjs | e2e | 434 lines | asserts 5 journey phrase(s)
+F-phone-1729 | apps/mobile/test/tracker/phase0RestLateCredits.test.ts | unit | 117 lines | imports the code, file name
+F-phone-1729 | supabase/tests/0071_ai_assistant.sql | db | 241 lines | asserts 4 journey phrase(s)
+F-phone-1729 | apps/dashboard/e2e/gyms-site-uat.spec.mjs | e2e | 242 lines | asserts 3 journey phrase(s)
+F-phone-1729 | apps/mobile/test/tracker/exercisePictures.test.ts | unit | 210 lines | imports the code
+F-phone-1729 | deploy/panel/helpCredits.test.mjs | unit | 163 lines | file name, asserts 1 journey phrase(s)
+F-phone-1729 | supabase/tests/0083_ai_members.sql | db | 180 lines | asserts 3 journey phrase(s)
+F-phone-1729 | apps/dashboard/e2e/assistant-uat.spec.mjs | e2e | 822 lines | asserts 2 journey phrase(s)
+F-phone-1721 | apps/mobile/test/db/e1rmCapReal.test.ts | unit | 102 lines | imports the code, file name
+F-phone-1721 | apps/mobile/test/engine/overload.test.ts | unit | 142 lines | imports the code, file name
+F-phone-1721 | apps/dashboard/test/crm/progressTrend.test.ts | unit | 245 lines | imports the code
+F-phone-1721 | apps/mobile/test/db/phase3ReviewFixes.test.ts | unit | 306 lines | imports the code
+F-phone-1721 | apps/mobile/test/tracker/audit13OctV037.test.ts | unit | 356 lines | imports the code
+F-phone-1721 | apps/mobile/test/tracker/oneRepMax.test.ts | unit | 105 lines | imports the code
+F-phone-1721 | apps/mobile/test/tracker/progression.test.ts | unit | 507 lines | imports the code
+F-phone-1721 | apps/mobile/test/db/reviewE1rmLogReal.test.ts | unit | 116 lines | file name
+F-phone-1721 | apps/mobile/test/tracker/engine/reviewE1rmRecords.test.ts | unit | 56 lines | file name
+F-phone-1721 | apps/mobile/test/tracker/phase5ProgressTop.test.ts | unit | 271 lines | asserts 1 journey phrase(s)
+F-phone-1721 | apps/mobile/test/tracker/workoutPhase1.test.ts | unit | 271 lines | asserts 1 journey phrase(s)
+F-phone-1713 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-1713 | apps/mobile/test/lib/feedback.test.ts | unit | 59 lines | imports the code, file name
+F-phone-1713 | apps/mobile/test/lib/feedbackMemberKey.test.ts | unit | 43 lines | imports the code, file name
+F-phone-1713 | apps/mobile/test/lib/feedbackVoice.test.ts | unit | 147 lines | imports the code, file name
+F-phone-1713 | apps/mobile/test/lib/fetchTimeout.test.ts | unit | 17 lines | imports the code, file name
+F-phone-1713 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | imports the code
+F-phone-1713 | apps/mobile/test/lib/helpHistoryStore.test.ts | unit | 153 lines | imports the code
+F-phone-1713 | apps/mobile/test/lib/watchDiag.test.ts | unit | 336 lines | imports the code
+F-phone-1713 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-1713 | apps/dashboard/e2e/feedback.spec.mjs | e2e | 34 lines | file name
+F-phone-1713 | apps/dashboard/test/crm/feedback.test.ts | unit | 91 lines | file name
+F-phone-1713 | apps/mobile/test/lib/feedbackButton.test.ts | unit | 120 lines | file name
+F-phone-1714 | apps/mobile/test/lib/feedbackButton.test.ts | unit | 120 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-phone-1714 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-1714 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-1714 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 2 journey phrase(s)
+F-phone-1714 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 2 journey phrase(s)
+F-phone-1714 | apps/mobile/qa/uat-rel-r452-help-replies.yaml | maestro | 182 lines | asserts 2 journey phrase(s)
+F-phone-1714 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | asserts 2 journey phrase(s)
+F-phone-1714 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 1 journey phrase(s)
+F-phone-1714 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 1 journey phrase(s)
+F-phone-1714 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 1 journey phrase(s)
+F-phone-1714 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-phone-1714 | apps/dashboard/e2e/pagechat-uat.spec.mjs | e2e | 272 lines | asserts 1 journey phrase(s)
+F-phone-1715 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-1715 | apps/mobile/test/lib/feedbackVoice.test.ts | unit | 147 lines | imports the code, file name
+F-phone-1715 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-1715 | apps/mobile/test/tracker/phase6PhoneA.test.ts | unit | 298 lines | asserts 2 journey phrase(s)
+F-phone-1715 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 1 journey phrase(s)
+F-phone-1715 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-phone-1715 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 1 journey phrase(s)
+F-phone-1715 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 1 journey phrase(s)
+F-phone-1715 | apps/dashboard/e2e/r450-uat.spec.mjs | e2e | 331 lines | asserts 1 journey phrase(s)
+F-phone-1715 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-phone-1715 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 1 journey phrase(s)
+F-phone-1715 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-phone-1716 | apps/mobile/test/lib/helpHistory.test.ts | unit | 207 lines | imports the code, file name, asserts 3 journey phrase(s)
+F-phone-1716 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 6 journey phrase(s)
+F-phone-1716 | apps/mobile/test/lib/helpHistoryStore.test.ts | unit | 153 lines | imports the code, file name
+F-phone-1716 | apps/dashboard/e2e/r608-uat.spec.mjs | e2e | 208 lines | asserts 4 journey phrase(s)
+F-phone-1716 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 4 journey phrase(s)
+F-phone-1716 | apps/mobile/qa/uat-rel-r452-help-replies.yaml | maestro | 182 lines | asserts 4 journey phrase(s)
+F-phone-1716 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 3 journey phrase(s)
+F-phone-1716 | apps/mobile/test/lib/feedbackMemberKey.test.ts | unit | 43 lines | imports the code
+F-phone-1716 | apps/dashboard/e2e/member-messages-uat.spec.mjs | e2e | 236 lines | asserts 2 journey phrase(s)
+F-phone-1716 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 2 journey phrase(s)
+F-phone-1716 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 2 journey phrase(s)
+F-phone-1716 | apps/dashboard/test/crm/offlinePayments.test.ts | unit | 582 lines | asserts 2 journey phrase(s)
+F-phone-1717 | apps/mobile/test/lib/helpHistoryStore.test.ts | unit | 153 lines | imports the code
+F-phone-1717 | apps/mobile/test/shop/r590GymRing.test.ts | unit | 181 lines | imports the code
+F-phone-1717 | apps/mobile/test/lib/helpHistory.test.ts | unit | 207 lines | asserts 2 journey phrase(s)
+F-phone-1717 | apps/dashboard/e2e/pagechat-uat.spec.mjs | e2e | 272 lines | asserts 1 journey phrase(s)
+F-phone-1717 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-phone-1717 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-phone-1717 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | asserts 1 journey phrase(s)
+F-phone-1717 | apps/dashboard/test/crm/pageChat.test.ts | unit | 118 lines | asserts 1 journey phrase(s)
+F-phone-1717 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-phone-1717 | apps/mobile/qa/uat-rel-r452-help-replies.yaml | maestro | 182 lines | asserts 1 journey phrase(s)
+F-phone-1717 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-phone-1717 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-phone-1728 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | imports the code, asserts 3 journey phrase(s)
+F-phone-1728 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-phone-1728 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 5 journey phrase(s)
+F-phone-1728 | apps/mobile/test/tracker/f199ProgressInProfile.test.ts | unit | 267 lines | imports the code, asserts 2 journey phrase(s)
+F-phone-1728 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 4 journey phrase(s)
+F-phone-1728 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 4 journey phrase(s)
+F-phone-1728 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 4 journey phrase(s)
+F-phone-1728 | apps/mobile/qa/sub-uat-f194-choose.yaml | maestro | 31 lines | asserts 4 journey phrase(s)
+F-phone-1728 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 4 journey phrase(s)
+F-phone-1728 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-phone-1728 | apps/mobile/test/tracker/statisticsAudit.test.ts | unit | 90 lines | asserts 4 journey phrase(s)
+F-phone-1728 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 3 journey phrase(s)
+F-phone-1732 | apps/mobile/test/lib/retryRead.test.ts | unit | 127 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-phone-1732 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-phone-1732 | apps/mobile/test/lib/loadState.test.ts | unit | 85 lines | imports the code, file name
+F-phone-1732 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-phone-1732 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-phone-1732 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-phone-1732 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-phone-1732 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-phone-1732 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-phone-1732 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-phone-1732 | apps/mobile/test/lib/memberWords.test.ts | unit | 278 lines | imports the code
+F-phone-1732 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-1709 | apps/mobile/test/lib/newDots.test.ts | unit | 204 lines | imports the code, file name
+F-phone-1709 | apps/mobile/test/tracker/f199ProgressInProfile.test.ts | unit | 267 lines | imports the code
+F-phone-1709 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | file name
+F-phone-1709 | apps/dashboard/test/crm/newDots.test.ts | unit | 279 lines | file name
+F-phone-1730 | apps/mobile/test/lib/permissionRefusal.test.ts | unit | 51 lines | imports the code, file name
+F-phone-1730 | apps/mobile/test/db/workoutPhotosReal.test.ts | unit | 327 lines | imports the code
+F-phone-1730 | apps/mobile/test/tracker/phase3PhoneReview.test.ts | unit | 357 lines | imports the code
+F-phone-1730 | apps/mobile/test/tracker/phase4Exercises.test.ts | unit | 161 lines | imports the code
+F-phone-1730 | apps/dashboard/test/crm/auditC7.test.ts | unit | 333 lines | asserts 1 journey phrase(s)
+F-phone-1730 | apps/mobile/test/onboarding/onboardingStore.test.ts | unit | 255 lines | asserts 1 journey phrase(s)
+F-phone-1730 | apps/mobile/test/tracker/phase5ProgressTop.test.ts | unit | 271 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-phone-1720-01 | type 1 | member | Member with past Bench press sessions (3 sets of 8 at 60 kg, rep range 8-10), opens today's workout plan in the coach
+  s1 see: Bench press 'Target: 60 kg' with the note 'Solid 60 kg × 8 last time — same weight, push for 9 today.'
+  s1 not: A target worked out from a set logged earlier today
+  s1 not: A weight that is not on the plate step (2.5 kg)
+  s2 see: 'You hit 10, 10, 10 at 60 kg — time to move up.'
+  s2 see: Target 62.5 kg
+  s2 not: The weight goes up when only the top set reached 10
+  s2 not: The same 60 kg target stays
+J-F-phone-1720-02 | type 2 | member | Member adds an exercise never done before (a barbell, a bodyweight and a dumbbell exercise)
+  s1 see: 'First time on <exercise> — start with the empty bar (20 kg) and own every rep.'
+  s1 not: A target above 20 kg with no history
+  s1 not: An empty or NaN weight
+  s2 see: 'First time on <exercise> — bodyweight only today, focus on clean controlled reps.'
+  s2 see: 'First time on <exercise> — starting light at 7.5 kg to groove the movement.'
+  s2 not: A weight added to a bodyweight exercise
+J-F-phone-1720-03 | type 3 | member | Member whose last two Squat sessions were under the rep range (6 then 5 reps at 100 kg, range 8-10), and one past session saved with no work
+  s1 see: 'Reps have slipped under 8 two sessions in a row — resetting to 90 kg to build back up stronger.'
+  s1 not: A deload target above the last weight
+  s1 not: A deload below one plate step
+  s2 see: The first-time note and start weight
+  s2 not: A crash or a target of 0 kg for a barbell exercise
+J-F-phone-1720-04 | type 6 | member | Member who already finished today's workout, and one stuck at 60 kg for three sessions
+  s1 see: The same target as this morning
+  s1 not: The target changes during the day because of today's own sets
+  s2 see: 'You've been stuck at 60 kg for three weeks — deloading to 54 kg to break the plateau.'
+  s2 not: A deload when the reps went up
+  s2 not: 'three weeks' said when the three sessions fell in fewer days (seen in passing)
+J-F-phone-1720-05 | type 12 | member | Member with and without MettleUp Plus (or a gym plan) opens today's plan
+  s1 see: Suggested weights shown or locked exactly as the paid-feature promise says
+  s1 not: A gym member on an active plan sees suggested weights locked
+  s1 not: Workout history leaves the phone to work out a target
+J-F-phone-1727-01 | type 1 | member | Member's gym replied; a notification is on the phone
+  s1 see: The gym message page opens (Gym tab, the conversation)
+  s1 not: Only the app opens on the Workout tab
+  s1 not: Another page than the one the notification names
+  s2 see: The page before, or the Gym tab when nothing is behind it
+  s2 not: A dead back arrow
+J-F-phone-1727-02 | type 2 | member | App icon long-pressed; a Start link was opened a minute earlier
+  s1 see: The Measures page
+  s1 not: 'Start Push Day A?' from the earlier link
+  s1 not: The Workout tab instead of Measures
+J-F-phone-1727-03 | type 2 | member | Member taps an old link kept by an older widget or What's new button
+  s1 see: Calendar
+  s1 see: The Profile tab
+  s1 see: Body on Body weight
+  s1 not: A 'not found' page for an old address
+  s1 not: The Progress tab shown in the bar
+J-F-phone-1727-04 | type 3 | member | Member taps a wrong forgeai:// link, and a notification whose route is a web address
+  s1 see: The Workout tab with one calm line: "That link didn't work."
+  s1 not: A blank page
+  s1 not: An error screen
+  s2 see: The app opens; no page or site is opened
+  s2 not: A web site or another app opened from a notification
+J-F-phone-1727-05 | type 6 | member | "That link didn't work." was just shown
+  s1 see: No link line
+  s1 not: The line shown a second time
+  s2 see: The Workout tab
+  s2 not: The previous launch's link page opens again
+J-F-phone-1727-06 | type 12 | member | Member starts a workout from a Start link that carries a one-time key
+  s1 see: 'Start <routine>?'
+  s1 not: The link's one-time key written into the app log
+  s1 not: A notification route opening a page outside the app
+J-F-phone-1726-01 | type 1 | member | Member opens the app
+  s1 see: The bar 'Workout', 'Gym', 'Profile'; Workout open
+  s1 not: A fourth tab (Progress or Coach)
+  s1 not: Another tab opens first
+  s2 see: The 'Join your gym' screen
+  s2 not: An empty page
+  s2 not: The tab named 'Shop'
+  s3 see: Profile with 'Your progress'
+  s3 not: The Progress tab in the bar
+J-F-phone-1726-02 | type 2 | member | Member opened a page from a notification or after Android restored the app (nothing behind it)
+  s1 see: The Profile tab
+  s1 not: Nothing happens (stuck page)
+  s2 see: Settings
+  s2 not: The app closes
+J-F-phone-1726-03 | type 2 | member | Member opens an old link to /coach or /progress
+  s1 see: /coach lands on Workout; /progress on Profile
+  s1 not: A Coach or Progress tab shown in the bar
+J-F-phone-1726-04 | type 3 | member | Member on step 2 of a screen with steps, with values typed
+  s1 see: Step 1 of the same screen
+  s1 not: The screen closes
+  s1 not: Typed values lost
+  s2 see: A question to keep or leave
+  s2 not: The screen closes without asking
+J-F-phone-1726-05 | type 6 | member | Member finishes a screen with steps
+  s1 see: The screen closes once
+  s1 not: The leave question shown after Done
+  s1 not: The question shown again after 'leave' was chosen
+J-F-phone-1706-01 | type 1 | member | GitHub copy of the app, a newer release published on GitHub
+  s1 see: The orange line 'A new version of MettleUp is ready' with 'Update'
+  s1 not: The line on a Google Play copy
+  s1 not: The line for a draft or pre-release
+  s2 see: The full screen 'Version <n> is ready' with up to 3 what-changed lines
+  s2 not: An empty what-changed list shown as lines
+  s3 see: The browser downloads 'mettleup-v<n>.apk' from github.com
+  s3 not: The watch APK
+  s3 not: A 'forgeai-' APK
+  s3 not: A link outside github.com
+J-F-phone-1706-02 | type 2 | member | Update line on the Workout tab, What's new lines known
+  s1 see: The lines inside the bar and "Hide what's new"
+  s1 not: "What's new" shown with no lines
+  s2 see: The lines close
+  s2 not: The update line goes away
+J-F-phone-1706-03 | type 2 | member | Google Play copy with a Play update
+  s1 see: 'Downloading the new version. Keep using the app.' then 'The new version is ready.' with 'Restart'
+  s1 not: The GitHub APK offered
+  s1 not: A restart during an open workout ('It installs after your workout.' instead)
+J-F-phone-1706-04 | type 3 | member | GitHub copy, no internet or GitHub refuses (rate limit), or the newest release has no phone APK
+  s1 see: No update line, or the last known line
+  s1 not: An error message
+  s1 not: A line pointing to a release with no phone APK
+J-F-phone-1706-05 | type 6 | member | Update line shown for version 0.80.0
+  s1 see: The full screen closes; it asks again later
+  s1 not: The full screen on every launch
+  s2 see: No update line
+  s2 not: The line still asks for the installed version
+  s3 see: The line again for 0.81.0
+  s3 not: 'Later' for 0.80.0 hiding 0.81.0
+J-F-phone-1706-06 | type 12 | member | GitHub copy asks for the newest release
+  s1 see: Nothing new on screen when there is no update
+  s1 not: Member data, gym code or install id sent with the question
+  s1 not: Asking on every launch
+J-F-phone-1710-01 | type 1 | member | Phone that had Google Drive linked by an older version, not signed in to a MettleUp account
+  s1 see: 'Backups now go to your MettleUp account. Sign in to keep your workouts safe.' with 'Sign in' and 'Got it'
+  s1 not: The card on a phone that never linked Drive
+  s2 see: Settings → Backup and restore
+  s2 not: The card shown again later on this phone
+J-F-phone-1710-02 | type 2 | member | The card is on the Workout tab
+  s1 see: The card goes
+  s1 not: The card back on the next launch
+J-F-phone-1710-03 | type 3 | member | Member already signed in, or a build that cannot sign in, or the phone's database cannot be read
+  s1 see: No card
+  s1 not: The card asking a signed-in member to sign in
+  s1 not: An error message
+J-F-phone-1710-04 | type 6 | member | Member closed the card, later signs out
+  s1 see: No card
+  s1 not: The card back after it was closed
+J-F-phone-1710-05 | type 12 | member | Member reads the card
+  s1 see: The card says backups go to the MettleUp account
+  s1 not: Anything sent to Google Drive
+  s1 not: Workouts uploaded before the member signs in
+J-F-phone-1719-01 | type 1 | member | Member on a screen that crashes
+  s1 see: The screen's 'Try again'
+  s1 not: Any message about a report
+  s1 not: A frozen screen
+  s2 see: The screen again
+  s2 not: The app slowed down or stuck while the report is sent
+J-F-phone-1719-02 | type 2 | member | An error nothing caught closes the app
+  s1 see: The app closes within about 1.5 seconds
+  s1 not: The app hanging open waiting for the report
+J-F-phone-1719-03 | type 3 | member | Member offline when a screen crashes, or a development build
+  s1 see: 'Try again' as usual
+  s1 not: A second error because the report could not be sent
+  s1 not: A report from a development build
+J-F-phone-1719-04 | type 6 | member | The same screen crashes three times, then six different crashes in one run
+  s1 see: 'Try again' each time
+  s1 not: Three reports of the same crash
+  s2 see: 'Try again' each time
+  s2 not: More than 5 reports in one run
+J-F-phone-1719-05 | type 12 | member | A crash happens while member data is on screen
+  s1 see: Nothing on screen
+  s1 not: The member's name, gym code, install id, phone model or workouts in the report
+  s1 not: A database error's details in the report
+J-F-phone-1719-06 | type 1 | system | The app's global error handler gets an error in a release build
+  s1 see: The report saved (2xx answer)
+  s1 not: The second address also posted after the first saved it
+  s2 see: The usual crash handling
+  s2 not: The original handler skipped
+J-F-phone-1719-07 | type 2 | system | A screen's error boundary logs '[ScreenErrorBoundary] a screen crashed:'
+  s1 see: One report with the component stack added
+  s1 not: The log line itself changed or lost
+J-F-phone-1719-08 | type 3 | system | The first address answers 404 or 500, or both addresses give no answer in 8 s
+  s1 see: The report saved at the old address, or a warning in the log
+  s1 not: An endless wait
+  s1 not: A thrown error inside the crash handler
+J-F-phone-1719-09 | type 6 | system | The same error message comes twice in one run
+  s1 see: Skipped (the first 200 letters match)
+  s1 not: A second report of the same kind
+J-F-phone-1729-01 | type 1 | member | Member in Settings
+  s1 see: Page 'Credits', 'Pictures and fonts made by others'
+  s1 not: An empty page
+  s2 see: 'Exercise start and end pictures', 'Exercise drawings', 'Body map drawing', 'Fonts: Manrope, Sora, Space Grotesk'
+  s2 see: Each with 'By …', 'From …', 'Licence: …', 'Read the licence'
+  s2 not: A missing 'Changed by MettleUp:' line for the changed drawings
+  s2 not: RepDB's line worded differently from 'Exercise data by RepDB (repdb.co)'
+J-F-phone-1729-02 | type 2 | member | Credits page open
+  s1 see: The MIT licence text and 'Hide the licence text'
+  s1 not: The button on an entry with no text
+J-F-phone-1729-03 | type 3 | member | No internet
+  s1 see: The browser opens and shows its own offline page
+  s1 not: A crash
+  s1 not: Nothing at all with no word (seen in passing: a failed open is silent)
+J-F-phone-1729-04 | type 6 | member | Credits opened alone on the stack (link or restored app)
+  s1 see: Settings
+  s1 not: A dead back arrow
+J-F-phone-1721-01 | type 1 | member | Member with no Bench press record yet
+  s1 see: A record: 'Estimated 1-rep max' about 116.7 kg
+  s1 not: No record for the first workout's best set
+  s2 see: 'Estimated 1-rep max (kg)' with the same 116.7
+  s2 not: Another number on the chart than on the record
+J-F-phone-1721-02 | type 2 | member | Member logs a single and opens the 1-rep max calculator
+  s1 see: Estimated 1-rep max 100 kg
+  s1 not: 103.3 kg for a single
+  s2 see: The same estimate, then 95 % down to 50 %
+  s2 not: A different estimate than the chart
+J-F-phone-1721-03 | type 3 | member | Record is 100 kg × 5
+  s1 see: No record; the estimate counts 12 reps (98 kg)
+  s1 not: 'Estimated 1-rep max · 128.3 kg' pop-up
+  s2 see: No record
+  s2 not: A record for a lighter set
+  s2 not: The bar to beat raised by the lighter set
+J-F-phone-1721-04 | type 6 | member | Member deletes the workout that holds the record
+  s1 see: The record list rebuilt from the workouts left
+  s1 not: The deleted workout's record still shown
+  s1 not: A lighter set becoming the record after the rebuild
+J-F-phone-1713-01 | type 1 | member | Member with a gym, online
+  s1 see: 'Ask a question and get an answer at once. …'
+  s1 see: Box 'Type here, or tap Speak'
+  s1 not: The Send button active with an empty box
+  s2 see: An answer with 'Answer written by AI from our help pages.' and 'Did this solve it?', or 'Thanks! We read every message.'
+  s2 not: Two copies of the message
+  s2 not: The question missing from 'Your questions'
+  s3 see: 'Great! Glad it helped.'
+  s3 not: The tap lost from 'Your questions'
+J-F-phone-1713-02 | type 2 | member | Member on any screen with the floating help button
+  s1 see: The words as text in the box
+  s1 not: The recording kept
+  s1 not: The microphone used before Speak is tapped
+  s2 see: The same answer or thanks as in Settings, with this screen's name sent
+  s2 not: The message sent to the gym server instead of MettleUp
+J-F-phone-1713-03 | type 3 | member | Help and feedback page open
+  s1 see: 'Send' greyed out ('Write something first.' if sent)
+  s1 not: An empty message sent
+  s2 see: "Couldn't send. Check your internet and try again. Your message is still here."
+  s2 not: The typed text cleared
+  s2 not: A spinner with no end (15 s limit, 25 s for help)
+J-F-phone-1713-04 | type 6 | member | Member answered 'No' to 'Did this solve it?'
+  s1 see: 'Got it. We reply as soon as we can.'
+  s1 not: The question marked solved
+  s2 see: The Help and feedback page with the reply under the question
+  s2 not: The reply lost because the install id changed
+J-F-phone-1713-05 | type 12 | member | Member sends a question
+  s1 see: The answer or the thanks
+  s1 not: The member's name or mobile number sent unless typed
+  s1 not: Anything sent that the privacy notice does not name (the phone's push address and gym key are sent: finding 02)
+J-F-phone-1714-01 | type 1 | member | Any screen of the member app (for example Profile); button on by default; no unread reply
+  s1 see: Sheet titled 'Help and feedback'
+  s1 see: 'Ask about this screen and get an answer at once, or tell us what is wrong here.'
+  s1 see: Box 'Type here, or tap Speak'
+  s1 see: Send greyed out until something is typed
+  s1 see: 'To turn off this round button: Settings → "Help and feedback".'
+  s1 not: The sheet opens for a different screen
+  s1 not: The tab sits over the tab bar, the top bar or a screen's main button
+  s2 see: 'Sending. The answer usually takes a few seconds.'
+  s2 see: A 'Quick answer' card, or 'Thanks! We read every message.'
+  s2 see: 'Your questions and answers are kept in Profile → Settings → Help and feedback.'
+  s2 not: Two messages sent
+  s2 not: The screen name sent carries a record id or code instead of ':id'
+  s2 not: The typed words cleared when the send failed
+J-F-phone-1714-02 | type 2 | member | Live workout screen (the floating tab is hidden there) with a workout running
+  s1 see: The same 'Help and feedback' sheet, for the live workout screen
+  s1 not: The floating tab shown over the set ticks, the rest timer or Finish
+  s1 not: The workout paused or ended
+  s2 see: 'Thanks! We read every message.' or a Quick answer
+  s2 see: The workout screen as it was
+  s2 not: Rest timer reset
+  s2 not: A set lost
+J-F-phone-1714-03 | type 3 | member | Help and feedback sheet open on any screen
+  s1 see: Send stays greyed out; nothing is sent
+  s1 not: An empty message sent
+  s1 not: 'Thanks! We read every message.' shown
+  s2 see: Red line "Couldn't send. Check your internet and try again. Your message is still here."
+  s2 see: The typed words still in the box
+  s2 not: The words lost
+  s2 not: A success line for a message that was not sent
+  s3 see: No floating tab on those screens
+  s3 not: The tab over the Calendar's Sunday column taking a day's tap
+  s4 see: The floating tab hides while the keyboard is open
+  s4 not: The tab sitting on the keyboard
+J-F-phone-1714-04 | type 6 | member | Profile → Settings → Help and feedback; switch 'Show the feedback button on every screen' on
+  s1 see: No round tab on any screen
+  s1 not: The tab still shows with no unread reply
+  s2 see: The tab comes back with a red dot and the number of new replies
+  s2 not: The reply hidden because the switch is off
+  s3 see: The tab goes away again (switch still off)
+  s3 not: The tab stays after the reply was read
+  s4 see: The tab docks to the left edge, tucked behind it, at the same height after reopening
+  s4 not: The tab left in mid-screen
+  s4 not: A drag counted as a tap that opens the sheet
+  s4 not: The tab back at the default spot
+J-F-phone-1714-05 | type 12 | member | Member on an exercise page sends feedback
+  s1 see: 'Thanks! We read every message.'
+  s1 not: The message going to the gym's owner or staff (it goes to MettleUp)
+  s1 not: The screen name sent containing the exercise id (it must be 'exercise/:id')
+  s1 not: More sent than the privacy notice lists: message, app version, phone model, screen, install number, coded IP
+J-F-phone-1715-01 | type 1 | member | Help and feedback sheet open; microphone allowed; internet on
+  s1 see: 'Listening. Speak in Hindi or English, then tap Stop.'
+  s1 see: A clock (0:01, 0:02…) and a level bar
+  s1 see: 'When you tap Stop, your recording goes through our server to an AI service in the USA that turns speech into text…'
+  s1 not: Recording starting before the tap
+  s2 see: 'Turning your voice into text…'
+  s2 see: The heard text in the box, on a new line under anything already typed
+  s2 see: 'Check the text. Fix anything, then tap Send.'
+  s2 not: The text reaching MettleUp before Send
+  s2 not: The clip left on the phone after it was sent
+  s2 not: Earlier typed words replaced
+  s3 see: 'Thanks! We read every message.' or a Quick answer
+  s3 not: The message recorded as typed (it must say voice)
+  s3 not: The recording sent a second time
+J-F-phone-1715-02 | type 2 | member | Profile → Settings → Help and feedback page (not the floating sheet)
+  s1 see: The same words and steps; the text lands in the page's box
+  s1 not: A different privacy line from the floating sheet's
+  s2 see: 'Thanks! We read every message.' or a Quick answer
+  s2 not: Two messages sent
+J-F-phone-1715-03 | type 3 | member | Help and feedback sheet open
+  s1 see: 'That was too short. Tap Speak and talk for a few seconds.'
+  s1 not: The clip sent to the server
+  s1 not: A day's recording used up
+  s2 see: 'MettleUp needs the microphone to hear you. Allow it in your phone Settings, or type instead.'
+  s2 see: Button 'Open Settings'
+  s2 not: A crash
+  s2 not: The phone's ask coming back on every tap
+  s3 see: "Couldn't reach us. Check your internet and try again, or type."
+  s3 not: Typed words wiped
+  s3 not: The same clip sent again after a 45-second time-out
+  s4 see: The server's own words about the limit
+  s4 not: Only "Couldn't turn your voice into text. Try again, or type." hiding the limit
+J-F-phone-1715-04 | type 6 | member | Help and feedback sheet open with 'Back hurts on squats' typed
+  s1 see: Recording stops; the box still says 'Back hurts on squats'
+  s1 not: Anything sent
+  s1 not: The clip left on the phone
+  s2 see: The heard text added on a new line under the typed words
+  s2 not: The typed words replaced
+  s3 see: The unsent text still in the box
+  s3 not: The text sent without Send
+J-F-phone-1715-05 | type 12 | member | Member records a voice message
+  s1 see: The text only in the box on this phone
+  s1 not: The words reaching MettleUp without Send
+  s1 not: The recording kept by MettleUp or the AI service
+  s1 not: The microphone used at any time other than after 'Speak'
+J-F-phone-1716-01 | type 1 | member | Profile → Settings → Help and feedback; three questions sent before from this phone
+  s1 see: Each question with its time
+  s1 see: A 'Quick answer' card tagged 'automatic' with 'Did this solve it?' Yes / No
+  s1 see: Under a question with no AI answer: 'The MettleUp team will reply here.'
+  s1 see: Each 'Reply from the MettleUp team' in time order, 'New' on unseen ones
+  s1 not: Questions from another phone
+  s1 not: A question shown twice
+  s1 not: Replies out of time order
+  s2 see: 'Great! Glad it helped.'
+  s2 see: Later: 'You said this solved it.'
+  s2 not: Both Yes and No kept
+  s2 not: The answer asked again
+J-F-phone-1716-02 | type 2 | member | Any screen; the round tab shows a red dot with '1'
+  s1 see: Sheet titled 'The MettleUp team answered you' opened straight on that question, the reply marked 'New'
+  s1 see: Button 'Ask something new'
+  s1 not: The empty message box first
+  s1 not: A question with no new reply shown in this view
+  s2 see: Sheet titled 'Your questions' with every kept question
+  s2 not: The red dot still on after the reply was shown
+J-F-phone-1716-03 | type 3 | member | Fresh install; Profile → Settings → Help and feedback
+  s1 see: 'Questions you send from this phone show here, with their answers.'
+  s1 not: A blank card
+  s1 not: Another install's questions
+  s2 see: The question is taken off the list; its words stay in the box
+  s2 not: A question stuck on 'Waiting for the answer' for ever
+  s3 see: 'Got it. We reply as soon as we can.'
+  s3 see: 'You said this did not solve it. The MettleUp team will reply here.'
+  s3 not: A promise of a reply with no question kept
+J-F-phone-1716-04 | type 6 | member | Help and feedback sheet; a question just sent
+  s1 see: 'Waiting for the answer. It usually takes a few seconds.' for at most 2 minutes
+  s1 not: 'Waiting' for ever
+  s2 see: The reply with 'New'
+  s2 not: The reply missing
+  s3 see: 'New' gone; no red dot
+  s3 not: The red dot back for the same reply
+  s3 not: A reply marked read before it was on screen
+J-F-phone-1716-05 | type 12 | member | Member looks at 'Your questions'
+  s1 see: Only the questions sent from this install, with their answers and replies
+  s1 not: Questions shown to the gym's owner or staff
+  s1 not: Questions of another install or member
+  s2 see: 'Questions you send from this phone show here, with their answers.'
+  s2 not: Old questions still listed after the erase
+J-F-phone-1717-01 | type 1 | member | Android phone, MettleUp notifications allowed, a question sent 3 days ago, app in the background
+  s1 see: Pop-up 'The MettleUp team answered your question' with 'Tap to read the answer.'
+  s1 not: A second pop-up for a first reply HQ already pushed
+  s1 not: A pop-up for a reply already read
+  s2 see: Profile → Settings → Help and feedback opens; the reply marked 'New'
+  s2 not: The app opening on another tab
+  s2 not: A sound over a running workout
+J-F-phone-1717-02 | type 2 | member | Two replies arrived on two questions; Android; notifications allowed
+  s1 see: One pop-up: '2 new replies. Tap to read the answer.'
+  s1 not: Two pop-ups stacked in the shade
+  s2 see: No pop-up; the red dot with '2' on the round tab
+  s2 not: A crash
+  s2 not: A permission ask
+J-F-phone-1717-03 | type 3 | member | Android; MettleUp notifications turned off; a reply arrived
+  s1 see: No pop-up
+  s1 see: The red dot with the number on the round tab
+  s1 not: The app asking for notification permission
+  s1 not: A crash
+  s2 see: Nothing new
+  s2 not: A new ask to the server on every return (once a minute at most)
+J-F-phone-1717-04 | type 6 | member | Android; a reply already popped up once
+  s1 see: No second pop-up for that reply
+  s1 not: The same reply popped up twice
+  s2 see: A pop-up for the new reply only
+  s2 not: No pop-up for the new reply
+  s2 not: '2 new replies' counting the read one
+J-F-phone-1717-05 | type 12 | member | Android phone locked with notifications on the lock screen
+  s1 see: Only 'The MettleUp team answered your question' and 'Tap to read the answer.'
+  s1 not: The question or the reply text on the lock screen
+J-F-phone-1728-01 | type 1 | member | Member updated from a version that had the Progress tab; opens the app
+  s1 see: The Workout tab as usual (the hint is settled quietly)
+  s1 not: A hint on a fresh install
+  s2 see: Card above the chart: 'Progress is now on your Profile, below the chart.'
+  s2 not: 'Your charts are now in the Progress tab.' (retired)
+  s3 see: The card is gone
+  s3 not: The card back on the next visit
+J-F-phone-1728-02 | type 2 | member | Member in a gym with a shop, updated from a version whose third tab said 'Shop'
+  s1 see: Card above the shop: 'Your gym’s shop is now inside the Gym tab.'
+  s1 not: The card in a gym with no shop
+  s2 see: The card is gone for good
+  s2 not: The card back after reopening the app
+J-F-phone-1728-03 | type 3 | member | Fresh install, or the welcome demo
+  s1 see: No 'now' hint anywhere
+  s1 not: A 'now in' hint with no 'before'
+  s2 see: No shop hint
+  s2 not: A shop hint pointing at an empty shop
+J-F-phone-1728-04 | type 6 | member | The Profile hint was closed earlier
+  s1 see: No hint
+  s1 not: The hint back
+  s2 see: No hint
+  s2 not: The hint armed again by the update
+J-F-phone-1732-01 | type 1 | member | A screen that reads data, for example the Workout tab's routines, opened for the first time
+  s1 see: Grey skeleton rows while reading
+  s1 see: Then the list, or the empty words only after the read answered
+  s1 not: 'No … yet' while still loading
+  s1 not: An endless spinner
+  s2 see: The list stays on screen while it re-reads quietly
+  s2 not: A flash back to the skeleton
+J-F-phone-1732-02 | type 2 | member | A screen whose action ends with a notice (for example nothing to save)
+  s1 see: The app's own sheet with a title and one button 'Close'
+  s1 not: Android's grey pop-up with 'OK'
+  s2 see: The screen as it was
+  s2 not: The action run again
+J-F-phone-1732-03 | type 3 | member | App just opened; the database is busy for a moment
+  s1 see: Quiet tries for about 4 seconds, then "Couldn't load your routines" with 'Try again' if it still fails
+  s1 not: The error after the first hiccup
+  s1 not: A blank screen
+  s1 not: 'No routines yet' when the read failed
+  s2 see: The skeleton, then the list
+  s2 not: Nothing happens
+  s3 see: The screen reads again by itself
+  s3 not: Stuck on the error until a tap
+J-F-phone-1732-04 | type 6 | member | Workout tab with a routine
+  s1 see: One workout starts
+  s1 not: Two workouts or two pages opened
+  s2 see: "Couldn't start the workout. Try again." under the button; the button works again
+  s2 not: A dead button
+  s2 not: No reason shown
+  s3 see: The last list stays up
+  s3 not: The list swapped for an error
+J-F-phone-1709-01 | type 1 | member | Phone updated from an older version; the new version's What's new has a feature line going to Settings → Health apps; Health Connect present
+  s1 see: A small dot on the Profile tab
+  s1 not: A dot for a fix line
+  s2 see: A dot on the Settings button
+  s2 not: Dots on unrelated rows
+  s3 see: A dot on the 'Health apps' row
+  s3 not: The dot on a different row
+  s4 see: A dot beside the feature's heading for this visit
+  s4 not: The tab, button and row dots still on after the page was opened
+  s5 see: No dots left for that feature
+  s5 not: The page dot back
+J-F-phone-1709-02 | type 2 | member | A feature line whose page this phone does not show (Your watch with no watch, What my gym can see, Health apps without Health Connect, Notif
+  s1 see: No dots for that feature
+  s1 not: A dot that leads nowhere
+J-F-phone-1709-03 | type 3 | member | Fresh install of the newest version
+  s1 see: No dots at all
+  s1 not: Dots for features that were already there at install
+  s2 see: No dots at all
+  s2 not: Dots that cannot be cleared
+J-F-phone-1709-04 | type 6 | member | Four new feature lines on Settings pages, all within 30 days
+  s1 see: Dots for the newest three only
+  s1 not: Four features dotted
+  s2 see: Its dots gone; the fourth feature now dotted
+  s2 not: The opened one still dotted
+  s3 see: Its dots gone without opening it
+  s3 not: Dots that never expire
+J-F-phone-1730-01 | type 1 | member | Progress photos page; camera allowed; a phone short of memory
+  s1 see: The camera opens
+  s1 not: A crash
+  s2 see: The app starts again; on the progress photos page the picture is added
+  s2 not: The picture lost
+  s2 not: The picture added as a meal, chat, workout or profile photo
+  s3 see: The picture once
+  s3 not: The picture added a second time
+J-F-phone-1730-02 | type 2 | member | Editing exercise A's picture from the gallery; Android closes the app behind the gallery
+  s1 see: B's form gets no picture
+  s1 not: A's picture placed in B
+  s2 see: A's form gets the picture
+  s2 not: The picture lost
+J-F-phone-1730-03 | type 3 | member | Progress photos page
+  s1 see: Plain words on how to allow the camera
+  s1 not: A crash
+  s1 not: An error logged as a fault
+  s2 see: Nothing added
+  s2 not: An empty photo added
+J-F-phone-1730-04 | type 6 | member | Progress photos taken; share pictures made
+  s1 see: 'Deletes everything on this phone and starts over from the welcome screen.'
+  s1 not: A photo kept after the erase
+  s2 see: The ImagePicker and share folders empty
+  s2 not: A body photo left in the cache
+J-F-phone-1730-05 | type 12 | member | Member takes a progress photo
+  s1 see: The photo on this phone only
+  s1 not: The photo sent to MettleUp or the gym
+  s1 not: A camera copy left after an erase

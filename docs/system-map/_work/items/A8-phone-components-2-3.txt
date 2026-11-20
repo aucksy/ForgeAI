@@ -1,0 +1,630 @@
+# A8-phone-components-2-3: coverage of 73 Tier 1 journeys (7 features, from A5-phone-components-2-3). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-phone-1421 | apps/mobile/test/shop/r152CameraOnlyCheckIn.test.ts | unit | 77 lines | imports the code
+F-phone-1421 | apps/mobile/test/shop/settingsJoinGym.test.ts | unit | 61 lines | imports the code
+F-phone-1421 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | asserts 2 journey phrase(s)
+F-phone-1421 | apps/mobile/qa/uat-rel-6-member.yaml | maestro | 153 lines | asserts 2 journey phrase(s)
+F-phone-1421 | apps/mobile/qa/welcome-gym.yaml | maestro | 173 lines | asserts 2 journey phrase(s)
+F-phone-1421 | apps/mobile/test/onboarding/welcomeUat.test.ts | unit | 90 lines | asserts 2 journey phrase(s)
+F-phone-1421 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-phone-1421 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-phone-1421 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 1 journey phrase(s)
+F-phone-1421 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 1 journey phrase(s)
+F-phone-1421 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-phone-1421 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-phone-1422 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 7 journey phrase(s)
+F-phone-1422 | apps/mobile/qa/uat-e.yaml | maestro | 267 lines | asserts 5 journey phrase(s)
+F-phone-1422 | apps/mobile/test/components/profileAutosave.test.ts | unit | 186 lines | imports the code, file name
+F-phone-1422 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-phone-1422 | apps/mobile/test/tracker/phase2ReviewFixes.test.ts | unit | 287 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1422 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | asserts 3 journey phrase(s)
+F-phone-1422 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-phone-1422 | apps/mobile/qa/phase1-a.yaml | maestro | 320 lines | asserts 3 journey phrase(s)
+F-phone-1422 | apps/mobile/qa/welcome-gym.yaml | maestro | 173 lines | asserts 3 journey phrase(s)
+F-phone-1422 | apps/mobile/test/components/ui/a11y.test.ts | unit | 225 lines | imports the code
+F-phone-1422 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-phone-1422 | apps/mobile/test/tracker/packetCTargets.test.ts | unit | 187 lines | imports the code
+F-phone-1424 | apps/mobile/test/tracker/r319ImportEraseCharts.test.ts | unit | 136 lines | asserts 7 journey phrase(s)
+F-phone-1424 | apps/mobile/test/tracker/watchInstall.test.ts | unit | 159 lines | imports the code, asserts 4 journey phrase(s)
+F-phone-1424 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | imports the code, asserts 3 journey phrase(s)
+F-phone-1424 | apps/mobile/test/onboarding/welcomeIntro.test.ts | unit | 355 lines | asserts 6 journey phrase(s)
+F-phone-1424 | apps/mobile/test/tracker/engine/aiSummary.test.ts | unit | 87 lines | asserts 6 journey phrase(s)
+F-phone-1424 | apps/mobile/test/tracker/redesignR5.test.ts | unit | 276 lines | imports the code, asserts 3 journey phrase(s)
+F-phone-1424 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-phone-1424 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 5 journey phrase(s)
+F-phone-1424 | apps/mobile/test/tracker/phase3Review.test.ts | unit | 235 lines | asserts 5 journey phrase(s)
+F-phone-1424 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 4 journey phrase(s)
+F-phone-1424 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 4 journey phrase(s)
+F-phone-1424 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 4 journey phrase(s)
+F-phone-1405 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 10 journey phrase(s)
+F-phone-1405 | apps/mobile/test/tracker/homeStart.test.ts | unit | 124 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1405 | apps/mobile/test/tracker/phase2PacketE.test.ts | unit | 288 lines | imports the code, asserts 1 journey phrase(s)
+F-phone-1405 | apps/mobile/qa/xj-2-gym-cancelled.yaml | maestro | 12 lines | asserts 3 journey phrase(s)
+F-phone-1405 | apps/mobile/test/components/ui/sharedPieces.test.ts | unit | 90 lines | imports the code
+F-phone-1405 | apps/mobile/test/lib/memberWords.test.ts | unit | 278 lines | imports the code
+F-phone-1405 | apps/mobile/test/tracker/entryBar.test.ts | unit | 510 lines | imports the code
+F-phone-1405 | apps/mobile/test/tracker/phase2ReviewFixes.test.ts | unit | 287 lines | imports the code
+F-phone-1405 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-phone-1405 | apps/mobile/qa/phase7-bigtext.yaml | maestro | 326 lines | asserts 2 journey phrase(s)
+F-phone-1405 | apps/mobile/qa/xj-2-order-cancel.yaml | maestro | 34 lines | asserts 2 journey phrase(s)
+F-phone-1405 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 2 journey phrase(s)
+F-phone-1428 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 7 journey phrase(s)
+F-phone-1428 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-phone-1428 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-phone-1428 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 4 journey phrase(s)
+F-phone-1428 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 4 journey phrase(s)
+F-phone-1428 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-phone-1428 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-phone-1428 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-phone-1428 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-phone-1428 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-phone-1428 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-phone-1428 | apps/mobile/test/components/ui/a11y.test.ts | unit | 225 lines | imports the code
+F-phone-1427 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | asserts 3 journey phrase(s)
+F-phone-1427 | apps/mobile/test/components/ui/sharedPieces.test.ts | unit | 90 lines | imports the code
+F-phone-1427 | apps/mobile/test/tracker/muscleTipUndoBar.test.ts | unit | 87 lines | file name
+F-phone-1427 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 1 journey phrase(s)
+F-phone-1427 | apps/mobile/test/db/finishReal.test.ts | unit | 104 lines | asserts 1 journey phrase(s)
+F-phone-1427 | apps/mobile/test/tracker/phase2ReviewFixes.test.ts | unit | 287 lines | asserts 1 journey phrase(s)
+F-phone-1427 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 1 journey phrase(s)
+F-phone-1429 | apps/mobile/test/components/ui/a11y.test.ts | unit | 225 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-phone-1429 | apps/mobile/test/a11y/touchLint.test.ts | unit | 53 lines | file name
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-phone-1421-01 | type 1 | member | Gym tab, a member using the app with no gym joined; the gym's 6-letter code in hand
+  s1 see: Card heading 'Join your gym'
+  s1 see: 'Got a code from your gym? Join to check in, order from its shop, and see the app in its colours. Your workouts stay as they are.'
+  s1 see: 'Scan the poster' as the first button
+  s1 see: 'Or type your gym's code' above a box '6 letters or numbers'
+  s1 not: The typed-code box shown above 'Scan the poster'
+  s1 not: The card shown when a gym is already joined
+  s2 see: The code in capitals, in the wide code look
+  s2 see: No more than 6 letters or numbers
+  s2 not: Small letters kept
+  s2 not: Spaces or dashes kept in the code
+  s2 not: A seventh character accepted
+  s3 see: The invite screen for that code, showing the gym and asking before joining
+  s3 not: The member joined without saying yes
+  s3 not: Workouts changed or removed
+  s3 not: The gym's colours put on before joining
+J-F-phone-1421-02 | type 2 | member | Gym tab, no gym joined, at the gym's desk in front of the poster
+  s1 see: The camera scanner screen
+  s1 see: 'Point your camera at the QR code on the poster at your gym's desk.'
+  s1 not: The typed-code box needed first
+  s1 not: A blank camera view with no words
+  s2 see: The same invite (or check-in) screen as a typed code, for that gym
+  s2 not: Joining with no question
+  s2 not: A different gym's invite screen
+J-F-phone-1421-03 | type 2 | member | Profile tab, Settings, no gym joined
+  s1 see: Row 'Join your gym' with the line 'Type your gym's code or scan its poster'
+  s1 not: A 'Leave' row when no gym is joined
+  s2 see: The Gym tab opens (switches tab) with the 'Join your gym' card at the top
+  s2 not: A second Gym page stacked on top of Settings
+  s2 not: The back arrow landing on a blank page
+J-F-phone-1421-04 | type 2 | member | WhatsApp message from the gym with its invite link; Gym tab, no gym joined
+  s1 see: Only the gym's 6-letter code in the box
+  s1 not: The whole message pasted in the box
+  s1 not: Letters of the message taken as the code
+  s2 see: The invite screen for that gym
+  s2 not: An error for a link that holds a good code
+J-F-phone-1421-05 | type 3 | member | Gym tab, no gym joined
+  s1 see: Under the box: 'The code is 6 letters or numbers. Ask at your gym's desk.'
+  s1 see: The line is spoken by the screen reader
+  s1 not: The invite screen opens
+  s1 not: A pop-up instead of the line under the box
+  s2 see: The same line under the box
+  s2 not: The app moves on with no code
+  s3 see: 'We couldn't find this gym'
+  s3 see: 'No gym has the code {code}, so scan the poster at your gym or type your gym's code again.'
+  s3 not: The member joined to some gym
+  s3 not: The word 'link' in the message
+  s3 not: An endless spinner
+J-F-phone-1421-06 | type 6 | member | Gym tab, no gym joined, the error line showing under the box
+  s1 see: The error line goes at once
+  s1 not: The old error still showing while typing
+  s2 see: The gym's own screen; the 'Join your gym' card is gone
+  s2 not: The 'Join your gym' card still at the top after joining
+  s3 see: The 'Join your gym' card is back, with an empty box
+  s3 not: The old code still filled in
+  s3 not: Workouts gone after leaving
+J-F-phone-1421-07 | type 12 | member | Gym tab, no gym joined
+  s1 see: The Gym tab again, still with no gym
+  s1 not: The gym gets the member's name or number before the member says yes
+  s1 not: The member listed in the gym's panel
+  s2 see: The app in the gym's colours; 'Your workouts stay as they are.' holds
+  s2 not: Workouts sent to the gym without the member's choice
+  s2 not: Another gym's name or logo shown
+J-F-phone-1421-08 | type 1 | prospect | Gym tab, a person who is not yet a member anywhere, standing at the gym's desk; the gym's 6-letter code in hand
+  s1 see: Card heading 'Join your gym'
+  s1 see: 'Got a code from your gym? Join to check in, order from its shop, and see the app in its colours. Your workouts stay as they are.'
+  s1 see: 'Scan the poster' as the first button
+  s1 see: 'Or type your gym's code' above a box '6 letters or numbers'
+  s1 not: The typed-code box shown above 'Scan the poster'
+  s1 not: The card shown when a gym is already joined
+  s2 see: The code in capitals, in the wide code look
+  s2 see: No more than 6 letters or numbers
+  s2 not: Small letters kept
+  s2 not: Spaces or dashes kept in the code
+  s2 not: A seventh character accepted
+  s3 see: The invite screen for that code, showing the gym and asking before joining
+  s3 not: The member joined without saying yes
+  s3 not: Workouts changed or removed
+  s3 not: The gym's colours put on before joining
+J-F-phone-1421-09 | type 2 | prospect | Gym tab, no gym joined, at the gym's desk in front of the poster
+  s1 see: The camera scanner screen
+  s1 see: 'Point your camera at the QR code on the poster at your gym's desk.'
+  s1 not: The typed-code box needed first
+  s1 not: A blank camera view with no words
+  s2 see: The same invite (or check-in) screen as a typed code, for that gym
+  s2 not: Joining with no question
+  s2 not: A different gym's invite screen
+J-F-phone-1421-10 | type 2 | prospect | WhatsApp message from the gym with its invite link; Gym tab, no gym joined
+  s1 see: Only the gym's 6-letter code in the box
+  s1 not: The whole message pasted in the box
+  s1 not: Letters of the message taken as the code
+  s2 see: The invite screen for that gym
+  s2 not: An error for a link that holds a good code
+J-F-phone-1421-11 | type 3 | prospect | Gym tab, no gym joined
+  s1 see: Under the box: 'The code is 6 letters or numbers. Ask at your gym's desk.'
+  s1 see: The line is spoken by the screen reader
+  s1 not: The invite screen opens
+  s1 not: A pop-up instead of the line under the box
+  s2 see: The same line under the box
+  s2 not: The app moves on with no code
+  s3 see: 'We couldn't find this gym'
+  s3 see: 'No gym has the code {code}, so scan the poster at your gym or type your gym's code again.'
+  s3 not: The member joined to some gym
+  s3 not: The word 'link' in the message
+  s3 not: An endless spinner
+J-F-phone-1421-12 | type 6 | prospect | Gym tab, no gym joined, the error line showing under the box
+  s1 see: The error line goes at once
+  s1 not: The old error still showing while typing
+  s2 see: The gym's own screen; the 'Join your gym' card is gone
+  s2 not: The 'Join your gym' card still at the top after joining
+  s3 see: The 'Join your gym' card is back, with an empty box
+  s3 not: The old code still filled in
+  s3 not: Workouts gone after leaving
+J-F-phone-1421-13 | type 12 | prospect | Gym tab, no gym joined
+  s1 see: The Gym tab again, still with no gym
+  s1 not: The gym gets the member's name or number before the member says yes
+  s1 not: The member listed in the gym's panel
+  s2 see: The app in the gym's colours; 'Your workouts stay as they are.' holds
+  s2 not: Workouts sent to the gym without the member's choice
+  s2 not: Another gym's name or logo shown
+J-F-phone-1422-01 | type 1 | member | Profile tab, Settings, 'Your profile' (page title 'Your profile')
+  s1 see: The chip moves at once
+  s1 see: 'Changes save as you go.' with 'Saved' beside it for a moment
+  s1 not: A 'Save profile' button needed
+  s1 not: A pop-up to confirm
+  s2 see: 'Saved' after a moment
+  s2 not: Saved while still half-typed with an error
+  s2 not: The age box cleared
+  s3 see: 'Saved' after each
+  s3 not: Height stored in the wrong unit
+  s3 not: Typing in Age delays the save of Height
+  s4 see: Goal 'Lose fat', age 28, the height and 'Intermediate' as set
+  s4 not: Any value back to the old one
+J-F-phone-1422-02 | type 2 | member | Your profile, a mobile number saved
+  s1 see: The box empties
+  s1 see: Bar 'Number removed' with 'Undo'
+  s1 not: An 'Are you sure?' question
+  s1 not: The bar shown when the remove did not save
+  s2 see: The old number back in the box
+  s2 see: 'Saved'
+  s2 not: The number stays removed
+  s2 not: The bar goes before 6 seconds
+J-F-phone-1422-03 | type 2 | member | Your profile, 'Body figure' chips 'Male' and 'Female'
+  s1 see: The chip moves
+  s1 see: 'The body drawn on Charts and on share pictures.'
+  s1 not: The other chips change
+  s2 see: The female body drawn
+  s2 not: The male body still drawn
+J-F-phone-1422-04 | type 3 | member | Your profile
+  s1 see: Under the box: 'Enter an age between {min} and {max}, or leave it blank.'
+  s1 see: The line is spoken
+  s1 not: 150 saved
+  s1 not: A pop-up
+  s1 not: 'Saved' shown
+  s2 see: A line under the mobile number box saying what is wrong
+  s2 not: The bad number saved
+  s2 not: The old number lost
+  s3 see: 'Enter a height between {min} and {max} cm, or leave it blank.' (inches in imperial)
+  s3 not: The height saved
+  s3 not: The error spoken twice
+J-F-phone-1422-05 | type 6 | member | Your profile; the phone's storage refuses the save once
+  s1 see: The chip moves, then moves back
+  s1 see: 'Try again' (spoken 'Try saving again')
+  s1 see: Spoken: 'Couldn't save your change.'
+  s1 not: 'Saved' shown
+  s1 not: The new goal kept on screen while not stored
+  s2 see: The chip moves to 'Get stronger'
+  s2 see: 'Saved'
+  s2 not: The tap made twice
+  s2 not: A box the member never touched saved again
+  s3 see: An empty profile, no values from before
+  s3 not: The card writes old values back after the erase
+J-F-phone-1422-06 | type 12 | member | Your profile, typing a mobile number
+  s1 see: 'Any country. Stays on this phone; only your gym will use it, once you link one.'
+  s1 not: The number sent anywhere before a gym is linked
+  s1 not: The number shown to gym mates
+  s2 see: 'Number removed' with 'Undo'
+  s2 not: The number kept in the phone after the bar goes
+J-F-phone-1422-07 | type 1 | pass member | Profile tab, Settings, 'Your profile' (page title 'Your profile')
+  s1 see: The chip moves at once
+  s1 see: 'Changes save as you go.' with 'Saved' beside it for a moment
+  s1 not: A 'Save profile' button needed
+  s1 not: A pop-up to confirm
+  s2 see: 'Saved' after a moment
+  s2 not: Saved while still half-typed with an error
+  s2 not: The age box cleared
+  s3 see: 'Saved' after each
+  s3 not: Height stored in the wrong unit
+  s3 not: Typing in Age delays the save of Height
+  s4 see: Goal 'Lose fat', age 28, the height and 'Intermediate' as set
+  s4 not: Any value back to the old one
+J-F-phone-1422-08 | type 2 | pass member | Your profile, a mobile number saved
+  s1 see: The box empties
+  s1 see: Bar 'Number removed' with 'Undo'
+  s1 not: An 'Are you sure?' question
+  s1 not: The bar shown when the remove did not save
+  s2 see: The old number back in the box
+  s2 see: 'Saved'
+  s2 not: The number stays removed
+  s2 not: The bar goes before 6 seconds
+J-F-phone-1422-09 | type 2 | pass member | Your profile, 'Body figure' chips 'Male' and 'Female'
+  s1 see: The chip moves
+  s1 see: 'The body drawn on Charts and on share pictures.'
+  s1 not: The other chips change
+  s2 see: The female body drawn
+  s2 not: The male body still drawn
+J-F-phone-1422-10 | type 3 | pass member | Your profile
+  s1 see: Under the box: 'Enter an age between {min} and {max}, or leave it blank.'
+  s1 see: The line is spoken
+  s1 not: 150 saved
+  s1 not: A pop-up
+  s1 not: 'Saved' shown
+  s2 see: A line under the mobile number box saying what is wrong
+  s2 not: The bad number saved
+  s2 not: The old number lost
+  s3 see: 'Enter a height between {min} and {max} cm, or leave it blank.' (inches in imperial)
+  s3 not: The height saved
+  s3 not: The error spoken twice
+J-F-phone-1422-11 | type 6 | pass member | Your profile; the phone's storage refuses the save once
+  s1 see: The chip moves, then moves back
+  s1 see: 'Try again' (spoken 'Try saving again')
+  s1 see: Spoken: 'Couldn't save your change.'
+  s1 not: 'Saved' shown
+  s1 not: The new goal kept on screen while not stored
+  s2 see: The chip moves to 'Get stronger'
+  s2 see: 'Saved'
+  s2 not: The tap made twice
+  s2 not: A box the member never touched saved again
+  s3 see: An empty profile, no values from before
+  s3 not: The card writes old values back after the erase
+J-F-phone-1422-12 | type 12 | pass member | Your profile, typing a mobile number
+  s1 see: 'Any country. Stays on this phone; only your gym will use it, once you link one.'
+  s1 not: The number sent anywhere before a gym is linked
+  s1 not: The number shown to gym mates
+  s2 see: 'Number removed' with 'Undo'
+  s2 not: The number kept in the phone after the bar goes
+J-F-phone-1424-01 | type 1 | member | Profile tab, an Android phone, no gym joined
+  s1 see: Page 'Settings' with headings 'You', 'Workouts', 'Your gym', 'Phone and watch', 'Your data', 'Help'
+  s1 see: Rows with a short line: 'Units' 'kg, km', 'Rest timer and sounds' 'Rest 2:00', 'About' 'Version {n}'
+  s1 not: A row in the wrong group
+  s1 not: More than 7 rows in one group
+  s1 not: An empty heading on Android
+  s2 see: The Units page
+  s2 not: Two Units pages stacked after a quick double tap
+  s3 see: Settings again
+  s3 not: The Profile tab instead of Settings
+  s3 not: A blank page
+J-F-phone-1424-02 | type 2 | member | A new feature has a dot; Profile tab
+  s1 see: A small dot just before the row's title
+  s1 not: A dot pushed next to the switch
+  s1 not: No dot on the way
+  s2 see: The page's own dot beside the new feature, this visit only
+  s2 not: The dots on the tab, button and row still there after
+J-F-phone-1424-03 | type 2 | member | Settings on an iPhone
+  s1 see: 'Not on iPhone yet: reminders, rest alerts, your watch, Health apps and widgets. They come in a later update.'
+  s1 not: A 'Reminders', 'Widgets' or 'Your watch' row that does nothing
+J-F-phone-1424-04 | type 3 | member | Settings on an Android phone with no watch and no Health Connect, no gym joined
+  s1 see: 'Your gym' shows only 'Join your gym'
+  s1 see: 'Phone and watch' shows only 'Widgets'
+  s1 not: 'Leave' or 'Gym logo on my home screen' with no gym
+  s1 not: 'Your watch' or 'Health apps' rows that open a page saying it is not there
+J-F-phone-1424-05 | type 6 | member | Settings, no gym joined
+  s1 see: 'Your gym' shows the gym's rows with 'Leave {gym name}'
+  s1 see: 'Gym logo on my home screen' when the gym has a logo
+  s1 not: 'Join your gym' still shown
+  s2 see: 'Join your gym' back
+  s2 not: The old gym's name still in a row
+  s3 see: The row's dot gone
+  s3 not: The dot back on the next visit
+J-F-phone-1424-06 | type 1 | pass member | Profile tab, an Android phone, no gym joined
+  s1 see: Page 'Settings' with headings 'You', 'Workouts', 'Your gym', 'Phone and watch', 'Your data', 'Help'
+  s1 see: Rows with a short line: 'Units' 'kg, km', 'Rest timer and sounds' 'Rest 2:00', 'About' 'Version {n}'
+  s1 not: A row in the wrong group
+  s1 not: More than 7 rows in one group
+  s1 not: An empty heading on Android
+  s2 see: The Units page
+  s2 not: Two Units pages stacked after a quick double tap
+  s3 see: Settings again
+  s3 not: The Profile tab instead of Settings
+  s3 not: A blank page
+J-F-phone-1424-07 | type 2 | pass member | A new feature has a dot; Profile tab
+  s1 see: A small dot just before the row's title
+  s1 not: A dot pushed next to the switch
+  s1 not: No dot on the way
+  s2 see: The page's own dot beside the new feature, this visit only
+  s2 not: The dots on the tab, button and row still there after
+J-F-phone-1424-08 | type 2 | pass member | Settings on an iPhone
+  s1 see: 'Not on iPhone yet: reminders, rest alerts, your watch, Health apps and widgets. They come in a later update.'
+  s1 not: A 'Reminders', 'Widgets' or 'Your watch' row that does nothing
+J-F-phone-1424-09 | type 3 | pass member | Settings on an Android phone with no watch and no Health Connect, no gym joined
+  s1 see: 'Your gym' shows only 'Join your gym'
+  s1 see: 'Phone and watch' shows only 'Widgets'
+  s1 not: 'Leave' or 'Gym logo on my home screen' with no gym
+  s1 not: 'Your watch' or 'Health apps' rows that open a page saying it is not there
+J-F-phone-1424-10 | type 6 | pass member | Settings, no gym joined
+  s1 see: 'Your gym' shows the gym's rows with 'Leave {gym name}'
+  s1 see: 'Gym logo on my home screen' when the gym has a logo
+  s1 not: 'Join your gym' still shown
+  s2 see: 'Join your gym' back
+  s2 not: The old gym's name still in a row
+  s3 see: The row's dot gone
+  s3 not: The dot back on the next visit
+J-F-phone-1405-01 | type 1 | member | Workout tab, a workout in progress
+  s1 see: The app's own sheet: 'Discard workout?'
+  s1 see: 'Your in-progress workout will be deleted.'
+  s1 see: A red 'Discard' button and 'Keep'
+  s1 not: Android's grey pop-up
+  s1 not: A button called 'OK' or 'Yes'
+  s2 see: The sheet slides away; no workout in progress
+  s2 not: The workout still running
+  s2 not: The sheet staying open
+J-F-phone-1405-02 | type 2 | member | Editing a logged workout ('Discard changes?')
+  s1 see: 'Discard changes?'
+  s1 see: 'Your edits will be thrown away. The saved workout stays as it was.'
+  s1 see: 'Discard' and 'Keep'
+  s1 not: The saved workout deleted
+  s2 see: The workout as it was before the edits
+  s2 not: The edits kept
+J-F-phone-1405-03 | type 2 | member | An action failed and the app tells the member (a one-button notice)
+  s1 see: The app's own sheet with the title and one line saying what happened
+  s1 see: One quiet button 'Close'
+  s1 not: A 'Cancel' button on a notice
+  s1 not: Android's grey pop-up
+  s2 see: The sheet goes
+  s2 not: The sheet opening again by itself
+J-F-phone-1405-04 | type 3 | member | Workout tab, the 'Discard workout?' sheet open
+  s1 see: The workout carries on
+  s1 not: The workout deleted
+  s2 see: The sheet closes; the workout carries on
+  s2 not: The workout deleted
+  s2 not: The app closes
+  s3 see: The workout discarded once
+  s3 not: Two discards
+  s3 not: An error after the second tap
+J-F-phone-1405-05 | type 6 | member | A sheet (for example a set's menu) just closed with a 'Delete' tap
+  s1 see: The question appears after the first sheet slides away
+  s1 not: No question at all (lost on Android)
+  s1 not: Two sheets on top of each other
+  s2 see: The open sheet changes to the new words
+  s2 not: The first question left waiting with no answer
+  s2 not: The first question taken as a yes
+J-F-phone-1405-06 | type 1 | pass member | Workout tab, a workout in progress
+  s1 see: The app's own sheet: 'Discard workout?'
+  s1 see: 'Your in-progress workout will be deleted.'
+  s1 see: A red 'Discard' button and 'Keep'
+  s1 not: Android's grey pop-up
+  s1 not: A button called 'OK' or 'Yes'
+  s2 see: The sheet slides away; no workout in progress
+  s2 not: The workout still running
+  s2 not: The sheet staying open
+J-F-phone-1405-07 | type 2 | pass member | Editing a logged workout ('Discard changes?')
+  s1 see: 'Discard changes?'
+  s1 see: 'Your edits will be thrown away. The saved workout stays as it was.'
+  s1 see: 'Discard' and 'Keep'
+  s1 not: The saved workout deleted
+  s2 see: The workout as it was before the edits
+  s2 not: The edits kept
+J-F-phone-1405-08 | type 2 | pass member | An action failed and the app tells the member (a one-button notice)
+  s1 see: The app's own sheet with the title and one line saying what happened
+  s1 see: One quiet button 'Close'
+  s1 not: A 'Cancel' button on a notice
+  s1 not: Android's grey pop-up
+  s2 see: The sheet goes
+  s2 not: The sheet opening again by itself
+J-F-phone-1405-09 | type 3 | pass member | Workout tab, the 'Discard workout?' sheet open
+  s1 see: The workout carries on
+  s1 not: The workout deleted
+  s2 see: The sheet closes; the workout carries on
+  s2 not: The workout deleted
+  s2 not: The app closes
+  s3 see: The workout discarded once
+  s3 not: Two discards
+  s3 not: An error after the second tap
+J-F-phone-1405-10 | type 6 | pass member | A sheet (for example a set's menu) just closed with a 'Delete' tap
+  s1 see: The question appears after the first sheet slides away
+  s1 not: No question at all (lost on Android)
+  s1 not: Two sheets on top of each other
+  s2 see: The open sheet changes to the new words
+  s2 not: The first question left waiting with no answer
+  s2 not: The first question taken as a yes
+J-F-phone-1428-01 | type 1 | member | Calendar, its read fails
+  s1 see: Heading 'Couldn't load your calendar'
+  s1 see: A 'Try again' button (spoken 'Try again: Couldn't load your calendar')
+  s1 see: The heading is spoken at once
+  s1 not: An empty calendar that looks like no workouts
+  s1 not: 'No data'
+  s1 not: An error code or stack trace
+  s2 see: The calendar
+  s2 not: The error state left on top of the calendar
+J-F-phone-1428-02 | type 2 | member | Profile tab, its read fails
+  s1 see: The smaller card 'Couldn't load your profile' and 'Couldn't load your workouts' with 'Try again'
+  s1 not: A blank profile with zeros
+J-F-phone-1428-03 | type 2 | member | Gym tab, 'Join your gym' card (a short line under a failed button)
+  s1 see: Under the box, in red: 'The code is 6 letters or numbers. Ask at your gym's desk.'
+  s1 see: Spoken once
+  s1 not: A pop-up
+  s1 not: The line spoken twice
+J-F-phone-1428-04 | type 3 | member | Calendar, still offline
+  s1 see: 'Couldn't load your calendar' stays
+  s1 not: An empty calendar
+  s1 not: A crash
+  s2 see: The same state, no pile of errors
+  s2 not: Several error blocks
+  s2 not: The app freezing
+J-F-phone-1428-05 | type 6 | member | A screen with a short error line showing
+  s1 see: The line goes
+  s1 not: The line stays after the fix
+  s2 see: The new line, spoken
+  s2 not: The old words
+  s2 not: Not spoken
+  s3 see: The line back, spoken again
+  s3 not: Silent for a screen-reader user
+J-F-phone-1428-06 | type 1 | pass member | Calendar, its read fails
+  s1 see: Heading 'Couldn't load your calendar'
+  s1 see: A 'Try again' button (spoken 'Try again: Couldn't load your calendar')
+  s1 see: The heading is spoken at once
+  s1 not: An empty calendar that looks like no workouts
+  s1 not: 'No data'
+  s1 not: An error code or stack trace
+  s2 see: The calendar
+  s2 not: The error state left on top of the calendar
+J-F-phone-1428-07 | type 2 | pass member | Profile tab, its read fails
+  s1 see: The smaller card 'Couldn't load your profile' and 'Couldn't load your workouts' with 'Try again'
+  s1 not: A blank profile with zeros
+J-F-phone-1428-08 | type 2 | pass member | Gym tab, 'Join your gym' card (a short line under a failed button)
+  s1 see: Under the box, in red: 'The code is 6 letters or numbers. Ask at your gym's desk.'
+  s1 see: Spoken once
+  s1 not: A pop-up
+  s1 not: The line spoken twice
+J-F-phone-1428-09 | type 3 | pass member | Calendar, still offline
+  s1 see: 'Couldn't load your calendar' stays
+  s1 not: An empty calendar
+  s1 not: A crash
+  s2 see: The same state, no pile of errors
+  s2 not: Several error blocks
+  s2 not: The app freezing
+J-F-phone-1428-10 | type 6 | pass member | A screen with a short error line showing
+  s1 see: The line goes
+  s1 not: The line stays after the fix
+  s2 see: The new line, spoken
+  s2 not: The old words
+  s2 not: Not spoken
+  s3 see: The line back, spoken again
+  s3 not: Silent for a screen-reader user
+J-F-phone-1427-01 | type 1 | member | Your profile, a mobile number saved
+  s1 see: Bar 'Number removed' with 'Undo' (spoken 'Undo: Number removed')
+  s1 not: The bar before the remove saved
+  s1 not: An 'Are you sure?' question
+  s2 see: The number back
+  s2 see: The bar goes
+  s2 not: The bar gone before 6 seconds
+  s2 not: The number still removed
+J-F-phone-1427-02 | type 2 | member | An active workout, one set just deleted
+  s1 see: A bar naming what was deleted, with 'Undo'
+  s1 not: The set gone with no way back
+  s2 see: The bar stays while touched, then runs its time out
+  s2 not: The bar going while the finger is on it
+  s3 see: The set back in its place
+  s3 not: The set back twice
+  s3 not: Another set changed
+J-F-phone-1427-03 | type 3 | member | A delete just made, its bar showing
+  s1 see: The bar goes; the delete stays
+  s1 not: The bar staying for ever
+  s1 not: The item coming back
+  s2 see: The item back once
+  s2 not: Two copies of the item
+  s2 not: An error
+J-F-phone-1427-04 | type 6 | member | A delete just made, its bar showing
+  s1 see: A fresh bar for the second item with a new 6 seconds
+  s1 not: The second bar timing out early on the first one's clock
+  s1 not: 'Undo' bringing back the wrong item
+  s2 see: The bar appears and goes without sliding
+  s2 not: A slide or fade
+J-F-phone-1427-05 | type 1 | pass member | Your profile, a mobile number saved
+  s1 see: Bar 'Number removed' with 'Undo' (spoken 'Undo: Number removed')
+  s1 not: The bar before the remove saved
+  s1 not: An 'Are you sure?' question
+  s2 see: The number back
+  s2 see: The bar goes
+  s2 not: The bar gone before 6 seconds
+  s2 not: The number still removed
+J-F-phone-1427-06 | type 2 | pass member | An active workout, one set just deleted
+  s1 see: A bar naming what was deleted, with 'Undo'
+  s1 not: The set gone with no way back
+  s2 see: The bar stays while touched, then runs its time out
+  s2 not: The bar going while the finger is on it
+  s3 see: The set back in its place
+  s3 not: The set back twice
+  s3 not: Another set changed
+J-F-phone-1427-07 | type 3 | pass member | A delete just made, its bar showing
+  s1 see: The bar goes; the delete stays
+  s1 not: The bar staying for ever
+  s1 not: The item coming back
+  s2 see: The item back once
+  s2 not: Two copies of the item
+  s2 not: An error
+J-F-phone-1427-08 | type 6 | pass member | A delete just made, its bar showing
+  s1 see: A fresh bar for the second item with a new 6 seconds
+  s1 not: The second bar timing out early on the first one's clock
+  s1 not: 'Undo' bringing back the wrong item
+  s2 see: The bar appears and goes without sliding
+  s2 not: A slide or fade
+J-F-phone-1429-01 | type 1 | member | Phone font size set to the largest
+  s1 see: Body text bigger (up to 1.6 times)
+  s1 see: Headings up to 1.4 times, page titles 1.3 times, big numbers 1.2 times
+  s1 see: Text wraps
+  s1 not: Text cut off
+  s1 not: A big number broken over two lines
+  s1 not: A button pushed off the screen
+  s2 see: Each takes a finger tap of at least 48 dp
+  s2 not: A miss on an icon's edge
+J-F-phone-1429-02 | type 2 | member | TalkBack on
+  s1 see: One spoken line like 'Recovery, 82 Primed, up 3'
+  s1 not: 'plus 3' or the symbols read out
+  s1 not: Each part read separately
+  s2 see: The error line spoken once
+  s2 not: Spoken twice
+  s2 not: Not spoken
+J-F-phone-1429-03 | type 2 | member | Phone 'Remove animations' on
+  s1 see: The bar appears without sliding
+  s1 not: Slides and fades
+J-F-phone-1429-04 | type 3 | member | Phone font size above the app's cap
+  s1 see: Text grows no more than its cap; the number in the ring stays whole
+  s1 not: The ring's number spilling out
+  s1 not: Overlapping text
+J-F-phone-1429-05 | type 6 | member | App open on any page
+  s1 see: Movement stops at once, without restarting the app
+  s1 not: Still animating until a restart
+  s2 see: Movement back
+  s2 not: Movement still off
+J-F-phone-1429-06 | type 1 | pass member | Phone font size set to the largest
+  s1 see: Body text bigger (up to 1.6 times)
+  s1 see: Headings up to 1.4 times, page titles 1.3 times, big numbers 1.2 times
+  s1 see: Text wraps
+  s1 not: Text cut off
+  s1 not: A big number broken over two lines
+  s1 not: A button pushed off the screen
+  s2 see: Each takes a finger tap of at least 48 dp
+  s2 not: A miss on an icon's edge
+J-F-phone-1429-07 | type 2 | pass member | TalkBack on
+  s1 see: One spoken line like 'Recovery, 82 Primed, up 3'
+  s1 not: 'plus 3' or the symbols read out
+  s1 not: Each part read separately
+  s2 see: The error line spoken once
+  s2 not: Spoken twice
+  s2 not: Not spoken
+J-F-phone-1429-08 | type 2 | pass member | Phone 'Remove animations' on
+  s1 see: The bar appears without sliding
+  s1 not: Slides and fades
+J-F-phone-1429-09 | type 3 | pass member | Phone font size above the app's cap
+  s1 see: Text grows no more than its cap; the number in the ring stays whole
+  s1 not: The ring's number spilling out
+  s1 not: Overlapping text
+J-F-phone-1429-10 | type 6 | pass member | App open on any page
+  s1 see: Movement stops at once, without restarting the app
+  s1 not: Still animating until a restart
+  s2 see: Movement back
+  s2 not: Movement still off

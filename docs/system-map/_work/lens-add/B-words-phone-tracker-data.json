@@ -1,0 +1,1 @@
+{"id":"B-words-phone-tracker-data","step":"B-words","item":"B-words (Language and words + 1 more) x phone / phone/tracker-data: 3 items","needs":["CAL-score"],"checkpoint":"_work/B-words-phone-tracker-data.md","out_file":"_work/out/B-words-phone-tracker-data.jsonl","surface":"phone","area":"phone/tracker-data","lenses":["10","gap-10"],"lens_items":["L10.1","H10.1","H10.2"]}

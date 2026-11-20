@@ -1,0 +1,1 @@
+{"id":"L12-panel-auth-data","step":"L12","item":"lens 12 (Platform and store rules) x panel / panel/auth-data: 3 items","needs":["M2-machine-pass","M3-play-report"],"checkpoint":"_work/L12-panel-auth-data.md","out_file":"_work/out/L12-panel-auth-data.jsonl","surface":"panel","area":"panel/auth-data","lenses":["12"],"lens_items":["L12.1","L12.2","L12.3"]}

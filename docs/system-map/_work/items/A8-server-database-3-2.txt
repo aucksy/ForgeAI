@@ -1,0 +1,144 @@
+# A8-server-database-3-2: coverage of 20 Tier 1 journeys (1 features, from A5-server-database-3-1b). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-server-516 | supabase/tests/0075_gym_alerts.sql | db | 150 lines | file name
+F-server-516 | supabase/tests/0095_test_alert.sql | db | 175 lines | file name
+F-server-516 | supabase/tests/0096_message_recipient.sql | db | 222 lines | file name
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-server-516-01 | type 1 | owner | Admin app open with the owner key, bell empty; a member places a shop order in the app
+  s1 see: Nothing yet on the owner's side; the order is saved for the member
+  s1 not: The member's order refused because the alert could not be written
+  s2 see: New shop order <order no> from Asha. Get it ready on Shop.
+  s2 see: The alert marked urgent
+  s2 not: The alert missing because the gym's summary setting is daily
+  s2 not: Another gym's order in the list
+  s3 see: The Shop page (/shop)
+  s3 not: A page that does not exist
+  s3 not: The same order shown as two alerts
+J-F-server-516-02 | type 2 | owner | Admin app open with the owner key; a member sends a complaint from Message your gym with no recipient (an older member app)
+  s1 see: Nothing yet on the owner's side
+  s1 not: The complaint refused because the alert failed
+  s2 see: Asha sent your gym a complaint. Open Member messages to read it.
+  s2 see: The alert marked urgent
+  s2 not: The complaint text itself in the alert line
+  s2 not: The alert only in the daily summary
+  s3 see: Member messages (/member-messages)
+  s3 not: The front desk or a trainer also getting this alert
+J-F-server-516-03 | type 3 | owner | Admin app; alerts exist from 4 days ago and from today; a test alert was sent today
+  s1 see: Only alerts from the last 3 days, newest first, at most 50
+  s1 not: The 4-day-old alerts
+  s1 not: The test alert in the bell list
+  s2 see: A refusal; no list
+  s2 not: Any gym's alerts returned to a wrong key
+  s3 see: An empty list
+  s3 not: An error screen
+  s3 not: Old alerts returned again
+J-F-server-516-04 | type 6 | owner | Admin app; the owner asked a member for their workout report
+  s1 see: Asha sent the workout report you asked for. Open their page to read it.
+  s1 not: No alert because the report came by an update, not a new row
+  s2 see: Still one alert for that report
+  s2 not: A second alert for the same report
+  s3 see: The old alert gone from the bell
+  s3 not: Alerts older than 30 days kept for ever
+J-F-server-516-05 | type 12 | owner | Admin app; a member sends feedback without their name, another pays online
+  s1 see: A member sent your gym feedback without their name. Open Member messages to read it.
+  s1 see: Ravi paid online for <label>. See it on Money.
+  s1 not: The anonymous member's name in any alert
+  s1 not: A phone number, an amount or the message text in any alert line
+  s2 see: The owner and the front desk only
+  s2 not: A trainer getting the feedback alert
+J-F-server-516-06 | type 1 | staff | Admin app open with a front desk login (not ticked as Trainer); a member types their number at the check-in poster
+  s1 see: Nothing yet on the desk's side
+  s1 not: The number refused because the alert failed
+  s2 see: Asha typed their number at the check-in poster. Confirm it on Today.
+  s2 see: The alert marked urgent
+  s2 not: The phone number in the alert line
+  s3 see: Today (/)
+  s3 not: Another gym's poster alert
+J-F-server-516-07 | type 2 | staff | Admin app with a front desk login; a member whose plan ends in 2 days asks to renew
+  s1 see: Asha asked to renew their plan (3 Months Gold). Approve or say no on Today.
+  s1 see: The alert marked urgent (plan ends in 3 days or less)
+  s1 not: A request for a plan ending in 20 days marked urgent
+  s1 not: An alert for a request that is not pending
+  s2 see: Today (/), with the request to approve
+  s2 not: The request shown twice
+J-F-server-516-08 | type 3 | staff | Admin app with a front desk login; a complaint with no recipient and a trainer question were sent today
+  s1 see: No alert for the complaint
+  s1 see: No alert for the trainer question
+  s1 not: The complaint alert shown to the desk
+  s1 not: The trainer question alert shown to a desk person without the trainer tick
+  s2 see: An empty list or a refusal
+  s2 not: Any alert shown to a removed staff person
+J-F-server-516-09 | type 6 | staff | Admin app with a front desk login; a member's question to the gym is open in Member messages
+  s1 see: No new alert for the gym's own reply
+  s1 not: An alert for a line the gym wrote
+  s2 see: Asha replied in Member messages. Open it to read the reply.
+  s2 not: The reply text in the alert
+  s2 not: The reply counted as a new question
+J-F-server-516-10 | type 12 | staff | Admin app with a front desk login; one complaint sent to "Gym admin" and one to "Gym owner"
+  s1 see: The complaint alert for the one sent to Gym admin
+  s1 see: No alert for the one sent to Gym owner
+  s1 not: The desk alerted about a complaint sent to the owner only
+J-F-server-516-11 | type 1 | trainer | Admin app open with a login ticked as Trainer (Rahul); a member picks Rahul under Who should read it? and sends a question
+  s1 see: Nothing yet on Rahul's side
+  s1 not: The question refused because the alert failed
+  s2 see: Asha sent you a question. Open Member messages to reply.
+  s2 not: The question text in the alert
+  s3 see: Member messages (/member-messages)
+  s3 not: Another trainer or the desk getting this alert
+  s3 not: The owner's bell ringing for it
+J-F-server-516-12 | type 2 | trainer | Admin app with a trainer login; a member asks a workout question to "any trainer"
+  s1 see: Asha asked a workout question. Open <the questions page, as the menu names it> to reply.
+  s1 not: The alert hidden from a ticked trainer when it went to any trainer
+  s2 see: The questions page (/questions)
+  s2 not: A desk person without the trainer tick alerted
+J-F-server-516-13 | type 3 | trainer | Admin app with a trainer login (not the owner); feedback to Gym admin and a complaint were sent today
+  s1 see: No feedback alert
+  s1 see: No complaint alert
+  s1 not: A trainer alerted about feedback or a complaint, even one sent to Gym admin
+J-F-server-516-14 | type 6 | trainer | Admin app with a trainer login; a question to any trainer is in the bell
+  s1 see: The question alert gone
+  s1 see: Shop, check-in and join alerts still shown
+  s1 not: Question alerts still shown after the tick is removed
+  s2 see: The question alert back while it is in the last 3 days
+  s2 not: An error or an empty bell
+J-F-server-516-15 | type 12 | trainer | Admin app with trainer Rahul's login; a member sent a question to trainer Priya
+  s1 see: No alert for Priya's question
+  s1 not: Rahul alerted about a question meant for Priya
+  s1 not: The member's phone number in any alert
+J-F-server-516-16 | type 1 | system | A person joins the gym in the MettleUp app with the gym code
+  s1 see: Asha joined your gym in the MettleUp app. See them in Members using the app.
+  s1 see: Route /members/app, not urgent
+  s1 not: The join refused because the alert failed
+  s1 not: The full name or phone in the line
+  s2 see: The join alert to the owner, desk and trainers
+  s2 not: The alert written for another gym
+J-F-server-516-17 | type 2 | system | The HQ Worker finds fees and shop orders members paid online in the last few minutes
+  s1 see: {ok: true, alerts: <number written>}
+  s1 see: Ravi paid online for Monthly fee. See it on Money.
+  s1 not: The amount in the alert line
+  s1 not: More than 100 items handled in one call
+  s2 see: Asha's friend asked about joining your gym. Call them from Enquiries.
+  s2 see: Urgent
+  s2 not: The friend's phone number in the line
+J-F-server-516-18 | type 3 | system | The HQ Worker or a trigger gets bad input
+  s1 see: INVALID error
+  s1 not: Any alert written
+  s2 see: That item skipped, the rest written
+  s2 not: The whole batch lost for one bad item
+  s3 see: Only a warning in the server log; the member's action saved
+  s3 not: The member's order, message or request refused
+  s4 see: A refusal
+  s4 not: A gym or member able to write alerts
+J-F-server-516-19 | type 6 | system | The HQ Worker hands the same paid item twice; a test alert is sent from a browser
+  s1 see: No new alert (one per event tag)
+  s1 not: Two alerts for one payment
+  s2 see: shown_at set once, only for the test alert
+  s2 not: A test alert in the bell, summaries or counts
+  s2 not: shown_at set on a real alert
+  s3 see: Sometimes (about one write in 100) the old ones are deleted
+  s3 not: The new alert lost when the clean-up runs
+J-F-server-516-20 | type 12 | system | Any caller outside the gym server
+  s1 see: Refused (row security on, all rights taken away)
+  s1 not: Any alert line of any gym readable by the public key
+  s2 see: The line without any name
+  s2 not: The member's name, phone, app id or list id kept in the alert

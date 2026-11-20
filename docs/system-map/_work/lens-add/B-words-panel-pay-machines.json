@@ -1,0 +1,1 @@
+{"id":"B-words-panel-pay-machines","step":"B-words","item":"B-words (Language and words + 1 more) x panel / panel/pay-machines: 3 items","needs":["CAL-score"],"checkpoint":"_work/B-words-panel-pay-machines.md","out_file":"_work/out/B-words-panel-pay-machines.jsonl","surface":"panel","area":"panel/pay-machines","lenses":["10","gap-10"],"lens_items":["L10.1","H10.1","H10.2"]}

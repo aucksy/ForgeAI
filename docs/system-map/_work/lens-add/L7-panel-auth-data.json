@@ -1,0 +1,1 @@
+{"id":"L7-panel-auth-data","step":"L7","item":"lens 7 (Speed) x panel / panel/auth-data: 5 items","needs":["M2-machine-pass"],"checkpoint":"_work/L7-panel-auth-data.md","out_file":"_work/out/L7-panel-auth-data.jsonl","surface":"panel","area":"panel/auth-data","lenses":["7"],"lens_items":["L7.1","L7.2","L7.3","L7.4","L7.5"]}

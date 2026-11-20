@@ -1,0 +1,789 @@
+# A8-panel-brand-shell-2: coverage of 90 Tier 1 journeys (9 features, from A5-panel-brand-shell-2). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-1109 | apps/dashboard/e2e/whatsnew.spec.mjs | e2e | 122 lines | file name, asserts 4 journey phrase(s)
+F-panel-1109 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-panel-1109 | apps/dashboard/test/crm/hqNews.test.ts | unit | 54 lines | imports the code, file name
+F-panel-1109 | apps/dashboard/test/crm/newDots.test.ts | unit | 279 lines | imports the code, file name
+F-panel-1109 | apps/dashboard/test/crm/whatsNew.test.ts | unit | 208 lines | imports the code, file name
+F-panel-1109 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 5 journey phrase(s)
+F-panel-1109 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 4 journey phrase(s)
+F-panel-1109 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 4 journey phrase(s)
+F-panel-1109 | apps/mobile/qa/sub-uat-f194-choose.yaml | maestro | 31 lines | asserts 4 journey phrase(s)
+F-panel-1109 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 4 journey phrase(s)
+F-panel-1109 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-panel-1109 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 3 journey phrase(s)
+F-panel-1121 | apps/dashboard/e2e/workoutcode.spec.mjs | e2e | 55 lines | asserts 5 journey phrase(s)
+F-panel-1121 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | imports the code, asserts 2 journey phrase(s)
+F-panel-1121 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-panel-1121 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | imports the code
+F-panel-1121 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | imports the code
+F-panel-1121 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | imports the code
+F-panel-1121 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-1121 | apps/dashboard/test/crm/gymReports.test.ts | unit | 140 lines | imports the code
+F-panel-1121 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | imports the code
+F-panel-1121 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | imports the code
+F-panel-1121 | apps/dashboard/test/crm/planRequests.test.ts | unit | 239 lines | imports the code
+F-panel-1121 | apps/dashboard/test/crm/plusLock.test.ts | unit | 92 lines | imports the code
+F-panel-1132 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 7 journey phrase(s)
+F-panel-1132 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-panel-1132 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 5 journey phrase(s)
+F-panel-1132 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 5 journey phrase(s)
+F-panel-1132 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 5 journey phrase(s)
+F-panel-1132 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-panel-1132 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-panel-1132 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-panel-1132 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 4 journey phrase(s)
+F-panel-1132 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 4 journey phrase(s)
+F-panel-1132 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 4 journey phrase(s)
+F-panel-1132 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | file name, asserts 2 journey phrase(s)
+F-panel-1127 | apps/dashboard/test/crm/challenges.test.ts | unit | 388 lines | imports the code, file name
+F-panel-1127 | apps/dashboard/test/crm/challengesHinglish.test.ts | unit | 108 lines | imports the code, file name
+F-panel-1127 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | imports the code, file name
+F-panel-1127 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-1127 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | file name, asserts 1 journey phrase(s)
+F-panel-1127 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 3 journey phrase(s)
+F-panel-1127 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-1127 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-panel-1127 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 2 journey phrase(s)
+F-panel-1127 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-1127 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 2 journey phrase(s)
+F-panel-1127 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-panel-1126 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 2 journey phrase(s)
+F-panel-1126 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-1126 | apps/dashboard/test/crm/dietPlans.test.ts | unit | 248 lines | file name
+F-panel-1126 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-1126 | apps/mobile/test/tracker/r72HealthSend.test.ts | unit | 52 lines | asserts 2 journey phrase(s)
+F-panel-1126 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-1126 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-1126 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 1 journey phrase(s)
+F-panel-1126 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 1 journey phrase(s)
+F-panel-1126 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-1126 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-1126 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 1 journey phrase(s)
+F-panel-1116 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 6 journey phrase(s)
+F-panel-1116 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | asserts 4 journey phrase(s)
+F-panel-1116 | apps/dashboard/e2e/friend-live-uat.spec.mjs | e2e | 262 lines | asserts 3 journey phrase(s)
+F-panel-1116 | apps/dashboard/test/crm/enquiries.test.ts | unit | 182 lines | file name, asserts 1 journey phrase(s)
+F-panel-1116 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 2 journey phrase(s)
+F-panel-1116 | apps/dashboard/e2e/pagechat-uat.spec.mjs | e2e | 272 lines | asserts 2 journey phrase(s)
+F-panel-1116 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | asserts 2 journey phrase(s)
+F-panel-1116 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 2 journey phrase(s)
+F-panel-1116 | apps/dashboard/test/crm/needsYou.test.ts | unit | 54 lines | asserts 2 journey phrase(s)
+F-panel-1116 | apps/mobile/qa/uat-rel-f147-bring-friend.yaml | maestro | 56 lines | asserts 2 journey phrase(s)
+F-panel-1116 | supabase/tests/0056_bring_a_friend.sql | db | 130 lines | asserts 2 journey phrase(s)
+F-panel-1116 | supabase/tests/0076_panel_web_push.sql | db | 209 lines | asserts 2 journey phrase(s)
+F-panel-1128 | apps/dashboard/test/crm/expenses.test.ts | unit | 128 lines | imports the code, file name
+F-panel-1128 | apps/dashboard/test/crm/auditC7.test.ts | unit | 333 lines | imports the code
+F-panel-1128 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 2 journey phrase(s)
+F-panel-1128 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 1 journey phrase(s)
+F-panel-1128 | supabase/tests/0017_undo_import.sql | db | 86 lines | asserts 1 journey phrase(s)
+F-panel-1128 | supabase/tests/0060_pay_mettleup.sql | db | 317 lines | asserts 1 journey phrase(s)
+F-panel-1135 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 6 journey phrase(s)
+F-panel-1135 | apps/dashboard/test/crm/hqAccess.test.ts | unit | 81 lines | imports the code, file name
+F-panel-1135 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 4 journey phrase(s)
+F-panel-1135 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 3 journey phrase(s)
+F-panel-1135 | apps/dashboard/test/crm/trial.test.ts | unit | 140 lines | imports the code
+F-panel-1135 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-panel-1135 | apps/dashboard/e2e/feedback.spec.mjs | e2e | 34 lines | file name
+F-panel-1135 | apps/dashboard/test/crm/feedback.test.ts | unit | 91 lines | file name
+F-panel-1135 | apps/mobile/test/lib/feedback.test.ts | unit | 59 lines | file name
+F-panel-1135 | apps/mobile/test/lib/feedbackButton.test.ts | unit | 120 lines | file name
+F-panel-1135 | apps/mobile/test/lib/feedbackMemberKey.test.ts | unit | 43 lines | file name
+F-panel-1135 | apps/mobile/test/lib/feedbackVoice.test.ts | unit | 147 lines | file name
+F-panel-1111 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | imports the code, file name, asserts 1 journey phrase(s)
+F-panel-1111 | apps/dashboard/test/crm/aiImportSameKind.test.ts | unit | 59 lines | imports the code, file name
+F-panel-1111 | apps/dashboard/test/crm/importPreview.test.ts | unit | 55 lines | imports the code, file name
+F-panel-1111 | apps/dashboard/test/crm/csv.test.ts | unit | 102 lines | imports the code
+F-panel-1111 | apps/dashboard/test/crm/importBranches.test.ts | unit | 362 lines | imports the code
+F-panel-1111 | apps/dashboard/test/crm/importFixtures.test.ts | unit | 454 lines | imports the code
+F-panel-1111 | apps/dashboard/test/crm/phoneColumns.test.ts | unit | 147 lines | imports the code
+F-panel-1111 | apps/dashboard/e2e/aiimport.spec.mjs | e2e | 169 lines | file name
+F-panel-1111 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 2 journey phrase(s)
+F-panel-1111 | apps/dashboard/test/crm/importMembers.test.ts | unit | 575 lines | file name
+F-panel-1111 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 1 journey phrase(s)
+F-panel-1111 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-1109-01 | type 1 | owner | Owner signed in online on the real gym; the bell top right shows a number
+  s1 see: A panel named 'Notifications'
+  s1 see: Groups 'Your gym', 'From MettleUp' and 'What's new'
+  s1 see: A 'New' tag on what was not seen before
+  s1 not: The bell is shown in the demo gym
+  s1 not: The list moves under the finger while it is open
+  s1 not: A message from another gym in Your gym
+  s2 see: The number no longer counts the app updates and MettleUp messages just shown
+  s2 not: The same updates counted as new again after a reload
+  s2 not: Alerts that still wait for someone dropped from the number
+  s3 see: Title 'What's new'
+  s3 see: Subtitle 'Changes to the admin app, newest first.' with the version
+  s3 see: One card per day, newest first
+  s3 see: A button like '<label> ›' under a change that has a page
+  s3 not: A day card with no lines
+  s3 not: A button that opens a page this person may not open
+J-F-panel-1109-02 | type 2 | owner | Owner on the real online gym; a new feature (not a fix) was released in the last 30 days and its page was not opened on this device
+  s1 see: A small dot on each entry on the way to the new feature
+  s1 not: A dot for a fix
+  s1 not: A dot for a feature released before this gym was set up
+  s1 not: A dot for a page that is not in this person’s menu
+  s1 not: A dot in the demo gym
+  s2 see: The dot next to the page heading stays while the owner is on the page
+  s2 not: The dot stays on the menu after the page was opened and left
+  s2 not: The dot comes back after a reload on the same device
+J-F-panel-1109-03 | type 2 | owner | Owner types the old address of What’s new (Settings → news)
+  s1 see: The same 'What's new' page
+  s1 not: A blank page
+  s1 not: A sign-out
+J-F-panel-1109-04 | type 3 | owner | Owner online; the server answer for MettleUp messages fails or is not a list
+  s1 see: The bell opens with the other groups; no 'From MettleUp' group
+  s1 not: An error box or a broken bell
+  s1 not: A message with a link that is not an admin page or an https address shown as a button
+  s1 not: A count that never clears
+J-F-panel-1109-05 | type 6 | owner | Owner on a new browser that never opened the bell; MettleUp sent messages 5 days ago and 20 days ago
+  s1 see: The message of the last 14 days counts as new; the older one does not
+  s1 not: Zero shown although a recent message was never seen
+  s1 not: Every old message counted
+  s2 see: No number for the seen message
+  s2 not: The seen message counted again
+  s2 not: A newer message not counted
+J-F-panel-1109-06 | type 12 | owner | Owner and a staff person use the same desk browser one after the other
+  s1 see: Staff sees the bell with what is new for the gym; 'seen' marks are the browser’s, not the person’s
+  s1 not: MettleUp messages needing a sign-in to read (the same words go to every gym)
+  s1 not: A gym’s own data inside a MettleUp message
+  s1 not: What the owner saw sent to the server as a reading record
+J-F-panel-1109-07 | type 1 | staff | Staff signed in online; the bell shows a number
+  s1 see: Panel 'Notifications' with 'Your gym', 'From MettleUp' and 'What's new'
+  s1 not: Alerts meant only for the owner
+  s1 not: A button to a page staff may not open (Expenses, Pay MettleUp, AI Assistant)
+  s2 see: Title 'What's new'; day cards, newest first
+  s2 see: Lines about owner-only pages show as text with no button
+  s2 not: A button that lands staff on a refused page
+J-F-panel-1109-08 | type 3 | staff | Staff signed in; a new owner feature was released yesterday
+  s1 see: No new-feature dots at all (dots are for the owner)
+  s1 not: A dot that leads staff to a page they cannot open
+J-F-panel-1109-09 | type 6 | staff | Staff opened the bell earlier today; nothing new since
+  s1 see: No number for app updates and MettleUp messages already seen
+  s1 not: Seen updates counted again
+  s1 not: A 'New' tag on an old line
+J-F-panel-1121-01 | type 1 | owner | Owner online, Messages & offers → Workout offer, no offer running
+  s1 see: 'What members see' preview with 'OFFER'
+  s1 see: Button reads 'Starting…'
+  s1 see: Toast 'Offer started. Members see it in the MettleUp app now.'
+  s1 not: Two offers started by a double tap
+  s1 not: An offer started with a number outside the hinted range
+  s1 not: The start form still shown while an offer runs
+  s2 see: Button reads 'Giving…'
+  s2 see: Toast '<n> days added for <name>. New last day: <day>.'
+  s2 not: The days added twice
+  s2 not: A receipt or GST line made for the free days
+  s2 not: Another member’s plan moved
+J-F-panel-1121-02 | type 2 | owner | Owner on a member’s page; the member shows a workout code on their phone
+  s1 see: Sheet 'Check workout code'
+  s1 see: 'For the workout offer. The member opens “Show my workouts to the desk” in the app. Type the code from their phone.'
+  s1 see: A summary line, 'Code made on <day>.' and each workout day with '✓ Checked in at the desk' or 'No check-in: does not count'
+  s1 not: A workout day without a check-in counted
+  s1 not: Exercises, weights or body weight shown from the code
+  s1 not: Anything saved by checking
+  s2 see: The extra-days sheet for this member’s plan
+  s2 not: The button shown when no day matched
+  s2 not: Days added without the owner confirming in the next sheet
+J-F-panel-1121-03 | type 3 | owner | Owner on the Check workout code sheet
+  s1 see: 'Check' is off while the box is empty
+  s1 see: A plain problem line under the box for a bad code
+  s1 not: A bad code shown as valid
+  s1 not: A crash on odd letters
+  s1 not: The old result still shown after the code is changed
+  s2 see: 'It is more than <n> days old: ask for a new code to see the newest workouts.'
+  s2 not: An old code treated as today’s
+J-F-panel-1121-04 | type 3 | owner | Owner opens Workout offer while the gym is not online, or the server part is missing
+  s1 see: 'Workout offers need your gym online' or 'Workout offers in the app are not switched on for your gym yet.'
+  s1 not: A start form that cannot save
+  s1 not: An endless Loading…
+J-F-panel-1121-05 | type 6 | owner | Owner, an offer is running, one member got the reward
+  s1 see: Toast 'Reward taken back. Last day: <day>.'
+  s1 not: The last day moved back further than the reward
+  s1 not: Take back allowed after the plan end was changed by something else, without a word
+  s2 see: Toast 'The days are now given by themselves.'
+  s2 not: Days given twice to a member the desk already rewarded
+  s3 see: Toast 'Offer stopped. Members already in can still finish.'
+  s3 not: Members already in lose their window
+  s3 not: New members still able to join
+J-F-panel-1121-06 | type 12 | owner | Owner checks a workout code for a member
+  s1 see: Only the days of workouts and whether a check-in matched
+  s1 not: Exercises, weights, sets, body weight or photos
+  s1 not: Another member’s days
+J-F-panel-1121-07 | type 1 | staff | Staff online, Messages & offers → Workout offer (the one part of Messages staff may open); an offer runs and a member has qualified
+  s1 see: Button reads 'Giving…'
+  s1 see: Toast '<n> days added for <name>. New last day: <day>.'
+  s1 not: Start, stop, change-mode or take-back controls shown to staff
+  s1 not: The days added twice
+J-F-panel-1121-08 | type 2 | staff | Staff on a member’s page
+  s1 see: The summary and the day list
+  s1 see: 'The owner gives the extra days.' in place of a button
+  s1 not: A 'Give extra days' button for staff
+  s1 not: Anything saved
+J-F-panel-1121-09 | type 3 | staff | Staff opens Workout offer when no offer runs; then types the address of Messages
+  s1 see: 'No workout offer running' with 'The owner starts one in Messages & offers.'
+  s1 not: A start form for staff
+  s2 see: Staff is sent away from it (to Shop)
+  s2 not: The owner’s message composer opened by staff
+J-F-panel-1121-10 | type 6 | staff | Staff gave a reward a minute ago; the list refreshed
+  s1 see: Toast '<name> already has the reward.'
+  s1 not: A second set of days
+  s1 not: A take-back button for staff
+J-F-panel-1132-01 | type 1 | owner | Owner online, Settings → Gym timings, no timings saved yet
+  s1 see: Title 'Gym timings', subtitle 'When your gym is open, for members to see'
+  s1 see: A preview of what members will see
+  s1 not: Nothing saved before Save is tapped
+  s1 not: A day that closes before it opens accepted without a word
+  s2 see: Button reads 'Saving…' then 'Saved ✓'
+  s2 see: Toast 'Gym timings saved. Members see them in the MettleUp app (Gym tab) within 10 minutes.'
+  s2 see: 'These timings are saved (<day>) and members see them. Change any time above to save again.'
+  s2 see: 'Last saved <day> by <name>.'
+  s2 not: Two saves from a double tap
+  s2 not: Another branch’s timings changed
+  s2 not: Saved ✓ shown when the save failed
+J-F-panel-1132-02 | type 2 | owner | Owner online, Settings → Member app → Busy machines (shown once the server has it)
+  s1 see: Title 'Busy machines', subtitle 'Tell members when a machine is usually busy'
+  s1 see: '<n> machines on your list can get busy (you have 1 or 2).'
+  s1 not: A machine with 3 or more counted as one that can get busy
+  s1 not: More than 30 own machines added
+  s2 see: Toast 'Saved.'
+  s2 see: 'Last saved <day> by <name>.'
+  s2 see: 'No changes to save.' after it
+  s2 not: Members shown who used a machine
+  s2 not: Busy times shown to members while the tick is off
+J-F-panel-1132-03 | type 2 | owner | Owner on Settings today (the MettleUp Plus switch for members is off for everyone)
+  s1 see: No 'Free MettleUp Plus for your members' card
+  s1 not: A lock switch shown that does nothing
+  s1 not: Members’ features locked after a plan ends while the card is hidden
+  s1 not: Members’ workouts or history ever locked
+J-F-panel-1132-04 | type 3 | owner | Owner opens Gym timings or Busy machines when the gym is not online, or the server part is missing, or the read fails
+  s1 see: 'Gym timings need your gym online' / 'Busy machines need your gym online' with 'Put your gym online first (Settings → Sign-in & data).'
+  s1 see: or 'Gym timings are not switched on for your gym yet' / 'Busy machines are not ready for your gym yet'
+  s1 see: or an error line with 'Try again'
+  s1 not: An editor that cannot save
+  s1 not: An endless Loading…
+  s2 see: 'Fix the times below to see what members will see.' and a problem line
+  s2 not: Wrong times saved
+  s2 not: The typed values wiped
+J-F-panel-1132-05 | type 6 | owner | Owner online with saved timings
+  s1 see: Button goes from 'Saved ✓' to 'Save timings'
+  s1 not: Save stays off after a change
+  s2 see: 'Members will no longer see when your gym is open. You can add the timings again at any time.'
+  s2 see: Toast 'Gym timings removed. Members no longer see them.'
+  s2 see: 'Start from' is offered again
+  s2 not: Members still shown the old timings for longer than the app’s refresh
+  s2 not: The remove done without the question
+  s3 see: Toast 'Saved.'
+  s3 not: Members still shown busy times
+  s3 not: The machine counts lost when switched off
+J-F-panel-1132-06 | type 12 | owner | Owner switches busy machines on
+  s1 see: Words that say members see when a machine is usually busy
+  s1 not: A member’s name or visit time shown to other members
+  s1 not: Machine use collected from members while the switch is off
+J-F-panel-1132-07 | type 1 | staff | Staff online, Settings → Gym timings; the owner saved timings
+  s1 see: 'Your gym’s timings' with 'Every week' and 'Special days'
+  s1 see: 'Only the owner can change the gym timings.'
+  s1 not: Any box staff can type in
+  s1 not: A save or remove button
+J-F-panel-1132-08 | type 2 | staff | Staff online, Settings → Busy machines
+  s1 see: The machine list as read-only
+  s1 see: 'Only the owner can change this.'
+  s1 not: The tick or the counts open to change
+J-F-panel-1132-09 | type 3 | staff | Staff online; the owner never saved timings or machines
+  s1 see: 'No timings yet.'
+  s1 see: 'No machines yet.'
+  s1 not: A 'Start from' list for staff
+  s1 not: An error in place of the empty words
+J-F-panel-1132-10 | type 6 | staff | Staff has Gym timings open; the owner changes them on another device
+  s1 see: The new timings
+  s1 not: The old timings kept until sign-out
+J-F-panel-1127-01 | type 1 | owner | Owner online, Challenges, no challenge running
+  s1 see: Sheet 'New challenge'
+  s1 see: Hints 'Members see this name. At most 60 letters.', 'Today or a later day, up to 60 days from today.', 'From 7 to 31 days.', 'From 0 to 60. You check each winner before the days are added.'
+  s1 see: A preview of what members will read
+  s1 not: 'Fill in the boxes above to see what members will read.' left when all boxes are filled
+  s2 see: Toast 'Challenge saved. Members see it in the MettleUp app within 10 minutes.'
+  s2 see: The challenge card with who has reached the goal
+  s2 not: Two challenges that overlap
+  s2 not: A second challenge from a double tap
+  s2 not: Free days added before the owner checks a winner
+J-F-panel-1127-02 | type 2 | owner | Owner online, Challenges, the ready-made challenges list at the top
+  s1 see: Button shows it is saving
+  s1 see: A toast that names the challenge and its first day
+  s1 not: Another ready-made one can be tapped while this one saves
+  s1 not: It starts over a running challenge
+  s2 see: 'Another challenge takes up the next 60 days, so this one cannot be turned on yet.'
+  s2 not: A silent no-op
+J-F-panel-1127-03 | type 2 | owner | Owner online; a challenge has finished and winners wait
+  s1 see: Button reads 'Saving…'
+  s1 see: A line for each winner that says what happened
+  s1 not: Free days given twice
+  s1 not: Days given to a member who was skipped
+  s1 not: A winner’s row gone with no word
+  s2 see: 'Done for <n> winners. Each line says what happened.'
+  s2 not: A failure half-way shown as all done
+  s2 not: A receipt made for free days
+  s3 see: 'List copied. You can paste it into WhatsApp.'
+  s3 not: A message sent to members by itself
+J-F-panel-1127-04 | type 3 | owner | Owner on the New challenge sheet; also the gym offline or the server part missing
+  s1 see: A plain problem line for the first wrong box
+  s1 not: A challenge saved with a wrong value
+  s1 not: The typed values wiped
+  s2 see: 'Challenges need your gym online' or 'Challenges are not switched on for your gym yet'
+  s2 not: An editor that cannot save
+J-F-panel-1127-05 | type 6 | owner | Owner online; one challenge not started yet, the leaderboard has members
+  s1 see: Toast 'Challenge cancelled. Members no longer see it.'
+  s1 see: 'No challenge is running'
+  s1 not: A started challenge changed instead of only cancelled
+  s1 not: Winners’ days taken back by a cancel
+  s2 see: Toast '<name> is hidden from the leaderboard.'
+  s2 see: The member under 'Hidden from members'
+  s2 see: Toast '<name> is on the leaderboard again.'
+  s2 not: The hidden member still shown to other members
+  s2 not: The member’s own totals deleted by hiding
+J-F-panel-1127-06 | type 12 | owner | Owner looks at the leaderboard and the winners list
+  s1 see: Names with workouts or kg; a winner’s phone number next to the name
+  s1 not: Body weight, photos or which exercises a member did
+  s1 not: A member who switched their name off shown by name to other members
+  s1 not: Another gym’s members
+J-F-panel-1127-07 | type 1 | staff | Staff online, Challenges; the owner runs a challenge
+  s1 see: 'Only the owner can start, change or cancel a challenge. You can see who has reached the goal.'
+  s1 see: The challenge card with members who reached the goal
+  s1 see: 'Leaderboard · last 30 days'
+  s1 not: 'New challenge', turn-on, change, cancel, give or skip controls for staff
+  s1 not: A hide button on the leaderboard
+J-F-panel-1127-08 | type 3 | staff | Staff online; no challenge running
+  s1 see: 'No challenge is running' with 'The owner has not started one.'
+  s1 not: A start button
+  s1 not: Ready-made challenges staff can turn on
+J-F-panel-1127-09 | type 6 | staff | Staff online; a challenge finished and the owner has not yet given the free days
+  s1 see: Before: each winner with a line that the free days wait; after a reload: what was given
+  s1 not: Give or Skip buttons for staff
+  s1 not: Old state kept after reload
+J-F-panel-1126-01 | type 1 | owner | Owner online, Diet plans, no plans yet
+  s1 see: Title 'Diet plans', subtitle 'Send members what to eat'
+  s1 see: 'No diet plans yet'
+  s1 see: 'Each ready-made plan is for an adult of about 60 to 70 kg who trains 3 to 5 days a week. It uses everyday Indian food and is not medical advice.'
+  s1 not: A ready-made plan sent to anyone before it is saved
+  s2 see: Toast '“<name>” saved and sent.' (or '“<name>” saved. Tick members to send it.' with nobody ticked)
+  s2 see: The plan under 'Plans'
+  s2 not: Two plans from a double tap
+  s2 not: The plan sent to a member who was not ticked
+  s2 not: The last meal removable (one meal must stay)
+J-F-panel-1126-02 | type 2 | owner | Owner online, on a member’s page, the Diet plan part
+  s1 see: Row reads 'Sending…'
+  s1 see: Toast '“<plan>” sent to <name>.'
+  s1 see: 'Already sent' on that plan next time
+  s1 not: The plan sent to another member
+  s1 not: Sent twice
+  s1 not: Other rows tappable while one sends
+  s2 see: Toast '“<plan>” saved and sent to <name>.'
+  s2 not: The new plan sent to every member
+J-F-panel-1126-03 | type 2 | owner | Owner online, on a member’s page, 'Body measurements', none yet
+  s1 see: 'No measurements yet' before
+  s1 see: Button reads 'Saving…'
+  s1 see: Toast 'Measurements saved. <name> sees them in the MettleUp app.'
+  s1 not: The desk note shown to the member
+  s1 not: Two rows for one save
+  s1 not: The measurements saved on another member
+J-F-panel-1126-04 | type 3 | owner | Owner on the diet editor and the measurements sheet; also with the gym not online
+  s1 see: A plain problem line under the wrong box or above the buttons
+  s1 not: A plan or measurement saved with a wrong value
+  s1 not: The typed values wiped
+  s2 see: 'Diet plans need your gym online' or 'Diet plans are not switched on for your gym yet'
+  s2 see: On the member page: 'Measurements are kept on your gym’s server. Put your gym online first (Settings → Sign-in & data).'
+  s2 not: An endless Loading…
+  s2 not: A save that looks done but is not
+J-F-panel-1126-05 | type 6 | owner | Owner online; one plan sent to two members, one measurement saved
+  s1 see: Toast '“<plan>” updated.'
+  s1 see: Toast '<name> no longer gets “<plan>”.'
+  s1 not: The other member loses the plan too
+  s1 not: The copy sent to the same members without ticking
+  s2 see: Toast 'Plan withdrawn.'
+  s2 see: The plan under a list with 'Members no longer get these.' with only a copy button
+  s2 not: Members still shown the withdrawn plan
+  s2 not: The withdrawn plan editable
+  s3 see: Toast 'Measurements updated.'
+  s3 see: Button reads 'Deleting…'; the row is gone
+  s3 see: 'Numbers in brackets show the change since the previous measurement.' still adds up
+  s3 not: The member’s own body weight entries in their app deleted
+  s3 not: A wrong change-since figure after the delete
+J-F-panel-1126-06 | type 12 | owner | Owner saves a measurement with a desk note for a member
+  s1 see: 'Members see these in their MettleUp app (Progress → Body) after they check in at the gym once.'
+  s1 see: 'Desk note (only your gym sees it)'
+  s1 not: The desk note in the member app
+  s1 not: One member’s measurements or diet plan shown to another member
+  s1 not: A member who never checked in at the gym getting the data
+J-F-panel-1126-07 | type 1 | staff | Staff (front desk) online, Diet plans, no plans yet
+  s1 see: Title 'Diet plans', subtitle 'Send members what to eat'
+  s1 see: 'No diet plans yet'
+  s1 see: 'Each ready-made plan is for an adult of about 60 to 70 kg who trains 3 to 5 days a week. It uses everyday Indian food and is not medical advice.'
+  s1 not: A ready-made plan sent to anyone before it is saved
+  s2 see: Toast '“<name>” saved and sent.' (or '“<name>” saved. Tick members to send it.' with nobody ticked)
+  s2 see: The plan under 'Plans'
+  s2 not: Two plans from a double tap
+  s2 not: The plan sent to a member who was not ticked
+  s2 not: The last meal removable (one meal must stay)
+J-F-panel-1126-08 | type 2 | staff | Staff (front desk) online, on a member’s page, the Diet plan part
+  s1 see: Row reads 'Sending…'
+  s1 see: Toast '“<plan>” sent to <name>.'
+  s1 see: 'Already sent' on that plan next time
+  s1 not: The plan sent to another member
+  s1 not: Sent twice
+  s1 not: Other rows tappable while one sends
+  s2 see: Toast '“<plan>” saved and sent to <name>.'
+  s2 not: The new plan sent to every member
+J-F-panel-1126-09 | type 2 | staff | Staff (front desk) online, on a member’s page, 'Body measurements', none yet
+  s1 see: 'No measurements yet' before
+  s1 see: Button reads 'Saving…'
+  s1 see: Toast 'Measurements saved. <name> sees them in the MettleUp app.'
+  s1 not: The desk note shown to the member
+  s1 not: Two rows for one save
+  s1 not: The measurements saved on another member
+J-F-panel-1126-10 | type 3 | staff | Staff (front desk) on the diet editor and the measurements sheet; also with the gym not online
+  s1 see: A plain problem line under the wrong box or above the buttons
+  s1 not: A plan or measurement saved with a wrong value
+  s1 not: The typed values wiped
+  s2 see: 'Diet plans need your gym online' or 'Diet plans are not switched on for your gym yet'
+  s2 see: On the member page: 'Measurements are kept on your gym’s server. Put your gym online first (Settings → Sign-in & data).'
+  s2 not: An endless Loading…
+  s2 not: A save that looks done but is not
+J-F-panel-1126-11 | type 6 | staff | Staff (front desk) online; one plan sent to two members, one measurement saved
+  s1 see: Toast '“<plan>” updated.'
+  s1 see: Toast '<name> no longer gets “<plan>”.'
+  s1 not: The other member loses the plan too
+  s1 not: The copy sent to the same members without ticking
+  s2 see: Toast 'Plan withdrawn.'
+  s2 see: The plan under a list with 'Members no longer get these.' with only a copy button
+  s2 not: Members still shown the withdrawn plan
+  s2 not: The withdrawn plan editable
+  s3 see: Toast 'Measurements updated.'
+  s3 see: Button reads 'Deleting…'; the row is gone
+  s3 see: 'Numbers in brackets show the change since the previous measurement.' still adds up
+  s3 not: The member’s own body weight entries in their app deleted
+  s3 not: A wrong change-since figure after the delete
+J-F-panel-1126-12 | type 12 | staff | Staff (front desk) saves a measurement with a desk note for a member
+  s1 see: 'Members see these in their MettleUp app (Progress → Body) after they check in at the gym once.'
+  s1 see: 'Desk note (only your gym sees it)'
+  s1 not: The desk note in the member app
+  s1 not: One member’s measurements or diet plan shown to another member
+  s1 not: A member who never checked in at the gym getting the data
+J-F-panel-1126-13 | type 1 | trainer | Trainer (a staff sign-in ticked as trainer) online, Diet plans, no plans yet
+  s1 see: Title 'Diet plans', subtitle 'Send members what to eat'
+  s1 see: 'No diet plans yet'
+  s1 see: 'Each ready-made plan is for an adult of about 60 to 70 kg who trains 3 to 5 days a week. It uses everyday Indian food and is not medical advice.'
+  s1 not: A ready-made plan sent to anyone before it is saved
+  s2 see: Toast '“<name>” saved and sent.' (or '“<name>” saved. Tick members to send it.' with nobody ticked)
+  s2 see: The plan under 'Plans'
+  s2 not: Two plans from a double tap
+  s2 not: The plan sent to a member who was not ticked
+  s2 not: The last meal removable (one meal must stay)
+J-F-panel-1126-14 | type 2 | trainer | Trainer (a staff sign-in ticked as trainer) online, on a member’s page, the Diet plan part
+  s1 see: Row reads 'Sending…'
+  s1 see: Toast '“<plan>” sent to <name>.'
+  s1 see: 'Already sent' on that plan next time
+  s1 not: The plan sent to another member
+  s1 not: Sent twice
+  s1 not: Other rows tappable while one sends
+  s2 see: Toast '“<plan>” saved and sent to <name>.'
+  s2 not: The new plan sent to every member
+J-F-panel-1126-15 | type 2 | trainer | Trainer (a staff sign-in ticked as trainer) online, on a member’s page, 'Body measurements', none yet
+  s1 see: 'No measurements yet' before
+  s1 see: Button reads 'Saving…'
+  s1 see: Toast 'Measurements saved. <name> sees them in the MettleUp app.'
+  s1 not: The desk note shown to the member
+  s1 not: Two rows for one save
+  s1 not: The measurements saved on another member
+J-F-panel-1126-16 | type 3 | trainer | Trainer (a staff sign-in ticked as trainer) on the diet editor and the measurements sheet; also with the gym not online
+  s1 see: A plain problem line under the wrong box or above the buttons
+  s1 not: A plan or measurement saved with a wrong value
+  s1 not: The typed values wiped
+  s2 see: 'Diet plans need your gym online' or 'Diet plans are not switched on for your gym yet'
+  s2 see: On the member page: 'Measurements are kept on your gym’s server. Put your gym online first (Settings → Sign-in & data).'
+  s2 not: An endless Loading…
+  s2 not: A save that looks done but is not
+J-F-panel-1126-17 | type 6 | trainer | Trainer (a staff sign-in ticked as trainer) online; one plan sent to two members, one measurement saved
+  s1 see: Toast '“<plan>” updated.'
+  s1 see: Toast '<name> no longer gets “<plan>”.'
+  s1 not: The other member loses the plan too
+  s1 not: The copy sent to the same members without ticking
+  s2 see: Toast 'Plan withdrawn.'
+  s2 see: The plan under a list with 'Members no longer get these.' with only a copy button
+  s2 not: Members still shown the withdrawn plan
+  s2 not: The withdrawn plan editable
+  s3 see: Toast 'Measurements updated.'
+  s3 see: Button reads 'Deleting…'; the row is gone
+  s3 see: 'Numbers in brackets show the change since the previous measurement.' still adds up
+  s3 not: The member’s own body weight entries in their app deleted
+  s3 not: A wrong change-since figure after the delete
+J-F-panel-1126-18 | type 12 | trainer | Trainer (a staff sign-in ticked as trainer) saves a measurement with a desk note for a member
+  s1 see: 'Members see these in their MettleUp app (Progress → Body) after they check in at the gym once.'
+  s1 see: 'Desk note (only your gym sees it)'
+  s1 not: The desk note in the member app
+  s1 not: One member’s measurements or diet plan shown to another member
+  s1 not: A member who never checked in at the gym getting the data
+J-F-panel-1116-01 | type 1 | owner | Owner online, Enquiries, none yet
+  s1 see: Title 'Enquiries', subtitle 'People who asked about joining'
+  s1 see: 'No enquiries yet' before
+  s1 see: Hint 'Call back on <day> (<when>)' or 'No date: it goes under Later.'
+  s1 see: The new row with its call-back day
+  s1 not: Two rows from a second press after a failed send
+  s1 not: A message sent to the person
+  s1 not: A follow-up day in the past accepted
+  s2 see: The filled-in Add member form
+  s2 see: The row turns 'Joined' with 'Open member'
+  s2 not: A second member with the same number
+  s2 not: Money shown as collected when nothing was paid
+  s2 not: The enquiry left open after the member was saved, with no word
+J-F-panel-1116-02 | type 2 | owner | Owner taps the quick button that opens Enquiries with the add sheet open at once
+  s1 see: The 'Add enquiry' sheet over the list
+  s1 not: The sheet opening again after it is closed
+  s1 not: A blank page
+J-F-panel-1116-03 | type 2 | owner | Owner online; a friend came through a member’s invite link and has now joined; the gym gives free days
+  s1 see: Sheet 'Free days added'
+  s1 not: The days added twice on a second tap or a retry
+  s1 not: Days added to a member with no running plan
+  s1 not: A receipt made for free days
+  s2 see: '<member> got <n> free days for this friend.'
+  s2 see: No 'Give free days' button
+  s2 not: The button back after a reload
+J-F-panel-1116-04 | type 2 | owner | Owner online, Settings → Member app → Bring a friend
+  s1 see: A line that a member gets <n> free days for each friend who joins
+  s1 see: After emptying: 'No free days for a friend who joins.'
+  s1 not: Free days given by themselves without the owner’s tap
+  s1 not: The member app still promising the old number after its refresh
+J-F-panel-1116-05 | type 3 | owner | Owner on the Add enquiry sheet
+  s1 see: A problem line under the wrong box
+  s1 not: An enquiry saved without a usable number
+  s1 not: Typed values wiped
+  s2 see: '<name> already asked from this number (call back <day>). You can still save.' or '<name> is already a member with this number.'
+  s2 not: The save blocked for a family number
+  s2 not: No warning at all
+  s3 see: Sheet 'Already a member' or 'Already a member (archived)' with a way to open or restore
+  s3 not: A duplicate member
+J-F-panel-1116-06 | type 6 | owner | Owner online with one open enquiry due today
+  s1 see: The row moves under Later with 'Call back <day>'
+  s1 not: 'The follow-up date can’t be in the past.' missing for a past day
+  s2 see: Bar '<name>: marked not interested.' with Undo
+  s2 see: 'Why did <name> not join? (optional)' on the row
+  s2 not: The enquiry deleted
+  s3 see: The enquiry open again with its old call-back day
+  s3 not: A second copy of the enquiry
+J-F-panel-1116-07 | type 12 | owner | Owner reads enquiries that came from the gym web page, an online join and a friend invite
+  s1 see: 'Asked on your web page', 'Chat on your web page', 'Asked to join online: <plan>, from <day>, <amount>. Paid.' or 'Not paid yet.', 'Referred by <member>'
+  s1 see: 'No number left yet' when the visitor gave none
+  s1 not: Another gym’s enquiries
+  s1 not: The friend’s details shown to the member who invited them
+  s1 not: A WhatsApp sent by opening the row
+J-F-panel-1116-08 | type 1 | staff | Staff online, Enquiries
+  s1 see: The new row with its call-back day
+  s1 not: Two rows
+  s1 not: A message sent to the person
+  s2 see: The phone’s dialler or WhatsApp opens with nothing sent by itself
+  s2 see: The row turns 'Joined'
+  s2 not: A WhatsApp sent without staff pressing send in WhatsApp
+  s2 not: A duplicate member
+J-F-panel-1116-09 | type 2 | staff | Staff taps the quick button for a new enquiry
+  s1 see: The 'Add enquiry' sheet
+  s1 not: A refusal page (staff may add enquiries)
+J-F-panel-1116-10 | type 3 | staff | Staff online; a referred friend has joined and free days are ready to give
+  s1 see: 'Referred by <member>'
+  s1 see: No 'Give free days' button and no reward note until the owner has given
+  s1 not: Staff able to move a plan’s last day
+  s1 not: A dead button
+  s2 see: A problem line under the box
+  s2 not: A bad row saved
+J-F-panel-1116-11 | type 6 | staff | Staff online with an open enquiry
+  s1 see: Bar '<name>: marked not interested.'
+  s1 see: Pill 'Not interested', then the open pills again
+  s1 not: The reason lost on reopen without a word
+  s1 not: The enquiry deleted
+  s2 see: '<member> got <n> free days for this friend.'
+  s2 not: A give button for staff
+J-F-panel-1116-12 | type 12 | staff | Staff reads the enquiry list
+  s1 see: Names, numbers and what they asked
+  s1 not: Money totals of the gym
+  s1 not: Enquiries of another branch the staff does not work at
+J-F-panel-1128-01 | type 1 | owner | Owner online, Expenses (Money group of the menu), this month, nothing added
+  s1 see: Title 'Expenses', subtitle 'What went out, and what the gym kept'
+  s1 see: 'No expenses this month' with 'Add rent, salaries, electricity and the rest to see what the gym really kept.'
+  s1 see: Button reads 'Saving…'
+  s1 see: Toast 'Expense added.'
+  s1 see: The page jumps to the month of the expense
+  s1 not: Two expenses from a second press
+  s1 not: The expense in the wrong month
+  s1 not: A member payment changed
+  s2 see: 'Fees <amount> + shop <amount>' under Collected
+  s2 see: Profit = Collected minus Expenses
+  s2 not: A refunded or voided receipt counted in Collected
+  s2 not: Totals that do not add up
+  s2 not: NaN or a blank tile
+J-F-panel-1128-02 | type 3 | owner | Owner on the Add expense sheet
+  s1 see: 'Type how much was spent.'
+  s1 see: 'That amount looks wrong. Type it again.'
+  s1 see: 'Type an amount more than zero.'
+  s1 see: 'The expense date can’t be in the future.'
+  s1 see: 'That date looks wrong. Check the year.'
+  s1 not: An expense saved with a wrong amount or date
+  s1 not: The typed values wiped
+J-F-panel-1128-03 | type 6 | owner | Owner online; one expense this month and one last month
+  s1 see: Toast 'Expense removed.'
+  s1 see: Expenses and Profit change by that amount
+  s1 not: The expense removed on Keep it
+  s1 not: Profit unchanged after the remove
+  s1 not: The wrong row removed
+  s2 see: Last month’s figures, then this month’s
+  s2 see: 'Next month' is off on the current month
+  s2 not: A future month reachable
+  s2 not: This month’s expense shown in last month
+J-F-panel-1128-04 | type 12 | owner | A staff person signed in on the same gym
+  s1 see: No Expenses entry; the address does not open the page
+  s1 not: Staff seeing Collected, Expenses or Profit
+  s1 not: An expense note shown to staff elsewhere
+J-F-panel-1135-01 | type 1 | owner | Owner online, More → Help and feedback
+  s1 see: Title 'Help and feedback'
+  s1 see: 'Ask a question and get an answer at once. Or tell us what works, what is hard, or what you want next. Hindi or English. On a phone you can tap the microphone on your keyboard to speak.'
+  s1 see: Button reads 'Sending…'
+  s1 see: An answer with 'Answer written by AI from our help pages.' and 'Did this solve it?' with Yes / No
+  s1 not: The message sent twice
+  s1 not: The box emptied when the send failed
+  s1 not: A member’s name or number added to the message by the app
+  s2 see: 'Got it. We reply as soon as we can.'
+  s2 see: The question in the list of your questions with its answer
+  s2 not: The rating sent for another question
+  s2 not: No way to see a later reply from the team
+J-F-panel-1135-02 | type 2 | owner | Owner online, Help and feedback, the 'MettleUp access' card at the bottom
+  s1 see: Words that support can read members, plans, receipts, check-ins, shop orders and the staff list for the next hour and cannot change anything
+  s1 see: A 'Close it now' button while it is open
+  s1 see: The window in the access list
+  s1 not: A window longer than one hour
+  s1 not: Support able to change records
+  s1 not: The window opened without the question
+  s1 not: Two windows from a double tap
+  s2 see: The window shown as ended in the list
+  s2 not: Support still able to look after it is closed
+J-F-panel-1135-03 | type 3 | owner | Owner on Help and feedback
+  s1 see: 'Send' is off while the box is empty
+  s1 see: Typing stops at 2,000 letters
+  s1 see: 'Couldn't send. Check your internet and try again. Your message is still here.'
+  s1 not: The message lost
+  s1 not: A thank-you shown for a message that did not go
+  s2 see: An answer from the help pages and a button 'Open AI Assistant'
+  s2 not: Credits taken for an answer that did not use the AI
+  s2 not: No answer at all
+J-F-panel-1135-04 | type 6 | owner | Owner asked a question yesterday; the team replied since; support never looked at the gym
+  s1 see: Yesterday’s question with the team’s reply, marked as new once
+  s1 see: 'MettleUp has never opened your records.' in the access card
+  s1 not: The reply marked new again after it was seen
+  s1 not: The history empty on the same browser
+  s2 see: The window listed as ended, with each look support made
+  s2 not: The window still open after one hour
+  s2 not: A look that is not listed
+J-F-panel-1135-05 | type 12 | owner | Owner reads the MettleUp access card before letting support look
+  s1 see: 'MettleUp sees only your gym’s totals (how many members, check-ins and money in all), never a member’s name or number. MettleUp support can look at your records only when you let them, for one hour at most, and only to read…'
+  s1 see: Every look with its time
+  s1 not: A look outside a window not shown
+  s1 not: The card shown to staff
+  s1 not: The card shown for a gym that is not online as if it worked
+J-F-panel-1135-06 | type 1 | staff | Staff online, More → Help and feedback
+  s1 see: Button reads 'Sending…'
+  s1 see: 'Thanks! We read every message.' or an answer with 'Did this solve it?'
+  s1 not: The message sent twice
+  s1 not: A member’s details added by the app
+J-F-panel-1135-07 | type 3 | staff | Staff online on Help and feedback
+  s1 see: No 'MettleUp access' card
+  s1 not: Staff able to open the gym’s records to support
+  s2 see: An answer from the help pages with no button to the AI Assistant
+  s2 not: An 'Open AI Assistant' button that staff cannot use
+J-F-panel-1135-08 | type 6 | staff | Staff asked a question earlier on this browser
+  s1 see: The earlier question with its answer or reply
+  s1 not: The reply marked new every time
+J-F-panel-1135-09 | type 12 | staff | Staff uses the desk browser where the owner also asked questions
+  s1 see: Unknown from the code read whether the questions list is kept per person or per browser
+  s1 not: The owner’s questions to MettleUp and their answers shown to staff
+  s1 not: Who looked at the gym’s records shown to staff
+J-F-panel-1111-01 | type 1 | owner | Owner online, Members → Import members from Excel, a file with name, mobile, plan, fees and valid-till columns
+  s1 see: Title 'Import members from Excel', subtitle 'Bring in your members from an Excel sheet or your old gym software'
+  s1 see: 'Other columns (locker number, blood group…) can be kept as extra details. Aadhaar and PAN numbers are never imported.'
+  s1 see: 'Nothing is saved until you check the list and tap Add.'
+  s1 see: 'Reading the file… a big sheet can take a few seconds.'
+  s1 not: Anything saved at this step
+  s1 not: The page frozen with no word on a big sheet
+  s2 see: 'Matching your columns with AI…' with 'Names, addresses, phone numbers, emails and ID numbers are hidden before anything is sent.'
+  s2 see: 'AI matched <n> columns. Check the boxes below and change any that are wrong.' or 'AI checked your columns and agrees with them. Check the boxes below.'
+  s2 see: 'Other columns in your file' with 'AI says this column is not needed, so it is not kept. Tick it to keep it.'
+  s2 not: A box the owner changed overwritten by the AI answer
+  s2 not: Member names or numbers sent to the AI
+  s2 not: An Aadhaar or PAN column offered as an extra detail
+  s3 see: 'Adding members…' with progress
+  s3 see: 'Import finished' with '<n> added, <n> skipped' and '<n> plans with their dates · <n> receipts'
+  s3 not: A member added twice
+  s3 not: A payment brought in twice
+  s3 not: A row with a bad number added without a word
+  s3 not: A WhatsApp sent to imported members
+J-F-panel-1111-02 | type 2 | owner | Owner online with a .csv file of 600 rows and a second file with several sheets and a branch column
+  s1 see: 'Only the first <max> rows can be imported at once. <n> more rows were left out. Import them as a second file.'
+  s1 not: Rows past the limit dropped without a word
+  s2 see: 'Branches in your file' with 'Your file has a column with each member’s branch. Check that each name goes to the right branch.'
+  s2 see: After the import, one line per branch and 'Each branch has its own “Past imports” list on this page…'
+  s2 not: Members saved in the wrong branch
+  s2 not: One branch’s failure holding back the others without a word
+J-F-panel-1111-03 | type 3 | owner | Owner online with files that are wrong
+  s1 see: An error line for the empty file
+  s1 see: 'Rows to check' with a fix box per row
+  s1 see: Existing members counted as skipped (or filled in when that is chosen)
+  s1 not: A crash on an odd file
+  s1 not: An existing member overwritten
+  s1 not: The add button on when nothing can be added
+  s2 see: 'A ticked column with no name is not kept. Give it a name.'
+  s2 not: The column kept with an empty name
+  s3 see: 'Matched without AI (it was not available). Check the columns below.'
+  s3 not: The import blocked because the AI is not there
+  s3 not: An error box
+J-F-panel-1111-04 | type 6 | owner | Owner online; an import was done earlier today and its plans or payments partly failed
+  s1 see: 'Members are saved, but not all their plans and payments. <reason> Tap “Undo this import” below. Then import the same file again, so every payment comes in only once.'
+  s1 not: A half import shown as finished cleanly
+  s2 see: 'This removes what this file added: <n> members, <n> plans with dates, <n> receipts and <n> plan names from Plans. … Nothing you added yourself is removed.'
+  s2 see: Button reads 'Undoing…'
+  s2 see: 'Import undone: <n> members, <n> plans with dates, <n> receipts and <n> plan names removed.'
+  s2 not: A member the owner added by hand removed
+  s2 not: A payment taken after the import removed without a word
+  s2 not: Members who checked in since removed without saying what was kept
+  s3 see: 'The import was not fully undone. Check the internet and tap Undo again. What is already removed stays removed.'
+  s3 not: Rows removed twice
+  s3 not: The list of past imports losing the import before it is fully undone
+  s4 see: The same members added once, each payment once
+  s4 not: Doubled receipts
+J-F-panel-1111-05 | type 12 | owner | Owner imports a file that has Aadhaar, PAN, address and phone columns
+  s1 see: 'Aadhaar and PAN numbers are never imported.'
+  s1 see: 'Names, addresses, phone numbers, emails and ID numbers are hidden before anything is sent.'
+  s1 not: An ID number saved on a member
+  s1 not: A real name, number or address in what goes to the AI
+  s1 not: The file kept anywhere after the import
+J-F-panel-1111-06 | type 1 | staff | Staff online, Members → Import members from Excel, a file with name, mobile and plan columns
+  s1 see: '<n> members have a plan in this file. Only the owner can add plans and payments. Members are added now. Plans are added when the owner imports the same file.'
+  s1 not: An AI line or an AI call for staff
+  s1 not: Plans or payments added by staff
+  s2 see: 'Import finished' with '<n> added, <n> skipped'
+  s2 see: 'Only the owner can add the plans and payments in this file. Ask the owner to import the same file. Members already added are skipped.'
+  s2 not: Receipts made
+  s2 not: A 'Past imports' list with Undo for staff
+  s2 not: Money totals shown
+J-F-panel-1111-07 | type 3 | staff | Staff online with a file of rows that have no mobile number, and members that already exist
+  s1 see: 'Rows to check' with a fix box per row
+  s1 see: Existing members shown as skipped
+  s1 not: Bad rows added
+  s1 not: An existing member overwritten
+  s1 not: The add button on with nothing to add
+J-F-panel-1111-08 | type 6 | staff | Staff imported members; the owner now imports the same file
+  s1 see: Button reads 'Add <n> plans and payments'
+  s1 see: Members skipped, plans and receipts added once
+  s1 not: The members added a second time
+  s1 not: Plans left out because the members already exist
+  s2 see: No 'Past imports' list for staff
+  s2 not: Staff able to undo the owner’s import
+J-F-panel-1111-09 | type 12 | staff | Staff imports a file with fees and ID columns
+  s1 see: 'Aadhaar and PAN numbers are never imported.'
+  s1 not: Fees or payment totals from the file saved or shown as gym money to staff
+  s1 not: An ID number kept
+  s1 not: Anything from the file sent to the AI by a staff import

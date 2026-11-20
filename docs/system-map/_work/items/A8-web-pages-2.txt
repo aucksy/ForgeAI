@@ -1,0 +1,611 @@
+# A8-web-pages-2: coverage of 82 Tier 1 journeys (8 features, from A5-web-pages-2). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-web-110 | deploy/panel/friend.test.mjs | unit | 123 lines | imports the code, file name
+F-web-110 | apps/dashboard/e2e/friend-live-uat.spec.mjs | e2e | 262 lines | file name, asserts 1 journey phrase(s)
+F-web-110 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | file name, asserts 1 journey phrase(s)
+F-web-110 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-web-110 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-web-110 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-web-110 | deploy/panel/mobileRule.test.mjs | unit | 51 lines | imports the code
+F-web-110 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-web-110 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-web-110 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 2 journey phrase(s)
+F-web-110 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 2 journey phrase(s)
+F-web-110 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-web-111 | apps/dashboard/test/crm/selfJoin.test.ts | unit | 174 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-web-111 | apps/mobile/qa/uat-e.yaml | maestro | 267 lines | asserts 5 journey phrase(s)
+F-web-111 | deploy/panel/selfJoin.test.mjs | unit | 256 lines | imports the code, file name
+F-web-111 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 3 journey phrase(s)
+F-web-111 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 3 journey phrase(s)
+F-web-111 | apps/dashboard/test/crm/joinPay.test.ts | unit | 223 lines | imports the code
+F-web-111 | apps/dashboard/test/crm/joinTrial.test.ts | unit | 160 lines | imports the code
+F-web-111 | apps/mobile/qa/phase1-a.yaml | maestro | 320 lines | asserts 3 journey phrase(s)
+F-web-111 | apps/mobile/qa/real-workout-w1.yaml | maestro | 368 lines | asserts 3 journey phrase(s)
+F-web-111 | apps/mobile/qa/store-a.yaml | maestro | 219 lines | asserts 3 journey phrase(s)
+F-web-111 | apps/mobile/qa/uat-d.yaml | maestro | 342 lines | asserts 3 journey phrase(s)
+F-web-111 | apps/mobile/qa/uat-rel-1-seed.yaml | maestro | 237 lines | asserts 3 journey phrase(s)
+F-web-107 | apps/mobile/qa/uat-rel-r336-update.yaml | maestro | 229 lines | asserts 6 journey phrase(s)
+F-web-107 | deploy/panel/whatsNewFeed.test.mjs | unit | 70 lines | imports the code, file name
+F-web-107 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/WatchVersionTest.kt | watch | 31 lines | asserts 4 journey phrase(s)
+F-web-107 | apps/mobile/qa/uat-rel-r401-whats-new.yaml | maestro | 96 lines | asserts 4 journey phrase(s)
+F-web-107 | apps/mobile/test/lib/updatePrompt.test.ts | unit | 214 lines | asserts 4 journey phrase(s)
+F-web-107 | apps/mobile/qa/uat-rel-r336-b-offline.yaml | maestro | 33 lines | asserts 3 journey phrase(s)
+F-web-107 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-web-107 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-web-107 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-web-107 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-web-107 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-web-107 | apps/dashboard/e2e/terms.spec.mjs | e2e | 149 lines | asserts 2 journey phrase(s)
+F-web-105 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code, file name
+F-web-105 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-web-105 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-web-105 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-web-105 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-web-105 | apps/dashboard/e2e/r579-uat.spec.mjs | e2e | 298 lines | asserts 2 journey phrase(s)
+F-web-105 | apps/dashboard/e2e/entry-uat.spec.mjs | e2e | 187 lines | asserts 1 journey phrase(s)
+F-web-105 | apps/dashboard/e2e/gyms-site-uat.spec.mjs | e2e | 242 lines | asserts 1 journey phrase(s)
+F-web-105 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-web-105 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-web-105 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-web-105 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-web-106 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-web-106 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-web-106 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-web-106 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-web-106 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-web-106 | apps/mobile/test/tracker/healthOnOff.test.ts | unit | 136 lines | asserts 1 journey phrase(s)
+F-web-106 | deploy/panel/aiMatch.test.mjs | unit | 678 lines | asserts 1 journey phrase(s)
+F-web-117 | deploy/panel/feedback.test.mjs | unit | 139 lines | imports the code, file name
+F-web-117 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-web-117 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-web-117 | deploy/panel/crash.test.mjs | unit | 105 lines | imports the code
+F-web-117 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-web-117 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-web-117 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-web-117 | apps/dashboard/e2e/feedback.spec.mjs | e2e | 34 lines | file name
+F-web-117 | apps/dashboard/test/crm/feedback.test.ts | unit | 91 lines | file name
+F-web-117 | apps/mobile/test/lib/feedback.test.ts | unit | 59 lines | file name
+F-web-117 | apps/mobile/test/lib/feedbackButton.test.ts | unit | 120 lines | file name
+F-web-117 | apps/mobile/test/lib/feedbackMemberKey.test.ts | unit | 43 lines | file name
+F-web-118 | deploy/panel/help.test.mjs | unit | 215 lines | imports the code, file name
+F-web-118 | deploy/panel/helpArticles.test.mjs | unit | 156 lines | imports the code, file name
+F-web-118 | deploy/panel/helpCredits.test.mjs | unit | 163 lines | imports the code, file name
+F-web-118 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-web-118 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-web-118 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-web-118 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-web-118 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-web-118 | apps/mobile/qa/uat-rel-13-help-questions.yaml | maestro | 79 lines | file name
+F-web-118 | apps/mobile/qa/uat-rel-r452-help-replies.yaml | maestro | 182 lines | file name
+F-web-118 | apps/mobile/test/lib/helpHistory.test.ts | unit | 207 lines | file name
+F-web-118 | apps/mobile/test/lib/helpHistoryStore.test.ts | unit | 153 lines | file name
+F-web-120 | deploy/panel/voice.test.mjs | unit | 161 lines | imports the code, file name
+F-web-120 | deploy/hq/leads-flow.test.mjs | unit | 88 lines | imports the code
+F-web-120 | deploy/panel/appLink.test.mjs | unit | 259 lines | imports the code
+F-web-120 | deploy/panel/hosts.test.mjs | unit | 291 lines | imports the code
+F-web-120 | deploy/panel/switches.test.mjs | unit | 170 lines | imports the code
+F-web-120 | deploy/panel/webKey.test.mjs | unit | 43 lines | imports the code
+F-web-120 | apps/dashboard/test/crm/assistant/todayApiVoice.test.ts | unit | 165 lines | file name
+F-web-120 | apps/mobile/test/lib/feedbackVoice.test.ts | unit | 147 lines | file name
+F-web-120 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-web-120 | apps/dashboard/e2e/feedback.spec.mjs | e2e | 34 lines | asserts 1 journey phrase(s)
+F-web-120 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 1 journey phrase(s)
+F-web-120 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-web-110-01 | type 1 | prospect | Friend's phone, a WhatsApp message from a member with the link app.mettleup.fit/f/<CODE>
+  s1 see: The gym's name as the title
+  s1 see: '<member first name> invited you to train here.' with the Hinglish line under it
+  s1 see: 'Only <gym> sees your number. <member> does not.'
+  s1 not: A blank page or endless loading
+  s1 not: Another gym's name or logo
+  s1 not: The member's phone number or full name
+  s2 see: The typed values stay in the boxes
+  s2 see: 'Any time' picked unless changed
+  s2 not: An error shown before Send is tapped
+  s2 not: The number box taking letters as part of the number
+  s3 see: 'Sent. <gym> will call you soon.' with 'Bhej diya. <gym> aapko jaldi call karega.'
+  s3 not: Two enquiries in the gym for one tap
+  s3 not: The form still shown as if nothing was sent
+  s3 not: The enquiry landing in another gym
+J-F-web-110-02 | type 2 | prospect | Friend opens an invite link whose member has no first name on record
+  s1 see: 'A friend invited you to train here.'
+  s1 see: 'Only <gym> sees your number. Your friend does not.'
+  s1 not: The word 'undefined' or an empty name in the line
+  s1 not: A broken sentence
+  s2 see: 'Sent. <gym> will call you soon.'
+  s2 not: The send refused because the inviter has no name
+J-F-web-110-03 | type 3 | prospect | Friend on the invite page with the form open
+  s1 see: Under the name: 'Type your name.' / 'Apna naam likhiye.'
+  s1 see: Under the number: 'Type a 10-digit mobile number.'
+  s1 see: The cursor goes to the name box
+  s1 not: Anything sent to the gym
+  s1 not: The form cleared
+  s2 see: 'Too many requests from this link today. Please try again tomorrow.'
+  s2 not: A sixth enquiry in the gym
+  s2 not: 'Sent.' shown for a send that was refused
+  s3 see: 'Invite not found' or 'This invite link does not work any more'
+  s3 not: The form shown for a code that cannot work
+  s3 not: An error page from the server
+J-F-web-110-04 | type 6 | prospect | Invite page open; meanwhile the member's invite code stops working (member left or the gym turned Bring a friend off)
+  s1 see: 'This invite link does not work any more' / 'Yeh invite link ab kaam nahi karta'
+  s1 see: The form is hidden
+  s1 not: 'Sent.' shown
+  s1 not: The enquiry saved without a member to credit
+  s2 see: 'Invite not found'
+  s2 not: The old form coming back for a dead code
+J-F-web-110-05 | type 12 | prospect | Friend has sent the form; the member who invited them opens their app
+  s1 see: 'Sent. <gym> will call you soon.'
+  s1 not: The number stored anywhere but that gym's Enquiries
+  s2 see: Only how many friends joined
+  s2 not: The friend's name or number shown to the member
+  s2 not: The enquiry visible to any other gym
+J-F-web-110-06 | type 1 | member | Member has shared their invite link and opens it in the phone browser to see what the friend sees
+  s1 see: The gym's name, logo or its first letter
+  s1 see: '<own first name> invited you to train here.'
+  s1 see: 'Only <gym> sees your number. <own first name> does not.'
+  s1 not: The member's phone number or surname on the page
+  s1 not: Another member's name
+J-F-web-110-07 | type 3 | member | Member opens a copy of their link with the code cut short by the chat app
+  s1 see: 'Invite not found'
+  s1 not: A form shown that can never send
+  s1 not: A server error page
+J-F-web-110-08 | type 6 | member | A friend already in the gym's Enquiries is invited again by the member
+  s1 see: The friend sees 'Sent. <gym> will call you soon.'
+  s1 see: In the gym's Enquiries the old enquiry shows 'Invited again by' and the member's name
+  s1 not: A second enquiry for the same number
+  s1 not: The member not credited for the second invite
+J-F-web-110-09 | type 12 | member | Two friends sent the form from the member's link
+  s1 see: How many friends joined
+  s1 not: Either friend's number or name shown to the member
+  s1 not: Friends of other members counted
+J-F-web-111-01 | type 1 | prospect | A person on their phone opens the gym's 'Become a member' link app.mettleup.fit/m/<GYM CODE>
+  s1 see: 'Become a member'
+  s1 see: 'Step 1 of 3' 'About you'
+  s1 see: A 'हिंदी' button at the top
+  s1 not: A blank page
+  s1 not: Another gym's name or plans
+  s2 see: The number shown as checked
+  s2 see: 'Change number' link
+  s2 see: 'Next' button
+  s2 not: A number marked checked without the WhatsApp message
+  s2 not: The typed name lost on coming back
+  s3 see: Each plan with the gym's own price
+  s3 see: The total for the picked plan
+  s3 not: A price different from the gym's plan in the panel
+  s3 not: A start day before today allowed
+  s4 see: 'Sent to <gym>'
+  s4 see: 'Your plan: <plan>, starting <date>.'
+  s4 not: Two enquiries for one tap
+  s4 not: A request saved in another gym
+  s4 not: A price the page made up sent to the gym
+J-F-web-111-02 | type 2 | prospect | The gym has switched on a free trial; the person is on Step 2
+  s1 see: 'Trial starts on'
+  s1 see: 'The free trial costs nothing. You do not pay anything on this page.'
+  s1 see: No 'How you pay' choice
+  s1 not: Any amount to pay
+  s1 not: A 'Pay now' button
+  s2 see: 'Your free trial: <from> to <to>.'
+  s2 not: The person shown as a member
+  s2 not: A payment started
+J-F-web-111-03 | type 2 | prospect | The gym takes online payment; the person is on Step 3
+  s1 see: 'Sent to <gym>'
+  s1 see: 'Pay now' button
+  s1 see: 'I have paid'
+  s1 see: 'Pay at the desk instead'
+  s1 not: The request lost when the payment cannot be made
+  s1 not: A different amount from the plan total
+  s2 see: The done screen without the pay button
+  s2 not: The request removed
+J-F-web-111-04 | type 3 | prospect | The person is on Step 3 with everything filled
+  s1 see: A line under the boxes asking to tick them
+  s1 not: Anything sent
+  s2 see: 'This number is already a member of this gym. You can renew your plan instead.'
+  s2 see: 'Use another number'
+  s2 not: A second member made
+  s2 not: The old member changed
+  s3 see: 'You have already used a free trial at this gym with this mobile number. Please pick a plan to join.'
+  s3 see: Back on Step 2 with no plan picked
+  s3 not: A second free trial given
+  s4 see: 'Too many sign-ups were sent today. Please try again tomorrow, or join at the gym desk.'
+  s4 not: 'Sent to <gym>' shown for a refused send
+J-F-web-111-05 | type 6 | prospect | The person filled Step 1 and 2; meanwhile the owner changes the gym
+  s1 see: 'This gym is not offering free trials right now. Please pick a plan to join.'
+  s1 see: Back on Step 2 with the plans reloaded
+  s1 not: A trial started after it was switched off
+  s2 see: Back on Step 2 with the new plans and a line that the plan changed
+  s2 not: The old price sent
+  s3 see: '<gym> is not taking sign-ups online right now'
+  s3 see: 'Please join at the gym desk.'
+  s3 not: The form shown
+J-F-web-111-06 | type 12 | prospect | The person sent the form
+  s1 see: The person's name, number, plan and start day in that gym only
+  s1 not: The number shown to any other gym
+  s1 not: The number kept by the page itself
+  s1 not: A price taken from what the page sent
+J-F-web-107-01 | type 1 | member | Member app on an older version; a new release is out with a whats-new.json
+  s1 see: The full-screen 'A new MettleUp is here'
+  s1 see: Up to 5 What's new lines of the new version
+  s1 not: The screen with no lines
+  s1 not: Lines of an older release
+  s1 not: More than 5 lines cut mid-sentence
+J-F-web-107-02 | type 3 | member | GitHub does not answer and the server has no kept copy of the lines
+  s1 see: The update screen without What's new lines, or with the lines from GitHub's own link
+  s1 not: A crash
+  s1 not: Empty bullet points
+  s1 not: An error code shown to the member
+J-F-web-107-03 | type 6 | member | A release was just replaced by a newer one
+  s1 see: The update screen; its lines may still be the previous release's for up to 10 minutes
+  s1 not: Lines of one version shown under another version's number
+  s2 see: The new release's lines
+  s2 not: Old lines kept for longer than 10 minutes
+J-F-web-107-04 | type 1 | system | GET /app/whats-new.json with nothing in the 10-minute cache
+  s1 see: 200 with {"version":"x.y.z","lines":[...]}
+  s1 see: Cache-Control max-age=600
+  s1 not: A 'v' left in the version
+  s1 not: More than 5 lines
+  s1 not: A non-JSON body
+  s2 see: The cached copy, without a GitHub call
+  s2 not: A call to GitHub on every request
+J-F-web-107-05 | type 3 | system | Both GitHub doors fail and no kept copy exists
+  s1 see: 503 {"error":"not available"} with no-store
+  s1 not: A 200 with empty lines
+  s1 not: The failure cached
+J-F-web-107-06 | type 6 | system | GitHub fails; a copy from the last 7 days is kept
+  s1 see: 200 with the kept copy, max-age 60
+  s1 not: A 503 while a good copy is kept
+  s1 not: The kept copy cached for 10 minutes
+J-F-web-105-01 | type 1 | prospect | An Android phone; the person taps app.mettleup.fit/app from a poster or the website
+  s1 see: Google Play opens on the MettleUp app
+  s1 not: A page in between
+  s1 not: The App Store
+  s1 not: Another app's Play page
+J-F-web-105-02 | type 2 | prospect | An iPhone while the iPhone app is not out
+  s1 see: 'The iPhone app is coming soon'
+  s1 see: 'What you can do now'
+  s1 not: Google Play as the main button
+  s1 not: A broken App Store link
+J-F-web-105-03 | type 2 | prospect | A computer browser
+  s1 see: 'Get the MettleUp app on your phone'
+  s1 see: 'Scan this QR code with your phone’s camera'
+  s1 see: Google Play button
+  s1 see: App Store with 'Coming soon'
+  s1 not: A redirect away from the page
+  s1 not: A QR code for another address
+  s2 see: Google Play on the MettleUp app
+  s2 not: A dead link
+J-F-web-105-04 | type 2 | prospect | An Android phone where Play is not used; the person opens app.mettleup.fit/app/apk
+  s1 see: A download of mettleup-v<newest>.apk
+  s1 not: An older version
+  s1 not: A GitHub error page
+J-F-web-105-05 | type 3 | prospect | The link is shared in WhatsApp; the iPhone store address is set with a typo
+  s1 see: A preview card with title and picture
+  s1 not: The preview showing the Play Store instead of MettleUp
+  s2 see: 'The iPhone app is coming soon'
+  s2 not: A redirect to a non-Apple address
+J-F-web-105-06 | type 6 | prospect | The day the iPhone app is out: the App Store address is set
+  s1 see: The App Store on the MettleUp app
+  s1 not: 'Coming soon' still shown
+  s1 not: An Android phone sent to the App Store
+J-F-web-105-07 | type 12 | prospect | Any phone opens the link
+  s1 see: The store or the get-app page
+  s1 not: A cookie set
+  s1 not: Anything personal in the address or kept by the server
+J-F-web-105-08 | type 1 | member | Member has the MettleUp app on Android; the gym sends app.mettleup.fit/j/<CODE> on WhatsApp
+  s1 see: The MettleUp app opens straight on the gym
+  s1 not: The browser opening instead
+  s1 not: Another gym
+J-F-web-105-09 | type 2 | member | Member on a computer wants the app on the phone
+  s1 see: Google Play on the phone
+  s1 not: A QR that points to the computer's own page loop
+J-F-web-105-10 | type 3 | member | Member without the app installed taps the gym link
+  s1 see: The gym page, which says how to get the app
+  s1 not: A dead end with no store link
+  s1 not: The gym's code lost
+J-F-web-105-11 | type 6 | member | Member uninstalls the app, then taps the gym link again
+  s1 see: The gym page in the browser
+  s1 not: An error that the app is missing
+  s2 see: The app opens on the gym
+  s2 not: The link stuck opening the browser
+J-F-web-105-12 | type 12 | member | Member shares the gym link
+  s1 see: The gym's public page or the store
+  s1 not: The member's name or number in the link
+  s1 not: A cookie set
+J-F-web-106-01 | type 1 | HQ admin | HQ admin on the Play Console upload page in the browser, release v<x.y.z> published on GitHub
+  s1 see: The file mettleup-v<x.y.z>.aab with its size
+  s1 see: Access allowed for play.google.com
+  s1 not: A cached older bundle
+  s1 not: A partial file passed as whole
+  s1 not: Access refused from play.google.com
+J-F-web-106-02 | type 2 | HQ admin | Same release, store pictures needed
+  s1 see: Each PNG of that release
+  s1 not: A picture from another release
+  s1 not: A file name outside store-*.png served
+J-F-web-106-03 | type 3 | HQ admin | A version that has no bundle, or a wrong address
+  s1 see: 'Not found'
+  s1 not: An empty 200 file
+  s1 not: A GitHub error page passed through
+  s2 see: 'Method not allowed'
+  s2 not: Anything changed
+J-F-web-106-04 | type 6 | HQ admin | The release files were replaced on GitHub
+  s1 see: The new file at once
+  s1 not: The old file served from a cache
+J-F-web-106-05 | type 12 | HQ admin | Anyone on the internet fetches /dl/v<x.y.z>.aab
+  s1 see: The public release bundle
+  s1 not: A signing key, a secret or a private build in the file
+  s1 not: A file outside the release tag
+J-F-web-117-01 | type 1 | owner | owner in the admin app, Help and feedback
+  s1 see: 'Thanks! We read every message.'
+  s1 see: The box cleared
+  s1 not: The message lost
+  s1 not: The message sent to the gym instead of MettleUp
+  s1 not: Two copies saved for one tap
+J-F-web-117-02 | type 3 | owner | owner in the admin app, Help and feedback
+  s1 see: 'Write something first.'
+  s1 not: An empty message saved
+  s2 see: 'Keep it under 2000 letters.'
+  s2 not: The message cut and saved without a word
+  s3 see: 'Too many messages today. Try again tomorrow.'
+  s3 not: 'Thanks!' shown for a refused message
+J-F-web-117-03 | type 6 | owner | owner sent a message; the feedback box was down a moment
+  s1 see: 'Could not save. Try again.'
+  s1 see: The typed message kept in the box
+  s1 not: The message cleared
+  s1 not: 'Thanks!' shown
+  s2 see: 'Thanks! We read every message.'
+  s2 not: Two copies saved
+J-F-web-117-04 | type 12 | owner | owner sent a message
+  s1 see: The text, app, version, phone model, screen and gym code
+  s1 not: The name or phone number of the sender stored
+  s1 not: The gym owner or other gyms seeing the message
+  s1 not: The message kept past 1 year
+J-F-web-117-05 | type 1 | staff | staff in the admin app, Help and feedback
+  s1 see: 'Thanks! We read every message.'
+  s1 see: The box cleared
+  s1 not: The message lost
+  s1 not: The message sent to the gym instead of MettleUp
+  s1 not: Two copies saved for one tap
+J-F-web-117-06 | type 3 | staff | staff in the admin app, Help and feedback
+  s1 see: 'Write something first.'
+  s1 not: An empty message saved
+  s2 see: 'Keep it under 2000 letters.'
+  s2 not: The message cut and saved without a word
+  s3 see: 'Too many messages today. Try again tomorrow.'
+  s3 not: 'Thanks!' shown for a refused message
+J-F-web-117-07 | type 6 | staff | staff sent a message; the feedback box was down a moment
+  s1 see: 'Could not save. Try again.'
+  s1 see: The typed message kept in the box
+  s1 not: The message cleared
+  s1 not: 'Thanks!' shown
+  s2 see: 'Thanks! We read every message.'
+  s2 not: Two copies saved
+J-F-web-117-08 | type 12 | staff | staff sent a message
+  s1 see: The text, app, version, phone model, screen and gym code
+  s1 not: The name or phone number of the sender stored
+  s1 not: The gym owner or other gyms seeing the message
+  s1 not: The message kept past 1 year
+J-F-web-117-09 | type 1 | trainer | trainer in the admin app, Help and feedback
+  s1 see: 'Thanks! We read every message.'
+  s1 see: The box cleared
+  s1 not: The message lost
+  s1 not: The message sent to the gym instead of MettleUp
+  s1 not: Two copies saved for one tap
+J-F-web-117-10 | type 3 | trainer | trainer in the admin app, Help and feedback
+  s1 see: 'Write something first.'
+  s1 not: An empty message saved
+  s2 see: 'Keep it under 2000 letters.'
+  s2 not: The message cut and saved without a word
+  s3 see: 'Too many messages today. Try again tomorrow.'
+  s3 not: 'Thanks!' shown for a refused message
+J-F-web-117-11 | type 6 | trainer | trainer sent a message; the feedback box was down a moment
+  s1 see: 'Could not save. Try again.'
+  s1 see: The typed message kept in the box
+  s1 not: The message cleared
+  s1 not: 'Thanks!' shown
+  s2 see: 'Thanks! We read every message.'
+  s2 not: Two copies saved
+J-F-web-117-12 | type 12 | trainer | trainer sent a message
+  s1 see: The text, app, version, phone model, screen and gym code
+  s1 not: The name or phone number of the sender stored
+  s1 not: The gym owner or other gyms seeing the message
+  s1 not: The message kept past 1 year
+J-F-web-117-13 | type 1 | member | member in the member app, Settings, Help and feedback
+  s1 see: 'Thanks! We read every message.'
+  s1 see: The box cleared
+  s1 not: The message lost
+  s1 not: The message sent to the gym instead of MettleUp
+  s1 not: Two copies saved for one tap
+J-F-web-117-14 | type 3 | member | member in the member app, Settings, Help and feedback
+  s1 see: 'Write something first.'
+  s1 not: An empty message saved
+  s2 see: 'Keep it under 2000 letters.'
+  s2 not: The message cut and saved without a word
+  s3 see: 'Too many messages today. Try again tomorrow.'
+  s3 not: 'Thanks!' shown for a refused message
+J-F-web-117-15 | type 6 | member | member sent a message; the feedback box was down a moment
+  s1 see: 'Could not save. Try again.'
+  s1 see: The typed message kept in the box
+  s1 not: The message cleared
+  s1 not: 'Thanks!' shown
+  s2 see: 'Thanks! We read every message.'
+  s2 not: Two copies saved
+J-F-web-117-16 | type 12 | member | member sent a message
+  s1 see: The text, app, version, phone model, screen and gym code
+  s1 not: The name or phone number of the sender stored
+  s1 not: The gym owner or other gyms seeing the message
+  s1 not: The message kept past 1 year
+J-F-web-118-01 | type 1 | owner | owner in the admin app, Help and feedback, the gym has AI credits
+  s1 see: A short answer written from the help articles
+  s1 see: 'Did this solve it?'
+  s1 not: An answer that quotes gym or member records
+  s1 not: A wrong gym charged
+  s1 not: The message lost when the answer is slow
+  s2 see: The question marked as helped
+  s2 not: The tap saved twice
+  s2 not: Another person's question rated
+  s3 see: no gym credit is used (staff questions are free, with a daily limit)
+  s3 not: A credit taken when the AI did not answer
+J-F-web-118-02 | type 2 | owner | owner asks a question when the gym has no credits left or the day's AI questions are used
+  s1 see: The matching help pages and a line saying why the AI was not asked
+  s1 not: A credit taken
+  s1 not: An empty answer
+J-F-web-118-03 | type 2 | owner | owner asked a question yesterday; the MettleUp team has replied
+  s1 see: The question with the AI answer and the team's reply, oldest reply first
+  s1 not: Another install's questions
+  s1 not: A reply shown under the wrong question
+J-F-web-118-04 | type 3 | owner | owner in the admin app, Help and feedback
+  s1 see: 'Write something first.'
+  s1 not: An AI call made
+  s2 see: The first answer stays
+  s2 not: The rating changed silently
+  s3 see: 'Too many messages today. Try again tomorrow.'
+  s3 not: An AI answer for a refused question
+J-F-web-118-05 | type 6 | owner | owner asked a question and the AI failed to answer
+  s1 see: 'Thanks! We read every message and reply as soon as we can.'
+  s1 see: or the matching help pages
+  s1 not: A credit kept for a question with no AI answer
+  s1 not: The question lost
+  s2 see: Both replies, oldest first
+  s2 not: Only the newest reply in a new app
+J-F-web-118-06 | type 12 | owner | owner asked a question
+  s1 see: An answer
+  s1 not: The gym code, install id, phone model or any gym record sent to the AI
+  s2 see: Nothing
+  s2 not: This person's question or reply shown on another phone
+J-F-web-118-07 | type 1 | staff | staff in the admin app, Help and feedback, the gym has AI credits
+  s1 see: A short answer written from the help articles
+  s1 see: 'Did this solve it?'
+  s1 not: An answer that quotes gym or member records
+  s1 not: A wrong gym charged
+  s1 not: The message lost when the answer is slow
+  s2 see: The question marked as helped
+  s2 not: The tap saved twice
+  s2 not: Another person's question rated
+  s3 see: no gym credit is used (staff questions are free, with a daily limit)
+  s3 not: A credit taken when the AI did not answer
+J-F-web-118-08 | type 2 | staff | staff asks a question when the gym has no credits left or the day's AI questions are used
+  s1 see: The matching help pages and a line saying why the AI was not asked
+  s1 not: A credit taken
+  s1 not: An empty answer
+J-F-web-118-09 | type 2 | staff | staff asked a question yesterday; the MettleUp team has replied
+  s1 see: The question with the AI answer and the team's reply, oldest reply first
+  s1 not: Another install's questions
+  s1 not: A reply shown under the wrong question
+J-F-web-118-10 | type 3 | staff | staff in the admin app, Help and feedback
+  s1 see: 'Write something first.'
+  s1 not: An AI call made
+  s2 see: The first answer stays
+  s2 not: The rating changed silently
+  s3 see: 'Too many messages today. Try again tomorrow.'
+  s3 not: An AI answer for a refused question
+J-F-web-118-11 | type 6 | staff | staff asked a question and the AI failed to answer
+  s1 see: 'Thanks! We read every message and reply as soon as we can.'
+  s1 see: or the matching help pages
+  s1 not: A credit kept for a question with no AI answer
+  s1 not: The question lost
+  s2 see: Both replies, oldest first
+  s2 not: Only the newest reply in a new app
+J-F-web-118-12 | type 12 | staff | staff asked a question
+  s1 see: An answer
+  s1 not: The gym code, install id, phone model or any gym record sent to the AI
+  s2 see: Nothing
+  s2 not: This person's question or reply shown on another phone
+J-F-web-118-13 | type 1 | trainer | trainer in the admin app, Help and feedback, the gym has AI credits
+  s1 see: A short answer written from the help articles
+  s1 see: 'Did this solve it?'
+  s1 not: An answer that quotes gym or member records
+  s1 not: A wrong gym charged
+  s1 not: The message lost when the answer is slow
+  s2 see: The question marked as helped
+  s2 not: The tap saved twice
+  s2 not: Another person's question rated
+  s3 see: no gym credit is used (staff questions are free, with a daily limit)
+  s3 not: A credit taken when the AI did not answer
+J-F-web-118-14 | type 2 | trainer | trainer asks a question when the gym has no credits left or the day's AI questions are used
+  s1 see: The matching help pages and a line saying why the AI was not asked
+  s1 not: A credit taken
+  s1 not: An empty answer
+J-F-web-118-15 | type 2 | trainer | trainer asked a question yesterday; the MettleUp team has replied
+  s1 see: The question with the AI answer and the team's reply, oldest reply first
+  s1 not: Another install's questions
+  s1 not: A reply shown under the wrong question
+J-F-web-118-16 | type 3 | trainer | trainer in the admin app, Help and feedback
+  s1 see: 'Write something first.'
+  s1 not: An AI call made
+  s2 see: The first answer stays
+  s2 not: The rating changed silently
+  s3 see: 'Too many messages today. Try again tomorrow.'
+  s3 not: An AI answer for a refused question
+J-F-web-118-17 | type 6 | trainer | trainer asked a question and the AI failed to answer
+  s1 see: 'Thanks! We read every message and reply as soon as we can.'
+  s1 see: or the matching help pages
+  s1 not: A credit kept for a question with no AI answer
+  s1 not: The question lost
+  s2 see: Both replies, oldest first
+  s2 not: Only the newest reply in a new app
+J-F-web-118-18 | type 12 | trainer | trainer asked a question
+  s1 see: An answer
+  s1 not: The gym code, install id, phone model or any gym record sent to the AI
+  s2 see: Nothing
+  s2 not: This person's question or reply shown on another phone
+J-F-web-118-19 | type 1 | member | member in the member app, Settings, Help and feedback, the gym has AI credits
+  s1 see: A short answer written from the help articles
+  s1 see: 'Did this solve it?'
+  s1 not: An answer that quotes gym or member records
+  s1 not: A wrong gym charged
+  s1 not: The message lost when the answer is slow
+  s2 see: The question marked as helped
+  s2 not: The tap saved twice
+  s2 not: Another person's question rated
+  s3 see: one of the gym's AI credits is used (10 answers = 1 credit)
+  s3 not: A credit taken when the AI did not answer
+J-F-web-118-20 | type 2 | member | member asks a question when the gym has no credits left or the day's AI questions are used
+  s1 see: The matching help pages and a line saying why the AI was not asked
+  s1 not: A credit taken
+  s1 not: An empty answer
+J-F-web-118-21 | type 2 | member | member asked a question yesterday; the MettleUp team has replied
+  s1 see: The question with the AI answer and the team's reply, oldest reply first
+  s1 not: Another install's questions
+  s1 not: A reply shown under the wrong question
+J-F-web-118-22 | type 3 | member | member in the member app, Settings, Help and feedback
+  s1 see: 'Write something first.'
+  s1 not: An AI call made
+  s2 see: The first answer stays
+  s2 not: The rating changed silently
+  s3 see: 'Too many messages today. Try again tomorrow.'
+  s3 not: An AI answer for a refused question
+J-F-web-118-23 | type 6 | member | member asked a question and the AI failed to answer
+  s1 see: 'Thanks! We read every message and reply as soon as we can.'
+  s1 see: or the matching help pages
+  s1 not: A credit kept for a question with no AI answer
+  s1 not: The question lost
+  s2 see: Both replies, oldest first
+  s2 not: Only the newest reply in a new app
+J-F-web-118-24 | type 12 | member | member asked a question
+  s1 see: An answer
+  s1 not: The gym code, install id, phone model or any gym record sent to the AI
+  s2 see: Nothing
+  s2 not: This person's question or reply shown on another phone
+J-F-web-120-01 | type 1 | member | Member in the app's feedback box, microphone allowed
+  s1 see: The spoken words as text in the box, to check
+  s1 not: The clip sent before the member stops
+  s1 not: Text in another person's words
+  s2 see: 'Thanks! We read every message.'
+  s2 not: The clip itself saved anywhere
+  s2 not: The fixed text replaced by the first version
+J-F-web-120-02 | type 3 | member | Member in the feedback box
+  s1 see: 'We heard nothing. Try again, closer to the phone.'
+  s1 not: Empty text put in the box
+  s2 see: 'Too long. Keep it under 2 minutes.'
+  s2 not: The clip thrown away so the member must speak again
+  s3 see: 'You have spoken a lot today. Type your message, or try tomorrow.'
+  s3 not: A clip sent to the speech service past the limit
+J-F-web-120-03 | type 6 | member | Member speaks while the speech service is busy or switched off
+  s1 see: 'Too many people are speaking right now. Wait a minute and try again.'
+  s1 see: or 'Speaking is not switched on yet. Type your message instead.'
+  s1 not: The clip lost (the app keeps it on every answer but success)
+  s2 see: The text in the box
+  s2 not: Two texts pasted in
+J-F-web-120-04 | type 12 | member | Member spoke a clip
+  s1 see: The text back
+  s1 not: The recording or its text kept by MettleUp or the speech service
+  s1 not: The count per phone kept over 7 days

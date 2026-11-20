@@ -1,0 +1,48 @@
+# B-alerts-phone-components-1-b: gap-3 + gap-4 x phone / phone/components-1. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+H3.1 | gap-3 | Every automatic send, reminder, push, digest, job: is there a record the owner (or HQ) can open that says it went, to whom, when, and why not when it did not?
+H3.2 | gap-3 | An automatic action with no record and no "why not" = finding (S2 when the owner believes it ran)
+H4.1 | gap-4 | Find every pair of features that act on the same people or the same event (manual message vs automatic reminder; AI idea vs Today nudge; bell vs Today vs push; desk link vs phone proof)
+H4.2 | gap-4 | Check they agree: no double message, no suggestion to do what the system already did, the same count in both places, "done" in one is "done" in the other
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-1300 | live | Workout tab notice: "Backups now go to your MettleUp account" (Sign in / Got it) for a phone that had Google Drive backu | apps/mobile/src/components/BackupMovedCard.tsx:19
+F-phone-1301 | behind switch | Gym's logo full-screen for about a second on launch and after joining a branded gym (tap to skip) | apps/mobile/src/components/BrandOpening.tsx:31
+F-phone-1302 | behind switch | Gym's logo and name at the top of the Workout, Profile and Shop tabs | apps/mobile/src/components/GymBrandMark.tsx:34
+F-phone-1306 | live | "New" dots: a small dot on tabs, Profile rows and settings that lead to something new in this version | apps/mobile/src/components/NewDot.tsx:15
+F-phone-1307 | live | Workout tab notice: "Your workouts are only on this phone" (Sign in to keep them safe / Hide for 30 days), from the 3rd  | apps/mobile/src/components/SafekeepNudgeCard.tsx:20
+F-phone-1308 | live | "Couldn't save" banner over every screen while saving fails (storage full); goes by itself on the next good save | apps/mobile/src/components/SaveProblemBanner.tsx:21
+F-phone-1309 | live | Crash screen: "Something went wrong on this screen. Your workout is safe." with Try again, instead of the app closing | apps/mobile/src/components/ScreenErrorBoundary.tsx:89
+F-phone-1310 | live | Update the app: full-screen "A new MettleUp is here" (Update now / Later), the orange update line on the Workout tab wit | apps/mobile/src/components/UpdatePrompt.tsx:154
+F-phone-1311 | live | Workout tab notice: "MettleUp works on your watch too" (Install on watch / Not now) after the first own workout, when a  | apps/mobile/src/components/WatchInstallCard.tsx:33
+F-phone-1312 | live | Watch app update pop-up: "Your watch app has an update" (Update on watch / Later), then "Check your watch" | apps/mobile/src/components/WatchUpdatePrompt.tsx:269
+F-phone-1313 | live | What's new: the one-time "New in this version" card on the Workout tab, earlier updates, and a button on each change to  | apps/mobile/src/components/WhatsNewCard.tsx:19
+F-phone-1314 | live | Charts page: body map of muscles trained (7 / 30 / 90 days); tap a muscle for its sets, the exercises that trained it an | apps/mobile/src/components/analytics/BodyMapSection.tsx:45
+F-phone-1315 | live | Charts page: Balance check, names a muscle trained much less than the rest in the last 4 weeks (Not now; Keep it / Go ba | apps/mobile/src/components/analytics/BalanceCard.tsx:27
+F-phone-1316 | live | Charts page: Strength score trend (0-100), with "Add body weight" when it is missing | apps/mobile/src/components/analytics/StrengthSection.tsx:23
+F-phone-1317 | live | Charts page: Reports card, opens the monthly report, the year in review and earlier reports | apps/mobile/src/components/analytics/ReportsCard.tsx:54
+F-phone-1321 | live | Charts everywhere: tap a bar or point to see its number and date in a box, drag to move it, tap the box to open that wor | apps/mobile/src/components/charts/BarChart.tsx:58
+F-phone-1323 | hidden | Coach chat: ask the AI coach by typing or a suggested prompt; replies come as bubbles and cards (today's workout plan, w | apps/mobile/src/components/chat/MessageBubble.tsx:150
+F-phone-1324 | hidden | Coach chat food cards: a logged meal with its macros, and the day's calories and protein against target | apps/mobile/src/components/chat/cards/MealCard.tsx:25
+F-phone-1325 | hidden | Coach chat voice: hold the mic to speak a message instead of typing | apps/mobile/src/components/chat/InputBar.tsx:89
+F-phone-1326 | live | Exercise page, History tab: every workout with this exercise, newest first, with its sets and stats; tap one to open tha | apps/mobile/src/components/exercise/SessionHistory.tsx:45
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-1300 | live | Workout tab notice: "Backups now go to your MettleUp account" (Sign in / Got it) for a phone that had Google Drive backu | apps/mobile/src/components/BackupMovedCard.tsx:19
+F-phone-1301 | behind switch | Gym's logo full-screen for about a second on launch and after joining a branded gym (tap to skip) | apps/mobile/src/components/BrandOpening.tsx:31
+F-phone-1302 | behind switch | Gym's logo and name at the top of the Workout, Profile and Shop tabs | apps/mobile/src/components/GymBrandMark.tsx:34
+F-phone-1306 | live | "New" dots: a small dot on tabs, Profile rows and settings that lead to something new in this version | apps/mobile/src/components/NewDot.tsx:15
+F-phone-1307 | live | Workout tab notice: "Your workouts are only on this phone" (Sign in to keep them safe / Hide for 30 days), from the 3rd  | apps/mobile/src/components/SafekeepNudgeCard.tsx:20
+F-phone-1308 | live | "Couldn't save" banner over every screen while saving fails (storage full); goes by itself on the next good save | apps/mobile/src/components/SaveProblemBanner.tsx:21
+F-phone-1309 | live | Crash screen: "Something went wrong on this screen. Your workout is safe." with Try again, instead of the app closing | apps/mobile/src/components/ScreenErrorBoundary.tsx:89
+F-phone-1310 | live | Update the app: full-screen "A new MettleUp is here" (Update now / Later), the orange update line on the Workout tab wit | apps/mobile/src/components/UpdatePrompt.tsx:154
+F-phone-1311 | live | Workout tab notice: "MettleUp works on your watch too" (Install on watch / Not now) after the first own workout, when a  | apps/mobile/src/components/WatchInstallCard.tsx:33
+F-phone-1312 | live | Watch app update pop-up: "Your watch app has an update" (Update on watch / Later), then "Check your watch" | apps/mobile/src/components/WatchUpdatePrompt.tsx:269
+F-phone-1313 | live | What's new: the one-time "New in this version" card on the Workout tab, earlier updates, and a button on each change to  | apps/mobile/src/components/WhatsNewCard.tsx:19
+F-phone-1314 | live | Charts page: body map of muscles trained (7 / 30 / 90 days); tap a muscle for its sets, the exercises that trained it an | apps/mobile/src/components/analytics/BodyMapSection.tsx:45
+F-phone-1315 | live | Charts page: Balance check, names a muscle trained much less than the rest in the last 4 weeks (Not now; Keep it / Go ba | apps/mobile/src/components/analytics/BalanceCard.tsx:27
+F-phone-1316 | live | Charts page: Strength score trend (0-100), with "Add body weight" when it is missing | apps/mobile/src/components/analytics/StrengthSection.tsx:23
+F-phone-1317 | live | Charts page: Reports card, opens the monthly report, the year in review and earlier reports | apps/mobile/src/components/analytics/ReportsCard.tsx:54
+F-phone-1321 | live | Charts everywhere: tap a bar or point to see its number and date in a box, drag to move it, tap the box to open that wor | apps/mobile/src/components/charts/BarChart.tsx:58
+F-phone-1323 | hidden | Coach chat: ask the AI coach by typing or a suggested prompt; replies come as bubbles and cards (today's workout plan, w | apps/mobile/src/components/chat/MessageBubble.tsx:150
+F-phone-1324 | hidden | Coach chat food cards: a logged meal with its macros, and the day's calories and protein against target | apps/mobile/src/components/chat/cards/MealCard.tsx:25
+F-phone-1325 | hidden | Coach chat voice: hold the mic to speak a message instead of typing | apps/mobile/src/components/chat/InputBar.tsx:89
+F-phone-1326 | live | Exercise page, History tab: every workout with this exercise, newest first, with its sets and stats; tap one to open tha | apps/mobile/src/components/exercise/SessionHistory.tsx:45

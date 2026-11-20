@@ -1,0 +1,1 @@
+{"id":"B-run-hq-app-b","step":"B-run","item":"B-run (Silent fallbacks) x hq / hq/app: 6 items","needs":["CAL-score"],"checkpoint":"_work/B-run-hq-app-b.md","out_file":"_work/out/B-run-hq-app-b.jsonl","surface":"hq","area":"hq/app","lenses":["gap-8"],"lens_items":["H8.1","H8.2","H8.3","H8.4","H8.5","H8.6"]}

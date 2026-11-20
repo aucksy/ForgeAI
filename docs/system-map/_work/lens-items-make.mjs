@@ -4,6 +4,7 @@
 //     <lens>: a lens number (4), a hunt (gap-5) or a bundle (B-sec, B-run, B-truth, B-alerts, B-words, B-time, B-switch)
 //     --surface: only this surface (web | phone | panel | server | hq | watch). Without it: every surface.
 //     --dry: print what would be made, write nothing.
+//     --needs <id,id>: the work item ids every item made must wait for (written into the lens-add files).
 // One work item per surface for web, hq, watch; one per AREA for phone, panel, server.
 // For each work item it writes:
 //   _work/items/<id>.txt       the numbered items and the input lists of that area (one row per line)
@@ -22,7 +23,9 @@ const argv = process.argv.slice(2);
 const dry = argv.includes('--dry');
 const si = argv.indexOf('--surface');
 const onlySurface = si >= 0 ? argv[si + 1] : null;
-const arg = argv.find((a, i) => !a.startsWith('--') && (si < 0 || i !== si + 1));
+const ni = argv.indexOf('--needs');
+const NEEDS_ARG = ni >= 0 ? argv[ni + 1].split(',').filter(Boolean) : [];
+const arg = argv.find((a, i) => !a.startsWith('--') && (si < 0 || i !== si + 1) && (ni < 0 || i !== ni + 1));
 function die(m) { console.error('lens-items-make.mjs: ' + m); process.exit(2); }
 if (!fs.existsSync(`${root}/_briefs/lens.md`)) die('run me from the repo root');
 const J = (f) => JSON.parse(fs.readFileSync(`${root}/${f}`, 'utf8'));
@@ -130,6 +133,7 @@ function inputsFor(lens, surface, areaIds) {
       missingMachine: machine.filter((m) => m.includes('MISSING')).length,
     };
   }
+  if (lens !== '5') return otherInputs(lens, surface, areaIds, inArea, F, featRows);
   const mine = lens === '5' ? F.filter((f) => MONEY.test(f.name) || MONEY.test(f.area)) : F;
   return {
     sections: [[lens === '5' ? 'FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)' : 'FEATURES OF THIS AREA (id | status | name | first entry)',
@@ -139,6 +143,64 @@ function inputsFor(lens, surface, areaIds) {
     hint: lens === '5' ? 'Follow every amount from where it is typed to every place that shows it.' : '',
     files: 'docs/system-map/features.json, promises.json, findings.jsonl (search by id or word, never read whole); the code at each entry file:line' + (lens === '5' ? '; apps/dashboard/public/refund.html (search, then read the part you need).' : '.'),
   };
+}
+
+// ---------- inputs for every lens and hunt other than 3, 4, 5 (added 21 Nov 2026) ----------
+// Machine files per lens (plan, "Machine pass"); a MISSING file = the items that need it are could-not-check.
+const MACHINE = { '7': ['db-perf.json', 'pagespeed.json'], '8': ['limits.json'], '9': ['a11y.json'], '12': ['play-report.md'], '16': ['code-health.csv'], 'gap-2': ['field-fill.csv'], 'gap-6': ['field-fill.csv'], 'gap-5': ['live-state.csv'] };
+// Map files a lens reads beside the features (search by id, never read whole).
+const MAPS = {
+  '2': 'entities.json, readers.json, impact.json', '17': 'entities.json, readers.json, impact.json', 'gap-9': 'entities.json, readers.json, impact.json',
+  'gap-1': 'entities.json, readers.json, impact.json', 'gap-4': 'readers.json, impact.json', 'gap-3': 'entities.json, readers.json',
+  '6': 'entities.json, readers.json', '11': 'entities.json, readers.json', '20': 'entities.json', 'gap-2': 'entities.json', 'gap-6': 'entities.json',
+  '10': 'promises.json', 'gap-10': 'promises.json', '14': 'promises.json', '12': 'promises.json', '18': 'improvements.jsonl',
+  '13': 'journey-types/<feature id>.json (types 7, 8, 10)', 'gap-7': 'journey-types/<feature id>.json (types 7, 8, 10)',
+};
+const HINTS = {
+  'gap-8': 'H8: read ONLY the silent catch rows and the fallback rows listed in your items file; every other silent.csv row of your area is counted as "filtered by script, N rows, not read" (N is in your items file).',
+  '16': 'L16: start from the code-health rows of your area; orphan tests: docs/system-map/_sources/orphan-tests.txt (rows of your area).',
+  'gap-1': 'H1: list each setting, switch, plan gate, status and automation of your area first (the features list), then search for every reader that should change with it.',
+  'gap-2': 'H2: Crispy Curves reach counts come from field-fill.csv; never count another gym.',
+  'gap-6': 'H6: fill counts come from field-fill.csv (Crispy Curves only); never count another gym.',
+  '18': 'L18: write improvement rows ("My view:"), not findings, unless something is broken.',
+};
+const RISKY = /pay|credit|ledger|receipt|order|message|alert|talk|push|notif|session|signin|staff-pin|owner-key|phone-code|phone-proof|sync|backup/;
+let SILENT = null;
+function otherInputs(lens, surface, areaIds, inArea, F, featRows) {
+  const mdir = `${root}/_sources/machine`;
+  const mfiles = MACHINE[lens] || [];
+  const machine = mfiles.map((f) => `${f}: ${fs.existsSync(`${mdir}/${f}`) ? 'ready' : 'MISSING (items that need it = could-not-check)'}`);
+  const sections = [['FEATURES OF THIS AREA (id | status | name | first entry)', featRows(F)]];
+  let counts = `${F.length} features`;
+  if (machine.length) sections.push(['MACHINE FILES (docs/system-map/_sources/machine/)', machine]);
+  if (lens === '16' && fs.existsSync(`${mdir}/code-health.csv`)) {
+    const rows = fs.readFileSync(`${mdir}/code-health.csv`, 'utf8').split(/\r?\n/).slice(1).filter((l) => l && inArea(l.split(',')[1]));
+    sections.push(['CODE HEALTH ROWS OF THIS AREA (kind,path,line,note)', rows]);
+    counts += `, ${rows.length} code-health rows`;
+  }
+  if (lens === 'gap-8') {
+    if (!SILENT) SILENT = fs.existsSync(`${root}/_sources/silent.csv`) ? fs.readFileSync(`${root}/_sources/silent.csv`, 'utf8').split(/\r?\n/).slice(1).filter(Boolean).map((l) => l.split(',')) : [];
+    const mine = SILENT.filter((r) => inArea(r[1]));
+    // fallback rows are read only in files named in a journey that writes money, messages, alerts, sign-in or sync:
+    // the entry files of features whose journeys write such an entity
+    const riskyFiles = new Set();
+    for (const f of F) {
+      let js = [];
+      try { js = JSON.parse(fs.readFileSync(`${root}/journeys/${f.id}.json`, 'utf8')); } catch { /* no journeys: feature not live */ }
+      if (js.some((j) => (j.writes || []).some((e) => RISKY.test(e)))) for (const e of f.entry || []) riskyFiles.add(pathOf(e));
+    }
+    const silentRows = mine.filter((r) => r[0] === 'catch' && r[3] === 'no' && r[4] === 'no' && r[5] === 'no');
+    const fb = mine.filter((r) => r[0] === 'fallback' && riskyFiles.has(r[1]));
+    const filtered = mine.length - silentRows.length - fb.length;
+    sections.push(['SILENT CATCH ROWS TO READ (kind,file,line,logs,tells_user,rethrows,text)', silentRows.map((r) => r.join(','))]);
+    sections.push(['FALLBACK ROWS TO READ (files that write money, messages, alerts, sign-in or sync)', fb.map((r) => r.join(','))]);
+    sections.push(['FILTERED BY SCRIPT', [`${filtered} other rows of _sources/silent.csv in this area: not read (write this number in the H8 evidence)`]]);
+    counts += `, ${silentRows.length} silent catch rows, ${fb.length} fallback rows`;
+  }
+  const files = `docs/system-map/features.json${MAPS[lens] ? ', ' + MAPS[lens] : ''}, findings.jsonl (search by id or word, never read whole)`
+    + (machine.length ? `; docs/system-map/_sources/machine/${mfiles.join(', ')}` : '')
+    + (lens === 'gap-8' ? '; docs/system-map/_sources/silent.csv (only your rows)' : '') + '; the code at each entry file:line.';
+  return { sections, counts, hint: HINTS[lens] || '', files, missingMachine: machine.filter((m) => m.includes('MISSING')).length };
 }
 
 // ---------- brief text ----------
@@ -219,7 +281,7 @@ for (const surface of SURFACES) {
           ...LI.items.filter((i) => t.ids.includes(i.id)).map((i) => `${i.id} | ${i.lens} | ${i.text}`)];
         if (group.includes('4')) file.push(`## PROMISES TO CHECK (id | status | where | text)${parts > 1 ? ` part ${p + 1} of ${parts}` : ''}`, ...(myProm.length ? myProm : ['(none)']));
         if (p === 0) for (const x of inp) for (const [title, rows] of x.sections) file.push('## ' + title, ...(rows.length ? rows : ['(none)']));
-        const add = { id: pid, step: prefix, item: `${isBundle ? arg : (arg.startsWith('gap-') ? 'hunt ' + arg.slice(4) : 'lens ' + arg)} (${LI.names[group[0]]}${group.length > 1 ? ' + ' + (group.length - 1) + ' more' : ''}) x ${surface} / ${label}: ${t.ids.length} items`, needs: [], checkpoint: `_work/${pid}.md`, out_file: `_work/out/${pid}.jsonl`, surface, area: label, lenses: p === 0 ? group : ['4'], lens_items: t.ids };
+        const add = { id: pid, step: prefix, item: `${isBundle ? arg : (arg.startsWith('gap-') ? 'hunt ' + arg.slice(4) : 'lens ' + arg)} (${LI.names[group[0]]}${group.length > 1 ? ' + ' + (group.length - 1) + ' more' : ''}) x ${surface} / ${label}: ${t.ids.length} items`, needs: NEEDS_ARG, checkpoint: `_work/${pid}.md`, out_file: `_work/out/${pid}.jsonl`, surface, area: label, lenses: p === 0 ? group : ['4'], lens_items: t.ids };
         const missing = inp.reduce((s, x) => s + (x.missingMachine || 0), 0);
         made.push({ pid, words, items: t.ids.length, counts: [...new Set(pinp.map((x) => x.counts))].join('; '), missing });
         if (words > LIMIT) over++;

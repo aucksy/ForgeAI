@@ -1,0 +1,395 @@
+# A8-hq-app-2: coverage of 43 Tier 1 journeys (8 features, from A5-hq-app-3). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-hq-101 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 3 journey phrase(s)
+F-hq-101 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-101 | apps/dashboard/e2e/pagechat-uat.spec.mjs | e2e | 272 lines | asserts 2 journey phrase(s)
+F-hq-101 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 2 journey phrase(s)
+F-hq-101 | supabase/tests/0094_page_chat.sql | db | 200 lines | asserts 2 journey phrase(s)
+F-hq-101 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-hq-101 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-hq-101 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 1 journey phrase(s)
+F-hq-101 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-hq-101 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 1 journey phrase(s)
+F-hq-101 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 1 journey phrase(s)
+F-hq-101 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 1 journey phrase(s)
+F-hq-125 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-hq-125 | apps/dashboard/e2e/entry-uat.spec.mjs | e2e | 187 lines | asserts 3 journey phrase(s)
+F-hq-125 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 3 journey phrase(s)
+F-hq-125 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-125 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 2 journey phrase(s)
+F-hq-125 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 2 journey phrase(s)
+F-hq-125 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-hq-125 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 2 journey phrase(s)
+F-hq-125 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 2 journey phrase(s)
+F-hq-125 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 2 journey phrase(s)
+F-hq-125 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-hq-125 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 2 journey phrase(s)
+F-hq-126 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-126 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 2 journey phrase(s)
+F-hq-126 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-hq-126 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 2 journey phrase(s)
+F-hq-126 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-hq-126 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-hq-126 | apps/dashboard/e2e/fonts.spec.mjs | e2e | 44 lines | asserts 1 journey phrase(s)
+F-hq-126 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 1 journey phrase(s)
+F-hq-126 | apps/dashboard/e2e/gymdata.spec.mjs | e2e | 52 lines | asserts 1 journey phrase(s)
+F-hq-126 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 1 journey phrase(s)
+F-hq-126 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 1 journey phrase(s)
+F-hq-126 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 1 journey phrase(s)
+F-hq-127 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 3 journey phrase(s)
+F-hq-127 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-127 | apps/mobile/test/cloud/backupWords.test.ts | unit | 88 lines | asserts 2 journey phrase(s)
+F-hq-127 | apps/mobile/test/cloud/copyPlan.test.ts | unit | 205 lines | asserts 2 journey phrase(s)
+F-hq-127 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 1 journey phrase(s)
+F-hq-127 | apps/dashboard/e2e/timings.spec.mjs | e2e | 130 lines | asserts 1 journey phrase(s)
+F-hq-127 | apps/dashboard/e2e/trial.spec.mjs | e2e | 72 lines | asserts 1 journey phrase(s)
+F-hq-127 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 1 journey phrase(s)
+F-hq-127 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | asserts 1 journey phrase(s)
+F-hq-127 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | asserts 1 journey phrase(s)
+F-hq-127 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 1 journey phrase(s)
+F-hq-127 | apps/mobile/test/lib/safekeepNudge.test.ts | unit | 107 lines | asserts 1 journey phrase(s)
+F-hq-131 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 3 journey phrase(s)
+F-hq-131 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-131 | apps/dashboard/e2e/pay-mettleup-uat.spec.mjs | e2e | 210 lines | asserts 2 journey phrase(s)
+F-hq-131 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 2 journey phrase(s)
+F-hq-131 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 2 journey phrase(s)
+F-hq-131 | apps/dashboard/test/crm/plusLock.test.ts | unit | 92 lines | asserts 2 journey phrase(s)
+F-hq-131 | apps/mobile/test/cloud/backupWords.test.ts | unit | 88 lines | asserts 2 journey phrase(s)
+F-hq-131 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-hq-131 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 1 journey phrase(s)
+F-hq-131 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-hq-131 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-hq-131 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 1 journey phrase(s)
+F-hq-132 | apps/dashboard/test/crm/hqAccess.test.ts | unit | 81 lines | asserts 4 journey phrase(s)
+F-hq-132 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code
+F-hq-132 | deploy/panel/helpArticles.test.mjs | unit | 156 lines | asserts 3 journey phrase(s)
+F-hq-132 | supabase/tests/0064_billing_checks.sql | db | 133 lines | asserts 3 journey phrase(s)
+F-hq-132 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 2 journey phrase(s)
+F-hq-132 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-hq-132 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-hq-132 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-hq-132 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-hq-132 | apps/dashboard/e2e/fonts.spec.mjs | e2e | 44 lines | asserts 1 journey phrase(s)
+F-hq-132 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 1 journey phrase(s)
+F-hq-132 | apps/dashboard/e2e/gymdata.spec.mjs | e2e | 52 lines | asserts 1 journey phrase(s)
+F-hq-100 | apps/dashboard/test/crm/messages.test.ts | unit | 189 lines | asserts 6 journey phrase(s)
+F-hq-100 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 4 journey phrase(s)
+F-hq-100 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 4 journey phrase(s)
+F-hq-100 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 4 journey phrase(s)
+F-hq-100 | apps/mobile/qa/uat-rel-r452-help-replies.yaml | maestro | 182 lines | asserts 4 journey phrase(s)
+F-hq-100 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 4 journey phrase(s)
+F-hq-100 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 3 journey phrase(s)
+F-hq-100 | apps/dashboard/e2e/member-messages-uat.spec.mjs | e2e | 236 lines | asserts 3 journey phrase(s)
+F-hq-100 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-hq-100 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 3 journey phrase(s)
+F-hq-100 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 3 journey phrase(s)
+F-hq-100 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 3 journey phrase(s)
+F-hq-133 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-hq-133 | apps/hq/test/logic.test.mjs | unit | 446 lines | imports the code, asserts 1 journey phrase(s)
+F-hq-133 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-hq-133 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 2 journey phrase(s)
+F-hq-133 | apps/dashboard/e2e/offline.spec.mjs | e2e | 74 lines | file name
+F-hq-133 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | file name
+F-hq-133 | apps/dashboard/test/crm/installSteps.test.ts | unit | 43 lines | asserts 2 journey phrase(s)
+F-hq-133 | apps/dashboard/test/crm/offlineDesk.test.ts | unit | 290 lines | file name
+F-hq-133 | apps/dashboard/test/crm/offlinePayments.test.ts | unit | 582 lines | file name
+F-hq-133 | apps/dashboard/test/crm/offlineReview.test.ts | unit | 395 lines | file name
+F-hq-133 | apps/mobile/qa/uat-rel-r336-b-offline.yaml | maestro | 33 lines | file name
+F-hq-133 | apps/mobile/qa/uat-rel-r436-b-offline.yaml | maestro | 35 lines | file name
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-hq-101-01 | type 1 | HQ admin | HQ open in a browser tab, signed in; two new leads came from the website and one gym owner says they paid
+  s1 see: A red number '3' on 'Needs you' in the side menu (phone: on the bottom bar)
+  s1 see: Tab title '(3) MettleUp HQ'
+  s1 not: New feedback to read counted in the red number
+  s1 not: The number shown while it is 0
+  s2 see: Heading 'Needs you'
+  s2 see: '3 things to do. Tap one to open it.'
+  s2 see: Lines '2 new leads to call' and '1 payment to confirm'
+  s2 not: A line with a count of 0
+  s2 not: The page total different from the menu number
+  s3 see: The Leads page opens
+  s3 not: Another page opens
+  s3 not: The count stays the same a minute after the leads are marked Called
+J-F-hq-101-02 | type 2 | HQ admin | Needs you page, alerts never asked for in this browser; HQ then left open in a background tab
+  s1 see: 'Alerts are on.' and a short sound
+  s1 not: The browser asking again on every visit
+  s2 see: Within a minute a short sound and a pop-up 'MettleUp HQ: needs you' with '1 new lead to call'
+  s2 see: The tab title number goes up
+  s2 not: A pop-up for something that did not go up
+  s2 not: Two pop-ups for the same new lead
+  s3 see: HQ comes to the front on the Leads page
+  s3 not: HQ opens on a page unrelated to the line in the pop-up
+J-F-hq-101-03 | type 3 | HQ admin | Needs you page while Cloudflare's small database (leads, feedback) cannot be read, in a browser that blocks notifications
+  s1 see: Warning 'One part of this list could not be counted right now. The rest is up to date.'
+  s1 see: Lines for gyms and payments still shown
+  s1 not: The whole page failing
+  s1 not: Leads shown as nothing waiting with no warning
+  s2 see: 'Alerts are blocked in this browser. Allow notifications for this site in the browser’s settings to get them.'
+  s2 not: A 'Turn on alerts' button that does nothing
+  s3 see: 'This browser cannot show pop-ups. HQ still shows the number on the menu and in the tab title.'
+  s3 not: An error on the page
+J-F-hq-101-04 | type 6 | HQ admin | Needs you shows '1 new lead to call' and 2 new feedback messages to read
+  s1 see: 'Nothing to do. Only new feedback to read.'
+  s1 see: The line '2 new feedback messages to read'
+  s1 see: The red number hidden; tab title 'MettleUp HQ'
+  s1 not: The red number still showing 1
+  s1 not: A '(0)' in the tab title
+  s2 see: Card 'All clear' and 'HQ checks again every minute.'
+  s2 see: 'Nothing is waiting. New leads, feedback, gyms and payments show here.'
+  s2 not: The page redrawn while typing in a box on it
+J-F-hq-101-05 | type 12 | HQ admin | The read log of direct looks at gym data has stopped working
+  s1 see: A red line on top 'Read log is not working since <time>: <reason>. Supabase keeps its logs only about a day, so direct looks at gym data are not being recorded. Fix it today.'
+  s1 not: The red line missing while looks go unrecorded
+  s2 see: The same read log line counted in 'things to do'
+  s2 not: Gym names, member names or phone numbers in the pop-up or the list (counts only)
+J-F-hq-125-01 | type 1 | HQ admin | A gym asked for a demo on the website an hour ago
+  s1 see: Heading 'Leads'
+  s1 see: 'Gyms that asked for a free demo on the website. Kept 12 months unless they become a customer.'
+  s1 see: A card with the gym name, city and phone number, and the time it came in
+  s1 not: Leads of another kind mixed in with no word
+  s1 not: An endless 'Loading…'
+  s2 see: The phone dialer opens with +91 and the number
+  s2 not: A number with +91 twice
+  s3 see: 'Saved.'
+  s3 not: The status back to New after a reload
+  s3 not: The note cut without a word
+J-F-hq-125-02 | type 2 | HQ admin | Leads page, a lead that has said yes after the demo
+  s1 see: The make-a-gym form opens under the lead card, filled with the gym name and phone
+  s1 not: The form filled with another lead's details
+  s2 see: The new gym and its sign-in details
+  s2 not: Two gyms made by a second tap
+  s2 not: The lead left as New
+J-F-hq-125-03 | type 2 | HQ admin | A member used 'Recommend MettleUp to your gym' on mettleup.fit; Needs you shows the new lead
+  s1 see: The Leads page
+  s1 see: 'From members’ shared links: 1 of <n>'
+  s1 not: The count of shared-link leads different from the cards marked as such
+  s2 see: ' · from a member’s shared link' after the time
+  s2 see: ' · Hindi' when the form was filled in Hindi
+  s2 not: The member's own name or number shown as the gym's
+J-F-hq-125-04 | type 3 | HQ admin | Leads page with a lead sent without a gym name
+  s1 see: 'Gym name: not entered' in place of the name
+  s1 not: An empty bold line
+  s1 not: The Make a gym form with the word 'null'
+  s2 see: 'That gym or request is not there any more. The page was refreshed.'
+  s2 not: 'Saved.' for a lead that is gone
+  s3 see: 'Feedback, leads and AI use are not connected yet.'
+  s3 not: An empty list that says 'No leads yet.'
+J-F-hq-125-05 | type 6 | HQ admin | A lead marked New
+  s1 see: 'Saved.' each time; after reload the box shows 'Won'
+  s1 not: The Needs you count still counting it as new after a minute
+  s2 see: 'No leads yet.'
+  s2 not: 'From members’ shared links: 0 of 0'
+J-F-hq-125-06 | type 12 | HQ admin | Leads page holding phone numbers of people who filled the demo form
+  s1 see: The leads, only inside HQ
+  s1 see: Later, the Log line 'Looked at leads'
+  s1 not: Lead numbers used for anything but a call back about MettleUp
+  s1 not: A lead older than 12 months still listed when it never became a customer
+J-F-hq-126-01 | type 1 | HQ admin | A gym owner emailed asking to delete the gym
+  s1 see: Heading 'Delete requests'
+  s1 see: 'The privacy notice promises a delete within 30 days. Each step is written in the log.'
+  s1 see: Card 'Write down a request that came another way'
+  s1 not: An endless 'Loading…'
+  s2 see: 'Open (1)' with the card '<gym> (<code>) · delete the whole gym'
+  s2 see: 'Asked <date> · day 1 of 30 · 29 days left'
+  s2 see: Warning 'Not checked: anyone signed in to the gym’s admin app could have sent this. Call the owner on the gym’s own number first.'
+  s2 not: The request dated other than today
+  s2 not: Two requests from one tap
+  s3 see: 'Called the gym’s own number ✓ (<time>)'
+  s3 see: The Not checked warning gone
+  s3 not: The step ticked on another request
+  s4 see: 'Reminded them to download their data ✓ (<time>)'
+  s4 see: The last step 'Delete: nothing can be brought back after this.'
+  s4 not: The gym deleted by this tap
+J-F-hq-126-02 | type 2 | HQ admin | A gym owner sent a delete request from the admin app
+  s1 see: 'New from the admin app' with a card '<time> · from the admin app' and the owner's words
+  s1 see: The Not checked warning
+  s1 not: The request missing from this list with no word
+  s2 see: The request moves to 'Open (n)' dated when the owner sent it
+  s2 not: The same admin app request listed again under New
+  s2 not: The request dated today instead of when it was sent
+J-F-hq-126-03 | type 2 | HQ admin | A member phoned asking to be erased from one gym
+  s1 see: A card '<gym> (<code>) · erase a member: mobile ending 4321'
+  s1 not: A whole-gym delete button on a member request
+  s2 see: The request moves to 'Closed (n)' as 'member mobile ending 4321 · done <time>'
+  s2 not: The request closed before the member was really erased
+J-F-hq-126-04 | type 3 | HQ admin | Delete requests page with an admin app request for a gym code that no longer exists and a request on day 33
+  s1 see: 'No gym with that code. It may be deleted already.'
+  s1 not: A 'Write it down' button for no gym
+  s2 see: 'day 33 of 30 · 3 days late' on a red card
+  s2 not: A minus number of days left
+  s2 not: A late request looking the same as a new one
+  s3 see: Nothing changes
+  s3 not: The request cancelled anyway
+J-F-hq-126-05 | type 6 | HQ admin | An open delete request; the gym phoned to say they want to stay
+  s1 see: 'Open (0)' and 'None open.'
+  s1 see: 'Closed (1)' with '<gym> (<code>) · gym · cancelled <time>'
+  s1 not: The cancel reason lost
+  s1 not: The request still counted as open
+  s2 see: 'Cancelled a delete request' with the reason
+  s2 not: No log line for the cancel
+J-F-hq-126-06 | type 12 | HQ admin | An admin app delete request not yet confirmed by phone
+  s1 see: 'Not checked: anyone signed in to the gym’s admin app could have sent this. Call the owner on the gym’s own number first.'
+  s1 not: The delete step reachable with no call ticked and no warning
+  s1 not: A member's full mobile number written in the member box when 'ending 4321' is enough
+J-F-hq-127-01 | type 1 | HQ admin | An open whole-gym delete request with 'called' and 'reminded' ticked; signed in within the last 15 minutes
+  s1 see: Question 'Delete <gym> for ever? Every member, receipt and record of this gym is erased. This cannot be undone.'
+  s1 not: The delete starting before the question is answered
+  s2 see: 'Deleted <gym>. Checked <n> tables: nothing left. Pictures removed: <n>. Now tell the gym it is done.'
+  s2 not: Another gym's records touched
+  s2 not: Members of the gym still able to sign in to it
+  s3 see: The gym no longer listed
+  s3 see: The request under 'Closed (n)' as done
+  s3 not: The request still open with its delete button
+J-F-hq-127-02 | type 2 | HQ admin | Same delete, but some pictures cannot be removed from storage
+  s1 see: 'Deleted <gym>. Checked <n> tables: nothing left. Pictures removed: <n>. <m> pictures are left: remove them in the Supabase dashboard (Storage). Now tell the gym it is done.'
+  s1 see: Log line 'Some pictures were left after a delete'
+  s1 not: Pictures left with no word on screen or in the log
+J-F-hq-127-03 | type 3 | HQ admin | An open whole-gym delete request
+  s1 see: 'That is not this gym’s code. Nothing was deleted.'
+  s1 see: Log line 'A gym delete was refused (nothing deleted)'
+  s1 not: Any record deleted
+  s2 see: 'For this, sign in again first (it must be within the last 15 minutes).' and a 'Sign in again' button
+  s2 not: The gym deleted on an old sign-in
+  s3 see: Nothing changes
+  s3 not: The delete running anyway
+J-F-hq-127-04 | type 6 | HQ admin | A gym was just deleted from its request card
+  s1 see: The 'Deleted <gym>…' message under the card
+  s1 not: A second tap on 'Delete the gym for ever' giving a confusing error with no word that it is done
+  s2 see: Words that the gym is not there any more
+  s2 not: Any of the gym's members, receipts or pictures shown
+J-F-hq-127-05 | type 12 | HQ admin | A gym asked to leave MettleUp 20 days ago and the call is done
+  s1 see: 'Checked <n> tables: nothing left'
+  s1 see: Log lines 'Deleted a gym' kept
+  s1 not: Member photos, receipts or any record of the gym left in any table
+  s1 not: The delete done later than 30 days after the request
+J-F-hq-131-01 | type 1 | HQ admin | Payment details never set; signed in within the last 15 minutes
+  s1 see: The fold open, 'Not set yet'
+  s1 see: 'Not set: gym owners see “Payment is not available yet” and no QR code. Fill these in to start taking payments.'
+  s1 not: The fold closed when nothing is set
+  s2 see: Question 'Change where gym owners send money?'
+  s2 not: A save with no question
+  s3 see: 'Saved. Gym owners see the new details the next time they open Pay MettleUp.'
+  s3 not: A wrong UPI ID saved without a check
+  s3 not: An owner's Pay MettleUp showing the old details after reopening
+J-F-hq-131-02 | type 2 | HQ admin | Payment details set earlier
+  s1 see: The fold closed, 'What gym owners pay to: UPI <id>'
+  s1 not: The account number shown in the folded line
+  s2 see: 'Gym owners see these on Pay MettleUp (a UPI QR code with the amount, and the bank details). Last changed <time>.'
+  s2 see: 'Saved. …'
+  s2 not: The other fields emptied by the change
+J-F-hq-131-03 | type 3 | HQ admin | Payments page, sign-in older than 15 minutes
+  s1 see: 'For this, sign in again first (it must be within the last 15 minutes).' and 'Sign in again'
+  s1 not: The details changed on an old sign-in
+  s2 see: Nothing saved
+  s2 not: The save running anyway
+  s3 see: 'Payments need the database update 0060 (waiting for your yes).' in the card
+  s3 not: The whole Payments page failing
+J-F-hq-131-04 | type 6 | HQ admin | Details not set, then set, then changed
+  s1 see: The fold now closed with 'What gym owners pay to: UPI <id>'
+  s1 see: 'Last changed <time>'
+  s1 not: 'Not set yet' still shown after a good save
+  s2 see: 'Last changed' moves to now
+  s2 not: The UPI ID changed by the bank-name save
+J-F-hq-131-05 | type 12 | HQ admin | Payments page, fold open
+  s1 see: 'Kept only in the gym server, never in the code. Any signed-in gym owner can read them, so a UPI ID without your mobile number is safer.'
+  s1 not: The details readable by anyone not signed in
+  s1 not: Members able to read them
+J-F-hq-132-01 | type 1 | HQ admin | HQ in use for months; more than 100 log lines
+  s1 see: Heading 'Log'
+  s1 see: 'Everything done in HQ, and every look at a gym. Nobody can change or delete a line. Kept 2 years.'
+  s1 see: A table 'When', 'What', 'Gym', 'Reason', 'Who', 'From' with 100 lines, newest first
+  s1 not: Raw action codes in place of words
+  s1 not: Lines out of time order
+  s2 see: The next 100 older lines added below
+  s2 not: Lines repeated or skipped between the two pages
+  s2 not: The page jumping to the top
+  s3 see: 'That is everything.'
+  s3 not: A 'Show older' button that adds nothing
+J-F-hq-132-02 | type 3 | HQ admin | Log page while the gym server does not answer
+  s1 see: 'The gym server did not answer. Try again in a minute.'
+  s1 not: An empty table with no words
+  s1 not: 'That is everything.' when nothing was read
+  s2 see: The lines already shown stay
+  s2 not: The whole table replaced by an error
+J-F-hq-132-03 | type 6 | HQ admin | A delete request was just cancelled
+  s1 see: A new top line 'Cancelled a delete request' with the gym, the reason, who did it and from where
+  s1 not: The action missing from the log
+  s1 not: Any way on the page to change or delete a line
+J-F-hq-132-04 | type 12 | HQ admin | Support access was opened on a gym yesterday
+  s1 see: The look at the gym with its reason, the HQ email in 'Who' and the address in 'From'
+  s1 not: A look at gym data with no line
+  s1 not: The log readable by anyone who is not an HQ admin
+J-F-hq-100-01 | type 1 | HQ admin | HQ address opened on a laptop, already signed in
+  s1 see: The side menu with 'Today' ('Needs you', 'All gyms', 'Payments', 'Feedback'), 'Leads', 'Tools' ('Messages', 'Delete requests', 'System', 'Log')
+  s1 see: The signed-in email and 'Sign out' at the bottom
+  s1 see: All gyms open and lit in the menu
+  s1 not: An empty email line
+  s1 not: Two menu items lit
+  s2 see: The Payments page; 'Payments' lit in the menu
+  s2 not: The old page left under 'Loading…'
+  s3 see: The gym page; 'All gyms' still lit
+  s3 not: No menu item lit on a gym page
+J-F-hq-100-02 | type 2 | HQ admin | HQ on a phone
+  s1 see: 'Needs you', 'Gyms', 'Payments', 'Feedback', 'More' in thumb reach, with the red number on Needs you
+  s1 not: The bottom bar covering the page's last button
+  s2 see: 'More' lit on the bottom bar
+  s2 not: No bottom bar item lit
+J-F-hq-100-03 | type 2 | HQ admin | Signed out; a saved link to HQ's Delete requests page
+  s1 see: The sign-in page
+  s1 not: Any HQ data shown before sign-in
+  s2 see: HQ opens on Delete requests, the page of the link
+  s2 not: HQ dropping the page and opening All gyms
+  s2 not: A sign-in loop
+J-F-hq-100-04 | type 3 | HQ admin | HQ open, signed in
+  s1 see: All gyms shown
+  s1 not: A blank page or an error
+  s2 see: 'The gym server did not answer. Try again in a minute.'
+  s2 not: An endless 'Loading…'
+  s3 see: The sign-in page, then back to that page
+  s3 not: A raw error code on the page
+J-F-hq-100-05 | type 6 | HQ admin | Signed in to HQ on a shared laptop
+  s1 see: Signed out of HQ
+  s1 not: HQ pages still opening after sign out
+  s2 see: The sign-in page, or an HQ page that asks to sign in again
+  s2 not: Gym data from before the sign out shown again from memory
+J-F-hq-100-06 | type 12 | HQ admin | HQ open on a laptop others can see
+  s1 see: The signed-in email in the menu
+  s1 see: Every look at a gym written in the Log
+  s1 not: HQ pages found by search engines
+  s1 not: Gym data kept in the browser after the tab is closed
+J-F-hq-133-01 | type 1 | HQ admin | HQ opened in Chrome on an Android phone, not installed
+  s1 see: The MettleUp HQ name and an 'Install app' button
+  s1 not: The button on a phone where HQ is already installed
+  s2 see: HQ added to the home screen; the button hidden
+  s2 not: The button still shown after install
+  s2 not: A second install question at once
+  s3 see: HQ full screen with the bottom bar
+  s3 not: A sign-in loop on first open
+J-F-hq-133-02 | type 2 | HQ admin | HQ opened in Safari on an iPhone
+  s1 see: The hint 'Tap Share, then Add to Home Screen.'
+  s1 not: Nothing happening on tap
+  s2 see: The hint hidden
+  s2 not: The hint stuck over the page
+J-F-hq-133-03 | type 2 | HQ admin | HQ on a phone, on Needs you
+  s1 see: The full menu slides up from the bottom with a dark cover behind
+  s1 not: The sheet opening under the bottom bar
+  s2 see: The sheet closes and Leads opens
+  s2 not: The sheet left open over the new page
+  s3 see: The sheet closes; the page unchanged
+  s3 not: A page opened by the tap on the cover
+J-F-hq-133-04 | type 3 | HQ admin | Installed HQ on a phone with no internet
+  s1 see: Page 'You're offline.', 'HQ needs the internet.' and 'Try again'
+  s1 not: Old gym data shown from memory
+  s1 not: The browser's own dinosaur error page
+  s2 see: HQ opens normally
+  s2 not: The offline page stuck after the internet is back
+  s3 see: The 'Install app' button hidden until the browser offers again
+  s3 not: The button left on screen doing nothing
+J-F-hq-133-05 | type 6 | HQ admin | HQ on a phone with the More sheet open
+  s1 see: The sheet closes
+  s1 not: The sheet stuck open
+  s2 see: No 'Install app' button in either
+  s2 not: The install button shown inside the installed app
+J-F-hq-133-06 | type 12 | HQ admin | HQ installed on a phone that someone else may pick up
+  s1 see: Only the plain offline page
+  s1 not: Any gym, member, lead or payment kept on the phone by the installed app

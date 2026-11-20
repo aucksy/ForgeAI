@@ -1,0 +1,888 @@
+# A8-panel-brand-shell-1: coverage of 93 Tier 1 journeys (10 features, from A5-panel-brand-shell-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-1102 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 10 journey phrase(s)
+F-panel-1102 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 9 journey phrase(s)
+F-panel-1102 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 9 journey phrase(s)
+F-panel-1102 | supabase/tests/0087_feedback_owner_desk.sql | db | 143 lines | asserts 6 journey phrase(s)
+F-panel-1102 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 5 journey phrase(s)
+F-panel-1102 | apps/dashboard/e2e/trainers-uat.spec.mjs | e2e | 282 lines | asserts 5 journey phrase(s)
+F-panel-1102 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 5 journey phrase(s)
+F-panel-1102 | apps/dashboard/e2e/whatsapp-verify-uat.spec.mjs | e2e | 324 lines | asserts 5 journey phrase(s)
+F-panel-1102 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 5 journey phrase(s)
+F-panel-1102 | supabase/tests/0050_trainer_view.sql | db | 213 lines | asserts 5 journey phrase(s)
+F-panel-1102 | supabase/tests/0053_ask_trainer_and_progress.sql | db | 232 lines | asserts 5 journey phrase(s)
+F-panel-1102 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 4 journey phrase(s)
+F-panel-1101 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 8 journey phrase(s)
+F-panel-1101 | apps/dashboard/e2e/terms.spec.mjs | e2e | 149 lines | asserts 7 journey phrase(s)
+F-panel-1101 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 6 journey phrase(s)
+F-panel-1101 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 6 journey phrase(s)
+F-panel-1101 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 5 journey phrase(s)
+F-panel-1101 | apps/dashboard/e2e/whatsapp-verify-uat.spec.mjs | e2e | 324 lines | asserts 5 journey phrase(s)
+F-panel-1101 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 4 journey phrase(s)
+F-panel-1101 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 4 journey phrase(s)
+F-panel-1101 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 4 journey phrase(s)
+F-panel-1101 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 4 journey phrase(s)
+F-panel-1101 | apps/dashboard/e2e/trial.spec.mjs | e2e | 72 lines | asserts 4 journey phrase(s)
+F-panel-1101 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 3 journey phrase(s)
+F-panel-1103 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 5 journey phrase(s)
+F-panel-1103 | apps/dashboard/test/crm/cloud.test.ts | unit | 466 lines | imports the code, file name
+F-panel-1103 | apps/dashboard/test/crm/local.test.ts | unit | 1070 lines | imports the code, file name
+F-panel-1103 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | imports the code, asserts 2 journey phrase(s)
+F-panel-1103 | apps/dashboard/test/crm/offlinePayments.test.ts | unit | 582 lines | imports the code, asserts 2 journey phrase(s)
+F-panel-1103 | apps/dashboard/test/crm/assistant/awayIdea.test.ts | unit | 316 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-1103 | apps/dashboard/test/crm/shop.test.ts | unit | 391 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-1103 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 3 journey phrase(s)
+F-panel-1103 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 3 journey phrase(s)
+F-panel-1103 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | imports the code
+F-panel-1103 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | imports the code
+F-panel-1103 | apps/dashboard/test/crm/auditC7.test.ts | unit | 333 lines | imports the code
+F-panel-1105 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 6 journey phrase(s)
+F-panel-1105 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-panel-1105 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | imports the code, asserts 2 journey phrase(s)
+F-panel-1105 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 5 journey phrase(s)
+F-panel-1105 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 5 journey phrase(s)
+F-panel-1105 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-panel-1105 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 4 journey phrase(s)
+F-panel-1105 | apps/dashboard/e2e/logocolour.spec.mjs | e2e | 160 lines | asserts 4 journey phrase(s)
+F-panel-1105 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-1105 | apps/dashboard/test/crm/r448.test.ts | unit | 76 lines | asserts 4 journey phrase(s)
+F-panel-1105 | apps/mobile/qa/sub-uat-f194-choose.yaml | maestro | 31 lines | asserts 4 journey phrase(s)
+F-panel-1105 | apps/mobile/test/onboarding/welcomeIntro.test.ts | unit | 355 lines | asserts 4 journey phrase(s)
+F-panel-1136 | apps/dashboard/e2e/demo.spec.mjs | e2e | 142 lines | file name, asserts 5 journey phrase(s)
+F-panel-1136 | apps/dashboard/e2e/demo-showcase-uat.spec.mjs | e2e | 181 lines | file name, asserts 3 journey phrase(s)
+F-panel-1136 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | imports the code, asserts 2 journey phrase(s)
+F-panel-1136 | apps/dashboard/test/crm/demo.test.ts | unit | 300 lines | imports the code, file name
+F-panel-1136 | apps/dashboard/test/crm/demoGym.test.ts | unit | 109 lines | imports the code, file name
+F-panel-1136 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code, file name
+F-panel-1136 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-panel-1136 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-panel-1136 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-panel-1136 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-panel-1136 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-panel-1136 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-panel-1137 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 4 journey phrase(s)
+F-panel-1137 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-1137 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-panel-1137 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-panel-1137 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-1137 | apps/dashboard/e2e/signin.spec.mjs | e2e | 82 lines | asserts 2 journey phrase(s)
+F-panel-1137 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-1137 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-1137 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 1 journey phrase(s)
+F-panel-1137 | apps/dashboard/e2e/r447-uat.spec.mjs | e2e | 280 lines | asserts 1 journey phrase(s)
+F-panel-1137 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 1 journey phrase(s)
+F-panel-1137 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 1 journey phrase(s)
+F-panel-1115 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 3 journey phrase(s)
+F-panel-1115 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 2 journey phrase(s)
+F-panel-1115 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-1115 | apps/dashboard/test/crm/attendance.test.ts | unit | 1063 lines | file name
+F-panel-1115 | apps/dashboard/test/crm/ownerOnboarding.test.ts | unit | 115 lines | asserts 2 journey phrase(s)
+F-panel-1115 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 2 journey phrase(s)
+F-panel-1115 | apps/mobile/test/shop/boardWords.test.ts | unit | 148 lines | asserts 2 journey phrase(s)
+F-panel-1115 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-1115 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-panel-1115 | apps/dashboard/e2e/demo-showcase-uat.spec.mjs | e2e | 181 lines | asserts 1 journey phrase(s)
+F-panel-1115 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-1115 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-1119 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | imports the code, asserts 2 journey phrase(s)
+F-panel-1119 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 4 journey phrase(s)
+F-panel-1119 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-1119 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | imports the code
+F-panel-1119 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | imports the code
+F-panel-1119 | apps/dashboard/test/crm/demoShowcase.test.ts | unit | 180 lines | imports the code
+F-panel-1119 | apps/dashboard/test/crm/gymReports.test.ts | unit | 140 lines | imports the code
+F-panel-1119 | apps/dashboard/test/crm/machines/entryMachineAdmin.test.ts | unit | 522 lines | imports the code
+F-panel-1119 | apps/dashboard/test/crm/memberMessages.test.ts | unit | 249 lines | imports the code
+F-panel-1119 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | imports the code
+F-panel-1119 | apps/dashboard/test/crm/planRequests.test.ts | unit | 239 lines | imports the code
+F-panel-1119 | apps/dashboard/test/crm/plusLock.test.ts | unit | 92 lines | imports the code
+F-panel-1108 | apps/dashboard/e2e/test-alert-uat.spec.mjs | e2e | 338 lines | asserts 6 journey phrase(s)
+F-panel-1108 | apps/dashboard/test/crm/hqAccess.test.ts | unit | 81 lines | asserts 4 journey phrase(s)
+F-panel-1108 | apps/dashboard/test/crm/aiImport.test.ts | unit | 381 lines | asserts 3 journey phrase(s)
+F-panel-1108 | supabase/tests/0098_alerts_done_and_read.sql | db | 375 lines | asserts 3 journey phrase(s)
+F-panel-1108 | apps/dashboard/e2e/bell-inbox-uat.spec.mjs | e2e | 401 lines | asserts 2 journey phrase(s)
+F-panel-1108 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 2 journey phrase(s)
+F-panel-1108 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 2 journey phrase(s)
+F-panel-1108 | apps/dashboard/test/crm/alertInbox.test.ts | unit | 207 lines | asserts 2 journey phrase(s)
+F-panel-1108 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-1108 | apps/mobile/test/store/restoreImpact.test.ts | unit | 24 lines | asserts 2 journey phrase(s)
+F-panel-1108 | supabase/tests/0043_member_photos.sql | db | 135 lines | asserts 2 journey phrase(s)
+F-panel-1108 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-1129 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 7 journey phrase(s)
+F-panel-1129 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | file name, asserts 4 journey phrase(s)
+F-panel-1129 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 3 journey phrase(s)
+F-panel-1129 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-panel-1129 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 2 journey phrase(s)
+F-panel-1129 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-panel-1129 | apps/dashboard/test/crm/ownerNumbers.test.ts | unit | 316 lines | file name
+F-panel-1129 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-1129 | apps/mobile/test/tracker/engine/badges.test.ts | unit | 205 lines | asserts 2 journey phrase(s)
+F-panel-1129 | apps/mobile/test/tracker/healthReadF55.test.ts | unit | 393 lines | asserts 2 journey phrase(s)
+F-panel-1129 | apps/dashboard/e2e/demo-showcase-uat.spec.mjs | e2e | 181 lines | asserts 1 journey phrase(s)
+F-panel-1129 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-1102-01 | type 1 | owner | Owner signed in online, More > Staff & sign-in, only the owner on the list
+  s1 see: Sheet 'Add a person' with 'Mobile number' (+91) and 'What is their job?'
+  s1 see: Toast '<name> added. Now make a sign-in code for them.'
+  s1 see: The new row with a 'Staff' pill and 'Not signed in yet'
+  s1 not: The person gets owner powers
+  s1 not: Two rows for one save
+  s1 not: A sign-in code or message sent to the person by itself
+  s2 see: Button reads 'Making…'
+  s2 see: Sheet 'Sign-in code for <name>' with a 6-digit code
+  s2 see: 'Works once, till <time> (<n> minutes).'
+  s2 see: Buttons 'Copy the code' and 'Send on WhatsApp'
+  s2 not: A code shown for another person
+  s2 not: The code still works after one use
+  s2 not: A WhatsApp sent without the owner tapping send in WhatsApp
+  s3 see: '· Code works till <time>' on the row
+  s3 not: The code itself printed on the list
+  s3 not: An older code for the same person still working
+J-F-panel-1102-02 | type 2 | owner | Owner on Add a person, wants to add a trainer and a manager
+  s1 see: Hint under the job box changes for Trainer
+  s1 see: Toast '<name> added. Now make a sign-in code for them.'
+  s1 see: Row pill 'Trainer' and the Trainer tick on
+  s1 not: The trainer is given owner access
+  s1 not: Toast says added-as-trainer when the trainer tick failed (it must say '<name> added with front desk access, but not marked as a trainer yet. Tick Trainer on their row.')
+  s2 see: First: an error under the job box and nothing saved
+  s2 see: Then: the row shows a 'Manager' pill
+  s2 not: A person saved with an empty job
+  s2 not: The typed job lost after a refresh on this browser
+  s2 not: 'Other' gives more than front desk access
+J-F-panel-1102-03 | type 2 | owner | Owner opens Staff & sign-in for the own row (new phone)
+  s1 see: Sheet 'Your sign-in code'
+  s1 see: 'On the phone or computer where you want to sign in, open app.mettleup.fit, tap Sign in, and type +91 <number> and this code.'
+  s1 not: A 'Remove' button on the owner's own row
+  s1 not: This device signed out by making the code
+J-F-panel-1102-04 | type 3 | owner | Owner on the 'Add a person' sheet
+  s1 see: 'Type their name.'
+  s1 not: A person saved without a name
+  s2 see: 'Type a 10-digit mobile number, like 98290 12345.'
+  s2 not: A short number saved
+  s2 not: The sheet closes
+  s3 see: A plain error on the sheet; the sheet stays open with what was typed
+  s3 not: A second row for the same number
+  s3 not: A raw server code shown
+  s3 not: The first person's sign-in or PIN changed
+J-F-panel-1102-05 | type 3 | owner | A browser-only gym (not online), owner opens Staff & sign-in
+  s1 see: Title 'Staff & sign-in', 'Who can open this gym, on which phone'
+  s1 see: 'Put your gym online first (Settings → Sign-in & data). Then you and your staff can sign in with a mobile number, on any phone or computer.'
+  s1 see: Button 'Go to Settings'
+  s1 not: An 'Add a person' button that fails
+  s1 not: An empty list with no reason
+J-F-panel-1102-06 | type 6 | owner | Owner, a front desk person signed in on 2 devices with a PIN set
+  s1 see: Sheet 'Sign <name> out everywhere?'
+  s1 see: '<name> is signed out of every phone and computer. They can sign in again with a new code. Their PIN stops working too. To get back in, they need a new code; then they set a new PIN.'
+  s1 not: Signed out before the owner confirms
+  s2 see: Toast 'Signed out.'
+  s2 see: Row says 'Signed out'; the 'Sign out everywhere' button is gone
+  s2 not: The person can still save anything on the old devices
+  s2 not: The old PIN still signs in
+  s2 not: The person removed from the list
+  s3 see: Sheet 'Remove <name>?' with 'They can’t sign in again. Your members and payments stay as they are.'
+  s3 see: Toast '<name> removed.'
+  s3 see: The row is gone
+  s3 not: The code made a moment ago still signs the removed person in
+  s3 not: Payments or members the person saved are changed
+  s3 not: The owner can remove the own row
+J-F-panel-1102-07 | type 12 | owner | Owner on Staff & sign-in; a front desk person opens the same page on another phone
+  s1 see: Each person: name, job pill, '+91 <mobile>', 'Signed in on N devices' or 'Signed out', whether a PIN is set
+  s1 not: A PIN or a sign-in code value shown in the list
+  s1 not: People of another gym or another branch's staff listed
+  s2 see: Card 'You' and 'Only an owner can add people or make sign-in codes. Ask your gym owner.'
+  s2 see: The staff rights line
+  s2 not: Other people's mobile numbers shown to staff
+  s2 not: 'Add a person', 'Make sign-in code' or 'Remove' shown to staff
+J-F-panel-1101-01 | type 1 | prospect | app.mettleup.fit first screen, never used MettleUp, 'Verify with WhatsApp' way on
+  s1 see: 'You sign in with this number. You check it by sending us one WhatsApp message. It is free.'
+  s1 see: Button 'Verify with WhatsApp'
+  s1 not: A gym made before the number is checked
+  s1 not: The terms box ticked by default
+  s2 see: 'Please wait…' then the button 'Create my gym'
+  s2 not: The prospect has to pay for an SMS
+  s2 not: A number other than the typed one accepted as checked
+  s3 see: 'Setting up…'
+  s3 see: Sheet 'Your gym is ready' with 'Gym code', 'Copy code', 'Join link', 'Copy link', a QR and 'Open the QR poster'
+  s3 see: 'Members type this code in the MettleUp app to join your gym.'
+  s3 see: Today of an empty gym behind it
+  s3 not: Sample members in the new gym
+  s3 not: Two gyms from a double tap
+  s3 not: The PIN not kept, so the next sign-in fails
+  s3 not: The gym code sheet shown again on every later open
+J-F-panel-1101-02 | type 2 | prospect | Prospect opens the sign-up link app.mettleup.fit/start from the website
+  s1 see: The set-up form first (title 'Start your gym')
+  s1 see: After Create my gym the address is the app's own (/)
+  s1 see: 'Your gym is ready'
+  s1 not: A refresh after sign-up opens the sign-up form again
+  s1 not: The sign-in tab hidden with no way to reach it ('Already use MettleUp?' 'Sign in' must be there)
+J-F-panel-1101-03 | type 3 | prospect | Set up a new gym form
+  s1 see: 'Type your gym’s name.'
+  s1 not: A gym created
+  s2 see: 'That PIN is too easy to guess. Don’t use one digit six times, digits in order like 123456, or the end of your mobile number.'
+  s2 not: A weak PIN accepted
+  s3 see: 'Tick the box to agree to the terms. Then tap “Verify with WhatsApp”.' (or '… Then tap “Create my gym” again.' once the number is checked)
+  s3 not: A gym made without the tick
+  s3 not: A WhatsApp check started without the tick
+  s4 see: A plain message that this number already has a gym, with 'Sign in instead'
+  s4 not: A second gym made silently for the same number
+  s4 not: The other gym's name shown before the number is proven
+J-F-panel-1101-04 | type 6 | prospect | Set up a new gym, number checked by WhatsApp but gym not yet created
+  s1 see: The button is 'Verify with WhatsApp' again for the new number
+  s1 not: The proof of the first number used for the second number
+  s2 see: A message that the check ran out, and the check starts again
+  s2 not: A stuck 'Setting up…'
+  s2 not: A gym made on a used or expired proof
+  s3 see: The gym opens straight; no 'Your gym is ready' sheet; no terms question
+  s3 not: Asked to agree to the terms a second time for the same version
+J-F-panel-1101-05 | type 12 | prospect | Set up a new gym form and the terms tick
+  s1 see: Both open as pages without losing what was typed
+  s1 see: 'Your members and payments are kept online. They stay safe if a phone or computer breaks.'
+  s1 not: The typed PIN shown in clear
+  s1 not: The form emptied after reading the terms
+  s2 see: The acceptance is kept once (version, time) for the gym
+  s2 not: The mobile number kept in clear in the WhatsApp check table after the proof is handed out
+  s2 not: The PIN stored other than as a hash
+J-F-panel-1101-06 | type 1 | owner | First screen, owner has a gym and a PIN, signed out
+  s1 see: 'Signing in…'
+  s1 see: 'Opening your gym…' then Today of the own gym
+  s1 not: Another gym's data opens
+  s1 not: The PIN shown in clear
+  s1 not: A terms question when the current version was already accepted
+J-F-panel-1101-07 | type 2 | owner | Owner forgot the PIN, sign-in screen, WhatsApp way on
+  s1 see: 'First we check that this mobile number is yours.' and that it is free
+  s1 see: Then a box to choose a new PIN
+  s1 not: A new PIN set for a number that was not proven
+  s1 not: A paid SMS
+  s2 see: The gym opens
+  s2 see: The old PIN no longer works
+  s2 not: Other devices' sessions able to keep the old PIN
+J-F-panel-1101-08 | type 2 | owner | Owner signed out, has a one-time code made on another device, already has a PIN
+  s1 see: The gym opens
+  s1 see: Sheet 'Choose a new PIN?' with 'You signed in with a one-time code. If you forgot your PIN, choose a new one now.' and 'Keep my old PIN'
+  s1 not: The current PIN asked for inside the 15 minutes
+  s1 not: The code works a second time
+  s2 see: Toast 'New PIN saved. Next time, sign in with your mobile number and this PIN.'
+  s2 not: The sheet shown again on the next open
+J-F-panel-1101-09 | type 2 | owner | Owner of a browser-only gym with members, Settings > Sign-in & data
+  s1 see: 'Right now your members and payments are only in this browser.'
+  s1 see: 'Putting your gym online…'
+  s1 see: The same members, plans and payments after it finishes; Staff & sign-in now lists the owner
+  s1 not: Members lost or doubled when going online
+  s1 not: A half-moved gym with no way on (a 'Finish going online' button must show)
+  s1 not: The demo gym offered to go online ('A demo gym is never put online.')
+J-F-panel-1101-10 | type 3 | owner | Sign-in form, owner types a wrong PIN
+  s1 see: A line that the PIN or code is wrong, with '(N tries left)'
+  s1 see: At zero: 'That PIN or code is wrong. Too many tries. Wait 15 minutes, or get a new code.'
+  s1 not: A different message for a number that is not in any gym (nobody may learn which numbers exist)
+  s1 not: Unlimited tries
+  s1 not: The right PIN working during the 15-minute wait
+  s2 see: 'Type your 6-digit PIN, or the code your gym owner gave you.'
+  s2 not: A call to the server
+J-F-panel-1101-11 | type 6 | owner | Owner signed in; MettleUp has published a new terms version
+  s1 see: 'Opening your gym…' then card 'Before you go on' with the terms tick and 'Agree and continue', and a way to sign out
+  s1 not: The gym usable behind the card
+  s1 not: The card shown when the terms check could not be reached (offline: the desk is never blocked)
+  s2 see: 'Tick the box first. Then tap “Agree and continue”.'
+  s2 see: 'Saving…' then the gym opens
+  s2 not: Asked again on the next open or on another device for the same version
+J-F-panel-1101-12 | type 12 | owner | Owner signs in on a shared computer at the gym
+  s1 see: Sheet 'Sign out of this device?'
+  s1 see: After it: the first screen; the back button does not show the gym
+  s1 not: Members or payments readable from the saved copy after sign-out by another gym's login
+  s1 not: The PIN or session key readable in the address bar
+J-F-panel-1101-13 | type 1 | staff | A front desk person added by the owner, holding a one-time code, never signed in
+  s1 see: The gym opens with the front desk menu
+  s1 see: Sheet 'Set your own PIN' with 'Save your own PIN. Next time, sign in with your mobile number and this PIN. You won’t need a code from the owner.'
+  s1 not: Owner-only pages in the menu
+  s1 not: The code works a second time or after its minutes ran out
+  s2 see: Toast 'PIN saved. Next time, sign in with your mobile number and this PIN.'
+  s2 not: A PIN equal to the end of the own mobile number accepted
+  s2 not: The sheet shown again on the next open
+J-F-panel-1101-14 | type 3 | staff | A front desk person the owner removed this morning, old PIN in hand
+  s1 see: The sign-in page with 'You no longer have access to this gym. Talk to the gym owner.'
+  s1 not: Any member or payment still readable from the phone's saved copy
+  s1 not: Unsent offline work pushed after removal
+  s2 see: The same wrong-PIN-or-code line as for any unknown number
+  s2 not: Signed in
+  s2 not: Told that the number exists in a gym
+  s2 not: A choice to 'Set up a new gym' taken by mistake for the way back in with no warning
+J-F-panel-1101-15 | type 6 | staff | A front desk person with a PIN; the owner taps 'Sign out everywhere' on them
+  s1 see: The sign-in page with a plain reason
+  s1 not: A silent failure where saves look fine but go nowhere
+  s2 see: Old PIN: refused
+  s2 see: New code: the gym opens and 'Choose a new PIN?' / 'Set your own PIN' is offered once
+  s2 not: The old PIN works again after the code sign-in without being set again
+J-F-panel-1101-16 | type 2 | staff | Front desk person forgot the PIN, sign-in screen
+  s1 see: 'Front desk staff: ask your gym owner for a code.'
+  s1 not: A staff person offered to email MettleUp for a code as if they were the owner without the check
+J-F-panel-1101-17 | type 1 | trainer | A trainer person added by the owner, holding a one-time code, never signed in
+  s1 see: The gym opens with the trainer menu
+  s1 see: Sheet 'Set your own PIN' with 'Save your own PIN. Next time, sign in with your mobile number and this PIN. You won’t need a code from the owner.'
+  s1 not: Owner-only pages in the menu
+  s1 not: The code works a second time or after its minutes ran out
+  s2 see: Toast 'PIN saved. Next time, sign in with your mobile number and this PIN.'
+  s2 not: A PIN equal to the end of the own mobile number accepted
+  s2 not: The sheet shown again on the next open
+J-F-panel-1101-18 | type 3 | trainer | A trainer person the owner removed this morning, old PIN in hand
+  s1 see: The sign-in page with 'You no longer have access to this gym. Talk to the gym owner.'
+  s1 not: Any member or payment still readable from the phone's saved copy
+  s1 not: Unsent offline work pushed after removal
+  s2 see: The same wrong-PIN-or-code line as for any unknown number
+  s2 not: Signed in
+  s2 not: Told that the number exists in a gym
+  s2 not: A choice to 'Set up a new gym' taken by mistake for the way back in with no warning
+J-F-panel-1101-19 | type 6 | trainer | A trainer person with a PIN; the owner taps 'Sign out everywhere' on them
+  s1 see: The sign-in page with a plain reason
+  s1 not: A silent failure where saves look fine but go nowhere
+  s2 see: Old PIN: refused
+  s2 see: New code: the gym opens and 'Choose a new PIN?' / 'Set your own PIN' is offered once
+  s2 not: The old PIN works again after the code sign-in without being set again
+J-F-panel-1103-01 | type 1 | owner | Owner signed in online on a laptop, Today open, a desk person adds a payment on another device
+  s1 see: 'Updated just now', then 'Updated 20 s ago', 'Updated 3 min ago'
+  s1 see: A 'Refresh' button
+  s1 not: A time that keeps saying 'just now' while nothing was pulled
+  s1 not: No Refresh in a browser-only gym shown as broken (it is simply hidden)
+  s2 see: 'Refreshing…' with a turning mark
+  s2 see: The new payment in Today and Money
+  s2 see: 'Updated just now'
+  s2 not: 'Updated just now' when the pull failed (it must say 'Could not refresh. Check the internet and try again.')
+  s2 not: Two pulls from a double tap
+  s2 not: The owner's own unsaved form wiped by the refresh
+J-F-panel-1103-02 | type 2 | owner | Owner of a browser-only gym (never put online)
+  s1 see: The member and the payment are there
+  s1 see: Settings says 'Your gym is saved in this browser only.'
+  s1 not: Anything sent to the gym server
+  s1 not: An 'Updated … ago' line or offline bar for a gym that has no server copy
+  s1 not: Data shared with another browser profile
+J-F-panel-1103-03 | type 3 | owner | Owner online; a payment saved offline by the desk was refused by the server when sent
+  s1 see: A bar with the member's name and why it was not sent
+  s1 see: For the owner: 'Save as cancelled receipt' (when it has a receipt) and 'Remove from this device'
+  s1 not: The refused payment silently dropped
+  s1 not: Later things of the same member sent ahead of it
+  s1 not: The same buttons shown to the front desk (they see 'Not sent: ask the owner')
+  s2 see: 'Remove it from this device for good? It was never sent, so it will be gone.'
+  s2 see: The line goes; '… more things for this member wait with it' are sent
+  s2 not: Removed on the first tap
+  s2 not: A receipt number lost with no cancelled receipt when 'Save as cancelled receipt' was the right choice
+J-F-panel-1103-04 | type 6 | owner | Owner online with a saved copy on the device, Settings > Sign-in & data
+  s1 see: 'Clear the offline copy on this device? Nothing is deleted from your gym’s records online.'
+  s1 see: After yes: 'Offline copy cleared. Your gym’s records online are safe. A fresh copy downloads while this device is online.'
+  s1 not: Any record deleted online
+  s1 not: The owner signed out
+  s2 see: A warning that clearing deletes those 2 for good, button 'Delete all 2 and clear'
+  s2 not: Waiting payments deleted without the count being shown
+  s3 see: The gym loads again from the server with the same members
+  s3 not: An empty gym
+  s3 not: Old details from the cleared copy
+J-F-panel-1103-05 | type 12 | owner | Owner signs out on a shared computer; another gym's owner signs in on the same browser
+  s1 see: Only the second gym's members, online and offline
+  s1 not: The first gym's saved copy or waiting list shown or sent under the second login
+  s1 not: A waiting payment of gym A pushed into gym B
+J-F-panel-1103-06 | type 1 | staff | Front desk signed in, the device has been online once, the internet drops
+  s1 see: Bar 'Offline: 2 waiting to send.' 'No internet. Check-ins, payments and new members are saved on this device and sent when the internet is back. Other things wait. Details shown are from <time>.'
+  s1 see: A receipt number on the payment
+  s1 not: A success message for something not kept
+  s1 not: Payment refused because offline
+  s1 not: 'Connect this device to the internet once so it can take payments offline.' on a device that was online
+  s2 see: A list 'Waiting to send from this device' with 'Payment ₹1,000, receipt <no>' and 'Waiting to send'
+  s2 not: Another member's name on the row
+  s3 see: 'Internet is back. Sending 2 saved on this device…' then 'All sent. Everything saved on this device is now online.'
+  s3 not: A double payment or double check-in online
+  s3 not: A different receipt number online than the one given to the member
+J-F-panel-1103-07 | type 3 | staff | Front desk offline, opens a page that needs the server
+  s1 see: 'This page opens when the internet is back. Open Members to save check-ins, payments and new members now.'
+  s1 not: An endless spinner
+  s1 not: A form that takes input and loses it
+  s2 see: 'Not sent: ask the owner' on that line
+  s2 not: Remove or 'Save as cancelled receipt' buttons for staff
+J-F-panel-1103-08 | type 6 | staff | Front desk on a phone, panel open, phone screen turned off for 20 minutes then on
+  s1 see: One pull at once; 'Updated just now' soon after
+  s1 see: Lists show what others changed meanwhile
+  s1 not: Old lists shown as fresh
+  s1 not: A pull on every quick tab switch (not again within 15 seconds)
+J-F-panel-1103-09 | type 1 | trainer | Trainer signed in on a phone, online
+  s1 see: The mark turns; lists update
+  s1 see: Screen reader text 'Refresh. Updated just now'
+  s1 not: More of the gym than a front desk login may see, because a trainer has the desk's access
+J-F-panel-1103-10 | type 3 | trainer | Trainer in the gym basement, no signal
+  s1 see: Either it is kept on the device and listed as waiting ('Change to details'), or a plain line that it waits for the internet
+  s1 not: A saved-looking change that is gone after the internet is back
+J-F-panel-1103-11 | type 6 | trainer | Trainer leaves the panel tab hidden behind another app for an hour, then returns
+  s1 see: One pull at once; fresh lists
+  s1 not: Server calls made all through the hidden hour
+  s1 not: 'Updated over an hour ago' staying after return
+J-F-panel-1103-12 | type 1 | system | A signed-in panel tab in view, nobody touching it
+  s1 see: A pull at the set gap while the tab is in view
+  s1 see: 'Updated …' counts up between pulls
+  s1 not: Two pulls at once when the server is slow
+  s1 not: A pull loop after an error
+J-F-panel-1103-13 | type 3 | system | The gym server answers a pull or a push with an error, or the session was ended by the owner
+  s1 see: For a dead session: the sign-in page with the reason
+  s1 see: For a server hiccup: the saved copy stays on screen and the check tries again later
+  s1 not: The saved copy wiped on an error
+  s1 not: A push repeated so the same payment lands twice
+  s1 not: A refused push retried for ever instead of being held for the owner
+J-F-panel-1103-14 | type 6 | system | The tab is hidden (another tab in front) all night
+  s1 see: No server call while hidden
+  s1 see: One call when it comes back, unless one ran in the last 15 seconds
+  s1 not: About 124 calls an hour from a forgotten tab (the reason this rule exists)
+  s1 not: Urgent alerts lost while hidden (those come by web push, not by this check)
+J-F-panel-1105-01 | type 1 | owner | Owner online, member app on, no branding yet, Settings > Branding
+  s1 see: Title 'Branding', 'Your gym's logo and colours in the MettleUp app. Your logo also shows at the top of this admin app.'
+  s1 see: 'Your brand colour', 'Background tone', heading style 'Normal' / 'Bold italic', a phone preview and a shortcut preview
+  s1 not: Another gym's logo or colours
+  s1 not: Save enabled before anything changed
+  s2 see: 'Checking your logo…' then a choice 'Without the background' ('Best for the app') or 'Keep my logo as it is'
+  s2 see: 'Upload this logo' then 'Uploading…'
+  s2 see: The logo in the phone preview
+  s2 not: The logo shown to members before Save
+  s2 not: A huge file uploaded untrimmed
+  s3 see: 'Saving…'
+  s3 see: Toast 'Saved. New members see it at once. Members who already joined see it on a later visit to the app. The app checks at most once an hour, and never in the middle of a workout.'
+  s3 see: 'Saved · <day month>'
+  s3 see: The logo at the top of the admin app at once
+  s3 not: The saved colour differs from the picked one
+  s3 not: A member mid-workout sees the look change
+  s3 not: Save twice from a double tap
+J-F-panel-1105-02 | type 2 | owner | Owner opens Branding from Set up your gym, logo has a photo behind it
+  s1 see: 'Your logo has a photo or a pattern behind it.' 'We can only take off a plain background, so we kept your logo as it is. … You can remove it for free:' with three steps (ChatGPT or Google Gemini)
+  s1 not: A half-erased logo used
+  s1 not: The upload refused with no way on
+  s2 see: The Set up your gym step for branding is ticked
+  s2 not: The step ticked before a save
+J-F-panel-1105-03 | type 3 | owner | Branding, owner tries bad input; and a gym with the member app off
+  s1 see: 'This picture can’t be read here. Save the logo as PNG and try again.' or 'That logo could not be used. Try a PNG or JPEG picture.'
+  s1 not: The old logo removed
+  s1 not: A broken picture saved
+  s2 see: 'Finish typing the colour code to check it.' and Save stays off
+  s2 not: A broken colour saved
+  s3 see: Card 'Easy to read?' and 'Members see the changed colour, so it is easy to read. Save keeps the colour you picked.'
+  s3 not: Unreadable text in the member app
+  s3 not: The picked colour replaced in the saved record
+  s4 see: Card 'Turn on the member app first'
+  s4 not: A branding form that cannot save
+J-F-panel-1105-04 | type 6 | owner | Owner with a saved logo and colours
+  s1 see: Sheet 'Go back to MettleUp’s look?' 'This removes your logo and colours from the member app. Members see MettleUp’s look on a later visit to the app, never in the middle of a workout.' with 'Keep my look' and 'Use MettleUp’s look'
+  s1 not: Removed before confirming
+  s2 see: Toast 'Back to MettleUp’s look.'
+  s2 see: The form back to defaults; the admin app header shows no gym logo
+  s2 not: The old logo still served to members after their next check
+  s2 not: The 'Use MettleUp’s look' button still there
+  s3 see: Saved as new
+  s3 not: The old colours come back by themselves
+J-F-panel-1105-05 | type 12 | owner | A front desk login types the address /settings/branding
+  s1 see: 'Only an owner can see this' 'Ask your gym owner if you need something from here.'
+  s1 not: The form shown read-only with the owner's draft
+  s1 not: A save from the desk accepted by the server
+  s2 see: The logo is a file anyone with its address can load (it is shown in the member app)
+  s2 not: Any personal data in the logo address or file name
+J-F-panel-1136-01 | type 1 | prospect | First screen of app.mettleup.fit, no gym, online
+  s1 see: 'Opens a sample gym with made-up members, payments and a shop. …'
+  s1 see: 'Starting your demo gym…'
+  s1 see: Today of a full sample gym under an orange strip 'Demo gym: made-up data. Nothing you do here is saved.' with 'Leave the demo'
+  s1 not: A real gym's members
+  s1 not: A sign-up asked first
+  s1 not: An empty gym
+  s2 see: They show in Members and Money like in a real gym
+  s2 not: Any call to the gym server or another site
+  s2 not: Anything written to the browser's storage except the dark or light choice
+  s2 not: A WhatsApp or message sent to a real number
+  s3 see: The MettleUp website for gyms
+  s3 not: The demo's data kept anywhere
+J-F-panel-1136-02 | type 2 | prospect | Prospect opens /demo?as=desk, or the demo without the shop while offline
+  s1 see: The sample gym as a front desk person sees it (no Expenses, no owner-only pages)
+  s1 not: Owner pages open to the desk view
+  s2 see: The sample gym opens; shop parts say they need a real gym
+  s2 not: An endless 'Starting your demo gym…'
+J-F-panel-1136-03 | type 3 | prospect | Inside the demo gym
+  s1 see: 'This works in your own gym' and '<what the page does> The demo gym is made-up data kept only on this page, so this part is switched off here.' with 'Back to Today'
+  s1 not: A form that looks real and fails on save
+  s1 not: A real payment page for MettleUp
+J-F-panel-1136-04 | type 6 | prospect | Prospect has changed things in the demo
+  s1 see: A new copy of the sample gym; the added member is gone; the strip still says nothing is saved
+  s1 not: Yesterday's demo changes still there
+  s1 not: Dates in the sample gym left in the past (it is built from today)
+  s2 see: The light choice is kept
+  s2 not: Any other demo setting kept on the device
+J-F-panel-1136-05 | type 12 | prospect | An owner signed in to a real gym on this browser opens /demo
+  s1 see: Only made-up members in the demo
+  s1 see: The strip button reads 'Back to my gym'
+  s1 see: The real gym opens still signed in, unchanged
+  s1 not: The real gym's members, session or saved copy readable inside the demo
+  s1 not: A demo change written into the real gym
+  s1 not: The owner signed out of the real gym
+J-F-panel-1137-01 | type 1 | prospect | Demo gym open as the owner
+  s1 see: 'People who can sign in' with the sample staff, the owner row 'Signed in on 2 devices'
+  s1 see: 'Change my PIN'
+  s1 not: A real mobile number of a real person
+  s1 not: A call to the gym server
+  s2 see: The answer shows in the thread; the message shows as sent in the list
+  s2 not: A push or WhatsApp sent to anyone
+  s2 not: 'Sent' words that promise a real member got it without the demo strip in view
+  s3 see: Each page full of sample rows and usable
+  s3 not: A page stuck on 'Loading…' because the pretend server has no answer for a call
+  s3 not: A raw error code
+J-F-panel-1137-02 | type 3 | prospect | Demo gym opened as the front desk (/demo?as=desk)
+  s1 see: 'Only an owner can add people or make sign-in codes. Ask your gym owner.'
+  s1 see: 'Only an owner can see this'
+  s1 not: The pretend server answering an owner-only call for the desk
+J-F-panel-1137-03 | type 6 | prospect | Demo gym, a shop order waiting and a plan request waiting
+  s1 see: Each moves to its done state and Today's counts go down
+  s1 not: A count on Today that does not match the page behind it
+  s2 see: All three are back to the starting state
+  s2 not: A half-kept state (one kept, others not)
+J-F-panel-1137-04 | type 12 | prospect | Demo gym, pages that would use a real person's data
+  s1 see: A code sheet for the sample person; WhatsApp, if it opens, is the prospect's own app with a made-up number
+  s1 not: A real sign-in code made on the gym server
+  s1 not: A message sent by MettleUp to any number
+J-F-panel-1115-01 | type 1 | owner | Owner signed in, Visits page, register for today, members with running plans
+  s1 see: Title 'Visits', 'Who trained, and when'
+  s1 see: Tabs with 'Losing the habit' and its count
+  s1 see: 'Check someone in' with 'Day' and the box 'Type a name or the last 4 digits of a mobile'
+  s1 not: Members of another branch in the list
+  s1 not: A future day offered
+  s2 see: Toast '<name> checked in.'
+  s2 see: The member under 'Check-ins today' with the time
+  s2 see: The count tiles go up by one
+  s2 not: A second visit for the same member and day from a double tap
+  s2 not: A check-in for a member whose plan ended shown with no warning
+  s2 not: The visit dated on another day
+  s3 see: Toast 'Check-in removed for <name>.' and the counts go back
+  s3 not: The wrong member's visit removed
+  s3 not: A check-in made in the member app removed with no word that it came from the app
+J-F-panel-1115-02 | type 2 | owner | Owner opens Visits > 'Losing the habit' from the tab (or the Today tile)
+  s1 see: Subtitle 'Paying members who are losing the habit'
+  s1 see: Tiles per band and cards with the reason, 'Usually <hour>', 'Last visit <n> weeks ago' and a WhatsApp link
+  s1 not: A member listed only because the desk never added visits
+  s1 not: Pass members or members with no running plan listed as at risk
+  s2 see: WhatsApp opens on that member's number with nothing sent yet
+  s2 not: A message sent by itself
+  s2 not: Another member's number
+  s3 see: 'Exported <n> members.' with columns Member, Mobile, Batch, Status, Last visit, Days since visit, Visits in last 8 weeks, Why
+  s3 not: 'Exported 1 members.'
+  s3 not: A file with more people than the list shown
+J-F-panel-1115-03 | type 2 | owner | Owner opens Check-in QR (poster) and Pass visits
+  s1 see: Title 'Check-in QR', 'Members scan it with the MettleUp app and check themselves in'
+  s1 see: 'Scan to check in' with the QR, print and save-as-picture buttons
+  s1 see: 'Members need the MettleUp app, and must join your gym in it (gym code <code>). The join poster is in Settings → Invite members.'
+  s1 not: A QR of another gym or branch
+  s1 not: 'Poster saved as a picture.' when no file was made (then 'Could not make the picture. Try Print poster.')
+  s2 see: 'Pass visits' and 'Pass members who came' tiles
+  s2 see: 'Visits by pass company' table and 'Who came on a pass'
+  s2 see: 'Download Excel file' then 'Exported <n> pass visits.'
+  s2 not: Visits of normal members counted as pass visits
+  s2 not: A pass member shown with dues or on the renewal list
+J-F-panel-1115-04 | type 3 | owner | Owner on Visits, wrong input
+  s1 see: 'That day hasn’t happened yet.' and 'Pick a day first' 'Pick a day that has already passed. Then the check-in box comes back.'
+  s1 not: A visit saved in the future
+  s2 see: 'Nobody matches that' 'Check the spelling, or add them in Members first.'
+  s2 not: A blank list with no words
+  s3 see: The row shows they are already in; no second visit
+  s3 not: Two visits on one day
+  s4 see: 'Put your gym online first' 'Members check in from their own phone, so your gym must be online first. Go to Settings → Sign-in & data. Then come back here for the poster.'
+  s4 not: A poster that cannot work
+J-F-panel-1115-05 | type 6 | owner | Owner adds a missed day, and a member scans the poster meanwhile
+  s1 see: 'Adding check-ins for <day>'
+  s1 see: Both listed under 'Check-ins on <day>'
+  s1 not: The visits saved on today
+  s1 not: The 30-day chart unchanged
+  s2 see: After a refresh the member is in today's list with a tag that it came from the app
+  s2 not: The desk's own check-in of the same member today doubled by the scan
+  s3 see: 'Start checking members in' 'This list needs a few days of check-ins first. … Nobody is listed just because their visits were never added.'
+  s3 not: Every member listed as gone quiet
+J-F-panel-1115-06 | type 12 | owner | Owner exports the at-risk list; a member waits at the poster with a number not on file
+  s1 see: Names and mobile numbers of this gym's members only
+  s1 not: Members of another branch or gym
+  s1 not: A cell starting with + read as a formula
+  s2 see: The app asks the member's number only the first time; the desk sees a request to approve
+  s2 not: The member checked in under another member's name without the desk approving
+J-F-panel-1115-07 | type 1 | staff | Staff signed in, Visits page, register for today, members with running plans
+  s1 see: Title 'Visits', 'Who trained, and when'
+  s1 see: Tabs with 'Losing the habit' and its count
+  s1 see: 'Check someone in' with 'Day' and the box 'Type a name or the last 4 digits of a mobile'
+  s1 not: Members of another branch in the list
+  s1 not: A future day offered
+  s2 see: Toast '<name> checked in.'
+  s2 see: The member under 'Check-ins today' with the time
+  s2 see: The count tiles go up by one
+  s2 not: A second visit for the same member and day from a double tap
+  s2 not: A check-in for a member whose plan ended shown with no warning
+  s2 not: The visit dated on another day
+  s3 see: Toast 'Check-in removed for <name>.' and the counts go back
+  s3 not: The wrong member's visit removed
+  s3 not: A check-in made in the member app removed with no word that it came from the app
+J-F-panel-1115-08 | type 2 | staff | Staff opens Visits > 'Losing the habit' from the tab (or the Today tile)
+  s1 see: Subtitle 'Paying members who are losing the habit'
+  s1 see: Tiles per band and cards with the reason, 'Usually <hour>', 'Last visit <n> weeks ago' and a WhatsApp link
+  s1 not: A member listed only because the desk never added visits
+  s1 not: Pass members or members with no running plan listed as at risk
+  s2 see: WhatsApp opens on that member's number with nothing sent yet
+  s2 not: A message sent by itself
+  s2 not: Another member's number
+  s3 see: 'Exported <n> members.' with columns Member, Mobile, Batch, Status, Last visit, Days since visit, Visits in last 8 weeks, Why
+  s3 not: 'Exported 1 members.'
+  s3 not: A file with more people than the list shown
+J-F-panel-1115-09 | type 2 | staff | Staff opens Check-in QR (poster) and Pass visits
+  s1 see: Title 'Check-in QR', 'Members scan it with the MettleUp app and check themselves in'
+  s1 see: 'Scan to check in' with the QR, print and save-as-picture buttons
+  s1 see: 'Members need the MettleUp app, and must join your gym in it (gym code <code>). The join poster is in Settings → Invite members.'
+  s1 not: A QR of another gym or branch
+  s1 not: 'Poster saved as a picture.' when no file was made (then 'Could not make the picture. Try Print poster.')
+  s2 see: 'Pass visits' and 'Pass members who came' tiles
+  s2 see: 'Visits by pass company' table and 'Who came on a pass'
+  s2 see: 'Download Excel file' then 'Exported <n> pass visits.'
+  s2 not: Visits of normal members counted as pass visits
+  s2 not: A pass member shown with dues or on the renewal list
+J-F-panel-1115-10 | type 3 | staff | Staff on Visits, wrong input
+  s1 see: 'That day hasn’t happened yet.' and 'Pick a day first' 'Pick a day that has already passed. Then the check-in box comes back.'
+  s1 not: A visit saved in the future
+  s2 see: 'Nobody matches that' 'Check the spelling, or add them in Members first.'
+  s2 not: A blank list with no words
+  s3 see: The row shows they are already in; no second visit
+  s3 not: Two visits on one day
+  s4 see: 'Put your gym online first' 'Members check in from their own phone, so your gym must be online first. Go to Settings → Sign-in & data. Then come back here for the poster.'
+  s4 not: A poster that cannot work
+J-F-panel-1115-11 | type 6 | staff | Staff adds a missed day, and a member scans the poster meanwhile
+  s1 see: 'Adding check-ins for <day>'
+  s1 see: Both listed under 'Check-ins on <day>'
+  s1 not: The visits saved on today
+  s1 not: The 30-day chart unchanged
+  s2 see: After a refresh the member is in today's list with a tag that it came from the app
+  s2 not: The desk's own check-in of the same member today doubled by the scan
+  s3 see: 'Start checking members in' 'This list needs a few days of check-ins first. … Nobody is listed just because their visits were never added.'
+  s3 not: Every member listed as gone quiet
+J-F-panel-1115-12 | type 12 | staff | Staff exports the at-risk list; a member waits at the poster with a number not on file
+  s1 see: Names and mobile numbers of this gym's members only
+  s1 not: Members of another branch or gym
+  s1 not: A cell starting with + read as a formula
+  s2 see: The app asks the member's number only the first time; the desk sees a request to approve
+  s2 not: The member checked in under another member's name without the desk approving
+J-F-panel-1119-01 | type 1 | owner | Owner online, member app on, Shop, no products yet
+  s1 see: Title 'Shop', 'What members order in the MettleUp app, and what you sell'
+  s1 see: 'No products yet' 'Add what you sell at the desk, like protein, shakers and T-shirts. Members can then order them in the app.'
+  s1 not: Sample products in a real gym
+  s2 see: The product in the list with its stock
+  s2 see: Toast 'Photo added to <name>. Members see it in the app now.'
+  s2 not: A product saved with an empty name or price ('Please fix the boxes marked in red.')
+  s2 not: The photo of another product
+  s3 see: Tab 'Orders · 1 new'
+  s3 see: The order card with lines and 'Total'
+  s3 not: The order missing until a reload when 'New orders show up here on their own in a few seconds.'
+  s3 not: Stock not reduced
+  s4 see: Toast 'Order <no> is ready. <member> can see this in the app.'
+  s4 see: Toast 'Order <no> collected. ₹<total> taken.'
+  s4 see: Today's shop card counts it
+  s4 not: Cash taken when the member paid online a moment ago (the desk must be told not to take it)
+  s4 not: The sale counted twice in today's card
+J-F-panel-1119-02 | type 2 | owner | Owner taps the shop card on Today, or the new-order alert
+  s1 see: Shop opens on Orders with the new order on top
+  s1 not: The products tab instead
+  s1 not: An order of another branch
+  s2 see: Toast 'Added 10 to <name>. <n> in stock now.'
+  s2 not: 20 added from a double tap
+J-F-panel-1119-03 | type 3 | owner | Owner on Shop, things that must be refused
+  s1 see: 'Please fix the boxes marked in red.'
+  s1 not: A free or nameless product shown to members
+  s2 see: 'This product was deleted while you were editing it.'
+  s2 not: The product re-created silently
+  s3 see: The card to turn on the member app first
+  s3 not: An order list that can never fill, with no reason
+J-F-panel-1119-04 | type 6 | owner | Owner with a new order and a product members can see
+  s1 see: Sheet 'Cancel order <no>?' with 'Keep it'
+  s1 see: After confirming: toast 'Order <no> cancelled. Stock is back.'
+  s1 not: Stock not put back
+  s1 not: A paid online order cancelled with no word about the money
+  s1 not: The member not told in the app
+  s2 see: Toast 'Order <no> is back to new.'
+  s2 not: The order lost from both filters
+  s3 see: 'Hidden — members can’t see it' then 'Members can see and order this'
+  s3 see: Delete: 'It goes from the app at once. Old orders for it stay as they are. …'
+  s3 not: Old orders losing their line text after the delete
+  s3 not: A hidden product still orderable
+  s4 see: The card says 'Cancelled by member'
+  s4 not: Shown as cancelled by the gym
+J-F-panel-1119-05 | type 12 | owner | Owner looks at an order card
+  s1 see: The member's name, what was ordered, the total
+  s1 not: Orders of another gym
+  s1 not: The member's payment details beyond paid or not
+J-F-panel-1119-06 | type 1 | staff | Front desk signed in, a new order waiting
+  s1 see: Title 'Shop', 'What members order in the MettleUp app'
+  s1 see: The Orders list with no tabs above it
+  s1 not: The products tab, prices or stock editing for staff
+  s2 see: Toast 'Order <no> is ready. <member> can see this in the app.'
+  s2 see: Toast 'Order <no> collected. ₹<total> taken.'
+  s2 not: Cash taken after an online payment
+  s2 not: The collected money missing the name of who took it
+J-F-panel-1119-07 | type 3 | staff | Front desk types the products address /shop/products
+  s1 see: The Orders list
+  s1 not: Add, edit, hide, restock or photo buttons for staff
+  s1 not: A product save from the desk accepted by the server
+  s2 see: Sent to the right page for the desk, not the owner's Messages
+  s2 not: An 'Only an owner can see this' dead end from a link the app itself made
+J-F-panel-1119-08 | type 6 | staff | Front desk with one new and one ready order
+  s1 see: Empty filter says 'Nothing waiting to be picked up' / 'Orders you mark ready wait here until the member collects and pays.'
+  s1 see: 'Order <no> cancelled. Stock is back.'
+  s1 not: Cancel missing for staff while Help says the desk handles orders
+  s1 not: Stock not back
+J-F-panel-1108-01 | type 1 | owner | Owner signed in online, a member sent a question and placed a shop order
+  s1 see: Lines for what waits, newest first, a 'New' tag on unseen ones
+  s1 see: When nothing waits: 'Nothing is waiting for you. New messages and requests from your members will show here.'
+  s1 not: Alerts of another gym or branch
+  s1 not: A line missing that the desk can see
+  s2 see: The right page opens (the question, the order)
+  s2 see: The line leaves the waiting list once the thing is done, with 'Done by <name>' in History
+  s2 not: The line gone just because it was opened, while the thing is not done
+  s2 not: The bell count not going down
+  s3 see: 'Removed from your list.' with 'Undo'
+  s3 not: The underlying question or order deleted
+  s3 not: Removed for every other person too, when it is 'your list'
+J-F-panel-1108-02 | type 2 | owner | Owner on Settings (or the offer card 'Get alerts on this device')
+  s1 see: 'Alerts are on for this device.'
+  s1 see: Card with 'Send a test alert'
+  s1 not: On for the person's other devices too
+  s1 not: A browser prompt that returns on every page
+  s2 see: 'We are sending a test alert to this device. It can take up to a minute. …'
+  s2 see: A notice pops up; back in the app: 'Sent. Did a notice pop up? It showed on this device at <time>.'
+  s2 not: The test shown on other people's devices
+  s2 not: A second test allowed at once (then 'You just sent a test. You can send another in <n> seconds.')
+  s3 see: A notice on this device; a tap opens the order
+  s3 not: No notice because the tab was hidden
+  s3 not: Two notices for one order
+J-F-panel-1108-03 | type 3 | owner | Owner, alerts that cannot work
+  s1 see: 'Alerts are blocked in this browser. Allow notifications for this site in the browser settings, then come back here.'
+  s1 not: 'Alerts are on' while blocked
+  s2 see: 'On an iPhone or iPad, first add the admin app to your Home Screen (Share, then Add to Home Screen). Open it from there and turn alerts on.'
+  s2 not: A turn-on button that does nothing
+  s3 see: 'We sent it, but this device has not shown it yet.' and 'Things to look at on this device:' with the three checks
+  s3 not: 'Sent' with a time when nothing was shown
+J-F-panel-1108-04 | type 6 | owner | Owner with alerts on, a done line and a removed line in the bell
+  s1 see: 'The last 7 days: what was done, opened or removed. Tap a line to open it.'
+  s1 see: Tags 'Done', 'Opened', 'Removed', 'Removed · Not done yet'
+  s1 not: Lines older than 7 days
+  s1 not: A removed line that cannot be opened any more
+  s2 see: It is back in the waiting list
+  s2 not: Back as 'New' with a fresh notice
+  s3 see: 'Alerts are off for this device.' then on again
+  s3 not: Notices still coming while off
+  s3 not: The other devices of the person turned off
+  s4 see: 'Your gym gets everything else together, every day at <time>.'
+  s4 see: The always-at-once list is still at once
+  s4 not: A shop order or complaint held for the daily summary
+  s4 not: The time saved in another time zone
+J-F-panel-1108-05 | type 12 | owner | Owner gets a notice on the phone's lock screen
+  s1 see: A short line that something needs the gym
+  s1 not: A member's mobile number or the full text of a complaint on the lock screen
+  s2 see: No more notices on this device
+  s2 not: Notices of the gym still arriving on a signed-out or removed person's phone
+J-F-panel-1108-06 | type 1 | staff | Staff signed in online, a member sent a question and placed a shop order
+  s1 see: Lines for what waits, newest first, a 'New' tag on unseen ones
+  s1 see: When nothing waits: 'Nothing is waiting for you. New messages and requests from your members will show here.'
+  s1 not: Alerts of another gym or branch
+  s1 not: A complaint meant for the owner only
+  s2 see: The right page opens (the question, the order)
+  s2 see: The line leaves the waiting list once the thing is done, with 'Done by <name>' in History
+  s2 not: The line gone just because it was opened, while the thing is not done
+  s2 not: The bell count not going down
+  s3 see: 'Removed from your list.' with 'Undo'
+  s3 not: The underlying question or order deleted
+  s3 not: Removed for every other person too, when it is 'your list'
+J-F-panel-1108-07 | type 2 | staff | Staff on Settings (or the offer card 'Get alerts on this device')
+  s1 see: 'Alerts are on for this device.'
+  s1 see: Card with 'Send a test alert'
+  s1 not: On for the person's other devices too
+  s1 not: A browser prompt that returns on every page
+  s2 see: 'We are sending a test alert to this device. It can take up to a minute. …'
+  s2 see: A notice pops up; back in the app: 'Sent. Did a notice pop up? It showed on this device at <time>.'
+  s2 not: The test shown on other people's devices
+  s2 not: A second test allowed at once (then 'You just sent a test. You can send another in <n> seconds.')
+  s3 see: A notice on this device; a tap opens the order
+  s3 not: No notice because the tab was hidden
+  s3 not: Two notices for one order
+J-F-panel-1108-08 | type 3 | staff | Staff, alerts that cannot work
+  s1 see: 'Alerts are blocked in this browser. Allow notifications for this site in the browser settings, then come back here.'
+  s1 not: 'Alerts are on' while blocked
+  s2 see: 'On an iPhone or iPad, first add the admin app to your Home Screen (Share, then Add to Home Screen). Open it from there and turn alerts on.'
+  s2 not: A turn-on button that does nothing
+  s3 see: 'We sent it, but this device has not shown it yet.' and 'Things to look at on this device:' with the three checks
+  s3 not: 'Sent' with a time when nothing was shown
+  s4 see: 'Only the owner can change when they come.' and the current timing in words
+  s4 not: A timing control the desk can save
+J-F-panel-1108-09 | type 6 | staff | Staff with alerts on, a done line and a removed line in the bell
+  s1 see: 'The last 7 days: what was done, opened or removed. Tap a line to open it.'
+  s1 see: Tags 'Done', 'Opened', 'Removed', 'Removed · Not done yet'
+  s1 not: Lines older than 7 days
+  s1 not: A removed line that cannot be opened any more
+  s2 see: It is back in the waiting list
+  s2 not: Back as 'New' with a fresh notice
+  s3 see: 'Alerts are off for this device.' then on again
+  s3 not: Notices still coming while off
+  s3 not: The other devices of the person turned off
+J-F-panel-1108-10 | type 12 | staff | Staff gets a notice on the phone's lock screen
+  s1 see: A short line that something needs the gym
+  s1 not: A member's mobile number or the full text of a complaint on the lock screen
+  s1 not: A complaint sent only to the owner shown to the desk
+  s2 see: No more notices on this device
+  s2 not: Notices of the gym still arriving on a signed-out or removed person's phone
+J-F-panel-1129-01 | type 1 | owner | Owner signed in, Today, a gym with months of members, payments and visits
+  s1 see: Tiles: plans ending, fees owed, stopped coming, new members, busiest hour, each with a small trend line
+  s1 see: 'Last <n> days, and plans ending in the next <n>. Tap a number to see who is behind it.'
+  s1 not: A tile whose number differs from the list behind it
+  s1 not: NaN or a minus count
+  s2 see: Page with 'Plans that end and are not renewed yet · <days>', 'How it changed' with 'Highest' and 'Now', and the members with '<plan> · ends in 3 days (<date>)'
+  s2 see: 'Back to Today'
+  s2 not: A renewed member still listed
+  s2 not: Pass members listed
+  s3 see: Title 'Your growth', 'Is your gym growing? Month by month, before and since MettleUp.'
+  s3 see: 'Started on MettleUp: <date>. These numbers show what changed since you started, not why. …'
+  s3 see: 'How these numbers are counted'
+  s3 not: This month shown as a full month without 'So far'
+  s3 not: Money that was refunded counted as income
+  s4 see: Page 'Share this report' 'One page to print, or to save as a PDF and send.'
+  s4 see: The browser's print box with one page
+  s4 not: Menu and buttons printed on the page
+  s4 not: A second page with one line
+J-F-panel-1129-02 | type 2 | owner | Owner opens /numbers/owed/30 from a saved link, and downloads
+  s1 see: 'Fees members still have to pay' with each member, owed since, days and amount
+  s1 not: A total that differs from Money > Dues
+  s2 see: 'Downloaded <n> members.' with headers Member, Mobile, Plans unpaid, Owed since, Days, Amount owed (INR), Archived
+  s2 not: 'Downloaded 1 members.'
+  s2 not: Amounts in paise
+  s3 see: 'Downloaded <n> months.'
+  s3 not: Months missing from the file that are on the page
+J-F-panel-1129-03 | type 3 | owner | Owner of a gym made today, no members
+  s1 see: 'No plans end in these days', 'Nobody owes money' 'Every plan is fully paid.', 'Start checking members in', 'Nobody joined in these days' 'Pick more days at the top to look further back.'
+  s1 not: 'Everybody is coming' when the register was never used
+  s1 not: A blank chart frame
+  s2 see: A plain correction or the dates swapped
+  s2 not: A minus range and wrong totals
+  s3 see: 'To compare with before MettleUp, add your old records' with 'Add old records'
+  s3 not: A growth percent from one month
+  s3 not: Divide-by-zero figures
+J-F-panel-1129-04 | type 6 | owner | Owner looks at the numbers, then a payment is taken and old records are added
+  s1 see: Fees owed goes down by that amount; the member leaves the list
+  s1 not: The old figure until a reload
+  s2 see: Months 'Before MettleUp' appear; the compare cards change from first-months-versus-latest to before-versus-since
+  s2 not: The 'Started MettleUp' month moved
+  s3 see: The page goes back to the earlier compare
+  s3 not: Old months left behind
+J-F-panel-1129-05 | type 12 | owner | Owner prints the report to send to a partner
+  s1 see: Totals by month only
+  s1 not: Member names or mobile numbers on the shared page
+  s1 not: Another branch's figures mixed in without saying so
+J-F-panel-1129-06 | type 1 | staff | Front desk signed in, Today
+  s1 see: The people tiles: plans ending, stopped coming, new members, busiest hour
+  s1 not: The fees-owed tile or any money total for the desk
+  s2 see: 'Members with a plan who stopped coming' and the list, with a WhatsApp action per member
+  s2 not: Money owed per member shown here to the desk
+J-F-panel-1129-07 | type 3 | staff | Front desk types owner-only addresses
+  s1 see: 'Only an owner can see this' 'Ask your gym owner if you need something from here.'
+  s1 not: The growth page or the owed list drawn for a moment before the refusal
+  s1 not: A 'Your growth' link in the desk's menu
+J-F-panel-1129-08 | type 6 | staff | Front desk checks members in, then looks at the numbers
+  s1 see: 'Check-ins by hour' and 'Hours, busiest first' include the new check-ins
+  s1 not: 'No check-in times yet' after timed check-ins exist
+  s2 see: 'Downloaded the hours.'
+  s2 not: A file with member names for an hours list
+J-F-panel-1129-09 | type 12 | staff | Front desk and the promise that only the owner sees growth
+  s1 see: No money totals on any desk page
+  s1 not: The desk able to add up the gym's income from what the panel shows

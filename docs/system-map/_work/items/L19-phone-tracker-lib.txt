@@ -1,0 +1,40 @@
+# L19-phone-tracker-lib: 19 x phone / phone/tracker-lib. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L19.1 | 19 | A member, staff or outsider trying to cheat: fake check-ins, editing dues, scraping join links, spamming enquiries, using a gym's AI credits, sharing a Pro feature
+L19.2 | 19 | Also: AI injection: can text typed by a member or lead steer the AI
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-1100 | live | Built-in exercise library (names, other names incl. Hindi, muscles, gear, how each is logged) | apps/mobile/src/tracker/catalog/exerciseCatalog.ts:19
+F-phone-1101 | live | Exercise library update on app launch (and after demo data or a restore): links old rows, adds new exercises, renames ol | apps/mobile/src/tracker/catalog/catalogSync.ts:251
+F-phone-1102 | live | Exercise pictures: small picture in lists, start and end pictures on the exercise page and demo sheet, line drawing with | apps/mobile/src/tracker/catalog/pictureChoice.ts:21
+F-phone-1103 | live | Muscles trained body map (finer muscles, male or female figure, shading by sets) | apps/mobile/src/tracker/lib/bodyMapColors.ts:18
+F-phone-1104 | live | Pick a date on a month calendar (workout date picker; also used by the plan request panel) | apps/mobile/src/tracker/lib/calendar.ts:5
+F-phone-1105 | live | Calendar page (workout days by month, and the year view) | apps/mobile/src/tracker/lib/calendarView.ts:8
+F-phone-1106 | live | Charts spaced by the real date (line charts, sparklines, bar chart) | apps/mobile/src/tracker/lib/chartTime.ts:25
+F-phone-1107 | live | Tap a chart point to open the workouts behind it (history for that day, week or month) | apps/mobile/src/tracker/lib/historyRange.ts:17
+F-phone-1108 | live | Monthly report and year in review (the Reports rows on the Progress tab, the 'Against last month' cards) | apps/mobile/src/tracker/lib/progressTab.ts:19
+F-phone-1109 | live | Reorder routines in a folder by press-and-hold, then drag | apps/mobile/src/tracker/lib/dragOrder.ts:14
+F-phone-1110 | live | Exercises list and exercise picker order (Recent, Made by you, All exercises, 'Last: date') | apps/mobile/src/tracker/lib/exercisesView.ts:31
+F-phone-1111 | live | First routine guide for a new member (name the folder, name the routine, pick exercises, save; Skip always there) | apps/mobile/src/tracker/lib/firstRoutine.ts:18
+F-phone-1112 | live | Workout tab routines and folders (open or close a folder, Following / Up next / Next tags, the menus, move up, down or t | apps/mobile/src/tracker/lib/workoutTab.ts:48
+F-phone-1113 | live | Up next card on the Workout tab (Resume or Discard an open workout, Start the next routine, See exercises, weekly goal l | apps/mobile/src/tracker/lib/upNext.ts:80
+F-phone-1114 | live | The gym's plans arrive as folders on the phone (saved, updated, relabelled when the plan or the gym is gone; 'Workouts o | apps/mobile/src/tracker/lib/gymPlanSteps.ts:34
+F-phone-1115 | live | Machine 'In use' screen while resting ('Resting, back in', 'I'm back') | apps/mobile/src/tracker/lib/inUse.ts:2
+F-phone-1116 | live | Exercise card target box in a workout (Previous, today's target, what is done, why a target is unusual, first-time start | apps/mobile/src/tracker/lib/kgTarget.ts:32
+F-phone-1117 | live | 'Previous' line above the set table and the grey hint on the next set | apps/mobile/src/tracker/lib/previousSource.ts:38
+F-phone-1118 | live | Step back when a lift is stuck ('Try 40 kg today?' with Try / Stay, and the line that says why the target is lower) | apps/mobile/src/tracker/lib/stepBack.ts:18
+F-phone-1119 | live | Measures page and add form (body weight plus ten body measurements) | apps/mobile/src/tracker/lib/measuresView.ts:15
+F-phone-1120 | live | Tab bar: the minimised workout bar on every tab but Workout, and the sliding highlight between tabs | apps/mobile/src/tracker/lib/miniBar.ts:8
+F-phone-1121 | live | Progress photos grid and comparing two photos ('6 weeks apart') | apps/mobile/src/tracker/lib/photoGrid.ts:17
+F-phone-1122 | live | Resume workout opens on the exercise in progress | apps/mobile/src/tracker/lib/resumeExercise.ts:15
+F-phone-1123 | live | RPE: say how hard a set felt (6 to 10); tapping a value ticks the set | apps/mobile/src/tracker/lib/rpe.ts:9
+F-phone-1124 | live | Typing a set's numbers: every tap on a number box selects the whole number | apps/mobile/src/tracker/lib/selectAllOnTap.ts:28
+F-phone-1125 | live | Supersets (groups shown as A, B, C) | apps/mobile/src/tracker/lib/superset.ts:4
+F-phone-1126 | live | Profile 'Next' line: today's goal to lift, against the same exercises last time | apps/mobile/src/tracker/lib/todayGoal.ts:124
+F-phone-1127 | live | Actions on a saved workout: Repeat, Edit, Save as routine, Delete (workout page and the Profile feed's menu) | apps/mobile/src/tracker/lib/useWorkoutActions.ts:47
+F-phone-1128 | live | Finish screen: which exercises went up or down against the last workout, and why | apps/mobile/src/tracker/lib/workoutCompare.ts:47
+F-phone-1129 | live | A saved workout's name and notes as shown in History, on the workout page and in shared text | apps/mobile/src/tracker/lib/workoutText.ts:11
+F-phone-1130 | live | Share a workout as a picture (name, day, duration, kg lifted, sets, records, body map, best set per exercise) | apps/mobile/src/tracker/share/workoutCard.ts:97
+F-phone-1131 | live | Share picture choices: size (Post or Story) and background (Dark or See-through) | apps/mobile/src/tracker/share/frame.ts:147
+F-phone-1132 | live | The member's gym on every share picture (logo and name on top, 'Logged with MettleUp' at the foot) | apps/mobile/src/tracker/share/gymBrand.ts:108
+F-phone-1133 | live | Share the monthly report or the year in review as a picture | apps/mobile/src/tracker/share/reportCard.ts:96
+F-phone-1134 | live | Before/after picture from two progress photos (Before, After, the two days, how far apart; never a body number) | apps/mobile/src/tracker/share/beforeAfterCard.ts:78

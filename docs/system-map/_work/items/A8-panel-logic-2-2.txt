@@ -1,0 +1,792 @@
+# A8-panel-logic-2-2: coverage of 81 Tier 1 journeys (8 features, from A5-panel-logic-2-2). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-728 | apps/dashboard/test/crm/newDots.test.ts | unit | 279 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-panel-728 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | file name, asserts 4 journey phrase(s)
+F-panel-728 | apps/mobile/test/lib/newDots.test.ts | unit | 204 lines | file name, asserts 2 journey phrase(s)
+F-panel-728 | apps/dashboard/test/crm/demoGym.test.ts | unit | 109 lines | asserts 3 journey phrase(s)
+F-panel-728 | apps/mobile/test/tracker/r319ImportEraseCharts.test.ts | unit | 136 lines | asserts 3 journey phrase(s)
+F-panel-728 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 2 journey phrase(s)
+F-panel-728 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 2 journey phrase(s)
+F-panel-728 | apps/mobile/test/tracker/plateSetup.test.ts | unit | 272 lines | asserts 2 journey phrase(s)
+F-panel-728 | apps/mobile/test/tracker/silentFailures.test.ts | unit | 86 lines | asserts 2 journey phrase(s)
+F-panel-728 | apps/dashboard/e2e/iphone-install-uat.spec.mjs | e2e | 339 lines | asserts 1 journey phrase(s)
+F-panel-728 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 1 journey phrase(s)
+F-panel-728 | apps/dashboard/e2e/logocolour.spec.mjs | e2e | 160 lines | asserts 1 journey phrase(s)
+F-panel-712 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 4 journey phrase(s)
+F-panel-712 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 4 journey phrase(s)
+F-panel-712 | apps/dashboard/test/crm/ownerOnboarding.test.ts | unit | 115 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-712 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 2 journey phrase(s)
+F-panel-712 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 2 journey phrase(s)
+F-panel-712 | apps/dashboard/test/crm/invite.test.ts | unit | 105 lines | asserts 2 journey phrase(s)
+F-panel-712 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-712 | apps/dashboard/e2e/hq-webpage-uat.spec.mjs | e2e | 166 lines | asserts 1 journey phrase(s)
+F-panel-712 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-712 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-712 | apps/dashboard/e2e/online.spec.mjs | e2e | 163 lines | asserts 1 journey phrase(s)
+F-panel-712 | apps/dashboard/e2e/pay-mettleup-uat.spec.mjs | e2e | 210 lines | asserts 1 journey phrase(s)
+F-panel-713 | apps/dashboard/test/crm/ownerNumbers.test.ts | unit | 316 lines | imports the code, file name, asserts 9 journey phrase(s)
+F-panel-713 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 6 journey phrase(s)
+F-panel-713 | apps/dashboard/test/crm/passMembers.test.ts | unit | 199 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-713 | apps/mobile/test/tracker/bodyMapRanges.test.ts | unit | 58 lines | asserts 4 journey phrase(s)
+F-panel-713 | apps/mobile/test/tracker/phase5ProgressTop.test.ts | unit | 271 lines | asserts 4 journey phrase(s)
+F-panel-713 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 3 journey phrase(s)
+F-panel-713 | apps/mobile/test/tracker/phase3Numbers.test.ts | unit | 256 lines | asserts 3 journey phrase(s)
+F-panel-713 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 2 journey phrase(s)
+F-panel-713 | apps/dashboard/test/crm/workoutOffer.test.ts | unit | 290 lines | asserts 2 journey phrase(s)
+F-panel-713 | apps/mobile/test/shop/planRequest.test.ts | unit | 171 lines | asserts 2 journey phrase(s)
+F-panel-713 | apps/mobile/test/tracker/statisticsAudit.test.ts | unit | 90 lines | asserts 2 journey phrase(s)
+F-panel-713 | apps/dashboard/e2e/bell-inbox-uat.spec.mjs | e2e | 401 lines | asserts 1 journey phrase(s)
+F-panel-715 | apps/dashboard/test/crm/freshness.test.ts | unit | 56 lines | asserts 7 journey phrase(s)
+F-panel-715 | apps/dashboard/test/crm/bellGroups.test.ts | unit | 190 lines | imports the code
+F-panel-715 | apps/dashboard/e2e/pagechat-uat.spec.mjs | e2e | 272 lines | asserts 2 journey phrase(s)
+F-panel-715 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 2 journey phrase(s)
+F-panel-715 | apps/dashboard/test/crm/shop.test.ts | unit | 391 lines | asserts 2 journey phrase(s)
+F-panel-715 | supabase/tests/0094_page_chat.sql | db | 200 lines | asserts 2 journey phrase(s)
+F-panel-715 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-panel-715 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-panel-715 | apps/dashboard/e2e/friend-live-uat.spec.mjs | e2e | 262 lines | asserts 1 journey phrase(s)
+F-panel-715 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 1 journey phrase(s)
+F-panel-715 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-panel-715 | apps/dashboard/test/crm/gymAlerts.test.ts | unit | 140 lines | asserts 1 journey phrase(s)
+F-panel-716 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 9 journey phrase(s)
+F-panel-716 | apps/dashboard/test/crm/passMembers.test.ts | unit | 199 lines | imports the code, file name, asserts 3 journey phrase(s)
+F-panel-716 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 3 journey phrase(s)
+F-panel-716 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 3 journey phrase(s)
+F-panel-716 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 2 journey phrase(s)
+F-panel-716 | apps/dashboard/e2e/owner-sell.spec.mjs | e2e | 88 lines | asserts 2 journey phrase(s)
+F-panel-716 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 2 journey phrase(s)
+F-panel-716 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 2 journey phrase(s)
+F-panel-716 | apps/dashboard/test/crm/messageTemplates.test.ts | unit | 246 lines | asserts 2 journey phrase(s)
+F-panel-716 | apps/mobile/test/shop/membership.test.ts | unit | 154 lines | asserts 2 journey phrase(s)
+F-panel-716 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-panel-716 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-panel-718 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | imports the code, file name, asserts 6 journey phrase(s)
+F-panel-718 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 3 journey phrase(s)
+F-panel-718 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 2 journey phrase(s)
+F-panel-718 | apps/dashboard/e2e/pagechat-uat.spec.mjs | e2e | 272 lines | asserts 2 journey phrase(s)
+F-panel-718 | apps/mobile/test/cloud/backupWords.test.ts | unit | 88 lines | asserts 2 journey phrase(s)
+F-panel-718 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-718 | supabase/tests/0094_page_chat.sql | db | 200 lines | asserts 2 journey phrase(s)
+F-panel-718 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-panel-718 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-panel-718 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-panel-718 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 1 journey phrase(s)
+F-panel-718 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-719 | apps/dashboard/test/crm/planRequests.test.ts | unit | 239 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-panel-719 | apps/mobile/android/wear/src/test/java/com/forgeai/wear/SelfDimTest.kt | watch | 234 lines | asserts 5 journey phrase(s)
+F-panel-719 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 3 journey phrase(s)
+F-panel-719 | apps/dashboard/test/crm/joinPay.test.ts | unit | 223 lines | asserts 2 journey phrase(s)
+F-panel-719 | apps/dashboard/test/crm/phoneLinks.test.ts | unit | 162 lines | asserts 2 journey phrase(s)
+F-panel-719 | apps/mobile/test/shop/planRequest.test.ts | unit | 171 lines | asserts 2 journey phrase(s)
+F-panel-719 | apps/mobile/test/tracker/idlePause.test.ts | unit | 113 lines | asserts 2 journey phrase(s)
+F-panel-719 | apps/mobile/test/tracker/workoutPause.test.ts | unit | 164 lines | asserts 2 journey phrase(s)
+F-panel-719 | supabase/tests/0031_branches.sql | db | 352 lines | asserts 2 journey phrase(s)
+F-panel-719 | supabase/tests/0045_report_requests.sql | db | 238 lines | asserts 2 journey phrase(s)
+F-panel-719 | supabase/tests/0054_member_alerts.sql | db | 139 lines | asserts 2 journey phrase(s)
+F-panel-719 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-panel-721 | apps/dashboard/test/crm/pt.test.ts | unit | 231 lines | imports the code, asserts 1 journey phrase(s)
+F-panel-721 | apps/dashboard/e2e/aiimport.spec.mjs | e2e | 169 lines | asserts 1 journey phrase(s)
+F-panel-721 | apps/dashboard/e2e/logocolour.spec.mjs | e2e | 160 lines | asserts 1 journey phrase(s)
+F-panel-721 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-panel-721 | apps/dashboard/e2e/trainers-uat.spec.mjs | e2e | 282 lines | asserts 1 journey phrase(s)
+F-panel-721 | apps/dashboard/test/crm/assistant/awayIdea.test.ts | unit | 316 lines | asserts 1 journey phrase(s)
+F-panel-721 | apps/dashboard/test/crm/logoColour.test.ts | unit | 130 lines | asserts 1 journey phrase(s)
+F-panel-721 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-panel-721 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 1 journey phrase(s)
+F-panel-721 | deploy/panel/helpPages.test.mjs | unit | 109 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-728-01 | type 1 | owner | Owner signed in online (not the demo gym); What's new holds a feature line dated in the last 30 days and after the gym was set up, with the 
+  s1 see: A small orange dot beside the Settings menu item
+  s1 not: A dot for a feature older than 30 days
+  s1 not: A dot for a feature that was already there when the gym joined
+  s1 not: More than 3 features carrying dots at once
+  s2 see: Page title 'Settings'
+  s2 see: Three tabs: 'Gym', 'Member app', 'Sign-in & data'
+  s2 see: A dot on the 'Member app' tab only
+  s2 not: A dot on a tab that holds no new feature
+  s2 not: No dot on any tab, so the owner cannot tell where the new thing is
+  s3 see: The Member app settings
+  s3 see: The dot stays beside the page title for this visit
+  s3 not: The dot gone before the page was opened
+  s4 see: No dot on the menu item, no dot on the tab
+  s4 not: The dot coming back on the same device after the page was opened
+J-F-panel-728-02 | type 2 | owner | Same owner; the new feature sits behind a card on the Gym tab (path /settings/payments, /settings/mettleup) or on Sign-in & data (/settings/
+  s1 see: A dot on the 'Gym' tab (or 'Sign-in & data' for People)
+  s1 not: The dot on the wrong tab
+  s2 see: A dot beside the card's button (Payments, Pay MettleUp or People)
+  s2 not: A tab dot with no dot on any card, so the owner cannot find which card is new
+  s3 see: The feature's own page opens with a dot beside its title
+  s3 not: The tab dot going away just because the Gym tab was opened, before the feature page was opened
+  s4 see: No dot on the tab or the card
+  s4 not: The dot still lit after the feature page was opened
+J-F-panel-728-03 | type 3 | owner | Owner in the demo gym, or in a gym kept only in this browser (not online)
+  s1 see: Tabs 'Gym', 'Member app', 'Sign-in & data' with no dots
+  s1 not: Any orange dot in the demo gym or an offline-only gym
+  s2 see: The same pages as always, no dot beside any title
+  s2 not: An error or blank page because the list of seen features cannot be read
+J-F-panel-728-04 | type 6 | owner | Owner opened the new feature on a laptop, so its dot is gone there
+  s1 see: The dot is lit again on the phone's tab (seen is remembered per device)
+  s1 not: A crash or blank menu on a device with no saved list
+  s2 see: The dot goes away on the phone too
+  s2 not: The laptop's dot coming back
+  s3 see: The dot shows again until the feature is opened or 30 days have passed
+  s3 not: A dot that never goes away after opening the feature
+  s4 see: No dot any more
+  s4 not: A dot shown past 30 days
+J-F-panel-728-05 | type 12 | owner | A gym created today; What's new holds Settings features dated before today
+  s1 see: No dot on any tab: features from before the gym joined are not new to it
+  s1 not: Dots for things added before this gym joined MettleUp
+  s1 not: Anything about which features were opened being sent to the server (it is kept on this device only)
+J-F-panel-728-06 | type 1 | staff | Staff (front desk) signed in online; a new Settings feature is live for the owner
+  s1 see: No orange dot anywhere: dots are shown to the owner only
+  s1 not: A dot leading the desk to a page it cannot open
+  s2 see: The staff settings page, with no 'Gym' / 'Member app' / 'Sign-in & data' tabs and no dots
+  s2 not: The owner's three tabs
+  s2 not: The owner's gym details form
+J-F-panel-728-07 | type 3 | staff | Staff signed in; types the address of an owner-only settings page (/settings/mettleup or /settings/branding)
+  s1 see: The page does not open for staff (exact view unknown: not read)
+  s1 not: The Pay MettleUp or Branding page opening for staff
+  s1 not: A dot shown on the way
+J-F-panel-728-08 | type 6 | staff | The owner saw dots in this browser and signed out; staff signs in on the same browser
+  s1 see: No dots for staff
+  s1 not: The owner's unseen dots shown to staff
+  s2 see: The owner's dots exactly as before: seen ones stay gone, unseen ones stay lit
+  s2 not: Staff's visit marking the owner's features as seen
+J-F-panel-712-01 | type 1 | owner | Sign-up form filled in; the owner presses 'Create my gym' and the gym is made online
+  s1 see: A sheet titled 'Your gym is ready'
+  s1 see: 'Members type this code in the MettleUp app to join your gym.'
+  s1 see: 'Gym code' with the code in big letters
+  s1 see: 'Join link' with the link
+  s1 see: A QR code and 'Members can also scan this QR with their phone camera. The link opens the MettleUp app on your gym.'
+  s1 not: Another gym's code or link
+  s1 not: No card, so the owner does not know the code
+  s1 not: A code in lower case or with spaces
+  s2 see: 'Code copied.' for about 2.5 seconds
+  s2 not: 'Code copied.' when the browser blocked copying (it must say 'This browser blocked copying. Select the text and copy it.')
+  s3 see: The phone's share sheet with the invite message; on a browser without one, WhatsApp opens in a new tab with the message ready
+  s3 not: A message sent to anyone by itself
+  s3 not: WhatsApp opening after the owner cancelled the share sheet
+  s4 see: The sheet closes; Today is behind it
+  s4 not: The card coming back on the next page or after a refresh
+J-F-panel-712-02 | type 2 | owner | The 'Your gym is ready' sheet is open
+  s1 see: 'Link copied.'
+  s1 not: The code copied instead of the link
+  s2 see: The sheet closes and the invite page of Settings opens (address /settings/invite) with the same code and link
+  s2 not: A different code on the poster page than on the card
+  s2 not: The sheet still open on top of the poster page
+J-F-panel-712-03 | type 3 | owner | An owner signs in to a gym that already exists (does not press 'Create my gym')
+  s1 see: Today, with no 'Your gym is ready' sheet
+  s1 not: The card shown at an ordinary sign-in
+  s1 not: The card of a gym created earlier in this tab by someone else
+  s2 see: The gym code and join link are there
+  s2 not: No way to find the code without the card
+J-F-panel-712-04 | type 6 | owner | The 'Your gym is ready' sheet was shown once
+  s1 see: Today, no sheet: it is shown once only
+  s1 not: The sheet again on every refresh
+  s2 see: No sheet (the note lived in the closed tab); the code is in Settings, Invite members
+  s2 not: A stuck or half-drawn sheet
+  s2 not: A sign-in error because the note is missing
+J-F-panel-712-05 | type 12 | owner | A gym was just created in this browser tab
+  s1 see: The sign-in page
+  s1 not: The gym code left in the tab's storage after the card was shown
+  s2 see: Their own Today, no card
+  s2 not: The first gym's code and join link shown to the second person
+J-F-panel-713-01 | type 1 | owner | Owner on Today; the gym has members, plans, receipts and check-ins
+  s1 see: Heading 'Your numbers'
+  s1 see: Range chips '7 days', '30 days', '90 days', 'Pick dates'
+  s1 see: 'Last 30 days, and plans ending in the next 30. Tap a number to see who is behind it.'
+  s1 see: Five tiles: 'Renewals due', 'Fees due', 'Stopped coming', 'New members', 'Busy hours'
+  s1 not: 'Fees due' different from the total on Money, Dues
+  s1 not: NaN or a blank in a tile
+  s2 see: A page titled 'Renewals due' with 'Next 30 days'
+  s2 see: One row per member: plan name, 'ends' or 'ended', the day
+  s2 not: A member who already renewed early listed as due
+  s2 not: A pass member (FITPASS, cultpass) listed
+  s2 not: An archived member listed
+  s2 not: The same member twice
+  s3 see: Today, with the same range still picked
+  s3 not: The range reset to another value
+J-F-panel-713-02 | type 2 | owner | Owner on Today, 'Your numbers'
+  s1 see: A page titled 'Fees due' listing who owes, oldest debt first; archived members who still owe are included
+  s1 not: A total that differs from the tile or from Money, Dues
+  s1 not: A refunded or voided receipt still counted as paid
+  s2 see: The hours members check in; with no timed check-ins: 'No check-in times yet' and 'This fills in once members are checked in at the desk or scan the gym's code in the app.'
+  s2 not: An empty chart with no words
+J-F-panel-713-03 | type 2 | owner | Owner on Today, 'Your numbers', range '30 days'
+  s1 see: Tiles recount: 'Last 7 days' and renewals for 'Next 7 days'
+  s1 not: A tile still showing the 30-day figure
+  s2 see: Every tile shows the picked days, for example '1 Oct – 29 Oct 2026'
+  s2 not: A range longer than 366 days accepted without a word
+  s2 not: From and to swapped into a minus count
+  s3 see: The same range is still picked
+  s3 not: The range forgotten
+J-F-panel-713-04 | type 3 | owner | Owner of a brand-new gym with no members
+  s1 see: All five tiles with zero
+  s1 not: An error, a spinner that never ends, NaN
+  s2 see: 'No plans end in these days' / 'Nobody needs to renew in these days.'
+  s2 see: 'Nobody owes money' / 'Every plan is fully paid.'
+  s2 see: 'Start checking members in' / 'After a few days of check-ins, this fills in by itself.'
+  s2 see: 'Nobody joined in these days' / 'Pick more days at the top to look further back.'
+  s2 see: 'No check-in times yet'
+  s2 not: 'Everybody is coming' in a gym that has never checked anyone in
+  s3 see: Not a numbers list (exact view unknown: not read)
+  s3 not: A blank page or a crash
+J-F-panel-713-05 | type 6 | owner | Owner; a member owes fees and their plan ends in 3 days
+  s1 see: The member is behind both numbers
+  s1 not: The member missing from either list
+  s2 see: 'Fees due' drops by that amount; 'Renewals due' drops by one
+  s2 not: Either number unchanged until a refresh of the browser
+  s3 see: 'Fees due' goes back up by the same amount
+  s3 not: The voided money still counted as paid
+  s4 see: They leave 'New members' and 'Renewals due' but stay in 'Fees due'
+  s4 not: Archiving wiping what they owe
+J-F-panel-713-06 | type 12 | owner | Owner and one staff person both signed in to the same gym
+  s1 see: The 'Fees due' tile and the link to the long view (growth)
+  s1 not: Another gym's or branch's figures mixed in
+  s2 see: A file with that gym's members only
+  s2 not: Members of another gym
+  s2 not: Money columns in a file made by staff
+J-F-panel-713-07 | type 1 | staff | Staff (front desk) on Today; the gym has members and check-ins
+  s1 see: Four tiles: 'Renewals due', 'Stopped coming', 'New members', 'Busy hours'
+  s1 see: No 'Fees due' tile and no growth link
+  s1 not: Any rupee total
+  s1 not: A gap where the fifth tile would be
+  s2 see: A page titled 'Stopped coming' listing members with a running plan who stopped coming
+  s2 not: Money owed shown on the rows
+  s3 see: The phone's dialler or the WhatsApp sheet for that member
+  s3 not: A message sent by itself
+J-F-panel-713-08 | type 2 | staff | Staff on Today, 'Your numbers'
+  s1 see: Members who joined in the last 90 days, newest first, each with their plan words
+  s1 not: Archived members listed
+  s1 not: Price paid shown
+J-F-panel-713-09 | type 3 | staff | Staff signed in; types the address of the owner's money list (/numbers/owed)
+  s1 see: The list does not open for staff; they are sent away from it (exact view unknown: not read)
+  s1 not: The 'Fees due' list or any total shown to staff
+  s1 not: The page title 'Fees due' flashing before the refusal
+J-F-panel-713-10 | type 6 | staff | Staff; a member is in 'Stopped coming'
+  s1 see: 'Stopped coming' drops by one when Today is opened again
+  s1 not: The member still listed after a check-in today
+  s2 see: The member is back in 'Stopped coming'
+  s2 not: Busy hours still counting the undone check-in
+J-F-panel-713-11 | type 12 | staff | Staff on any numbers list
+  s1 see: Names, plans and dates; the same members the desk already sees in Members
+  s1 not: Fees, prices or money totals
+  s1 not: Figures of another branch
+J-F-panel-715-01 | type 1 | owner | Owner signed in online on a computer, on Today; the panel read the gym's records a short while ago
+  s1 see: 'Updated 20 s ago' (or 'Updated just now', 'Updated 3 min ago', 'Updated over an hour ago')
+  s1 see: A 'Refresh' button beside it
+  s1 not: Two refresh buttons on one screen
+  s1 not: An age that never moves on
+  s2 see: The button reads 'Refreshing…' and cannot be pressed again
+  s2 not: The whole page reloading
+  s2 not: The scroll place jumping to the top
+  s2 not: An open form losing what was typed
+  s3 see: 'Updated just now'
+  s3 see: Today's 'Needs you' list, the bell and the gym's records are the newest ones
+  s3 not: 'Updated just now' when one of the reads failed
+  s3 not: Old rows still on screen after the new ones arrived
+J-F-panel-715-02 | type 2 | owner | Owner signed in online on a phone
+  s1 see: A round button with the refresh mark and a short age under it: 'now', '20 s', '3 min' or '1 h+'
+  s1 not: The long sentence squeezed into the phone's top bar
+  s1 not: No age at all
+  s2 see: The mark spins and a small line under the top bar says 'Refreshing…'
+  s2 not: A second read started by a second tap
+  s3 see: The line goes away and the age reads 'now'
+  s3 not: The line left on screen over the page
+J-F-panel-715-03 | type 3 | owner | Owner signed in online; the internet is off
+  s1 see: 'Refreshing…', then 'Could not refresh. Check the internet and try again.' in red (on a phone: '!' under the mark and the same sentence in a line under the top bar)
+  s1 not: 'Updated just now' after a failed read
+  s1 not: The age reset to now although nothing new was read
+  s2 see: No Refresh button and no 'Updated' words at all
+  s2 not: A Refresh button that can only fail
+J-F-panel-715-04 | type 6 | owner | Owner; the last Refresh failed and the red sentence is showing
+  s1 see: 'Refreshing…', then 'Updated just now'; the red sentence is gone
+  s1 not: The failed sentence staying after a good refresh
+  s2 see: The age counts on by itself: 'Updated 2 min ago'
+  s2 not: A call to the server every 5 seconds just to move the age
+  s3 see: An age that matches the real last read
+  s3 not: 'Updated just now' for data that is ten minutes old
+J-F-panel-715-05 | type 1 | staff | Staff signed in online on a computer, on Members; the panel read the gym's records a short while ago
+  s1 see: 'Updated 20 s ago' (or 'Updated just now', 'Updated 3 min ago', 'Updated over an hour ago')
+  s1 see: A 'Refresh' button beside it
+  s1 not: Two refresh buttons on one screen
+  s1 not: An age that never moves on
+  s2 see: The button reads 'Refreshing…' and cannot be pressed again
+  s2 not: The whole page reloading
+  s2 not: The scroll place jumping to the top
+  s2 not: An open form losing what was typed
+  s3 see: 'Updated just now'
+  s3 see: The members list and the bell are the newest ones
+  s3 not: 'Updated just now' when one of the reads failed
+  s3 not: Old rows still on screen after the new ones arrived
+J-F-panel-715-06 | type 2 | staff | Staff signed in online on a phone
+  s1 see: A round button with the refresh mark and a short age under it: 'now', '20 s', '3 min' or '1 h+'
+  s1 not: The long sentence squeezed into the phone's top bar
+  s1 not: No age at all
+  s2 see: The mark spins and a small line under the top bar says 'Refreshing…'
+  s2 not: A second read started by a second tap
+  s3 see: The line goes away and the age reads 'now'
+  s3 not: The line left on screen over the page
+J-F-panel-715-07 | type 3 | staff | Staff signed in online; the internet is off
+  s1 see: 'Refreshing…', then 'Could not refresh. Check the internet and try again.' in red (on a phone: '!' under the mark and the same sentence in a line under the top bar)
+  s1 not: 'Updated just now' after a failed read
+  s1 not: The age reset to now although nothing new was read
+  s2 see: No Refresh button and no 'Updated' words at all
+  s2 not: A Refresh button that can only fail
+J-F-panel-715-08 | type 6 | staff | Staff; the last Refresh failed and the red sentence is showing
+  s1 see: 'Refreshing…', then 'Updated just now'; the red sentence is gone
+  s1 not: The failed sentence staying after a good refresh
+  s2 see: The age counts on by itself: 'Updated 2 min ago'
+  s2 not: A call to the server every 5 seconds just to move the age
+  s3 see: An age that matches the real last read
+  s3 not: 'Updated just now' for data that is ten minutes old
+J-F-panel-715-09 | type 1 | trainer | Trainer signed in online on a computer, on Member questions (a trainer is a staff sign-in ticked as trainer); the panel read the gym's recor
+  s1 see: 'Updated 20 s ago' (or 'Updated just now', 'Updated 3 min ago', 'Updated over an hour ago')
+  s1 see: A 'Refresh' button beside it
+  s1 not: Two refresh buttons on one screen
+  s1 not: An age that never moves on
+  s2 see: The button reads 'Refreshing…' and cannot be pressed again
+  s2 not: The whole page reloading
+  s2 not: The scroll place jumping to the top
+  s2 not: An open form losing what was typed
+  s3 see: 'Updated just now'
+  s3 see: The questions list on the open page is read again too
+  s3 not: 'Updated just now' when one of the reads failed
+  s3 not: Old rows still on screen after the new ones arrived
+J-F-panel-715-10 | type 2 | trainer | Trainer signed in online on a phone
+  s1 see: A round button with the refresh mark and a short age under it: 'now', '20 s', '3 min' or '1 h+'
+  s1 not: The long sentence squeezed into the phone's top bar
+  s1 not: No age at all
+  s2 see: The mark spins and a small line under the top bar says 'Refreshing…'
+  s2 not: A second read started by a second tap
+  s3 see: The line goes away and the age reads 'now'
+  s3 not: The line left on screen over the page
+J-F-panel-715-11 | type 3 | trainer | Trainer signed in online; the internet is off
+  s1 see: 'Refreshing…', then 'Could not refresh. Check the internet and try again.' in red (on a phone: '!' under the mark and the same sentence in a line under the top bar)
+  s1 not: 'Updated just now' after a failed read
+  s1 not: The age reset to now although nothing new was read
+  s2 see: No Refresh button and no 'Updated' words at all
+  s2 not: A Refresh button that can only fail
+J-F-panel-715-12 | type 6 | trainer | Trainer; the last Refresh failed and the red sentence is showing
+  s1 see: 'Refreshing…', then 'Updated just now'; the red sentence is gone
+  s1 not: The failed sentence staying after a good refresh
+  s2 see: The age counts on by itself: 'Updated 2 min ago'
+  s2 not: A call to the server every 5 seconds just to move the age
+  s3 see: An age that matches the real last read
+  s3 not: 'Updated just now' for data that is ten minutes old
+J-F-panel-716-01 | type 1 | owner | Owner signed in; the gym has no pass member yet
+  s1 see: Hint: 'They pay a pass company, not your gym. No plan and no dues, and never on the renewal list. Each visit counts for the pass company.'
+  s1 see: Chips 'FITPASS' and 'cultpass', and a box to type another company
+  s1 not: A plan or a fee asked for a pass member
+  s2 see: The member's page; a 'Pass visit' button in place of the everyday check-in words; 'Pass visits this month'
+  s2 not: 'Expired' or 'No plan' warnings on a pass member
+  s2 not: A second 'Sell membership' button lower on the page
+  s3 see: 'Pass visit counted for FITPASS.'
+  s3 not: Two visits for one day after a second tap
+  s3 not: The visit counted as an ordinary visit only
+  s4 see: Page 'Pass visits', 'Visits by FITPASS, cultpass and other pass members'
+  s4 see: 'Pass members pay a pass company like FITPASS or cultpass, and the company pays your gym for each visit. Match these counts with the company’s monthly payment.'
+  s4 see: Tiles 'Pass visits' 1 and 'Pass members who came' 1 for this month
+  s4 see: Table 'Visits by pass company' and the list 'Who came on a pass'
+  s4 not: A count that differs from the register for that month
+  s5 see: A file with the columns Date, Pass company, Member, Mobile, Checked in by; 'Exported 1 pass visit.'
+  s5 not: 'Exported 1 pass visits.'
+  s5 not: Visits of another month in the file
+J-F-panel-716-02 | type 2 | owner | Owner; a pass member exists; the member opens the MettleUp app and scans the gym's check-in QR
+  s1 see: The visit is counted for the member's pass company; the file says 'MettleUp app QR' under 'Checked in by'
+  s1 not: A QR check-in from before the day they became a pass member counted
+  s1 not: The QR visit missing from the count
+  s2 see: Saved as 'FITPASS' (one company, however it is typed)
+  s2 not: Two rows 'FITPASS' and 'fit pass' in the monthly table
+  s3 see: Next time the member form offers 'Urban Pass' as a chip after FITPASS and cultpass
+  s3 not: A name longer than 40 letters cut without a word to the user
+  s4 see: Only the pass members, with the count on the chip
+  s4 not: The chip shown in a gym with no pass member
+J-F-panel-716-03 | type 3 | owner | Owner on the member form
+  s1 see: 'Pick or type the pass company.'; nothing saved
+  s1 not: A pass member saved with no company
+  s1 not: The form closing
+  s2 see: No 'Pass visits' entry at the top
+  s2 not: An empty Pass visits page offered to a gym that has no pass members
+  s3 see: 'No pass visits in <month>' and 'Add a pass member from Members, then check them in at the desk or let them scan your check-in QR. Each visit counts here.'
+  s3 not: A blank table
+J-F-panel-716-04 | type 6 | owner | Owner; a FITPASS member has desk pass visits and QR check-ins last month
+  s1 see: Desk and QR visits together
+  s1 not: A month chip missing for a month that has pass visits
+  s2 see: The member page reads like an ordinary member again
+  s2 not: Dues invented for the time they were on a pass
+  s3 see: The same count as before: last month's visits were pass visits when they happened
+  s3 not: Last month's FITPASS count dropping because the member is no longer a pass member
+  s3 not: Past visits moved to another company when the member's company is changed
+  s4 see: Their past pass visits still count; a removed member shows as 'A removed member'
+  s4 not: Visits vanishing from a month the company has not paid yet
+J-F-panel-716-05 | type 12 | owner | Owner; a pass member has an old gym plan that ends this week
+  s1 see: The pass member is not listed
+  s1 not: A renewal reminder or dues reminder aimed at a pass member
+  s2 see: 'No dues on a pass' when nothing is owed
+  s2 not: 'Fully paid' or a 'Renew' push on a pass member
+  s3 see: A file on this device with names and mobile numbers of this gym's pass members only
+  s3 not: Members of another gym
+  s3 not: The file sent anywhere by itself
+J-F-panel-716-06 | type 1 | staff | Staff signed in; the gym has no pass member yet
+  s1 see: Hint: 'They pay a pass company, not your gym. No plan and no dues, and never on the renewal list. Each visit counts for the pass company.'
+  s1 see: Chips 'FITPASS' and 'cultpass', and a box to type another company
+  s1 not: A plan or a fee asked for a pass member
+  s2 see: The member's page; a 'Pass visit' button in place of the everyday check-in words; 'Pass visits this month'
+  s2 not: 'Expired' or 'No plan' warnings on a pass member
+  s2 not: A second 'Sell membership' button lower on the page
+  s3 see: 'Pass visit counted for FITPASS.'
+  s3 not: Two visits for one day after a second tap
+  s3 not: The visit counted as an ordinary visit only
+  s4 see: Page 'Pass visits', 'Visits by FITPASS, cultpass and other pass members'
+  s4 see: 'Pass members pay a pass company like FITPASS or cultpass, and the company pays your gym for each visit. Match these counts with the company’s monthly payment.'
+  s4 see: Tiles 'Pass visits' 1 and 'Pass members who came' 1 for this month
+  s4 see: Table 'Visits by pass company' and the list 'Who came on a pass'
+  s4 not: A count that differs from the register for that month
+  s5 see: A file with the columns Date, Pass company, Member, Mobile, Checked in by; 'Exported 1 pass visit.'
+  s5 not: 'Exported 1 pass visits.'
+  s5 not: Visits of another month in the file
+J-F-panel-716-07 | type 2 | staff | Staff; a pass member exists; the member opens the MettleUp app and scans the gym's check-in QR
+  s1 see: The visit is counted for the member's pass company; the file says 'MettleUp app QR' under 'Checked in by'
+  s1 not: A QR check-in from before the day they became a pass member counted
+  s1 not: The QR visit missing from the count
+  s2 see: Saved as 'FITPASS' (one company, however it is typed)
+  s2 not: Two rows 'FITPASS' and 'fit pass' in the monthly table
+  s3 see: Next time the member form offers 'Urban Pass' as a chip after FITPASS and cultpass
+  s3 not: A name longer than 40 letters cut without a word to the user
+  s4 see: Only the pass members, with the count on the chip
+  s4 not: The chip shown in a gym with no pass member
+J-F-panel-716-08 | type 3 | staff | Staff on the member form
+  s1 see: 'Pick or type the pass company.'; nothing saved
+  s1 not: A pass member saved with no company
+  s1 not: The form closing
+  s2 see: No 'Pass visits' entry at the top
+  s2 not: An empty Pass visits page offered to a gym that has no pass members
+  s3 see: 'No pass visits in <month>' and 'Add a pass member from Members, then check them in at the desk or let them scan your check-in QR. Each visit counts here.'
+  s3 not: A blank table
+J-F-panel-716-09 | type 6 | staff | Staff; a FITPASS member has desk pass visits and QR check-ins last month
+  s1 see: Desk and QR visits together
+  s1 not: A month chip missing for a month that has pass visits
+  s2 see: The member page reads like an ordinary member again
+  s2 not: Dues invented for the time they were on a pass
+  s3 see: The same count as before: last month's visits were pass visits when they happened
+  s3 not: Last month's FITPASS count dropping because the member is no longer a pass member
+  s3 not: Past visits moved to another company when the member's company is changed
+  s4 see: Their past pass visits still count; a removed member shows as 'A removed member'
+  s4 not: Visits vanishing from a month the company has not paid yet
+J-F-panel-716-10 | type 12 | staff | Staff; a pass member has an old gym plan that ends this week
+  s1 see: The pass member is not listed
+  s1 not: A renewal reminder or dues reminder aimed at a pass member
+  s2 see: 'No dues on a pass' when nothing is owed
+  s2 not: 'Fully paid' or a 'Renew' push on a pass member
+  s3 see: A file on this device with names and mobile numbers of this gym's pass members only
+  s3 not: Members of another gym
+  s3 not: The file sent anywhere by itself
+J-F-panel-718-01 | type 1 | owner | Owner signed in online on Today; an app user typed a member's mobile number at the poster check-in and it waits for the desk
+  s1 see: 'Say yes only if the number is really theirs. This stops anyone checking in with someone else’s number.'
+  s1 see: A row: '<member name> · +91 98290 48001'
+  s1 see: 'The app user “<name>” typed this number at check-in. Is it their number?'
+  s1 see: Buttons 'No' and 'Yes, it’s theirs'
+  s1 not: Rows of another gym
+  s1 not: Rows already answered
+  s1 not: Newest first (the oldest wait must be on top)
+  s2 see: The button reads 'Saving…'; every button on the card is off while it saves
+  s2 not: A second answer sent by a second tap
+  s2 not: Another row answered by mistake
+  s3 see: The row leaves the card; Today's 'Needs you' count drops at once; with no rows left the card goes away
+  s3 not: The row still waiting after a yes
+  s3 not: The count staying up until the next minute
+J-F-panel-718-02 | type 2 | owner | Owner on Today; a waiting number whose app user gave no name
+  s1 see: 'Someone in the app typed this number at check-in. Is it their number?'
+  s1 not: Empty quote marks where the name would be
+  s2 see: The row leaves the card and the count drops
+  s2 not: The app user getting that number after a No
+  s2 not: A question 'are you sure' that hides the list
+J-F-panel-718-03 | type 3 | owner | Owner on Today with the card open; things go wrong
+  s1 see: 'Someone already answered this one. The list is up to date now.' and the list is read again
+  s1 not: A second, different answer saved over the first
+  s2 see: 'Could not save. Check the internet and try again.'; the row stays
+  s2 not: The row leaving as if saved
+  s2 not: Buttons left switched off for good
+  s3 see: 'Your gym account is on hold, so this can’t be answered now.' / 'You have been signed out. Sign in again.'
+  s3 not: A raw server code such as SUSPENDED or BAD_KEY on screen
+  s4 see: No 'Numbers to confirm' card
+  s4 not: An empty card with a title and no rows
+J-F-panel-718-04 | type 6 | owner | Owner answered a number a minute ago
+  s1 see: The answered row does not come back; only waiting numbers are shown
+  s1 not: An answered number shown as waiting again
+  s2 see: There is none here: the card shows waiting numbers only
+  s2 not: A yes silently turned into a no, or the other way round
+  s3 see: A new waiting row
+  s3 not: The old No answering the new ask by itself without the desk seeing it
+J-F-panel-718-05 | type 12 | owner | Owner; a waiting row shows a member's name and mobile number
+  s1 see: Only this gym's member name, their mobile and the name the app user gave
+  s1 not: The number shown to the app user or tied to their app account before the desk says yes
+  s1 not: Numbers typed at another gym
+  s2 see: The app user stays without that number
+  s2 not: The real member's check-ins, plan or dues shown to the person who typed the number
+J-F-panel-718-06 | type 1 | staff | Staff signed in online on Today; an app user typed a member's mobile number at the poster check-in and it waits for the desk
+  s1 see: 'Say yes only if the number is really theirs. This stops anyone checking in with someone else’s number.'
+  s1 see: A row: '<member name> · +91 98290 48001'
+  s1 see: 'The app user “<name>” typed this number at check-in. Is it their number?'
+  s1 see: Buttons 'No' and 'Yes, it’s theirs'
+  s1 not: Rows of another gym
+  s1 not: Rows already answered
+  s1 not: Newest first (the oldest wait must be on top)
+  s2 see: The button reads 'Saving…'; every button on the card is off while it saves
+  s2 not: A second answer sent by a second tap
+  s2 not: Another row answered by mistake
+  s3 see: The row leaves the card; Today's 'Needs you' count drops at once; with no rows left the card goes away
+  s3 not: The row still waiting after a yes
+  s3 not: The count staying up until the next minute
+J-F-panel-718-07 | type 2 | staff | Staff on Today; a waiting number whose app user gave no name
+  s1 see: 'Someone in the app typed this number at check-in. Is it their number?'
+  s1 not: Empty quote marks where the name would be
+  s2 see: The row leaves the card and the count drops
+  s2 not: The app user getting that number after a No
+  s2 not: A question 'are you sure' that hides the list
+J-F-panel-718-08 | type 3 | staff | Staff on Today with the card open; things go wrong
+  s1 see: 'Someone already answered this one. The list is up to date now.' and the list is read again
+  s1 not: A second, different answer saved over the first
+  s2 see: 'Could not save. Check the internet and try again.'; the row stays
+  s2 not: The row leaving as if saved
+  s2 not: Buttons left switched off for good
+  s3 see: 'Your gym account is on hold, so this can’t be answered now.' / 'You have been signed out. Sign in again.'
+  s3 not: A raw server code such as SUSPENDED or BAD_KEY on screen
+  s4 see: No 'Numbers to confirm' card
+  s4 not: An empty card with a title and no rows
+J-F-panel-718-09 | type 6 | staff | Staff answered a number a minute ago
+  s1 see: The answered row does not come back; only waiting numbers are shown
+  s1 not: An answered number shown as waiting again
+  s2 see: There is none here: the card shows waiting numbers only
+  s2 not: A yes silently turned into a no, or the other way round
+  s3 see: A new waiting row
+  s3 not: The old No answering the new ask by itself without the desk seeing it
+J-F-panel-718-10 | type 12 | staff | Staff; a waiting row shows a member's name and mobile number
+  s1 see: Only this gym's member name, their mobile and the name the app user gave
+  s1 not: The number shown to the app user or tied to their app account before the desk says yes
+  s1 not: Numbers typed at another gym
+  s2 see: The app user stays without that number
+  s2 not: The real member's check-ins, plan or dues shown to the person who typed the number
+J-F-panel-719-01 | type 1 | owner | Owner signed in online on Today; a member with a running gym plan asked in the app to pause it for 7 days
+  s1 see: The member's name
+  s1 see: 'Pause 3 Nov 2026 - 9 Nov 2026 (7 days)'
+  s1 see: Buttons 'Decline' and 'Approve'
+  s1 not: Requests of another gym
+  s1 not: A pause shown without its dates or day count
+  s2 see: 'Saving…'; every button on the card is off
+  s2 not: A second approval started by a second tap
+  s3 see: The row stays, without buttons: 'Paused by <name>. Plan now ends <date>.'
+  s3 see: The member's gym plan ends 7 days later; its note says '+7 days (Freeze - asked in the app (app #<8 letters>))'
+  s3 not: The days added twice
+  s3 not: The days added to a PT pack, a cancelled plan, or a plan that is not the one ending last
+  s3 not: The request marked approved while the plan was not changed
+J-F-panel-719-02 | type 2 | owner | Owner on Today; a member asked in the app to renew with a plan that is on sale
+  s1 see: 'Renew: <plan name>'
+  s1 see: 'The member pays at the desk. Approving adds the fee to what they owe.'
+  s1 not: A price or a payment button on the row
+  s2 see: 'Renewed by <name>: <first day> - <last day>. Collect the fee at the desk.'
+  s2 not: A receipt written (nothing is collected here)
+  s2 not: Two plans sold for one request
+  s2 not: A start date that overlaps the plan they already have
+  s3 see: The new plan with the note 'Asked in the app (app #<8 letters>)' and its full price shown as still to pay
+  s3 not: The plan shown as paid
+  s3 not: The sale recorded without who sold it
+J-F-panel-719-03 | type 3 | owner | Owner on Today with requests that cannot be approved
+  s1 see: 'Declined by <name>.'; no plan is changed
+  s1 not: Days added or a plan sold on a decline
+  s2 see: 'This member has no gym plan to pause. Decline it, or sell a plan first.'
+  s2 not: A PT pack extended instead
+  s3 see: 'That plan is no longer on sale. Decline it, or sell another plan from the member’s page.'
+  s3 not: An off-sale plan sold
+  s4 see: 'This member is not on your list any more. Decline it.'
+  s4 not: A plan made for a member who is not there
+  s5 see: 'Someone already answered this request. The list is up to date now.' / 'This request is no longer there. The member may have taken it back.'
+  s5 not: A raw code such as ALREADY_DECIDED or GONE on screen
+J-F-panel-719-04 | type 6 | owner | Owner; the internet drops right after the plan was changed but before the server took the approval
+  s1 see: 'Could not save. Check the internet and try again.' or 'Not saved yet. Check the internet and press Approve again.'; the row still has its buttons
+  s1 not: The row shown as approved
+  s2 see: The row turns to 'Paused by …' or 'Renewed by …'
+  s2 not: The pause days added a second time
+  s2 not: A second plan sold for the same request
+  s3 see: Waiting requests first (oldest on top), then answered ones (newest first) without buttons; with no requests at all the card is not shown
+  s3 not: An answered request getting its buttons back
+  s3 not: An approved pause whose days were later removed still reading 'Paused'
+J-F-panel-719-05 | type 12 | owner | Owner approves a request; the member has the MettleUp app
+  s1 see: The row reads 'Paused by <name>' or 'Renewed by <name>'
+  s1 not: Requests or names from another gym
+  s2 see: A notification that the pause or renewal was approved, and the new last day in the app
+  s2 not: The member told 'approved' while the plan in the panel did not change
+  s2 not: The staff person's phone number or other details shown to the member
+J-F-panel-719-06 | type 1 | staff | Staff signed in online on Today; a member with a running gym plan asked in the app to pause it for 7 days
+  s1 see: The member's name
+  s1 see: 'Pause 3 Nov 2026 - 9 Nov 2026 (7 days)'
+  s1 see: Buttons 'Decline' and 'Approve'
+  s1 not: Requests of another gym
+  s1 not: A pause shown without its dates or day count
+  s2 see: 'Saving…'; every button on the card is off
+  s2 not: A second approval started by a second tap
+  s3 see: The row stays, without buttons: 'Paused by <name>. Plan now ends <date>.'
+  s3 see: The member's gym plan ends 7 days later; its note says '+7 days (Freeze - asked in the app (app #<8 letters>))'
+  s3 not: The days added twice
+  s3 not: The days added to a PT pack, a cancelled plan, or a plan that is not the one ending last
+  s3 not: The request marked approved while the plan was not changed
+J-F-panel-719-07 | type 2 | staff | Staff on Today; a member asked in the app to renew with a plan that is on sale
+  s1 see: 'Renew: <plan name>'
+  s1 see: 'The member pays at the desk. Approving adds the fee to what they owe.'
+  s1 not: A price or a payment button on the row
+  s2 see: 'Renewed by <name>: <first day> - <last day>. Collect the fee at the desk.'
+  s2 not: A receipt written (nothing is collected here)
+  s2 not: Two plans sold for one request
+  s2 not: A start date that overlaps the plan they already have
+  s3 see: The new plan with the note 'Asked in the app (app #<8 letters>)' and its full price shown as still to pay
+  s3 not: The plan shown as paid
+  s3 not: The sale recorded without who sold it
+J-F-panel-719-08 | type 3 | staff | Staff on Today with requests that cannot be approved
+  s1 see: 'Declined by <name>.'; no plan is changed
+  s1 not: Days added or a plan sold on a decline
+  s2 see: 'This member has no gym plan to pause. Decline it, or sell a plan first.'
+  s2 not: A PT pack extended instead
+  s3 see: 'That plan is no longer on sale. Decline it, or sell another plan from the member’s page.'
+  s3 not: An off-sale plan sold
+  s4 see: 'This member is not on your list any more. Decline it.'
+  s4 not: A plan made for a member who is not there
+  s5 see: 'Someone already answered this request. The list is up to date now.' / 'This request is no longer there. The member may have taken it back.'
+  s5 not: A raw code such as ALREADY_DECIDED or GONE on screen
+J-F-panel-719-09 | type 6 | staff | Staff; the internet drops right after the plan was changed but before the server took the approval
+  s1 see: 'Could not save. Check the internet and try again.' or 'Not saved yet. Check the internet and press Approve again.'; the row still has its buttons
+  s1 not: The row shown as approved
+  s2 see: The row turns to 'Paused by …' or 'Renewed by …'
+  s2 not: The pause days added a second time
+  s2 not: A second plan sold for the same request
+  s3 see: Waiting requests first (oldest on top), then answered ones (newest first) without buttons; with no requests at all the card is not shown
+  s3 not: An answered request getting its buttons back
+  s3 not: An approved pause whose days were later removed still reading 'Paused'
+J-F-panel-719-10 | type 12 | staff | Staff approves a request; the member has the MettleUp app
+  s1 see: The row reads 'Paused by <name>' or 'Renewed by <name>'
+  s1 not: Requests or names from another gym
+  s2 see: A notification that the pause or renewal was approved, and the new last day in the app
+  s2 not: The member told 'approved' while the plan in the panel did not change
+  s2 not: The staff person's phone number or other details shown to the member
+J-F-panel-721-01 | type 1 | owner | Owner signed in; Plans has no PT plan yet
+  s1 see: The plan's line: 'PT · 12 sessions · Trainer Rohit'
+  s1 not: More than 200 sessions accepted
+  s1 not: A trainer name longer than 40 letters kept
+  s2 see: A PT block: '<pack name> · runs until <date>', 0 of 12 used
+  s2 not: The PT pack changing the member's gym plan status or last day
+  s3 see: 'PT session marked.'; the button reads 'Session marked today' and is off; 1 of 12 used
+  s3 not: Two sessions used by a double tap
+  s3 not: A session marked for a day that has not happened
+J-F-panel-721-02 | type 2 | owner | Owner; a member renewed PT early, so two packs run at once (old pack 10 of 12 used)
+  s1 see: '2 PT packs running. Sessions are used from the oldest pack first.'
+  s1 see: Each pack: '<name> · 10 of 12 used · until <date>', with ' · next session' on the pack in use
+  s1 not: The new pack used while the old pack still has paid sessions
+  s2 see: The old pack goes to 11 of 12
+  s2 not: The session taken from the newer pack
+  s3 see: Members whose running packs have 2 sessions or fewer left between them, or whose last pack ends within 7 days; this member is not listed, because a later pack is already there
+  s3 not: A member with a pack already bought and waiting listed as 'PT ending'
+  s3 not: The chip shown when nobody is ending
+J-F-panel-721-03 | type 3 | owner | Owner; PT packs that cannot take a session
+  s1 see: 'All 12 PT sessions used. Time to renew.' and a 'Renew PT' button in place of 'Mark session'
+  s1 not: A 13th session marked
+  s1 not: 'Mark session' still offered
+  s2 see: 'Ended on <date> with 3 sessions left'; no 'Mark session' for that pack
+  s2 not: A session marked after the last day (the save answers 'This PT plan ended on <date>. The owner can extend it (Freeze / extra days).')
+  s3 see: The button does not save and says the internet is needed (exact words unknown: not read)
+  s3 not: 'PT session marked.' for a session that was not saved
+J-F-panel-721-04 | type 6 | owner | Owner; a session was marked yesterday on the wrong member
+  s1 see: Used goes down by one; 'Mark session' is offered again
+  s1 not: The session taken back from the wrong pack when two are running
+  s2 see: Today's session comes back; the button reads 'Mark session' again
+  s2 not: Two sessions taken back by one tap
+  s3 see: 'Only 2 PT sessions left', then 'Only 1 PT session left'
+  s3 not: 'Only 1 PT sessions left'
+J-F-panel-721-05 | type 12 | owner | Owner marks a session; the member has the MettleUp app
+  s1 see: The pack's count on the member's page
+  s1 not: PT counts of another gym's members
+  s2 see: Their own count only, in the words 'Personal training: {left} of {total} left. Ask the desk to add more.'
+  s2 not: A different number of sessions left on the app than in the panel
+  s2 not: The price of the pack or other members' PT shown to the member
+  s3 see: PT columns as words, for example '4 of 12', and the trainer's name
+  s3 not: '4 of 12' turned into a date by Excel
+J-F-panel-721-06 | type 1 | staff | Staff signed in; Plans has no PT plan yet
+  s1 see: The plan's line: 'PT · 12 sessions · Trainer Rohit'
+  s1 not: More than 200 sessions accepted
+  s1 not: A trainer name longer than 40 letters kept
+  s2 see: A PT block: '<pack name> · runs until <date>', 0 of 12 used
+  s2 not: The PT pack changing the member's gym plan status or last day
+  s3 see: 'PT session marked.'; the button reads 'Session marked today' and is off; 1 of 12 used
+  s3 not: Two sessions used by a double tap
+  s3 not: A session marked for a day that has not happened
+J-F-panel-721-07 | type 2 | staff | Staff; a member renewed PT early, so two packs run at once (old pack 10 of 12 used)
+  s1 see: '2 PT packs running. Sessions are used from the oldest pack first.'
+  s1 see: Each pack: '<name> · 10 of 12 used · until <date>', with ' · next session' on the pack in use
+  s1 not: The new pack used while the old pack still has paid sessions
+  s2 see: The old pack goes to 11 of 12
+  s2 not: The session taken from the newer pack
+  s3 see: Members whose running packs have 2 sessions or fewer left between them, or whose last pack ends within 7 days; this member is not listed, because a later pack is already there
+  s3 not: A member with a pack already bought and waiting listed as 'PT ending'
+  s3 not: The chip shown when nobody is ending
+J-F-panel-721-08 | type 3 | staff | Staff; PT packs that cannot take a session
+  s1 see: 'All 12 PT sessions used. Time to renew.' and a 'Renew PT' button in place of 'Mark session'
+  s1 not: A 13th session marked
+  s1 not: 'Mark session' still offered
+  s2 see: 'Ended on <date> with 3 sessions left'; no 'Mark session' for that pack
+  s2 not: A session marked after the last day (the save answers 'This PT plan ended on <date>. The owner can extend it (Freeze / extra days).')
+  s3 see: The button does not save and says the internet is needed (exact words unknown: not read)
+  s3 not: 'PT session marked.' for a session that was not saved
+J-F-panel-721-09 | type 6 | staff | Staff; one session was marked today by mistake and another was marked yesterday
+  s1 see: Today's session comes back; the button reads 'Mark session' again
+  s1 not: Two sessions taken back by one tap
+  s2 see: No 'Undo last session' button: only the owner can take back a session from an earlier day
+  s2 not: Staff giving back an old session, which is a free session
+  s3 see: 'Only 2 PT sessions left', then 'Only 1 PT session left'
+  s3 not: 'Only 1 PT sessions left'
+J-F-panel-721-10 | type 12 | staff | Staff marks a session; the member has the MettleUp app
+  s1 see: The pack's count on the member's page
+  s1 not: PT counts of another gym's members
+  s2 see: Their own count only, in the words 'Personal training: {left} of {total} left. Ask the desk to add more.'
+  s2 not: A different number of sessions left on the app than in the panel
+  s2 not: The price of the pack or other members' PT shown to the member
+  s3 see: PT sessions and trainer, no money totals of the gym
+  s3 not: The gym's money totals shown to staff
+J-F-panel-721-11 | type 1 | trainer | A trainer (a staff sign-in ticked as trainer) signed in; a member with a running 12-session PT pack is booked with them today
+  s1 see: 'Did they come? Tap "Mark session" on the member’s page.' once the booking has started
+  s1 not: The booking itself using up a class
+  s2 see: '<pack name> · runs until <date>' and how many sessions are used
+  s2 not: Another member's pack
+  s3 see: 'PT session marked.'; the button reads 'Session marked today' and is off; used goes up by one
+  s3 not: Two sessions used by a double tap
+  s3 not: A session marked for a day that has not happened
+J-F-panel-721-12 | type 2 | trainer | A trainer (a staff sign-in ticked as trainer); a member renewed PT early, so two packs run at once (old pack 10 of 12 used)
+  s1 see: '2 PT packs running. Sessions are used from the oldest pack first.'
+  s1 see: Each pack: '<name> · 10 of 12 used · until <date>', with ' · next session' on the pack in use
+  s1 not: The new pack used while the old pack still has paid sessions
+  s2 see: The old pack goes to 11 of 12
+  s2 not: The session taken from the newer pack
+  s3 see: Members whose running packs have 2 sessions or fewer left between them, or whose last pack ends within 7 days; this member is not listed, because a later pack is already there
+  s3 not: A member with a pack already bought and waiting listed as 'PT ending'
+  s3 not: The chip shown when nobody is ending
+J-F-panel-721-13 | type 3 | trainer | A trainer (a staff sign-in ticked as trainer); PT packs that cannot take a session
+  s1 see: 'All 12 PT sessions used. Time to renew.' and a 'Renew PT' button in place of 'Mark session'
+  s1 not: A 13th session marked
+  s1 not: 'Mark session' still offered
+  s2 see: 'Ended on <date> with 3 sessions left'; no 'Mark session' for that pack
+  s2 not: A session marked after the last day (the save answers 'This PT plan ended on <date>. The owner can extend it (Freeze / extra days).')
+  s3 see: The button does not save and says the internet is needed (exact words unknown: not read)
+  s3 not: 'PT session marked.' for a session that was not saved
+J-F-panel-721-14 | type 6 | trainer | A trainer (a staff sign-in ticked as trainer); one session was marked today by mistake and another was marked yesterday
+  s1 see: Today's session comes back; the button reads 'Mark session' again
+  s1 not: Two sessions taken back by one tap
+  s2 see: No 'Undo last session' button: only the owner can take back a session from an earlier day
+  s2 not: Staff giving back an old session, which is a free session
+  s3 see: 'Only 2 PT sessions left', then 'Only 1 PT session left'
+  s3 not: 'Only 1 PT sessions left'
+J-F-panel-721-15 | type 12 | trainer | A trainer (a staff sign-in ticked as trainer) marks a session; the member has the MettleUp app
+  s1 see: The pack's count on the member's page
+  s1 not: PT counts of another gym's members
+  s2 see: Their own count only, in the words 'Personal training: {left} of {total} left. Ask the desk to add more.'
+  s2 not: A different number of sessions left on the app than in the panel
+  s2 not: The price of the pack or other members' PT shown to the member
+  s3 see: PT sessions and trainer, no money totals of the gym
+  s3 not: The gym's money totals shown to staff

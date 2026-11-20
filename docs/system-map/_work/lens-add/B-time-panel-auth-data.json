@@ -1,0 +1,1 @@
+{"id":"B-time-panel-auth-data","step":"B-time","item":"B-time (Install, update, upgrade + 2 more) x panel / panel/auth-data: 5 items","needs":["CAL-score"],"checkpoint":"_work/B-time-panel-auth-data.md","out_file":"_work/out/B-time-panel-auth-data.jsonl","surface":"panel","area":"panel/auth-data","lenses":["13","20","gap-7"],"lens_items":["L13.1","L20.1","H7.1","H7.2","H7.3"]}

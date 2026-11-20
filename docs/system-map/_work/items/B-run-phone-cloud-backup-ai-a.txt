@@ -1,0 +1,57 @@
+# B-run-phone-cloud-backup-ai-a: 6 + 15 x phone / phone/cloud-backup-ai. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L6.1 | 6 | Offline and bad network on every write
+L6.2 | 6 | retries do not double-save
+L6.3 | 6 | outages of each outside service (Supabase, Cloudflare, Play, WhatsApp, AI): what the user sees
+L6.4 | 6 | backups exist and a restore was tested
+L6.5 | 6 | cron jobs that fail silently
+L6.6 | 6 | error logging (every "try again" logs why)
+L6.7 | 6 | Every recording or timer that runs over time (heart rate, rest timer, workout clock, sync) keeps working in every device state: screen on, dim / always-on, off, app in the background, watch off the wrist
+L6.8 | 6 | where cloud emulators cannot show it, prove it by reading the code
+L15.1 | 15 | For every S1/S2 failure type: would we know before a gym tells us?
+L15.2 | 15 | Error reports, crash reports, job failure alerts, a daily health line
+L15.3 | 15 | Also: product measurement: which sign-up, activation, day-30 and paid numbers exist, and which decisions are made blind
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-1500 | behind switch | Chat with the coach: send a message, get a reply and cards (Coach tab; switched off in code, FEATURES.coach is false) | apps/mobile/src/ai/orchestrator.ts:111
+F-phone-1501 | behind switch | Use your own AI key for the coach (Claude, OpenAI or Groq) and pick the model in Settings | apps/mobile/src/ai/providers/anthropic.ts:79
+F-phone-1502 | behind switch | Coach without a key: understands typed workouts and body weight in English, Hindi and Hinglish, fully offline | apps/mobile/src/ai/localCoach.ts:839
+F-phone-1503 | behind switch | Coach reads and changes your data by chat: log a workout, meal or body weight, show today's workout, records, stats and  | apps/mobile/src/ai/tools.ts:441
+F-phone-1505 | behind switch | Send the coach a meal photo to estimate calories and log it (needs a Claude or OpenAI key; offline coach asks you to des | apps/mobile/src/ai/orchestrator.ts:113
+F-phone-1510 | live | Download my data: save one backup file (ZIP) with workouts, routines, own exercises, body weight, measurements, photos,  | apps/mobile/src/backup/backupSave.ts:42
+F-phone-1511 | live | Restore from a backup file: open it, see what is inside, then replace everything on this phone or add only what is missi | apps/mobile/src/backup/backupOpen.ts:36
+F-phone-1512 | live | Undo a restore: put the phone back as it was before the backup was put in | apps/mobile/src/backup/backupRestore.ts:551
+F-phone-1520 | live | MettleUp account: Continue with Google, and sign out (offered to every member, gym or not, in a build with a real Google | apps/mobile/src/cloud/account.ts:50
+F-phone-1521 | live | Keep your workouts on MettleUp: every saved change is copied to the server by itself in the background, and waits when o | apps/mobile/src/cloud/copySync.ts:381
+F-phone-1522 | live | Bring back my workouts: after signing in on a new phone, the saved copy is merged in with no duplicate workouts, newest  | apps/mobile/src/cloud/copySync.ts:223
+F-phone-1523 | live | Delete my MettleUp account and the saved copy of my workouts (a gym owner's or trainer's sign-in is kept, only the copy  | apps/mobile/src/cloud/account.ts:149
+F-phone-1524 | live | Backup status line in Settings: when the copy was last saved, changes still waiting, sign in again needed, or the copy i | apps/mobile/src/cloud/copySync.ts:402
+F-phone-1525 | live | Restore from an older Google Drive backup: sign in to Drive, find the newest backup, put it on this phone (kept for memb | apps/mobile/src/cloud/drive.ts:110
+F-phone-1526 | hidden | Back up to Google Drive (upload a new backup, keep the newest few): code still present but no screen calls it since Driv | apps/mobile/src/cloud/drive.ts:366
+F-phone-1527 | behind switch | Old gym link: sign in with email and password, then join a gym by its code (Settings, Gym; switched off in code, FEATURE | apps/mobile/src/cloud/session.ts:75
+F-phone-1528 | behind switch | Old gym sync: after any saved change, and when the internet comes back, one activity summary row of the member is sent t | apps/mobile/src/cloud/sync.ts:12
+F-phone-1529 | behind switch | Old gym link: delete my cloud data and disconnect from the gym (only disconnects after the server confirms the delete) | apps/mobile/src/cloud/session.ts:148
+F-phone-1530 | live | Reaching the server when Supabase is blocked: every request goes through our own addresses first (app.mettleup.fit/sb, t | apps/mobile/src/cloud/address.ts:115
+F-phone-1531 | live | Gym logo and shop photos load through our own address when the saved link is Supabase's | apps/mobile/src/cloud/picture.ts:20
+F-phone-1532 | behind switch | MettleUp Plus limits (paid member plan): more than 7 exercises of your own and charts older than 3 months are refused wi | apps/mobile/src/cloud/limitsFlag.ts:21
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-1500 | behind switch | Chat with the coach: send a message, get a reply and cards (Coach tab; switched off in code, FEATURES.coach is false) | apps/mobile/src/ai/orchestrator.ts:111
+F-phone-1501 | behind switch | Use your own AI key for the coach (Claude, OpenAI or Groq) and pick the model in Settings | apps/mobile/src/ai/providers/anthropic.ts:79
+F-phone-1502 | behind switch | Coach without a key: understands typed workouts and body weight in English, Hindi and Hinglish, fully offline | apps/mobile/src/ai/localCoach.ts:839
+F-phone-1503 | behind switch | Coach reads and changes your data by chat: log a workout, meal or body weight, show today's workout, records, stats and  | apps/mobile/src/ai/tools.ts:441
+F-phone-1505 | behind switch | Send the coach a meal photo to estimate calories and log it (needs a Claude or OpenAI key; offline coach asks you to des | apps/mobile/src/ai/orchestrator.ts:113
+F-phone-1510 | live | Download my data: save one backup file (ZIP) with workouts, routines, own exercises, body weight, measurements, photos,  | apps/mobile/src/backup/backupSave.ts:42
+F-phone-1511 | live | Restore from a backup file: open it, see what is inside, then replace everything on this phone or add only what is missi | apps/mobile/src/backup/backupOpen.ts:36
+F-phone-1512 | live | Undo a restore: put the phone back as it was before the backup was put in | apps/mobile/src/backup/backupRestore.ts:551
+F-phone-1520 | live | MettleUp account: Continue with Google, and sign out (offered to every member, gym or not, in a build with a real Google | apps/mobile/src/cloud/account.ts:50
+F-phone-1521 | live | Keep your workouts on MettleUp: every saved change is copied to the server by itself in the background, and waits when o | apps/mobile/src/cloud/copySync.ts:381
+F-phone-1522 | live | Bring back my workouts: after signing in on a new phone, the saved copy is merged in with no duplicate workouts, newest  | apps/mobile/src/cloud/copySync.ts:223
+F-phone-1523 | live | Delete my MettleUp account and the saved copy of my workouts (a gym owner's or trainer's sign-in is kept, only the copy  | apps/mobile/src/cloud/account.ts:149
+F-phone-1524 | live | Backup status line in Settings: when the copy was last saved, changes still waiting, sign in again needed, or the copy i | apps/mobile/src/cloud/copySync.ts:402
+F-phone-1525 | live | Restore from an older Google Drive backup: sign in to Drive, find the newest backup, put it on this phone (kept for memb | apps/mobile/src/cloud/drive.ts:110
+F-phone-1526 | hidden | Back up to Google Drive (upload a new backup, keep the newest few): code still present but no screen calls it since Driv | apps/mobile/src/cloud/drive.ts:366
+F-phone-1527 | behind switch | Old gym link: sign in with email and password, then join a gym by its code (Settings, Gym; switched off in code, FEATURE | apps/mobile/src/cloud/session.ts:75
+F-phone-1528 | behind switch | Old gym sync: after any saved change, and when the internet comes back, one activity summary row of the member is sent t | apps/mobile/src/cloud/sync.ts:12
+F-phone-1529 | behind switch | Old gym link: delete my cloud data and disconnect from the gym (only disconnects after the server confirms the delete) | apps/mobile/src/cloud/session.ts:148
+F-phone-1530 | live | Reaching the server when Supabase is blocked: every request goes through our own addresses first (app.mettleup.fit/sb, t | apps/mobile/src/cloud/address.ts:115
+F-phone-1531 | live | Gym logo and shop photos load through our own address when the saved link is Supabase's | apps/mobile/src/cloud/picture.ts:20
+F-phone-1532 | behind switch | MettleUp Plus limits (paid member plan): more than 7 exercises of your own and charts older than 3 months are refused wi | apps/mobile/src/cloud/limitsFlag.ts:21

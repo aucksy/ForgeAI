@@ -1,0 +1,793 @@
+# A8-panel-forms-1: coverage of 82 Tier 1 journeys (9 features, from A5-panel-forms-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-3100 | apps/dashboard/test/crm/members.test.ts | unit | 336 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-panel-3100 | apps/dashboard/test/crm/importMembers.test.ts | unit | 575 lines | imports the code, file name
+F-panel-3100 | apps/dashboard/test/crm/batches.test.ts | unit | 169 lines | imports the code
+F-panel-3100 | apps/dashboard/test/crm/mobileNumber.test.ts | unit | 201 lines | imports the code
+F-panel-3100 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 2 journey phrase(s)
+F-panel-3100 | apps/dashboard/test/crm/membership.test.ts | unit | 446 lines | file name
+F-panel-3100 | apps/dashboard/test/crm/passMembers.test.ts | unit | 199 lines | file name
+F-panel-3100 | apps/dashboard/test/crm/receiptDoc.test.ts | unit | 324 lines | asserts 2 journey phrase(s)
+F-panel-3100 | apps/mobile/test/shop/membership.test.ts | unit | 154 lines | file name
+F-panel-3100 | supabase/tests/0023_member_membership.sql | db | 125 lines | file name
+F-panel-3100 | supabase/tests/0055_pass_members.sql | db | 79 lines | file name
+F-panel-3100 | supabase/tests/0083_ai_members.sql | db | 180 lines | file name
+F-panel-400 | apps/dashboard/test/crm/moveStart.test.ts | unit | 131 lines | asserts 1 journey phrase(s)
+F-panel-400 | apps/dashboard/test/crm/workoutOffer.test.ts | unit | 290 lines | asserts 1 journey phrase(s)
+F-panel-400 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-panel-400 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 1 journey phrase(s)
+F-panel-400 | deploy/hq/readLog.test.mjs | unit | 152 lines | asserts 1 journey phrase(s)
+F-panel-400 | deploy/panel/assistCatalogue.test.mjs | unit | 184 lines | asserts 1 journey phrase(s)
+F-panel-400 | deploy/panel/helpPages.test.mjs | unit | 109 lines | asserts 1 journey phrase(s)
+F-panel-401 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 7 journey phrase(s)
+F-panel-401 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 6 journey phrase(s)
+F-panel-401 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 5 journey phrase(s)
+F-panel-401 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 4 journey phrase(s)
+F-panel-401 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 4 journey phrase(s)
+F-panel-401 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 4 journey phrase(s)
+F-panel-401 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 3 journey phrase(s)
+F-panel-401 | apps/dashboard/test/crm/sheet.test.ts | unit | 61 lines | imports the code
+F-panel-401 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 2 journey phrase(s)
+F-panel-401 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 2 journey phrase(s)
+F-panel-401 | apps/dashboard/test/crm/receiptDoc.test.ts | unit | 324 lines | asserts 2 journey phrase(s)
+F-panel-401 | apps/dashboard/test/crm/sheets.test.ts | unit | 122 lines | asserts 2 journey phrase(s)
+F-panel-421 | apps/dashboard/test/crm/sheet.test.ts | unit | 61 lines | imports the code
+F-panel-421 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-panel-421 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-panel-421 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-421 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 1 journey phrase(s)
+F-panel-421 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-421 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-421 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-421 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 1 journey phrase(s)
+F-panel-421 | apps/dashboard/e2e/r495-uat.spec.mjs | e2e | 303 lines | asserts 1 journey phrase(s)
+F-panel-421 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-panel-421 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 1 journey phrase(s)
+F-panel-420 | apps/dashboard/test/crm/sheet.test.ts | unit | 61 lines | imports the code
+F-panel-420 | apps/dashboard/e2e/people.spec.mjs | e2e | 100 lines | asserts 2 journey phrase(s)
+F-panel-420 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-panel-420 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-420 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 1 journey phrase(s)
+F-panel-420 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-420 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-420 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-420 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 1 journey phrase(s)
+F-panel-420 | apps/dashboard/e2e/r495-uat.spec.mjs | e2e | 303 lines | asserts 1 journey phrase(s)
+F-panel-420 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-panel-420 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 1 journey phrase(s)
+F-panel-402 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 4 journey phrase(s)
+F-panel-402 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 4 journey phrase(s)
+F-panel-402 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 3 journey phrase(s)
+F-panel-402 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 3 journey phrase(s)
+F-panel-402 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 3 journey phrase(s)
+F-panel-402 | apps/dashboard/test/crm/sheet.test.ts | unit | 61 lines | imports the code
+F-panel-402 | apps/mobile/test/tracker/auditPhase5Fixes.test.ts | unit | 540 lines | asserts 3 journey phrase(s)
+F-panel-402 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-panel-402 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-panel-402 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 2 journey phrase(s)
+F-panel-402 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 2 journey phrase(s)
+F-panel-402 | apps/dashboard/e2e/staff.spec.mjs | e2e | 130 lines | asserts 2 journey phrase(s)
+F-panel-403 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 3 journey phrase(s)
+F-panel-403 | apps/dashboard/test/crm/sheet.test.ts | unit | 61 lines | imports the code
+F-panel-403 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 2 journey phrase(s)
+F-panel-403 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-panel-403 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-panel-403 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-403 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 1 journey phrase(s)
+F-panel-403 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-403 | apps/dashboard/e2e/money.spec.mjs | e2e | 279 lines | asserts 1 journey phrase(s)
+F-panel-403 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-403 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 1 journey phrase(s)
+F-panel-403 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 1 journey phrase(s)
+F-panel-404 | apps/dashboard/test/crm/ownerNumbers.test.ts | unit | 316 lines | asserts 6 journey phrase(s)
+F-panel-404 | apps/dashboard/test/crm/workoutOffer.test.ts | unit | 290 lines | asserts 5 journey phrase(s)
+F-panel-404 | apps/dashboard/test/crm/hqAccess.test.ts | unit | 81 lines | asserts 4 journey phrase(s)
+F-panel-404 | apps/mobile/test/tracker/phase5ProgressTop.test.ts | unit | 271 lines | asserts 4 journey phrase(s)
+F-panel-404 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 3 journey phrase(s)
+F-panel-404 | apps/mobile/test/shop/planRequest.test.ts | unit | 171 lines | asserts 3 journey phrase(s)
+F-panel-404 | apps/mobile/test/tracker/bodyMapRanges.test.ts | unit | 58 lines | asserts 3 journey phrase(s)
+F-panel-404 | apps/mobile/test/tracker/phase3Numbers.test.ts | unit | 256 lines | asserts 3 journey phrase(s)
+F-panel-404 | deploy/panel/helpArticles.test.mjs | unit | 156 lines | asserts 3 journey phrase(s)
+F-panel-404 | supabase/tests/0064_billing_checks.sql | db | 133 lines | asserts 3 journey phrase(s)
+F-panel-404 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 2 journey phrase(s)
+F-panel-404 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 2 journey phrase(s)
+F-panel-405 | apps/dashboard/e2e/workoutcode.spec.mjs | e2e | 55 lines | asserts 8 journey phrase(s)
+F-panel-405 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 2 journey phrase(s)
+F-panel-405 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 1 journey phrase(s)
+F-panel-405 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 1 journey phrase(s)
+F-panel-405 | apps/dashboard/test/crm/ownerNumbers.test.ts | unit | 316 lines | asserts 1 journey phrase(s)
+F-panel-405 | apps/dashboard/test/crm/workoutOffer.test.ts | unit | 290 lines | asserts 1 journey phrase(s)
+F-panel-405 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-panel-405 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+F-panel-405 | apps/mobile/test/shop/mateProfile.test.ts | unit | 167 lines | asserts 1 journey phrase(s)
+F-panel-405 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 1 journey phrase(s)
+F-panel-405 | deploy/panel/helpPages.test.mjs | unit | 109 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-3100-01 | type 1 | gym owner | Admin app sign-in screen, the box "Your mobile number" with "+91" in front is empty
+  s1 see: The box shows 9876543210
+  s1 see: The "+91" mark stays in front of the box, once
+  s1 not: The box showing "+91 98765 " (cut by a length limit)
+  s1 not: The box showing 919876543210 or 91987654321
+  s1 not: The first digit of the number pushed out
+  s2 see: Sign-in carries on with 98765 43210 as the number
+  s2 not: The message "Type a 10-digit mobile number, like 98290 12345." for a number that was filled in correctly
+J-F-panel-3100-02 | type 2 | gym owner | Members, the Add member form is open; "Code" shows +91 and "Mobile number" is empty
+  s1 see: The box shows 9876543210
+  s1 not: The box showing 00919876543210
+  s1 not: The box cut to its first 10 characters
+  s2 see: The box shows 9876543210
+  s2 not: Brackets or dashes left in the box
+  s3 see: The member is saved with the number +91 98765 43210
+  s3 not: The message "This mobile number looks wrong. Check it and type it again." for this number
+  s3 not: A member saved with 12 or 14 digits
+J-F-panel-3100-03 | type 2 | gym owner | Enquiries, the new enquiry form is open; the code picker shows +91
+  s1 see: The box shows 9876543210
+  s1 not: The box showing the +91 or spaces
+  s1 not: A different result than the Add member form gives for the same paste
+  s2 see: The enquiry is saved with that 10-digit number
+  s2 not: The enquiry saved with the country code written twice
+J-F-panel-3100-04 | type 2 | gym owner | The gym's own online join page, opened by the owner on a phone to try it
+  s1 see: The box shows 9876543210
+  s1 not: The box showing "+91 98765 " or 12 digits
+  s1 not: A page that behaves differently from the admin app for the same input
+J-F-panel-3100-05 | type 2 | gym owner | Staff and sign-in screen, adding a person; the box "Mobile number" with "+91" in front (typing by hand, one key at a time)
+  s1 see: Each digit shows as typed, up to 10
+  s1 not: A digit jumping or vanishing while typing
+  s2 see: The box still shows 9876543210; the 11th digit is ignored
+  s2 not: The box becoming 8765432107 (the first digit pushed out)
+  s3 see: "+" and "+9" stay while being typed; after "+91" only the number that follows is kept: 9876543210
+  s3 not: The "+" vanishing so that "91" looks like the start of the number
+J-F-panel-3100-06 | type 3 | gym owner | Admin app sign-in screen, the box "Your mobile number" is empty
+  s1 see: The box keeps the whole number as pasted (up to 24 characters)
+  s1 not: The box showing 7911123456, a made-up Indian number
+  s2 see: "Type a 10-digit mobile number, like 98290 12345."
+  s2 not: Sign-in tried with 7911123456
+  s2 not: A one-time code sent to a stranger's number
+  s3 see: The box shows 98765 and waits for the rest
+  s3 not: Zeros added to make 10 digits
+J-F-panel-3100-07 | type 3 | gym owner | Add member form, "Code" shows +91
+  s1 see: The box keeps the number as pasted
+  s1 not: The box cut to its last 10 digits
+  s2 see: Under the box: "This mobile number looks wrong. Check it and type it again."
+  s2 not: A member saved as +91 with a Gulf number's digits
+  s3 see: "Type their mobile number."
+  s3 not: "This mobile number looks wrong" for an empty box
+J-F-panel-3100-08 | type 6 | gym owner | Add member form with "Code" on +91 and 9876543210 already in "Mobile number"
+  s1 see: The box is left exactly as typed while another code is picked
+  s1 not: Digits cut or dropped under a non-India code
+  s2 see: The number box still shows what was typed; it is cleaned only on the next change to the box
+  s2 not: The member saved with the wrong number without a message
+  s3 see: "This mobile number looks wrong. Check it and type it again." if it is not a 10-digit Indian mobile
+  s3 not: A silent save of a number that does not match its code
+  s4 see: "Code" shows +971 and the number shows whole
+  s4 not: The form refusing to save until the number is retyped as Indian
+J-F-panel-3100-09 | type 12 | gym owner | What's new card in the admin app says mobile number boxes keep only the 10-digit number "on sign-in, Add member, Enquiries and your join pag
+  s1 see: 9876543210 in all four boxes
+  s1 not: Any one of the four places keeping the +91, the spaces or 12 digits
+  s2 see: Unknown from the code read: the rule keeps the last 10 digits, so the box would show 9829012345
+  s2 not: The first number dropped with no word to the person typing
+  s3 see: The emergency box leaves it as typed; only a single mobile with a clear India code is cut to 10 digits
+  s3 not: A landline turned into a fake 10-digit mobile
+J-F-panel-3100-10 | type 1 | staff (desk) | Members, Add member form open at the front desk; "Code" shows +91
+  s1 see: The box shows 9876543210
+  s1 not: "+91" left inside the box next to the +91 code
+  s1 not: The number cut to "+91 98765 "
+  s2 see: The member is saved; the member page shows the number once with +91
+  s2 not: "This mobile number looks wrong. Check it and type it again." for a number pasted correctly
+J-F-panel-3100-11 | type 2 | staff (desk) | Admin app sign-in screen on the desk phone
+  s1 see: The box shows the 10 digits only
+  s1 not: The country code typed into the box
+J-F-panel-3100-12 | type 2 | staff (desk) | Enquiries, new enquiry form at the desk; the walk-in reads the number out with a leading 0
+  s1 see: The box shows 9876543210
+  s1 not: The box keeping the leading 0 and dropping the last digit
+  s2 see: The enquiry is saved with the 10-digit number
+  s2 not: An enquiry that cannot be called back because a digit is missing
+J-F-panel-3100-13 | type 3 | staff (desk) | Add member form at the desk, "Code" on +91
+  s1 see: "This mobile number looks wrong. Check it and type it again."
+  s1 not: A member saved with a short number
+  s2 see: The box keeps it; on save the same message shows
+  s2 not: The number changed by the box into something else
+  s3 see: The box shows the same number in 0-9 digits
+  s3 not: Empty box or question marks
+J-F-panel-3100-14 | type 6 | staff (desk) | Add member form at the desk with a full 10-digit number in the box
+  s1 see: The box stays as it was: an 11th digit is ignored
+  s1 not: The first digit silently pushed out, leaving a different wrong number
+  s2 see: The corrected 10-digit number
+  s2 not: The cursor edit refused
+  s3 see: An empty box
+  s3 not: The old number coming back
+J-F-panel-3100-15 | type 1 | trainer | Admin app sign-in screen on the trainer's own phone
+  s1 see: The box shows 9876543210 after the "+91" mark
+  s1 not: The box showing 12 digits or "+91 98765 "
+J-F-panel-3100-16 | type 2 | trainer | The forgot-PIN screen, the box "Your mobile number" with "+91" in front
+  s1 see: The box shows 9876543210
+  s1 not: The box showing 9198765432 (the first 10 digits)
+J-F-panel-3100-17 | type 3 | trainer | Admin app sign-in screen
+  s1 see: The number stays whole in the box
+  s1 not: The box showing 7911123456
+  s2 see: "Type a 10-digit mobile number, like 98290 12345."
+  s2 not: A sign-in attempt for another person's number
+J-F-panel-3100-18 | type 6 | trainer | Admin app sign-in screen with a full number already typed
+  s1 see: Nothing changes
+  s1 not: The first digit pushed out
+  s2 see: The new 10-digit number replaces the old one
+  s2 not: Digits of the old and new number mixed
+J-F-panel-400-01 | type 1 | owner | Member page of a member whose plan was sold with a start date in the future; owner signed in, online
+  s1 see: Sheet titled "Change start date"
+  s1 see: The plan name and "now <start> → <last day>."
+  s1 see: Box "New start date" holding the present start
+  s1 see: Hint "Pick the day the member will start."
+  s1 see: Button "Save start date" greyed out
+  s1 not: An error shown before anything was changed
+  s1 not: The button live while the date is unchanged
+  s2 see: Hint "The member keeps every day they paid for. The plan will end on <last day + 5>."
+  s2 see: "Save start date" becomes live
+  s2 not: A last day that makes the plan shorter or longer than before
+  s3 see: Button reads "Saving…"
+  s3 see: The sheet closes
+  s3 see: Message "Start date changed to <new day>."
+  s3 not: The plan's price, dues or receipts changed
+  s3 not: The joining date of the member changed
+  s4 see: The new start and last day
+  s4 see: History line "Start date changed: <old> → <new>"
+  s4 not: The old dates still shown
+  s4 not: No history line
+J-F-panel-400-02 | type 2 | owner | Member page of a member with a running gym plan and a personal-training pack that starts next week
+  s1 see: Sheet "Change start date" for the PT pack
+  s1 not: The button missing on a PT pack that has not started
+  s2 see: The hint with the new last day; no overlap message, because a PT pack runs beside a gym plan
+  s2 not: "These dates overlap their <plan> plan" for a PT pack
+  s3 see: "Start date changed to <day>."
+  s3 not: The pack's unused sessions changed
+J-F-panel-400-03 | type 3 | owner | Member page; the member has a plan running till the 30th and a renewal sold to start on the 1st of next month
+  s1 see: Under the box: "These dates overlap their <plan name> plan (<start> → <last day>). Pick a start after it ends."
+  s1 see: "Save start date" greyed out
+  s1 not: Two gym plans saved over the same days
+  s2 see: "The start can't be more than 31 days ago."
+  s2 not: A plan back-dated by months
+  s3 see: "Pick a start date." and the button stays greyed out
+  s3 not: A save with an empty or half-typed date
+  s4 see: No "Change start date" button on either row
+  s4 not: The button offered on a plan whose days are already being used
+  s5 see: "Change start date" cannot be pressed without internet
+  s5 not: A change that looks saved but never reaches the server
+J-F-panel-400-04 | type 6 | owner | Member page; a plan starting in 10 days whose start was already changed once
+  s1 see: The sheet shows the present (already moved) dates under "now"
+  s1 not: The dates from before the first change
+  s2 see: A second history line "Start date changed: <old> → <new>"; the first line is still there
+  s2 not: The first history line overwritten
+  s3 see: "Start date changed to <today>."
+  s3 see: The plan now counts as started
+  s3 not: The member shown as not active today
+  s4 see: The button is gone: a plan that has started can only be moved with "Freeze / extra days"
+  s4 not: The owner believing the move to today can be taken back the same way; nothing on the sheet says it cannot
+J-F-panel-401-01 | type 1 | owner | Member page of a member who owes ₹1,500 on one membership; owner signed in, online
+  s1 see: Sheet titled "Collect payment"
+  s1 see: "From <member name> · ₹1,500 due in total"
+  s1 see: "For which membership" showing "<plan> (<start day>) — ₹1,500 due"
+  s1 see: "Amount received" empty with ₹1,500 in grey and "Leave blank to collect the full amount due."
+  s1 see: "Paid by", "Reference (optional)", "Received on" set to today
+  s1 see: "This clears all dues on this membership."
+  s1 not: An amount of zero when money is due
+  s1 not: A cancelled membership in the list
+  s2 see: Button reads "Saving…"
+  s2 see: The sheet closes
+  s2 see: "Payment saved. Receipt <number>."
+  s2 not: Two receipts
+  s2 not: A receipt for more than ₹1,500
+  s3 see: No dues; the "Collect payment" button is gone; the receipt is in the payments list
+  s3 not: The due still shown
+  s3 not: The button still offered
+J-F-panel-401-02 | type 2 | owner | Money, Dues list, a row of a member who owes money
+  s1 see: The same "Collect payment" sheet for that member
+  s1 not: "That member could not be opened. Try reloading the page." for a member who is on the list
+  s2 see: "Payment saved."
+  s2 see: The row leaves the Dues list
+  s2 not: The row still listed with the old amount
+J-F-panel-401-03 | type 2 | owner | Member page of a member who owes on two memberships; a part payment by UPI received three days ago
+  s1 see: The amount box empties; the grey amount is that membership's due
+  s1 not: The amount typed for the first membership carried over
+  s2 see: "Still due after this: ₹<due − 500>" in the warning colour
+  s2 not: "This clears all dues on this membership." for a part payment
+  s3 see: "Payment saved. Receipt <number>."
+  s3 not: The receipt dated today
+  s3 not: The reference lost
+  s4 see: Paid, still due and total add up; "Collect payment" is still there
+  s4 not: The membership shown as fully paid
+J-F-panel-401-04 | type 3 | owner | Collect payment sheet open for a membership with ₹1,500 due
+  s1 see: "That is more than the ₹1,500 due on this membership."
+  s1 see: Neither "Still due after this" nor "This clears all dues" is shown
+  s1 not: A receipt for ₹2,000
+  s1 not: The membership shown with a minus balance
+  s2 see: "Type an amount more than zero."
+  s2 not: A receipt for ₹0
+  s3 see: "That amount looks wrong. Type it again."
+  s3 not: The full due collected instead
+  s4 see: "The payment date can’t be in the future."
+  s4 not: A receipt dated in the future
+  s5 see: "Pick the date you got this money."
+  s5 not: A raw message such as "Not a YYYY-MM-DD date"
+  s6 see: "That date looks wrong. Check the year."
+  s6 not: A receipt number nobody can read back
+J-F-panel-401-05 | type 6 | owner | Member page of a member who owes ₹1,500
+  s1 see: "Payment saved. Receipt <number>."
+  s1 not: The due unchanged
+  s2 see: "₹1,000 due in total" and ₹1,000 in grey in the amount box
+  s2 not: ₹1,500 offered again
+  s3 see: The "Collect payment" button leaves the member page
+  s3 not: The button still shown with nothing due
+  s4 see: "<Member name> has no dues. Every membership is fully paid." and no Save button
+  s4 not: A form that lets money be taken against nothing
+J-F-panel-401-06 | type 12 | owner | Help article "Renew a membership or collect a payment" says: Tap "Collect payment" (it shows only when money is due). What's new says the ap
+  s1 see: No "Collect payment" button on the first; the button on the second
+  s1 not: The button on a member who owes nothing
+  s2 see: "That is more than the ₹<due> due on this membership."
+  s2 not: More money recorded than the member owes
+  s3 see: The member's name, total due, plan names and dates: the same facts the owner and the desk already see on the member page
+  s3 not: Another gym's member or dues in the list
+J-F-panel-401-07 | type 1 | staff | Member page of a member who owes ₹1,500; front desk login, online
+  s1 see: Sheet "Collect payment" with the member's name and "₹1,500 due in total"
+  s1 see: Under "Received on": "Today, or up to 31 days back."
+  s1 not: The owner-only totals of the gym
+  s2 see: "Saving…", then "Payment saved. Receipt <number>."
+  s2 not: Two receipts after one tap
+  s3 see: No dues left
+  s3 not: The due still shown
+J-F-panel-401-08 | type 2 | staff | Money, Dues list, as the front desk
+  s1 see: The "Collect payment" sheet for that member
+  s1 not: A sheet for a different member than the row tapped
+  s2 see: "Payment saved."
+  s2 not: The row dropping off the Dues list while money is still due
+J-F-panel-401-09 | type 3 | staff | Collect payment sheet open at the front desk
+  s1 see: "The front desk can date a payment at most 31 days back. Ask the owner to enter older payments."
+  s1 not: A receipt back-dated 40 days by a desk login
+  s2 see: The payment is saved
+  s2 not: A refusal on the last allowed day
+  s3 see: "That is more than the ₹<due> due on this membership."
+  s3 not: The extra money recorded
+J-F-panel-401-10 | type 6 | staff | Front desk; a member paid part yesterday and comes back with the rest
+  s1 see: Only what is still due is offered
+  s1 not: Yesterday's amount offered again
+  s2 see: "Payment saved. Receipt <number>."; the button leaves the page
+  s2 not: A second receipt with yesterday's number
+  s3 see: The due is back and "Collect payment" is shown again
+  s3 not: The membership still shown as paid after its receipt was cancelled
+J-F-panel-421-01 | type 1 | owner | Online gym, owner signed in on a device that has opened a money sheet at least once while online; a member owes ₹1,500
+  s1 see: The normal sheet; nothing about offline is shown
+  s1 not: A wait or an error while the device gets its own receipt series
+  s2 see: The sheet stays as it is under the app's offline bar
+  s2 not: The sheet closing or emptying
+  s3 see: "Saving…", then the sheet closes
+  s3 see: "Payment saved on this device. Receipt <this device's own number>. It goes online when the internet is back."
+  s3 not: "Payment saved." with no word that it is only on this device
+  s3 not: A receipt number that another desk could also give
+  s4 see: The payment goes online once, with the same receipt number
+  s4 not: A second receipt for the same payment
+  s4 not: The receipt number changing after it was printed
+J-F-panel-421-02 | type 2 | owner | Online gym, owner; the internet is off; a member wants to renew
+  s1 see: "Membership saved on this device. Receipt <this device's own number>. It goes online when the internet is back."
+  s1 not: A membership saved with its money lost
+  s1 not: A normal online receipt number given offline
+  s2 see: The membership and its receipt go online once
+  s2 not: Two memberships
+J-F-panel-421-03 | type 2 | owner | Online gym, owner; the internet is off; Money, Dues list
+  s1 see: The sheet closes
+  s1 see: Only "Payment saved." (the code gives this page no other words)
+  s1 not: The person at the desk not being told the payment is only on this device and what its receipt number is
+J-F-panel-421-04 | type 3 | owner | Online gym, owner, on a device that has NOT opened a money sheet online since this feature came
+  s1 see: "Connect this device to the internet once so it can take payments offline. Until then, take this payment when the internet is back."
+  s1 see: The sheet stays open; nothing is saved
+  s1 not: A receipt with a made-up or clashing number
+  s1 not: A success message
+  s2 see: "Nothing was saved: this device is out of space. Free up space, or try again when the internet is back."
+  s2 not: A success message for a payment that was not kept
+  s3 see: The button cannot be pressed, or "No internet, so this can't be saved now. Check-ins, payments and new members still work. Try this again when the internet is back."
+  s3 not: A change that looks saved and is lost
+J-F-panel-421-05 | type 6 | owner | Online gym, owner; the connection is weak: a save is sent and no answer comes back
+  s1 see: A message that it could not be confirmed; the sheet stays open
+  s1 not: A success message for a save nobody confirmed
+  s2 see: "A payment for this member is still being sent. When the internet is back, check the member's page before you take money again."
+  s2 not: A second receipt for the same money
+  s3 see: "Your earlier entry was saved just now (receipt <number>). Check the member’s page before you take money again."
+  s3 not: The changed amount saved as a second payment
+  s4 see: One receipt; the due is down once
+  s4 not: The due reduced twice
+  s5 see: Unknown from the code read: the waiting payment must still be there and go online
+  s5 not: A waiting payment dropped at sign-out
+J-F-panel-421-06 | type 1 | staff | Online gym, front desk signed in on a device that has opened a money sheet at least once while online; a member owes ₹1,500
+  s1 see: The normal sheet; nothing about offline is shown
+  s1 not: A wait or an error while the device gets its own receipt series
+  s2 see: The sheet stays as it is under the app's offline bar
+  s2 not: The sheet closing or emptying
+  s3 see: "Saving…", then the sheet closes
+  s3 see: "Payment saved on this device. Receipt <this device's own number>. It goes online when the internet is back."
+  s3 not: "Payment saved." with no word that it is only on this device
+  s3 not: A receipt number that another desk could also give
+  s4 see: The payment goes online once, with the same receipt number
+  s4 not: A second receipt for the same payment
+  s4 not: The receipt number changing after it was printed
+J-F-panel-421-07 | type 2 | staff | Online gym, front desk; the internet is off; a member wants to renew
+  s1 see: "Membership saved on this device. Receipt <this device's own number>. It goes online when the internet is back."
+  s1 not: A membership saved with its money lost
+  s1 not: A normal online receipt number given offline
+  s2 see: The membership and its receipt go online once
+  s2 not: Two memberships
+J-F-panel-421-08 | type 2 | staff | Online gym, front desk; the internet is off; Money, Dues list
+  s1 see: The sheet closes
+  s1 see: Only "Payment saved." (the code gives this page no other words)
+  s1 not: The person at the desk not being told the payment is only on this device and what its receipt number is
+J-F-panel-421-09 | type 3 | staff | Online gym, front desk, on a device that has NOT opened a money sheet online since this feature came
+  s1 see: "Connect this device to the internet once so it can take payments offline. Until then, take this payment when the internet is back."
+  s1 see: The sheet stays open; nothing is saved
+  s1 not: A receipt with a made-up or clashing number
+  s1 not: A success message
+  s2 see: "Nothing was saved: this device is out of space. Free up space, or try again when the internet is back."
+  s2 not: A success message for a payment that was not kept
+  s3 see: The button cannot be pressed, or "No internet, so this can't be saved now. Check-ins, payments and new members still work. Try this again when the internet is back."
+  s3 not: A change that looks saved and is lost
+J-F-panel-421-10 | type 6 | staff | Online gym, front desk; the connection is weak: a save is sent and no answer comes back
+  s1 see: A message that it could not be confirmed; the sheet stays open
+  s1 not: A success message for a save nobody confirmed
+  s2 see: "A payment for this member is still being sent. When the internet is back, check the member's page before you take money again."
+  s2 not: A second receipt for the same money
+  s3 see: "Your earlier entry was saved just now (receipt <number>). Check the member’s page before you take money again."
+  s3 not: The changed amount saved as a second payment
+  s4 see: One receipt; the due is down once
+  s4 not: The due reduced twice
+  s5 see: Unknown from the code read: the waiting payment must still be there and go online
+  s5 not: A waiting payment dropped at sign-out
+J-F-panel-420-01 | type 1 | owner | Online gym with the owner and one desk person; the desk person collected a payment this morning; owner signed in
+  s1 see: "Payment saved. Receipt <number>."
+  s1 not: A box asking who took the money (the app takes it from the sign-in)
+  s2 see: A line "Received by <owner's name>"
+  s2 not: The desk person's name on the owner's receipt
+  s3 see: Each row says "Taken by <name>"
+  s3 see: A "Taken by" filter listing the owner and the desk person
+  s3 not: A row with "Taken by" and no name
+  s3 not: Someone listed who took no money in this period
+  s4 see: Only that person's receipts and their total
+  s4 not: The owner's receipts in the desk person's total
+J-F-panel-420-02 | type 2 | owner | Member page, "Sell membership" sheet, owner signed in
+  s1 see: "Membership saved. Receipt <number>."
+  s1 not: A sale receipt with no taker when a person is signed in
+  s2 see: "Received by <owner's name>"
+  s2 not: A different name than the collect sheet would give
+J-F-panel-420-03 | type 3 | owner | A gym used only in this browser (never taken online), or an old owner key with no person behind it
+  s1 see: "Payment saved. Receipt <number>."
+  s1 not: A refusal because nobody is "signed in"
+  s2 see: No "Received by" line on the receipt; no "Taken by" on the row
+  s2 not: "Received by null", "Received by undefined" or an empty "Taken by"
+J-F-panel-420-04 | type 6 | owner | Online gym; a desk person who took money last month has since been renamed or removed in Staff and sign-in
+  s1 see: The name as it was written on the receipt when the money was taken
+  s1 not: The old receipt losing its "Received by" line
+  s1 not: The old receipt showing another person
+  s2 see: The person is still listed for that month
+  s2 not: Their money moved under the owner's name
+  s3 see: The receipt keeps the name of the person who took the money
+  s3 not: The receipt stamped with whoever happened to be signed in when it went online (not checked on the server)
+J-F-panel-420-05 | type 12 | owner | A printed or shared receipt of a payment the desk person took
+  s1 see: "Received by <desk person's name>": the member sees the staff member's name
+  s1 not: The staff member's mobile number or any other detail of theirs on the receipt
+  s2 see: Unknown from the code read whether a desk login sees other people's "Taken by" totals; Collections is described in the code as totals for the owner
+  s2 not: A desk login seeing the gym's full collections
+J-F-panel-420-06 | type 1 | staff | Online gym, front desk person Ramesh signed in with his own mobile and PIN; a member owes ₹1,500
+  s1 see: "Payment saved. Receipt <number>."
+  s1 not: A way to type someone else's name as the taker
+  s2 see: "Received by Ramesh"
+  s2 not: The owner's name on a receipt Ramesh took
+J-F-panel-420-07 | type 2 | staff | Front desk, "Sell membership" or "Renew membership" sheet with money received
+  s1 see: "Membership saved. Receipt <number>."
+  s1 not: A sale receipt with no taker
+  s2 see: "Received by <desk person's name>"
+  s2 not: Another name
+J-F-panel-420-08 | type 3 | staff | Front desk; a shared desk phone on which a colleague is still signed in
+  s1 see: The receipt says "Received by <colleague's name>": the app can only know who is signed in
+  s1 not: Any hint on the sheet that says whose name will go on the receipt is missing: the sheet does not show the taker before saving
+  s2 see: None in this sheet; only the owner can cancel a receipt
+  s2 not: A desk login editing the taker of a saved receipt
+J-F-panel-420-09 | type 6 | staff | Front desk; a member pays through a payment link while the desk person's collect sheet is open
+  s1 see: The receipt saves itself and the sheet closes
+  s1 not: No receipt
+  s2 see: The taker is the person whose sheet was open when it was paid
+  s2 not: A receipt for online money that names nobody while a person was signed in
+J-F-panel-402-01 | type 1 | owner | Gym with its UPI ID saved in Settings, Payments; owner signed in; "Collect payment" open for a member who owes ₹1,500
+  s1 see: A box headed "Pay online" with the button "Show UPI QR for ₹1,500"
+  s1 not: The box for an amount under ₹1 or above the due
+  s2 see: "Pay ₹1,500 to <gym name>"
+  s2 see: A QR code
+  s2 see: "Scan with any UPI app: Google Pay, PhonePe, Paytm or BHIM."
+  s2 see: The gym's UPI ID with "Copy UPI ID"
+  s2 see: "When the money shows in your UPI app or sound box, tap Save payment."
+  s2 see: "Hide QR"
+  s2 see: "Paid by" has switched to UPI
+  s2 not: A QR for a different amount than the box shows
+  s2 not: The payment saved just because the QR was shown
+  s3 see: "Payment saved. Receipt <number>."
+  s3 not: A receipt saved before the desk tapped Save payment
+J-F-panel-402-02 | type 2 | owner | Gym that connected a payment company (test keys) in Settings, Payments; owner; "Collect payment" open, ₹1,500 due
+  s1 see: "Making the link…"
+  s1 see: Then "Pay ₹1,500 to <gym name>", a QR code and "Scan with the phone camera to pay by UPI, card or net banking on <company>."
+  s1 see: "Test mode" tag and "Test mode: no real money moves."
+  s1 see: "Waiting for the payment…"
+  s1 see: "Copy link" and "Send on WhatsApp"
+  s1 not: A live link while the gym is on test keys
+  s1 not: Two links from one tap
+  s2 see: "Copied"
+  s2 not: A message sent to the member without the desk choosing to
+  s3 see: "Paid ₹1,500 by card. Test mode: no real money came in, so no receipt was saved."
+  s3 not: A receipt made from a test payment
+  s3 not: The due going down
+  s4 see: Unknown until live is on: the receipt would save itself with "Paid online" and the company's payment id, and the sheet would close
+  s4 not: The desk also saving the same money by hand
+J-F-panel-402-03 | type 2 | owner | Gym with a UPI ID, online payments on at the server but no payment company connected; owner; "Collect payment" open
+  s1 see: "Sent. They see it under My membership in the MettleUp app. Tap Save payment when the money shows."
+  s1 see: The "Send to their app" button is gone
+  s1 not: The request sent twice
+  s2 see: "Payment saved. Receipt <number>."
+  s2 not: The receipt saved by itself for a plain UPI request
+J-F-panel-402-04 | type 2 | owner | "Sell membership" sheet, gym with a UPI ID; owner
+  s1 see: "Pay online" with "Show UPI QR for <the total, or what was typed as received>"; no "Make a payment link" (a link needs a saved membership)
+  s1 not: A payment link for a membership that does not exist yet
+  s2 see: The QR; "Paid by" switches to UPI and the money box fills with the total if it was empty
+  s2 not: A different amount in the QR than in the money box
+J-F-panel-402-05 | type 3 | owner | Gym with NO UPI ID and no payment company; owner; "Collect payment" open
+  s1 see: "Add your gym’s UPI ID in Settings to show a UPI QR here." with the link "Open payments"
+  s1 not: A QR for an empty UPI ID
+  s2 see: "<Company> needs the member’s mobile number for a payment link. Add it to the member, or show the UPI QR."
+  s2 not: A link made with a blank or wrong number
+  s3 see: The button cannot be pressed; if pressed as the internet drops: "No internet. Try again."
+  s3 not: "Waiting for the payment…" for a link that was never made
+  s4 see: The "Pay online" box disappears
+  s4 not: A QR or link for more than the member owes
+J-F-panel-402-06 | type 6 | owner | A payment link for ₹1,500 is on screen in "Collect payment" ("Waiting for the payment…"); owner
+  s1 see: The link and its QR leave the screen; the first buttons are back
+  s1 not: The old ₹1,500 link still being payable with nothing on screen saying so (the sheet's Save payment closes open links; see F-panel-403)
+  s2 see: "This link has run out. Make a new one." with "Make a payment link"
+  s2 not: "Waiting for the payment…" for ever
+  s3 see: "The last try did not go through. They can try again."
+  s3 not: The link shown as paid
+  s4 see: The receipt is made the next time the admin app checks (the "Paid online" card)
+  s4 not: Paid money with no receipt
+  s4 not: Two receipts when two desks have the app open
+  s5 see: "Paid <amount> <how>, after the link was closed."
+  s5 not: The late money hidden
+J-F-panel-402-07 | type 12 | owner | What's new says: add your UPI ID and the desk can show a UPI QR for each payment; online payment links work in test mode only for now. Terms
+  s1 see: The link shows "Test mode: no real money moves."
+  s1 not: A link that takes real money while the promise says test mode only
+  s2 see: From the code: the member's name and 10-digit mobile, the amount and the plan name go to the server and on to the payment company
+  s2 not: More of the member's details sent than the link needs (not checked on the server)
+  s3 see: WhatsApp opens with "<gym>: please pay <amount> for <plan>. Pay here: <link>" addressed to the member's number
+  s3 not: The message going out by itself
+  s3 not: The link sent to a different number than the member's
+J-F-panel-402-08 | type 1 | staff | Gym with its UPI ID saved in Settings, Payments; front desk signed in; "Collect payment" open for a member who owes ₹1,500
+  s1 see: A box headed "Pay online" with the button "Show UPI QR for ₹1,500"
+  s1 not: The box for an amount under ₹1 or above the due
+  s2 see: "Pay ₹1,500 to <gym name>"
+  s2 see: A QR code
+  s2 see: "Scan with any UPI app: Google Pay, PhonePe, Paytm or BHIM."
+  s2 see: The gym's UPI ID with "Copy UPI ID"
+  s2 see: "When the money shows in your UPI app or sound box, tap Save payment."
+  s2 see: "Hide QR"
+  s2 see: "Paid by" has switched to UPI
+  s2 not: A QR for a different amount than the box shows
+  s2 not: The payment saved just because the QR was shown
+  s3 see: "Payment saved. Receipt <number>."
+  s3 not: A receipt saved before the desk tapped Save payment
+J-F-panel-402-09 | type 2 | staff | Gym that connected a payment company (test keys) in Settings, Payments; front desk; "Collect payment" open, ₹1,500 due
+  s1 see: "Making the link…"
+  s1 see: Then "Pay ₹1,500 to <gym name>", a QR code and "Scan with the phone camera to pay by UPI, card or net banking on <company>."
+  s1 see: "Test mode" tag and "Test mode: no real money moves."
+  s1 see: "Waiting for the payment…"
+  s1 see: "Copy link" and "Send on WhatsApp"
+  s1 not: A live link while the gym is on test keys
+  s1 not: Two links from one tap
+  s2 see: "Copied"
+  s2 not: A message sent to the member without the desk choosing to
+  s3 see: "Paid ₹1,500 by card. Test mode: no real money came in, so no receipt was saved."
+  s3 not: A receipt made from a test payment
+  s3 not: The due going down
+  s4 see: Unknown until live is on: the receipt would save itself with "Paid online" and the company's payment id, and the sheet would close
+  s4 not: The desk also saving the same money by hand
+J-F-panel-402-10 | type 2 | staff | Gym with a UPI ID, online payments on at the server but no payment company connected; front desk; "Collect payment" open
+  s1 see: "Sent. They see it under My membership in the MettleUp app. Tap Save payment when the money shows."
+  s1 see: The "Send to their app" button is gone
+  s1 not: The request sent twice
+  s2 see: "Payment saved. Receipt <number>."
+  s2 not: The receipt saved by itself for a plain UPI request
+J-F-panel-402-11 | type 2 | staff | "Sell membership" sheet, gym with a UPI ID; front desk
+  s1 see: "Pay online" with "Show UPI QR for <the total, or what was typed as received>"; no "Make a payment link" (a link needs a saved membership)
+  s1 not: A payment link for a membership that does not exist yet
+  s2 see: The QR; "Paid by" switches to UPI and the money box fills with the total if it was empty
+  s2 not: A different amount in the QR than in the money box
+J-F-panel-402-12 | type 3 | staff | Gym with NO UPI ID and no payment company; front desk; "Collect payment" open
+  s1 see: From the code: only the heading "Pay online" with nothing under it (no button, no words)
+  s1 not: An empty box that looks broken; the desk left guessing what "Pay online" is for
+  s2 see: "<Company> needs the member’s mobile number for a payment link. Add it to the member, or show the UPI QR."
+  s2 not: A link made with a blank or wrong number
+  s3 see: The button cannot be pressed; if pressed as the internet drops: "No internet. Try again."
+  s3 not: "Waiting for the payment…" for a link that was never made
+  s4 see: The "Pay online" box disappears
+  s4 not: A QR or link for more than the member owes
+J-F-panel-402-13 | type 6 | staff | A payment link for ₹1,500 is on screen in "Collect payment" ("Waiting for the payment…"); front desk
+  s1 see: The link and its QR leave the screen; the first buttons are back
+  s1 not: The old ₹1,500 link still being payable with nothing on screen saying so (the sheet's Save payment closes open links; see F-panel-403)
+  s2 see: "This link has run out. Make a new one." with "Make a payment link"
+  s2 not: "Waiting for the payment…" for ever
+  s3 see: "The last try did not go through. They can try again."
+  s3 not: The link shown as paid
+  s4 see: The receipt is made the next time the admin app checks (the "Paid online" card)
+  s4 not: Paid money with no receipt
+  s4 not: Two receipts when two desks have the app open
+  s5 see: "Paid <amount> <how>, after the link was closed."
+  s5 not: The late money hidden
+J-F-panel-403-01 | type 1 | owner | Gym with a payment company connected; a payment link for a member's ₹1,500 due was made earlier and is still open; owner; the member now pay
+  s1 see: The normal sheet; nothing about the open link
+  s1 not: The sheet refusing cash because a link exists
+  s2 see: "Saving…" a moment longer than usual, then "Payment saved. Receipt <number>."
+  s2 not: The cash receipt saved while the link can still be paid
+  s3 see: The link is closed and cannot be paid
+  s3 not: The member able to pay the same ₹1,500 again
+J-F-panel-403-02 | type 3 | owner | Same gym; the member paid the open link a moment ago with real money, and the owner does not know
+  s1 see: "<Member name> has just paid ₹1,500 online, so this payment was not saved. The receipt for their online payment is made by itself in a few minutes."
+  s1 see: The sheet stays open; "Save payment" is live again
+  s1 not: A cash receipt saved on top of the online payment
+  s1 not: The sheet closing with a success message
+  s2 see: The same message while the online payment covers the due
+  s2 not: A second try going through
+  s3 see: One receipt, "Paid online", for ₹1,500; nothing due
+  s3 not: No receipt at all
+  s3 not: Two receipts
+J-F-panel-403-03 | type 6 | owner | Same gym; an open link exists for the due; owner
+  s1 see: The payment is kept on the device as in F-panel-421; the check with the server is skipped
+  s1 not: The desk told the link was closed when it was not
+  s2 see: Unknown from the code read: both the cash receipt and the online payment can exist for one due
+  s2 not: The double payment going unnoticed: nothing in the code read tells the desk
+  s3 see: The cash payment is saved: a test payment does not count as paid
+  s3 not: "has just paid ... online" for test money
+J-F-panel-403-04 | type 2 | owner | Same gym; the member paid ₹500 of a ₹1,500 due through a link, and now pays the remaining ₹1,000 in cash; owner
+  s1 see: "Still due after this: ..." or "This clears all dues on this membership." as the sums say
+  s1 not: The sheet still asking for ₹1,500 once the online ₹500 has its receipt
+  s2 see: The ₹1,000 is saved: taking only the rest of a part payment made online is allowed
+  s2 not: "has just paid ₹500 online, so this payment was not saved" for the rest of the due
+J-F-panel-403-05 | type 12 | owner | Refund page says: "If you paid twice by mistake, or paid more than the price, we refund the extra amount."
+  s1 see: The link is closed first, so the member cannot pay twice
+  s1 not: The member charged twice for one due
+  s2 see: Unknown: no screen for this was in the code read
+  s2 not: The owner not learning that a refund is owed under the gym's and MettleUp's own words
+J-F-panel-403-06 | type 1 | staff | Gym with a payment company connected; a payment link for a member's ₹1,500 due was made earlier and is still open; front desk; the member no
+  s1 see: The normal sheet; nothing about the open link
+  s1 not: The sheet refusing cash because a link exists
+  s2 see: "Saving…" a moment longer than usual, then "Payment saved. Receipt <number>."
+  s2 not: The cash receipt saved while the link can still be paid
+  s3 see: The link is closed and cannot be paid
+  s3 not: The member able to pay the same ₹1,500 again
+J-F-panel-403-07 | type 3 | staff | Same gym; the member paid the open link a moment ago with real money, and the front desk does not know
+  s1 see: "<Member name> has just paid ₹1,500 online, so this payment was not saved. The receipt for their online payment is made by itself in a few minutes."
+  s1 see: The sheet stays open; "Save payment" is live again
+  s1 not: A cash receipt saved on top of the online payment
+  s1 not: The sheet closing with a success message
+  s2 see: The same message while the online payment covers the due
+  s2 not: A second try going through
+  s3 see: One receipt, "Paid online", for ₹1,500; nothing due
+  s3 not: No receipt at all
+  s3 not: Two receipts
+J-F-panel-403-08 | type 6 | staff | Same gym; an open link exists for the due; front desk
+  s1 see: The payment is kept on the device as in F-panel-421; the check with the server is skipped
+  s1 not: The desk told the link was closed when it was not
+  s2 see: Unknown from the code read: both the cash receipt and the online payment can exist for one due
+  s2 not: The double payment going unnoticed: nothing in the code read tells the desk
+  s3 see: The cash payment is saved: a test payment does not count as paid
+  s3 not: "has just paid ... online" for test money
+J-F-panel-404-01 | type 1 | owner | Member page of a member whose gym plan ends on the 30th; the member was ill for a week; owner signed in, online
+  s1 see: Sheet titled "Freeze / extra days"
+  s1 see: "<Plan name> last day: <30th>."
+  s1 see: "Reason" with "Freeze – Medical" picked, "Freeze – Travel", "Freeze – Other", "Gift – Extra days"
+  s1 see: "How many days" with "7 days" picked, "15 days", "30 days"
+  s1 see: Box "Or type the days (1–365)" holding 7
+  s1 see: "New last day: <7 days later>" and "Valid till then (<how far from today>)."
+  s1 see: Button "Add 7 days"
+  s1 not: A new last day that is not exactly 7 days after the old one
+  s2 see: The box shows 15; "New last day" moves; the button reads "Add 15 days"
+  s2 not: The button still saying 7
+  s3 see: "Saving…"
+  s3 see: The sheet closes
+  s3 see: "Plan moved 15 days later."
+  s3 not: The days added twice
+  s3 not: A receipt or a charge made for free days
+  s4 see: The new last day
+  s4 see: History line "+15 days (Freeze - medical): <old> → <new>"
+  s4 not: The start date moved
+  s4 not: The price or dues changed
+J-F-panel-404-02 | type 2 | owner | Member page of a member whose only plan ended 10 days ago
+  s1 see: "<Plan name> ended on <date>."
+  s1 not: The button missing on an ended plan
+  s2 see: "New last day: <date>" and, in the warning colour, "Still ended (<how long ago>). Add more days to reach today."
+  s2 not: "Valid till then" for a day in the past
+  s3 see: "Valid till then (<in 5 days>)."
+  s3 not: The member still shown as ended after the save
+  s4 see: "Plan moved 15 days later."; history "+15 days (Gift - extra days): …"
+  s4 not: The reason saved as a freeze
+J-F-panel-404-03 | type 2 | owner | Member page of a member with a personal-training pack that has 3 sessions left and ends this week
+  s1 see: "<Pack name> last day: <date>. 3 PT sessions left."
+  s1 not: The button on a pack with no sessions left
+  s1 not: "1 PT sessions left."
+  s2 see: "New last day" 20 days on; button "Add 20 days"
+  s2 not: The gym plan's last day moving with the pack's
+  s3 see: "Plan moved 20 days later."; history "+20 days (Freeze - Wedding in the family): …"
+  s3 not: The sessions left changing
+J-F-panel-404-04 | type 3 | owner | "Freeze / extra days" sheet open
+  s1 see: Under the box: "A whole number from 1 to 365."
+  s1 see: "New last day: —"
+  s1 see: Button reads "Add days" and is greyed out
+  s1 not: A save with zero days
+  s2 see: The same message for 366 and 3.5; no message for an empty box; the button stays greyed out
+  s2 not: Days rounded without a word
+  s2 not: More than a year added in one go
+  s3 see: No "Freeze / extra days" button on either
+  s3 not: Days added to a plan that sits under a queued renewal
+  s4 see: "This member has a later plan. Add the days to the plan that ends last." or "This plan is cancelled. Undo the cancel first, or add the days to their current plan."
+  s4 not: The days added anyway
+  s5 see: No "Freeze / extra days" button; on the PT card a plain note instead
+  s5 not: A desk login moving a last day for free
+  s6 see: The "Freeze / extra days" button cannot be pressed
+  s6 not: Days that look added and are lost
+J-F-panel-404-05 | type 6 | owner | Member page; the owner added 7 days a minute ago by mistake
+  s1 see: The last day already 7 days later
+  s1 not: The old last day
+  s2 see: From the code: the button reads "Add 1 days" and the message "Plan moved 1 days later."
+  s2 not: Wrong grammar on the button and the message for one day
+  s3 see: None in this sheet: it only adds days. Both history lines stay
+  s3 not: The owner believing a wrong freeze can be undone here
+  s4 see: "Freeze / extra days" is now on the renewal (the plan that ends last), not on the first plan
+  s4 not: Days added to the earlier plan, overlapping the renewal
+J-F-panel-404-06 | type 12 | owner | The owner freezes a plan for a health reason; a desk person works in the same gym
+  s1 see: History line "+7 days (Freeze - medical): …" on the member page
+  s1 not: The reason shown to the member in the app without the gym choosing that (not checked)
+  s2 see: Unknown from the code read whether the desk sees the plan history with the reason; the history is part of the plan row
+  s2 not: A typed health or family detail visible to people the owner did not expect; no word on the sheet says who will see it
+  s3 see: Unknown: whether the reason line is in the export was not read
+  s3 not: A health note leaving the gym in a file with no warning
+J-F-panel-405-01 | type 1 | owner | Member page of a member with a running gym plan and check-ins this month; the member shows "Show my workouts to the desk" in the app; owner 
+  s1 see: Sheet "Check workout code"
+  s1 see: "For the workout offer. The member opens “Show my workouts to the desk” in the app. Type the code from their phone."
+  s1 see: Box "Workout code"; "Check" greyed out until something is typed
+  s1 not: Anything saved by opening this sheet
+  s2 see: A line such as "8 of 10 workouts match a check-in (6 at the desk, 2 in the app)."
+  s2 see: "Code made on <day>."
+  s2 see: Each workout day with "✓ Checked in at the desk" or "No check-in: does not count"
+  s2 see: Button "Give extra days"
+  s2 not: Days without a check-in counted
+  s2 not: The button when no workout matches
+  s3 see: The code sheet closes; "Freeze / extra days" opens with "Gift – Extra days" picked and 3 in the days box
+  s3 see: "New last day: <3 days later>"; button "Add 3 days"
+  s3 not: The sheet opening on "Freeze – Medical" or on 7 days
+  s4 see: "Plan moved 3 days later."; history "+3 days (Gift - extra days): <old> → <new>"
+  s4 not: A receipt, a charge or GST for the free days
+  s4 not: The days added to a PT pack or an earlier plan
+J-F-panel-405-02 | type 3 | owner | Member page of a member with check-ins but no gym plan to extend (only a PT pack, or every gym plan cancelled); owner signed in
+  s1 see: The match line and the list of days
+  s1 see: From the code: instead of a button, the words "The owner gives the extra days."
+  s1 not: The owner told to ask the owner; nothing says the member has no plan to add days to
+  s2 see: The problem in words under the "Workout code" box
+  s2 not: A reward offered for a code that cannot be read
+  s3 see: "0 of <n> workouts match a check-in." and no "Give extra days"
+  s3 not: A reward for workouts the gym never saw
+  s4 see: "The owner gives the extra days."
+  s4 not: A desk login giving free days
+J-F-panel-405-03 | type 6 | owner | Member page; the owner has just given 3 reward days for a code
+  s1 see: The same match line and "Give extra days" again: the code sheet says nothing is saved
+  s1 not: The owner not being told this code was already rewarded (the only trace is the history line on the plan)
+  s2 see: The sheet closes; no days added
+  s2 not: Days added by Cancel
+  s3 see: The sheet opens on "Freeze – Medical" with 7 days: the reward setting was cleared
+  s3 not: The sheet still opening on Gift with 3 days
+  s4 see: The sheet lets both be changed; the history line records what was picked
+  s4 not: A reward recorded as a travel freeze without the owner noticing the reason chip
+J-F-panel-405-04 | type 12 | owner | Members read in the app: "your gym can reward you for training. Hit its target days and get free days on your membership." The admin app say
+  s1 see: The plan's last day moves; no receipt appears in the member's payments; Money totals do not change
+  s1 not: A receipt or GST line for free days
+  s1 not: Collections going up
+  s2 see: The membership shows the new last day (not checked in this read)
+  s2 not: The member promised free days and seeing the old last day
+  s3 see: Only this member's workout days of the last 30 days, matched to this gym's own check-ins; nothing is stored
+  s3 not: Workout details beyond the days (exercises, weights) shown at the desk

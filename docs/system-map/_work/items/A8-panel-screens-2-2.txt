@@ -1,0 +1,908 @@
+# A8-panel-screens-2-2: coverage of 70 Tier 1 journeys (10 features, from A5-panel-screens-2-2). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-311 | apps/dashboard/e2e/progress-trend-uat.spec.mjs | e2e | 276 lines | asserts 5 journey phrase(s)
+F-panel-311 | apps/dashboard/e2e/r534-training-progress-uat.spec.mjs | e2e | 165 lines | asserts 5 journey phrase(s)
+F-panel-311 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-panel-311 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 3 journey phrase(s)
+F-panel-311 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 3 journey phrase(s)
+F-panel-311 | apps/dashboard/e2e/online.spec.mjs | e2e | 163 lines | asserts 3 journey phrase(s)
+F-panel-311 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 3 journey phrase(s)
+F-panel-311 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 3 journey phrase(s)
+F-panel-311 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-panel-311 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 2 journey phrase(s)
+F-panel-311 | apps/dashboard/e2e/people-jobs-uat.spec.mjs | e2e | 269 lines | asserts 2 journey phrase(s)
+F-panel-311 | apps/dashboard/e2e/trainers-uat.spec.mjs | e2e | 282 lines | asserts 2 journey phrase(s)
+F-panel-312 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 10 journey phrase(s)
+F-panel-312 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 4 journey phrase(s)
+F-panel-312 | apps/dashboard/test/crm/oneLink.test.ts | unit | 61 lines | asserts 3 journey phrase(s)
+F-panel-312 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 2 journey phrase(s)
+F-panel-312 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 2 journey phrase(s)
+F-panel-312 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 2 journey phrase(s)
+F-panel-312 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 2 journey phrase(s)
+F-panel-312 | apps/dashboard/e2e/webpage-uat.spec.mjs | e2e | 405 lines | asserts 2 journey phrase(s)
+F-panel-312 | apps/dashboard/test/crm/selfJoin.test.ts | unit | 174 lines | asserts 2 journey phrase(s)
+F-panel-312 | apps/mobile/test/shop/noticeAlertWords.test.ts | unit | 71 lines | asserts 2 journey phrase(s)
+F-panel-312 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 1 journey phrase(s)
+F-panel-312 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-313 | apps/dashboard/e2e/pass.spec.mjs | e2e | 171 lines | asserts 5 journey phrase(s)
+F-panel-313 | apps/dashboard/test/crm/passMembers.test.ts | unit | 199 lines | asserts 3 journey phrase(s)
+F-panel-313 | apps/dashboard/e2e/forgeaccess.spec.mjs | e2e | 57 lines | asserts 2 journey phrase(s)
+F-panel-313 | apps/dashboard/e2e/mobile-number-uat.spec.mjs | e2e | 114 lines | asserts 2 journey phrase(s)
+F-panel-313 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-panel-313 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-panel-313 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | asserts 1 journey phrase(s)
+F-panel-313 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 1 journey phrase(s)
+F-panel-313 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-313 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 1 journey phrase(s)
+F-panel-313 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-panel-313 | apps/dashboard/e2e/tapcards.spec.mjs | e2e | 36 lines | asserts 1 journey phrase(s)
+F-panel-314 | apps/dashboard/e2e/pay-mettleup-uat.spec.mjs | e2e | 210 lines | asserts 10 journey phrase(s)
+F-panel-314 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 6 journey phrase(s)
+F-panel-314 | apps/dashboard/test/crm/payMettleUp.test.ts | unit | 236 lines | file name, asserts 3 journey phrase(s)
+F-panel-314 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-panel-314 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 4 journey phrase(s)
+F-panel-314 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 4 journey phrase(s)
+F-panel-314 | apps/dashboard/test/crm/billing.test.ts | unit | 168 lines | asserts 4 journey phrase(s)
+F-panel-314 | supabase/tests/0032_member_cloud.sql | db | 217 lines | asserts 4 journey phrase(s)
+F-panel-314 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 3 journey phrase(s)
+F-panel-314 | apps/dashboard/e2e/hq-pay-uat.spec.mjs | e2e | 218 lines | asserts 3 journey phrase(s)
+F-panel-314 | apps/dashboard/e2e/hq-webpage-uat.spec.mjs | e2e | 166 lines | asserts 3 journey phrase(s)
+F-panel-314 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 3 journey phrase(s)
+F-panel-315 | supabase/tests/0094_page_chat.sql | db | 200 lines | asserts 5 journey phrase(s)
+F-panel-315 | apps/mobile/test/theme/plans.test.ts | unit | 123 lines | file name, asserts 2 journey phrase(s)
+F-panel-315 | apps/dashboard/test/crm/workoutPlans.test.ts | unit | 598 lines | file name, asserts 1 journey phrase(s)
+F-panel-315 | apps/mobile/test/shop/planRequest.test.ts | unit | 171 lines | asserts 3 journey phrase(s)
+F-panel-315 | supabase/tests/0030_plans_and_trials.sql | db | 136 lines | file name, asserts 1 journey phrase(s)
+F-panel-315 | supabase/tests/0080_gym_page.sql | db | 269 lines | asserts 3 journey phrase(s)
+F-panel-315 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 2 journey phrase(s)
+F-panel-315 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-315 | apps/dashboard/test/crm/dietPlans.test.ts | unit | 248 lines | file name
+F-panel-315 | apps/dashboard/test/crm/planRequests.test.ts | unit | 239 lines | asserts 2 journey phrase(s)
+F-panel-315 | apps/dashboard/test/crm/plans.test.ts | unit | 45 lines | file name
+F-panel-315 | apps/mobile/qa/uat-rel-r461-plus.yaml | maestro | 365 lines | asserts 2 journey phrase(s)
+F-panel-317 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 8 journey phrase(s)
+F-panel-317 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 7 journey phrase(s)
+F-panel-317 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 7 journey phrase(s)
+F-panel-317 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 7 journey phrase(s)
+F-panel-317 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 6 journey phrase(s)
+F-panel-317 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 6 journey phrase(s)
+F-panel-317 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 5 journey phrase(s)
+F-panel-317 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 5 journey phrase(s)
+F-panel-317 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 5 journey phrase(s)
+F-panel-317 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | asserts 5 journey phrase(s)
+F-panel-317 | apps/dashboard/test/crm/demoGym.test.ts | unit | 109 lines | asserts 5 journey phrase(s)
+F-panel-317 | apps/dashboard/test/crm/messages.test.ts | unit | 189 lines | asserts 5 journey phrase(s)
+F-panel-318 | apps/mobile/test/tracker/muscleTipsRoutines.test.ts | unit | 525 lines | asserts 6 journey phrase(s)
+F-panel-318 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-panel-318 | apps/dashboard/test/crm/askQuestions.test.ts | unit | 209 lines | file name, asserts 2 journey phrase(s)
+F-panel-318 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 4 journey phrase(s)
+F-panel-318 | apps/dashboard/e2e/alerts-uat.spec.mjs | e2e | 475 lines | asserts 3 journey phrase(s)
+F-panel-318 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 3 journey phrase(s)
+F-panel-318 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 3 journey phrase(s)
+F-panel-318 | apps/dashboard/e2e/ai-questions-uat.spec.mjs | e2e | 434 lines | file name
+F-panel-318 | apps/dashboard/e2e/joinpay-uat.spec.mjs | e2e | 688 lines | asserts 2 journey phrase(s)
+F-panel-318 | apps/dashboard/e2e/member-messages-uat.spec.mjs | e2e | 236 lines | asserts 2 journey phrase(s)
+F-panel-318 | apps/dashboard/e2e/message-recipient-uat.spec.mjs | e2e | 136 lines | asserts 2 journey phrase(s)
+F-panel-318 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 2 journey phrase(s)
+F-panel-319 | apps/dashboard/test/crm/receiptContrast.test.ts | unit | 32 lines | imports the code, file name
+F-panel-319 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | file name, asserts 2 journey phrase(s)
+F-panel-319 | apps/dashboard/test/crm/receiptDoc.test.ts | unit | 324 lines | file name, asserts 2 journey phrase(s)
+F-panel-319 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 3 journey phrase(s)
+F-panel-319 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-panel-319 | apps/dashboard/test/crm/csv.test.ts | unit | 102 lines | asserts 2 journey phrase(s)
+F-panel-319 | apps/dashboard/test/crm/receipts.test.ts | unit | 112 lines | file name
+F-panel-319 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 2 journey phrase(s)
+F-panel-319 | supabase/tests/0021_receipt_rules.sql | db | 245 lines | file name
+F-panel-319 | supabase/tests/0041_offline_desk_receipts.sql | db | 85 lines | file name
+F-panel-319 | apps/dashboard/e2e/body.spec.mjs | e2e | 183 lines | asserts 1 journey phrase(s)
+F-panel-319 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 1 journey phrase(s)
+F-panel-320 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | file name, asserts 7 journey phrase(s)
+F-panel-320 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 8 journey phrase(s)
+F-panel-320 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 8 journey phrase(s)
+F-panel-320 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 7 journey phrase(s)
+F-panel-320 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 7 journey phrase(s)
+F-panel-320 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 6 journey phrase(s)
+F-panel-320 | apps/dashboard/e2e/r449-uat.spec.mjs | e2e | 212 lines | asserts 6 journey phrase(s)
+F-panel-320 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 6 journey phrase(s)
+F-panel-320 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 6 journey phrase(s)
+F-panel-320 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 5 journey phrase(s)
+F-panel-320 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 5 journey phrase(s)
+F-panel-320 | apps/dashboard/e2e/timings.spec.mjs | e2e | 130 lines | asserts 5 journey phrase(s)
+F-panel-321 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 5 journey phrase(s)
+F-panel-321 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | file name, asserts 2 journey phrase(s)
+F-panel-321 | supabase/tests/0034_signin_pin.sql | db | 205 lines | asserts 4 journey phrase(s)
+F-panel-321 | supabase/tests/0061_phone_codes.sql | db | 180 lines | asserts 4 journey phrase(s)
+F-panel-321 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 4 journey phrase(s)
+F-panel-321 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 3 journey phrase(s)
+F-panel-321 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 3 journey phrase(s)
+F-panel-321 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 3 journey phrase(s)
+F-panel-321 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 3 journey phrase(s)
+F-panel-321 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 3 journey phrase(s)
+F-panel-321 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 3 journey phrase(s)
+F-panel-321 | apps/mobile/test/tracker/switcherLine.test.ts | unit | 38 lines | asserts 3 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-311-01 | type 1 | owner | Owner signed in, gym online, the gym server has Training progress, at least one member shares workouts from the app
+  s1 see: Title 'Training progress'
+  s1 see: Subtitle 'Every member who shares their workouts, and their trainer'
+  s1 see: 'Loading…' only on the first read
+  s1 see: One card per member: name, one plain line in a pill, 'Trainer: {name}' or 'No trainer'
+  s1 see: '{n} workouts in 12 weeks' and 'Workouts per week, last 12 weeks' beside a small line chart
+  s1 see: Last line: 'Members can switch sharing off in their app at any time. Body weight, photos and notes are never shared.'
+  s1 not: A member who does not share workouts is listed
+  s1 not: Body weight, photos or notes are shown
+  s1 not: '1 workouts in 12 weeks' for one workout
+  s1 not: A blank page with no word while reading
+  s2 see: A tag appears on that card (Getting stronger, Steady, Dropping or Not enough data yet)
+  s2 see: Beside it, when known: '{name}: strength score {before} → {now} kg' or '{name}: most reps {before} → {now}'
+  s2 not: Every member's workouts are read at once on a long list
+  s2 not: A tag shown for a member with no recent workouts
+  s3 see: The button says 'Sending…' and both buttons are greyed
+  s3 see: Under the buttons, in green: 'Sent. It is in their app now.'
+  s3 not: WhatsApp opens
+  s3 not: The message goes to any other member
+  s3 not: Two messages from one tap
+  s3 not: 'Sent' shown when the send failed
+J-F-panel-311-02 | type 2 | owner | Training progress list, a member who is on the gym's member list
+  s1 see: A page titled with the member's name
+  s1 see: Subtitle 'Training progress · Trainer: {name}' (or 'Training progress' with no trainer)
+  s1 see: 'Loading…', then the member's full progress
+  s1 see: Buttons 'Back to Training progress' and 'Open member page'
+  s1 not: Another member's progress opens
+  s1 not: Body weight, photos or notes appear
+  s1 not: An endless Loading
+  s2 see: The list again, with the same members
+  s2 not: The list is empty or reads from scratch with an error
+  s3 see: The same page for that member
+  s3 not: A blank page
+  s3 not: A page for a member of another gym
+J-F-panel-311-03 | type 3 | owner | Owner on Training progress; cases where it cannot work
+  s1 see: In red under the buttons: 'This member is not on the MettleUp app any more.'
+  s1 not: 'Sent. It is in their app now.'
+  s1 not: A message kept for a person who is no longer there
+  s2 see: No link on the name
+  s2 see: 'This member is not on your gym’s list yet, so their full progress cannot open.'
+  s2 not: A 'See full progress' button that opens an empty page
+  s3 see: 'Training progress needs your gym online'
+  s3 see: 'Put your gym online first (Settings → Sign-in & data).'
+  s3 not: A list from another gym
+  s3 not: An endless Loading
+  s4 see: 'Training progress is not ready for your gym yet'
+  s4 see: 'It will appear here once your gym’s server has it.'
+  s4 not: A red error
+  s4 not: An empty list that looks like no member trains
+  s5 see: A red line with the reason
+  s5 see: A 'Try again' button
+  s5 not: A blank page
+  s5 not: Old figures shown as fresh
+J-F-panel-311-04 | type 6 | owner | Owner on Training progress; the gym already sent this member 2 messages today
+  s1 see: 'Sent to their app. No phone notification this time: your gym already sent 2 messages today.'
+  s1 not: A third phone notification today
+  s1 not: The plain 'Sent. It is in their app now.' line
+  s2 see: A second message is sent, with its own Sent line
+  s2 not: The card freezes on Sending…
+  s3 see: The member is gone from the list
+  s3 see: The list does not jump to the top or go blank while reading
+  s3 not: The member still listed with old figures
+  s3 not: The open member page closes by itself
+  s4 see: 'This member is not sharing workouts from the MettleUp app. They can switch on “Share my workouts with my trainers” in the app’s settings.'
+  s4 not: Old workouts still shown after sharing was switched off
+J-F-panel-311-05 | type 12 | owner | Owner on Training progress, a member who shares and one who does not
+  s1 see: Workout counts, best lifts and the weekly line only
+  s1 see: 'Body weight, photos and notes are never shared.'
+  s1 not: Body weight, a photo or a note of any member
+  s1 not: A member who never switched sharing on
+  s1 not: A member of another gym or branch
+  s2 see: It goes to that one member's app
+  s2 not: The message is visible to other members
+  s2 not: The member's phone number is shown or used
+  s2 not: A WhatsApp is sent
+J-F-panel-311-06 | type 1 | trainer | A desk person the owner ticked as Trainer, signed in, gym online, the owner gave them two members who share workouts
+  s1 see: Title 'Training progress'
+  s1 see: Subtitle 'Your members: who to talk to today'
+  s1 see: Only the members the owner gave this trainer
+  s1 see: No 'Trainer:' pill on the cards
+  s1 not: A member of another trainer
+  s1 not: A member with no trainer
+  s1 not: Body weight, photos or notes
+  s2 see: The plain line, the 12-week chart and the tag
+  s2 see: 'See full progress'
+  s2 see: In place of the two send buttons: 'Only the gym owner can send these from here for now.'
+  s2 not: A 'Send: Well done' button that then fails
+  s2 not: An empty space where the buttons would be
+J-F-panel-311-07 | type 2 | trainer | Trainer on Training progress
+  s1 see: The member's name as the title, subtitle 'Training progress'
+  s1 see: The member's full progress
+  s1 see: 'Back to Training progress', 'Open member page'
+  s1 not: The trainer's name shown as 'Trainer: …' as if for the owner
+  s1 not: Progress of a member who is not theirs
+J-F-panel-311-08 | type 3 | trainer | A desk person WITHOUT the Trainer tick, and a trainer who types the address of another trainer's member
+  s1 see: 'Only trainers and the owner see this'
+  s1 see: 'Ask the owner to tick you as a trainer in Staff & sign-in.'
+  s1 not: Any member card
+  s1 not: A red error
+  s2 see: 'Only the owner and this member’s own trainer can see this.'
+  s2 not: Any workout of that member
+  s2 not: The member's name in the title
+J-F-panel-311-09 | type 6 | trainer | Trainer with one member; then the owner changes things
+  s1 see: The member is gone from the list
+  s1 not: The member stays until sign-out
+  s1 not: The full progress page still opens from an old link
+  s2 see: 'No members to show yet'
+  s2 see: 'The owner gives you members on each member’s page. They show here once they use the MettleUp app.'
+  s2 not: A blank page
+  s2 not: The owner's wording about giving trainers
+  s3 see: 'Only trainers and the owner see this'
+  s3 not: The old list stays on screen
+J-F-panel-311-10 | type 12 | trainer | Trainer on Training progress
+  s1 see: Only their own members, only shared workout facts
+  s1 not: Body weight, photos, notes
+  s1 not: Fees, dues or phone numbers that the desk role may not see
+  s1 not: Members of other trainers
+J-F-panel-312-01 | type 1 | owner | Owner of an online gym, gym web pages open for this gym, one plan people can pick, no web page made yet; Get started list
+  s1 see: Subtitle 'Three parts, in order: your free web page, your one link and QR poster, and how people pay.'
+  s1 see: Card 1 'Your free web page' with 'MettleUp makes a free web page for your gym at join.mettleup.fit. …'
+  s1 see: 'Your page is not made yet. Add a few lines about your gym, what it has and some photos, then publish it.'
+  s1 see: Buttons 'Make my page' and 'Not now'
+  s1 see: 'It is your choice. You can turn your page on or off here at any time.'
+  s1 not: A page already shown as on
+  s1 not: Part numbers that skip (1, 3)
+  s1 not: The step shown for a gym that is not online
+  s2 see: 'Your page is on. People can open it at {address}.'
+  s2 see: Buttons 'Edit your page' and 'Turn off my page'
+  s2 not: The page shown as off after publishing
+  s2 not: No way back to this step from the editor
+  s3 see: The link in a dashed box
+  s3 see: 'This is your gym’s one link. It opens your web page on a phone or a computer, and its “Become a member” button opens your join form.'
+  s3 see: Toast 'Link copied.'
+  s3 see: '✓ You have shared your link.'
+  s3 not: 'Link copied.' when the browser blocked the copy
+  s3 not: A link to another gym
+  s4 see: The poster with the gym name, QR and link
+  s4 see: Toast 'Poster saved as a picture.'
+  s4 see: 'Print it on A4 and stick it at the desk. On a phone, Print → “Save as PDF” also works. Use the picture for a print shop.'
+  s4 not: A poster whose QR opens a different link from the box
+  s4 not: A broken logo mark
+  s5 see: 'Pay at the gym desk'
+  s5 see: 'UPI at the desk' with the saved UPI ID, or 'Add UPI ID'
+  s5 see: 'Pay online when they join' and 'Open Payments' only while online join payments are switched on
+  s5 see: '✓ This step is done. You can come back here at any time.'
+  s5 not: 'Pay online when they join' shown while that switch is off
+  s5 not: A UPI ID of another gym
+J-F-panel-312-02 | type 2 | owner | Owner of an online gym where web pages are NOT open (or this owner cannot edit the page)
+  s1 see: Subtitle 'Two parts, in order: your join link and QR poster, and how people pay.'
+  s1 see: Card 1 'Your join link and QR poster'
+  s1 see: 'This is your gym’s one link. People open it on a phone or a computer, pick a plan and send you their details.'
+  s1 not: A 'Your free web page' card
+  s1 not: Part numbers starting at 2
+  s2 see: WhatsApp opens with a ready message carrying the link, with no person picked
+  s2 see: '✓ You have shared your link.'
+  s2 not: A message sent by itself
+  s2 not: A person picked for the owner
+  s3 see: The browser's print preview with the poster only
+  s3 not: The whole panel page in the print
+  s3 not: An empty preview on a phone
+J-F-panel-312-03 | type 2 | owner | Owner opens the step from somewhere else: a typed address, or the web page editor's way back
+  s1 see: The same step, with the same three (or two) cards
+  s1 not: A blank page
+  s1 not: The Get started list instead, for an online gym
+  s2 see: This step again, page status as saved
+  s2 not: Back lands on Settings with no way to the step
+J-F-panel-312-04 | type 3 | owner | Cases where the step cannot do its job
+  s1 see: 'Your join link works once your gym has at least one plan that people can pick. Add one in Plans.'
+  s1 see: Button 'Open Plans'
+  s1 not: A link and poster that open a join form with nothing to pick
+  s2 see: The Get started list opens instead
+  s2 not: A join link for a gym that is not online
+  s2 not: A blank page
+  s3 see: Nothing of the step is shown
+  s3 not: The link, the poster or the page switch
+  s4 see: Toast 'This browser blocked copying. Select the text and copy it.'
+  s4 not: '✓ You have shared your link.' appears
+  s5 see: Toast 'Could not make the picture. Try Print poster.'
+  s5 not: 'Poster saved as a picture.'
+  s6 see: In red: 'MettleUp has taken your page down, so visitors cannot see it. Open your page to read MettleUp’s note.'
+  s6 see: Button 'Open your page'
+  s6 not: 'Your page is on.'
+  s6 not: A 'Turn off my page' button
+J-F-panel-312-05 | type 6 | owner | Owner on the step, web page on
+  s1 see: Sheet 'Turn off your web page?'
+  s1 see: 'Visitors then see that the page is not here, and links or posters with your page address stop working until you turn it on again. Your one link then opens the join form instead.'
+  s1 see: Buttons 'Keep it on' and 'Turn off my page'
+  s1 not: The page goes off before the owner confirms
+  s2 see: 'Turning off…'
+  s2 see: Toast 'Your page is off.'
+  s2 see: 'Your web page is off. Your one link below opens the join form instead.'
+  s2 see: 'To turn it on, open your page, tick “Show my page to visitors” and save.'
+  s2 see: Card 2 is now titled 'Your join link and QR poster'
+  s2 not: Visitors can still open the page
+  s2 not: The link box still shows the page address
+  s2 not: The words on the page are lost
+  s3 see: The page editor opens
+  s3 not: The page is switched on without the owner saving it
+  s4 see: 'Your web page is off. Your one link below opens the join form instead.'
+  s4 not: The choice is forgotten on the next visit in this browser
+  s5 see: A red line such as 'Your page could not be turned off. Check your internet and try again.'
+  s5 see: The sheet stays open
+  s5 not: 'Your page is off.' shown
+  s5 not: The page left half off
+J-F-panel-312-06 | type 12 | owner | Owner on the step; a visitor with the link
+  s1 see: 'It shows your fees, timings, photos and address. People can send you a question there, or tap “Become a member” to ask to join.'
+  s1 see: 'It is your choice. You can turn your page on or off here at any time.'
+  s1 not: Member names, phone numbers or money figures on the public page
+  s1 not: The page switched on by MettleUp without the owner
+  s2 see: The page is not there
+  s2 not: The old page still open to the public
+  s2 not: The gym's photos still served
+J-F-panel-313-01 | type 1 | owner | Owner, gym with FITPASS and cultpass members who checked in this month and last month; Visits page
+  s1 see: Title 'Pass visits', subtitle 'Visits by FITPASS, cultpass and other pass members'
+  s1 see: 'Pass members pay a pass company like FITPASS or cultpass, and the company pays your gym for each visit. Match these counts with the company’s monthly payment.'
+  s1 see: Tiles 'Pass visits' and 'Pass members who came', each with this month's name
+  s1 see: Table 'Visits by pass company': Pass company, Month, Visits, People
+  s1 see: List 'Who came on a pass': name, '{company} · last came {date}', '{n} visits'
+  s1 not: A member who came twice on one day counted as two visits
+  s1 not: Visits of members with a normal plan
+  s1 not: Totals that differ between the tile and the table
+  s2 see: Tiles, table and list change to last month
+  s2 not: This month's visits mixed into last month
+  s2 not: The chip row missing when two months have visits
+  s3 see: A file named with the gym name, 'pass-visits' and the month
+  s3 see: Toast 'Exported {n} pass visits.'
+  s3 see: One line per visit in the file
+  s3 not: 'Exported 1 pass visits.'
+  s3 not: A different count in the file than on screen
+  s3 not: Visits of another month in the file
+  s4 see: The Visits page
+  s4 not: The panel closes
+J-F-panel-313-02 | type 3 | owner | Owner, gym with no pass visits this month
+  s1 see: Both tiles show 0
+  s1 see: 'No pass visits in {month}'
+  s1 see: 'Add a pass member from Members, then check them in at the desk or let them scan your check-in QR. Each visit counts here.'
+  s1 see: Button 'Add member'
+  s1 see: 'Download Excel file' is greyed
+  s1 not: An empty file can be downloaded
+  s1 not: NaN or a dash in a tile
+  s1 not: The 'Who came on a pass' card with no rows
+  s2 see: The add-member form
+  s2 not: A member added without the pass switch being asked
+J-F-panel-313-03 | type 6 | owner | Owner on Pass visits with one pass member who came today
+  s1 see: Still '1 visit' for that member today
+  s1 not: Two visits for one person on one day
+  s2 see: unknown: whether past pass visits stay counted
+  s2 not: The month total changes with no word why
+  s3 see: The visit is gone from the tiles, the table and the list
+  s3 not: A removed visit still billed to the pass company
+J-F-panel-313-04 | type 12 | owner | Owner downloads the month file
+  s1 see: Member names and phone numbers of pass members, one line per visit
+  s1 not: Members of another branch or gym
+  s1 not: Members without a pass
+  s1 not: Fees or dues of members
+  s2 see: unknown: the page has no role check of its own in this file
+  s2 not: A desk person downloads phone numbers they may not export
+J-F-panel-314-01 | type 1 | owner | Owner signed in, real gym online, gym server has paying built in, MettleUp has added its UPI and bank details; Settings, Gym tab
+  s1 see: Card text 'Pay for MettleUp by UPI or bank transfer, and see when your payment is confirmed.'
+  s1 see: Page 'Pay MettleUp', subtitle 'Pay for your MettleUp plan by UPI or bank transfer'
+  s1 see: 'Loading…', then one line saying the plan the gym is on now
+  s1 see: Button 'Back to Settings'
+  s1 not: The card shown to a desk person or on the demo gym
+  s1 not: An endless Loading
+  s2 see: The price in large figures with 'for 1 month' or 'for 1 year'
+  s2 see: During the free trial: one line saying when the paid time starts
+  s2 see: 'The price for one branch. More than one branch? Message MettleUp for your total before you pay.'
+  s2 see: The heading of card 2 and the 'Amount paid' box follow the price
+  s2 not: A price that does not match the picked plan
+  s2 not: The amount box keeping the old price before the owner typed in it
+  s3 see: 'Scan with any UPI app (Google Pay, PhonePe, Paytm, your bank’s app). The amount is filled in.'
+  s3 see: Link 'On a phone? Pay with a UPI app'
+  s3 see: 'UPI ID', 'Name', and 'Or pay by bank transfer (NEFT or IMPS)' with Account name, Account number, IFSC, Bank
+  s3 see: 'In the payment note, write your gym code {code} so we know it is you.'
+  s3 not: A QR with a different amount from the heading
+  s3 not: Payment details of anyone but MettleUp
+  s3 not: An empty gym code with no hint
+  s4 see: 'Send us the reference number, so MettleUp can find your payment and confirm it.'
+  s4 see: Button 'Sending…'
+  s4 see: Toast 'Sent. MettleUp will check the payment and confirm it here.'
+  s4 see: The page scrolls to the top; 'Your payments' shows the new one as waiting
+  s4 see: The reference box is empty again
+  s4 not: The plan shown as paid before MettleUp confirms
+  s4 not: Two rows from one tap
+  s4 not: The typed reference lost when the send fails
+  s5 see: The payment shows a green confirmed pill with its line
+  s5 see: The plan line at the top shows the new plan
+  s5 not: Still waiting after it was confirmed
+  s5 not: A confirmed pill with the old plan line
+J-F-panel-314-02 | type 2 | owner | Owner pays by bank transfer instead of UPI
+  s1 see: The hint changes to 'The UTR number your bank shows for the transfer.'
+  s1 not: The 12-digit UPI rule applied to a bank UTR
+  s2 see: Toast 'Sent. MettleUp will check the payment and confirm it here.'
+  s2 see: A waiting line in 'Your payments'
+  s2 not: The payment saved as UPI
+J-F-panel-314-03 | type 2 | owner | Owner on a gym whose server has 'Pay online' switched on; and the owner who types the page address
+  s1 see: A 'Pay online' block above 'Your payments', with the gym's receipts (exact words unknown: not read in this step)
+  s1 not: The block shown while the server switch is off
+  s1 not: Receipts of another gym
+  s2 see: The same page
+  s2 not: A blank page
+  s2 not: The page for a desk person
+J-F-panel-314-04 | type 3 | owner | Owner on Pay MettleUp; wrong input and missing parts
+  s1 see: A red line under 'Reference number (UTR)' (exact words unknown)
+  s1 not: Anything sent to MettleUp
+  s1 not: A toast that says Sent
+  s2 see: Under the box: 'Type the amount you paid, in rupees, like 1499.'
+  s2 not: A payment of ₹0 sent
+  s3 see: A red line above the form with the reason (exact words unknown)
+  s3 see: The typed reference stays in the box
+  s3 not: Two waiting payments for one reference
+  s4 see: 'Paying MettleUp here is not ready yet'
+  s4 see: 'To pay now, message MettleUp and we will send you the payment details. Your gym keeps working as it is.'
+  s4 not: A red error
+  s4 not: A form that cannot send
+  s5 see: 'Payment is not available yet'
+  s5 see: 'MettleUp has not added its payment details here yet. Message MettleUp to pay. Your gym keeps working as it is.'
+  s5 not: An empty QR
+  s5 not: Steps 1 to 3 with nothing to pay to
+  s6 see: 'Only the gym owner can pay MettleUp'
+  s6 see: 'Sign in as the owner, with the gym online, to pay.'
+  s6 not: MettleUp's bank details
+  s6 not: The gym's payments to MettleUp
+  s7 see: A red line with the reason
+  s7 see: Button 'Try again'
+  s7 not: A blank page
+J-F-panel-314-05 | type 6 | owner | Owner with payments in every state
+  s1 see: One pill and one line per payment: waiting (amber), confirmed (green), not confirmed (red)
+  s1 see: Only the 5 newest
+  s1 not: A not-confirmed payment shown as waiting for ever
+  s1 not: Older payments with no way to see them said nowhere
+  s2 see: A new waiting line above the old one
+  s2 not: The old not-confirmed line turns to waiting
+  s2 not: The form is blocked
+  s3 see: The plan line and past payments only
+  s3 not: Steps 1 to 3 asking a lifetime gym to pay
+  s4 see: A 'new' dot beside the 'Pay MettleUp' button, then no dot
+  s4 not: The dot stays for ever
+J-F-panel-314-06 | type 12 | owner | Owner and a desk person of the same gym
+  s1 see: MettleUp's UPI ID and bank account, the gym's own payments and plan
+  s1 not: Payments or plan of another gym
+  s1 not: The owner's own bank or card details asked for or stored
+  s2 see: No 'Your MettleUp plan' card
+  s2 see: 'Only the gym owner can pay MettleUp'
+  s2 not: What the gym pays MettleUp
+  s2 not: The reference numbers the owner sent
+J-F-panel-315-01 | type 1 | owner | Owner signed in, gym with two plans; Plans page
+  s1 see: Title 'Plans', subtitle 'What you sell, and for how much'
+  s1 see: Button '+ Add plan'
+  s1 see: One row per plan: name, price, duration, joining fee line, 'Sold today, runs until {date}', Edit
+  s1 not: Plans of another gym or branch
+  s1 not: A run-until date that is a day short
+  s2 see: Sheet 'Add plan'
+  s2 see: Boxes 'Plan name', 'Duration', 'Unit' (Months, Days), 'Price (₹)', 'Joining fee (₹)' with 'Charged once, on a member’s first plan.', the 'PT plan' switch, 'Description (optional)', 'For sale?'
+  s2 not: Values of the last edited plan left in the boxes
+  s3 see: 'Saving…', then the sheet closes
+  s3 see: A new row: 'Quarterly', ₹3,000, '3 months', 'No joining fee', 'Sold today, runs until {date}'
+  s3 not: Two rows from one tap
+  s3 not: The price saved as ₹30 or ₹3,00,000
+  s3 not: The sheet closing when the save failed
+J-F-panel-315-02 | type 2 | owner | Owner of a new gym with no plans
+  s1 see: 'No plans yet'
+  s1 see: 'Add your own, or start from a typical Indian gym price list and edit the numbers.'
+  s1 see: Buttons '+ Add plan' and 'Use a starter price list'
+  s1 not: A blank page
+  s2 see: The button says 'Adding…' and is greyed
+  s2 see: Five plans appear in the list
+  s2 not: Ten plans after a double tap
+  s2 not: Some plans missing with no word
+  s3 see: A red line ending 'Some plans may already be added. Check the list.'
+  s3 not: A silent half list
+  s3 not: A second tap adding the same plans again with the same names
+J-F-panel-315-03 | type 2 | owner | Owner adds another kind of plan: a personal-training pack
+  s1 see: 'Personal training with a set number of sessions. Sold on top of their gym plan.'
+  s1 see: Boxes 'PT sessions' (12, 'How many sessions this plan includes.') and 'Trainer (optional)'
+  s1 not: The PT boxes shown while the switch is off
+  s2 see: The row shows a PT line under the name with the sessions and the trainer
+  s2 not: The plan saved as a normal plan
+  s2 not: A trainer name saved after the switch was turned off
+J-F-panel-315-04 | type 3 | owner | Owner on the 'Add plan' sheet, wrong input
+  s1 see: Under 'Plan name': 'Give the plan a name.'
+  s1 not: A nameless plan saved
+  s2 see: 'Duration must be a whole number between 1 and 120.'
+  s2 not: A plan of 100 months from 1e2
+  s2 not: A plan of 0 days
+  s3 see: 'The price looks wrong. Type it again.'
+  s3 not: A plan saved at ₹0 from an empty box
+  s4 see: 'The joining fee looks wrong. Type it again.'
+  s4 not: The fee quietly saved as 0
+  s5 see: 'PT sessions must be a whole number between 1 and {max}.'
+  s5 not: A PT pack with no sessions
+  s6 see: unknown: no duplicate-name check is visible on this sheet
+  s6 not: Two plans the desk cannot tell apart when selling
+  s7 see: The sheet closes, nothing saved
+  s7 not: A half-saved plan
+J-F-panel-315-05 | type 6 | owner | Owner with a plan that members already bought
+  s1 see: Sheet 'Edit plan' with the saved values
+  s1 see: 'A new price is used only for new sales. Memberships already sold keep their old price.'
+  s1 not: Empty boxes
+  s1 not: A price shown in paise
+  s2 see: The row shows the new price
+  s2 not: Dues or receipts of memberships already sold change
+  s2 not: The plan moves to another place in the list
+  s3 see: The row gets a 'Not for sale' pill
+  s3 not: The plan is deleted
+  s3 not: Members on the plan lose it
+  s3 not: The plan still offered when selling
+  s4 see: The pill is gone and the plan can be sold again
+  s4 not: A second copy of the plan
+  s5 see: The PT line under the name is gone
+  s5 not: Old sessions or trainer still saved on the plan
+J-F-panel-315-06 | type 1 | staff | Desk person signed in, gym with plans
+  s1 see: Title 'Plans', subtitle 'What you sell, and for how much'
+  s1 see: Every plan with its price, duration, joining fee line and run-until date
+  s1 see: 'Not for sale' on retired plans
+  s1 not: A '+ Add plan' button
+  s1 not: An 'Edit' button on any row
+  s1 not: An empty column where Edit would be
+J-F-panel-315-07 | type 3 | staff | Desk person on a gym with no plans, or trying to change one
+  s1 see: 'No plans yet'
+  s1 see: 'Ask your gym owner to add the plans you sell.'
+  s1 not: '+ Add plan'
+  s1 not: 'Use a starter price list'
+  s2 see: No button, no link, no sheet
+  s2 not: The desk changes a price or retires a plan
+J-F-panel-315-08 | type 6 | staff | Desk person has Plans open while the owner edits on another device
+  s1 see: The new price, and 'Not for sale' on the retired plan
+  s1 not: The old price sold at the desk
+  s1 not: The retired plan still looking for sale
+  s2 see: The pill is gone
+  s2 not: The pill stays until sign-out
+J-F-panel-317-01 | type 1 | owner | Owner signed in, gym online, MettleUp Plus switched on for members, gym server has the lock; Settings, Member app tab
+  s1 see: A tick box 'Lock the paid features when a member’s plan ends', ticked
+  s1 see: A hint saying the paid features stop 7 days after a plan ends until the member renews, and workouts are always kept
+  s1 see: A greyed 'Save' button
+  s1 see: A small line saying who changed it last and when, if it was ever changed
+  s1 not: The card shown while MettleUp Plus is off for members
+  s1 not: The box unticked while the saved value is on
+  s2 see: Toast 'Saved. Members keep the paid features after their plan ends.'
+  s2 see: 'Save' goes grey again
+  s2 see: The last-changed line shows today
+  s2 not: The toast when the save failed
+  s2 not: The box jumping back by itself
+J-F-panel-317-02 | type 3 | owner | Owner on the card; cases where it cannot save or cannot show
+  s1 see: The button is greyed; nothing happens
+  s1 not: A save and a new last-changed line for no change
+  s2 see: A red line with the reason under the box
+  s2 see: The box keeps what the owner chose
+  s2 not: A 'Saved.' toast
+  s2 not: The members' lock changing
+  s3 see: No card at all
+  s3 not: A card that cannot save
+  s3 not: A red error
+  s4 see: No card and no word (the failure is only written to the browser log)
+  s4 not: A card showing a guessed value
+J-F-panel-317-03 | type 6 | owner | Owner with the lock off
+  s1 see: Toast 'Saved. Paid features lock 7 days after a member’s plan ends.'
+  s1 not: Members whose plan ended yesterday locked at once
+  s2 see: 'Save' is grey again because nothing differs from what is saved
+  s2 not: A save with no change
+  s3 see: The box as saved, with the last-changed line
+  s3 not: The box back to its default
+J-F-panel-317-04 | type 12 | owner | Owner saves the lock on; a member whose plan ended 8 days ago opens the app
+  s1 see: Toast 'Saved. Paid features lock 7 days after a member’s plan ends.'
+  s1 not: A lock earlier than 7 days after the end
+  s2 see: The paid extras are locked; every saved workout is still there
+  s2 not: Any workout hidden or deleted
+  s2 not: A member with a running plan locked
+  s2 not: The member asked to pay MettleUp
+J-F-panel-317-05 | type 1 | staff | Desk person signed in, gym online, MettleUp Plus on for members, the owner saved the lock on
+  s1 see: Title 'Settings', subtitle 'Screen colours, app and your sign-in'
+  s1 see: Cards 'Dark or light', 'Members', the sign-in card, the install card and the alerts card
+  s1 see: The card 'Free MettleUp Plus for your members' is NOT there, so the desk cannot read the lock
+  s1 not: The owner's tick box or 'Save' button
+  s1 not: Expected by the card's own desk words but never reached: 'On: paid features lock 7 days after a member’s plan ends.' and 'Only the owner can change this.'
+J-F-panel-317-06 | type 3 | staff | Desk person tries to reach or change the lock
+  s1 see: The desk's short Settings again, with no tabs
+  s1 not: The tick box
+  s1 not: A 'Save' button
+  s1 not: The gym's app code card
+J-F-panel-317-07 | type 6 | staff | The owner switches the lock off while the desk person is signed in
+  s1 see: The same short Settings; nothing says whether the lock is on or off
+  s1 see: Expected by the card's own desk words but never reached: 'Off: members keep the paid features after their plan ends.'
+  s1 not: The desk tells a member the wrong thing because the screen showed an old value
+J-F-panel-318-01 | type 1 | owner | Owner signed in, gym online, gym server has questions, one member question waiting
+  s1 see: Title 'Member questions'
+  s1 see: 'Members ask from the MettleUp app. Your reply shows in their app, with a notification on their phone.'
+  s1 see: 'Waiting for your reply (1)'
+  s1 see: A card: the member's name as a link, a pill 'To any trainer or the owner' (or 'To you', 'To {name}'), when it was asked, the question in full
+  s1 not: Questions of another gym
+  s1 not: A question cut short with no way to read it all
+  s1 not: A blank page while reading
+  s2 see: Hint 'Short and clear. The member cannot reply back; they can ask a new question. {n} of 1000 letters'
+  s2 see: 'Send reply' becomes active
+  s2 not: More than 1000 letters taken
+  s2 not: The counter not moving
+  s3 see: 'Sending…'
+  s3 see: The card moves under 'Answered and closed' with '{name} replied · {when}' and the reply
+  s3 see: 'Waiting for your reply (0)' and 'No questions are waiting.'
+  s3 see: The menu count of open questions goes down
+  s3 not: Two replies from one tap
+  s3 not: The reply shown as sent when it failed
+  s3 not: The reply box still open on an answered question
+J-F-panel-318-02 | type 3 | owner | Owner on Member questions; wrong input and missing parts
+  s1 see: 'Send reply' stays greyed
+  s1 not: An empty reply sent to the member
+  s2 see: A red line with the reason (exact words unknown)
+  s2 see: The list reads again and shows the trainer's reply
+  s2 not: Two replies on one question
+  s2 not: The first reply overwritten
+  s3 see: A red line, then the card under 'Answered and closed' with 'The member took this question back.'
+  s3 not: A reply and a notification sent for a withdrawn question
+  s4 see: 'Questions need your gym online'
+  s4 see: 'Put your gym online first (Settings → Sign-in & data).'
+  s4 not: An endless Loading
+  s5 see: 'Member questions are not switched on for your gym yet.'
+  s5 not: A red error
+  s6 see: A red line with the reason
+  s6 see: Button 'Try again'
+  s6 not: A blank page
+  s6 not: A typed reply lost on Try again
+J-F-panel-318-03 | type 6 | owner | Owner with questions in every state
+  s1 see: Answered ones with '{name} replied · {when}'
+  s1 see: 'The member took this question back.'
+  s1 see: 'Closed with no reply after 14 days.'
+  s1 see: A pill 'To {name} (no longer a trainer)' where the trainer lost the tick
+  s1 not: A reply box on a closed question
+  s1 not: A closed question counted as waiting
+  s2 see: 'No questions yet. Members find "Ask about your workout" on the Gym tab of their app.'
+  s2 not: Two empty headings with nothing under them
+  s3 see: The list reads again without going blank
+  s3 not: The typed reply is lost
+  s3 not: The page jumps to the top
+  s4 see: That member's page
+  s4 not: A page for a different member
+J-F-panel-318-04 | type 12 | owner | Owner; a member asked one question to one named trainer and another to anyone
+  s1 see: Each card says whom it was sent to
+  s1 see: unknown: whether the owner also sees a question sent to one named trainer
+  s1 not: Feedback or complaints mixed into this page
+  s1 not: A member's phone number, body weight or photos
+  s2 see: It shows only in that member's app
+  s2 not: The reply shown to other members
+  s2 not: A WhatsApp or SMS sent
+J-F-panel-318-05 | type 1 | trainer | A desk person ticked as Trainer, signed in, gym online; a member asked this trainer a question
+  s1 see: 'Waiting for your reply (1)'
+  s1 see: The card with the pill 'To you'
+  s1 not: A question sent only to the owner or to another trainer
+  s1 not: Feedback or a complaint
+  s2 see: 'Sending…'
+  s2 see: The card under 'Answered and closed' with '{trainer name} replied · {when}'
+  s2 not: The reply signed with the owner's name
+  s2 not: Two replies from one tap
+J-F-panel-318-06 | type 3 | trainer | A desk person WITHOUT the Trainer tick
+  s1 see: 'Only trainers and the owner can see questions. Ask the owner to tick you as a trainer.'
+  s1 not: Any question
+  s1 not: Any member name
+  s1 not: A red error
+J-F-panel-318-07 | type 6 | trainer | Trainer with an open question; then things change
+  s1 see: The card is under 'Answered and closed' with the owner's reply
+  s1 not: The reply box still open for the trainer
+  s2 see: 'Only trainers and the owner can see questions. Ask the owner to tick you as a trainer.'
+  s2 not: The old list stays on screen
+  s2 not: A reply can still be sent
+  s3 see: 'Closed with no reply after 14 days.'
+  s3 not: It still counts as waiting
+J-F-panel-318-08 | type 12 | trainer | Two trainers in one gym; a member asks trainer A by name
+  s1 see: The question is not there
+  s1 not: Trainer B reads or answers a question sent only to trainer A
+  s2 see: The card with 'To you'
+  s2 not: The member's phone number, dues or body data on the card
+J-F-panel-319-01 | type 1 | owner | Owner signed in; a member paid a fee today
+  s1 see: Title 'Receipt {number}', subtitle '{member} · {day}'
+  s1 see: Buttons 'Back', 'Send on WhatsApp', 'Print'
+  s1 see: On the paper: gym name, address, phone, 'GSTIN: …' when saved, the receipt number and day
+  s1 see: 'Received with thanks from', the member's name and phone
+  s1 see: 'Particulars' and 'Amount', then 'Total received' with the amount in figures and in words
+  s1 see: With GST: a box 'Tax included in the above' with 'Taxable value', 'CGST @ {n}%', 'SGST @ {n}%'
+  s1 see: 'Paid by {method}'
+  s1 not: A total that differs from the payment
+  s1 not: Taxable value plus CGST plus SGST not adding up to the total
+  s1 not: Another member's name
+  s1 not: Another branch's receipt number
+  s2 see: The browser's print preview with the paper only
+  s2 not: The Back, WhatsApp and Print buttons on the print
+  s2 not: A dark page printed in dark mode
+  s3 see: The page the person came from, or Money when there is none
+  s3 not: The panel closes or leaves the site
+J-F-panel-319-02 | type 2 | owner | Owner on a receipt; the other thing the page does
+  s1 see: WhatsApp opens for that member's number with a ready message: 'we received your ₹{amount} on {day} ({method}). Receipt no. {number}. … Thank you!'
+  s1 see: When a balance is left: the message also carries what is still due and the pay link
+  s1 not: A message sent by itself
+  s1 not: Another member's number
+  s1 not: A pay link when nothing is due
+  s1 not: A wrong still-due amount
+J-F-panel-319-03 | type 3 | owner | Owner opens receipts that cannot be shown or sent in full
+  s1 see: 'Receipt not found'
+  s1 see: 'This receipt is not here any more. It may be from a gym you erased.'
+  s1 see: Button 'Back to Money'
+  s1 not: A blank page
+  s1 not: An empty receipt with ₹0
+  s2 see: No 'Send on WhatsApp' button
+  s2 not: A button that opens WhatsApp with no number
+  s3 see: No 'Send on WhatsApp' button; 'Print' still works
+  s3 not: A dead button
+  s4 see: 'Print' is greyed
+  s4 see: 'Not confirmed yet: the internet dropped while this was saved. Its receipt number is sure once it is sent, so print it after that.'
+  s4 not: A print with a number that may change
+  s4 not: A 'Send on WhatsApp' button that sends the unsure number to the member
+J-F-panel-319-04 | type 6 | owner | Owner with a receipt that is later cancelled
+  s1 see: A boxed banner on the paper: 'CANCELLED — THIS RECEIPT DOES NOT COUNT' with the reason under it
+  s1 see: No 'Send on WhatsApp' button
+  s1 not: The receipt looking valid
+  s1 not: The banner only as a colour that a black-and-white printer loses
+  s2 see: The banner is on the print
+  s2 not: A cancelled receipt printed without the banner
+J-F-panel-319-05 | type 1 | staff | Desk person signed in; a member paid a fee today
+  s1 see: Title 'Receipt {number}', subtitle '{member} · {day}'
+  s1 see: Buttons 'Back', 'Send on WhatsApp', 'Print'
+  s1 see: On the paper: gym name, address, phone, 'GSTIN: …' when saved, the receipt number and day
+  s1 see: 'Received with thanks from', the member's name and phone
+  s1 see: 'Particulars' and 'Amount', then 'Total received' with the amount in figures and in words
+  s1 see: With GST: a box 'Tax included in the above' with 'Taxable value', 'CGST @ {n}%', 'SGST @ {n}%'
+  s1 see: 'Paid by {method}'
+  s1 not: A total that differs from the payment
+  s1 not: Taxable value plus CGST plus SGST not adding up to the total
+  s1 not: Another member's name
+  s1 not: Another branch's receipt number
+  s2 see: The browser's print preview with the paper only
+  s2 not: The Back, WhatsApp and Print buttons on the print
+  s2 not: A dark page printed in dark mode
+  s3 see: The page the person came from, or Money when there is none
+  s3 not: The panel closes or leaves the site
+J-F-panel-319-06 | type 2 | staff | Desk person on a receipt; the other thing the page does
+  s1 see: WhatsApp opens for that member's number with a ready message: 'we received your ₹{amount} on {day} ({method}). Receipt no. {number}. … Thank you!'
+  s1 see: When a balance is left: the message also carries what is still due and the pay link
+  s1 not: A message sent by itself
+  s1 not: Another member's number
+  s1 not: A pay link when nothing is due
+  s1 not: A wrong still-due amount
+J-F-panel-319-07 | type 3 | staff | Desk person opens receipts that cannot be shown or sent in full
+  s1 see: 'Receipt not found'
+  s1 see: 'This receipt is not here any more. It may be from a gym you erased.'
+  s1 see: Button 'Back to Money'
+  s1 not: A blank page
+  s1 not: An empty receipt with ₹0
+  s2 see: No 'Send on WhatsApp' button
+  s2 not: A button that opens WhatsApp with no number
+  s3 see: No 'Send on WhatsApp' button; 'Print' still works
+  s3 not: A dead button
+  s4 see: 'Print' is greyed
+  s4 see: 'Not confirmed yet: the internet dropped while this was saved. Its receipt number is sure once it is sent, so print it after that.'
+  s4 not: A print with a number that may change
+  s4 not: A 'Send on WhatsApp' button that sends the unsure number to the member
+J-F-panel-319-08 | type 6 | staff | Desk person with a receipt that is later cancelled
+  s1 see: A boxed banner on the paper: 'CANCELLED — THIS RECEIPT DOES NOT COUNT' with the reason under it
+  s1 see: No 'Send on WhatsApp' button
+  s1 not: The receipt looking valid
+  s1 not: The banner only as a colour that a black-and-white printer loses
+  s2 see: The banner is on the print
+  s2 not: A cancelled receipt printed without the banner
+J-F-panel-319-09 | type 12 | owner | Owner of a gym with two branches; a receipt of branch 2
+  s1 see: A number that starts with the branch's own code
+  s1 see: Only this member's name and phone
+  s1 not: The same number as a receipt of branch 1
+  s1 not: Other payments of the member that are not part of this receipt
+  s1 not: Internal notes
+  s2 see: WhatsApp opens only for the member's own number
+  s2 not: The receipt offered to any other number
+J-F-panel-320-01 | type 1 | owner | Owner signed in, single-branch gym online; Settings
+  s1 see: Title 'Settings', subtitle 'Gym details, opening times and the admin app'
+  s1 see: Tabs 'Gym', 'Member app', 'Sign-in & data'
+  s1 see: Cards in order: 'Your MettleUp plan', 'Gym details', the install card, the alerts card, 'Payments', the branches card, the entry machines card, 'Gym timings'
+  s1 not: The card 'Your gym is saved in this browser only.' on an online gym
+  s1 not: Details of another gym in the boxes
+  s2 see: 'Saving…'
+  s2 see: Toast 'Saved.'
+  s2 see: The new name in the top bar and, for members, in the app
+  s2 not: 'Saved.' when the save failed
+  s2 not: The GSTIN saved in small letters
+  s2 not: The name changed in the panel but not for members
+  s3 see: The Payments page, then the Gym timings page
+  s3 not: Typed but unsaved details saved by leaving
+  s3 not: A dead button on an online gym
+J-F-panel-320-02 | type 2 | owner | Owner of a gym with two branches, one branch open
+  s1 see: The card is titled 'This branch’s details' and the first box 'Branch name'
+  s1 see: Hints that speak of this branch
+  s1 not: 'Gym details' and 'Gym name' on a branch
+  s1 not: The other branch's address or GSTIN
+  s2 see: Toast 'Saved.'
+  s2 not: The other branch's details changed
+  s2 not: The whole gym renamed
+J-F-panel-320-03 | type 3 | owner | Owner on the Gym tab; wrong input and a gym that is not online
+  s1 see: A red line under the name box
+  s1 not: 'Saved.'
+  s1 not: A gym with no name
+  s2 see: A red line under the GSTIN box
+  s2 not: The wrong GSTIN saved and printed on receipts
+  s3 see: A red line under the UPI ID box
+  s3 not: A UPI ID saved that makes a dead pay link
+  s4 see: A red line at the top with the reason, or 'Could not save your gym details.'
+  s4 not: The spinner stops with no word
+  s5 see: 'Your gym is saved in this browser only. Put it online to keep it safe and open it on any phone or computer.'
+  s5 see: Button 'Open Sign-in & data'
+  s5 see: No 'Your MettleUp plan' card and no entry machines card
+  s5 see: 'First put your gym online in Settings → Sign-in & data. Then you can add your timings for members to see.' with 'Open gym timings' greyed
+  s5 not: A timings page that cannot save
+  s5 not: The gym said to be safe online
+J-F-panel-320-04 | type 6 | owner | Owner with saved details
+  s1 see: Toast 'Saved.'
+  s1 see: Fee messages no longer carry a pay link
+  s1 not: The old UPI ID still used in messages
+  s2 see: The old name everywhere again
+  s2 not: Members still seeing the name in between
+  s3 see: Every box starts again from that gym
+  s3 not: Save gives the new gym the old gym's UPI ID or GSTIN
+  s4 see: A 'new' dot beside 'Open payments', then no dot
+  s4 not: The dot stays for ever
+J-F-panel-320-05 | type 12 | owner | Owner fills the gym details
+  s1 see: Each hint says where the value is shown: the name in the member app, the phone and address on the web page while pages are open, the GSTIN on receipts, the UPI ID in fee messages
+  s1 not: A hint naming the web page while web pages are closed
+  s1 not: The UPI ID shown to people outside the gym's own messages and pay screens
+  s2 see: None of the gym details
+  s2 not: The desk can read or change the GSTIN, the UPI ID or the MettleUp plan
+J-F-panel-320-06 | type 1 | staff | Desk person signed in
+  s1 see: Title 'Settings', subtitle 'Screen colours, app and your sign-in'
+  s1 see: Card 'Dark or light' with the switch
+  s1 see: Card 'Members' with 'Import members from Excel'
+  s1 see: The sign-in card, the install card and the alerts card
+  s1 not: Tabs
+  s1 not: 'Gym details'
+  s1 not: 'Your MettleUp plan'
+  s1 not: 'Payments'
+  s1 not: The entry machines card
+  s2 see: The whole panel changes colour at once
+  s2 not: One part left in the old colours
+  s3 see: The import page
+  s3 not: A dead button with internet on
+J-F-panel-320-07 | type 3 | staff | Desk person tries to reach the owner's parts
+  s1 see: The desk's short Settings, the same as before
+  s1 not: Gym details
+  s1 not: The gym's app code
+  s1 not: Erase or download buttons
+  s2 see: 'Only the gym owner can pay MettleUp'
+  s2 not: MettleUp's bank details
+  s3 see: The button waits for the internet and says so
+  s3 not: An import that looks done but is not saved
+J-F-panel-320-08 | type 6 | staff | Desk person on the short Settings
+  s1 see: Light is kept on this device
+  s1 not: Back to Dark by itself
+  s1 not: The owner's device changes colour too
+  s2 see: The alerts card shows the new state each time
+  s2 not: Alerts still arriving after off
+  s3 see: The sign-in page
+  s3 not: The gym's records still readable after sign-out
+J-F-panel-321-01 | type 1 | owner | Owner signed in, gym online with the member app on; Settings
+  s1 see: Subtitle 'What your members see in the MettleUp app'
+  s1 see: Cards in order: 'Member app' with the gym's app code, the join free-trial card, 'Your look in the app', 'Challenges', the busy machines card, the bring-a-friend card, 'Free MettleUp Plus for your members'
+  s1 see: 'Members see your logo when the app opens, and your colour on every screen.'
+  s1 see: 'Give members a goal for the month. Everyone who reaches it wins free days. A top 10 list shows in the app.'
+  s1 not: A card for a part the gym's server does not have yet
+  s1 not: The app code of another gym
+  s2 see: The branding page, then the Challenges page
+  s2 not: Back lands on the Gym tab instead of Member app
+J-F-panel-321-02 | type 2 | owner | Owner opens the tab by its own address
+  s1 see: The Member app tab is the chosen one
+  s1 not: The Gym tab shown under a Member app address
+  s2 see: The Gym tab
+  s2 not: A blank page
+  s2 not: An error
+J-F-panel-321-03 | type 3 | owner | Owner of a gym that is not online, or with the member app off
+  s1 see: 'First turn on the member app above. Then you can add your logo and colour.' with 'Open branding' greyed
+  s1 see: 'First put your gym online in Settings → Sign-in & data. Then you can start a challenge for members.' with 'Open challenges' greyed
+  s1 see: No busy machines, bring-a-friend or MettleUp Plus card
+  s1 not: A greyed button with no word why
+  s1 not: A card that opens a page that cannot save
+  s2 see: The button waits for the internet and says so
+  s2 not: A branding page that loses the logo on save
+J-F-panel-321-04 | type 6 | owner | Owner; a new part was added to this tab
+  s1 see: A 'new' dot on the 'Member app' tab
+  s1 not: A dot with nothing new behind it
+  s2 see: The dot is gone
+  s2 not: The dot stays for ever
+  s2 not: The dot gone on this device but unknown on another
+  s3 see: Member app, then Gym
+  s3 not: Back leaves Settings in one step

@@ -1,0 +1,1 @@
+{"id":"M3-play-report","step":"coord","item":"coordinator, in the simpleapps108 Chrome window: Play pre-launch report + Android vitals + live Play version -> _sources/machine/play-report.md (also fills the Play row of live-state.csv)","needs":[],"checkpoint":"-","out_file":"_sources/machine/play-report.md"}

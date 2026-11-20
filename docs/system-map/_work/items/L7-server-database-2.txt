@@ -1,0 +1,45 @@
+# L7-server-database-2: 7 x server / server/database-2. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L7.1 | 7 | Panel load on a slow Indian 4G phone (Core Web Vitals)
+L7.2 | 7 | biggest pages and lists with 500+ members
+L7.3 | 7 | phone app start time, workout screen with long history
+L7.4 | 7 | watch battery and screen-on time
+L7.5 | 7 | database queries without indexes
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-server-400 | live | Sign in to the admin app with a lasting 6-digit PIN (set or change your PIN, wrong-try locks that grow, one-time code st | supabase/migrations/0034_signin_pin.sql:246
+F-server-401 | live | Sign a person out everywhere and HQ reset of an owner sign-in (both also clear that person's PIN) | supabase/migrations/0034_signin_pin.sql:320
+F-server-402 | live | Record a member's body measurements at the desk; the member sees them in the app (Progress, Body) | supabase/migrations/0035_trainer_measurements_diet.sql:262
+F-server-403 | live | Diet plans from the trainer, sent to members by name or by membership plan | supabase/migrations/0035_trainer_measurements_diet.sql:342
+F-server-404 | live | Gym opening hours for each weekday and special days, shown in the member app | supabase/migrations/0036_gym_timings.sql:168
+F-server-405 | live | Gym leaderboard: top 10 and your place by workouts and kg lifted (owner can hide a member) | supabase/migrations/0037_leaderboard.sql:299
+F-server-406 | live | Monthly gym challenge and its free-day rewards (cancel a challenge, owner gives or skips each winner's reward) | supabase/migrations/0037_leaderboard.sql:513
+F-server-407 | live | Phone pop-ups for the gym's messages and workout offers (save the phone's push address, queue of push jobs, HQ sender re | supabase/migrations/0038_member_push.sql:114
+F-server-408 | live | How busy the gym is right now and its usual busy and quiet hours | supabase/migrations/0039_gym_busy.sql:82
+F-server-409 | live | Gym mate profile opened from the leaderboard (bio and recent workout summaries) | supabase/migrations/0040_gym_mate_profiles.sql:136
+F-server-410 | live | Receipt printed at a desk with no internet is accepted even when the member has overpaid | supabase/migrations/0041_offline_desk_receipts.sql:24
+F-server-411 | live | Send a message to members: at most 10 a day, and from the 3rd of the day no phone pop-up | supabase/migrations/0042_message_calm.sql:76
+F-server-412 | live | Member photo taken at the desk (add, change, remove) | supabase/migrations/0043_member_photos.sql:80
+F-server-413 | live | Member asks to pause or renew their plan from the app; the desk approves or declines | supabase/migrations/0044_plan_requests.sql:165
+F-server-414 | live | Gym asks for a member's workout report; the member says yes or no and the desk downloads it | supabase/migrations/0045_report_requests.sql:310
+F-server-415 | behind switch | Apps read which pack the gym is on (starter, pro, ai); file header says NOT APPLIED LIVE | supabase/migrations/0046_gym_pack.sql:24
+F-server-416 | live | Check in by the gym's QR; a typed check-in number waits for the desk to approve or decline | supabase/migrations/0048_security_fixes.sql:61
+F-server-417 | behind switch | Busy machines by day and hour (owner enters machine counts; members see proven busy times) | supabase/migrations/0049_busy_by_exercise.sql:319
+F-server-418 | live | Trainers see their members' progress (owner ticks trainers and assigns members; member shares a summary and recent worko | supabase/migrations/0050_trainer_view.sql:242
+F-server-419 | live | Trainer form videos on workout plan exercises (YouTube links only) | supabase/migrations/0051_gym_videos_and_wod.sql:38
+F-server-420 | live | Gym workout of the day for every member | supabase/migrations/0051_gym_videos_and_wod.sql:150
+F-server-421 | live | Nightly backup: one full copy of every table for the HQ Worker | supabase/migrations/0052_hq_backup.sql:34
+F-server-422 | live | Ask a trainer: a member sends one question, a trainer or the owner replies, the reply pops up on the phone | supabase/migrations/0053_ask_trainer_and_progress.sql:246
+F-server-423 | live | Phone pop-ups for the gym's answers: plan request decided, report asked for, shop order ready or cancelled | supabase/migrations/0054_member_alerts.sql:180
+F-server-424 | live | Pass members (FITPASS, cultpass): QR check-in counts as OK and "My membership" shows the pass company | supabase/migrations/0055_pass_members.sql:43
+F-server-425 | live | Bring a friend: member shares an invite link, the friend's form lands in Enquiries, member sees how many joined | supabase/migrations/0056_bring_a_friend.sql:104
+F-server-426 | live | Online payment requests: tells the web server which gym member an app member is, so "your gym asked you to pay" reaches  | supabase/migrations/0057_member_pay_me.sql:20
+F-server-427 | hidden | Entry machines at the gym door, machine side: punches become visits, command queue (file header says NOT APPLIED, gate W | supabase/migrations/0058_entry_machines.sql:213
+F-server-428 | hidden | Entry machines, admin app side: add or remove a machine, give members machine numbers, queue member commands (file heade | supabase/migrations/0059_entry_machines_owner.sql:41
+F-server-429 | hidden | Pay MettleUp: owner pays for a plan by UPI or bank transfer and sends the reference number (file header says NOT APPLIED | supabase/migrations/0060_pay_mettleup.sql:142
+F-server-430 | hidden | HQ checks MettleUp payments: count waiting, confirm or reject, and set MettleUp's own payment details (file header says  | supabase/migrations/0060_pay_mettleup.sql:217
+F-server-431 | hidden | Forgot PIN: a WhatsApp code proves the mobile number, then a new PIN is set (file header says NOT APPLIED) | supabase/migrations/0061_phone_codes.sql:115
+F-server-432 | behind switch | Create my gym online; newest version adds a WhatsApp-checked number and one free trial per number (that version: file he | supabase/migrations/0061_phone_codes.sql:140
+F-server-433 | behind switch | Plan limits checked on the server: Pro extras closed for Starter gyms, and grace, basic and read-only states when a gym  | supabase/migrations/0062_plan_features.sql:99
+## MACHINE FILES (docs/system-map/_sources/machine/)
+db-perf.json: MISSING (items that need it = could-not-check)
+pagespeed.json: MISSING (items that need it = could-not-check)

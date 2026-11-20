@@ -1,0 +1,1042 @@
+# A8-panel-screens-1-1: coverage of 101 Tier 1 journeys (10 features, from A5-panel-screens-1-1). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-200 | apps/dashboard/e2e/ai-questions-uat.spec.mjs | e2e | 434 lines | asserts 4 journey phrase(s)
+F-panel-200 | apps/dashboard/e2e/assistant-uat.spec.mjs | e2e | 822 lines | file name, asserts 2 journey phrase(s)
+F-panel-200 | supabase/tests/0098_alerts_done_and_read.sql | db | 375 lines | asserts 4 journey phrase(s)
+F-panel-200 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | file name, asserts 1 journey phrase(s)
+F-panel-200 | apps/mobile/test/tracker/phase4Review.test.ts | unit | 183 lines | asserts 3 journey phrase(s)
+F-panel-200 | supabase/tests/0071_ai_assistant.sql | db | 241 lines | file name, asserts 1 journey phrase(s)
+F-panel-200 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-panel-200 | apps/dashboard/test/crm/assistant/allowance.test.ts | unit | 54 lines | file name
+F-panel-200 | apps/dashboard/test/crm/assistant/answer.test.ts | unit | 191 lines | file name
+F-panel-200 | apps/dashboard/test/crm/assistant/awayIdea.test.ts | unit | 316 lines | file name
+F-panel-200 | apps/dashboard/test/crm/assistant/maskMatch.test.ts | unit | 87 lines | file name
+F-panel-200 | apps/dashboard/test/crm/assistant/messageDay.test.ts | unit | 114 lines | file name
+F-panel-201 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 4 journey phrase(s)
+F-panel-201 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 3 journey phrase(s)
+F-panel-201 | apps/dashboard/test/crm/challengesHinglish.test.ts | unit | 108 lines | asserts 3 journey phrase(s)
+F-panel-201 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | asserts 3 journey phrase(s)
+F-panel-201 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 2 journey phrase(s)
+F-panel-201 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 2 journey phrase(s)
+F-panel-201 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 2 journey phrase(s)
+F-panel-201 | apps/dashboard/e2e/offline.spec.mjs | e2e | 74 lines | asserts 2 journey phrase(s)
+F-panel-201 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 2 journey phrase(s)
+F-panel-201 | apps/dashboard/test/crm/attendance.test.ts | unit | 1063 lines | file name
+F-panel-201 | apps/dashboard/test/crm/machines/pretendMachine.test.ts | unit | 216 lines | asserts 2 journey phrase(s)
+F-panel-201 | apps/mobile/qa/phase7-bigtext.yaml | maestro | 326 lines | asserts 2 journey phrase(s)
+F-panel-203 | apps/dashboard/test/crm/attendance.test.ts | unit | 1063 lines | file name
+F-panel-203 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-panel-203 | apps/dashboard/e2e/offline.spec.mjs | e2e | 74 lines | asserts 1 journey phrase(s)
+F-panel-203 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 1 journey phrase(s)
+F-panel-203 | apps/dashboard/e2e/r579-uat.spec.mjs | e2e | 298 lines | asserts 1 journey phrase(s)
+F-panel-203 | apps/dashboard/e2e/workoutcode.spec.mjs | e2e | 55 lines | asserts 1 journey phrase(s)
+F-panel-203 | apps/dashboard/test/crm/checkin.test.ts | unit | 137 lines | asserts 1 journey phrase(s)
+F-panel-203 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | asserts 1 journey phrase(s)
+F-panel-202 | apps/dashboard/test/crm/attendance.test.ts | unit | 1063 lines | file name, asserts 2 journey phrase(s)
+F-panel-202 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-202 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-202 | apps/dashboard/e2e/growth.spec.mjs | e2e | 150 lines | asserts 1 journey phrase(s)
+F-panel-202 | apps/dashboard/e2e/gyms-site-uat.spec.mjs | e2e | 242 lines | asserts 1 journey phrase(s)
+F-panel-202 | apps/dashboard/e2e/import.spec.mjs | e2e | 136 lines | asserts 1 journey phrase(s)
+F-panel-202 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-202 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-202 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 1 journey phrase(s)
+F-panel-202 | apps/dashboard/e2e/r534-training-progress-uat.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-panel-202 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-panel-202 | apps/dashboard/test/crm/navNames.test.ts | unit | 61 lines | asserts 1 journey phrase(s)
+F-panel-204 | apps/dashboard/e2e/friend-uat.spec.mjs | e2e | 279 lines | asserts 5 journey phrase(s)
+F-panel-204 | apps/dashboard/test/crm/challenges.test.ts | unit | 388 lines | asserts 3 journey phrase(s)
+F-panel-204 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 1 journey phrase(s)
+F-panel-204 | apps/dashboard/e2e/gst.spec.mjs | e2e | 102 lines | asserts 1 journey phrase(s)
+F-panel-204 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-204 | apps/dashboard/e2e/pay-uat.spec.mjs | e2e | 237 lines | asserts 1 journey phrase(s)
+F-panel-204 | apps/dashboard/e2e/r495-uat.spec.mjs | e2e | 303 lines | asserts 1 journey phrase(s)
+F-panel-204 | apps/dashboard/e2e/receipt.spec.mjs | e2e | 71 lines | asserts 1 journey phrase(s)
+F-panel-204 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 1 journey phrase(s)
+F-panel-204 | apps/dashboard/test/crm/challengesHinglish.test.ts | unit | 108 lines | asserts 1 journey phrase(s)
+F-panel-204 | apps/dashboard/test/crm/enquiries.test.ts | unit | 182 lines | asserts 1 journey phrase(s)
+F-panel-204 | apps/dashboard/test/crm/planRequests.test.ts | unit | 239 lines | asserts 1 journey phrase(s)
+F-panel-206 | apps/dashboard/test/crm/busyMachines.test.ts | unit | 162 lines | file name, asserts 3 journey phrase(s)
+F-panel-206 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-panel-206 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-panel-206 | apps/dashboard/e2e/hq-webpage-uat.spec.mjs | e2e | 166 lines | asserts 4 journey phrase(s)
+F-panel-206 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 4 journey phrase(s)
+F-panel-206 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 4 journey phrase(s)
+F-panel-206 | apps/dashboard/e2e/entry-uat.spec.mjs | e2e | 187 lines | asserts 3 journey phrase(s)
+F-panel-206 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 3 journey phrase(s)
+F-panel-206 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 2 journey phrase(s)
+F-panel-206 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 2 journey phrase(s)
+F-panel-206 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 2 journey phrase(s)
+F-panel-206 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 2 journey phrase(s)
+F-panel-207 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | file name, asserts 15 journey phrase(s)
+F-panel-207 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | imports the code, file name, asserts 11 journey phrase(s)
+F-panel-207 | apps/dashboard/test/crm/challengesHinglish.test.ts | unit | 108 lines | imports the code, file name, asserts 4 journey phrase(s)
+F-panel-207 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 7 journey phrase(s)
+F-panel-207 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 7 journey phrase(s)
+F-panel-207 | apps/dashboard/test/crm/challenges.test.ts | unit | 388 lines | imports the code, file name, asserts 2 journey phrase(s)
+F-panel-207 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 7 journey phrase(s)
+F-panel-207 | apps/mobile/test/shop/boardWords.test.ts | unit | 148 lines | asserts 7 journey phrase(s)
+F-panel-207 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 6 journey phrase(s)
+F-panel-207 | apps/dashboard/e2e/reminders.spec.mjs | e2e | 109 lines | asserts 6 journey phrase(s)
+F-panel-207 | apps/mobile/test/tracker/engine/aiSummary.test.ts | unit | 87 lines | asserts 6 journey phrase(s)
+F-panel-207 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 5 journey phrase(s)
+F-panel-208 | apps/dashboard/test/crm/challenges.test.ts | unit | 388 lines | imports the code, file name
+F-panel-208 | apps/dashboard/test/crm/challengesHinglish.test.ts | unit | 108 lines | imports the code, file name
+F-panel-208 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | imports the code, file name
+F-panel-208 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | imports the code
+F-panel-208 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | file name
+F-panel-208 | apps/mobile/test/lib/memberWords.test.ts | unit | 278 lines | asserts 2 journey phrase(s)
+F-panel-208 | apps/mobile/test/tracker/watchUpdateCard.test.ts | unit | 324 lines | asserts 2 journey phrase(s)
+F-panel-208 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-208 | apps/dashboard/e2e/numbers.spec.mjs | e2e | 142 lines | asserts 1 journey phrase(s)
+F-panel-208 | apps/dashboard/e2e/progress-trend-uat.spec.mjs | e2e | 276 lines | asserts 1 journey phrase(s)
+F-panel-208 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-panel-208 | apps/dashboard/e2e/test-alert-uat.spec.mjs | e2e | 338 lines | asserts 1 journey phrase(s)
+F-panel-209 | apps/dashboard/e2e/r532-uat.spec.mjs | e2e | 143 lines | asserts 13 journey phrase(s)
+F-panel-209 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 7 journey phrase(s)
+F-panel-209 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 7 journey phrase(s)
+F-panel-209 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 7 journey phrase(s)
+F-panel-209 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 6 journey phrase(s)
+F-panel-209 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 6 journey phrase(s)
+F-panel-209 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 6 journey phrase(s)
+F-panel-209 | apps/dashboard/test/crm/dietPlans.test.ts | unit | 248 lines | file name, asserts 4 journey phrase(s)
+F-panel-209 | apps/dashboard/e2e/timings.spec.mjs | e2e | 130 lines | asserts 5 journey phrase(s)
+F-panel-209 | apps/dashboard/test/crm/assistant/aiQuestions.test.ts | unit | 172 lines | asserts 5 journey phrase(s)
+F-panel-209 | apps/dashboard/test/crm/messages.test.ts | unit | 189 lines | asserts 5 journey phrase(s)
+F-panel-209 | apps/dashboard/e2e/collections.spec.mjs | e2e | 276 lines | asserts 4 journey phrase(s)
+F-panel-210 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-panel-210 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 5 journey phrase(s)
+F-panel-210 | apps/mobile/test/shop/gymMessages.test.ts | unit | 362 lines | asserts 5 journey phrase(s)
+F-panel-210 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 4 journey phrase(s)
+F-panel-210 | apps/mobile/qa/sub-uat-f194-choose.yaml | maestro | 31 lines | asserts 4 journey phrase(s)
+F-panel-210 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 4 journey phrase(s)
+F-panel-210 | apps/mobile/test/shop/gymTalk.test.ts | unit | 234 lines | asserts 4 journey phrase(s)
+F-panel-210 | apps/dashboard/e2e/getstarted.spec.mjs | e2e | 55 lines | asserts 3 journey phrase(s)
+F-panel-210 | apps/dashboard/e2e/r532-uat.spec.mjs | e2e | 143 lines | asserts 3 journey phrase(s)
+F-panel-210 | apps/dashboard/e2e/today-handled-uat.spec.mjs | e2e | 150 lines | asserts 3 journey phrase(s)
+F-panel-210 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-210 | apps/dashboard/test/crm/moveStart.test.ts | unit | 131 lines | imports the code
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-200-01 | type 1 | owner | Today page, owner signed in on an online gym where the assistant is switched on
+  s1 see: Header "AI Assistant" with the credits pill
+  s1 see: Tabs "Ask" and "History"
+  s1 see: Sections "Today for you" and "Try saying"
+  s1 see: Link "See all {n} things it can do"
+  s1 see: Line "Asking is free. A task uses credits only when you send or save it." or "Every {n} AI questions use 1 credit. A task uses credits when you send or save it."
+  s1 not: The page shows before the server has answered about credits
+  s1 not: The credits pill is empty or shows another gym's credits
+  s2 see: The typed words as a bubble
+  s2 see: "Thinking…" while it works
+  s2 see: Then an answer line or a card with the drafted task
+  s2 not: A second request goes out while the first is still "Thinking…"
+  s2 not: A message is sent to members or a record is changed before the owner approves the card
+  s2 not: Credits go down for a plain question while the line says asking is free
+  s3 see: The card says it is done (exact words on the card: unknown, cards file not read)
+  s3 see: The credits pill goes down by the credits the task used
+  s3 not: Credits taken twice for one task
+  s3 not: Credits taken for a task that failed
+  s4 see: The request at the top with its status: "Not sent", "Done", "Cancelled" or "Did not work"
+  s4 see: For a done task that cost credits: "1 credit" or "{n} credits"
+  s4 not: A task of another gym in the list
+  s4 not: A done task shown as "Not sent"
+J-F-panel-200-02 | type 2 | owner | Today page, the assistant card suggests a sentence (a sentence handed over from the Today card or "Make it")
+  s1 see: The AI Assistant opens (full page on a phone, 420 px side panel on a computer) with the sentence in the ask box, or already asked
+  s1 not: The sentence is asked twice
+  s1 not: The sentence is lost and the box is empty
+  s2 see: "Thinking…", then an answer or a card
+  s2 not: The Ask tab stays on History so the answer is out of sight
+J-F-panel-200-03 | type 3 | owner | AI Assistant page, the owner has used every question allowed today
+  s1 see: The box reads "No more free questions today. Ask again tomorrow."
+  s1 see: The microphone and send buttons are greyed
+  s1 not: A request still goes out and is counted
+  s1 not: The box locks with no words saying why
+  s2 see: Nothing happens; the send button is greyed while the box is empty
+  s2 not: An empty request is sent and counted as a question
+J-F-panel-200-04 | type 3 | owner | Owner types the /assistant address on a gym where the assistant is off (switched off by the panel server, a demo gym, or the gym's server do
+  s1 see: Nothing for a moment, then the Today page
+  s1 not: An empty assistant page that cannot answer
+  s1 not: An error page
+  s1 not: A request sent or credits used
+J-F-panel-200-05 | type 6 | owner | AI Assistant page, owner with no tasks yet
+  s1 see: "Nothing yet. Tasks you give the AI Assistant show here."
+  s1 not: An endless "Loading…"
+  s1 not: With no internet: anything but "History could not load. Check the internet and try again."
+  s2 see: The task with the status "Not sent"
+  s2 not: Credits used for a task that was only drafted
+  s3 see: The conversation is empty; "Today for you" and "Try saying" show again
+  s3 not: History loses the task
+  s3 not: The drafted task is sent by clearing the chat
+  s4 see: Status changes to "Done" or "Cancelled"
+  s4 not: A cancelled task still runs
+  s4 not: A done task can be approved a second time
+J-F-panel-200-06 | type 12 | owner | AI Assistant page, owner asks about members by name
+  s1 see: The request and its answer; nobody but the owner has the menu line "AI Assistant"
+  s1 not: A staff login can open /assistant or read the owner's requests
+  s1 not: The words are kept longer than the 400 days the privacy page says
+  s1 not: What was typed goes anywhere other than the AI company the privacy page names
+J-F-panel-201-01 | type 1 | owner | Owner on the Visits page, Register tab, day "Today"; a member with a running plan is at the desk
+  s1 see: Title "Visits", line "Who trained, and when"
+  s1 see: Tabs "Register" and "Losing the habit" (with a count)
+  s1 see: Card "Check someone in" with the day chips "Today", "Yesterday", "Another day"
+  s1 not: The Register opens on a past day
+  s1 not: The count on "Losing the habit" differs from the list behind it
+  s2 see: The matching member with the plan-state pill, a "₹… due" pill when money is owed, the mobile number and the batch
+  s2 see: A button "Check in"
+  s2 not: An expired plan or unpaid dues hide the "Check in" button
+  s2 not: An archived member or a member of another gym in the results
+  s3 see: The button reads "Saving…"
+  s3 see: A toast "<name> checked in."
+  s3 see: The search box empties
+  s3 see: The member appears under "In today"
+  s3 see: "Check-ins today" goes up by one
+  s3 not: Two visits for the same member on the same day
+  s3 not: The toast shows but the visit is not saved
+  s3 not: The visit saved on yesterday or tomorrow
+  s4 see: "Check-ins today" ("So far today")
+  s4 see: "Visits in 30 days"
+  s4 see: "Check-ins a day" (or "Check-ins a week" for a quiet gym)
+  s4 see: "Busiest hour"
+  s4 see: "Last 30 days" and "When the gym is busy"
+  s4 not: A tile showing NaN or a minus figure
+  s4 not: "Busiest hour" counting visits that carry no real time
+J-F-panel-201-02 | type 2 | owner | Owner on the Visits Register; the desk forgot to mark a batch two days ago
+  s1 see: The date box with the hint "Use this to add a day the desk missed. You can’t pick a future day."
+  s1 see: A warning strip "Adding check-ins for <that day>"
+  s1 not: The chip snaps back to "Today"
+  s1 not: Check-ins still go to today while the strip names another day
+  s2 see: Every member of that batch, A to Z, each with "Check in" or "✓ Already in"
+  s2 not: Rows jump as members are checked in
+  s2 not: Members of other batches in the list
+  s3 see: A toast for each: "<name> checked in."
+  s3 see: The register below shows them on that day ("On that day")
+  s3 not: The time of typing counted as the hour they trained
+  s3 not: A member checked in on that day and also on today
+J-F-panel-201-03 | type 3 | owner | Owner on the Visits Register
+  s1 see: "Nobody matches that"
+  s1 see: "Check the spelling, or add them in Members first." (a gym with branches also reads: A member of another branch? Use “Member from another branch” below.)
+  s1 see: Button "Open Members"
+  s1 not: A blank area with no words
+  s1 not: A check-in made for the nearest name
+  s2 see: Under the date: "That day hasn’t happened yet."
+  s2 see: "Pick a day first" / "Pick a day that has already passed. Then the check-in box comes back."
+  s2 see: The register reads "No day selected" / "Pick a day above to see who trained."
+  s2 not: A visit saved on a future day
+  s2 not: "Check-ins today" showing 0 for a busy gym while no day is picked
+  s3 see: "✓ Already in" in place of the button
+  s3 not: A second visit for the same day
+J-F-panel-201-04 | type 6 | owner | Owner on the Visits Register; a member was checked in by mistake today
+  s1 see: A toast "Check-in removed for <name>."
+  s1 see: The row leaves the register
+  s1 see: "Check-ins today" goes down by one
+  s1 not: The member's visits on other days are removed
+  s1 not: Other members' visits of the same day are removed
+  s1 not: The row comes back after the next sync
+  s2 see: The button "Check in" is back (not "✓ Already in")
+  s2 not: The member stays marked as in
+  s3 see: Toast "<name> checked in." and one row in the register
+  s3 not: Two rows for the member
+J-F-panel-201-05 | type 12 | owner | Owner on the Visits Register with a member who owes money
+  s1 see: The member's mobile number, plan state and "₹… due" on the row
+  s1 not: Members of another gym or branch in the results
+  s1 not: More personal data than name, mobile, batch, plan state and amount due
+  s2 see: The visit, then no visit; a workout or a challenge that needs "a check-in that day" follows the register
+  s2 not: MettleUp staff seeing this member's name through the check-in
+  s2 not: A visit kept on the server after the desk removed it
+J-F-panel-201-06 | type 1 | staff | Front-desk staff on the Visits page, Register tab, day "Today"; a member with a running plan is at the desk
+  s1 see: Title "Visits", line "Who trained, and when"
+  s1 see: Tabs "Register" and "Losing the habit" (with a count)
+  s1 see: Card "Check someone in" with the day chips "Today", "Yesterday", "Another day"
+  s1 not: The Register opens on a past day
+  s1 not: The count on "Losing the habit" differs from the list behind it
+  s2 see: The matching member with the plan-state pill, a "₹… due" pill when money is owed, the mobile number and the batch
+  s2 see: A button "Check in"
+  s2 not: An expired plan or unpaid dues hide the "Check in" button
+  s2 not: An archived member or a member of another gym in the results
+  s3 see: The button reads "Saving…"
+  s3 see: A toast "<name> checked in."
+  s3 see: The search box empties
+  s3 see: The member appears under "In today"
+  s3 see: "Check-ins today" goes up by one
+  s3 not: Two visits for the same member on the same day
+  s3 not: The toast shows but the visit is not saved
+  s3 not: The visit saved on yesterday or tomorrow
+  s4 see: "Check-ins today" ("So far today")
+  s4 see: "Visits in 30 days"
+  s4 see: "Check-ins a day" (or "Check-ins a week" for a quiet gym)
+  s4 see: "Busiest hour"
+  s4 see: "Last 30 days" and "When the gym is busy"
+  s4 not: A tile showing NaN or a minus figure
+  s4 not: "Busiest hour" counting visits that carry no real time
+J-F-panel-201-07 | type 2 | staff | Front-desk staff on the Visits Register; the desk forgot to mark a batch two days ago
+  s1 see: The date box with the hint "Use this to add a day the desk missed. You can’t pick a future day."
+  s1 see: A warning strip "Adding check-ins for <that day>"
+  s1 not: The chip snaps back to "Today"
+  s1 not: Check-ins still go to today while the strip names another day
+  s2 see: Every member of that batch, A to Z, each with "Check in" or "✓ Already in"
+  s2 not: Rows jump as members are checked in
+  s2 not: Members of other batches in the list
+  s3 see: A toast for each: "<name> checked in."
+  s3 see: The register below shows them on that day ("On that day")
+  s3 not: The time of typing counted as the hour they trained
+  s3 not: A member checked in on that day and also on today
+J-F-panel-201-08 | type 3 | staff | Front-desk staff on the Visits Register
+  s1 see: "Nobody matches that"
+  s1 see: "Check the spelling, or add them in Members first." (a gym with branches also reads: A member of another branch? Use “Member from another branch” below.)
+  s1 see: Button "Open Members"
+  s1 not: A blank area with no words
+  s1 not: A check-in made for the nearest name
+  s2 see: Under the date: "That day hasn’t happened yet."
+  s2 see: "Pick a day first" / "Pick a day that has already passed. Then the check-in box comes back."
+  s2 see: The register reads "No day selected" / "Pick a day above to see who trained."
+  s2 not: A visit saved on a future day
+  s2 not: "Check-ins today" showing 0 for a busy gym while no day is picked
+  s3 see: "✓ Already in" in place of the button
+  s3 not: A second visit for the same day
+J-F-panel-201-09 | type 6 | staff | Front-desk staff on the Visits Register; a member was checked in by mistake today
+  s1 see: A toast "Check-in removed for <name>."
+  s1 see: The row leaves the register
+  s1 see: "Check-ins today" goes down by one
+  s1 not: The member's visits on other days are removed
+  s1 not: Other members' visits of the same day are removed
+  s1 not: The row comes back after the next sync
+  s2 see: The button "Check in" is back (not "✓ Already in")
+  s2 not: The member stays marked as in
+  s3 see: Toast "<name> checked in." and one row in the register
+  s3 not: Two rows for the member
+J-F-panel-201-10 | type 12 | staff | Front-desk staff on the Visits Register with a member who owes money
+  s1 see: The member's mobile number, plan state and "₹… due" on the row (the desk sees the amount due here)
+  s1 not: Members of another gym or branch in the results
+  s1 not: More personal data than name, mobile, batch, plan state and amount due
+  s2 see: The visit, then no visit; a workout or a challenge that needs "a check-in that day" follows the register
+  s2 not: MettleUp staff seeing this member's name through the check-in
+  s2 not: A visit kept on the server after the desk removed it
+J-F-panel-203-01 | type 1 | owner | Owner on the Visits page
+  s1 see: The check-in poster page ("Scan to check in"; exact words of that page: unknown, not part of this feature)
+  s1 not: The button missing on a phone-width screen
+  s1 not: The page opening the poster of another gym
+  s2 see: The Visits page on the Register tab
+  s2 not: The app closes or lands on Today
+J-F-panel-203-02 | type 2 | owner | Owner on the Visits page of a gym with at least one pass member (FITPASS, cultpass or another pass)
+  s1 see: The Pass visits page: visits by pass members, month by month (exact words: unknown, not part of this feature)
+  s1 not: The button missing although the gym has a pass member
+  s1 not: Visits of members with a normal plan counted as pass visits
+J-F-panel-203-03 | type 3 | owner | Owner on the Visits page of a gym with no pass member and no past pass visit
+  s1 see: Only "Check-in QR"; no "Pass visits" button
+  s1 not: A "Pass visits" button that leads to an empty page
+  s2 see: The Pass visits page opens (the address has no check of its own); what it shows for a gym with no pass member: unknown
+  s2 not: An error page or a blank screen
+  s2 not: Another gym's pass visits
+J-F-panel-203-04 | type 6 | owner | Owner on the Visits page; the gym's only pass member is archived after some pass visits
+  s1 see: No "Pass visits" button
+  s1 not: The button showing with nothing behind it
+  s2 see: The "Pass visits" button appears
+  s2 not: The button appears only after signing out and in
+  s3 see: The "Pass visits" button stays, because a past pass visit exists
+  s3 not: Past pass visits vanish from the month count when the member is archived
+J-F-panel-203-05 | type 1 | staff | Front-desk staff on the Visits page
+  s1 see: The check-in poster page ("Scan to check in"; exact words of that page: unknown, not part of this feature)
+  s1 not: The button missing on a phone-width screen
+  s1 not: The page opening the poster of another gym
+  s2 see: The Visits page on the Register tab
+  s2 not: The app closes or lands on Today
+J-F-panel-203-06 | type 2 | staff | Front-desk staff on the Visits page of a gym with at least one pass member (FITPASS, cultpass or another pass)
+  s1 see: The Pass visits page: visits by pass members, month by month (exact words: unknown, not part of this feature)
+  s1 not: The button missing although the gym has a pass member
+  s1 not: Visits of members with a normal plan counted as pass visits
+J-F-panel-203-07 | type 3 | staff | Front-desk staff on the Visits page of a gym with no pass member and no past pass visit
+  s1 see: Only "Check-in QR"; no "Pass visits" button
+  s1 not: A "Pass visits" button that leads to an empty page
+  s2 see: The Pass visits page opens (the address has no check of its own); what it shows for a gym with no pass member: unknown
+  s2 not: An error page or a blank screen
+  s2 not: Another gym's pass visits
+J-F-panel-203-08 | type 6 | staff | Front-desk staff on the Visits page; the gym's only pass member is archived after some pass visits
+  s1 see: No "Pass visits" button
+  s1 not: The button showing with nothing behind it
+  s2 see: The "Pass visits" button appears
+  s2 not: The button appears only after signing out and in
+  s3 see: The "Pass visits" button stays, because a past pass visit exists
+  s3 not: Past pass visits vanish from the month count when the member is archived
+J-F-panel-202-01 | type 1 | owner | Owner on the Visits page; the register has been used for some weeks and a few paying members stopped coming
+  s1 see: Line "Paying members who are losing the habit"
+  s1 see: Tile "Need a word" with "of {n} listed"
+  s1 see: One tile per group, with its line: "New, and not coming regularly yet", "Away longer than they usually are", "Weeks without a visit"
+  s1 see: Card "Who to talk to" with the advice that starts "Everyone here has weeks left on their plan, but they stopped coming or never really started."
+  s1 not: A member whose plan has ended on the list
+  s1 not: A member who came today on the list
+  s1 not: The count on the tab differing from "of {n} listed"
+  s2 see: Only members of that group; "Need a word" shows that number
+  s2 see: Each card: name, the reason in words, the group pill, "Usually 6–7 am" when known, "Last visit …"
+  s2 not: Members of other groups left in the list
+  s2 not: A reason that contradicts the last visit shown
+  s3 see: WhatsApp opens in a new tab on a chat with that member's number, with an empty message box
+  s3 not: The panel sends a message by itself
+  s3 not: The chat opens on another member's number
+  s3 not: A number without its country code, so the chat does not open
+  s4 see: That member's page
+  s4 not: Another member's page
+J-F-panel-202-02 | type 2 | owner | Owner on Visits → "Losing the habit" with members listed
+  s1 see: A file named after the gym, "at-risk" and today's date downloads
+  s1 see: A toast "Exported {n} members." (or "Exported 1 member.")
+  s1 see: Columns: Member, Mobile, Batch, Status, Last visit, Days since visit, Visits in last 8 weeks, Why
+  s1 not: The file holds everyone when a group was picked
+  s1 not: Mobile numbers turned into 9.87E+11 by the spreadsheet
+  s1 not: A member who never came shown with an empty last visit instead of "Never"
+  s2 see: The same list with the "Losing the habit" tab picked
+  s2 not: The Register tab opens instead
+J-F-panel-202-03 | type 3 | owner | Owner on Visits → "Losing the habit"
+  s1 see: "Start checking members in"
+  s1 see: "This list needs a few days of check-ins first. Check members in as they arrive, and it fills in by itself. Nobody is listed just because their visits were never added."
+  s1 see: Button "Open the register"
+  s1 not: Every paying member listed as gone because no visits were ever added
+  s2 see: "Everybody is training" / "Every member with a running plan is coming as usual."
+  s2 see: Button "Back to the register"
+  s2 not: An empty card with no words
+  s3 see: "Nobody in this group"
+  s3 see: "Download Excel file" is greyed
+  s3 not: An empty file downloads
+J-F-panel-202-04 | type 6 | owner | Owner on Visits → "Losing the habit"; a listed member walks in
+  s1 see: Toast "<name> checked in."
+  s1 see: The count on "Losing the habit" changes if the visit takes them off the list
+  s1 not: The member stays on the list with "Last visit" still showing the old day
+  s2 see: The member is gone from the list or shows "Last visit today"
+  s2 not: The tab count and the list disagree
+  s3 see: The member is back as before
+  s3 not: The member lost from both lists
+J-F-panel-202-05 | type 12 | owner | Owner on Visits → "Losing the habit"
+  s1 see: A file with each listed member's name and mobile number leaves the panel onto this device
+  s1 not: Members of another gym or branch in the file
+  s1 not: More personal data in the file than the eight columns named on screen
+  s2 see: A WhatsApp chat on this device's own WhatsApp; the member's number goes to WhatsApp only when the button is tapped
+  s2 not: A message sent without a person typing and sending it
+J-F-panel-202-06 | type 1 | staff | Front-desk staff on the Visits page; the register has been used for some weeks and a few paying members stopped coming
+  s1 see: Line "Paying members who are losing the habit"
+  s1 see: Tile "Need a word" with "of {n} listed"
+  s1 see: One tile per group, with its line: "New, and not coming regularly yet", "Away longer than they usually are", "Weeks without a visit"
+  s1 see: Card "Who to talk to" with the advice that starts "Everyone here has weeks left on their plan, but they stopped coming or never really started."
+  s1 not: A member whose plan has ended on the list
+  s1 not: A member who came today on the list
+  s1 not: The count on the tab differing from "of {n} listed"
+  s2 see: Only members of that group; "Need a word" shows that number
+  s2 see: Each card: name, the reason in words, the group pill, "Usually 6–7 am" when known, "Last visit …"
+  s2 not: Members of other groups left in the list
+  s2 not: A reason that contradicts the last visit shown
+  s3 see: WhatsApp opens in a new tab on a chat with that member's number, with an empty message box
+  s3 not: The panel sends a message by itself
+  s3 not: The chat opens on another member's number
+  s3 not: A number without its country code, so the chat does not open
+  s4 see: That member's page
+  s4 not: Another member's page
+J-F-panel-202-07 | type 2 | staff | Front-desk staff on Visits → "Losing the habit" with members listed
+  s1 see: A file named after the gym, "at-risk" and today's date downloads
+  s1 see: A toast "Exported {n} members." (or "Exported 1 member.")
+  s1 see: Columns: Member, Mobile, Batch, Status, Last visit, Days since visit, Visits in last 8 weeks, Why
+  s1 not: The file holds everyone when a group was picked
+  s1 not: Mobile numbers turned into 9.87E+11 by the spreadsheet
+  s1 not: A member who never came shown with an empty last visit instead of "Never"
+  s2 see: The same list with the "Losing the habit" tab picked
+  s2 not: The Register tab opens instead
+J-F-panel-202-08 | type 3 | staff | Front-desk staff on Visits → "Losing the habit"
+  s1 see: "Start checking members in"
+  s1 see: "This list needs a few days of check-ins first. Check members in as they arrive, and it fills in by itself. Nobody is listed just because their visits were never added."
+  s1 see: Button "Open the register"
+  s1 not: Every paying member listed as gone because no visits were ever added
+  s2 see: "Everybody is training" / "Every member with a running plan is coming as usual."
+  s2 see: Button "Back to the register"
+  s2 not: An empty card with no words
+  s3 see: "Nobody in this group"
+  s3 see: "Download Excel file" is greyed
+  s3 not: An empty file downloads
+J-F-panel-202-09 | type 6 | staff | Front-desk staff on Visits → "Losing the habit"; a listed member walks in
+  s1 see: Toast "<name> checked in."
+  s1 see: The count on "Losing the habit" changes if the visit takes them off the list
+  s1 not: The member stays on the list with "Last visit" still showing the old day
+  s2 see: The member is gone from the list or shows "Last visit today"
+  s2 not: The tab count and the list disagree
+  s3 see: The member is back as before
+  s3 not: The member lost from both lists
+J-F-panel-202-10 | type 12 | staff | Front-desk staff on Visits → "Losing the habit"
+  s1 see: A file with each listed member's name and mobile number leaves the panel onto this device (the desk login can download it too: this screen has no owner-only check)
+  s1 not: Members of another gym or branch in the file
+  s1 not: More personal data in the file than the eight columns named on screen
+  s2 see: A WhatsApp chat on this device's own WhatsApp; the member's number goes to WhatsApp only when the button is tapped
+  s2 not: A message sent without a person typing and sending it
+J-F-panel-204-01 | type 1 | owner | Owner in Settings on an online gym whose server has Bring a friend
+  s1 see: "Members can send a friend a link from the MettleUp app. The friend leaves a name and number, and it shows in Enquiries with the member’s name."
+  s1 see: Box "Free days for each friend who joins" (empty reads "None")
+  s1 see: Hint "Type how many free days a member gets, with one tap from you, for each friend who joins through their invite link, or leave it empty to give none."
+  s1 see: "Friends who left their number: {n} · Friends who joined: {n}"
+  s1 not: The card on a gym that is not online
+  s1 not: Counts of another gym
+  s2 see: A toast "Saved. A member gets 7 free days for each friend who joins."
+  s2 see: The box keeps 7; the button is greyed again
+  s2 not: The toast shows but the number is not saved
+  s2 not: Free days added to any member at this moment (they are added only by the owner's tap on a joined friend)
+J-F-panel-204-02 | type 3 | owner | Owner in Settings, card "Bring a friend"
+  s1 see: Under the box: "Type a whole number of days from 1 to 60, or leave it empty."
+  s1 not: 61 saved
+  s1 not: The number silently cut to 60
+  s2 see: The same line under the box
+  s2 not: A wrong number saved as 1 or 0
+  s3 see: No "Bring a friend" card at all
+  s3 not: A card whose Save fails every time
+J-F-panel-204-03 | type 6 | owner | Owner in Settings, card "Bring a friend", 7 free days saved
+  s1 see: "Save free days" is greyed
+  s1 not: A save with nothing changed
+  s2 see: A toast "Saved. No free days for a friend who joins."
+  s2 see: The box reads "None"
+  s2 not: 0 shown in the box
+  s2 not: Members still told they get 7 days
+  s3 see: A toast "Saved. A member gets 1 free day for each friend who joins."
+  s3 not: "1 free days"
+J-F-panel-204-04 | type 12 | owner | Owner in Settings, card "Bring a friend", after a member invited two friends
+  s1 see: Only two numbers: friends who left their number and friends who joined
+  s1 not: A friend's name or number on this card
+  s1 not: Friends who went to another gym counted here
+  s2 see: The app tells the member their gym can add 7 free days when a friend joins
+  s2 not: The app promising days the gym set to none
+  s2 not: Days added to the member without the owner's tap
+J-F-panel-206-01 | type 1 | owner | Owner in Settings on an online gym whose server has busy machines; the switch is off
+  s1 see: Page "Busy machines" / "Tell members when a machine is usually busy"
+  s1 see: Button "Back to Settings"
+  s1 see: A tick box "Show busy machines to members"
+  s1 see: Card "How many of each do you have?" with one box per machine (empty reads "None")
+  s1 see: Card "Machines you added"
+  s1 see: "Save" greyed with "No changes to save."
+  s1 not: The switch on by default
+  s1 not: An endless "Loading…"
+  s2 see: The tick; "Save" can be tapped
+  s2 not: Members see anything before Save
+  s3 see: "{n} machines on your list can get busy (you have 1 or 2)." changes as boxes are filled
+  s3 not: A machine with an empty box counted
+  s4 see: "Saving…", then a toast "Saved."
+  s4 see: "Last saved <day> by <name>."
+  s4 see: Under each saved machine a status line
+  s4 not: The toast with nothing saved
+  s4 not: The boxes going back to the old numbers
+  s4 not: Two saves from one tap
+J-F-panel-206-02 | type 2 | owner | Owner on the Busy machines page; the gym has a machine that is not on the ready list
+  s1 see: Boxes "Machine name" (example "For example: Belt squat") and "How many?" (starts at 1)
+  s1 see: "Which exercises are done on it?" with "Find an exercise"
+  s1 see: Button "Remove this machine"
+  s1 not: More than 30 added machines allowed (the button greys at 30)
+  s2 see: The exercise as a chip "<exercise> ✕"; the find box empties
+  s2 not: The same exercise offered twice
+  s2 not: "No exercise with that name." while matches exist
+  s3 see: A toast "Saved."; the machine stays under "Machines you added" with a status line
+  s3 not: The added machine saved without its exercises
+  s3 not: The machine listed twice
+J-F-panel-206-03 | type 3 | owner | Owner on the Busy machines page
+  s1 see: An error strip "<machine>: type how many you have, from 1 to {max}, or leave it empty."
+  s1 not: The wrong number saved
+  s1 not: A toast "Saved."
+  s2 see: "Give the machine you added a name."
+  s2 see: Then "<name> is on the list twice."
+  s2 see: A name over 40 letters: "<start of name>…: keep the name under 40 letters."
+  s2 not: Two machines with one name saved
+  s3 see: "Busy machines need your gym online" / "Put your gym online first (Settings → Sign-in & data)."
+  s3 see: "Busy machines are not ready for your gym yet" / "They will appear here once your gym’s server has them."
+  s3 see: An error strip and "Try again"
+  s3 not: The editor shown where saving cannot work
+J-F-panel-206-04 | type 6 | owner | Owner on the Busy machines page, switched on with machines saved
+  s1 see: A toast "Saved."; the status lines change to the switched-off wording (exact words: unknown)
+  s1 not: Members still shown busy times after the switch is off
+  s2 see: The machine is gone after the save
+  s2 not: The machine removed before Save is tapped and with no way back
+  s2 not: Its old busy guesses still shown to members
+  s3 see: Switched on again with the machines kept
+  s3 not: The machine counts lost by switching off and on
+  s4 see: The Settings page (the code asks nothing before leaving)
+  s4 not: The unsaved number shown as saved next time
+J-F-panel-206-05 | type 12 | owner | Owner on the Busy machines page, switched on
+  s1 see: "{n} members’ phones sent workouts in the last 5 weeks." (a count only)
+  s1 see: The line that explains how it works (exact words: unknown)
+  s1 not: A member's name next to a machine
+  s1 not: Members' machine use sent from phones while the gym's switch is off
+J-F-panel-206-06 | type 1 | staff | Front-desk staff signed in on an online gym; the owner has set up busy machines
+  s1 see: Page "Busy machines"
+  s1 see: Heading "Switched on" or "Switched off"
+  s1 see: One line per machine: "<name>: <how many>. <status>"
+  s1 see: "Only the owner can change this."
+  s1 not: A tick box, number boxes or a Save button
+  s1 not: An endless "Loading…"
+J-F-panel-206-07 | type 2 | staff | Front-desk staff in Settings
+  s1 see: Whether the Settings page shows this card to staff: unknown (Settings page not read); when shown it opens the same read-only page
+  s1 not: A card that opens an editor for staff
+J-F-panel-206-08 | type 3 | staff | Front-desk staff on the Busy machines page
+  s1 see: Nothing to tap: the page is a plain list with "Only the owner can change this."
+  s1 not: Any change saved from a staff login
+  s2 see: An error strip and "Try again"
+  s2 not: An old list shown as if it were current
+  s2 not: A blank page
+J-F-panel-206-09 | type 6 | staff | Front-desk staff on the Busy machines page; the owner switches it off on another device
+  s1 see: "Switched off" and "No machines yet."
+  s1 not: An empty page with no words
+  s2 see: "Switched on" with the list, later "Switched off"
+  s2 not: "Switched on" still shown after the owner switched it off and the page was reopened
+J-F-panel-207-01 | type 1 | owner | Owner on the Challenges page of an online gym; no challenge is running
+  s1 see: Title "Challenges", line "A challenge for your members. Everyone who reaches the goal wins." (a gym with branches: "A challenge for <branch>’s members. Each branch has its own.")
+  s1 see: Ready-made challenges with "Turn on"
+  s1 see: Button "New challenge"
+  s1 see: "No challenge is running"
+  s1 not: Another branch's challenge shown as this one
+  s1 not: An endless "Loading…"
+  s2 see: Sheet "New challenge"
+  s2 see: Name box (example "November challenge", hint "Members see this name. At most 60 letters.")
+  s2 see: "What counts": "Workouts", "Kg lifted" (and "Visits" where check-ins can count)
+  s2 see: "First day" ("Today or a later day, up to 60 days from today.")
+  s2 see: "How many days" ("From 7 to 31 days.")
+  s2 see: "Free days for everyone who reaches the goal" ("From 0 to 60. You check each winner before the days are added.")
+  s2 see: "Fill in the boxes above to see what members will read."
+  s2 not: The sheet opening with another challenge's values
+  s3 see: A preview of what members will read
+  s3 not: A preview that differs from what is saved
+  s4 see: "Saving…"
+  s4 see: A toast "Challenge saved. Members see it in the MettleUp app within 10 minutes."
+  s4 see: The challenge card with "Running now", "Change" and "Cancel challenge"
+  s4 not: Two challenges from one tap
+  s4 not: A second challenge running at the same time
+  s4 not: Free days given to anyone at this moment
+J-F-panel-207-02 | type 2 | owner | Owner on the Challenges page; ready-made challenges are listed
+  s1 see: A toast saying it is on and from which day (exact words: unknown)
+  s1 see: The card now offers "Change" and the turn-off button
+  s1 not: It starts today while another challenge is still running
+  s1 not: A second tap makes a second challenge
+  s2 see: The sheet titled with the challenge name; after saving, the card shows the new numbers
+  s2 not: A new challenge made instead of changing this one
+J-F-panel-207-03 | type 2 | owner | Owner on the Challenges page; a challenge with 7 free days is running or just finished and three members reached the goal
+  s1 see: A list "Members who reached the goal of <title>" with each name
+  s1 see: For each winner waiting: a button to give the free days and "Skip"
+  s1 see: A button to give all waiting winners at once
+  s1 see: "Copy this list"
+  s1 see: "Open Members"
+  s1 not: A member who did not reach the goal on the list
+  s1 not: Free days already added before the owner tapped
+  s2 see: "Saving…" on that button, then a toast saying what happened for that member
+  s2 see: The winner no longer asks for a confirm
+  s2 not: The days added twice
+  s2 not: The days added to another member
+  s2 not: A plan that had ended pushed forward without saying so
+  s3 see: "Saving…", then "Done for {n} winners. Each line says what happened."
+  s3 not: Some winners given and some not, with a success toast
+  s3 not: A winner given the days twice
+  s4 see: A toast saying what happened; no days added for that member
+  s4 not: Days added after a skip
+  s5 see: "List copied. You can paste it into WhatsApp." (or "Could not copy. Select the names and copy them by hand.")
+  s5 not: Mobile numbers in the copied list
+J-F-panel-207-04 | type 3 | owner | Owner on the Challenges page, sheet "New challenge"
+  s1 see: "Give the challenge a name, like “November challenge”."
+  s1 not: A challenge saved with no name
+  s2 see: "Type the goal as a number above 0."
+  s2 see: "It can start today or later, not on a day that has passed."
+  s2 see: "It must run from 7 to 31 days."
+  s2 see: "Free days must be a whole number from 0 to 60."
+  s2 not: Any of these saved
+  s2 not: The sheet closing with the error unread
+  s3 see: "The visits goal cannot be more than the number of days the challenge runs."
+  s3 not: A goal nobody can reach saved
+  s4 see: "Challenges need your gym online" / "Members’ phones read the challenge from your gym’s server. Put your gym online first (Settings → Sign-in & data)."
+  s4 see: "Challenges are not switched on for your gym yet" / "They will appear here once your gym’s server has them."
+  s4 not: A "New challenge" button that can never save
+J-F-panel-207-05 | type 6 | owner | Owner on the Challenges page; a challenge is running
+  s1 see: Sheet "Cancel this challenge?" with "Keep it" and "Cancel challenge"
+  s1 not: The challenge cancelled on the first tap
+  s2 see: The sheet closes; the challenge still reads "Running now"
+  s2 not: The challenge cancelled
+  s3 see: A toast "Challenge cancelled. Members no longer see it."
+  s3 see: "No challenge is running"
+  s3 see: The challenge under "Past challenges" marked "Cancelled", with no winners list
+  s3 not: Members still see it in the app after 10 minutes
+  s3 not: Free days given for a cancelled challenge
+  s4 see: It can start today
+  s4 not: The cancelled challenge still blocking the day
+J-F-panel-207-06 | type 12 | owner | Owner on the Challenges page with winners waiting
+  s1 see: Winners by name; free days are added only when the owner confirms each one
+  s1 not: Winners of another branch or gym
+  s1 not: A member who hid their name still listed to other members by this page's action
+  s1 not: A workout counted on a day the register shows no check-in for that member
+J-F-panel-207-07 | type 1 | staff | Front-desk staff on the Challenges page; the owner has a challenge running
+  s1 see: Title "Challenges"
+  s1 see: "Only the owner can start, change or cancel a challenge. You can see who has reached the goal."
+  s1 see: The running challenge with "Running now"
+  s1 see: Under the ready-made list: "Only the owner can turn these challenges on or off."
+  s1 not: A "New challenge", "Change", "Cancel challenge" or "Turn on" button
+  s2 see: The winners by name and a note that the owner gives the free days
+  s2 not: A button that gives or skips free days
+J-F-panel-207-08 | type 2 | staff | Front-desk staff on the Challenges page; members reached the goal
+  s1 see: "List copied. You can paste it into WhatsApp."
+  s1 not: Mobile numbers in the copied text
+  s2 see: The Members page
+  s2 not: Free days added by opening it
+J-F-panel-207-09 | type 3 | staff | Front-desk staff on the Challenges page; nothing is running
+  s1 see: "No challenge is running" / "The owner has not started one."
+  s1 not: A way to start one
+  s1 not: A blank page
+  s2 see: "Challenges need your gym online"
+  s2 not: An endless "Loading…"
+J-F-panel-207-10 | type 6 | staff | Front-desk staff on the Challenges page; the owner cancels the running challenge on another device
+  s1 see: "No challenge is running"; the old one under "Past challenges" marked "Cancelled"
+  s1 not: The cancelled challenge still shown as "Running now" after a reload
+  s2 see: Its summary and the winners; where the owner has confirmed, the line says what happened
+  s2 not: Give or skip buttons for staff
+J-F-panel-207-11 | type 12 | staff | Front-desk staff on the Challenges page with winners listed
+  s1 see: Names of members of this gym who reached the goal; no way to add days
+  s1 not: A staff login adding free days (money's worth) to a member
+  s1 not: Winners of another branch
+J-F-panel-208-01 | type 1 | owner | Owner on the Challenges page; members have logged workouts in the last 30 days
+  s1 see: "Rank by" with the two ways to rank
+  s1 see: Up to 10 members in order with their totals
+  s1 see: On each row "Hide from the leaderboard"
+  s1 not: More than 10 rows
+  s1 not: A member of another gym or branch
+  s1 not: Totals older than 30 days counted
+  s2 see: A toast "<name> is hidden from the leaderboard."
+  s2 see: The row shows the pill "Hidden" and the button "Show again"
+  s2 see: The member under "Hidden from members"
+  s2 not: The member still shown to other members in the app
+  s2 not: Another member hidden
+  s2 not: The member's workouts deleted
+J-F-panel-208-02 | type 2 | owner | Owner on the Challenges page, Leaderboard card
+  s1 see: The top 10 in the new order ("Top {n} by kg lifted")
+  s1 not: The same order as before
+  s1 not: A hidden member counted as visible in one ranking only
+J-F-panel-208-03 | type 3 | owner | Owner on the Challenges page of a gym where nobody has logged a workout
+  s1 see: "No member has logged a workout in the last 30 days yet."
+  s1 not: An empty numbered list
+  s1 not: A hide button with nobody to hide
+  s2 see: "Nobody to show yet. Totals appear after members train and open the MettleUp app."
+  s2 not: A row with 0 as a rank
+  s3 see: The button is greyed without internet, or an error line in the card
+  s3 not: A toast that says hidden while members still see the name
+J-F-panel-208-04 | type 6 | owner | Owner on the Leaderboard card; one member is hidden
+  s1 see: A toast "<name> is on the leaderboard again."
+  s1 see: The member leaves "Hidden from members"; the "Hidden" pill goes
+  s1 not: The member still missing in the member app
+  s2 see: "<name> is hidden from the leaderboard."
+  s2 not: The member listed twice under "Hidden from members"
+J-F-panel-208-05 | type 12 | owner | Owner on the Leaderboard card
+  s1 see: The owner still sees the member, marked "Hidden"; members do not
+  s1 not: Other members opening the hidden member's workouts
+  s1 not: A member who switched their own name off shown by name to other members
+  s1 not: Leaderboard numbers kept after the member leaves the gym
+J-F-panel-208-06 | type 1 | staff | Front-desk staff on the Challenges page; members have logged workouts
+  s1 see: "Rank by" and up to 10 members with their totals
+  s1 see: A "Hidden" pill on a member the owner hid
+  s1 not: A "Hide from the leaderboard" or "Show again" button
+J-F-panel-208-07 | type 2 | staff | Front-desk staff on the Leaderboard card
+  s1 see: The top 10 in the new order
+  s1 not: An error or an empty list while totals exist
+J-F-panel-208-08 | type 3 | staff | Front-desk staff on the Leaderboard card
+  s1 see: None: rows have no button for staff
+  s1 not: A staff login hiding or showing a member
+  s2 see: "No member has logged a workout in the last 30 days yet."
+  s2 not: A blank card
+J-F-panel-208-09 | type 6 | staff | Front-desk staff on the Leaderboard card; the owner hides a member on another device
+  s1 see: The member with the pill "Hidden" and in the list "Hidden from members", with no "Show again" button
+  s1 not: The member still shown as visible after a reload
+J-F-panel-208-10 | type 12 | staff | Front-desk staff on the Leaderboard card
+  s1 see: The names of members the owner hid, visible to the desk
+  s1 not: Staff seeing members of another branch
+  s1 not: Staff able to open a hidden member's shared workouts from here
+J-F-panel-209-01 | type 1 | owner | Owner on the Diet plans page of an online gym with no plans yet
+  s1 see: Title "Diet plans", line "Send members what to eat"
+  s1 see: Button "+ New plan"
+  s1 see: "No diet plans yet" / "Start from a ready-made plan, like “Fat loss veg · 1,600 kcal”, change what you like, and send it to members or to everyone on a membership plan."
+  s1 not: An endless "Loading…"
+  s1 not: Plans of another gym
+  s2 see: Sheet "New diet plan"
+  s2 see: Groups "Veg" ("No eggs, meat or fish") and "Non-veg" ("With eggs, chicken or fish")
+  s2 see: "Start empty" ("Write every meal yourself")
+  s2 see: The note that each ready-made plan is for an adult of about 60 to 70 kg who trains 3 to 5 days a week, uses everyday Indian food and is not medical advice
+  s2 not: A ready-made plan with meat under "Veg"
+  s3 see: Editor "New diet plan" filled in: "Plan name", "Goal (optional)", "Calories a day (optional)", "Protein a day (optional)", one block per meal with "Meal" and "Food, one per line", "Notes for the member (optional)", and the part that picks who gets it
+  s3 not: An empty editor
+  s3 not: The plan already sent to someone before saving
+  s4 see: "Saving…", the sheet closes, the plan is in the list with "Edit", "Make a copy" and "Withdraw"
+  s4 not: Two plans from one tap
+  s4 not: The plan sent to members who were not picked
+  s4 not: The meals saved in another order
+J-F-panel-209-02 | type 2 | owner | Owner on the Diet plans page
+  s1 see: Editor "New diet plan" with empty boxes and one meal block
+  s1 see: Example words in the boxes ("Fat loss veg · 1,600 kcal", "Breakfast", "2 roti / 1 bowl dal / 1 bowl sabzi")
+  s1 not: The example words saved as real content
+  s2 see: The plan in the list
+  s2 not: The doctor line added twice
+J-F-panel-209-03 | type 2 | owner | Owner on the Diet plans page with one saved plan
+  s1 see: Sheet "Edit diet plan"; after saving, the same plan with the new number
+  s1 not: A second plan made
+  s1 not: The people who get it reset
+  s2 see: Editor "New diet plan" filled with the copy
+  s2 not: The copy saved before "Save plan" is tapped
+  s2 not: The copy overwriting the first plan
+J-F-panel-209-04 | type 3 | owner | Owner on the Diet plans page, editor open
+  s1 see: "Give the plan a name, like “Fat loss veg”."
+  s1 not: A plan saved with no name
+  s2 see: "Add the food for at least one meal (one food per line)."
+  s2 not: An empty plan sent to members
+  s3 see: "Each meal with food needs a name, like “Breakfast”."
+  s3 see: "Calories a day: a whole number from {min} to {max}, or leave it empty."
+  s3 not: The sheet closing with the error unread
+  s4 see: "Diet plans need your gym online" / "Members’ phones read the plans from your gym’s server. Put your gym online first (Settings → Sign-in & data)."
+  s4 see: "Diet plans are not switched on for your gym yet" / "They will appear here once your gym’s server has them."
+  s4 see: No "+ New plan" button
+  s4 not: A "+ New plan" button that can never save
+J-F-panel-209-05 | type 6 | owner | Owner on the Diet plans page with a plan that members have
+  s1 see: Sheet "Withdraw this plan?": "<plan name> will stop showing in members’ apps the next time they open the Gym tab. You can’t send this plan again; make a copy of it instead."
+  s1 see: Buttons "Keep it" and "Withdraw"
+  s1 not: The plan withdrawn on the first tap
+  s2 see: A toast "Plan withdrawn."
+  s2 see: The plan under "Withdrawn plans (1)" with "Members no longer get these." and only "Make a copy"
+  s2 not: Members still see the plan after they open the Gym tab
+  s2 not: An "Edit" or send button on a withdrawn plan
+  s3 see: A new open plan; the withdrawn one stays withdrawn
+  s3 not: The withdrawn plan coming back to members by itself
+J-F-panel-209-06 | type 12 | owner | Owner on the Diet plans page
+  s1 see: The third member sees no diet plan; the two see it under Gym → Diet plan
+  s1 not: A member seeing a plan sent to someone else by name
+  s1 not: A ready-made plan shown without the "not medical advice" note
+  s1 not: Other gyms' plans or members in the picker
+J-F-panel-209-07 | type 1 | staff | Front-desk staff (staff may make and send plans) on the Diet plans page of an online gym with no plans yet
+  s1 see: Title "Diet plans", line "Send members what to eat"
+  s1 see: Button "+ New plan"
+  s1 see: "No diet plans yet" / "Start from a ready-made plan, like “Fat loss veg · 1,600 kcal”, change what you like, and send it to members or to everyone on a membership plan."
+  s1 not: An endless "Loading…"
+  s1 not: Plans of another gym
+  s2 see: Sheet "New diet plan"
+  s2 see: Groups "Veg" ("No eggs, meat or fish") and "Non-veg" ("With eggs, chicken or fish")
+  s2 see: "Start empty" ("Write every meal yourself")
+  s2 see: The note that each ready-made plan is for an adult of about 60 to 70 kg who trains 3 to 5 days a week, uses everyday Indian food and is not medical advice
+  s2 not: A ready-made plan with meat under "Veg"
+  s3 see: Editor "New diet plan" filled in: "Plan name", "Goal (optional)", "Calories a day (optional)", "Protein a day (optional)", one block per meal with "Meal" and "Food, one per line", "Notes for the member (optional)", and the part that picks who gets it
+  s3 not: An empty editor
+  s3 not: The plan already sent to someone before saving
+  s4 see: "Saving…", the sheet closes, the plan is in the list with "Edit", "Make a copy" and "Withdraw"
+  s4 not: Two plans from one tap
+  s4 not: The plan sent to members who were not picked
+  s4 not: The meals saved in another order
+J-F-panel-209-08 | type 2 | staff | Front-desk staff (staff may make and send plans) on the Diet plans page
+  s1 see: Editor "New diet plan" with empty boxes and one meal block
+  s1 see: Example words in the boxes ("Fat loss veg · 1,600 kcal", "Breakfast", "2 roti / 1 bowl dal / 1 bowl sabzi")
+  s1 not: The example words saved as real content
+  s2 see: The plan in the list
+  s2 not: The doctor line added twice
+J-F-panel-209-09 | type 2 | staff | Front-desk staff (staff may make and send plans) on the Diet plans page with one saved plan
+  s1 see: Sheet "Edit diet plan"; after saving, the same plan with the new number
+  s1 not: A second plan made
+  s1 not: The people who get it reset
+  s2 see: Editor "New diet plan" filled with the copy
+  s2 not: The copy saved before "Save plan" is tapped
+  s2 not: The copy overwriting the first plan
+J-F-panel-209-10 | type 3 | staff | Front-desk staff (staff may make and send plans) on the Diet plans page, editor open
+  s1 see: "Give the plan a name, like “Fat loss veg”."
+  s1 not: A plan saved with no name
+  s2 see: "Add the food for at least one meal (one food per line)."
+  s2 not: An empty plan sent to members
+  s3 see: "Each meal with food needs a name, like “Breakfast”."
+  s3 see: "Calories a day: a whole number from {min} to {max}, or leave it empty."
+  s3 not: The sheet closing with the error unread
+  s4 see: "Diet plans need your gym online" / "Members’ phones read the plans from your gym’s server. Put your gym online first (Settings → Sign-in & data)."
+  s4 see: "Diet plans are not switched on for your gym yet" / "They will appear here once your gym’s server has them."
+  s4 see: No "+ New plan" button
+  s4 not: A "+ New plan" button that can never save
+J-F-panel-209-11 | type 6 | staff | Front-desk staff (staff may make and send plans) on the Diet plans page with a plan that members have
+  s1 see: Sheet "Withdraw this plan?": "<plan name> will stop showing in members’ apps the next time they open the Gym tab. You can’t send this plan again; make a copy of it instead."
+  s1 see: Buttons "Keep it" and "Withdraw"
+  s1 not: The plan withdrawn on the first tap
+  s2 see: A toast "Plan withdrawn."
+  s2 see: The plan under "Withdrawn plans (1)" with "Members no longer get these." and only "Make a copy"
+  s2 not: Members still see the plan after they open the Gym tab
+  s2 not: An "Edit" or send button on a withdrawn plan
+  s3 see: A new open plan; the withdrawn one stays withdrawn
+  s3 not: The withdrawn plan coming back to members by itself
+J-F-panel-209-12 | type 12 | staff | Front-desk staff (staff may make and send plans) on the Diet plans page
+  s1 see: The third member sees no diet plan; the two see it under Gym → Diet plan
+  s1 not: A member seeing a plan sent to someone else by name
+  s1 not: A ready-made plan shown without the "not medical advice" note
+  s1 not: Other gyms' plans or members in the picker
+J-F-panel-209-13 | type 1 | trainer | Trainer (a staff login ticked as a trainer; the panel knows only the roles owner and staff) on the Diet plans page of an online gym with no 
+  s1 see: Title "Diet plans", line "Send members what to eat"
+  s1 see: Button "+ New plan"
+  s1 see: "No diet plans yet" / "Start from a ready-made plan, like “Fat loss veg · 1,600 kcal”, change what you like, and send it to members or to everyone on a membership plan."
+  s1 not: An endless "Loading…"
+  s1 not: Plans of another gym
+  s2 see: Sheet "New diet plan"
+  s2 see: Groups "Veg" ("No eggs, meat or fish") and "Non-veg" ("With eggs, chicken or fish")
+  s2 see: "Start empty" ("Write every meal yourself")
+  s2 see: The note that each ready-made plan is for an adult of about 60 to 70 kg who trains 3 to 5 days a week, uses everyday Indian food and is not medical advice
+  s2 not: A ready-made plan with meat under "Veg"
+  s3 see: Editor "New diet plan" filled in: "Plan name", "Goal (optional)", "Calories a day (optional)", "Protein a day (optional)", one block per meal with "Meal" and "Food, one per line", "Notes for the member (optional)", and the part that picks who gets it
+  s3 not: An empty editor
+  s3 not: The plan already sent to someone before saving
+  s4 see: "Saving…", the sheet closes, the plan is in the list with "Edit", "Make a copy" and "Withdraw"
+  s4 not: Two plans from one tap
+  s4 not: The plan sent to members who were not picked
+  s4 not: The meals saved in another order
+J-F-panel-209-14 | type 2 | trainer | Trainer (a staff login ticked as a trainer; the panel knows only the roles owner and staff) on the Diet plans page
+  s1 see: Editor "New diet plan" with empty boxes and one meal block
+  s1 see: Example words in the boxes ("Fat loss veg · 1,600 kcal", "Breakfast", "2 roti / 1 bowl dal / 1 bowl sabzi")
+  s1 not: The example words saved as real content
+  s2 see: The plan in the list
+  s2 not: The doctor line added twice
+J-F-panel-209-15 | type 2 | trainer | Trainer (a staff login ticked as a trainer; the panel knows only the roles owner and staff) on the Diet plans page with one saved plan
+  s1 see: Sheet "Edit diet plan"; after saving, the same plan with the new number
+  s1 not: A second plan made
+  s1 not: The people who get it reset
+  s2 see: Editor "New diet plan" filled with the copy
+  s2 not: The copy saved before "Save plan" is tapped
+  s2 not: The copy overwriting the first plan
+J-F-panel-209-16 | type 3 | trainer | Trainer (a staff login ticked as a trainer; the panel knows only the roles owner and staff) on the Diet plans page, editor open
+  s1 see: "Give the plan a name, like “Fat loss veg”."
+  s1 not: A plan saved with no name
+  s2 see: "Add the food for at least one meal (one food per line)."
+  s2 not: An empty plan sent to members
+  s3 see: "Each meal with food needs a name, like “Breakfast”."
+  s3 see: "Calories a day: a whole number from {min} to {max}, or leave it empty."
+  s3 not: The sheet closing with the error unread
+  s4 see: "Diet plans need your gym online" / "Members’ phones read the plans from your gym’s server. Put your gym online first (Settings → Sign-in & data)."
+  s4 see: "Diet plans are not switched on for your gym yet" / "They will appear here once your gym’s server has them."
+  s4 see: No "+ New plan" button
+  s4 not: A "+ New plan" button that can never save
+J-F-panel-209-17 | type 6 | trainer | Trainer (a staff login ticked as a trainer; the panel knows only the roles owner and staff) on the Diet plans page with a plan that members 
+  s1 see: Sheet "Withdraw this plan?": "<plan name> will stop showing in members’ apps the next time they open the Gym tab. You can’t send this plan again; make a copy of it instead."
+  s1 see: Buttons "Keep it" and "Withdraw"
+  s1 not: The plan withdrawn on the first tap
+  s2 see: A toast "Plan withdrawn."
+  s2 see: The plan under "Withdrawn plans (1)" with "Members no longer get these." and only "Make a copy"
+  s2 not: Members still see the plan after they open the Gym tab
+  s2 not: An "Edit" or send button on a withdrawn plan
+  s3 see: A new open plan; the withdrawn one stays withdrawn
+  s3 not: The withdrawn plan coming back to members by itself
+J-F-panel-209-18 | type 12 | trainer | Trainer (a staff login ticked as a trainer; the panel knows only the roles owner and staff) on the Diet plans page
+  s1 see: The third member sees no diet plan; the two see it under Gym → Diet plan
+  s1 not: A member seeing a plan sent to someone else by name
+  s1 not: A ready-made plan shown without the "not medical advice" note
+  s1 not: Other gyms' plans or members in the picker
+J-F-panel-210-01 | type 1 | owner | Owner on a member's page; the gym has saved diet plans and this member has none
+  s1 see: "No diet plan sent yet. Members see their plan in the MettleUp app (Gym → Diet plan) after they check in at the gym once."
+  s1 see: Button "Send a diet plan"
+  s1 not: A plan of another member shown here
+  s1 not: An endless "Loading…"
+  s2 see: Sheet "Send a diet plan to <member name>"
+  s2 see: "Your gym’s diet plans" with each plan and "Send"
+  s2 see: "Or make one for them"
+  s2 not: Withdrawn plans offered
+  s3 see: "Sending…" on that row, the sheet closes, a toast "“<plan name>” sent to <member name>."
+  s3 see: The plan listed in the section with a button to stop sending it
+  s3 not: The plan sent to another member
+  s3 not: Other members who had the plan losing it
+  s3 not: Two sends from a double tap
+J-F-panel-210-02 | type 2 | owner | Owner on a member's page, sheet "Send a diet plan to <member name>"
+  s1 see: The ready-made list, then the editor "New diet plan" with this member already picked
+  s1 not: The new plan saved for nobody
+  s1 not: The new plan sent to every member
+  s2 see: The plan saved and listed for this member
+  s2 not: The plan missing from the Diet plans page
+J-F-panel-210-03 | type 3 | owner | Owner on a member's page
+  s1 see: That plan with the pill "Already sent"; it cannot be tapped
+  s1 not: The plan sent twice
+  s2 see: "Diet plans are kept on your gym’s server. Put your gym online first (Settings → Sign-in & data)."
+  s2 see: "Diet plans are not switched on for your gym yet."
+  s2 not: A "Send a diet plan" button that can never work
+  s3 see: In the sheet: the server's words, or "Could not send this plan. Try again."
+  s3 not: The toast "sent" when nothing was sent
+J-F-panel-210-04 | type 6 | owner | Owner on a member's page; the member has one plan sent by name and one through their membership plan
+  s1 see: Both plan names; the second with " · through their membership plan"
+  s1 not: A plan from a membership that has ended still listed
+  s2 see: A toast "<member name> no longer gets “<plan name>”."
+  s2 see: The plan leaves the section
+  s2 not: Other members losing the plan
+  s2 not: The whole plan withdrawn
+  s2 not: Two saves from a double tap leaving the plan in a wrong state
+  s3 see: It can be sent again (not "Already sent")
+  s3 not: The plan stuck as "Already sent"
+J-F-panel-210-05 | type 12 | owner | Owner on a member's page
+  s1 see: The member sees the plan under Gym → Diet plan, after they have checked in at the gym once
+  s1 not: Another member seeing this member's plan
+  s1 not: The section shown to a login that may not send plans
+  s1 not: A plan shown to the member with no word that it is not medical advice when it came from a ready-made plan
+J-F-panel-210-06 | type 1 | staff | Front-desk staff (staff may make and send plans) on a member's page; the gym has saved diet plans and this member has none
+  s1 see: "No diet plan sent yet. Members see their plan in the MettleUp app (Gym → Diet plan) after they check in at the gym once."
+  s1 see: Button "Send a diet plan"
+  s1 not: A plan of another member shown here
+  s1 not: An endless "Loading…"
+  s2 see: Sheet "Send a diet plan to <member name>"
+  s2 see: "Your gym’s diet plans" with each plan and "Send"
+  s2 see: "Or make one for them"
+  s2 not: Withdrawn plans offered
+  s3 see: "Sending…" on that row, the sheet closes, a toast "“<plan name>” sent to <member name>."
+  s3 see: The plan listed in the section with a button to stop sending it
+  s3 not: The plan sent to another member
+  s3 not: Other members who had the plan losing it
+  s3 not: Two sends from a double tap
+J-F-panel-210-07 | type 2 | staff | Front-desk staff (staff may make and send plans) on a member's page, sheet "Send a diet plan to <member name>"
+  s1 see: The ready-made list, then the editor "New diet plan" with this member already picked
+  s1 not: The new plan saved for nobody
+  s1 not: The new plan sent to every member
+  s2 see: The plan saved and listed for this member
+  s2 not: The plan missing from the Diet plans page
+J-F-panel-210-08 | type 3 | staff | Front-desk staff (staff may make and send plans) on a member's page
+  s1 see: That plan with the pill "Already sent"; it cannot be tapped
+  s1 not: The plan sent twice
+  s2 see: "Diet plans are kept on your gym’s server. Put your gym online first (Settings → Sign-in & data)."
+  s2 see: "Diet plans are not switched on for your gym yet."
+  s2 not: A "Send a diet plan" button that can never work
+  s3 see: In the sheet: the server's words, or "Could not send this plan. Try again."
+  s3 not: The toast "sent" when nothing was sent
+J-F-panel-210-09 | type 6 | staff | Front-desk staff (staff may make and send plans) on a member's page; the member has one plan sent by name and one through their membership p
+  s1 see: Both plan names; the second with " · through their membership plan"
+  s1 not: A plan from a membership that has ended still listed
+  s2 see: A toast "<member name> no longer gets “<plan name>”."
+  s2 see: The plan leaves the section
+  s2 not: Other members losing the plan
+  s2 not: The whole plan withdrawn
+  s2 not: Two saves from a double tap leaving the plan in a wrong state
+  s3 see: It can be sent again (not "Already sent")
+  s3 not: The plan stuck as "Already sent"
+J-F-panel-210-10 | type 12 | staff | Front-desk staff (staff may make and send plans) on a member's page
+  s1 see: The member sees the plan under Gym → Diet plan, after they have checked in at the gym once
+  s1 not: Another member seeing this member's plan
+  s1 not: The section shown to a login that may not send plans
+  s1 not: A plan shown to the member with no word that it is not medical advice when it came from a ready-made plan
+J-F-panel-210-11 | type 1 | trainer | Trainer (a staff login ticked as a trainer; the panel knows only the roles owner and staff) on a member's page; the gym has saved diet plans
+  s1 see: "No diet plan sent yet. Members see their plan in the MettleUp app (Gym → Diet plan) after they check in at the gym once."
+  s1 see: Button "Send a diet plan"
+  s1 not: A plan of another member shown here
+  s1 not: An endless "Loading…"
+  s2 see: Sheet "Send a diet plan to <member name>"
+  s2 see: "Your gym’s diet plans" with each plan and "Send"
+  s2 see: "Or make one for them"
+  s2 not: Withdrawn plans offered
+  s3 see: "Sending…" on that row, the sheet closes, a toast "“<plan name>” sent to <member name>."
+  s3 see: The plan listed in the section with a button to stop sending it
+  s3 not: The plan sent to another member
+  s3 not: Other members who had the plan losing it
+  s3 not: Two sends from a double tap
+J-F-panel-210-12 | type 2 | trainer | Trainer (a staff login ticked as a trainer; the panel knows only the roles owner and staff) on a member's page, sheet "Send a diet plan to <
+  s1 see: The ready-made list, then the editor "New diet plan" with this member already picked
+  s1 not: The new plan saved for nobody
+  s1 not: The new plan sent to every member
+  s2 see: The plan saved and listed for this member
+  s2 not: The plan missing from the Diet plans page
+J-F-panel-210-13 | type 3 | trainer | Trainer (a staff login ticked as a trainer; the panel knows only the roles owner and staff) on a member's page
+  s1 see: That plan with the pill "Already sent"; it cannot be tapped
+  s1 not: The plan sent twice
+  s2 see: "Diet plans are kept on your gym’s server. Put your gym online first (Settings → Sign-in & data)."
+  s2 see: "Diet plans are not switched on for your gym yet."
+  s2 not: A "Send a diet plan" button that can never work
+  s3 see: In the sheet: the server's words, or "Could not send this plan. Try again."
+  s3 not: The toast "sent" when nothing was sent
+J-F-panel-210-14 | type 6 | trainer | Trainer (a staff login ticked as a trainer; the panel knows only the roles owner and staff) on a member's page; the member has one plan sent
+  s1 see: Both plan names; the second with " · through their membership plan"
+  s1 not: A plan from a membership that has ended still listed
+  s2 see: A toast "<member name> no longer gets “<plan name>”."
+  s2 see: The plan leaves the section
+  s2 not: Other members losing the plan
+  s2 not: The whole plan withdrawn
+  s2 not: Two saves from a double tap leaving the plan in a wrong state
+  s3 see: It can be sent again (not "Already sent")
+  s3 not: The plan stuck as "Already sent"
+J-F-panel-210-15 | type 12 | trainer | Trainer (a staff login ticked as a trainer; the panel knows only the roles owner and staff) on a member's page
+  s1 see: The member sees the plan under Gym → Diet plan, after they have checked in at the gym once
+  s1 not: Another member seeing this member's plan
+  s1 not: The section shown to a login that may not send plans
+  s1 not: A plan shown to the member with no word that it is not medical advice when it came from a ready-made plan

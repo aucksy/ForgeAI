@@ -1,0 +1,816 @@
+# A8-panel-screens-1-3: coverage of 88 Tier 1 journeys (10 features, from A5-panel-screens-1-3). Made by _work/a8-items.mjs.
+## CANDIDATE TESTS (feature | test file | kind | size | why the script picked it)
+F-panel-220 | apps/dashboard/e2e/timings.spec.mjs | e2e | 130 lines | asserts 9 journey phrase(s)
+F-panel-220 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 8 journey phrase(s)
+F-panel-220 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 7 journey phrase(s)
+F-panel-220 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 7 journey phrase(s)
+F-panel-220 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 6 journey phrase(s)
+F-panel-220 | apps/dashboard/e2e/dues.spec.mjs | e2e | 104 lines | asserts 6 journey phrase(s)
+F-panel-220 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 6 journey phrase(s)
+F-panel-220 | apps/dashboard/test/crm/messages.test.ts | unit | 189 lines | asserts 6 journey phrase(s)
+F-panel-220 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 6 journey phrase(s)
+F-panel-220 | apps/mobile/test/shop/gymBusy.test.ts | unit | 209 lines | asserts 6 journey phrase(s)
+F-panel-220 | apps/dashboard/e2e/onelink-uat.spec.mjs | e2e | 331 lines | asserts 5 journey phrase(s)
+F-panel-220 | apps/dashboard/e2e/online.spec.mjs | e2e | 163 lines | asserts 5 journey phrase(s)
+F-panel-221 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-panel-221 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-panel-221 | apps/dashboard/e2e/desk.spec.mjs | e2e | 307 lines | asserts 2 journey phrase(s)
+F-panel-221 | apps/dashboard/e2e/importcheck.spec.mjs | e2e | 62 lines | asserts 2 journey phrase(s)
+F-panel-221 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 2 journey phrase(s)
+F-panel-221 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 2 journey phrase(s)
+F-panel-221 | apps/dashboard/e2e/r561-uat.spec.mjs | e2e | 386 lines | asserts 2 journey phrase(s)
+F-panel-221 | apps/dashboard/e2e/storage.spec.mjs | e2e | 165 lines | asserts 2 journey phrase(s)
+F-panel-221 | apps/dashboard/test/crm/challengeConfirm.test.ts | unit | 151 lines | asserts 2 journey phrase(s)
+F-panel-221 | apps/dashboard/test/crm/importMembers.test.ts | unit | 575 lines | file name
+F-panel-221 | apps/dashboard/test/crm/pin.test.ts | unit | 159 lines | asserts 2 journey phrase(s)
+F-panel-221 | apps/mobile/test/db/workoutPhotosReal.test.ts | unit | 327 lines | asserts 2 journey phrase(s)
+F-panel-222 | apps/dashboard/test/crm/importMembers.test.ts | unit | 575 lines | file name
+F-panel-222 | apps/mobile/test/lib/helpHistory.test.ts | unit | 207 lines | asserts 1 journey phrase(s)
+F-panel-222 | apps/mobile/test/shop/offerActions.test.ts | unit | 189 lines | asserts 1 journey phrase(s)
+F-panel-222 | deploy/hq/readLog.test.mjs | unit | 152 lines | asserts 1 journey phrase(s)
+F-panel-222 | deploy/panel/assistCatalogue.test.mjs | unit | 184 lines | asserts 1 journey phrase(s)
+F-panel-223 | supabase/tests/0031_branches.sql | db | 352 lines | asserts 12 journey phrase(s)
+F-panel-223 | apps/dashboard/e2e/branches.spec.mjs | e2e | 190 lines | asserts 9 journey phrase(s)
+F-panel-223 | apps/mobile/test/shop/staffDoor.test.ts | unit | 116 lines | asserts 5 journey phrase(s)
+F-panel-223 | apps/dashboard/test/crm/branches.test.ts | unit | 224 lines | asserts 3 journey phrase(s)
+F-panel-223 | apps/dashboard/test/crm/pay.test.ts | unit | 293 lines | asserts 3 journey phrase(s)
+F-panel-223 | apps/dashboard/e2e/landing-lead.spec.mjs | e2e | 118 lines | asserts 2 journey phrase(s)
+F-panel-223 | apps/dashboard/test/crm/importBranches.test.ts | unit | 362 lines | asserts 2 journey phrase(s)
+F-panel-223 | apps/dashboard/test/crm/importMembers.test.ts | unit | 575 lines | file name
+F-panel-223 | apps/mobile/test/db/workoutPhotosReal.test.ts | unit | 327 lines | asserts 2 journey phrase(s)
+F-panel-223 | apps/mobile/test/onboarding/eraseLeftBehind.test.ts | unit | 59 lines | asserts 2 journey phrase(s)
+F-panel-223 | apps/mobile/test/onboarding/phoneSignIn.test.ts | unit | 251 lines | asserts 2 journey phrase(s)
+F-panel-223 | apps/mobile/test/onboarding/startup.test.ts | unit | 185 lines | asserts 2 journey phrase(s)
+F-panel-224 | apps/dashboard/e2e/aiimport.spec.mjs | e2e | 169 lines | asserts 2 journey phrase(s)
+F-panel-224 | apps/dashboard/test/crm/importMembers.test.ts | unit | 575 lines | file name
+F-panel-224 | apps/dashboard/test/crm/trainerView.test.ts | unit | 212 lines | asserts 2 journey phrase(s)
+F-panel-224 | apps/dashboard/e2e/challenges-ready-uat.spec.mjs | e2e | 302 lines | asserts 1 journey phrase(s)
+F-panel-224 | apps/dashboard/e2e/importcheck.spec.mjs | e2e | 62 lines | asserts 1 journey phrase(s)
+F-panel-224 | apps/dashboard/e2e/newdots-uat.spec.mjs | e2e | 281 lines | asserts 1 journey phrase(s)
+F-panel-224 | apps/dashboard/e2e/pin.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-224 | apps/dashboard/e2e/r448-uat.spec.mjs | e2e | 410 lines | asserts 1 journey phrase(s)
+F-panel-224 | apps/dashboard/e2e/r526-uat.spec.mjs | e2e | 180 lines | asserts 1 journey phrase(s)
+F-panel-224 | apps/dashboard/test/crm/gymState.test.ts | unit | 78 lines | asserts 1 journey phrase(s)
+F-panel-224 | apps/dashboard/test/crm/navNames.test.ts | unit | 61 lines | asserts 1 journey phrase(s)
+F-panel-224 | apps/dashboard/test/crm/ownerOnboarding.test.ts | unit | 115 lines | asserts 1 journey phrase(s)
+F-panel-225 | apps/dashboard/e2e/whatsapp-verify-uat.spec.mjs | e2e | 324 lines | asserts 10 journey phrase(s)
+F-panel-225 | apps/dashboard/e2e/whatsapp-code-uat.spec.mjs | e2e | 251 lines | asserts 9 journey phrase(s)
+F-panel-225 | apps/dashboard/test/crm/mobileNumber.test.ts | unit | 201 lines | asserts 7 journey phrase(s)
+F-panel-225 | apps/dashboard/e2e/selfjoin-uat.spec.mjs | e2e | 506 lines | asserts 6 journey phrase(s)
+F-panel-225 | apps/dashboard/test/crm/plural.test.ts | unit | 48 lines | asserts 6 journey phrase(s)
+F-panel-225 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | asserts 6 journey phrase(s)
+F-panel-225 | supabase/tests/0038_member_push.sql | db | 169 lines | asserts 6 journey phrase(s)
+F-panel-225 | supabase/tests/0044_plan_requests.sql | db | 229 lines | asserts 6 journey phrase(s)
+F-panel-225 | apps/dashboard/e2e/importcheck.spec.mjs | e2e | 62 lines | asserts 5 journey phrase(s)
+F-panel-225 | apps/dashboard/e2e/settings.spec.mjs | e2e | 143 lines | asserts 5 journey phrase(s)
+F-panel-225 | supabase/tests/0060_pay_mettleup.sql | db | 317 lines | asserts 5 journey phrase(s)
+F-panel-225 | supabase/tests/0095_test_alert.sql | db | 175 lines | asserts 5 journey phrase(s)
+F-panel-226 | apps/dashboard/test/crm/challengesHinglish.test.ts | unit | 108 lines | asserts 3 journey phrase(s)
+F-panel-226 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-226 | apps/dashboard/test/crm/moveStart.test.ts | unit | 131 lines | imports the code
+F-panel-226 | apps/mobile/test/shop/checkIn.test.ts | unit | 272 lines | asserts 3 journey phrase(s)
+F-panel-226 | apps/dashboard/e2e/offline.spec.mjs | e2e | 74 lines | asserts 2 journey phrase(s)
+F-panel-226 | apps/dashboard/e2e/offline3.spec.mjs | e2e | 208 lines | asserts 2 journey phrase(s)
+F-panel-226 | apps/dashboard/test/crm/readyChallenges.test.ts | unit | 260 lines | asserts 2 journey phrase(s)
+F-panel-226 | apps/mobile/qa/phase7-bigtext.yaml | maestro | 326 lines | asserts 2 journey phrase(s)
+F-panel-226 | apps/mobile/qa/xc-2b-checkin-offline.yaml | maestro | 16 lines | asserts 2 journey phrase(s)
+F-panel-226 | apps/mobile/test/shop/offer.test.ts | unit | 266 lines | asserts 2 journey phrase(s)
+F-panel-226 | apps/dashboard/e2e/clock.spec.mjs | e2e | 176 lines | asserts 1 journey phrase(s)
+F-panel-226 | apps/dashboard/e2e/jointrial-uat.spec.mjs | e2e | 469 lines | asserts 1 journey phrase(s)
+F-panel-227 | apps/dashboard/e2e/desk2.spec.mjs | e2e | 102 lines | asserts 3 journey phrase(s)
+F-panel-227 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-227 | apps/dashboard/test/crm/moveStart.test.ts | unit | 131 lines | imports the code
+F-panel-227 | apps/dashboard/test/crm/members.test.ts | unit | 336 lines | asserts 1 journey phrase(s)
+F-panel-227 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-panel-227 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 1 journey phrase(s)
+F-panel-227 | deploy/panel/helpPages.test.mjs | unit | 109 lines | asserts 1 journey phrase(s)
+F-panel-227 | supabase/tests/0015_qr_checkin.sql | db | 198 lines | asserts 1 journey phrase(s)
+F-panel-227 | supabase/tests/0068_member_find_gym.sql | db | 159 lines | asserts 1 journey phrase(s)
+F-panel-228 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-228 | apps/dashboard/test/crm/moveStart.test.ts | unit | 131 lines | imports the code
+F-panel-228 | apps/dashboard/e2e/journey-uat.spec.mjs | e2e | 322 lines | asserts 1 journey phrase(s)
+F-panel-228 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-228 | apps/dashboard/e2e/r534-training-progress-uat.spec.mjs | e2e | 165 lines | asserts 1 journey phrase(s)
+F-panel-228 | apps/dashboard/e2e/r579-uat.spec.mjs | e2e | 298 lines | asserts 1 journey phrase(s)
+F-panel-228 | apps/dashboard/test/crm/memberCard.test.ts | unit | 127 lines | asserts 1 journey phrase(s)
+F-panel-228 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-panel-228 | apps/mobile/test/shop/ug1LeaveWithOrders.test.ts | unit | 394 lines | asserts 1 journey phrase(s)
+F-panel-228 | deploy/panel/helpPages.test.mjs | unit | 109 lines | asserts 1 journey phrase(s)
+F-panel-229 | apps/dashboard/test/crm/memberPhoto.test.ts | unit | 186 lines | imports the code
+F-panel-229 | apps/dashboard/test/crm/moveStart.test.ts | unit | 131 lines | imports the code
+F-panel-229 | apps/dashboard/test/crm/invite.test.ts | unit | 105 lines | asserts 2 journey phrase(s)
+F-panel-229 | apps/dashboard/e2e/launch-uat.spec.mjs | e2e | 192 lines | asserts 1 journey phrase(s)
+F-panel-229 | apps/dashboard/e2e/offers.spec.mjs | e2e | 140 lines | asserts 1 journey phrase(s)
+F-panel-229 | apps/dashboard/test/crm/businessGrowth.test.ts | unit | 392 lines | asserts 1 journey phrase(s)
+F-panel-229 | apps/dashboard/test/crm/hinglish.test.ts | unit | 197 lines | asserts 1 journey phrase(s)
+F-panel-229 | apps/dashboard/test/crm/settingLines.test.ts | unit | 95 lines | asserts 1 journey phrase(s)
+F-panel-229 | apps/mobile/qa/v0280-k.yaml | maestro | 60 lines | asserts 1 journey phrase(s)
+F-panel-229 | apps/mobile/test/cloud/mettleupRebrand.test.ts | unit | 261 lines | asserts 1 journey phrase(s)
+F-panel-229 | apps/mobile/test/lib/crashReport.test.ts | unit | 90 lines | asserts 1 journey phrase(s)
+F-panel-229 | apps/mobile/test/lib/releaseA.test.ts | unit | 251 lines | asserts 1 journey phrase(s)
+## JOURNEYS (id | type | role | start; then one line per see / not)
+J-F-panel-220-01 | type 1 | owner | Settings, gym online, timings saved before
+  s1 see: Title 'Gym timings'
+  s1 see: 'When your gym is open, for members to see'
+  s1 see: 'Right now members see: <open or closed line>'
+  s1 see: Card 'Every week' with a box for each of the seven days
+  s1 see: 'Last saved <day> by <name>.'
+  s1 not: 'Loading…' that never ends
+  s1 not: Another branch's timings shown as this gym's
+  s2 see: Tuesday to Saturday show the same times as Monday
+  s2 see: The button reads 'Save timings' and can be tapped
+  s2 not: Sunday changed by the copy
+  s2 not: The change sent to members before Save is tapped
+  s3 see: Button reads 'Saving…'
+  s3 see: Toast 'Gym timings saved. Members see them in the MettleUp app (Gym tab) within 10 minutes.'
+  s3 see: Button reads 'Saved ✓'
+  s3 see: 'These timings are saved (<day>) and members see them. Change any time above to save again.'
+  s3 not: The saved toast when the save failed
+  s3 not: Two saves from two fast taps
+J-F-panel-220-02 | type 2 | owner | Gym online, no timings saved yet (first time: start from a ready-made week, add a special day and a note)
+  s1 see: Card 'Start from'
+  s1 see: 'Pick the one closest to your gym, then change any day.'
+  s1 see: A row for each ready-made week
+  s1 not: An empty editor with no days
+  s1 not: A Save button before a week is picked
+  s2 see: Card 'Every week' filled in
+  s2 see: Button 'Save and show members'
+  s2 not: Members told the gym is open before anything is saved
+  s2 not: A line that says members see these times 'right now' while nothing is saved
+  s3 see: Card 'Special days' with 'Add holidays like Diwali, or days with other times. Members see them on the Gym tab 7 days before.'
+  s3 see: A row 'Special day 1: date' and 'Special day 1: why (optional)'
+  s3 see: Hint 'Type up to 120 letters here to tell members something they should know about your gym timings.'
+  s3 not: More than 30 special days can be added
+  s3 not: A special day with no date saved without a word
+  s4 see: Toast 'Gym timings saved. Members see them in the MettleUp app (Gym tab) within 10 minutes.'
+  s4 see: On Get started, 'Set your gym timings' is ticked
+  s4 not: The special day or the note missing after the page is opened again
+J-F-panel-220-03 | type 3 | owner | Gym timings open in the editor
+  s1 see: 'Fix the times below to see what members will see.'
+  s1 not: A made-up open or closed line for a week that is not complete
+  s2 see: A red banner above the editor that names the problem (exact words are in the timings rules, not read in this step)
+  s2 see: The editor stays as typed
+  s2 not: Broken timings saved
+  s2 not: The saved toast
+  s3 see: Both buttons greyed, with the needs-internet words
+  s3 not: A save that looks done while offline
+  s4 see: 'Gym timings need your gym online'
+  s4 see: 'Members’ phones read the timings from your gym’s server. Put your gym online first (Settings → Sign-in & data).'
+  s4 not: An editor that saves only on this device
+J-F-panel-220-04 | type 6 | owner | Gym timings saved and shown in the editor
+  s1 see: Sheet 'Remove the gym timings?'
+  s1 see: 'Members will no longer see when your gym is open. You can add the timings again at any time.'
+  s1 see: Buttons 'Keep them' and 'Remove'
+  s1 not: Timings removed before Remove is tapped
+  s2 see: The sheet closes; the editor is unchanged
+  s2 not: Any change sent to the server
+  s3 see: Toast 'Gym timings removed. Members no longer see them.'
+  s3 see: Card 'Start from' is back
+  s3 not: The old timings still shown to members after 10 minutes
+  s3 not: The 'Last saved' line still on the page
+  s4 see: The saved toast; the editor shows the new week
+  s4 not: The removed special days or note coming back by themselves
+J-F-panel-220-05 | type 12 | owner | Gym timings editor, gym with a note and two branches
+  s1 see: 'Members see these on the Gym tab of the MettleUp app: “Open now · closes 10:00 pm”, and the whole week. Times are India time.'
+  s1 not: The 'Last saved … by <name>' staff name shown to members
+  s1 not: A note shown to members before Save
+  s2 see: 'When <branch name> is open. Each branch has its own timings.'
+  s2 see: That branch's own week
+  s2 not: One branch's timings saved over the other branch's
+  s2 not: Members of one branch shown the other branch's hours
+J-F-panel-220-06 | type 1 | staff | Front desk signed in, gym online, timings saved by the owner
+  s1 see: Card 'Your gym’s timings'
+  s1 see: 'Right now members see: <open or closed line>'
+  s1 see: The week, any coming special days and the note
+  s1 see: 'Only the owner can change the gym timings.'
+  s1 not: Any time box, Save button or Remove button
+  s1 not: Special days that are already over
+J-F-panel-220-07 | type 3 | staff | Front desk signed in
+  s1 see: 'No timings yet.'
+  s1 see: 'Only the owner can change the gym timings.'
+  s1 not: The 'Start from' list offered to the front desk
+  s2 see: 'Gym timings are not switched on for your gym yet'
+  s2 see: 'They will appear here once your gym’s server has them.'
+  s2 not: A raw error text
+  s3 see: A red banner with the reason and a button
+  s3 see: 'Try again'
+  s3 not: 'Loading…' for ever
+  s3 not: Old timings shown as if they were fresh
+J-F-panel-220-08 | type 6 | staff | Front desk has Gym timings open; the owner then changes the timings on another device
+  s1 see: The owner's new week and the new 'Right now members see' line
+  s1 not: The old week after the page is opened again
+  s1 not: A different answer from what the member app shows
+  s2 see: 'No timings yet.'
+  s2 not: The removed week still listed
+J-F-panel-220-09 | type 12 | staff | Front desk signed in, timings saved
+  s1 see: The same week, special days and note that members see
+  s1 see: 'Only the owner can change the gym timings.'
+  s1 not: Any way for the front desk to change the timings
+  s1 not: The server accepting a save from a front-desk sign-in
+J-F-panel-221-01 | type 1 | owner | Members, then Import; an Excel file with names, mobiles, plans, fees and valid-till dates
+  s1 see: Card 'Your file' with four lines, the last: 'Nothing is saved until you check the list and tap Add.'
+  s1 see: Buttons 'Choose file' and 'Download sample file'
+  s1 not: Anything saved before Add is tapped
+  s2 see: 'Reading the file… a big sheet can take a few seconds.'
+  s2 see: Card 'Which column is which': '<file name>. We matched them from the column names and what is in them. Change any that are wrong.'
+  s2 see: Name and Mobile boxes marked with ' *'
+  s2 not: A column matched to two boxes at once
+  s3 see: '<n> rows: <n> will be added, <n> already members or repeated, <n> with a problem.'
+  s3 see: Chips 'All', 'Will be added', 'Already members', 'Problems'
+  s3 see: '<n> members come with their plan and its dates (<n> plan names), and ₹<amount> already paid as receipts. Expiry reminders work for them from day one.'
+  s3 not: Counts that do not add up to the number of rows
+  s3 not: The paid money added up twice
+  s4 see: 'Adding members…'
+  s4 see: '<done> of <total> done. Keep this page open until it finishes.'
+  s4 see: The '← Members' button is gone while it runs
+  s4 not: A second run started by a second tap
+  s5 see: 'Import finished'
+  s5 see: '<n> added, <n> skipped'
+  s5 see: '<n> plans with their dates · <n> receipts'
+  s5 see: Buttons 'Open members' and 'Import another file'
+  s5 see: Card 'Past imports' with this import
+  s5 not: A member added twice
+  s5 not: A payment saved twice
+J-F-panel-221-02 | type 2 | owner | A file where some mobiles are already members (another kind: fill in blank details)
+  s1 see: '<n> are already members of your gym (same mobile). For them:'
+  s1 see: Chips 'Skip them' and 'Fill in their blank details'
+  s1 not: An existing member counted under Will be added
+  s2 see: 'Only empty details are filled in. Their name, mobile and joining date stay as they are.'
+  s2 see: The main button reads 'Add <n> members, update <n>' or 'Update <n> members'
+  s2 not: A detail that already has a value changed
+  s3 see: '<n> added, <n> skipped, <n> filled in'
+  s3 not: An existing member's name, mobile or joining date overwritten
+J-F-panel-221-03 | type 2 | owner | An Excel file with three sheets (another kind of file)
+  s1 see: A 'Sheet' box; the line names the sheet and '(it looks most like a member list)'
+  s1 see: Each sheet listed as '<name> (<n> rows)'
+  s1 not: An empty or totals sheet picked first
+  s2 see: 'Import finished' with a button 'Import the next sheet: “<name>”'
+  s2 not: Fixes typed for the first sheet applied to the next one
+  s3 see: The next sheet's columns and list; in the Sheet box the first sheet is marked '· added'
+  s3 not: The same sheet offered again as not added
+J-F-panel-221-04 | type 2 | owner | Import page (other things to tap: the sample file and the skipped rows)
+  s1 see: A CSV file with members sample in its name is saved
+  s1 not: A file that the import itself cannot read back
+  s2 see: 'Download the skipped rows and fix them in Excel. The reason is in the first column. Then import that file.'
+  s2 see: Button 'Download <n> skipped rows'
+  s2 not: Skipped rows that cannot be found anywhere after the import
+  s3 see: A CSV named skipped rows plus the file name, with the reason in the first column
+  s3 not: An empty file
+  s3 not: Aadhaar or PAN numbers in it
+J-F-panel-221-05 | type 3 | owner | Import page, first card
+  s1 see: Red banner 'That file is over 5 MB. It is too big for a member list. Pick the Excel or CSV file with your members.'
+  s1 not: The page freezing while it tries to read the file
+  s2 see: 'That is not an Excel or CSV file. Pick a .xlsx, .xls or .csv file.'
+  s2 not: A list of nonsense rows offered for import
+  s3 see: 'That file has no member rows. It needs one row of column names, then one row per member.'
+  s3 not: An Add button for zero rows
+  s4 see: Red banner 'Pick the columns with the name and the mobile number.'
+  s4 see: The Add button is greyed
+  s4 not: Members added with no name or no mobile
+  s5 see: 'Only the first <limit> rows can be imported at once. <n> more rows were left out. Import them as a second file.'
+  s5 not: Rows past the limit dropped without a word
+J-F-panel-221-06 | type 6 | owner | A file with a few bad rows
+  s1 see: Card 'Rows to check' with each row and its reason
+  s1 see: Boxes to fix the name, mobile or joining date
+  s1 not: A problem row dropped without being named
+  s2 see: 'Row <n> checked again.'
+  s2 see: The fixed row moves to Will be added; the skipped row leaves the card
+  s2 not: The typed fix lost when another row is fixed
+  s2 not: The skipped row added anyway
+  s3 see: 'Saving stopped halfway: <reason> <n> members were saved (up to row <n>). The rest may not be saved. When the internet is back, tap “Try again” below, or import the same file again. Members already added are skipped, so nobody is added twice.'
+  s3 see: '<n> rows are not saved yet. Tap “Try again” to send just these rows.'
+  s3 not: 'Import finished' with no word about the rows that are not saved
+  s4 see: 'Adding members…' and then the counts with the waiting rows now added
+  s4 not: A member added twice
+  s4 not: A second entry in Past imports for the same file
+J-F-panel-221-07 | type 12 | owner | A file from old gym software with ID numbers in it
+  s1 see: 'Not imported: <column> has Aadhaar numbers. ID numbers are never imported.'
+  s1 see: '<column> is read as usual. Any Aadhaar or PAN number in it is left out.'
+  s1 see: On the first card: 'Aadhaar and PAN numbers are never imported.'
+  s1 not: An Aadhaar or PAN number saved in a member note or extra detail
+  s2 see: Only ticked columns are kept as extra details on the member page
+  s2 not: An unticked column saved
+  s2 not: An ID number in the downloaded skipped-rows file
+J-F-panel-221-08 | type 1 | staff | Front desk signed in; a file with names and mobiles only
+  s1 see: Card 'Your file' and the buttons 'Choose file' and 'Download sample file'
+  s1 not: A 'Past imports' card for the front desk
+  s2 see: 'Which column is which' and 'Check the list' with the counts
+  s2 not: A line about AI matching (it is for the owner only)
+  s3 see: 'Adding members…'
+  s3 see: 'Import finished', '<n> added, <n> skipped'
+  s3 see: Button 'Open members'
+  s3 not: A member added twice
+J-F-panel-221-09 | type 2 | staff | Front desk signed in; a file that also has plans and fees (another kind of file)
+  s1 see: Card 'Plans and payments': '<n> members have a plan in this file. Only the owner can add plans and payments. Members are added now. Plans are added when the owner imports the same file.'
+  s1 not: A money total shown to the front desk
+  s2 see: 'Only the owner can add the plans and payments in this file. Ask the owner to import the same file. Members already added are skipped.'
+  s2 not: A membership or a receipt saved by the front desk
+  s3 see: The main button reads 'Add <n> plans and payments'
+  s3 not: The members added a second time
+J-F-panel-221-10 | type 3 | staff | Front desk signed in, Import page
+  s1 see: Red banner 'That file is over 5 MB. It is too big for a member list. Pick the Excel or CSV file with your members.'
+  s1 not: The page freezing while it tries to read the file
+  s2 see: 'That is not an Excel or CSV file. Pick a .xlsx, .xls or .csv file.'
+  s2 not: A list of nonsense rows offered for import
+  s3 see: 'That file has no member rows. It needs one row of column names, then one row per member.'
+  s3 not: An Add button for zero rows
+  s4 see: Red banner 'Pick the columns with the name and the mobile number.'
+  s4 see: The Add button is greyed
+  s4 not: Members added with no name or no mobile
+  s5 see: The Add button is greyed
+  s5 not: A run that adds nothing but says finished
+J-F-panel-221-11 | type 6 | staff | Front desk signed in; a file with a few bad rows
+  s1 see: Card 'Rows to check' with each row and its reason
+  s1 see: Boxes to fix the name, mobile or joining date
+  s1 not: A problem row dropped without being named
+  s2 see: 'Row <n> checked again.'
+  s2 see: The fixed row moves to Will be added; the skipped row leaves the card
+  s2 not: The typed fix lost when another row is fixed
+  s2 not: The skipped row added anyway
+  s3 see: 'Saving stopped halfway: <reason> <n> members were saved (up to row <n>). The rest may not be saved. When the internet is back, tap “Try again” below, or import the same file again. Members already added are skipped, so nobody is added twice.'
+  s3 see: '<n> rows are not saved yet. Tap “Try again” to send just these rows.'
+  s3 not: 'Import finished' with no word about the rows that are not saved
+  s4 see: 'Adding members…' and then the counts with the waiting rows now added
+  s4 not: A member added twice
+  s4 not: A second entry in Past imports for the same file
+J-F-panel-221-12 | type 12 | staff | Front desk signed in; a file with ID numbers in it
+  s1 see: 'Not imported: <column> has Aadhaar numbers. ID numbers are never imported.'
+  s1 see: '<column> is read as usual. Any Aadhaar or PAN number in it is left out.'
+  s1 see: On the first card: 'Aadhaar and PAN numbers are never imported.'
+  s1 not: An Aadhaar or PAN number saved in a member note or extra detail
+  s2 see: Only ticked columns are kept as extra details on the member page
+  s2 not: An unticked column saved
+  s2 not: An ID number in the downloaded skipped-rows file
+J-F-panel-222-01 | type 1 | owner | Owner signed in online; Import page; a file whose column names are unusual
+  s1 see: 'Matching your columns with AI…'
+  s1 see: 'Names, addresses, phone numbers, emails and ID numbers are hidden before anything is sent.'
+  s1 not: A button the owner must tap to start the matching
+  s1 not: The list of rows hidden while it waits
+  s2 see: 'AI matched <n> columns. Check the boxes below and change any that are wrong.' or 'AI checked your columns and agrees with them. Check the boxes below.'
+  s2 see: The boxes it set carry '· Matched by AI'
+  s2 not: A real name, phone number or ID number sent to the AI
+  s2 not: Anything saved before Add is tapped
+J-F-panel-222-02 | type 2 | owner | A file is open on the Import page (other ways the matching starts: a new header row, another sheet)
+  s1 see: 'Matching your columns with AI…' again
+  s1 see: The boxes start again from the new row
+  s1 not: The answer for the old header row applied to the new one
+  s2 see: The line is about the new sheet only
+  s2 not: The first sheet's late answer changing the second sheet's boxes
+J-F-panel-222-03 | type 3 | owner | Owner on the Import page
+  s1 see: In warning colour: 'Matched without AI (it was not available). Check the columns below.'
+  s1 see: The boxes filled by the built-in rules
+  s1 not: The import blocked
+  s1 not: A raw error text
+  s2 see: 'Matched without AI (it was not available). Check the columns below.'
+  s2 not: The owner charged or asked to pay
+  s2 not: A spinner that never ends
+  s3 see: 'Matched without AI (it was not available). Check the columns below.'
+  s3 not: The sheet sent anywhere
+J-F-panel-222-04 | type 6 | owner | A file is open and the AI is still matching
+  s1 see: The Plan box keeps the column the owner picked
+  s1 not: The AI answer replacing the owner's pick
+  s2 see: The tag leaves that box
+  s2 not: The tag staying on a box the owner set
+  s3 see: A column the AI found useless is unticked with 'AI says this column is not needed, so it is not kept.'
+  s3 see: Ticking it keeps it
+  s3 not: A column the owner ticked by hand unticked by the AI
+J-F-panel-222-05 | type 12 | owner | Owner online; a file with names, mobiles, addresses and an Aadhaar column
+  s1 see: 'Names, addresses, phone numbers, emails and ID numbers are hidden before anything is sent.'
+  s1 not: Any real name, mobile, address, email or ID number leaving the browser
+  s1 not: More than 5 example rows sent
+  s2 see: No AI line; the built-in rules fill the boxes
+  s2 not: The front desk's file sent to the AI
+J-F-panel-223-01 | type 1 | owner | Gym with 2 branches; a file with a Branch column
+  s1 see: Card 'Branches in your file'
+  s1 see: 'Your file has a column with each member’s branch. Check that each name goes to the right branch.'
+  s1 see: A box for each name: '“<name>” · <n> rows'
+  s1 see: '<branch>: <n> to add · <branch>: <n> to add'
+  s1 not: A Branch box shown to a gym with one branch
+  s2 see: 'Opening <branch>… The Add button works once it is open.'
+  s2 not: Rows checked for repeats only against the branch on screen
+  s3 see: A line for each branch: '<branch>: <n> members added.'
+  s3 see: 'Each branch has its own “Past imports” list on this page. To undo what went into another branch, switch to that branch and open this page there.'
+  s3 not: A member saved into the wrong branch
+  s3 not: A member saved into both branches
+J-F-panel-223-02 | type 2 | owner | Gym with 2 branches; a file with no Branch column (another kind of file)
+  s1 see: Card 'Branch' with the box 'Add the members in this sheet to'
+  s1 see: The branch on screen is picked, or the branch whose name the sheet carries
+  s1 not: Rows sent to another branch without the box saying so
+  s2 see: 'Opening <branch>… The Add button works once it is open.'
+  s2 see: With several sheets: 'One sheet for each branch? Pick the branch for this sheet. When it is added, you can add the next sheet.'
+  s2 not: The Add button working before that branch is open
+  s3 see: '<branch>: <n> members added.'
+  s3 not: The members added to the branch on screen instead
+J-F-panel-223-03 | type 3 | owner | Gym with 2 branches; a file whose Branch column has a name no branch has
+  s1 see: '1 name matches none of your branches. Pick a branch for it, or pick “Skip these rows”. Until then, those rows wait under “Rows to check”.'
+  s1 see: Under the box: 'Pick a branch for these rows.'
+  s1 not: Those rows added to the branch on screen without asking
+  s2 see: 'Could not open <branch>: <reason> Its rows wait under “Rows to check”.'
+  s2 see: Button 'Try to open <branch> again'
+  s2 not: Rows for that branch saved somewhere else
+  s2 not: The Add button stuck for ever
+J-F-panel-223-04 | type 6 | owner | Gym with 2 branches; the Branches in your file card is open
+  s1 see: The rows leave the list, then come back under that branch with the counts changed
+  s1 not: Skipped rows added
+  s1 not: The counts per branch not changing
+  s2 see: '<branch> could not be opened: <reason> Its rows are waiting below. Tap “Try again”.'
+  s2 see: The other branch's line shows its members added
+  s2 not: The good branch rolled back
+  s2 not: The failed branch shown as done
+  s3 see: Only the waiting rows are sent, into the right branch
+  s3 not: Members of the good branch added twice
+J-F-panel-223-05 | type 12 | owner | Owner of 2 branches and, separately, an owner of one branch
+  s1 see: No Branch box and no branch cards; the column is offered as an extra detail to keep
+  s1 not: Rows refused because of an unknown branch
+  s2 see: Only the names of branches this owner has are offered
+  s2 not: A branch of another owner offered
+  s2 not: Members of one branch listed in the other branch's Members
+J-F-panel-223-06 | type 1 | staff | Gym with 2 branches; a file with no Branch column
+  s1 see: Card 'Branch' with the box 'Add the members in this sheet to'
+  s1 see: The branch on screen is picked, or the branch whose name the sheet carries
+  s1 not: Rows sent to another branch without the box saying so
+  s2 see: 'Opening <branch>… The Add button works once it is open.'
+  s2 see: With several sheets: 'One sheet for each branch? Pick the branch for this sheet. When it is added, you can add the next sheet.'
+  s2 not: The Add button working before that branch is open
+  s3 see: '<branch>: <n> members added.'
+  s3 not: The members added to the branch on screen instead
+J-F-panel-223-07 | type 2 | staff | Gym with 2 branches; a file with a Branch column (another kind of file)
+  s1 see: Card 'Branches in your file'
+  s1 see: 'Your file has a column with each member’s branch. Check that each name goes to the right branch.'
+  s1 see: A box for each name: '“<name>” · <n> rows'
+  s1 see: '<branch>: <n> to add · <branch>: <n> to add'
+  s1 not: A Branch box shown to a gym with one branch
+  s2 see: 'Opening <branch>… The Add button works once it is open.'
+  s2 not: Rows checked for repeats only against the branch on screen
+  s3 see: A line for each branch: '<branch>: <n> members added.'
+  s3 see: 'Each branch has its own “Past imports” list on this page. To undo what went into another branch, switch to that branch and open this page there.'
+  s3 not: A member saved into the wrong branch
+  s3 not: A member saved into both branches
+J-F-panel-223-08 | type 3 | staff | Gym with 2 branches; a file whose Branch column has a name no branch has
+  s1 see: '1 name matches none of your branches. Pick a branch for it, or pick “Skip these rows”. Until then, those rows wait under “Rows to check”.'
+  s1 see: Under the box: 'Pick a branch for these rows.'
+  s1 not: Those rows added to the branch on screen without asking
+  s2 see: 'Could not open <branch>: <reason> Its rows wait under “Rows to check”.'
+  s2 see: Button 'Try to open <branch> again'
+  s2 not: Rows for that branch saved somewhere else
+  s2 not: The Add button stuck for ever
+J-F-panel-223-09 | type 6 | staff | Gym with 2 branches; the Branches in your file card is open
+  s1 see: The rows leave the list, then come back under that branch with the counts changed
+  s1 not: Skipped rows added
+  s1 not: The counts per branch not changing
+  s2 see: '<branch> could not be opened: <reason> Its rows are waiting below. Tap “Try again”.'
+  s2 see: The other branch's line shows its members added
+  s2 not: The good branch rolled back
+  s2 not: The failed branch shown as done
+  s3 see: Only the waiting rows are sent, into the right branch
+  s3 not: Members of the good branch added twice
+J-F-panel-223-10 | type 12 | staff | Front desk of one branch; gym with 2 branches
+  s1 see: unknown: this step did not read whether a front-desk sign-in sees the other branch in the box
+  s1 not: The front desk saving members into a branch they do not work at
+  s1 not: The front desk reading the other branch's member list while repeats are checked
+J-F-panel-224-01 | type 1 | owner | Owner on the Import page; one import was made earlier today and nothing of it was used
+  s1 see: A row '<day month, time>' with '<n> members · <n> plans with dates · <n> receipts'
+  s1 see: Red button 'Undo this import'
+  s1 not: Imports of another branch in this list
+  s2 see: 'This removes what this file added: <n> members, <n> plans with dates, <n> receipts and <n> plan names from Plans. Nothing you added yourself is removed.'
+  s2 see: Buttons 'Yes, undo it' and 'Keep it'
+  s2 not: Anything removed before the second tap
+  s3 see: Button reads 'Undoing…'
+  s3 see: 'Import undone: <n> members, <n> plans with dates, <n> receipts and <n> plan names removed.'
+  s3 not: A member the owner added by hand removed
+  s3 not: The receipts still counted in the money totals
+J-F-panel-224-02 | type 2 | owner | An import just finished with a problem (another way in: the finished card sends the owner here)
+  s1 see: 'Members are saved, but not all their plans and payments. <reason> Tap “Undo this import” below. Then import the same file again, so every payment comes in only once.'
+  s1 not: A half-saved import with no way named to clean it up
+  s2 see: 'Import undone: …'
+  s2 not: Payments left behind that come in a second time on the next import
+  s3 see: Each payment once
+  s3 not: A receipt twice for one member
+J-F-panel-224-03 | type 3 | owner | Owner on the Import page
+  s1 see: Red banner 'The import was not fully undone. Check the internet and tap Undo again. What is already removed stays removed.'
+  s1 not: 'Import undone' when part of it is still there
+  s2 see: No 'Past imports' card
+  s2 not: An empty card with only a title
+J-F-panel-224-04 | type 6 | owner | An import where two members have since checked in and one paid at the desk
+  s1 see: The counts, then '<n> members, <n> plans with dates stay, with their receipts, because they were used after the import (a check-in, a payment at the desk, extra days or a PT session).'
+  s1 not: A member with a check-in or a desk payment removed
+  s2 see: The question closes; nothing changed
+  s2 not: Anything removed
+  s3 see: 'Import undone: …' followed by the same stay line
+  s3 not: The members who stay losing their plan or receipts
+  s4 see: The removed members are added again; the ones who stayed are shown as already members
+  s4 not: A member who stayed added a second time
+J-F-panel-224-05 | type 12 | owner | Owner of 2 branches; a front-desk sign-in on another device
+  s1 see: Only counts, no member names
+  s1 not: Members of the other branch removed by an undo done here
+  s2 see: No 'Past imports' card
+  s2 not: The front desk undoing an import
+  s2 not: The server accepting an undo from a front-desk sign-in
+J-F-panel-225-01 | type 1 | owner | Members list; a member with a running plan, a part payment and some visits
+  s1 see: Title: the member name
+  s1 see: '<batch> batch · Member since <day>'
+  s1 see: A status pill
+  s1 see: '<plan> · <start> → <end> (<days left>)'
+  s1 see: Tiles 'Dues', 'Last visit', the days tile and 'Total visits'
+  s1 see: Cards 'Training pattern', 'Memberships', 'Payments', 'Details'
+  s1 not: The Dues tile reading 'Fully paid' while money is due
+  s1 not: Another member's payments or visits
+  s2 see: 'Mobile', 'Email', 'Date of birth', 'Address', 'Emergency contact', 'Notes', and any extra details kept from an import
+  s2 not: An Aadhaar or PAN number
+  s3 see: The member form sheet, then the page with the new address
+  s3 not: The change shown here but lost after a refresh
+  s3 not: Another field emptied by the save
+J-F-panel-225-02 | type 2 | owner | A member who comes on a company pass (another kind of member)
+  s1 see: A pill with the pass company name
+  s1 see: 'Comes with <company>. No plan and no dues: <company> pays your gym for each visit.'
+  s1 see: Dues tile '—' with 'No dues on a pass'
+  s1 see: 'No membership needed'
+  s1 see: The top button reads 'Sell membership', not 'Renew'
+  s1 not: A dues amount for a pass member
+  s1 not: The member shown as expired
+J-F-panel-225-03 | type 2 | owner | A member marked as a possible double (another way in: the link on the other member)
+  s1 see: 'Check this member.' '<other name> has the same mobile number. Both are kept. If they are the same person, archive one of them.'
+  s1 see: Button 'Checked'
+  s1 not: The two members merged by themselves
+  s2 see: That member's page
+  s2 not: A Member not found page
+  s3 see: Toast 'Marked as checked.'; the note is gone
+  s3 not: The note back after a refresh
+J-F-panel-225-04 | type 3 | owner | A link to a member who is not in this gym
+  s1 see: 'Member not found'
+  s1 see: 'They may have been removed.'
+  s1 see: Button 'Back to members'
+  s1 not: A blank page
+  s1 not: Another gym's member
+  s2 see: The form refuses and says what is missing (exact words are in the member form, not read in this step)
+  s2 not: A member saved with no name
+J-F-panel-225-05 | type 6 | owner | A member added a minute ago with no plan
+  s1 see: 'No membership yet.'
+  s1 see: 'No memberships yet'
+  s1 see: 'No payments yet'
+  s1 see: Last visit 'never' with 'No check-ins yet'
+  s1 see: Top button 'Sell membership'
+  s1 not: A minus day count
+  s1 not: A blank card with no words
+  s2 see: The plan line with its dates; the top button now reads 'Renew'
+  s2 not: The page still saying No membership yet
+  s3 see: A grey pill 'Archived' next to the status
+  s3 not: The memberships or payments gone from the page
+J-F-panel-225-06 | type 12 | owner | Owner on a member page; the member uses the app and has a desk photo
+  s1 see: The photo, a pill 'Using the app', the mobile as a call link and 'WhatsApp'
+  s1 not: The photo shown to anyone but the owner and the front desk
+  s2 see: Each receipt with a way to void it; each membership with a way to cancel it
+  s2 not: A voided receipt still counted in Dues
+J-F-panel-225-07 | type 1 | staff | Members list; a member with a running plan, a part payment and some visits
+  s1 see: Title: the member name
+  s1 see: '<batch> batch · Member since <day>'
+  s1 see: A status pill
+  s1 see: '<plan> · <start> → <end> (<days left>)'
+  s1 see: Tiles 'Dues', 'Last visit', the days tile and 'Total visits'
+  s1 see: Cards 'Training pattern', 'Memberships', 'Payments', 'Details'
+  s1 not: The Dues tile reading 'Fully paid' while money is due
+  s1 not: Another member's payments or visits
+  s2 see: 'Mobile', 'Email', 'Date of birth', 'Address', 'Emergency contact', 'Notes', and any extra details kept from an import
+  s2 not: An Aadhaar or PAN number
+  s3 see: The member form sheet, then the page with the new address
+  s3 not: The change shown here but lost after a refresh
+  s3 not: Another field emptied by the save
+J-F-panel-225-08 | type 2 | staff | A member who comes on a company pass (another kind of member)
+  s1 see: A pill with the pass company name
+  s1 see: 'Comes with <company>. No plan and no dues: <company> pays your gym for each visit.'
+  s1 see: Dues tile '—' with 'No dues on a pass'
+  s1 see: 'No membership needed'
+  s1 see: The top button reads 'Sell membership', not 'Renew'
+  s1 not: A dues amount for a pass member
+  s1 not: The member shown as expired
+J-F-panel-225-09 | type 3 | staff | Front desk on a member page
+  s1 see: Receipts with no way to void them; memberships with no way to cancel them and no extra-days button
+  s1 not: A void, cancel or freeze that the front desk can tap
+  s1 not: The server accepting one from a front-desk sign-in
+  s2 see: 'Member not found'
+  s2 see: 'They may have been removed.'
+  s2 not: A blank page
+J-F-panel-225-10 | type 6 | staff | A member added a minute ago with no plan
+  s1 see: 'No membership yet.'
+  s1 see: 'No memberships yet'
+  s1 see: 'No payments yet'
+  s1 see: Last visit 'never' with 'No check-ins yet'
+  s1 see: Top button 'Sell membership'
+  s1 not: A minus day count
+  s1 not: A blank card with no words
+  s2 see: The plan line with its dates; the top button now reads 'Renew'
+  s2 not: The page still saying No membership yet
+  s3 see: A grey pill 'Archived' next to the status
+  s3 not: The memberships or payments gone from the page
+J-F-panel-225-11 | type 12 | staff | Front desk on a member page
+  s1 see: The same mobile, email, date of birth, address, emergency contact and notes the owner sees
+  s1 not: Gym-wide money totals on this page
+  s1 not: An Aadhaar or PAN number
+J-F-panel-226-01 | type 1 | owner | Member page; the member has not been in today
+  s1 see: Button reads 'Saving…' and cannot be tapped
+  s1 see: Toast 'Checked in for today.'
+  s1 see: Button reads 'Checked in today' and stays greyed
+  s1 see: Last visit reads today; Total visits is one more
+  s1 not: Two visits for one day
+  s1 not: No sign for a second after the tap
+J-F-panel-226-02 | type 2 | owner | Member page of a member who comes on a company pass (another kind of member)
+  s1 see: Toast 'Pass visit counted for <company>.'
+  s1 see: Button reads 'Pass counted today'
+  s1 see: The pass visits this month tile is one more
+  s1 not: The visit saved without the pass company on it
+  s1 not: A dues amount appearing
+J-F-panel-226-03 | type 3 | owner | Member page; the member already checked in today another way (poster or entry machine)
+  s1 see: 'Checked in today', greyed
+  s1 not: A second visit for today
+  s2 see: A red banner with the reason
+  s2 see: The button back to 'Check in'
+  s2 not: 'Checked in for today.' for a visit that was not saved
+J-F-panel-226-04 | type 6 | owner | Member page; the internet is off
+  s1 see: The visit is kept on this device and the button turns to Checked in today
+  s1 not: The visit lost when the internet comes back
+  s1 not: The visit sent twice
+  s2 see: The button reads 'Check in' again
+  s2 not: Yesterday's visit counted as today's
+  s3 see: None on this page
+  s3 not: The button becoming active again by itself on the same day
+J-F-panel-226-05 | type 1 | staff | Member page; the member has not been in today
+  s1 see: Button reads 'Saving…' and cannot be tapped
+  s1 see: Toast 'Checked in for today.'
+  s1 see: Button reads 'Checked in today' and stays greyed
+  s1 see: Last visit reads today; Total visits is one more
+  s1 not: Two visits for one day
+  s1 not: No sign for a second after the tap
+J-F-panel-226-06 | type 2 | staff | Member page of a member who comes on a company pass (another kind of member)
+  s1 see: Toast 'Pass visit counted for <company>.'
+  s1 see: Button reads 'Pass counted today'
+  s1 see: The pass visits this month tile is one more
+  s1 not: The visit saved without the pass company on it
+  s1 not: A dues amount appearing
+J-F-panel-226-07 | type 3 | staff | Member page; the member already checked in today another way (poster or entry machine)
+  s1 see: 'Checked in today', greyed
+  s1 not: A second visit for today
+  s2 see: A red banner with the reason
+  s2 see: The button back to 'Check in'
+  s2 not: 'Checked in for today.' for a visit that was not saved
+J-F-panel-226-08 | type 6 | staff | Member page; the internet is off
+  s1 see: The visit is kept on this device and the button turns to Checked in today
+  s1 not: The visit lost when the internet comes back
+  s1 not: The visit sent twice
+  s2 see: The button reads 'Check in' again
+  s2 not: Yesterday's visit counted as today's
+  s3 see: None on this page
+  s3 not: The button becoming active again by itself on the same day
+J-F-panel-227-01 | type 1 | owner | Member page of a member who left the gym
+  s1 see: Toast 'Member archived.'
+  s1 see: Grey pill 'Archived'
+  s1 see: The button now reads 'Restore member'
+  s1 not: Memberships, payments or visits deleted
+  s1 not: Money still due wiped
+J-F-panel-227-02 | type 2 | owner | Member page of an archived member (the other direction)
+  s1 see: Toast 'Member restored.'
+  s1 see: The 'Archived' pill is gone
+  s1 see: The button reads 'Archive member' in red
+  s1 not: The plan dates changed by the restore
+J-F-panel-227-03 | type 3 | owner | Member page; the internet is off
+  s1 see: Greyed, with the needs-internet words
+  s1 not: An archive that looks done but never reaches the server
+  s2 see: A red banner with the reason; the pill and the button do not change
+  s2 not: 'Member archived.' for a save that failed
+J-F-panel-227-04 | type 6 | owner | Member page
+  s1 see: Each tap gives its toast and flips the pill and the button
+  s1 not: The page and the Members list disagreeing about whether the member is archived
+  s2 see: Pill 'Archived'; all history still on the page
+  s2 not: Expiry or dues reminders still going to an archived member
+J-F-panel-227-05 | type 1 | staff | Member page of a member who left the gym
+  s1 see: Toast 'Member archived.'
+  s1 see: Grey pill 'Archived'
+  s1 see: The button now reads 'Restore member'
+  s1 not: Memberships, payments or visits deleted
+  s1 not: Money still due wiped
+J-F-panel-227-06 | type 2 | staff | Member page of an archived member (the other direction)
+  s1 see: Toast 'Member restored.'
+  s1 see: The 'Archived' pill is gone
+  s1 see: The button reads 'Archive member' in red
+  s1 not: The plan dates changed by the restore
+J-F-panel-227-07 | type 3 | staff | Member page; the internet is off
+  s1 see: Greyed, with the needs-internet words
+  s1 not: An archive that looks done but never reaches the server
+  s2 see: A red banner with the reason; the pill and the button do not change
+  s2 not: 'Member archived.' for a save that failed
+J-F-panel-227-08 | type 6 | staff | Member page
+  s1 see: Each tap gives its toast and flips the pill and the button
+  s1 not: The page and the Members list disagreeing about whether the member is archived
+  s2 see: Pill 'Archived'; all history still on the page
+  s2 not: Expiry or dues reminders still going to an archived member
+J-F-panel-228-01 | type 1 | owner | Member page of a member with a running plan
+  s1 see: Sheet 'Member card' with the card drawn in the gym's colours
+  s1 see: Buttons 'Print', 'Download picture', 'Send on WhatsApp'
+  s1 not: Another member's name, photo or plan on the card
+  s2 see: The browser's print window with the card and 'Cut along the line.'
+  s2 not: The member page behind the sheet printed with it
+J-F-panel-228-02 | type 2 | owner | Member card sheet open (other things to do with the card: a picture, WhatsApp)
+  s1 see: Toast 'Card saved as a picture.' and a picture file is saved
+  s1 not: A blank or cut-off picture
+  s2 see: WhatsApp opens in a new tab on this member's number with a message already typed
+  s2 not: The message sent without the person pressing send in WhatsApp
+  s2 not: Another member's number
+J-F-panel-228-03 | type 3 | owner | Member card sheet open
+  s1 see: Toast 'Could not make the picture. Try Print.'
+  s1 not: 'Card saved as a picture.' with no file
+  s2 see: WhatsApp opens with the message typed and no chat picked
+  s2 not: A chat opened with a wrong number
+J-F-panel-228-04 | type 6 | owner | Member page
+  s1 see: The member page as it was
+  s1 not: Anything saved about the member
+  s1 not: A mark that a card was printed
+  s2 see: The card shows the new valid-till date
+  s2 not: The old date on the card
+J-F-panel-228-05 | type 12 | owner | Member card sheet open
+  s1 see: The QR gives only the member's ID
+  s1 not: The member's name or phone number inside the QR
+  s1 not: The member's address, dues or notes printed on the card
+J-F-panel-228-06 | type 1 | staff | Member page of a member with a running plan
+  s1 see: Sheet 'Member card' with the card drawn in the gym's colours
+  s1 see: Buttons 'Print', 'Download picture', 'Send on WhatsApp'
+  s1 not: Another member's name, photo or plan on the card
+  s2 see: The browser's print window with the card and 'Cut along the line.'
+  s2 not: The member page behind the sheet printed with it
+J-F-panel-228-07 | type 2 | staff | Member card sheet open (other things to do with the card: a picture, WhatsApp)
+  s1 see: Toast 'Card saved as a picture.' and a picture file is saved
+  s1 not: A blank or cut-off picture
+  s2 see: WhatsApp opens in a new tab on this member's number with a message already typed
+  s2 not: The message sent without the person pressing send in WhatsApp
+  s2 not: Another member's number
+J-F-panel-228-08 | type 3 | staff | Member card sheet open
+  s1 see: Toast 'Could not make the picture. Try Print.'
+  s1 not: 'Card saved as a picture.' with no file
+  s2 see: WhatsApp opens with the message typed and no chat picked
+  s2 not: A chat opened with a wrong number
+J-F-panel-228-09 | type 6 | staff | Member page
+  s1 see: The member page as it was
+  s1 not: Anything saved about the member
+  s1 not: A mark that a card was printed
+  s2 see: The card shows the new valid-till date
+  s2 not: The old date on the card
+J-F-panel-228-10 | type 12 | staff | Member card sheet open
+  s1 see: The QR gives only the member's ID
+  s1 not: The member's name or phone number inside the QR
+  s1 not: The member's address, dues or notes printed on the card
+J-F-panel-229-01 | type 1 | owner | Gym online with a gym code; member page of a member who does not use the app yet
+  s1 see: WhatsApp opens in a new tab on this member's number
+  s1 see: A message already typed with the app link and the gym code
+  s1 not: The message sent without the person pressing send in WhatsApp
+  s1 not: Another gym's code or another member's number
+J-F-panel-229-02 | type 2 | owner | Member page of a member with the 'Using the app' pill (another kind of member)
+  s1 see: 'Hi <first name>!'
+  s1 see: 'Here is the MettleUp app link from <gym>, in case you need to install the app again or use a new phone.'
+  s1 see: 'Tap to get the app:' and the link
+  s1 see: 'Gym code: <CODE>'
+  s1 not: Words that invite them as if they were new
+J-F-panel-229-03 | type 3 | owner | Member page
+  s1 see: Greyed, with the needs-internet words
+  s1 not: A tab that opens to an error page
+  s2 see: 'Get the free MettleUp app from <gym> to track your workouts.'
+  s2 see: 'Tap to get the app:' and the plain app link
+  s2 see: No gym code line
+  s2 not: An empty 'Gym code:' line
+  s2 not: A made-up code
+  s3 see: WhatsApp opens with the message typed and no chat picked
+  s3 not: A chat opened with a wrong number
+J-F-panel-229-04 | type 6 | owner | Member page; the link was shared a minute ago
+  s1 see: The member page as it was; the button can be tapped again
+  s1 not: A mark that the link was sent when nobody pressed send
+  s1 not: Anything saved about the member
+J-F-panel-229-05 | type 12 | owner | Member page
+  s1 see: Only the member's first name, the gym name, the app link and the gym code
+  s1 not: The member's mobile, dues or plan in the message
+  s1 not: The message opened on any chat but this member
+J-F-panel-229-06 | type 1 | staff | Gym online with a gym code; member page of a member who does not use the app yet
+  s1 see: WhatsApp opens in a new tab on this member's number
+  s1 see: A message already typed with the app link and the gym code
+  s1 not: The message sent without the person pressing send in WhatsApp
+  s1 not: Another gym's code or another member's number
+J-F-panel-229-07 | type 2 | staff | Member page of a member with the 'Using the app' pill (another kind of member)
+  s1 see: 'Hi <first name>!'
+  s1 see: 'Here is the MettleUp app link from <gym>, in case you need to install the app again or use a new phone.'
+  s1 see: 'Tap to get the app:' and the link
+  s1 see: 'Gym code: <CODE>'
+  s1 not: Words that invite them as if they were new
+J-F-panel-229-08 | type 3 | staff | Member page
+  s1 see: Greyed, with the needs-internet words
+  s1 not: A tab that opens to an error page
+  s2 see: 'Get the free MettleUp app from <gym> to track your workouts.'
+  s2 see: 'Tap to get the app:' and the plain app link
+  s2 see: No gym code line
+  s2 not: An empty 'Gym code:' line
+  s2 not: A made-up code
+  s3 see: WhatsApp opens with the message typed and no chat picked
+  s3 not: A chat opened with a wrong number
+J-F-panel-229-09 | type 6 | staff | Member page; the link was shared a minute ago
+  s1 see: The member page as it was; the button can be tapped again
+  s1 not: A mark that the link was sent when nobody pressed send
+  s1 not: Anything saved about the member
+J-F-panel-229-10 | type 12 | staff | Member page
+  s1 see: Only the member's first name, the gym name, the app link and the gym code
+  s1 not: The member's mobile, dues or plan in the message
+  s1 not: The message opened on any chat but this member
