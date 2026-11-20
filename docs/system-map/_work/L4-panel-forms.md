@@ -1,1 +1,9 @@
 - 2026-11-20 started; inputs read (0 promises, 0 entities, 0 readers).
+- 2026-11-20 L4.1 done: does-not-apply (0 promises listed).
+- 2026-11-20 L4.2 done: checked; finding 01 (desk can add under-18 members, no parent step, notice says no under-18 data).
+- 2026-11-20 L4.3 done: checked; desk photo is readable only by the gym's own keys (HQ emergency read covers member records only); member details reachable by HQ emergency = existing FN-A5-server-hq-gate-workers-3-01.
+- 2026-11-20 L4.4 done: checked; photo left after member removal = existing FN-L4-panel-shop-01.
+- 2026-11-20 L4.5 done: checked; online collect sends name, mobile, amount to the gym's payment company, as the notice says. No finding.
+- 2026-11-20 L4.6 done: checked; existing FN-L4-panel-shop-01.
+- ALL ITEMS DONE. Output: docs/system-map/_work/out/L4-panel-forms.jsonl (1 finding, 1 grid row). About 300 code lines read.
+- Could not check: a second gym; a real add-member write.
