@@ -37,20 +37,20 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 53 | 5.1 (206k tokens) |
+| A5 | 54 | 5.1 (206k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 5 in progress, 150 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 6 in progress, 151 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A5-phone-tracker-components-1-3 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-components-1; list in _work/items/A5-phone-tracker-components-1-3.txt | in progress | _work/A5-phone-tracker-components-1-3.md |  |
 | A5-phone-tracker-components-1-4 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-components-1; list in _work/items/A5-phone-tracker-components-1-4.txt | in progress | _work/A5-phone-tracker-components-1-4.md |  |
 | A5-phone-tracker-components-2-1 | A5 | journeys: 10 features (10 feature x role pairs) of phone / phone/tracker-components-2; list in _work/items/A5-phone-tracker-components-2-1.txt | in progress | _work/A5-phone-tracker-components-2-1.md |  |
 | A5-phone-tracker-components-2-2 | A5 | journeys: 10 features (10 feature x role pairs) of phone / phone/tracker-components-2; list in _work/items/A5-phone-tracker-components-2-2.txt | in progress | _work/A5-phone-tracker-components-2-2.md |  |
 | A5-phone-tracker-components-2-3 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/tracker-components-2; list in _work/items/A5-phone-tracker-components-2-3.txt | in progress | _work/A5-phone-tracker-components-2-3.md |  |
-| A5-phone-screens-2-4 | A5 | journeys: 7 features (7 feature x role pairs) of phone / phone/screens-2; list in _work/items/A5-phone-screens-2-4.txt | done | _work/A5-phone-screens-2-4.md | 7 features: 52 full journeys and 53 type lines; 1 finding (S3): Gym timings offline the first time says the gym has not added its hours |
+| A5-phone-tracker-components-2-4 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/tracker-components-2; list in _work/items/A5-phone-tracker-components-2-4.txt | in progress | _work/A5-phone-tracker-components-2-4.md |  |
+| A5-phone-tracker-data-1 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-data; list in _work/items/A5-phone-tracker-data-1.txt | in progress | _work/A5-phone-tracker-data-1.md |  |
 | A5-phone-shop-1-1 | A5 | journeys: 10 features (18 feature x role pairs) of phone / phone/shop-1; list in _work/items/A5-phone-shop-1-1.txt | done | _work/A5-phone-shop-1-1.md | 10 features (18 pairs): 106 full journeys and 134 type lines; 0 findings; seen in passing: the report request says the gym gets exercises and notes while What my gym can see says it never does (check in 3H); check-in time uses the phone clock |
 | A5-phone-shop-1-2 | A5 | journeys: 10 features (16 feature x role pairs) of phone / phone/shop-1; list in _work/items/A5-phone-shop-1-2.txt | done | _work/A5-phone-shop-1-2.md | 10 features (16 pairs): 72 full journeys and 121 type lines; 1 finding (S3): Take back my request fails silently offline and the pause and renew area disappears while the request still waits |
 | A5-phone-shop-2-1 | A5 | journeys: 8 features (16 feature x role pairs) of phone / phone/shop-2; list in _work/items/A5-phone-shop-2-1.txt | done | _work/A5-phone-shop-2-1.md | 8 features (16 pairs): 79 full journeys and 115 type lines; 1 finding (S3): the My membership card says No internet while it waits, even online |
@@ -58,7 +58,8 @@ Counts: 0 todo, 5 in progress, 150 done, 0 blocked. Full list: work-items.jsonl.
 | A5-phone-shop-2-3 | A5 | journeys: 8 features (16 feature x role pairs) of phone / phone/shop-2; list in _work/items/A5-phone-shop-2-3.txt | done | _work/A5-phone-shop-2-3.md | 8 features (16 pairs): 91 full journeys and 120 type lines; 1 finding (S4): the sample shop is marked live but cannot be opened; seen in passing: complaints to Gym admin are also read by the front desk against two older promises |
 | A5-phone-tracker-components-1-1 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/tracker-components-1; list in _work/items/A5-phone-tracker-components-1-1.txt | done | _work/A5-phone-tracker-components-1-1.md | 9 features: 36 full journeys and 74 type lines; 1 finding (S3): Share before and after can swap the photos so the newer one shows as Before; coordinator wrapped one-text user_sees into lists |
 | A5-phone-tracker-components-1-2 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-components-1; list in _work/items/A5-phone-tracker-components-1-2.txt | done | _work/A5-phone-tracker-components-1-2.md | 8 features: 61 full journeys and 56 type lines; 2 findings (S3): an exercise chart opens on its 1-year view for free members when the last workout is older than 3 months; Skip for now hides the first-routine card for good |
-(+ 142 older done items, not shown)
+| A5-phone-tracker-components-1-3 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-components-1; list in _work/items/A5-phone-tracker-components-1-3.txt | done | _work/A5-phone-tracker-components-1-3.md | 8 features: 38 full journeys and 59 type lines; 1 finding (S3): a treadmill speed above 40 stays in the box but the set saves no speed, with no message; coordinator shortened the root_cause_key |
+(+ 143 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
