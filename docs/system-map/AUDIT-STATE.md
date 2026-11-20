@@ -1,10 +1,11 @@
-status: PAUSED (weekly Fable 97 at 07:45 IST on 20 Nov; stop line 99; no helper fits. HE WAS TOLD ONCE for this pause in run pacer-1120-0722: do not tell him again. Resumes on Opus 5.5 medium after he resets the Fable limit)
+MODEL: OPUS (his switch after the 20 Nov Fable reset). Every helper = Opus 5.5 ("opus"), effort "medium". Only the weekly all-models stop line counts (90, or 95 in its last 24 hours).
+status: RUNNING (pacer-1120-0935 started 20 Nov 09:35 IST: Fable reset to 0, so the Fable pause is over)
 phase/step: A2, A3, A4, A4b and A7 DONE. A5 (journeys): 35 of 119 items done (live features only). Lens 4 pilot done; lenses 4, 3, 5 are ready to run beside A5. E1-E4 done; 3F draft done
 expected end: not before about 8 Dec 2026 at the present size. projection: about 3.1 weekly periods of 3 (A5 alone needs about 1.6 more: 87 items x 1.7 weekly points): OVER; HIS CHOICE of 19 Nov (live features first) is applied: full journeys only for features with status live; the rest is deferred and listed in the final report
 mode: ANALYSIS ONLY. No app code, tests, workflows, skills or settings change. "Apply" items in 3E/3F = proposals only.
-model: every helper = Fable 5.2 ("fable"), effort "medium". Max 6 helpers at once.
+model: every helper = Opus 5.5 ("opus"), effort "medium" (since 20 Nov 2026). Max 6 helpers at once.
 blind check: never put the held-out rows or hints into a helper brief (ids are in plan section 3G only).
-weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches 99% / I will reset Fable Limit and then continue"): (a) weekly Fable: stop line 99, every day; start no new helper when weekly Fable + 2 would pass 99; pause at 97 or more with no helper fitting, and tell him once. (b) weekly all models: stop line 90 while its reset is more than 24 hours away, 95 in the last 24 hours; start no new helper when weekly all + 1 would pass it.
+weekly stop line: weekly all models only: 90 while its reset is more than 24 hours away, 95 in the last 24 hours; start no new helper when weekly all + 1 would pass it. (The weekly Fable line no longer applies: the audit runs on Opus.)
 
 ## Windows
 | window reset (IST) | F5 start | F5 now | WF | WA | helpers run | why stopped |
@@ -40,10 +41,16 @@ weekly stop lines (his words, 19 Nov 2026 09:40 IST: "Lets stop if fable reaches
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 0 in progress, 132 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 6 in progress, 132 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
+| A5-panel-demo-2 | A5 | journeys: 8 features (8 feature x role pairs) of panel / panel/demo; list in _work/items/A5-panel-demo-2.txt | in progress | _work/A5-panel-demo-2.md |  |
+| A5-panel-small-1 | A5 | journeys: 7 features (9 feature x role pairs) of panel / small areas; list in _work/items/A5-panel-small-1.txt | in progress | _work/A5-panel-small-1.md |  |
+| A5-phone-screens-1-1 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/screens-1; list in _work/items/A5-phone-screens-1-1.txt | in progress | _work/A5-phone-screens-1-1.md |  |
+| A5-phone-screens-1-2 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/screens-1; list in _work/items/A5-phone-screens-1-2.txt | in progress | _work/A5-phone-screens-1-2.md |  |
+| A5-phone-screens-1-3 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/screens-1; list in _work/items/A5-phone-screens-1-3.txt | in progress | _work/A5-phone-screens-1-3.md |  |
+| A5-phone-screens-1-4 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/screens-1; list in _work/items/A5-phone-screens-1-4.txt | in progress | _work/A5-phone-screens-1-4.md |  |
 | A5-panel-ui-shell-1 | A5 | journeys: 10 features (23 feature x role pairs) of panel / panel/ui-shell; list in _work/items/A5-panel-ui-shell-1.txt | done | _work/A5-panel-ui-shell-1.md | 10 features (23 feature x role pairs): 120 full journeys and 170 type lines; 1 finding (S2): a front-desk login can freeze a plan for up to 365 days by Approve on a pause request on Today, though staff rights say staff cannot freeze plans; 5 seen-in-passing lines in the checkpoint |
 | A5-panel-ui-shell-2 | A5 | journeys: 10 features (22 feature x role pairs) of panel / panel/ui-shell; list in _work/items/A5-panel-ui-shell-2.txt | done | _work/A5-panel-ui-shell-2.md | 7 of 10 features (15 feature x role pairs): 79 full journeys and 110 type lines; 0 findings; limit reached: the 3 features left are item A5-panel-ui-shell-2b; promise_ids are empty on every journey of this item (promises.json was not searched): link them in a later pass; 12 type-10 lines had at_step 0 and were set to 1 by the coordinator; 4 seen-in-passing lines in the checkpoint |
 | A5-panel-ui-shell-3 | A5 | journeys: 10 features (20 feature x role pairs) of panel / panel/ui-shell; list in _work/items/A5-panel-ui-shell-3.txt | done | _work/A5-panel-ui-shell-3.md | 10 features (20 feature x role pairs): 116 full journeys and 145 type lines; 1 finding (S3): the owner's quick buttons are saved only in his own browser (same as the logic-2-3 finding: merge in 3H); 12 seen-in-passing lines in the checkpoint (one: a trainer may open other trainers' pages) |

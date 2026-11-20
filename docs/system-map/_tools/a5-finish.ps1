@@ -11,7 +11,7 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 $ex = node docs/system-map/_tools/expand.mjs $id; $ex | Select-Object -Last 1
 node docs/system-map/_tools/merge.mjs "$id-gen" --blind $blind | Select-Object -Last 1
 $m = (Select-String -Path docs/system-map/_tools/finish.ps1 -Pattern "^\`$m = '(.+)'").Matches[0].Groups[1].Value
-Set-Content $m "Audit: $id generated journeys merged`n`nCo-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>" -Encoding ascii
+Set-Content $m "Audit: $id generated journeys merged`n`nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" -Encoding ascii
 git add docs/system-map 2>$null
 git commit -q -F $m
 git push -q origin HEAD:main

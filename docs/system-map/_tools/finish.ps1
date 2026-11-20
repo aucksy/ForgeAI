@@ -1,7 +1,7 @@
 param([string]$id, [string]$tokens, [string]$line)
 $r = 'C:\Users\Aakash Pahuja\AppData\Local\Temp\claude\19050ed31f641eaa\a75edd9f-3244-414f-b133-ce887d21fe49\scratchpad\wt-audit'
 Set-Location $r
-Set-Content -Path 'D:\Apps\ForgeAI\audit-pacer.lock' -Value ("pacer-1120-0722 " + (Get-Date -Format o)) -Encoding ascii
+Set-Content -Path 'D:\Apps\ForgeAI\audit-pacer.lock' -Value ("pacer-1120-0935 " + (Get-Date -Format o)) -Encoding ascii
 node docs/system-map/_tools/merge.mjs $id --blind "C:/Users/Aakash Pahuja/.claude/audit-blind-patterns.txt"
 $code = $LASTEXITCODE
 "merge exit $code"
@@ -21,8 +21,8 @@ if ($code -ne 0) {
 if ($miss.Count -gt 0) { "NOT MARKED DONE: lines missing"; exit 2 }
 node docs/system-map/_tools/state.mjs done $id $tokens $line
 node docs/system-map/_tools/state.mjs summary | Select-Object -Last 2
-$m = 'C:\Users\AAKASH~1\AppData\Local\Temp\claude\19050ed31f641eaa\fe098edf-1c57-41f3-a390-bc726151af88\scratchpad\msg.txt'
-Set-Content $m "Audit: $id merged`n`nCo-Authored-By: Claude Fable 5.2 <noreply@anthropic.com>" -Encoding ascii
+$m = 'C:\Users\AAKASH~1\AppData\Local\Temp\claude\19050ed31f641eaa\a06ac638-86b4-4fed-bb19-52ae81884fa6\scratchpad\msg.txt'
+Set-Content $m "Audit: $id merged`n`nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" -Encoding ascii
 git add docs/system-map 2>$null
 git commit -q -F $m
 git push -q origin HEAD:main
