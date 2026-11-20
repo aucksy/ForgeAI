@@ -44,31 +44,30 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A5 | 121 | 5.1 (202k tokens) |
 | L4 | 42 | 3.9 (157k tokens) |
 | L5 | 33 | 4.1 (163k tokens) |
-| L3 | 28 | 4.5 (179k tokens) |
+| L3 | 29 | 4.5 (180k tokens) |
 
 ## Work items
-Counts: 4 todo, 5 in progress, 321 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 3 todo, 5 in progress, 322 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L3-phone-shop-1 | L3 | lens 3 (Security) x phone / phone/shop-1: 11 items | in progress | _work/L3-phone-shop-1.md |  |
 | L3-phone-tracker-services-1 | L3 | lens 3 (Security) x phone / phone/tracker-services-1: 11 items | in progress | _work/L3-phone-tracker-services-1.md |  |
 | L3-phone-tracker-services-2 | L3 | lens 3 (Security) x phone / phone/tracker-services-2: 11 items | in progress | _work/L3-phone-tracker-services-2.md |  |
 | L3-phone-native | L3 | lens 3 (Security) x phone / phone/native: 11 items | in progress | _work/L3-phone-native.md |  |
 | L3-phone-components-1 | L3 | lens 3 (Security) x phone / phone/components-1: 11 items | in progress | _work/L3-phone-components-1.md |  |
-| L3-phone-components-2 | L3 | lens 3 (Security) x phone / phone/components-2: 11 items | todo | _work/L3-phone-components-2.md |  |
+| L3-phone-components-2 | L3 | lens 3 (Security) x phone / phone/components-2: 11 items | in progress | _work/L3-phone-components-2.md |  |
 | L3-phone-cloud-backup-ai | L3 | lens 3 (Security) x phone / phone/cloud-backup-ai: 11 items | todo | _work/L3-phone-cloud-backup-ai.md |  |
 | L3-phone-onboarding-db | L3 | lens 3 (Security) x phone / phone/onboarding-db: 11 items | todo | _work/L3-phone-onboarding-db.md |  |
 | L3-phone-lib-core | L3 | lens 3 (Security) x phone / phone/lib-core: 11 items | todo | _work/L3-phone-lib-core.md |  |
-| L3-phone-screens-1 | L3 | lens 3 (Security) x phone / phone/screens-1: 11 items | done | _work/L3-phone-screens-1.md | L3 phone-screens-1: 11 checked, 1 new S4 (spreadsheet library 0.18.5; REPEAT of FN-L3-phone-tracker-components-1-01), 2 reused |
 | L3-phone-screens-2 | L3 | lens 3 (Security) x phone / phone/screens-2: 11 items | done | _work/L3-phone-screens-2.md | L3 phone-screens-2: 11 checked, 0 new, 3 reused |
+| L3-phone-shop-1 | L3 | lens 3 (Security) x phone / phone/shop-1: 11 items | done | _work/L3-phone-shop-1.md | L3 phone-shop-1: 10 checked, 1 does-not-apply, 0 new, 9 reused |
 | L3-phone-shop-2 | L3 | lens 3 (Security) x phone / phone/shop-2: 11 items | done | _work/L3-phone-shop-2.md | L3 phone-shop-2: 10 checked, 1 does-not-apply, 1 new S4 (3 member actions lack cross-gym refusal tests), 3 reused |
 | L3-phone-tracker-components-1 | L3 | lens 3 (Security) x phone / phone/tracker-components-1: 11 items | done | _work/L3-phone-tracker-components-1.md | L3 phone-tracker-components-1: 10 checked, 1 does-not-apply, 2 new (S3 phone spreadsheet library 0.18.5 alerts, S4 navigation library alert), 0 reused |
 | L3-phone-tracker-components-2 | L3 | lens 3 (Security) x phone / phone/tracker-components-2: 11 items | done | _work/L3-phone-tracker-components-2.md | L3 phone-tracker-components-2: 10 checked, 1 does-not-apply, 1 new S4 (sharing library alert), 3 reused |
 | L3-phone-tracker-data | L3 | lens 3 (Security) x phone / phone/tracker-data: 11 items | done | _work/L3-phone-tracker-data.md | L3 phone-tracker-data: 9 checked, 2 does-not-apply, 0 new, 1 reused |
 | L3-phone-tracker-engine | L3 | lens 3 (Security) x phone / phone/tracker-engine: 11 items | done | _work/L3-phone-tracker-engine.md | L3 phone-tracker-engine: 6 checked, 5 does-not-apply, 0 new, 0 reused |
 | L3-phone-tracker-lib | L3 | lens 3 (Security) x phone / phone/tracker-lib: 11 items | done | _work/L3-phone-tracker-lib.md | L3 phone-tracker-lib: 9 checked, 2 does-not-apply, 0 new, 0 reused |
-(+ 313 older done items, not shown)
+(+ 314 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
