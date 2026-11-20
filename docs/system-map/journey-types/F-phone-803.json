@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-phone-803-member-10","feature":"F-phone-803","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":2,"entity":"none","note":"Older workouts store warm-up as isWarmup and drop/failure as setType","wi":"A5-phone-tracker-components-2-1"},
+{"kind":"jtype","id":"JT-F-phone-803-member-11","feature":"F-phone-803","role":"member","type":11,"applies":"yes","why_not":"none","variants":["T11-watch"],"at_step":2,"entity":"none","note":"A warm-up set shown on the watch's next-set line","wi":"A5-phone-tracker-components-2-1"},
+{"kind":"jtype","id":"JT-F-phone-803-member-4","feature":"F-phone-803","role":"member","type":4,"applies":"no","why_not":"the sheet has four fixed choices; no data size changes it","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-components-2-1"},
+{"kind":"jtype","id":"JT-F-phone-803-member-5","feature":"F-phone-803","role":"member","type":5,"applies":"no","why_not":"no time edge: a set type is not dated","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-components-2-1"},
+{"kind":"jtype","id":"JT-F-phone-803-member-7","feature":"F-phone-803","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-doubletap"],"at_step":2,"entity":"none","note":"A double tap on 'Remove set' must remove one set only","wi":"A5-phone-tracker-components-2-1"},
+{"kind":"jtype","id":"JT-F-phone-803-member-8","feature":"F-phone-803","role":"member","type":8,"applies":"no","why_not":"no setting changes the choices (RPE moved to its own sheet)","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-components-2-1"},
+{"kind":"jtype","id":"JT-F-phone-803-member-9","feature":"F-phone-803","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-bigfont"],"at_step":1,"entity":"none","note":"Five rows must fit at the largest font","wi":"A5-phone-tracker-components-2-1"}
+]
