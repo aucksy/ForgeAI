@@ -5,3 +5,4 @@ F-phone-402: 12 journeys, 14 type lines (E-leads used for the 'Tell my gym' lead
 F-phone-430: 10 journeys, 16 type lines
 F-phone-403: 12 journeys, 14 type lines
 F-phone-432: 10 journeys, 14 type lines (no entity fits: share only, nothing stored)
+F-phone-405: 6 journeys, 18 type lines, 1 finding (sample shop unreachable: every page redirects without a gym; no entity fits, phone-only store)
