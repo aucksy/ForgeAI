@@ -47,19 +47,18 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L3 | 37 | 4.4 (174k tokens) |
 | CAL | 0 | 5 (start value) |
 | A8r | 1 | 4.9 (197k tokens) |
-| A8 | 6 | 5.5 (220k tokens) |
+| A8 | 7 | 5.4 (215k tokens) |
 
 ## Work items
-Counts: 94 todo, 5 in progress, 341 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 93 todo, 5 in progress, 342 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
+| M3-play-report | coord | coordinator, in the simpleapps108 Chrome window: Play pre-launch report + Android vitals + live Play version -> _sources/machine/play-report.md (also fills the Play row of live-state.csv) | in progress | - |  |
 | A8-panel-auth-data-3 | A8 | coverage: 93 Tier 1 journeys of 8 features, panel / panel-auth-data; list in _work/items/A8-panel-auth-data-3.txt | in progress | _work/A8-panel-auth-data-3.md |  |
 | A8-panel-brand-shell-1 | A8 | coverage: 93 Tier 1 journeys of 10 features, panel / panel-brand-shell; list in _work/items/A8-panel-brand-shell-1.txt | in progress | _work/A8-panel-brand-shell-1.md |  |
 | A8-panel-brand-shell-2 | A8 | coverage: 90 Tier 1 journeys of 9 features, panel / panel-brand-shell; list in _work/items/A8-panel-brand-shell-2.txt | in progress | _work/A8-panel-brand-shell-2.md |  |
 | A8-panel-brand-shell-3 | A8 | coverage: 120 Tier 1 journeys of 9 features, panel / panel-brand-shell; list in _work/items/A8-panel-brand-shell-3.txt | in progress | _work/A8-panel-brand-shell-3.md |  |
-| A8-panel-demo-1 | A8 | coverage: 91 Tier 1 journeys of 16 features, panel / panel-demo; list in _work/items/A8-panel-demo-1.txt | in progress | _work/A8-panel-demo-1.md |  |
-| M3-play-report | coord | coordinator, in the simpleapps108 Chrome window: Play pre-launch report + Android vitals + live Play version -> _sources/machine/play-report.md (also fills the Play row of live-state.csv) | todo | - |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
 | CAL-2 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged | todo | _work/CAL-2.md |  |
@@ -84,7 +83,7 @@ Counts: 94 todo, 5 in progress, 341 done, 0 blocked. Full list: work-items.jsonl
 | A8-panel-screens-2-1 | A8 | coverage: 90 Tier 1 journeys of 10 features, panel / panel-screens-2; list in _work/items/A8-panel-screens-2-1.txt | todo | _work/A8-panel-screens-2-1.md |  |
 | A8-panel-screens-2-2 | A8 | coverage: 70 Tier 1 journeys of 10 features, panel / panel-screens-2; list in _work/items/A8-panel-screens-2-2.txt | todo | _work/A8-panel-screens-2-2.md |  |
 | A8-panel-screens-2-3 | A8 | coverage: 70 Tier 1 journeys of 10 features, panel / panel-screens-2; list in _work/items/A8-panel-screens-2-3.txt | todo | _work/A8-panel-screens-2-3.md |  |
-| A8-rules | A8r | coverage rule per journey template (42) from the CI gate lists -> _work/a8-rules.json; brief _work/briefs/A8-rules.md | done | _work/A8-rules.md | A8-rules: 42 templates ruled; Tier 2 16,807 journeys: 171 full, 804 partial, 15,832 none |
+| A8-panel-screens-2-4 | A8 | coverage: 105 Tier 1 journeys of 9 features, panel / panel-screens-2; list in _work/items/A8-panel-screens-2-4.txt | todo | _work/A8-panel-screens-2-4.md |  |
 | A8-tier2 | A8 | script: _tools/a8-tier2.mjs applies _work/a8-rules.json to the 16,807 Tier 2 journeys -> _work/out/A8-tier2.jsonl; then merge.mjs A8-tier2 | done | - | A8-tier2 merged by rule: 171 full, 804 partial, 15,832 none |
 | A8-hq-app-1 | A8 | coverage: 86 Tier 1 journeys of 17 features, hq / hq-app; list in _work/items/A8-hq-app-1.txt | done | _work/A8-hq-app-1.md | A8 hq-app-1: 86 journeys, 0 full, 70 partial, 16 none; 6 findings |
 | A8-hq-app-2 | A8 | coverage: 43 Tier 1 journeys of 8 features, hq / hq-app; list in _work/items/A8-hq-app-2.txt | done | _work/A8-hq-app-2.md | A8 hq-app-2 (pilot): 43 journeys, 1 full, 29 partial, 13 none; 3 findings |
@@ -92,8 +91,9 @@ Counts: 94 todo, 5 in progress, 341 done, 0 blocked. Full list: work-items.jsonl
 | A8-panel-assistant-2 | A8 | coverage: 43 Tier 1 journeys of 9 features, panel / panel-assistant; list in _work/items/A8-panel-assistant-2.txt | done | _work/A8-panel-assistant-2.md | A8 panel-assistant-2: 43 journeys, 0 full, 36 partial, 7 none; 7 findings |
 | A8-panel-auth-data-1 | A8 | coverage: 70 Tier 1 journeys of 9 features, panel / panel-auth-data; list in _work/items/A8-panel-auth-data-1.txt | done | _work/A8-panel-auth-data-1.md | A8 panel-auth-data-1: 70 journeys, 5 full, 60 partial, 5 none; 9 findings (2 S2) |
 | A8-panel-auth-data-2 | A8 | coverage: 108 Tier 1 journeys of 9 features, panel / panel-auth-data; list in _work/items/A8-panel-auth-data-2.txt | done | _work/A8-panel-auth-data-2.md | A8 panel-auth-data-2: 108 journeys, 4 full, 84 partial, 20 none; 10 findings (2 S2) |
-(+ 69 more todo items, not shown)
-(+ 333 older done items, not shown)
+| A8-panel-demo-1 | A8 | coverage: 91 Tier 1 journeys of 16 features, panel / panel-demo; list in _work/items/A8-panel-demo-1.txt | done | _work/A8-panel-demo-1.md | A8 panel-demo-1: 91 journeys, 0 full, 42 partial, 49 none; 7 findings |
+(+ 68 more todo items, not shown)
+(+ 334 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
