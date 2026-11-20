@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-server-312-owner-10","feature":"F-server-312","role":"owner","type":10,"applies":"no","why_not":"server code; same signature as 0010","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-database-1-4"},
+{"kind":"jtype","id":"JT-F-server-312-owner-11","feature":"F-server-312","role":"owner","type":11,"applies":"yes","why_not":"none","variants":["T11-twopanels"],"at_step":2,"entity":"E-gym-sessions","note":"the removed person's other device is signed out","wi":"A5-server-database-1-4"},
+{"kind":"jtype","id":"JT-F-server-312-owner-4","feature":"F-server-312","role":"owner","type":4,"applies":"yes","why_not":"none","variants":["T4-long","T4-hinglish"],"at_step":1,"entity":"E-gym-staff","note":"name cut to 60 letters without a word","wi":"A5-server-database-1-4"},
+{"kind":"jtype","id":"JT-F-server-312-owner-5","feature":"F-server-312","role":"owner","type":5,"applies":"no","why_not":"nothing dated","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-database-1-4"},
+{"kind":"jtype","id":"JT-F-server-312-owner-7","feature":"F-server-312","role":"owner","type":7,"applies":"yes","why_not":"none","variants":["T7-doubletap","T7-twostaff"],"at_step":1,"entity":"E-gym-staff","note":"the business lock makes the second add PHONE_TAKEN","wi":"A5-server-database-1-4"},
+{"kind":"jtype","id":"JT-F-server-312-owner-8","feature":"F-server-312","role":"owner","type":8,"applies":"no","why_not":"no setting","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-database-1-4"},
+{"kind":"jtype","id":"JT-F-server-312-owner-9","feature":"F-server-312","role":"owner","type":9,"applies":"no","why_not":"server function only; the screen that calls it belongs to another feature","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-database-1-4"}
+]
