@@ -1,0 +1,46 @@
+# L4-phone-screens-1: 4 x phone / phone/screens-1. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L4.1 | 4 | Promise register (A7)
+L4.2 | 4 | India DPDP Act duties (notice, consent, purpose, deletion, breach timing, children)
+L4.3 | 4 | who at MettleUp can see gym data and the record of it (read log)
+L4.4 | 4 | data kept longer than promised
+L4.5 | 4 | data sent to outside services (AI, WhatsApp, analytics, Health Connect / Google Health / Fitbit) vs what the policy says
+L4.6 | 4 | account deletion really deletes everywhere (backups noted)
+## PROMISES TO CHECK (id | status | where | text)
+P-A7-phone-watch-1-09 | partly | apps/mobile/src/app/(tabs)/workout.tsx:348 | Your in-progress workout will be deleted.
+P-A7-phone-watch-1-14 | partly | apps/mobile/src/app/measures/index.tsx:334 | Tap your own entry to fix or delete it.
+P-A7-phone-watch-1-16 | partly | apps/mobile/src/app/measures/index.tsx:334 | Tap an entry to fix or delete it.
+P-A7-phone-watch-1-11 | unknown | apps/mobile/src/app/import/index.tsx:231 | It is never stopped half-way.
+P-A7-phone-watch-1-12 | unknown | apps/mobile/src/app/import/index.tsx:770 | Delete all {ownWorkouts} of your workout{…} in MettleUp, then import.
+P-A7-phone-watch-1-13 | unknown | apps/mobile/src/app/import/index.tsx:778 | A workout already here is skipped, also one you logged in MettleUp too (same day, started within 30 minutes), so it’s safe to re-run.
+## ENTITIES WITH PERSONAL DATA (id | personal | kept how long | where stored)
+(none)
+## READERS OF THOSE ENTITIES IN THIS AREA (id | entity | kind | where)
+(none)
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-100 | live | App start-up and frame: open the database, welcome or error screen instead of the app, gym look, keep a gym link for aft | apps/mobile/src/app/_layout.tsx:98
+F-phone-101 | live | Old, retired or broken links land on the page that replaced them (Progress, Analytics, Body weight, Home, Library, Measu | apps/mobile/src/app/+not-found.tsx:9
+F-phone-102 | live | Workout tab: Up next card (resume, start, done today), start an empty workout, folders and routines, find a plan | apps/mobile/src/app/(tabs)/workout.tsx:99
+F-phone-103 | live | Profile tab: photo and numbers, history chart, Your progress links, workouts feed, the workouts of one week or month, ba | apps/mobile/src/app/(tabs)/profile.tsx:150
+F-phone-104 | live | Edit your profile (photo, name, bio, link, mobile, goal, experience, age, height, body figure) | apps/mobile/src/app/edit-profile.tsx:58
+F-phone-106 | live | Calendar: streak, workout days by month and year, search workouts, log a past workout | apps/mobile/src/app/calendar.tsx:34
+F-phone-109 | live | Exercise list (search, filters) and one exercise's page (summary, chart, records, history, how to) | apps/mobile/src/app/exercises.tsx:18
+F-phone-110 | live | Create or edit your own exercise, and hide or show library exercises | apps/mobile/src/app/library/new.tsx:98
+F-phone-111 | live | Body: log and chart body weight and measurements (also shows what the gym's trainer measured) | apps/mobile/src/app/measures/index.tsx:66
+F-phone-113 | live | 1-rep max and percentage calculator | apps/mobile/src/app/one-rep-max.tsx:29
+F-phone-114 | live | Bring in past workouts and routines from Hevy or Strong (export file, or a Hevy share link) | apps/mobile/src/app/import/index.tsx:133
+F-phone-115 | live | Join a gym from its invite link (kept through setup if the app is new) | apps/mobile/src/app/j/[code].tsx:2
+F-phone-116 | live | Check in at the gym by QR (poster link or the app's own scanner) | apps/mobile/src/app/c/[code].tsx:2
+F-phone-117 | behind switch | Find my gym (prove your number by WhatsApp, join the gym that lists you, or tell your gym) | apps/mobile/src/app/find-gym.tsx:64
+F-phone-119 | hidden | AI coach chat and its settings page (a coach link only fills the message box) | apps/mobile/src/app/(tabs)/coach.tsx:35
+F-phone-120 | hidden | Nutrition page | apps/mobile/src/app/nutrition.tsx:62
+F-phone-137 | live | Gym tab: join your gym, or the gym's home (membership, check in, leaderboard and a gym mate's shared workouts, gym timin | apps/mobile/src/app/(tabs)/shop.tsx:2
+F-phone-233 | behind switch | Switched-off screens: AI coach chat tab (with the forgeai://coach link) and today's nutrition log; both send the member  | apps/mobile/src/app/(tabs)/coach.tsx:35
+F-phone-234 | live | Workout tab and what opens from it: Up next card, see today's workout before starting, quick workout for the time I have | apps/mobile/src/app/(tabs)/workout.tsx:99
+F-phone-235 | live | Profile tab and its pages: profile and history chart, edit my profile, badges, calendar, statistics, all records, credit | apps/mobile/src/app/(tabs)/profile.tsx:150
+F-phone-236 | live | Exercise library: the exercises list, one exercise's page (summary, history, how to), hidden exercises, create or edit m | apps/mobile/src/app/exercises.tsx:18
+F-phone-237 | live | Body measures: body weight, ten measurements and photos on one page with a graph, add a day's entry, trainer's measureme | apps/mobile/src/app/measures/index.tsx:66
+F-phone-238 | live | Gym tab: join my gym, the gym's home, join by invite link (forgeai://j), check in by QR link (forgeai://c) and the poste | apps/mobile/src/app/(tabs)/shop.tsx:2
+## NOT LISTED
+0 open promises of this area are not about personal data or law by their words (script filter); they are left to hunt 10 and lens 10.
+3 promises of this area already have the status kept.

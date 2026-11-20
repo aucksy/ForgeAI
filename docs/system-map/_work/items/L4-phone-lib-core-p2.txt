@@ -1,0 +1,64 @@
+# L4-phone-lib-core-p2: 4 x phone / phone/lib-core part 2. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L4.1 | 4 | Promise register (A7)
+## PROMISES TO CHECK (id | status | where | text) part 2 of 3
+P-A7-whats-new-3-14 | partly | apps/mobile/src/lib/whatsNew.ts:517 | Joined a gym that has its own look? The app changes to your gym's name and colours.
+P-A7-whats-new-3-15 | partly | apps/mobile/src/lib/whatsNew.ts:520 | After you join, a "Gym" button appears at the bottom.
+P-A7-whats-new-3-21 | partly | apps/mobile/src/lib/whatsNew.ts:545 | Last time's numbers now come from the last time you did that exercise, in any routine.
+P-A7-whats-new-3-24 | partly | apps/mobile/src/lib/whatsNew.ts:551 | Turn on a big "In use" screen after each set, so others know the machine is taken.
+P-A7-whats-new-3-28 | partly | apps/mobile/src/lib/whatsNew.ts:575 | Did a workout without a routine? Save it as a routine in one tap when you finish.
+P-A7-whats-new-3-31 | partly | apps/mobile/src/lib/whatsNew.ts:586 | The Workout tab now tells you when a new version of MettleUp is ready.
+P-A7-whats-new-3-33 | partly | apps/mobile/src/lib/whatsNew.ts:588 | Joining a gym now asks you to confirm you are 18 or older and agree to the terms.
+P-A7-whats-new-3-36 | partly | apps/mobile/src/lib/whatsNew.ts:597 | In a routine, each exercise shows the kilos to beat, and each set shows what to aim for.
+P-A7-whats-new-3-37 | partly | apps/mobile/src/lib/whatsNew.ts:599 | New "My membership" page: your plan, end date, days left and visits this month.
+P-A7-whats-new-3-38 | partly | apps/mobile/src/lib/whatsNew.ts:602 | Scan the QR code at your gym's desk, then start today's workout in one tap.
+P-A7-whats-new-3-41 | partly | apps/mobile/src/lib/whatsNew.ts:611 | Switching gyms while a shop order is waiting now asks you first, because switching cancels it.
+P-A7-whats-new-3-42 | partly | apps/mobile/src/lib/whatsNew.ts:618 | Join your gym with its code.
+P-A7-whats-new-3-47 | partly | apps/mobile/src/lib/whatsNew.ts:629 | Said no to the camera? The app now tells you and opens your phone's Settings to allow it.
+P-A7-whats-new-3-49 | partly | apps/mobile/src/lib/whatsNew.ts:641 | A new app icon that fits round home screens.
+P-A7-whats-new-3-52 | partly | apps/mobile/src/lib/whatsNew.ts:650 | A new record pops up with confetti and names the record you beat.
+P-A7-whats-new-3-53 | partly | apps/mobile/src/lib/whatsNew.ts:651 | During a workout, hold and drag an exercise to move it.
+P-A7-phone-watch-1-44 | unknown | apps/mobile/src/lib/feedbackVoice.ts:53 | Neither we nor that service keep it.
+P-A7-phone-watch-1-45 | unknown | apps/mobile/src/lib/feedbackVoice.ts:53 | The text reaches us only if you tap Send.
+P-A7-phone-watch-1-62 | unknown | apps/mobile/src/engine/overload.ts:169 | Top set hit {lastS.topReps} at {trimNum(lastS.topWeightKg)} kg — bring every set to {target.repRangeMax} and we add weight.
+P-A7-whats-new-2-10 | unknown | apps/mobile/src/lib/whatsNew.ts:92 | Your watch keeps its big numbers full size at the largest text size.
+P-A7-whats-new-2-14 | unknown | apps/mobile/src/lib/whatsNew.ts:111 | Suggested reps never drop below what each set did in your previous workout at the same weight.
+P-A7-whats-new-2-15 | unknown | apps/mobile/src/lib/whatsNew.ts:112 | 81 exercises now have new pictures that show how to do each move.
+P-A7-whats-new-2-17 | unknown | apps/mobile/src/lib/whatsNew.ts:126 | Light mode is here: the app now follows your phone's light or dark setting.
+P-A7-whats-new-2-19 | unknown | apps/mobile/src/lib/whatsNew.ts:131 | Suggested reps now follow the same set last time, not the set you just did.
+P-A7-whats-new-2-20 | unknown | apps/mobile/src/lib/whatsNew.ts:132 | Your watch screen now stays on dimmed during a workout, even with Always-on display off.
+P-A7-whats-new-2-23 | unknown | apps/mobile/src/lib/whatsNew.ts:143 | Your progress is now on the Profile tab: Charts, Exercises, Records, Body and Reports.
+P-A7-whats-new-2-24 | unknown | apps/mobile/src/lib/whatsNew.ts:144 | On any chart, tap a dot or bar, then tap the date to see those workouts.
+P-A7-whats-new-2-25 | unknown | apps/mobile/src/lib/whatsNew.ts:145 | Bar charts now show month names along the bottom.
+P-A7-whats-new-2-27 | unknown | apps/mobile/src/lib/whatsNew.ts:160 | Exercise charts now add up your total for the time you pick, for example all-time kg lifted.
+P-A7-whats-new-2-28 | unknown | apps/mobile/src/lib/whatsNew.ts:161 | On an exercise chart, tap a dot, then tap its date to open that day's workout.
+P-A7-whats-new-2-30 | unknown | apps/mobile/src/lib/whatsNew.ts:179 | Suggested weights are simpler: 1 more rep on each set until all sets reach the top of your rep range, then more weight.
+P-A7-whats-new-2-31 | unknown | apps/mobile/src/lib/whatsNew.ts:180 | Bodyweight exercises: the green line says when you beat last time's total reps.
+P-A7-whats-new-2-33 | unknown | apps/mobile/src/lib/whatsNew.ts:182 | Watch: bigger -15 and +15 buttons on the rest timer, and long names fit.
+P-A7-whats-new-2-34 | unknown | apps/mobile/src/lib/whatsNew.ts:183 | "Muscles ready today" and Quick workout are gone from the Workout tab.
+P-A7-whats-new-2-37 | unknown | apps/mobile/src/lib/whatsNew.ts:197 | Tap "Invite a friend" on the Gym tab to send a friend a link to your gym.
+P-A7-whats-new-2-41 | unknown | apps/mobile/src/lib/whatsNew.ts:209 | On the chart of an exercise, tap a point and then its label to open that workout.
+P-A7-whats-new-2-43 | unknown | apps/mobile/src/lib/whatsNew.ts:219 | Your gym can post a workout of the day. Find it on the Workout tab and start it with one tap.
+P-A7-whats-new-2-44 | unknown | apps/mobile/src/lib/whatsNew.ts:220 | If your trainer filmed an exercise, tap "Watch your trainer" on that exercise's page.
+P-A7-whats-new-2-47 | unknown | apps/mobile/src/lib/whatsNew.ts:236 | Your main lifts now show a strength level on the exercise page. Your body weight stays private.
+P-A7-whats-new-2-49 | unknown | apps/mobile/src/lib/whatsNew.ts:238 | If a set felt easy, the next sets suggest a little more. Rest that runs over now shows in red.
+P-A7-whats-new-2-51 | unknown | apps/mobile/src/lib/whatsNew.ts:240 | Settings is simpler, with one place for backup. The muscle map can show the last 30 or 90 days.
+P-A7-whats-new-2-53 | unknown | apps/mobile/src/lib/whatsNew.ts:250 | Exercise pictures now use the MettleUp colours. The exercise list shows a close-up of each one.
+P-A7-whats-new-2-54 | unknown | apps/mobile/src/lib/whatsNew.ts:251 | Triceps Dip, Cable Lateral Raise, Walking Lunge and Plank now have pictures.
+P-A7-whats-new-2-58 | unknown | apps/mobile/src/lib/whatsNew.ts:266 | Is your gym not on MettleUp yet? Open the Gym tab and tap "Recommend MettleUp to my gym".
+P-A7-whats-new-2-59 | unknown | apps/mobile/src/lib/whatsNew.ts:276 | The new MettleUp logo now shows when the app opens and at the top of the Workout, Progress and Gym tabs.
+P-A7-whats-new-2-61 | unknown | apps/mobile/src/lib/whatsNew.ts:278 | Touch and hold the app icon and tap "Resume workout". It now opens your workout, not the Workout tab.
+P-A7-whats-new-2-63 | unknown | apps/mobile/src/lib/whatsNew.ts:296 | Your watch now keeps MettleUp open all workout. It dims with your wrist down and lights up when you look.
+P-A7-whats-new-2-64 | unknown | apps/mobile/src/lib/whatsNew.ts:297 | During a workout, each exercise now shows your next set first, like "Next: 75 kg × 5".
+P-A7-whats-new-2-65 | unknown | apps/mobile/src/lib/whatsNew.ts:298 | In the exercises list, exercises without a drawing now show a photo of the start position.
+P-A7-whats-new-2-68 | unknown | apps/mobile/src/lib/whatsNew.ts:304 | On the Progress photos screen, if your phone blocks the camera, tap "Allow the camera in Settings" to turn it on.
+P-A7-whats-new-2-70 | unknown | apps/mobile/src/lib/whatsNew.ts:316 | Fixed: MettleUp could close by itself when a message from your gym came in.
+P-A7-whats-new-2-74 | unknown | apps/mobile/src/lib/whatsNew.ts:333 | Many exercises now show a start and an end picture, so you can check your body position.
+P-A7-whats-new-2-76 | unknown | apps/mobile/src/lib/whatsNew.ts:335 | Voice feedback now has a second way to send. If you saw "Couldn't reach us" before, please try again.
+P-A7-whats-new-2-80 | unknown | apps/mobile/src/lib/whatsNew.ts:363 | After a workout, see the kg you lifted today next to last time. Each exercise's History shows kg per workout too.
+P-A7-whats-new-2-81 | unknown | apps/mobile/src/lib/whatsNew.ts:364 | Pull-ups, push-ups and other body-weight moves now show last time's numbers from any workout, in any routine.
+P-A7-whats-new-2-84 | unknown | apps/mobile/src/lib/whatsNew.ts:370 | Lateral Raise and Incline Dumbbell Press now have a short moving demo on their exercise page, to check your form.
+P-A7-whats-new-2-86 | unknown | apps/mobile/src/lib/whatsNew.ts:383 | During a workout, the "kg to beat" and the PREVIOUS column now come from the same last workout, so the numbers match.
+P-A7-whats-new-2-87 | unknown | apps/mobile/src/lib/whatsNew.ts:384 | If a lighter first set hit the top of its reps last time, the app now suggests your main weight for it.
+P-A7-whats-new-2-88 | unknown | apps/mobile/src/lib/whatsNew.ts:385 | Match the "kg to beat" exactly and the app says "reached". It says "beaten" only when you lift more.
+P-A7-whats-new-2-89 | unknown | apps/mobile/src/lib/whatsNew.ts:386 | "Resume workout" now opens at the exercise you were on, so you do not have to scroll.

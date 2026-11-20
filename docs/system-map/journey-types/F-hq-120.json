@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-hq-120-hq-admin-10","feature":"F-hq-120","role":"HQ admin","type":10,"applies":"no","why_not":"HQ is a web page served fresh each time; there is no installed old version","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-hq-app-2"},
+{"kind":"jtype","id":"JT-F-hq-120-hq-admin-11","feature":"F-hq-120","role":"HQ admin","type":11,"applies":"no","why_not":"Read-only totals; nothing on this page is changed from another device","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-hq-app-2"},
+{"kind":"jtype","id":"JT-F-hq-120-hq-admin-4","feature":"F-hq-120","role":"HQ admin","type":4,"applies":"yes","why_not":"none","variants":["T4-zero","T4-many"],"at_step":1,"entity":"E-gyms","note":"No gyms and no releases must still draw; storage of 0 MB","wi":"A5-hq-app-2"},
+{"kind":"jtype","id":"JT-F-hq-120-hq-admin-5","feature":"F-hq-120","role":"HQ admin","type":5,"applies":"yes","why_not":"none","variants":["T5-month1","T5-monday","T5-midnight"],"at_step":1,"entity":"E-ai-usage","note":"'AI reads this month' resets on the 1st; the free-limit check runs Mondays 03:00 India time","wi":"A5-hq-app-2"},
+{"kind":"jtype","id":"JT-F-hq-120-hq-admin-7","feature":"F-hq-120","role":"HQ admin","type":7,"applies":"yes","why_not":"none","variants":["T7-offline"],"at_step":1,"entity":"E-gyms","note":"A read only; a failed load must say so","wi":"A5-hq-app-2"},
+{"kind":"jtype","id":"JT-F-hq-120-hq-admin-8","feature":"F-hq-120","role":"HQ admin","type":8,"applies":"no","why_not":"HQ has no language, theme, unit or alert setting that changes this page","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-hq-app-2"},
+{"kind":"jtype","id":"JT-F-hq-120-hq-admin-9","feature":"F-hq-120","role":"HQ admin","type":9,"applies":"yes","why_not":"none","variants":["T9-390","T9-laptop"],"at_step":1,"entity":"none","note":"Seven tiles and a three-column table","wi":"A5-hq-app-2"}
+]

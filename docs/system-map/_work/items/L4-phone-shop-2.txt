@@ -1,0 +1,101 @@
+# L4-phone-shop-2: 4 x phone / phone/shop-2. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L4.1 | 4 | Promise register (A7)
+L4.2 | 4 | India DPDP Act duties (notice, consent, purpose, deletion, breach timing, children)
+L4.3 | 4 | who at MettleUp can see gym data and the record of it (read log)
+L4.4 | 4 | data kept longer than promised
+L4.5 | 4 | data sent to outside services (AI, WhatsApp, analytics, Health Connect / Google Health / Fitbit) vs what the policy says
+L4.6 | 4 | account deletion really deletes everywhere (backups noted)
+## PROMISES TO CHECK (id | status | where | text)
+P-A7-phone-watch-2-54 | partly | apps/mobile/src/shop/offerWords.ts:39 | What the gym gets: only the dates of those workouts.
+P-A7-phone-watch-2-55 | partly | apps/mobile/src/shop/offerWords.ts:39 | Never your exercises, weights, sets, body weight or photos.
+P-A7-phone-watch-2-64 | partly | apps/mobile/src/shop/trainerShare.ts:33 | They never see your body weight, photos or notes.
+P-A7-phone-watch-2-65 | partly | apps/mobile/src/shop/trainerShare.ts:33 | If you switch this off or leave the gym, the gym deletes it at once.
+P-A7-templates-2-37 | partly | apps/mobile/src/shop/noticeAlertWords.ts:21 | Get a pop-up when {name} sends news, like a holiday, new timings or an offer. It can take a few minutes to reach you.
+P-A7-templates-2-35 | unknown | apps/mobile/src/shop/noticeAlertWords.ts:9 | News from your gym: a holiday, new timings or an offer
+P-A7-templates-2-38 | unknown | apps/mobile/src/shop/noticeAlertWords.ts:46 | Tap to read them.
+## ENTITIES WITH PERSONAL DATA (id | personal | kept how long | where stored)
+E-crm-records | yes | unknown | table crm_records
+E-gym-auto-reminders | yes | unknown | table gym_auto_reminders
+E-gym-body-measurements | yes | unknown | table gym_body_measurements
+E-gym-diet-plans | yes | unknown | table gym_diet_plans
+E-gym-exercise-starts | yes | 63 days; also deleted when the member leaves | table gym_exercise_starts
+E-gym-friend-invites | yes | unknown | table gym_friend_invites
+E-gym-mate-profiles | yes | unknown | table gym_mate_profiles
+E-gym-member-board | yes | unknown | table gym_member_board
+E-gym-plan-requests | yes | unknown | table gym_plan_requests
+E-gym-plus-settings | yes | unknown | table gym_plus_settings
+E-gym-progress-summaries | yes | unknown | table gym_progress_summaries
+E-gym-report-requests | yes | request turns 'expired' 30 days after it is made and its file is deleted then; t | table gym_report_requests, table gym_report_files
+E-gym-staff | yes | unknown | table gym_staff
+E-gym-talk-threads | yes | unknown | table gym_talk_threads
+E-gym-wods | yes | unknown | table gym_wods
+E-offer-members | yes | 365 days after the offer has ended | table offer_members
+E-pay-gyms | yes | unknown | d1 table pay_gyms
+E-shop-orders | yes | unknown | table shop_orders
+E-trainer-questions | yes | unknown | table trainer_questions
+## READERS OF THOSE ENTITIES IN THIS AREA (id | entity | kind | where)
+RD-A4-d1-1-100 | E-pay-gyms | screen | apps/mobile/src/shop/memberPay.ts:78
+RD-A4-rpc-1b-33 | E-gym-staff | list | apps/mobile/src/shop/gymApi.ts:558
+RD-A4-rpc-1b-36 | E-gym-auto-reminders | notification | apps/mobile/src/shop/gymApi.ts:210
+RD-A4-rpc-1b-42 | E-crm-records | list | apps/mobile/src/shop/gymApi.ts:701
+RD-A4-rpc-2-01 | E-gym-member-board | list | apps/mobile/src/shop/gymApi.ts:273
+RD-A4-rpc-2-07 | E-crm-records | count | apps/mobile/src/shop/gymApi.ts:284
+RD-A4-rpc-2-09 | E-crm-records | list | apps/mobile/src/shop/gymApi.ts:221
+RD-A4-rpc-2-11 | E-crm-records | screen | apps/mobile/src/shop/gymApi.ts:610
+RD-A4-rpc-2-13 | E-gym-mate-profiles | list | apps/mobile/src/shop/gymApi.ts:400
+RD-A4-rpc-2-14 | E-gym-mate-profiles | screen | apps/mobile/src/shop/gymApi.ts:408
+RD-A4-rpc-2-19 | E-crm-records | screen | apps/mobile/src/shop/gymApi.ts:198
+RD-A4-rpc-2-20 | E-shop-orders | list | apps/mobile/src/shop/gymApi.ts:158
+RD-A4-rpc-2-25 | E-gym-talk-threads | list | apps/mobile/src/shop/gymApi.ts:641
+RD-A4-rpc-2-28 | E-gym-talk-threads | badge | apps/mobile/src/shop/gymApi.ts:633
+RD-A4-rpc-2-33 | E-gym-progress-summaries | screen | apps/mobile/src/shop/gymApi.ts:515
+RD-A4-rpc-2-35 | E-trainer-questions | list | apps/mobile/src/shop/gymApi.ts:574
+RD-A4-rpc-2b-01 | E-gym-plan-requests | list | apps/mobile/src/shop/gymApi.ts:309
+RD-A4-rpc-2b-12 | E-offer-members | count | apps/mobile/src/shop/gymApi.ts:446
+RD-A4-rpc-2b-18 | E-gym-exercise-starts | list | apps/mobile/src/shop/gymApi.ts:495
+RD-A4-rpc-2b-23 | E-gym-wods | screen | apps/mobile/src/shop/gymApi.ts:232
+RD-A4-rpc-2b-30 | E-gym-staff | list | apps/mobile/src/shop/gymApi.ts:660
+RD-A4-rpc-2b-33 | E-gym-diet-plans | list | apps/mobile/src/shop/gymApi.ts:251
+RD-A4-rpc-2b-34 | E-gym-body-measurements | list | apps/mobile/src/shop/gymApi.ts:243
+RD-A4-rpc-2b-36 | E-gym-friend-invites | screen | apps/mobile/src/shop/gymApi.ts:623
+RD-A4-rpc-2b-37 | E-gym-plus-settings | screen | apps/mobile/src/shop/gymApi.ts:728
+RD-A4-rpc-2b-38 | E-gym-report-requests | screen | apps/mobile/src/shop/gymApi.ts:355
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-400 | live | Join a gym by invite link or gym code (with the 18+ and terms tick box) | apps/mobile/src/shop/gymApi.ts:85
+F-phone-401 | hidden | Gym owner or desk staff unlock their gym in the member app with their mobile number and PIN | apps/mobile/src/shop/gymApi.ts:98
+F-phone-402 | live | Find my gym and sign in with my mobile number (WhatsApp check) | apps/mobile/src/shop/gymApi.ts:686
+F-phone-403 | live | Gym tab home: the gym's name and logo, its parts, and staying linked to the gym | apps/mobile/src/shop/gymTab.ts:1
+F-phone-404 | live | Gym shop: see products, fill the bag, place and cancel an order | apps/mobile/src/shop/gymApi.ts:152
+F-phone-405 | live | demo copy of Gym shop (the sample shop and its pretend orders, shown before joining a gym) | apps/mobile/src/shop/shopStore.ts:72
+F-phone-406 | live | Messages from the gym: the inbox behind the bell (holidays, timings, offers, events) | apps/mobile/src/shop/gymApi.ts:116
+F-phone-407 | behind switch | Gym messages pop up on the phone (15-minute background check and instant push; quiet pop-up during a workout) | apps/mobile/src/shop/noticeAlertsRun.ts:147
+F-phone-408 | behind switch | Automatic reminders from the gym (plan ending, birthday wishes and others), set on the phone itself | apps/mobile/src/shop/gymReminders.ts:286
+F-phone-409 | live | My membership: plan, end date, days left, and the "plan ends soon" card on the Workout tab | apps/mobile/src/shop/gymApi.ts:197
+F-phone-410 | live | Ask the desk to pause or renew my plan | apps/mobile/src/shop/gymApi.ts:308
+F-phone-411 | live | Check in by QR: scan the poster at the desk | apps/mobile/src/shop/gymApi.ts:186
+F-phone-412 | live | Workout plans sent by the gym | apps/mobile/src/shop/gymApi.ts:220
+F-phone-413 | live | The gym's workout of the day | apps/mobile/src/shop/gymApi.ts:231
+F-phone-414 | live | Watch your trainer: the gym's own form videos on an exercise | apps/mobile/src/shop/trainerVideo.ts:1
+F-phone-415 | live | Measurements taken by the gym's trainer and diet plans from the gym | apps/mobile/src/shop/gymApi.ts:242
+F-phone-416 | live | The gym's opening hours | apps/mobile/src/shop/gymApi.ts:261
+F-phone-417 | live | How busy the gym is right now | apps/mobile/src/shop/gymApi.ts:283
+F-phone-418 | behind switch | Busy times by exercise (which machines are usually free) | apps/mobile/src/shop/gymApi.ts:494
+F-phone-419 | live | Gym leaderboard and monthly challenge | apps/mobile/src/shop/gymApi.ts:272
+F-phone-420 | behind switch | Gym mate profiles: let my gym mates see my workouts, and see theirs | apps/mobile/src/shop/gymApi.ts:384
+F-phone-421 | behind switch | Share my workouts with my trainers (weekly summary and recent workouts; my start date at the gym) | apps/mobile/src/shop/gymApi.ts:514
+F-phone-422 | behind switch | Ask my trainer for help (one tap) | apps/mobile/src/shop/gymApi.ts:537
+F-phone-423 | live | Ask a trainer a workout question, and get a pop-up when the trainer replies | apps/mobile/src/shop/gymApi.ts:557
+F-phone-424 | live | Message your gym: a question, feedback or a complaint to the owner or a trainer, with the red unread count | apps/mobile/src/shop/gymApi.ts:632
+F-phone-425 | hidden | demo copy of Message your gym (the pretend gym in QA test builds; the page says the messages stay on the phone) | apps/mobile/src/shop/gymTalk.ts:129
+F-phone-426 | live | The gym's workout offer: join, share workout dates, leave, and show my workouts to the desk | apps/mobile/src/shop/gymApi.ts:435
+F-phone-427 | live | Send my workout report to the gym when the desk asks | apps/mobile/src/shop/gymApi.ts:354
+F-phone-428 | live | Bring a friend: my invite code, the free days and how many friends joined | apps/mobile/src/shop/gymApi.ts:622
+F-phone-429 | live | Leave the gym (open orders are cancelled first; an offline leave is sent again later) | apps/mobile/src/shop/gymApi.ts:461
+F-phone-430 | live | Add the gym's logo to the home screen | apps/mobile/src/shop/gymShortcut.ts:103
+F-phone-431 | behind switch | Pay the gym from the app: UPI QR, UPI app, or online payment for fees and shop orders | apps/mobile/src/shop/memberPay.ts:1
+F-phone-432 | live | Recommend MettleUp to your gym (share link on the no-gym screen) | apps/mobile/src/shop/recommendGym.ts:1
+F-phone-433 | behind switch | MettleUp Plus: paid extras lock 7 days after the plan ends | apps/mobile/src/shop/gymApi.ts:727
+## NOT LISTED
+1 open promises of this area are not about personal data or law by their words (script filter); they are left to hunt 10 and lens 10.
+16 promises of this area already have the status kept.

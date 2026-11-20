@@ -1,0 +1,59 @@
+# L4-panel-pay-machines: 4 x panel / panel/pay-machines. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L4.1 | 4 | Promise register (A7)
+L4.2 | 4 | India DPDP Act duties (notice, consent, purpose, deletion, breach timing, children)
+L4.3 | 4 | who at MettleUp can see gym data and the record of it (read log)
+L4.4 | 4 | data kept longer than promised
+L4.5 | 4 | data sent to outside services (AI, WhatsApp, analytics, Health Connect / Google Health / Fitbit) vs what the policy says
+L4.6 | 4 | account deletion really deletes everywhere (backups noted)
+## PROMISES TO CHECK (id | status | where | text)
+P-A7-panel-1-38 | unknown | apps/dashboard/src/crm/branches/BranchesCard.tsx:183 | Its receipt numbers start with its own code (like B2), so two branches never print the same number.
+P-A7-panel-1-49 | unknown | apps/dashboard/src/crm/demo/demoMode.tsx:119 | {page.body} The demo gym is made-up data kept only on this page, so this part is switched off here.
+P-A7-panel-2-62 | unknown | apps/dashboard/src/crm/machines/entryMachineAdmin.ts:282 | Only the gym owner can add or remove a machine.
+P-A7-panel-2-63 | unknown | apps/dashboard/src/crm/move/move.ts:83 | {head} Your gym's records are only in this browser.
+## ENTITIES WITH PERSONAL DATA (id | personal | kept how long | where stored)
+E-crm-records | yes | unknown | table crm_records
+E-entry-machine-commands | yes | unknown | table entry_machine_commands
+E-entry-machine-members | yes | unknown | table entry_machine_members
+E-entry-machine-punches | yes | every punch kept (file comment); no delete found | table entry_machine_punches
+## READERS OF THOSE ENTITIES IN THIS AREA (id | entity | kind | where)
+RD-A4-rpc-1-02 | E-crm-records | list | apps/dashboard/src/crm/branches/api.ts:51
+RD-A4-rpc-1-04 | E-crm-records | list | apps/dashboard/src/crm/branches/api.ts:66
+RD-A4-rpc-1b-09 | E-entry-machine-members | job | apps/dashboard/src/crm/machines/supabaseStore.ts:91
+RD-A4-rpc-1b-10 | E-entry-machine-punches | job | apps/dashboard/src/crm/machines/supabaseStore.ts:96
+RD-A4-rpc-1b-12 | E-entry-machine-commands | job | apps/dashboard/src/crm/machines/supabaseStore.ts:120
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-100 | hidden | Entry machine reports in to the gym server (machine recognised by serial, last-seen kept, unknown machine noted) | apps/dashboard/src/crm/machines/supabaseStore.ts:57
+F-panel-101 | hidden | Entry machine punch becomes a member visit (machine number matched to member, repeat punches dropped, punches and visits | apps/dashboard/src/crm/machines/supabaseStore.ts:90
+F-panel-102 | hidden | Entry machine picks up queued jobs from the gym and reports each result | apps/dashboard/src/crm/machines/supabaseStore.ts:119
+F-panel-103 | live | See the gym's branches and switch to another branch | apps/dashboard/src/crm/branches/api.ts:26
+F-panel-104 | live | Add a branch (optionally copying plans; gets its own receipt prefix) | apps/dashboard/src/crm/branches/api.ts:31
+F-panel-105 | live | Rename the business (the name over all branches) | apps/dashboard/src/crm/branches/api.ts:45
+F-panel-106 | live | Check in a member from another branch by mobile number, list today's visitors from other branches, undo a visitor check- | apps/dashboard/src/crm/branches/api.ts:50
+F-panel-107 | live | All branches page: totals, lists and member search across every branch, open a branch | apps/dashboard/src/crm/branches/AllBranches.tsx:32
+F-panel-108 | live | Demo gym (pretend server, in memory): opens as the sample gym | apps/dashboard/src/crm/demo/demoServer.ts:445
+F-panel-109 | live | Demo gym (pretend server, in memory): Staff & sign-in list and PIN status | apps/dashboard/src/crm/demo/demoServer.ts:449
+F-panel-110 | live | Demo gym (pretend server, in memory): Training progress and trainer setup (make a trainer, assign a member, see a member | apps/dashboard/src/crm/demo/demoServer.ts:456
+F-panel-1104 | behind switch | Branches: All branches totals, branch switcher, add or rename a branch, check in a member from another branch | apps/dashboard/src/crm/branches/AllBranches.tsx:32
+F-panel-111 | live | Demo gym (pretend server, in memory): Member questions (count, list, answer) | apps/dashboard/src/crm/demo/demoServer.ts:480
+F-panel-1114 | behind switch | Online payments: Settings > Payments (UPI QR, gym's own payment company), Pay online inside the money sheets, payments t | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:57
+F-panel-112 | live | Demo gym (pretend server, in memory): Member messages (waiting count, threads, reply, mark done) | apps/dashboard/src/crm/demo/demoServer.ts:495
+F-panel-113 | live | Demo gym (pretend server, in memory): Messages & offers: app members, sent messages, send and withdraw a message | apps/dashboard/src/crm/demo/demoServer.ts:515
+F-panel-1137 | live | demo copy of server-backed features (staff, trainers, progress, questions, member messages, messages, reminders, offers, | apps/dashboard/src/crm/demo/demoServer.ts:445
+F-panel-114 | live | Demo gym (pretend server, in memory): Automatic reminders (read and save settings) | apps/dashboard/src/crm/demo/demoServer.ts:532
+F-panel-115 | live | Demo gym (pretend server, in memory): Workout offer and its members | apps/dashboard/src/crm/demo/demoServer.ts:539
+F-panel-116 | live | Demo gym (pretend server, in memory): Shop products, orders and order status | apps/dashboard/src/crm/demo/demoServer.ts:549
+F-panel-117 | live | Demo gym (pretend server, in memory): Member body measurements (list, save, delete) | apps/dashboard/src/crm/demo/demoServer.ts:563
+F-panel-118 | live | Demo gym (pretend server, in memory): Diet plans (list, save, withdraw) | apps/dashboard/src/crm/demo/demoServer.ts:578
+F-panel-119 | live | Demo gym (pretend server, in memory): Trainers week schedule, book and cancel a PT class | apps/dashboard/src/crm/demo/demoServer.ts:596
+F-panel-120 | live | Demo gym (pretend server, in memory): Challenges and leaderboard | apps/dashboard/src/crm/demo/demoServer.ts:611
+F-panel-121 | live | Demo gym (pretend server, in memory): Gym timings (read and save) | apps/dashboard/src/crm/demo/demoServer.ts:619
+F-panel-122 | live | Demo gym (pretend server, in memory): Bring a friend summary | apps/dashboard/src/crm/demo/demoServer.ts:627
+F-panel-123 | live | Demo gym (pretend server, in memory): Members' renew/pause plan requests (list, approve or decline) | apps/dashboard/src/crm/demo/demoServer.ts:633
+F-panel-124 | behind switch | Pro pack gate: a Starter gym sees "Part of the Pro pack" in place of Branding, Shop, Challenges, Workout offer, Workout  | apps/dashboard/src/crm/plan/GymPackProvider.tsx:26
+F-panel-125 | live | Payments settings: UPI QR status (uses the gym's UPI ID, no server part) | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:57
+F-panel-126 | behind switch | Connect or disconnect a payment company (Razorpay, Cashfree; PayU and PhonePe only if already on them) by keys or compan | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:129
+F-panel-127 | behind switch | Where members can pay online: "Take payments in the member app" and "Take payments when people join online" switches | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:183
+## NOT LISTED
+9 open promises of this area are not about personal data or law by their words (script filter); they are left to hunt 10 and lens 10.
+3 promises of this area already have the status kept.

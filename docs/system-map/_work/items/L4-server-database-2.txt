@@ -1,0 +1,92 @@
+# L4-server-database-2: 4 x server / server/database-2. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L4.1 | 4 | Promise register (A7)
+L4.2 | 4 | India DPDP Act duties (notice, consent, purpose, deletion, breach timing, children)
+L4.3 | 4 | who at MettleUp can see gym data and the record of it (read log)
+L4.4 | 4 | data kept longer than promised
+L4.5 | 4 | data sent to outside services (AI, WhatsApp, analytics, Health Connect / Google Health / Fitbit) vs what the policy says
+L4.6 | 4 | account deletion really deletes everywhere (backups noted)
+## PROMISES TO CHECK (id | status | where | text)
+(none)
+## ENTITIES WITH PERSONAL DATA (id | personal | kept how long | where stored)
+E-entry-machine-commands | yes | unknown | table entry_machine_commands
+E-entry-machine-members | yes | unknown | table entry_machine_members
+E-entry-machine-punches | yes | every punch kept (file comment); no delete found | table entry_machine_punches
+E-gym-body-measurements | yes | unknown | table gym_body_measurements
+E-gym-challenge-hits | yes | kept after the challenge is over; phone blanked when the member leaves (file com | table gym_challenge_hits
+E-gym-challenges | yes | unknown | table gym_challenges
+E-gym-diet-plans | yes | unknown | table gym_diet_plans
+E-gym-exercise-starts | yes | 63 days; also deleted when the member leaves | table gym_exercise_starts
+E-gym-friend-invites | yes | unknown | table gym_friend_invites
+E-gym-friend-referrals | yes | unknown | table gym_friend_referrals
+E-gym-machine-setup | yes | unknown | table gym_machine_setup
+E-gym-mate-profiles | yes | unknown | table gym_mate_profiles
+E-gym-member-board | yes | unknown | table gym_member_board
+E-gym-member-days | yes | 62 days, and deleted when the member leaves the gym (supabase/migrations/0037_le | table gym_member_days
+E-gym-member-photos | yes | unknown | table gym_member_photos
+E-gym-phone-links | yes | unknown | table gym_phone_links
+E-gym-plan-requests | yes | unknown | table gym_plan_requests
+E-gym-progress-summaries | yes | unknown | table gym_progress_summaries
+E-gym-report-requests | yes | request turns 'expired' 30 days after it is made and its file is deleted then; t | table gym_report_requests, table gym_report_files
+E-gym-sessions | yes | unknown | table gym_sessions
+E-gym-staff-pins | yes | unknown | table gym_staff_pins
+E-gym-trainer-members | yes | unknown | table gym_trainer_members
+E-gym-trainers | yes | unknown | table gym_trainers
+E-gym-wods | yes | unknown | table gym_wods
+E-member-push-notes | yes | 30 days after it is done | table member_push_notes
+E-member-push-tokens | yes | 60 days after the last update; also deleted when the member leaves | table member_push_tokens
+E-mettleup-payments | yes | unknown | table mettleup_payments
+E-shop-orders | yes | unknown | table shop_orders
+E-trainer-questions | yes | unknown | table trainer_questions
+## READERS OF THOSE ENTITIES IN THIS AREA (id | entity | kind | where)
+RD-A4-nocaller-1-68 | E-gym-challenge-hits | notification | supabase/migrations/0047_challenge_rewards.sql:76
+RD-A4-nocaller-2-25 | E-gym-mate-profiles | list | supabase/migrations/0040_gym_mate_profiles.sql:112
+RD-A4-nocaller-2-26 | E-gym-member-board | list | supabase/migrations/0040_gym_mate_profiles.sql:122
+RD-A4-nocaller-2-28 | E-gym-exercise-starts | count | supabase/migrations/0049_busy_by_exercise.sql:165
+RD-A4-nocaller-2-30 | E-gym-exercise-starts | count | supabase/migrations/0049_busy_by_exercise.sql:175
+RD-A4-nocaller-2-35 | E-gym-machine-setup | screen | supabase/migrations/0049_busy_by_exercise.sql:280
+RD-A4-nocaller-2-39 | E-gym-body-measurements | list | supabase/migrations/0035_trainer_measurements_diet.sql:130
+RD-A4-nocaller-2-41 | E-gym-member-photos | list | supabase/migrations/0043_member_photos.sql:55
+RD-A4-nocaller-2-46 | E-mettleup-payments | list | supabase/migrations/0060_pay_mettleup.sql:125
+RD-A4-nocaller-2-86 | E-gym-plan-requests | list | supabase/migrations/0044_plan_requests.sql:109
+RD-A4-nocaller-3-02 | E-shop-orders | notification | supabase/migrations/0054_member_alerts.sql:152
+RD-A4-nocaller-3-03 | E-gym-plan-requests | notification | supabase/migrations/0054_member_alerts.sql:83
+RD-A4-nocaller-3-04 | E-gym-report-requests | notification | supabase/migrations/0054_member_alerts.sql:111
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-server-400 | live | Sign in to the admin app with a lasting 6-digit PIN (set or change your PIN, wrong-try locks that grow, one-time code st | supabase/migrations/0034_signin_pin.sql:246
+F-server-401 | live | Sign a person out everywhere and HQ reset of an owner sign-in (both also clear that person's PIN) | supabase/migrations/0034_signin_pin.sql:320
+F-server-402 | live | Record a member's body measurements at the desk; the member sees them in the app (Progress, Body) | supabase/migrations/0035_trainer_measurements_diet.sql:262
+F-server-403 | live | Diet plans from the trainer, sent to members by name or by membership plan | supabase/migrations/0035_trainer_measurements_diet.sql:342
+F-server-404 | live | Gym opening hours for each weekday and special days, shown in the member app | supabase/migrations/0036_gym_timings.sql:168
+F-server-405 | live | Gym leaderboard: top 10 and your place by workouts and kg lifted (owner can hide a member) | supabase/migrations/0037_leaderboard.sql:299
+F-server-406 | live | Monthly gym challenge and its free-day rewards (cancel a challenge, owner gives or skips each winner's reward) | supabase/migrations/0037_leaderboard.sql:513
+F-server-407 | live | Phone pop-ups for the gym's messages and workout offers (save the phone's push address, queue of push jobs, HQ sender re | supabase/migrations/0038_member_push.sql:114
+F-server-408 | live | How busy the gym is right now and its usual busy and quiet hours | supabase/migrations/0039_gym_busy.sql:82
+F-server-409 | live | Gym mate profile opened from the leaderboard (bio and recent workout summaries) | supabase/migrations/0040_gym_mate_profiles.sql:136
+F-server-410 | live | Receipt printed at a desk with no internet is accepted even when the member has overpaid | supabase/migrations/0041_offline_desk_receipts.sql:24
+F-server-411 | live | Send a message to members: at most 10 a day, and from the 3rd of the day no phone pop-up | supabase/migrations/0042_message_calm.sql:76
+F-server-412 | live | Member photo taken at the desk (add, change, remove) | supabase/migrations/0043_member_photos.sql:80
+F-server-413 | live | Member asks to pause or renew their plan from the app; the desk approves or declines | supabase/migrations/0044_plan_requests.sql:165
+F-server-414 | live | Gym asks for a member's workout report; the member says yes or no and the desk downloads it | supabase/migrations/0045_report_requests.sql:310
+F-server-415 | behind switch | Apps read which pack the gym is on (starter, pro, ai); file header says NOT APPLIED LIVE | supabase/migrations/0046_gym_pack.sql:24
+F-server-416 | live | Check in by the gym's QR; a typed check-in number waits for the desk to approve or decline | supabase/migrations/0048_security_fixes.sql:61
+F-server-417 | behind switch | Busy machines by day and hour (owner enters machine counts; members see proven busy times) | supabase/migrations/0049_busy_by_exercise.sql:319
+F-server-418 | live | Trainers see their members' progress (owner ticks trainers and assigns members; member shares a summary and recent worko | supabase/migrations/0050_trainer_view.sql:242
+F-server-419 | live | Trainer form videos on workout plan exercises (YouTube links only) | supabase/migrations/0051_gym_videos_and_wod.sql:38
+F-server-420 | live | Gym workout of the day for every member | supabase/migrations/0051_gym_videos_and_wod.sql:150
+F-server-421 | live | Nightly backup: one full copy of every table for the HQ Worker | supabase/migrations/0052_hq_backup.sql:34
+F-server-422 | live | Ask a trainer: a member sends one question, a trainer or the owner replies, the reply pops up on the phone | supabase/migrations/0053_ask_trainer_and_progress.sql:246
+F-server-423 | live | Phone pop-ups for the gym's answers: plan request decided, report asked for, shop order ready or cancelled | supabase/migrations/0054_member_alerts.sql:180
+F-server-424 | live | Pass members (FITPASS, cultpass): QR check-in counts as OK and "My membership" shows the pass company | supabase/migrations/0055_pass_members.sql:43
+F-server-425 | live | Bring a friend: member shares an invite link, the friend's form lands in Enquiries, member sees how many joined | supabase/migrations/0056_bring_a_friend.sql:104
+F-server-426 | live | Online payment requests: tells the web server which gym member an app member is, so "your gym asked you to pay" reaches  | supabase/migrations/0057_member_pay_me.sql:20
+F-server-427 | hidden | Entry machines at the gym door, machine side: punches become visits, command queue (file header says NOT APPLIED, gate W | supabase/migrations/0058_entry_machines.sql:213
+F-server-428 | hidden | Entry machines, admin app side: add or remove a machine, give members machine numbers, queue member commands (file heade | supabase/migrations/0059_entry_machines_owner.sql:41
+F-server-429 | hidden | Pay MettleUp: owner pays for a plan by UPI or bank transfer and sends the reference number (file header says NOT APPLIED | supabase/migrations/0060_pay_mettleup.sql:142
+F-server-430 | hidden | HQ checks MettleUp payments: count waiting, confirm or reject, and set MettleUp's own payment details (file header says  | supabase/migrations/0060_pay_mettleup.sql:217
+F-server-431 | hidden | Forgot PIN: a WhatsApp code proves the mobile number, then a new PIN is set (file header says NOT APPLIED) | supabase/migrations/0061_phone_codes.sql:115
+F-server-432 | behind switch | Create my gym online; newest version adds a WhatsApp-checked number and one free trial per number (that version: file he | supabase/migrations/0061_phone_codes.sql:140
+F-server-433 | behind switch | Plan limits checked on the server: Pro extras closed for Starter gyms, and grace, basic and read-only states when a gym  | supabase/migrations/0062_plan_features.sql:99
+## NOT LISTED
+0 open promises of this area are not about personal data or law by their words (script filter); they are left to hunt 10 and lens 10.
+0 promises of this area already have the status kept.

@@ -1,0 +1,116 @@
+# L4-panel-logic-2: 4 x panel / panel/logic-2. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L4.1 | 4 | Promise register (A7)
+L4.2 | 4 | India DPDP Act duties (notice, consent, purpose, deletion, breach timing, children)
+L4.3 | 4 | who at MettleUp can see gym data and the record of it (read log)
+L4.4 | 4 | data kept longer than promised
+L4.5 | 4 | data sent to outside services (AI, WhatsApp, analytics, Health Connect / Google Health / Fitbit) vs what the policy says
+L4.6 | 4 | account deletion really deletes everywhere (backups noted)
+## PROMISES TO CHECK (id | status | where | text) part 1 of 2
+P-A7-templates-1-39 | GAP | apps/dashboard/src/crm/logic/messageTemplates.ts:342 | Take the {months}-month plan for {price} and save {saving} over paying monthly. Till {till}.
+P-A7-templates-1-41 | GAP | apps/dashboard/src/crm/logic/messageTemplates.ts:347 | {months} महीने का प्लान {price} में लें। हर महीने फ़ीस देने के मुक़ाबले {saving} की बचत। {till} तक।
+P-A7-panel-2-37 | partly | apps/dashboard/src/crm/logic/memberMessages.ts:266 | Messages are deleted 180 days after the last one in a conversation, or as soon as the member leaves the gym.
+P-A7-panel-2-50 | partly | apps/dashboard/src/crm/logic/staffJobs.ts:32 | Never sees money totals.
+P-A7-panel-2-52 | partly | apps/dashboard/src/crm/logic/staffJobs.ts:33 | Never sees money totals.
+P-A7-templates-1-32 | partly | apps/dashboard/src/crm/logic/messageTemplates.ts:305 | Join together and save: {discount} off each for 2 or more family members, any plan. Till {till}.
+P-A7-templates-1-38 | partly | apps/dashboard/src/crm/logic/messageTemplates.ts:341 | Save with a {months}-month plan
+P-A7-templates-1-40 | partly | apps/dashboard/src/crm/logic/messageTemplates.ts:345 | {months} महीने के प्लान पर बचत
+P-A7-templates-1-47 | partly | apps/dashboard/src/crm/logic/whatsapp.ts:60 | या {offer.months} महीने का प्लान {formatINR(offer.priceP)} में लें। हर महीने फ़ीस देने के मुक़ाबले {formatINR(offer.savingP)} की बचत।
+P-A7-templates-1-48 | partly | apps/dashboard/src/crm/logic/whatsapp.ts:61 | Or take the {offer.months}-month plan for {formatINR(offer.priceP)} and save {formatINR(offer.savingP)} over paying month by month.
+P-A7-templates-1-49 | partly | apps/dashboard/src/crm/logic/whatsapp.ts:159 | {hi} {formatINR(v.outstandingP)} of your fees is due. Please pay at the front desk or on UPI.
+P-A7-templates-1-52 | partly | apps/dashboard/src/crm/logic/whatsapp.ts:185 | Your {plan} plan runs till {formatDay(v.coversUntil)}.
+P-A7-templates-1-57 | partly | apps/dashboard/src/crm/logic/whatsapp.ts:212 | {hi} आपकी {formatINR(v.outstandingP)} फ़ीस बाक़ी है। कृपया डेस्क पर या UPI से जमा करें।
+P-A7-templates-1-60 | partly | apps/dashboard/src/crm/logic/whatsapp.ts:236 | {plan} {formatDayHi(v.coversUntil)} तक है।
+P-A7-whats-new-1-32 | partly | apps/dashboard/src/crm/logic/whatsNew.ts:186 | Member messages now opens on the right type when you tap a line on Today. Feedback there now reaches only you and the front desk, not trainers. Complaints still
+P-A7-whats-new-1-45 | partly | apps/dashboard/src/crm/logic/whatsNew.ts:247 | Asking the AI Assistant a question is free. Each message it sends, and each member or payment it saves, uses 1 AI credit. Each workout plan it writes and you sa
+P-A7-whats-new-2-04 | partly | apps/dashboard/src/crm/logic/whatsNew.ts:703 | Your members now get every paid feature of the MettleUp app free while their plan is active. In Settings, Member app, choose whether those features lock 7 days 
+P-A7-panel-2-38 | unknown | apps/dashboard/src/crm/logic/plusLock.ts:48 | Your members get every paid feature of the MettleUp app free while their plan is active: the watch app, charts older than 3 months, suggested weights, the calcu
+P-A7-panel-2-46 | unknown | apps/dashboard/src/crm/logic/selling.ts:219 | Only the owner can remove it.
+P-A7-panel-2-47 | unknown | apps/dashboard/src/crm/logic/settingLines.ts:44 | Tick this box to stop the paid features {n} days after a member’s plan ends until they renew, while their workouts are always kept.
+P-A7-whats-new-1-02 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:49 | Each person has their own bell. Tap the X to take a line off your list. It still waits in its page. “History” at the top of the bell keeps the last 7 days.
+P-A7-whats-new-1-03 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:52 | Alerts on your phone now count only what is new to you and not done yet. When everything is done, no alert comes.
+P-A7-whats-new-1-04 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:55 | With the automatic birthday wish on, the AI Assistant and Today ask you to wish only members who will not get it. A member gets it on the app at 9:30 am if thei
+P-A7-whats-new-1-05 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:66 | Today now shows only what still needs you. A member message leaves Today once you reply or mark it done, and news like a new member shows once. The bell still k
+P-A7-whats-new-1-06 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:69 | The AI Assistant card on Today now fits small phones, in English and Hinglish. Long ideas wrap onto the next line instead of running off the screen.
+P-A7-whats-new-1-07 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:72 | The AI Assistant ideas on Today now name the members, like “Asha: no visit in 12 days”. Tap “See who” for the list. Someone who joined today is no longer counte
+P-A7-whats-new-1-09 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:86 | Mobile number boxes now keep only the 10-digit number. When a phone fills in “+91 98765 43210”, the box shows 9876543210, on sign-in, Add member, Enquiries and 
+P-A7-whats-new-1-13 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:98 | English or Hinglish and light or dark now sit at the top of every page. On a phone, tap the round button at the top right. When alerts are off on this device, t
+P-A7-whats-new-1-15 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:105 | Every date box in the admin app now shows the day first, like "17 Oct 2026", whatever language your phone or computer uses. Tap it to open the calendar, as befo
+P-A7-whats-new-1-17 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:111 | Set up your gym has a new step, “Let people join your gym online”. It puts your join link, your QR poster and how people pay in one place. The step is done once
+P-A7-whats-new-1-18 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:115 | When you upload a logo on a plain white or coloured box, Branding now takes the box off for you. You see both logos side by side first, and you can keep yours a
+P-A7-whats-new-1-19 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:119 | Each member’s page now has a “Share app link” button. Tap it to send that member the app link and your gym code on WhatsApp, for example when they get a new pho
+P-A7-whats-new-1-20 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:123 | Your gym’s link now shows the right page on any phone or computer. On Android it opens the app or Google Play. On an iPhone it says the iPhone app is coming soo
+P-A7-whats-new-1-21 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:126 | Gym timings: after you save, the button shows “Saved ✓” and a line under it says your members can see these timings. Change any time to save again.
+P-A7-whats-new-1-22 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:138 | Your gym’s logo now shows at the top of the admin app, next to your gym’s name. Your staff see it too. To add or change it, open Branding.
+P-A7-whats-new-1-24 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:148 | "Set up your gym" has a new step, "Set your gym timings". It ticks itself once you save your opening hours in Gym timings.
+P-A7-whats-new-1-25 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:153 | New: people can ask to join your gym from a phone or a computer, with no app. In Invite members, under "Your gym’s join link", send the join link on WhatsApp or
+P-A7-whats-new-1-30 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:175 | New: alerts on your phone or computer even when the admin app is closed. Complaints, shop orders and members waiting at the check-in poster come at once. Turn t
+P-A7-whats-new-1-31 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:182 | Members’ workout questions are now in "Member questions", in the menu. Members send them from "Ask about your workout" in their app. You can answer them, and yo
+P-A7-whats-new-1-39 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:219 | Today now shows one setup card at a time (first alerts, then putting the admin app on your phone), so the page is shorter.
+P-A7-whats-new-1-40 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:222 | In the AI Assistant, a day you pick now also shows in words, like "Sun, 18 Oct". When a message is ready, its Send button comes fully into view.
+P-A7-whats-new-1-41 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:225 | A member photo taken with the camera now looks exactly like the camera preview. It no longer flips after you tap "Take photo".
+P-A7-whats-new-1-42 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:228 | In the AI Assistant, tapping Hindi or Both on a message now writes the Hindi words first, so you see them before you send. Before, the message could still go ou
+P-A7-whats-new-1-43 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:232 | In the AI Assistant, a "Gym closed" message now always says which day, with the date. Its button says when it goes: "Send now", or the day and time you picked.
+P-A7-whats-new-1-44 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:242 | New: the AI Assistant, in the menu. Type or say what you need, in Hindi or English. It gets a message or a change ready for you to check. Nothing is sent or sav
+P-A7-whats-new-1-51 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:282 | Forgot your PIN? Tap "Can’t use WhatsApp? Other ways back in". For example, make a sign-in code on another phone or computer where you are signed in. Then choos
+P-A7-whats-new-1-52 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:285 | Checking your number on WhatsApp: the message now tells you to come back to the MettleUp page after you tap Send. Back on the page, it says "Checking your messa
+P-A7-whats-new-1-53 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:288 | In Settings → Sign-in & data, the button "Clear this device’s saved data" is now "Clear offline copy", with a note on what it does. It never deletes your gym’s 
+P-A7-whats-new-1-54 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:293 | The card to put the admin app on your phone or computer is now on the first Settings tab, Gym.
+P-A7-whats-new-1-55 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:297 | "MettleUp access", where you let MettleUp support look at your records and see each time they did, is now on Help and feedback.
+P-A7-whats-new-1-57 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:314 | We updated the MettleUp terms and the data agreement for gyms. The next time you sign in as the owner, please read them and tick "I agree" again. Your staff are
+P-A7-whats-new-1-59 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:320 | We rewrote the MettleUp privacy notice in simpler words. It now lists every company that helps run MettleUp. Read it at mettleup.fit/privacy.
+P-A7-whats-new-1-61 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:331 | On iPhone, Settings now shows clear numbered steps to put the admin app on your home screen. The first time you open it from there, sign in once more. After tha
+P-A7-whats-new-1-65 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:346 | In Settings → Sign-in & data, two cards have clearer names: "Download a backup" and "Your gym’s records".
+P-A7-whats-new-1-66 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:356 | New "Questions" page: members can now ask a trainer a question in their MettleUp app. You or the trainer they picked reply here, and the member gets a notificat
+P-A7-whats-new-1-67 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:361 | Members now get a notification on their phone when you approve their pause or renewal, send the workout report they asked for, or have their shop order ready.
+P-A7-whats-new-1-68 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:370 | Forgot your PIN? On the sign-in page, tap "Verify with WhatsApp" and send MettleUp one free WhatsApp message. Then choose a new PIN.
+P-A7-whats-new-1-69 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:380 | More → Trainers: each trainer gets a page with their photo, hours and personal-training members. Book members with a free trainer for personal training.
+P-A7-whats-new-1-70 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:385 | Settings → Branding: the page no longer loses the logo or colour you pick before you tap Save.
+P-A7-whats-new-1-71 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:390 | Settings → Pay MettleUp: if you pay during your free trial, you keep every free day. Your paid plan starts when the trial ends.
+## ENTITIES WITH PERSONAL DATA (id | personal | kept how long | where stored)
+(none)
+## READERS OF THOSE ENTITIES IN THIS AREA (id | entity | kind | where)
+(none)
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-3100 | live | Mobile number boxes keep only the 10-digit number (a pasted or auto-filled +91 number is cut down), on sign-in, Add memb | apps/dashboard/src/crm/logic/members.ts:237
+F-panel-700 | live | Import members from another software's sheet (plans become real memberships, several sheets, undo this import) | apps/dashboard/src/crm/logic/importTerms.ts:47
+F-panel-701 | live | Joined online: make a member from a join-page request, approve one that paid online, let a free-trial person in | apps/dashboard/src/crm/logic/selfJoin.ts:40
+F-panel-702 | live | Member ID card (print, picture, WhatsApp) | apps/dashboard/src/crm/logic/memberCard.ts:25
+F-panel-703 | behind switch | Member messages: read and reply to what members send from 'Message your gym' | apps/dashboard/src/crm/logic/memberMessages.ts:99
+F-panel-704 | live | Member photo taken at the desk | apps/dashboard/src/crm/logic/memberPhoto.ts:33
+F-panel-705 | live | Gym and trainers see a member's training progress (Progress card, strength trend, My members list, cheer on WhatsApp) | apps/dashboard/src/crm/logic/memberProgress.ts:50
+F-panel-706 | live | Add and edit members (mobile number rules, duplicates) | apps/dashboard/src/crm/logic/members.ts:51
+F-panel-707 | live | Sell, renew and extend a membership (term dates, start-day and joining-fee defaults) | apps/dashboard/src/crm/logic/membership.ts:37
+F-panel-709 | live | Receipts (number per financial year, receipt rules, printable receipt with amount in words, receipt on WhatsApp) | apps/dashboard/src/crm/logic/receiptDoc.ts:95
+F-panel-710 | live | Side menu and More page in five groups that fold | apps/dashboard/src/crm/logic/navGroups.ts:33
+F-panel-711 | live | 'Needs you' on Today (count, badge, list, sound and browser notice for waiting requests) | apps/dashboard/src/crm/logic/needsYou.ts:51
+F-panel-712 | live | New gym ready card: gym code and join link shown once after 'Create my gym' | apps/dashboard/src/crm/logic/newGymReady.ts:16
+F-panel-713 | live | Numbers for the owner on Today (renewals due, fees due, stopped coming, new members, busy hours) | apps/dashboard/src/crm/logic/ownerNumbers.ts:44
+F-panel-714 | behind switch | Read a web-page visitor's chat with the AI helper in Enquiries | apps/dashboard/src/crm/logic/pageChat.ts:27
+F-panel-715 | live | Refresh the whole panel from the top bar | apps/dashboard/src/crm/logic/panelRefresh.ts:17
+F-panel-716 | live | Pass members (FITPASS, cultpass): add, count pass visits, match the company's payment | apps/dashboard/src/crm/logic/passMembers.ts:31
+F-panel-717 | behind switch | Pay MettleUp for a plan (UPI QR or bank transfer, send the reference number) | apps/dashboard/src/crm/logic/payMettleUp.ts:85
+F-panel-718 | live | Numbers to confirm: say yes or no to a mobile number typed at the poster check-in | apps/dashboard/src/crm/logic/phoneLinks.ts:36
+F-panel-719 | live | Approve pause and renew requests from the member app | apps/dashboard/src/crm/logic/planRequests.ts:53
+F-panel-720 | behind switch | MettleUp Plus: owner's switch to lock paid extras after a member's plan ends | apps/dashboard/src/crm/logic/plusLock.ts:18
+F-panel-721 | live | Personal training packs with a count of classes used | apps/dashboard/src/crm/logic/pt.ts:25
+F-panel-722 | live | Quick action buttons at the top of Today, picked and ordered by the owner | apps/dashboard/src/crm/logic/quickActions.ts:35
+F-panel-723 | live | Ready-made challenges to turn on, off or edit | apps/dashboard/src/crm/logic/readyChallenges.ts:80
+F-panel-724 | live | Bring a friend: thank the member who brought a new member with free days | apps/dashboard/src/crm/logic/referrals.ts:20
+F-panel-725 | live | Ready WhatsApp message to one member (plan ending, plan ended, birthday, haven't seen you) in English or Hindi, with ren | apps/dashboard/src/crm/logic/whatsapp.ts:259
+F-panel-726 | live | Messages & offers: ready messages for all members (gym news, offers, events) sent in the app and on WhatsApp down a list | apps/dashboard/src/crm/logic/messageTemplates.ts:138
+F-panel-727 | live | One plain sentence under each setting | apps/dashboard/src/crm/logic/settingLines.ts:12
+F-panel-728 | live | Settings tabs (Gym, Member app, Sign-in & data) carrying new-feature dots | apps/dashboard/src/crm/logic/newDots.ts:133
+F-panel-729 | live | Set-up cards on Today, one at a time (get alerts on this device, put the admin app on your phone) | apps/dashboard/src/crm/logic/setupCards.ts:14
+F-panel-730 | live | Add a person with a job (Owner, Staff, Trainer, Other) in Settings > Staff & sign-in | apps/dashboard/src/crm/logic/staffJobs.ts:44
+F-panel-731 | behind switch | Trainer profiles and schedules: working hours, book personal-training classes | apps/dashboard/src/crm/logic/trainerSchedule.ts:38
+F-panel-732 | live | The gym's own form videos: a trainer's YouTube link on an exercise | apps/dashboard/src/crm/logic/trainerVideos.ts:17
+F-panel-733 | live | Free-trial banner for the gym owner on Today | apps/dashboard/src/crm/logic/trial.ts:48
+F-panel-734 | live | Gym alerts on this phone or computer with the admin app closed (at once, daily or weekly) | apps/dashboard/src/crm/logic/webPush.ts:29
+F-panel-735 | live | Monday summary of last week to send on WhatsApp | apps/dashboard/src/crm/logic/weekSummary.ts:14
+F-panel-736 | live | Workout offer: train N times in N days, get free days (set up, give or undo the reward) | apps/dashboard/src/crm/logic/workoutOffer.ts:102
+F-panel-737 | live | Workout plans from the gym or trainer, with ready-made programs | apps/dashboard/src/crm/logic/workoutPlans.ts:80
+F-panel-738 | live | What's new in the admin app (card on Today after an update, full list in Settings) | apps/dashboard/src/crm/logic/whatsNew.ts:41
+## NOT LISTED
+87 open promises of this area are not about personal data or law by their words (script filter); they are left to hunt 10 and lens 10.
+40 promises of this area already have the status kept.

@@ -1,0 +1,46 @@
+# L4-phone-cloud-backup-ai: 4 x phone / phone/cloud-backup-ai. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L4.1 | 4 | Promise register (A7)
+L4.2 | 4 | India DPDP Act duties (notice, consent, purpose, deletion, breach timing, children)
+L4.3 | 4 | who at MettleUp can see gym data and the record of it (read log)
+L4.4 | 4 | data kept longer than promised
+L4.5 | 4 | data sent to outside services (AI, WhatsApp, analytics, Health Connect / Google Health / Fitbit) vs what the policy says
+L4.6 | 4 | account deletion really deletes everywhere (backups noted)
+## PROMISES TO CHECK (id | status | where | text)
+P-A7-phone-watch-1-24 | partly | apps/mobile/src/backup/backupText.ts:14 | Your phone number and your gym membership are never in the file.
+P-A7-phone-watch-1-28 | partly | apps/mobile/src/cloud/accountWords.ts:34 | This deletes your account and everything saved on MettleUp’s server.
+P-A7-phone-watch-1-29 | partly | apps/mobile/src/cloud/accountWords.ts:36 | Your account and everything saved on MettleUp are deleted.
+P-A7-phone-watch-1-30 | partly | apps/mobile/src/cloud/accountWords.ts:38 | Everything saved on MettleUp is deleted.
+P-A7-phone-watch-1-07 | unknown | apps/mobile/src/ai/localCoach.ts:472 | No records yet — log a few workouts and we will start tracking them.
+P-A7-phone-watch-1-25 | unknown | apps/mobile/src/backup/backupText.ts:55 | “{ADD_LABEL}”: only what this phone doesn’t have yet comes in; your settings stay.
+P-A7-phone-watch-1-27 | unknown | apps/mobile/src/cloud/accountWords.ts:25 | Your space on MettleUp is full, so new workouts stay on this phone only.
+## ENTITIES WITH PERSONAL DATA (id | personal | kept how long | where stored)
+E-member-items | yes | until the member deletes the account; no time limit found | table member_items
+## READERS OF THOSE ENTITIES IN THIS AREA (id | entity | kind | where)
+RD-A4-rpc-2b-04 | E-member-items | count | apps/mobile/src/cloud/copyApi.ts:100
+RD-A4-rpc-2b-05 | E-member-items | job | apps/mobile/src/cloud/copyApi.ts:73
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-1500 | behind switch | Chat with the coach: send a message, get a reply and cards (Coach tab; switched off in code, FEATURES.coach is false) | apps/mobile/src/ai/orchestrator.ts:111
+F-phone-1501 | behind switch | Use your own AI key for the coach (Claude, OpenAI or Groq) and pick the model in Settings | apps/mobile/src/ai/providers/anthropic.ts:79
+F-phone-1502 | behind switch | Coach without a key: understands typed workouts and body weight in English, Hindi and Hinglish, fully offline | apps/mobile/src/ai/localCoach.ts:839
+F-phone-1503 | behind switch | Coach reads and changes your data by chat: log a workout, meal or body weight, show today's workout, records, stats and  | apps/mobile/src/ai/tools.ts:441
+F-phone-1505 | behind switch | Send the coach a meal photo to estimate calories and log it (needs a Claude or OpenAI key; offline coach asks you to des | apps/mobile/src/ai/orchestrator.ts:113
+F-phone-1510 | live | Download my data: save one backup file (ZIP) with workouts, routines, own exercises, body weight, measurements, photos,  | apps/mobile/src/backup/backupSave.ts:42
+F-phone-1511 | live | Restore from a backup file: open it, see what is inside, then replace everything on this phone or add only what is missi | apps/mobile/src/backup/backupOpen.ts:36
+F-phone-1512 | live | Undo a restore: put the phone back as it was before the backup was put in | apps/mobile/src/backup/backupRestore.ts:551
+F-phone-1520 | live | MettleUp account: Continue with Google, and sign out (offered to every member, gym or not, in a build with a real Google | apps/mobile/src/cloud/account.ts:50
+F-phone-1521 | live | Keep your workouts on MettleUp: every saved change is copied to the server by itself in the background, and waits when o | apps/mobile/src/cloud/copySync.ts:381
+F-phone-1522 | live | Bring back my workouts: after signing in on a new phone, the saved copy is merged in with no duplicate workouts, newest  | apps/mobile/src/cloud/copySync.ts:223
+F-phone-1523 | live | Delete my MettleUp account and the saved copy of my workouts (a gym owner's or trainer's sign-in is kept, only the copy  | apps/mobile/src/cloud/account.ts:149
+F-phone-1524 | live | Backup status line in Settings: when the copy was last saved, changes still waiting, sign in again needed, or the copy i | apps/mobile/src/cloud/copySync.ts:402
+F-phone-1525 | live | Restore from an older Google Drive backup: sign in to Drive, find the newest backup, put it on this phone (kept for memb | apps/mobile/src/cloud/drive.ts:110
+F-phone-1526 | hidden | Back up to Google Drive (upload a new backup, keep the newest few): code still present but no screen calls it since Driv | apps/mobile/src/cloud/drive.ts:366
+F-phone-1527 | behind switch | Old gym link: sign in with email and password, then join a gym by its code (Settings, Gym; switched off in code, FEATURE | apps/mobile/src/cloud/session.ts:75
+F-phone-1528 | behind switch | Old gym sync: after any saved change, and when the internet comes back, one activity summary row of the member is sent t | apps/mobile/src/cloud/sync.ts:12
+F-phone-1529 | behind switch | Old gym link: delete my cloud data and disconnect from the gym (only disconnects after the server confirms the delete) | apps/mobile/src/cloud/session.ts:148
+F-phone-1530 | live | Reaching the server when Supabase is blocked: every request goes through our own addresses first (app.mettleup.fit/sb, t | apps/mobile/src/cloud/address.ts:115
+F-phone-1531 | live | Gym logo and shop photos load through our own address when the saved link is Supabase's | apps/mobile/src/cloud/picture.ts:20
+F-phone-1532 | behind switch | MettleUp Plus limits (paid member plan): more than 7 exercises of your own and charts older than 3 months are refused wi | apps/mobile/src/cloud/limitsFlag.ts:21
+## NOT LISTED
+0 open promises of this area are not about personal data or law by their words (script filter); they are left to hunt 10 and lens 10.
+1 promises of this area already have the status kept.

@@ -1,0 +1,46 @@
+# L4-panel-brand-shell: 4 x panel / panel/brand-shell. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L4.1 | 4 | Promise register (A7)
+L4.2 | 4 | India DPDP Act duties (notice, consent, purpose, deletion, breach timing, children)
+L4.3 | 4 | who at MettleUp can see gym data and the record of it (read log)
+L4.4 | 4 | data kept longer than promised
+L4.5 | 4 | data sent to outside services (AI, WhatsApp, analytics, Health Connect / Google Health / Fitbit) vs what the policy says
+L4.6 | 4 | account deletion really deletes everywhere (backups noted)
+## PROMISES TO CHECK (id | status | where | text)
+P-A7-panel-1-42 | partly | apps/dashboard/src/crm/brand/BrandingScreen.tsx:39 | The app checks at most once an hour, and never in the middle of a workout.
+P-A7-panel-1-43 | partly | apps/dashboard/src/crm/brand/BrandingScreen.tsx:343 | Members see MettleUp’s look on a later visit to the app, never in the middle of a workout.
+P-A7-panel-1-44 | partly | apps/dashboard/src/crm/brand/BrandingScreen.tsx:681 | If it sits on a plain white or coloured box, we take the box off for you.
+P-A7-panel-1-45 | partly | apps/dashboard/src/crm/brand/BrandingScreen.tsx:691 | We can only take off a plain background, so we kept your logo as it is.
+P-A7-panel-1-47 | partly | apps/dashboard/src/crm/brand/BrandingScreen.tsx:692 | We take off a plain background for you, but not a photo or a pattern.
+P-A7-panel-1-67 | partly | apps/dashboard/src/crm/lang/hinglish.ts:1147 | AI pehle Hindi mein likhega, free mein.
+P-A7-panel-1-68 | partly | apps/dashboard/src/crm/lang/hinglish.ts:1223 | Inmein se {n} is mahine ke free credits hain.
+P-A7-panel-1-46 | unknown | apps/dashboard/src/crm/brand/BrandingScreen.tsx:691 | You can remove it for free:
+P-A7-panel-1-48 | unknown | apps/dashboard/src/crm/brand/BrandingScreen.tsx:692 | You can remove those for free:
+P-A7-panel-1-50 | unknown | apps/dashboard/src/crm/lang/hinglish.ts:44 | Aapke gym ka free page: fees, timings aur photos
+P-A7-panel-1-52 | unknown | apps/dashboard/src/crm/lang/hinglish.ts:181 | Yeh free hai.
+P-A7-panel-1-53 | unknown | apps/dashboard/src/crm/lang/hinglish.ts:229 | Yeh free hai.
+P-A7-panel-1-54 | unknown | apps/dashboard/src/crm/lang/hinglish.ts:288 | Apna free web page banao, apna ek link aur QR poster share karo, aur dekho log paise kaise denge.
+P-A7-panel-1-55 | unknown | apps/dashboard/src/crm/lang/hinglish.ts:292 | Teen hisse, isi kram mein: aapka free web page, aapka ek link aur QR poster, aur log paise kaise denge.
+P-A7-panel-1-63 | unknown | apps/dashboard/src/crm/lang/hinglish.ts:836 | Apna free gym web page banao, phir yeh card wahi page bhejega.
+P-A7-panel-1-64 | unknown | apps/dashboard/src/crm/lang/hinglish.ts:1044 | Yeh online payment refund ho gaya, isliye kuch save nahi hua.
+P-A7-panel-2-01 | unknown | apps/dashboard/src/crm/lang/hinglish.ts:1293 | Aaj ke free sawaal ho gaye.
+P-A7-panel-2-02 | unknown | apps/dashboard/src/crm/lang/hinglish.ts:1294 | Aaj ke free sawaal khatam.
+P-A7-panel-2-03 | unknown | apps/dashboard/src/crm/lang/hinglish.ts:1465 | Plan likhwana free hai.
+P-A7-panel-2-06 | unknown | apps/dashboard/src/crm/lang/hinglish.ts:1576 | Jo log aapka "Become a member" link kholte hain, woh plan chunne se pehle aapka gym free mein try kar sakte hain.
+P-A7-panel-2-08 | unknown | apps/dashboard/src/crm/lang/hinglish.ts:1580 | Naye log aapka gym 1 din free mein try kar sakte hain.
+P-A7-panel-2-09 | unknown | apps/dashboard/src/crm/lang/hinglish.ts:1581 | Naye log aapka gym {n} din free mein try kar sakte hain.
+P-A7-panel-2-12 | unknown | apps/dashboard/src/crm/lang/hinglish.ts:1626 | Likhein ki member ke invite link se judne wale har dost ke liye us member ko kitne free din milenge (aap unhe ek tap se dete hain), ya koi din na dene ke liye i
+## ENTITIES WITH PERSONAL DATA (id | personal | kept how long | where stored)
+E-gym-page-photos | unknown | unknown | storage bucket gym-page-photos (private, webp, 1 MB)
+E-member-summary | yes | unknown | table member_summary
+E-profiles | yes | unknown | table profiles
+## READERS OF THOSE ENTITIES IN THIS AREA (id | entity | kind | where)
+RD-A4-rpc-1b-46 | E-profiles | screen | apps/dashboard/src/hooks/useGymData.ts:39
+RD-A4-rpc-4-43 | E-gym-page-photos | screen | apps/dashboard/src/crm/gympage/api.ts:60
+RD-A4-rpc-4-45 | E-member-summary | list | apps/dashboard/src/hooks/useGymData.ts:61
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1105 | live | Branding: gym logo and colours for the member app, logo upload, remove logo background, phone and shortcut preview | apps/dashboard/src/crm/brand/BrandingScreen.tsx:41
+F-panel-3101 | live | Branding: suggest a gym colour from the uploaded logo | apps/dashboard/src/crm/brand/brandLogic.ts:141
+## NOT LISTED
+10 open promises of this area are not about personal data or law by their words (script filter); they are left to hunt 10 and lens 10.
+10 promises of this area already have the status kept.

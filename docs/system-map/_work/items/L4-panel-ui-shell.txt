@@ -1,0 +1,39 @@
+# L4-panel-ui-shell: 4 x panel / panel/ui-shell. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L4.1 | 4 | Promise register (A7)
+L4.2 | 4 | India DPDP Act duties (notice, consent, purpose, deletion, breach timing, children)
+L4.3 | 4 | who at MettleUp can see gym data and the record of it (read log)
+L4.4 | 4 | data kept longer than promised
+L4.5 | 4 | data sent to outside services (AI, WhatsApp, analytics, Health Connect / Google Health / Fitbit) vs what the policy says
+L4.6 | 4 | account deletion really deletes everywhere (backups noted)
+## PROMISES TO CHECK (id | status | where | text)
+P-A7-panel-3-02 | GAP | apps/dashboard/src/crm/ui/ForgeAccessCard.tsx:28 | MettleUp support can look at your records only when you let them, for one hour at most, and only to read.
+P-A7-panel-3-03 | GAP | apps/dashboard/src/crm/ui/ForgeAccessCard.tsx:35 | MettleUp has never opened your records.
+P-A7-panel-3-01 | partly | apps/dashboard/src/crm/ui/ForgeAccessCard.tsx:28 | MettleUp sees only your gym’s totals (how many members, check-ins and money in all), never a member’s name or number.
+P-A7-panel-3-05 | partly | apps/dashboard/src/crm/ui/GymDataActions.tsx:27 | Then we delete every member, payment, check-in and shop order of this gym from our server within 30 days, and call you on the gym’s number to confirm before we 
+P-A7-panel-3-34 | unknown | apps/dashboard/src/crm/ui/BillingOnline.tsx:99 | Pay by UPI, card or net banking on the payment company’s secure page.
+P-A7-panel-3-35 | unknown | apps/dashboard/src/crm/ui/BusinessGrowth.tsx:164 | Old records count only if you added them.
+P-A7-panel-3-40 | unknown | apps/dashboard/src/crm/ui/offline.tsx:189 | It was never sent, so it will be gone.
+## ENTITIES WITH PERSONAL DATA (id | personal | kept how long | where stored)
+(none)
+## READERS OF THOSE ENTITIES IN THIS AREA (id | entity | kind | where)
+(none)
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1109 | live | What's new page, MettleUp HQ news in the bell, new-feature dots | apps/dashboard/src/crm/ui/WhatsNew.tsx:351
+F-panel-1121 | live | Workout offer: train N times get extra days, give or undo a reward, check a member's workout code | apps/dashboard/src/crm/ui/WorkoutCodeCheckSheet.tsx:18
+F-panel-1129 | live | Your numbers and Your growth: number tiles with the list behind each, month-by-month growth, one-page print report | apps/dashboard/src/crm/ui/BusinessGrowth.tsx:70
+F-panel-500 | live | Move around the admin app (side menu, phone bottom bar, More page, page links, one Refresh button) | apps/dashboard/src/crm/ui/AppShell.tsx:1
+F-panel-501 | live | This device: Dark or Light screen, English or Hinglish, put the admin app on the phone's home screen | apps/dashboard/src/crm/ui/ThemeToggle.tsx:1
+F-panel-502 | live | Offline front desk: keep working without internet, Offline banner, greyed-out buttons, sync when back | apps/dashboard/src/crm/ui/offline.tsx:1
+F-panel-503 | live | First run: welcome screen (sign in, create a gym, try it) and the 'your gym is ready' page with gym code, join link and  | apps/dashboard/src/crm/ui/Welcome.tsx:1
+F-panel-505 | live | Gym alerts: the bell's to-do list, 'Needs you' with a ring, and alerts on this device with the app closed (owner picks i | apps/dashboard/src/crm/ui/BellInbox.tsx:1
+F-panel-506 | live | What's new in the admin app, and the dots that mark a new feature in the menu | apps/dashboard/src/crm/ui/WhatsNew.tsx:351
+F-panel-508 | live | Today's to-do cards: approve members' pause and renew requests, confirm check-in mobile numbers, approve people who join | apps/dashboard/src/crm/ui/PlanRequestsCard.tsx:1
+F-panel-509 | live | Your numbers and Your growth: fees collected, new members, busiest hours, month-by-month growth and its printable report | apps/dashboard/src/crm/ui/OwnerNumbers.tsx:526
+F-panel-511 | live | Member ID card: print, share or save a member's card | apps/dashboard/src/crm/ui/MemberCardSheet.tsx:52
+F-panel-521 | live | Workout offer: check a member's workout code at the desk against the gym's check-ins | apps/dashboard/src/crm/ui/WorkoutCodeCheckSheet.tsx:18
+F-panel-535 | hidden | Pay MettleUp online and open MettleUp receipts | apps/dashboard/src/crm/ui/BillingOnline.tsx:65
+F-panel-536 | hidden | Stopped-paying line on Today: 7 extra days, then basic mode, then read-only, with Pay now for the owner | apps/dashboard/src/crm/ui/LapseBanner.tsx:30
+## NOT LISTED
+2 open promises of this area are not about personal data or law by their words (script filter); they are left to hunt 10 and lens 10.
+9 promises of this area already have the status kept.

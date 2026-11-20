@@ -1,0 +1,16 @@
+# L4-panel-logic-2-p2: 4 x panel / panel/logic-2 part 2. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L4.1 | 4 | Promise register (A7)
+## PROMISES TO CHECK (id | status | where | text) part 2 of 2
+P-A7-whats-new-1-73 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:404 | Settings → Branding: see how your logo looks as an icon on a member’s phone home screen. It shows right under your logo.
+P-A7-whats-new-1-74 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:411 | Settings → Pay MettleUp: pay for your MettleUp plan by UPI or bank transfer, then send us the reference number. This page shows when we confirm your payment and
+P-A7-whats-new-1-80 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:454 | Small fixes: Today’s numbers now say "Fees due" in full rupees, a pass member’s page no longer asks you to sell a membership twice, and pages that send you to S
+P-A7-whats-new-1-82 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:468 | Sell membership: if the price is above the plan’s price, or the plan starts over 30 days later than usual, the app asks you to check once. Tap "Yes, save" to ke
+P-A7-whats-new-1-87 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:499 | On Today, "Your numbers" shows 5 key numbers for your gym. Tap one to see the members behind it, call or WhatsApp them, or download the list.
+P-A7-whats-new-1-89 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:508 | When you add or edit a member, "Take photo" uses the desk computer’s camera.
+P-A7-whats-new-1-90 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:512 | Settings → Branding: the app suggests a gym colour from your logo.
+P-A7-whats-new-1-91 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:522 | Import members: the app now matches your Excel columns by itself, using AI. Check the columns and change any that are wrong.
+P-A7-whats-new-1-92 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:527 | Import members: if your sheet has more than one phone column, the app picks the one with real mobile numbers. You can change it on the same page.
+P-A7-whats-new-1-93 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:531 | Messages and offers you send from "Messages & offers" now pop up on members' phones at once, even when their app is closed. Members need MettleUp 0.59.0 or newe
+P-A7-whats-new-1-97 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:564 | On a member's page, "Body measurements" lets the trainer note weight and body sizes, so you can see their progress.
+P-A7-whats-new-2-02 | unknown | apps/dashboard/src/crm/logic/whatsNew.ts:688 | New: a free web page for your gym at join.mettleup.fit, with your fees, timings, photos and a “Become a member” button. Make it in Set up your gym, under “Let p

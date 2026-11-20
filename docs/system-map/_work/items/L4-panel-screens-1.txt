@@ -1,0 +1,84 @@
+# L4-panel-screens-1: 4 x panel / panel/screens-1. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L4.1 | 4 | Promise register (A7)
+L4.2 | 4 | India DPDP Act duties (notice, consent, purpose, deletion, breach timing, children)
+L4.3 | 4 | who at MettleUp can see gym data and the record of it (read log)
+L4.4 | 4 | data kept longer than promised
+L4.5 | 4 | data sent to outside services (AI, WhatsApp, analytics, Health Connect / Google Health / Fitbit) vs what the policy says
+L4.6 | 4 | account deletion really deletes everywhere (backups noted)
+## PROMISES TO CHECK (id | status | where | text)
+P-A7-panel-3-51 | unknown | apps/dashboard/src/crm/ui/screens/Challenges.tsx:335 | Members see it in the MettleUp app within 10 minutes.
+P-A7-panel-3-53 | unknown | apps/dashboard/src/crm/ui/screens/EntryMachines.tsx:180 | {name} shows Online within a minute of its first call.
+P-A7-panel-3-58 | unknown | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:1035 | AI says this column is not needed, so it is not kept.
+P-A7-panel-3-59 | unknown | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:1038 | It only numbers the rows, so it is not kept.
+P-A7-panel-3-60 | unknown | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:1055 | A ticked column with no name is not kept.
+## ENTITIES WITH PERSONAL DATA (id | personal | kept how long | where stored)
+(none)
+## READERS OF THOSE ENTITIES IN THIS AREA (id | entity | kind | where)
+(none)
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-panel-1110 | live | Members: list and filters, add or edit a member, member page, photo by desk camera, ID card print and share, members who | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:112
+F-panel-1111 | live | Import members from Excel or CSV (with AI column guess), preview, branches, undo an import | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:125
+F-panel-1116 | live | Enquiries: add, follow up, thank, turn into a member; Bring a friend setting and referral free days | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:100
+F-panel-1126 | live | Diet plans and body measurements for members | apps/dashboard/src/crm/ui/screens/DietPlans.tsx:138
+F-panel-1127 | live | Challenges: monthly challenge, leaderboard, hide a member on the board, confirm the reward | apps/dashboard/src/crm/ui/screens/Challenges.tsx:107
+F-panel-1128 | live | Expenses: add and remove gym expenses, profit | apps/dashboard/src/crm/ui/screens/Expenses.tsx:51
+F-panel-1130 | behind switch | AI Assistant: ask about the gym, suggestions, voice, tasks, credits, member rules, AI-written plans | apps/dashboard/src/crm/ui/screens/Assistant.tsx:11
+F-panel-1132 | live | Member-app settings: gym timings, busy machines counts, MettleUp Plus lock when a plan ends | apps/dashboard/src/crm/ui/screens/BusyMachines.tsx:82
+F-panel-1133 | behind switch | Entry machines (door/biometric): add or remove a machine, member numbers, keep machines in step with sales; includes the | apps/dashboard/src/crm/ui/screens/EntryMachines.tsx:87
+F-panel-1135 | live | Help and feedback: write to MettleUp, your questions history, MettleUp access (let support look for one hour, see every  | apps/dashboard/src/crm/ui/screens/Feedback.tsx:29
+F-panel-200 | behind switch | AI Assistant page (owner asks the assistant; paid from the gym AI credits) | apps/dashboard/src/crm/ui/screens/Assistant.tsx:11
+F-panel-201 | live | Visits register: find a member and check them in at the desk, undo a check-in, pick a past day or batch, see 30-day visi | apps/dashboard/src/crm/ui/screens/Attendance.tsx:86
+F-panel-202 | live | "Losing the habit" list: paying members who stopped coming, filter by risk band, download as CSV, open a WhatsApp chat w | apps/dashboard/src/crm/ui/screens/Attendance.tsx:756
+F-panel-203 | live | Links from Visits to the Check-in QR poster and Pass visits pages (Pass visits button only once the gym has a pass membe | apps/dashboard/src/crm/ui/screens/Attendance.tsx:88
+F-panel-204 | behind switch | Bring a friend: owner sets free days per friend who joins and sees links, asks and joins counts (Settings card) | apps/dashboard/src/crm/ui/screens/BringAFriend.tsx:24
+F-panel-205 | live | Bring a friend thank-you: give the inviting member free days from the enquiry or right after the friend joins | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:1020
+F-panel-206 | behind switch | Busy machines: owner switches it on, types how many of each machine, adds a missing machine; desk reads it | apps/dashboard/src/crm/ui/screens/BusyMachines.tsx:82
+F-panel-207 | live | Challenges: owner creates a monthly challenge (ready-made or own), cancels it, sees who reached the goal and confirms th | apps/dashboard/src/crm/ui/screens/Challenges.tsx:107
+F-panel-208 | live | Leaderboard: top 10 of the last 30 days, owner can hide a member from what members see | apps/dashboard/src/crm/ui/screens/Challenges.tsx:791
+F-panel-209 | live | Diet plans: build a plan (or start from a ready-made Indian plan), edit, copy, withdraw, choose who gets it | apps/dashboard/src/crm/ui/screens/DietPlans.tsx:138
+F-panel-210 | live | Diet plan on a member page: see the plan this member has and "Send a diet plan" | apps/dashboard/src/crm/ui/screens/DietPlans.tsx:505
+F-panel-211 | live | Enquiries list: who to call today, call or WhatsApp with a ready message, move the follow-up date, mark not interested ( | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:100
+F-panel-212 | live | Add an enquiry by hand | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:651
+F-panel-213 | live | Make an enquiry a member (add member, sell plan, then the new member page) | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:297
+F-panel-214 | behind switch | Web page question and AI chat shown on an enquiry; chats needing the owner come first; "mark chat done" | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:408
+F-panel-215 | hidden | Entry machines: owner adds or removes a finger/face machine by serial; list shows Online/Offline, last call and entries  | apps/dashboard/src/crm/ui/screens/EntryMachines.tsx:87
+F-panel-216 | hidden | Entry machine number of a member, on the member page (see and change the PIN typed on the machine) | apps/dashboard/src/crm/ui/screens/EntryMachines.tsx:387
+F-panel-217 | live | Expenses (Kharcha): month by month collected, expenses and profit; add an expense; remove one | apps/dashboard/src/crm/ui/screens/Expenses.tsx:51
+F-panel-218 | live | Help and feedback: write to MettleUp, get an answer (AI credits or help pages), rate it, see your past questions | apps/dashboard/src/crm/ui/screens/Feedback.tsx:29
+F-panel-219 | live | MettleUp access card: owner lets MettleUp support look at the gym records and sees every look | apps/dashboard/src/crm/ui/screens/Feedback.tsx:135
+F-panel-220 | live | Gym timings: open hours per day, special days, a note for members; owner edits, desk reads | apps/dashboard/src/crm/ui/screens/GymTimings.tsx:81
+F-panel-221 | live | Import members from Excel or CSV: pick file, match columns, fix rows, add in batches, download skipped rows and a sample | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:125
+F-panel-222 | live | Import: AI matches the file columns by itself | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:579
+F-panel-223 | live | Import: send rows to the right branch (gym with 2 or more branches) | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:1069
+F-panel-224 | live | Undo a past import | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:1524
+F-panel-225 | live | Member page: status, what they owe, visits and training pattern, memberships, payments, contact details; edit the member | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:112
+F-panel-226 | live | Check a member in from their page (for a pass member: count a pass visit) | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:335
+F-panel-227 | live | Archive or restore a member | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:365
+F-panel-228 | live | Member card (print at the desk) | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:370
+F-panel-229 | live | Share app link: WhatsApp the member the app link and gym code | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:390
+F-panel-230 | live | WhatsApp a member with the message already typed (fees, plan ending, birthday) | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:503
+F-panel-231 | behind switch | Member photo: take, change, remove | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:458
+F-panel-232 | live | Sell or renew a membership and collect a payment from the member page | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:417
+F-panel-233 | live | Cancel a membership (with a reason) and undo the cancel | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:909
+F-panel-234 | live | Freeze / extra days on a plan, and move the start date of a plan not started yet | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:1377
+F-panel-235 | live | Personal training pack: mark a session, undo the last one, renew PT | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:545
+F-panel-236 | live | Cancel (void) a receipt from the member page | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:1434
+F-panel-237 | live | Check a workout code (workout offer reward claim) from the member page | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:576
+F-panel-238 | live | Send or build a workout plan from the member page | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:643
+F-panel-239 | live | Body measurements: measure a member at the desk (weight, body fat, tape), fix or delete an entry, history with change | apps/dashboard/src/crm/ui/screens/MemberMeasurements.tsx:44
+F-panel-514 | live | Expenses: what the gym spent month by month, and profit | apps/dashboard/src/crm/ui/screens/Expenses.tsx:51
+F-panel-516 | live | Visits: the attendance register, members who stopped coming (with a WhatsApp link), and pass-company visits month by mon | apps/dashboard/src/crm/ui/screens/Attendance.tsx:86
+F-panel-517 | live | Enquiries: people who asked about joining, add one, set a follow-up day | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:100
+F-panel-518 | behind switch | Bring a friend: set the free days for a member whose friend joins, and thank that member with one tap | apps/dashboard/src/crm/ui/screens/BringAFriend.tsx:1
+F-panel-519 | live | Import members from Excel or CSV | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:125
+F-panel-526 | live | Diet plans and body measurements: send members what to eat, and record a member's weight, body fat and tape measurements | apps/dashboard/src/crm/ui/screens/DietPlans.tsx:138
+F-panel-527 | live | Challenges: a monthly goal for members and the leaderboard (owner sets it, desk reads it) | apps/dashboard/src/crm/ui/screens/Challenges.tsx:107
+F-panel-529 | live | Gym timings: when the gym is open, shown to members in their app | apps/dashboard/src/crm/ui/screens/GymTimings.tsx:81
+F-panel-531 | unknown | Entry machines: add or remove the gym's door machines, give a member a machine number, keep machines in step in the back | apps/dashboard/src/crm/ui/screens/EntryMachines.tsx:87
+F-panel-532 | behind switch | Busy machines: the owner switches it on and types how many of each machine the gym has, so members see tips on busy time | apps/dashboard/src/crm/ui/screens/BusyMachines.tsx:82
+F-panel-537 | behind switch | AI Assistant: ask a question or give a task in Hindi or English | apps/dashboard/src/crm/ui/screens/Assistant.tsx:11
+F-panel-538 | live | Help and feedback: write to MettleUp, see every time MettleUp support opened the gym's records, and the support email li | apps/dashboard/src/crm/ui/screens/Feedback.tsx:29
+## NOT LISTED
+9 open promises of this area are not about personal data or law by their words (script filter); they are left to hunt 10 and lens 10.
+12 promises of this area already have the status kept.

@@ -1,0 +1,111 @@
+# L4-server-panel-worker: 4 x server / server/panel-worker. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L4.1 | 4 | Promise register (A7)
+L4.2 | 4 | India DPDP Act duties (notice, consent, purpose, deletion, breach timing, children)
+L4.3 | 4 | who at MettleUp can see gym data and the record of it (read log)
+L4.4 | 4 | data kept longer than promised
+L4.5 | 4 | data sent to outside services (AI, WhatsApp, analytics, Health Connect / Google Health / Fitbit) vs what the policy says
+L4.6 | 4 | account deletion really deletes everywhere (backups noted)
+## PROMISES TO CHECK (id | status | where | text)
+P-A7-templates-2-48 | partly | deploy/panel/phoneInbound.js:309 | We could not find your MettleUp code in this message. Go back to the MettleUp page, tap "Open WhatsApp again" and send the message without changes.
+## ENTITIES WITH PERSONAL DATA (id | personal | kept how long | where stored)
+E-ai-usage | yes | 1 year (nightly clean-up); spoken-feedback count rows 7 days | d1 table ai_usage
+E-crm-records | yes | unknown | table crm_records
+E-feedback | yes | 1 year; crash reports 90 days | d1 table feedback
+E-friend-asks | yes | 2 days | d1 table friend_asks
+E-gym-ai-questions | yes | 400 days | table gym_ai_questions
+E-gym-friend-invites | yes | unknown | table gym_friend_invites
+E-gym-staff | yes | unknown | table gym_staff
+E-leads | yes | 12 months unless status is won | d1 table leads
+E-pay-gyms | yes | unknown | d1 table pay_gyms
+E-pay-requests | yes | unknown | d1 table pay_requests
+E-phone-code-asks | yes | 2 days (daily clean-up) | d1 table phone_code_asks
+E-phone-codes | yes | 2 days (daily clean-up) | d1 table phone_codes
+E-phone-inbound | yes | 2 days (daily clean-up) | d1 table phone_inbound
+E-shop-orders | yes | unknown | table shop_orders
+## READERS OF THOSE ENTITIES IN THIS AREA (id | entity | kind | where)
+RD-A4-d1-1-010 | E-ai-usage | count | deploy/panel/aiMatch.js:685
+RD-A4-d1-1-011 | E-ai-usage | count | deploy/panel/aiMatch.js:687
+RD-A4-d1-1-015 | E-ai-usage | count | deploy/panel/assist.js:504
+RD-A4-d1-1-016 | E-ai-usage | count | deploy/panel/assist.js:506
+RD-A4-d1-1-019 | E-ai-usage | count | deploy/panel/voice.js:75
+RD-A4-d1-1-020 | E-ai-usage | count | deploy/panel/voice.js:77
+RD-A4-d1-1-042 | E-feedback | count | deploy/panel/crash.js:135
+RD-A4-d1-1-044 | E-feedback | count | deploy/panel/feedback.js:106
+RD-A4-d1-1-049 | E-feedback | list | deploy/panel/help.js:358
+RD-A4-d1-1-094 | E-pay-gyms | screen | deploy/panel/pay.js:1039
+RD-A4-d1-1-095 | E-pay-gyms | screen | deploy/panel/pay.js:1305
+RD-A4-d1-1-096 | E-pay-gyms | screen | deploy/panel/pay.js:1387
+RD-A4-d1-2-12 | E-pay-requests | screen | deploy/panel/pay.js:257
+RD-A4-d1-2-22 | E-pay-requests | job | deploy/panel/pay.js:919
+RD-A4-d1-2-24 | E-pay-requests | job | deploy/panel/pay.js:967
+RD-A4-d1-2-26 | E-pay-requests | job | deploy/panel/pay.js:1002
+RD-A4-d1-2-27 | E-pay-requests | job | deploy/panel/pay.js:1015
+RD-A4-d1-2-28 | E-pay-requests | job | deploy/panel/pay.js:1049
+RD-A4-d1-2-29 | E-pay-requests | screen | deploy/panel/pay.js:1061
+RD-A4-d1-2-31 | E-pay-requests | list | deploy/panel/pay.js:1131
+RD-A4-d1-2-32 | E-pay-requests | list | deploy/panel/pay.js:1141
+RD-A4-d1-2-36 | E-pay-requests | job | deploy/panel/pay.js:1211
+RD-A4-d1-2-37 | E-pay-requests | job | deploy/panel/pay.js:1254
+RD-A4-d1-2-38 | E-pay-requests | list | deploy/panel/pay.js:1278
+RD-A4-d1-2-39 | E-pay-requests | list | deploy/panel/pay.js:1285
+RD-A4-d1-2-40 | E-pay-requests | list | deploy/panel/pay.js:1298
+RD-A4-d1-2-42 | E-pay-requests | screen | deploy/panel/pay.js:1389
+RD-A4-d1-2-44 | E-pay-requests | job | deploy/panel/pay.js:1491
+RD-A4-d1-2-47 | E-pay-requests | job | deploy/panel/pay.js:1550
+RD-A4-d1-2-57 | E-phone-code-asks | count | deploy/panel/phoneCode.js:193
+RD-A4-d1-2-58 | E-phone-code-asks | count | deploy/panel/phoneCode.js:274
+RD-A4-d1-2-59 | E-phone-code-asks | count | deploy/panel/phoneCode.js:275
+RD-A4-d1-2-64 | E-phone-code-asks | count | deploy/panel/phoneInbound.js:194
+RD-A4-d1-2-65 | E-phone-code-asks | count | deploy/panel/phoneInbound.js:195
+RD-A4-d1-2-70 | E-phone-codes | job | deploy/panel/phoneCode.js:374
+RD-A4-d1-2-76 | E-phone-inbound | job | deploy/panel/phoneInbound.js:208
+RD-A4-d1-2-78 | E-phone-inbound | screen | deploy/panel/phoneInbound.js:231
+RD-A4-d1-2-80 | E-phone-inbound | job | deploy/panel/phoneInbound.js:343
+RD-A4-rpc-1b-02 | E-gym-ai-questions | job | deploy/panel/questionCredits.js:82
+RD-A4-rpc-1b-04 | E-gym-friend-invites | screen | deploy/panel/worker.js:279
+RD-A4-rpc-2-21 | E-shop-orders | job | deploy/panel/pay.js:1382
+RD-A4-rpc-2-22 | E-crm-records | job | deploy/panel/pay.js:233
+RD-A4-rpc-4-25 | E-gym-staff | job | deploy/panel/phoneCode.js:295
+RD-A4-rpc-4-32 | E-gym-staff | job | deploy/panel/aiMatch.js:623
+RD-A4-rpc-4-33 | E-gym-staff | job | deploy/panel/pay.js:220
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-server-101 | live | Move a desk from the old admin address to app.mettleup.fit: the old address asks whether to move and hands the sign-in o | deploy/panel/worker.js:101
+F-server-102 | live | Block-proof gym server address: both apps reach the gym server through our own address (/sb) so a block of supabase.co c | deploy/panel/worker.js:110
+F-server-103 | live | Phone pop-ups at once: after the admin app sends a message, starts an offer or answers a member question, HQ is told to  | deploy/panel/proxy.js:75
+F-server-104 | live | Gym invite link page (/j/CODE): shows "Join <gym>" with the gym name and logo for link previews; opens the app on a phon | deploy/panel/worker.js:111
+F-server-105 | live | Check-in poster link page (/c/CODE): "Check in at <gym>"; opens the app's check-in screen, or tells a phone without the  | deploy/panel/worker.js:117
+F-server-106 | live | Bring a friend: a member's invite page (/f/CODE) names the gym and the member, and its form sends the friend's name and  | deploy/panel/worker.js:121
+F-server-107 | live | Join online: the gym's "Become a member" page (/m/CODE) shows the gym's plans and prices (and a free trial when on), and | deploy/panel/worker.js:126
+F-server-108 | behind switch | Pay online on the join page: tells the page whether this gym can be paid online, checks the page's own payment, and take | deploy/panel/worker.js:131
+F-server-109 | live | Smart app link (/app): Android goes to Google Play, an iPhone to the App Store once set ("coming soon" until then), a co | deploy/panel/worker.js:134
+F-server-110 | live | What's new lines for the app's update screen, served from our own server (read from GitHub, cached, last good copy kept  | deploy/panel/worker.js:133
+F-server-111 | live | Release file pass-through for the Play Console page (/dl/<version>.aab and its store pictures): lets the console page fe | deploy/panel/worker.js:136
+F-server-112 | live | Send feedback: both apps post a message; it is kept in MettleUp's own small database (not the gym server), with how it w | deploy/panel/worker.js:140
+F-server-113 | live | Help and feedback with an AI answer: the message is saved, an answer is written from the help articles (or matched from  | deploy/panel/worker.js:141
+F-server-114 | unknown | Spoken feedback: the member app sends a short voice clip, gets the text back to fix and send; the clip is not kept; coun | deploy/panel/worker.js:145
+F-server-115 | live | Crash reports: both apps post an uncaught error with no personal data; kept 90 days as "crash" rows for HQ and the daily | deploy/panel/worker.js:146
+F-server-116 | live | Daily clean-up at 03:00 India time: deletes crash reports older than 90 days, spoken-feedback counts older than 7 days,  | deploy/panel/worker.js:177
+F-server-117 | live | News from MettleUp HQ for the admin app's bell: the latest messages HQ sent to every gym | deploy/panel/worker.js:147
+F-server-118 | unknown | AI column matching in the member import: the AI is shown column names and a few masked example rows and says which colum | deploy/panel/worker.js:148
+F-server-119 | unknown | Owner's AI Assistant: the owner's typed or spoken sentence becomes 1 to 3 cards from a fixed list of tools and admin pag | deploy/panel/worker.js:149
+F-server-122 | unknown | AI workout plan writer: the assistant writes a plan for one member from the goal, level and days the owner gave, using t | deploy/panel/worker.js:152
+F-server-123 | live | AI question credits: before an AI answer, one question is taken from the gym's AI credits (members and page visitors: 10 | deploy/panel/questionCredits.js:82
+F-server-124 | behind switch | Connect the gym's own payment company: the owner types the company's keys (sealed before they are stored), sees the conn | deploy/panel/worker.js:154
+F-server-125 | behind switch | Connect a payment company by signing in (Razorpay or Cashfree "Connect" button) instead of typing keys | deploy/panel/pay.js:745
+F-server-126 | live | Collect a payment online at the desk: make a payment link (or UPI request) for a member through the gym's own account, c | deploy/panel/pay.js:766
+F-server-128 | live | Member pays in the app: the member sees what can be paid online, pays a due or a shop order through the gym's payment li | deploy/panel/pay.js:778
+F-server-130 | behind switch | Payment company webhook: the company tells us a link was paid (signature checked, each event kept once) and the request  | deploy/panel/pay.js:743
+F-server-131 | behind switch | Every 10 minutes: open payment links are checked with each gym's payment company and marked paid when the money has arri | deploy/panel/worker.js:179
+F-server-132 | behind switch | Owner's two payment switches ("Take payments in the member app", "Take payments when people join online") and the desk's | deploy/panel/pay.js:786
+F-server-133 | hidden | Sign-in code by WhatsApp: a 6-digit code sent to a mobile number for Forgot PIN and for the new-gym number check (login_ | deploy/panel/worker.js:160
+F-server-134 | live | "Verify with WhatsApp": the person sends MettleUp's number one WhatsApp message with a code to prove the number is their | deploy/panel/phoneCode.js:247
+F-server-135 | live | WhatsApp delivery news: Meta tells us whether each WhatsApp message was sent, delivered or failed and why (written to th | deploy/panel/worker.js:162
+F-server-136 | behind switch | Pay online for a MettleUp plan: the admin app's "Pay online" request is passed to the HQ server, which makes the payment | deploy/panel/worker.js:156
+F-server-137 | live | Public key for the admin app's alerts when the app is closed (browser push), passed on from the HQ server | deploy/panel/worker.js:158
+F-server-139 | live | Feature switches for the admin app (/api/switches): says whether gym web pages, pay online on the join page, AI credit c | deploy/panel/worker.js:166
+F-server-140 | live | Free demo request form on the gym-owner landing page: the gym's contact details are kept for MettleUp to call back, with | deploy/panel/worker.js:167
+F-server-141 | hidden | Gym's own free web page (join.mettleup.fit/<gym>): the gym's plans and prices, timings, address with map links, faciliti | deploy/panel/worker.js:93
+## NOT LISTED
+0 open promises of this area are not about personal data or law by their words (script filter); they are left to hunt 10 and lens 10.
+3 promises of this area already have the status kept.

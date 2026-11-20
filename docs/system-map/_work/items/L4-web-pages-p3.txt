@@ -1,0 +1,61 @@
+# L4-web-pages-p3: 4 x web / web/pages part 3. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L4.1 | 4 | Promise register (A7)
+## PROMISES TO CHECK (id | status | where | text) part 3 of 3
+P-A7-pilot-08 | unknown | apps/dashboard/public/data-agreement.html:35 | Each gym can reach only its own records.
+P-A7-pilot-16 | unknown | apps/dashboard/public/data-agreement.html:39 | We tell you in writing within 24 hours of finding out.
+P-A7-pilot-17 | unknown | apps/dashboard/public/data-agreement.html:39 | We say what happened, what data, what we did and what comes next.
+P-A7-pilot-18 | unknown | apps/dashboard/public/data-agreement.html:39 | We help you tell the Data Protection Board straight away and send the full report within 72 hours, and we help tell the members affected.
+P-A7-pilot-19 | unknown | apps/dashboard/public/data-agreement.html:52 | If a member asks you to see, correct or erase their details, you handle it, and we help when you ask.
+P-A7-pilot-20 | unknown | apps/dashboard/public/data-agreement.html:52 | If a member asks us, we pass it to you.
+P-A7-pilot-21 | unknown | apps/dashboard/public/data-agreement.html:55 | If that does not work for you, we send you the same within 7 days of asking.
+P-A7-pilot-24 | unknown | apps/dashboard/public/data-agreement.html:58 | We keep the deletion request itself for 2 years, as proof.
+P-A7-pilot-27 | unknown | apps/dashboard/public/data-agreement.html:64 | That scrambled form can still be traced back, so we protect it like other personal data.
+P-A7-pilot-30 | unknown | apps/dashboard/public/data-agreement.html:67 | We may end it with 30 days' notice, or at once for serious misuse.
+P-A7-pilot-31 | unknown | apps/dashboard/public/data-agreement.html:67 | Even after it ends, points 5, 9 and 10 (leaks, deleting your gym, and members' own workouts) still apply until your records are deleted.
+P-A7-pilot-32 | unknown | apps/dashboard/public/data-agreement.html:73 | Before a new version applies, we tell the owner in the admin app and ask them to accept it again.
+P-A7-pilot-38 | unknown | apps/dashboard/public/delete-account.html:29 | We do it within 30 days and reply when it is done.
+P-A7-pilot-39 | unknown | apps/dashboard/public/delete-account.html:37 | The photos themselves stay on your phone, because we never save them on our server.
+P-A7-pilot-46 | unknown | apps/dashboard/public/delivery.html:18 | Free trial: starts as soon as you sign up.
+P-A7-pilot-47 | unknown | apps/dashboard/public/delivery.html:18 | We check it and turn your plan on.
+P-A7-pilot-51 | unknown | apps/dashboard/public/delivery.html:24 | If you do not pay, we tell you in the admin app first.
+P-A7-pilot-52 | unknown | apps/dashboard/public/delivery.html:24 | After that, we may switch off the paid features step by step.
+P-A7-pilot-53 | unknown | apps/dashboard/public/delivery.html:24 | We never delete your data because a payment is late.
+P-A7-pilot-55 | unknown | apps/dashboard/public/privacy.html:21 | We only store them for it.
+P-A7-pilot-56 | unknown | apps/dashboard/public/privacy.html:22 | We never sell your data or show ads.
+P-A7-pilot-57 | unknown | apps/dashboard/public/privacy.html:22 | Data from Health Connect never goes to your gym or to any AI.
+P-A7-pilot-59 | unknown | apps/dashboard/public/privacy.html:47 | We answer within 30 days.
+P-A7-pilot-60 | unknown | apps/dashboard/public/privacy.html:51 | We are also in charge of help and feedback messages, crash reports, workouts you share with gym mates, and our technical logs.
+P-A7-pilot-61 | unknown | apps/dashboard/public/privacy.html:51 | (Under India's data law, we are the "Data Fiduciary" for these.)
+P-A7-pilot-63 | unknown | apps/dashboard/public/privacy.html:52 | (Your gym is the "Data Fiduciary" and we are its "Data Processor".)
+P-A7-pilot-64 | unknown | apps/dashboard/public/privacy.html:52 | If you write to us instead, we pass your request to your gym and help it answer.
+P-A7-pilot-65 | unknown | apps/dashboard/public/privacy.html:56 | Your progress photos never leave your phone.
+P-A7-pilot-66 | unknown | apps/dashboard/public/privacy.html:57 | "Ask an AI about your workouts" (Settings → Your data) only opens your phone's share menu.
+P-A7-pilot-67 | unknown | apps/dashboard/public/privacy.html:74 | This copy never holds your mobile number.
+P-A7-pilot-69 | unknown | apps/dashboard/public/privacy.html:76 | We look at it only to fix a fault, or when the law makes us.
+P-A7-pilot-70 | unknown | apps/dashboard/public/privacy.html:81 | Find my gym: if you check your mobile number in the app, we look for it on the member lists of gyms that use MettleUp, only to show you your own gym.
+P-A7-pilot-72 | unknown | apps/dashboard/public/privacy.html:82 | Tell my gym: if you type your gym's name and city, we keep only those two, so our team can contact that gym.
+P-A7-pilot-73 | unknown | apps/dashboard/public/privacy.html:82 | We never share your number.
+P-A7-pilot-74 | unknown | apps/dashboard/public/privacy.html:89 | Members see only how busy the gym is, never who came
+P-A7-pilot-75 | unknown | apps/dashboard/public/privacy.html:93 | Which machines you used, and when (only if your gym turned on busy machines)
+P-A7-pilot-76 | unknown | apps/dashboard/public/privacy.html:99 | Only if the gym asks and you tap yes
+P-A7-pilot-77 | unknown | apps/dashboard/public/privacy.html:102 | It never includes your body weight, photos, notes, food or mobile number.
+P-A7-pilot-79 | unknown | apps/dashboard/public/privacy.html:108 | You see only how many friends joined.
+P-A7-pilot-80 | unknown | apps/dashboard/public/privacy.html:109 | We pass the company your name, mobile number and the amount.
+P-A7-pilot-81 | unknown | apps/dashboard/public/privacy.html:109 | We never see your card, UPI or bank details.
+P-A7-pilot-82 | unknown | apps/dashboard/public/privacy.html:120 | Data from Health Connect never goes to your gym, to advertisers or to any AI.
+P-A7-pilot-83 | unknown | apps/dashboard/public/privacy.html:125 | Help and feedback (Settings → Help and feedback): we get your message, the app and its version, your phone model, the screen you were on and your gym's code.
+P-A7-pilot-84 | unknown | apps/dashboard/public/privacy.html:125 | We also get a random number for this install and a coded form of your internet (IP) address, used only to stop misuse.
+P-A7-pilot-85 | unknown | apps/dashboard/public/privacy.html:125 | We do not get your name or mobile number, unless you type them.
+P-A7-pilot-86 | unknown | apps/dashboard/public/privacy.html:127 | Neither we nor Groq keep the recording.
+P-A7-pilot-87 | unknown | apps/dashboard/public/privacy.html:127 | To stop misuse, we count how many recordings each phone and each coded internet address makes a day.
+P-A7-pilot-89 | unknown | apps/dashboard/public/privacy.html:129 | The error text is copied to our private bug list on GitHub.
+P-A7-pilot-90 | unknown | apps/dashboard/public/privacy.html:130 | Sign in with your phone number: when you check your mobile number in the app, we look for it on the member and staff lists of gyms that use MettleUp, only to sh
+P-A7-websites-1-06 | unknown | apps/dashboard/public/about.html:30 | Asking is free.
+P-A7-websites-1-07 | unknown | apps/dashboard/public/about.html:30 | You use AI credits only when the AI finishes a task for you.
+P-A7-websites-1-10 | unknown | apps/dashboard/public/about.html:53 | Free set-up, and we move your data from your old software or Excel.
+P-A7-websites-1-24 | unknown | apps/dashboard/public/home/index.html:866 | Asking is free.
+P-A7-websites-1-27 | unknown | apps/dashboard/public/home/index.html:867 | A credit is used only when the AI Assistant sends or saves something.
+P-A7-websites-1-30 | unknown | apps/dashboard/public/home/index.html:989 | Your member data is safe and private.
+P-A7-websites-1-43 | unknown | apps/dashboard/public/join-online.html:144 | We check that this number is yours.
+P-A7-websites-1-44 | unknown | apps/dashboard/public/join-online.html:144 | It is free.

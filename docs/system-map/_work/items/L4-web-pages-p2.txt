@@ -1,0 +1,64 @@
+# L4-web-pages-p2: 4 x web / web/pages part 2. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L4.1 | 4 | Promise register (A7)
+## PROMISES TO CHECK (id | status | where | text) part 2 of 3
+P-A7-pilot-50 | partly | apps/dashboard/public/delivery.html:24 | When online payments start, we will remind you in the admin app 7, 3 and 1 days before a monthly or yearly plan ends.
+P-A7-pilot-54 | partly | apps/dashboard/public/delivery.html:24 | If you ask us to, we delete your gym's data within 30 days.
+P-A7-pilot-58 | partly | apps/dashboard/public/privacy.html:23 | You can see, correct or delete your data at any time.
+P-A7-pilot-62 | partly | apps/dashboard/public/privacy.html:52 | We only store these records for your gym, under a written agreement.
+P-A7-pilot-78 | partly | apps/dashboard/public/privacy.html:106 | Messages you send to your gym from the Gym tab (questions, feedback, complaints) and the gym's replies are kept for 180 days after the last message, and deleted
+P-A7-pilot-88 | partly | apps/dashboard/public/privacy.html:129 | A report never holds your workouts, name, gym or phone details.
+P-A7-websites-1-16 | partly | apps/dashboard/public/friend.html:94 | Only the gym sees your number.
+P-A7-websites-1-20 | partly | apps/dashboard/public/home/index.html:11 | Every member gets a free workout app in your gym's name: they see their progress, so they keep coming.
+P-A7-websites-1-25 | partly | apps/dashboard/public/home/index.html:867 | Try it free: 20 AI credits in your free trial.
+P-A7-websites-1-28 | partly | apps/dashboard/public/home/index.html:895 | AI never sees member details
+P-A7-websites-1-37 | partly | apps/dashboard/public/home/index.html:1052 | When the AI Assistant comes, you also get 100 free AI credits every month.
+P-A7-websites-1-51 | partly | apps/dashboard/public/member-site/index.html:396 | Progress photos stay on your phone, so they stay private.
+P-A7-websites-1-57 | partly | deploy/panel/gymPage.js:412 | Your chat is saved and seen by {gn}.
+P-A7-help-1-10 | unknown | deploy/panel/helpArticles.js:260 | It can also write a workout plan for a member from your gym's exercises, for free.
+P-A7-help-1-15 | unknown | deploy/panel/helpArticles.js:340 | A member shows here only after they switch on "Share my workouts with my trainers" in their app.
+P-A7-help-1-28 | unknown | deploy/panel/helpArticles.js:418 | "Hide from app" takes a product off the app without deleting it.
+P-A7-help-1-30 | unknown | deploy/panel/helpArticles.js:454 | "Sign-in & data": "Staff & sign-in", "Download a backup" (an Excel file of all your gym data), "Your gym’s records" (how many members, memberships sold, payment
+P-A7-help-1-42 | unknown | deploy/panel/helpArticles.js:916 | It uses only the workouts you logged; sleep and soreness are not counted.
+P-A7-help-1-48 | unknown | deploy/panel/helpPages.js:84 | We read every message and reply as soon as we can.
+P-A7-legal-2-05 | unknown | apps/dashboard/public/privacy.html:138 | Someone could still match that code to an address, so we protect it like other personal data.
+P-A7-legal-2-17 | unknown | apps/dashboard/public/privacy.html:149 | A page may remember your light or dark choice, on your device only.
+P-A7-legal-2-18 | unknown | apps/dashboard/public/privacy.html:150 | We use it only to call you back about MettleUp.
+P-A7-legal-2-19 | unknown | apps/dashboard/public/privacy.html:151 | A friend's invite page sends your details only to that friend's gym (section 4B).
+P-A7-legal-2-20 | unknown | apps/dashboard/public/privacy.html:156 | We never sell your data.
+P-A7-legal-2-21 | unknown | apps/dashboard/public/privacy.html:156 | They may use the data only to do that work for us:
+P-A7-legal-2-23 | unknown | apps/dashboard/public/privacy.html:167 | Takes your payment to your gym, only when you pay online
+P-A7-legal-2-24 | unknown | apps/dashboard/public/privacy.html:169 | We also share data when Indian law requires it, for example with a court or the police.
+P-A7-legal-2-35 | unknown | apps/dashboard/public/privacy.html:197 | We use them only to look into security problems.
+P-A7-legal-2-41 | unknown | apps/dashboard/public/privacy.html:215 | We answer within 30 days.
+P-A7-legal-2-43 | unknown | apps/dashboard/public/privacy.html:220 | If we learn that we hold data of someone under 18, we delete it.
+P-A7-legal-2-44 | unknown | apps/dashboard/public/privacy.html:223 | Each gym can reach only its own records.
+P-A7-legal-2-48 | unknown | apps/dashboard/public/privacy.html:224 | If your data leaks, we tell you without delay, in the app or by message.
+P-A7-legal-2-49 | unknown | apps/dashboard/public/privacy.html:224 | We tell you what happened, what it means for you and what you can do.
+P-A7-legal-2-50 | unknown | apps/dashboard/public/privacy.html:224 | We report it to the Data Protection Board as the law requires.
+P-A7-legal-2-51 | unknown | apps/dashboard/public/privacy.html:224 | If it involves a gym's records, we also tell that gym within 24 hours.
+P-A7-legal-2-53 | unknown | apps/dashboard/public/privacy.html:234 | We only handle those records for your gym.
+P-A7-legal-2-54 | unknown | apps/dashboard/public/privacy.html:240 | Legitimate interest: we have a fair reason, and you can object to it at any time.
+P-A7-legal-2-60 | unknown | apps/dashboard/public/privacy.html:263 | The app only shows them on your phone or watch.
+P-A7-legal-2-61 | unknown | apps/dashboard/public/privacy.html:271 | You can ask us for a copy of your data, and ask us to correct it or delete it.
+P-A7-legal-2-62 | unknown | apps/dashboard/public/privacy.html:274 | We then stop, unless we have a strong reason the law accepts.
+P-A7-legal-2-63 | unknown | apps/dashboard/public/privacy.html:277 | It is free, and we answer within 30 days.
+P-A7-legal-2-64 | unknown | apps/dashboard/public/privacy.html:277 | We may ask you to show that the data is yours.
+P-A7-legal-2-66 | unknown | apps/dashboard/public/privacy.html:278 | You can also write to us first, and we will try to fix it.
+P-A7-legal-2-68 | unknown | apps/dashboard/public/privacy.html:284 | Decisions by computer: we never make a decision about you by computer alone that has a legal or similarly big effect on you.
+P-A7-legal-2-69 | unknown | apps/dashboard/public/privacy.html:288 | Before a change that affects you, we tell you in the app.
+P-A7-legal-2-70 | unknown | apps/dashboard/public/privacy.html:290 | Nothing changed in what we collect or share.
+P-A7-legal-2-71 | unknown | apps/dashboard/public/privacy.html:291 | Changed: crash reports now go to a private bug list on GitHub.
+P-A7-legal-2-73 | unknown | apps/dashboard/public/refund.html:15 | Members of a gym never pay MettleUp: the member app is free.
+P-A7-legal-2-77 | unknown | apps/dashboard/public/refund.html:21 | We never take money from your card or bank account on our own.
+P-A7-legal-2-81 | unknown | apps/dashboard/public/refund.html:27 | AI credits you buy are not refunded and cannot be changed into cash.
+P-A7-legal-2-85 | unknown | apps/dashboard/public/refund.html:30 | Changing your plan: today, email us and we set it up for you.
+P-A7-legal-3-22 | unknown | apps/dashboard/public/terms.html:100 | We never delete your records because a payment is late, and you can always see and export them.
+P-A7-legal-3-23 | unknown | apps/dashboard/public/terms.html:104 | Your gym is in charge of them, and MettleUp only stores them for you.
+P-A7-legal-3-29 | unknown | apps/dashboard/public/terms.html:124 | We may end this agreement with 30 days' notice, or at once for serious misuse.
+P-A7-pilot-01 | unknown | apps/dashboard/public/data-agreement.html:18 | Under India's data law (the DPDP Act 2023), you are the Data Fiduciary for them and we are your Data Processor .
+P-A7-pilot-02 | unknown | apps/dashboard/public/data-agreement.html:21 | We store and process your records only to run MettleUp for your gym, as the app's features and your staff direct.
+P-A7-pilot-03 | unknown | apps/dashboard/public/data-agreement.html:21 | We do not sell them, use them for ads or for our own marketing, or share them with other gyms.
+P-A7-pilot-04 | unknown | apps/dashboard/public/data-agreement.html:21 | We may count them in totals that name no gym and no person (for example, how many check-ins MettleUp handled).
+P-A7-pilot-06 | unknown | apps/dashboard/public/data-agreement.html:28 | The AI only says which column is which, and we keep nothing from the file.
+P-A7-pilot-07 | unknown | apps/dashboard/public/data-agreement.html:32 | We tell you in the admin app before we add a new company that sees your records.

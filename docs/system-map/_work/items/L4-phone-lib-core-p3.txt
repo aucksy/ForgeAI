@@ -1,0 +1,29 @@
+# L4-phone-lib-core-p3: 4 x phone / phone/lib-core part 3. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L4.1 | 4 | Promise register (A7)
+## PROMISES TO CHECK (id | status | where | text) part 3 of 3
+P-A7-whats-new-2-91 | unknown | apps/mobile/src/lib/whatsNew.ts:398 | Reach the challenge goal shown in the Gym tab, then show that screen at the front desk for your reward.
+P-A7-whats-new-2-93 | unknown | apps/mobile/src/lib/whatsNew.ts:410 | Progress tab: new tabs at the top, Kg lifted, Sets and Duration. Tap one to see your totals for it.
+P-A7-whats-new-2-94 | unknown | apps/mobile/src/lib/whatsNew.ts:414 | Progress also shows your next workout's total kg if you hit every target, next to last time's total.
+P-A7-whats-new-2-98 | unknown | apps/mobile/src/lib/whatsNew.ts:436 | Gym members: measurements your trainer takes now show in Progress → Body, marked with your gym's name.
+P-A7-whats-new-3-01 | unknown | apps/mobile/src/lib/whatsNew.ts:445 | The Gym tab now shows if your gym is open right now, with its hours for the week and any holiday.
+P-A7-whats-new-3-02 | unknown | apps/mobile/src/lib/whatsNew.ts:456 | When MettleUp asks, turn on "Alarms & reminders" so "Rest is over" rings on time, even on a locked phone.
+P-A7-whats-new-3-06 | unknown | apps/mobile/src/lib/whatsNew.ts:472 | In the Gym tab, join your gym, or check in at the front desk by scanning the poster with your camera.
+P-A7-whats-new-3-13 | unknown | apps/mobile/src/lib/whatsNew.ts:510 | Scrolling a workout is easier. A swipe that starts on a weight or reps box now scrolls the page.
+P-A7-whats-new-3-16 | unknown | apps/mobile/src/lib/whatsNew.ts:521 | To leave your gym, open Settings, then "Your gym".
+P-A7-whats-new-3-17 | unknown | apps/mobile/src/lib/whatsNew.ts:528 | After a workout, see if you beat your last time on the same routine. Tap the result to see each exercise.
+P-A7-whats-new-3-22 | unknown | apps/mobile/src/lib/whatsNew.ts:548 | Warm-up sets stay as they were last time. The app never changes them.
+P-A7-whats-new-3-23 | unknown | apps/mobile/src/lib/whatsNew.ts:549 | Push-ups, pull-ups and other bodyweight moves now show how many reps beat last time.
+P-A7-whats-new-3-26 | unknown | apps/mobile/src/lib/whatsNew.ts:564 | During a workout, your phone's notifications show how long you've been training.
+P-A7-whats-new-3-30 | unknown | apps/mobile/src/lib/whatsNew.ts:577 | Change an exercise's rest time while you rest, and the running timer changes too.
+P-A7-whats-new-3-32 | unknown | apps/mobile/src/lib/whatsNew.ts:587 | Tell us what to fix or add, by typing or speaking.
+P-A7-whats-new-3-35 | unknown | apps/mobile/src/lib/whatsNew.ts:596 | Your trainer's workout plans now appear on your Workout tab by themselves.
+P-A7-whats-new-3-39 | unknown | apps/mobile/src/lib/whatsNew.ts:603 | Got a code from your gym? Join from the first screen and add your gym's logo to your home screen.
+P-A7-whats-new-3-40 | unknown | apps/mobile/src/lib/whatsNew.ts:610 | After you rate how hard a set felt, the tick shows once and keeps the numbers you typed.
+P-A7-whats-new-3-43 | unknown | apps/mobile/src/lib/whatsNew.ts:619 | Rate how hard a set felt, and the set ticks itself before your rest starts.
+P-A7-whats-new-3-44 | unknown | apps/mobile/src/lib/whatsNew.ts:620 | A small handle shows which exercises and routines you can drag to move.
+P-A7-whats-new-3-45 | unknown | apps/mobile/src/lib/whatsNew.ts:621 | Fixes for large text sizes, and for the keyboard after opening the app from its home-screen shortcut.
+P-A7-whats-new-3-46 | unknown | apps/mobile/src/lib/whatsNew.ts:628 | New: the MettleUp watch app. Your rest counts down and buzzes on your Wear OS watch.
+P-A7-whats-new-3-50 | unknown | apps/mobile/src/lib/whatsNew.ts:648 | Rate how hard a set felt with one tap, and your rest timer starts.
+P-A7-whats-new-3-51 | unknown | apps/mobile/src/lib/whatsNew.ts:649 | The "Rest is over" sound is now the same with the screen off as with the app open.
+P-A7-whats-new-3-54 | unknown | apps/mobile/src/lib/whatsNew.ts:653 | Choose how big each suggested weight increase is: "Weight jumps".

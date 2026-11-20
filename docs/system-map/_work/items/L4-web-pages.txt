@@ -1,0 +1,100 @@
+# L4-web-pages: 4 x web / web/pages. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L4.1 | 4 | Promise register (A7)
+L4.2 | 4 | India DPDP Act duties (notice, consent, purpose, deletion, breach timing, children)
+L4.3 | 4 | who at MettleUp can see gym data and the record of it (read log)
+L4.4 | 4 | data kept longer than promised
+L4.5 | 4 | data sent to outside services (AI, WhatsApp, analytics, Health Connect / Google Health / Fitbit) vs what the policy says
+L4.6 | 4 | account deletion really deletes everywhere (backups noted)
+## PROMISES TO CHECK (id | status | where | text) part 1 of 3
+P-A7-legal-2-16 | GAP | apps/dashboard/public/privacy.html:144 | Every look is recorded, and the owner can see each one in the admin app.
+P-A7-legal-3-12 | GAP | apps/dashboard/public/terms.html:75 | Before a change takes effect, we tell you in the app.
+P-A7-legal-3-31 | GAP | apps/dashboard/public/terms.html:137 | Before a new version applies, we tell the owner in the admin app and ask them to accept it again.
+P-A7-pilot-05 | GAP | apps/dashboard/public/data-agreement.html:28 | Google Gemini, then Anthropic Claude if Gemini fails: only when you import a member list.
+P-A7-pilot-15 | GAP | apps/dashboard/public/data-agreement.html:36 | Every look is recorded, and you can see each one in the admin app.
+P-A7-pilot-34 | GAP | apps/dashboard/public/delete-account.html:18 | If you never did, nothing is saved on our server: your workouts are only on your phone, and there is nothing for us to delete.
+P-A7-help-1-04 | partly | deploy/panel/helpArticles.js:147 | They have no plan and no dues, and are never on the renewal list.
+P-A7-help-1-18 | partly | deploy/panel/helpArticles.js:380 | If a member's app asks "Who should read it?", a question goes to "Gym owner" or one trainer by name (only that trainer is alerted).
+P-A7-help-1-22 | partly | deploy/panel/helpArticles.js:385 | Messages are deleted 180 days after the last one, or when the member leaves.
+P-A7-help-1-24 | partly | deploy/panel/helpArticles.js:394 | Body weight, photos and notes are never shared.
+P-A7-help-1-41 | partly | deploy/panel/helpArticles.js:898 | "Erase or start over": "Erase all data" deletes everything on this phone and starts over.
+P-A7-legal-2-04 | partly | apps/dashboard/public/privacy.html:137 | We check that it is your number, and keep only a coded form of it.
+P-A7-legal-2-06 | partly | apps/dashboard/public/privacy.html:141 | Signing that device out deletes the copy.
+P-A7-legal-2-07 | partly | apps/dashboard/public/privacy.html:143 | The AI Assistant (gym owners only): what the owner types or says goes to Anthropic's Claude AI so it can understand the request and get a message or a change re
+P-A7-legal-2-10 | partly | apps/dashboard/public/privacy.html:143 | A spoken request goes through our server to Groq, which turns it into text; neither we nor Groq keep the recording.
+P-A7-legal-2-11 | partly | apps/dashboard/public/privacy.html:143 | We keep each request, what the owner did with it and the credits it used for 400 days, so the owner can see them in the admin app.
+P-A7-legal-2-13 | partly | apps/dashboard/public/privacy.html:144 | MettleUp support looks at a gym's records only in a short window.
+P-A7-legal-2-15 | partly | apps/dashboard/public/privacy.html:144 | We can only read the records, never change them.
+P-A7-legal-2-22 | partly | apps/dashboard/public/privacy.html:162 | Google Drive is used only to bring back an old Drive backup.
+P-A7-legal-2-26 | partly | apps/dashboard/public/privacy.html:175 | When you delete an item in the app, it is deleted on our server too.
+P-A7-legal-2-28 | partly | apps/dashboard/public/privacy.html:176 | If the gym leaves MettleUp, we delete its records within 30 days of its request.
+P-A7-legal-2-34 | partly | apps/dashboard/public/privacy.html:197 | From 13 May 2027, the law also asks us to keep sign-in and technical logs for 1 year, even after an account is deleted.
+P-A7-legal-2-36 | partly | apps/dashboard/public/privacy.html:202 | Your saved copy and MettleUp account: Settings → Your data → Backup and restore → "Delete my account".
+P-A7-legal-2-40 | partly | apps/dashboard/public/privacy.html:207 | Where section 6 says so, what was shared is deleted at once too.
+P-A7-legal-2-42 | partly | apps/dashboard/public/privacy.html:220 | MettleUp is only for people aged 18 or over.
+P-A7-legal-2-45 | partly | apps/dashboard/public/privacy.html:223 | Only people the gym's owner adds can sign in to its admin app.
+P-A7-legal-2-46 | partly | apps/dashboard/public/privacy.html:223 | MettleUp support can look only in a recorded window (section 4E).
+P-A7-legal-2-47 | partly | apps/dashboard/public/privacy.html:223 | We keep backup copies so data is not lost.
+P-A7-legal-2-52 | partly | apps/dashboard/public/privacy.html:227 | They get only what the table in section 5 says.
+P-A7-legal-2-55 | partly | apps/dashboard/public/privacy.html:261 | We keep them on our server only if you sign in with Google to keep a copy.
+P-A7-legal-2-56 | partly | apps/dashboard/public/privacy.html:262 | To take back your consent, delete those entries in the app, or delete your account (section 7).
+P-A7-legal-2-57 | partly | apps/dashboard/public/privacy.html:262 | Entries you delete in the app are deleted on our server too.
+P-A7-legal-2-58 | partly | apps/dashboard/public/privacy.html:263 | Your progress photos never leave your phone, so we never get them.
+P-A7-legal-2-59 | partly | apps/dashboard/public/privacy.html:263 | We never get your sleep, steps or heart rate either.
+P-A7-legal-2-65 | partly | apps/dashboard/public/privacy.html:277 | If you never signed in, your data is only on your phone, and you can see and erase it there (section 7).
+P-A7-legal-2-67 | partly | apps/dashboard/public/privacy.html:283 | Age: MettleUp is only for people aged 18 or over, in every country.
+P-A7-legal-2-72 | partly | apps/dashboard/public/privacy.html:474 | आपकी सेव की गई कॉपी और MettleUp खाता: Settings → Your data → Backup and restore → "Delete my account"।
+P-A7-legal-2-89 | partly | apps/dashboard/public/refund.html:33 | We never delete your data because a payment is late.
+P-A7-legal-2-90 | partly | apps/dashboard/public/refund.html:33 | If you ask us to, we delete your gym's data within 30 days.
+P-A7-legal-3-03 | partly | apps/dashboard/public/terms.html:35 | The app is only for people aged 18 or over.
+P-A7-legal-3-05 | partly | apps/dashboard/public/terms.html:46 | If you do not sign in, your workouts are only on your phone, so keep your phone backed up.
+P-A7-legal-3-06 | partly | apps/dashboard/public/terms.html:47 | You can download them (Settings → Your data → Backup and restore → "Download my data") or delete them at any time.
+P-A7-legal-3-10 | partly | apps/dashboard/public/terms.html:69 | You can stop using the app, leave your gym or delete your account at any time.
+P-A7-legal-3-13 | partly | apps/dashboard/public/terms.html:75 | If you do not agree, stop using it and you can delete your account.
+P-A7-legal-3-28 | partly | apps/dashboard/public/terms.html:123 | We delete its records within 30 days of your request (section 9 of the data agreement).
+P-A7-legal-3-30 | partly | apps/dashboard/public/terms.html:128 | You decide which plans to send, and you can change, delete or add plans at any time.
+P-A7-pilot-09 | partly | apps/dashboard/public/data-agreement.html:35 | Only people the owner adds can sign in, with their own PIN or a one-time code.
+P-A7-pilot-11 | partly | apps/dashboard/public/data-agreement.html:35 | Signing that device out deletes the copy.
+P-A7-pilot-12 | partly | apps/dashboard/public/data-agreement.html:36 | We look at your records only in a window that you open (in Settings, for 1 hour).
+P-A7-pilot-14 | partly | apps/dashboard/public/data-agreement.html:36 | We can only read, never change.
+P-A7-pilot-23 | partly | apps/dashboard/public/data-agreement.html:58 | Then we delete every member, payment, check-in and shop order of your gym from our server within 30 days of the request.
+P-A7-pilot-25 | partly | apps/dashboard/public/data-agreement.html:61 | You, your trainers and your desk cannot see it, and deleting your gym does not delete it.
+P-A7-pilot-29 | partly | apps/dashboard/public/data-agreement.html:67 | You can stop at any time and ask us to delete your gym (point 9).
+P-A7-pilot-33 | partly | apps/dashboard/public/delete-account.html:18 | You only have an account if you tapped Continue with Google in the app.
+P-A7-pilot-35 | partly | apps/dashboard/public/delete-account.html:23 | Tap Delete my account .
+P-A7-pilot-37 | partly | apps/dashboard/public/delete-account.html:26 | We delete your account and everything saved on our server at once.
+P-A7-pilot-41 | partly | apps/dashboard/public/delete-account.html:43 | Backup copies: we remove every backup copy of your data within 7 days of deletion.
+P-A7-pilot-43 | partly | apps/dashboard/public/delete-account.html:45 | When you leave the gym in the app, we erase your mobile number from them.
+P-A7-pilot-45 | partly | apps/dashboard/public/delivery.html:15 | Your members use the free MettleUp app on their phones.
+P-A7-pilot-48 | partly | apps/dashboard/public/delivery.html:21 | Coming soon: card and net banking, on the payment company's own secure page.
+## ENTITIES WITH PERSONAL DATA (id | personal | kept how long | where stored)
+E-friend-asks | yes | 2 days | d1 table friend_asks
+E-gym-friend-invites | yes | unknown | table gym_friend_invites
+E-leads | yes | 12 months unless status is won | d1 table leads
+E-pay-gyms | yes | unknown | d1 table pay_gyms
+E-pay-requests | yes | unknown | d1 table pay_requests
+## READERS OF THOSE ENTITIES IN THIS AREA (id | entity | kind | where)
+RD-A4-d1-1-051 | E-friend-asks | count | deploy/panel/friend.js:77
+RD-A4-d1-1-054 | E-friend-asks | count | deploy/panel/gymPageServe.js:186
+RD-A4-d1-1-056 | E-friend-asks | count | deploy/panel/selfJoin.js:111
+RD-A4-d1-1-073 | E-leads | count | deploy/panel/leads.js:120
+RD-A4-d1-1-091 | E-pay-gyms | screen | deploy/panel/joinPay.js:125
+RD-A4-d1-2-03 | E-pay-requests | screen | deploy/panel/joinPay.js:179
+RD-A4-d1-2-04 | E-pay-requests | job | deploy/panel/joinPay.js:190
+RD-A4-d1-2-05 | E-pay-requests | screen | deploy/panel/joinPay.js:202
+RD-A4-d1-2-07 | E-pay-requests | screen | deploy/panel/joinPay.js:220
+RD-A4-d1-2-09 | E-pay-requests | screen | deploy/panel/joinPay.js:234
+RD-A4-d1-2-10 | E-pay-requests | screen | deploy/panel/joinPay.js:260
+RD-A4-rpc-1b-04 | E-gym-friend-invites | screen | deploy/panel/worker.js:279
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-web-100 | live | Open the right site at each MettleUp address: old and www addresses redirect, mettleup.fit shows the member site, gyms.m | deploy/panel/hosts.js:110
+F-web-102 | behind switch | Gym-owner marketing site (gyms.mettleup.fit, /home): what MettleUp does for a gym, English or Hindi, try your gym's name | apps/dashboard/public/home/index.html:1
+F-web-104 | behind switch | Member marketing site (mettleup.fit, /member-site): the free workout app for phone and watch, English or Hindi, 'Send to | apps/dashboard/public/member-site/index.html:1
+F-web-113 | behind switch | A gym's own free web page (join.mettleup.fit/<gym>): plans, timings, address and maps links, facilities, photos, WhatsAp | deploy/panel/gymPageServe.js:341
+F-web-114 | behind switch | Ask the gym a question, or report a page, from the gym's web page | deploy/panel/gymPageServe.js:353
+F-web-115 | behind switch | AI helper chat on the gym's web page: answers from the page only, else 'I will ask the gym'; the visitor can leave a num | deploy/panel/gymPageServe.js:356
+F-web-138 | live | Install the admin app on the device and open it with no internet (service worker) | apps/dashboard/public/sw.js:1
+F-web-139 | live | Company and legal pages: About, Contact, Privacy, Terms, Refunds, Shipping and delivery, Data agreement for gyms, Delete | apps/dashboard/public/about.html:1
+## NOT LISTED
+60 open promises of this area are not about personal data or law by their words (script filter); they are left to hunt 10 and lens 10.
+84 promises of this area already have the status kept.

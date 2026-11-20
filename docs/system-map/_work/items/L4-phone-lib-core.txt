@@ -1,0 +1,110 @@
+# L4-phone-lib-core: 4 x phone / phone/lib-core. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L4.1 | 4 | Promise register (A7)
+L4.2 | 4 | India DPDP Act duties (notice, consent, purpose, deletion, breach timing, children)
+L4.3 | 4 | who at MettleUp can see gym data and the record of it (read log)
+L4.4 | 4 | data kept longer than promised
+L4.5 | 4 | data sent to outside services (AI, WhatsApp, analytics, Health Connect / Google Health / Fitbit) vs what the policy says
+L4.6 | 4 | account deletion really deletes everywhere (backups noted)
+## PROMISES TO CHECK (id | status | where | text) part 1 of 3
+P-A7-whats-new-2-60 | GAP | apps/mobile/src/lib/whatsNew.ts:277 | When a new version is ready, a pop-up tells you (never during a workout). "Later" asks again in 3 days.
+P-A7-whats-new-3-04 | GAP | apps/mobile/src/lib/whatsNew.ts:466 | At the bottom of the screen, the same 4 tabs always show: Workout, Progress, Gym and Profile. They never move.
+P-A7-whats-new-3-05 | GAP | apps/mobile/src/lib/whatsNew.ts:468 | Your charts, records and body weight are now together in the new Progress tab.
+P-A7-whats-new-3-18 | GAP | apps/mobile/src/lib/whatsNew.ts:530 | Haven't trained a muscle in 3 weeks? The Workout tab may suggest a few sets for it.
+P-A7-whats-new-3-19 | GAP | apps/mobile/src/lib/whatsNew.ts:534 | Gym members: show your workout days to the front desk on your screen, from "My membership".
+P-A7-whats-new-3-34 | GAP | apps/mobile/src/lib/whatsNew.ts:589 | MettleUp no longer asks to use your microphone.
+P-A7-phone-watch-1-43 | partly | apps/mobile/src/lib/feedbackVoice.ts:53 | Only the recording is sent.
+P-A7-phone-watch-1-46 | partly | apps/mobile/src/lib/safekeepNudge.ts:30 | Your workouts are only on this phone.
+P-A7-phone-watch-1-47 | partly | apps/mobile/src/lib/watchDiag.ts:28 | It holds only the times your watch screen turned on, off or dim, and your watch's Battery Saver and screen settings.
+P-A7-phone-watch-2-20 | partly | apps/mobile/src/plan/planWords.ts:124 | After that, logging, history and routines stay free.
+P-A7-phone-watch-2-23 | partly | apps/mobile/src/plan/planWords.ts:129 | Your workouts, history and routines stay free, and nothing was deleted.
+P-A7-whats-new-2-05 | partly | apps/mobile/src/lib/whatsNew.ts:84 | "Message your gym" on the Gym tab now lets you pick who reads it, like the owner or a trainer.
+P-A7-whats-new-2-06 | partly | apps/mobile/src/lib/whatsNew.ts:88 | In a workout, "Today's target" now always beats your previous workout. If it can't, tap "i" to see why.
+P-A7-whats-new-2-07 | partly | apps/mobile/src/lib/whatsNew.ts:89 | On some phones, gym messages and "Rest is over" made no sound. Now they do.
+P-A7-whats-new-2-08 | partly | apps/mobile/src/lib/whatsNew.ts:90 | Tapping a notification now opens its page, like your gym's reply.
+P-A7-whats-new-2-09 | partly | apps/mobile/src/lib/whatsNew.ts:91 | "New exercise" is simpler: tap a row, like "Main muscle", to change it.
+P-A7-whats-new-2-11 | partly | apps/mobile/src/lib/whatsNew.ts:105 | On the Gym tab, tap "Message your gym" to ask a question, give feedback or make a complaint.
+P-A7-whats-new-2-12 | partly | apps/mobile/src/lib/whatsNew.ts:109 | Messages from your gym now pop up even while the app is open.
+P-A7-whats-new-2-13 | partly | apps/mobile/src/lib/whatsNew.ts:110 | In a workout, a bar under each exercise shows the kilos you lifted and the kilos still to go.
+P-A7-whats-new-2-16 | partly | apps/mobile/src/lib/whatsNew.ts:113 | On your watch, turn the dial to change your reps straight away.
+P-A7-whats-new-2-18 | partly | apps/mobile/src/lib/whatsNew.ts:130 | Tap "Start empty workout" to get the exercises of your last one. "Start blank" removes them.
+P-A7-whats-new-2-21 | partly | apps/mobile/src/lib/whatsNew.ts:133 | The phone now tells you when your watch app has an update.
+P-A7-whats-new-2-22 | partly | apps/mobile/src/lib/whatsNew.ts:134 | Before Google sign-in, tick once to confirm you are 18 or older and accept our terms.
+P-A7-whats-new-2-26 | partly | apps/mobile/src/lib/whatsNew.ts:156 | In Settings, Plates and bars, pick 2.5 kg or 5 kg steps for machines and cables, so suggested weights match your gym.
+P-A7-whats-new-2-29 | partly | apps/mobile/src/lib/whatsNew.ts:170 | New features now have a small dot. Start on the Profile tab and follow the dots to find them.
+P-A7-whats-new-2-32 | partly | apps/mobile/src/lib/whatsNew.ts:181 | Turn on "Sleep and workouts" in Settings to see if you slept under 6 hours before a lighter workout.
+P-A7-whats-new-2-36 | partly | apps/mobile/src/lib/whatsNew.ts:196 | If you train at a gym, your share pictures can show its logo. In Progress photos, tap "Share before and after".
+P-A7-whats-new-2-38 | partly | apps/mobile/src/lib/whatsNew.ts:206 | After a set on a machine or barbell, your phone shows "In use" and how many kg you need to beat your previous total.
+P-A7-whats-new-2-39 | partly | apps/mobile/src/lib/whatsNew.ts:207 | Each set now gets its own rep goal. If you are stuck at a weight, the app asks before it suggests a lighter one.
+P-A7-whats-new-2-40 | partly | apps/mobile/src/lib/whatsNew.ts:208 | Suggested machine weights now follow the steps on the machine, like 35, 40 and 45 kg.
+P-A7-whats-new-2-42 | partly | apps/mobile/src/lib/whatsNew.ts:210 | On your watch, you can now log each set with the dial and one tap on Done.
+P-A7-whats-new-2-45 | partly | apps/mobile/src/lib/whatsNew.ts:223 | Want your trainer to follow your progress? Switch on "Share my workouts with my trainers".
+P-A7-whats-new-2-46 | partly | apps/mobile/src/lib/whatsNew.ts:226 | If your gym shows busy machines, "What my gym can see" says what is shared, and you can switch it off.
+P-A7-whats-new-2-48 | partly | apps/mobile/src/lib/whatsNew.ts:237 | Earn badges by training, like 50 workouts. Tap "Badges" on your Profile to see them all.
+P-A7-whats-new-2-50 | partly | apps/mobile/src/lib/whatsNew.ts:239 | Charts spots a muscle you train much less than the rest and offers one exercise swap for 8 weeks.
+P-A7-whats-new-2-52 | partly | apps/mobile/src/lib/whatsNew.ts:241 | At gym check-in, the front desk confirms your mobile number once, so nobody else can use it.
+P-A7-whats-new-2-55 | partly | apps/mobile/src/lib/whatsNew.ts:261 | Settings → Health Connect can now add weigh-ins from your smart scale to your body weight, and show today's steps.
+P-A7-whats-new-2-56 | partly | apps/mobile/src/lib/whatsNew.ts:264 | On your watch, the rest timer has bigger text, and "Workout saved" shows when you finish.
+P-A7-whats-new-2-57 | partly | apps/mobile/src/lib/whatsNew.ts:265 | When you join a gym, you can scan the gym poster instead of typing the code. A wrong code is caught at once.
+P-A7-whats-new-2-62 | partly | apps/mobile/src/lib/whatsNew.ts:287 | Have a Wear OS watch? Start a workout and tap "Install on watch" at the top to see rest, next set and heart rate there.
+P-A7-whats-new-2-67 | partly | apps/mobile/src/lib/whatsNew.ts:303 | To join a gym, "Scan the poster" is now the first button on the Gym tab. You can still type the code.
+P-A7-whats-new-2-69 | partly | apps/mobile/src/lib/whatsNew.ts:313 | "Check in" on the Gym tab now opens a scanner in MettleUp. Point it at the QR poster at your gym’s desk.
+P-A7-whats-new-2-71 | partly | apps/mobile/src/lib/whatsNew.ts:325 | The Gym tab now has 3 parts at the top: "Shop" (only if your gym sells things), "My gym" and "Leaderboard".
+P-A7-whats-new-2-72 | partly | apps/mobile/src/lib/whatsNew.ts:329 | To pause or renew your membership, go to Gym, then "My gym", and tap "Pause my plan" or "Renew my plan".
+P-A7-whats-new-2-73 | partly | apps/mobile/src/lib/whatsNew.ts:332 | If your gym wants to see your workout report, the app asks you first. Nothing is sent unless you say yes.
+P-A7-whats-new-2-75 | partly | apps/mobile/src/lib/whatsNew.ts:334 | On an exercise page, tap "1-rep max and % calculator" to see the most you can lift once, and any % of it.
+P-A7-whats-new-2-77 | partly | apps/mobile/src/lib/whatsNew.ts:344 | In the feedback box, tap "Speak" and talk in Hindi or English. The app writes it as text you can fix before "Send".
+P-A7-whats-new-2-79 | partly | apps/mobile/src/lib/whatsNew.ts:360 | Tap the round button on any screen to tell us what is wrong or what you want, by speaking or typing.
+P-A7-whats-new-2-82 | partly | apps/mobile/src/lib/whatsNew.ts:365 | On the Gym tab, see how busy your gym is right now and its quiet hours later today.
+P-A7-whats-new-2-83 | partly | apps/mobile/src/lib/whatsNew.ts:367 | Tap a name on your gym's leaderboard to see the workouts that member shares. Sharing yours is off until you turn it on.
+P-A7-whats-new-2-85 | partly | apps/mobile/src/lib/whatsNew.ts:380 | Messages and offers from your gym now pop up on your phone right away, even when the app is closed.
+P-A7-whats-new-2-90 | partly | apps/mobile/src/lib/whatsNew.ts:395 | Gym tab: a leaderboard of your gym for the last 30 days, by workouts or by kg lifted. See your place and the top 10.
+P-A7-whats-new-2-92 | partly | apps/mobile/src/lib/whatsNew.ts:400 | Other members see your name only if you switch it on: Settings → Your gym → What my gym can see.
+P-A7-whats-new-2-95 | partly | apps/mobile/src/lib/whatsNew.ts:418 | New phone? Tap "Continue with Google" on the first screen to find and restore your Google Drive backup.
+P-A7-whats-new-2-96 | partly | apps/mobile/src/lib/whatsNew.ts:428 | Settings → Back up and restore → "Save a backup": one file with your workouts, routines, photos and settings.
+P-A7-whats-new-2-97 | partly | apps/mobile/src/lib/whatsNew.ts:432 | New phone, or back after a while? Tap "Restore from a backup" to bring it all back, even from the old ForgeAI app.
+P-A7-whats-new-2-99 | partly | apps/mobile/src/lib/whatsNew.ts:440 | Your trainer can now send you a diet plan. Once sent, tap "Diet plan" in the Gym tab to see your meals.
+P-A7-whats-new-3-03 | partly | apps/mobile/src/lib/whatsNew.ts:465 | ForgeAI is now called MettleUp, with a new orange logo. Same app: your workouts and history are all still here.
+P-A7-whats-new-3-08 | partly | apps/mobile/src/lib/whatsNew.ts:480 | Health Connect (Google's health app) now stays on. Your workouts are sent even if you don't allow calories there.
+P-A7-whats-new-3-11 | partly | apps/mobile/src/lib/whatsNew.ts:501 | Gym members: your gym can reward you for training. Hit its target days and get free days on your membership.
+## ENTITIES WITH PERSONAL DATA (id | personal | kept how long | where stored)
+E-feedback | yes | 1 year; crash reports 90 days | d1 table feedback
+## READERS OF THOSE ENTITIES IN THIS AREA (id | entity | kind | where)
+RD-A4-d1-1-098 | E-feedback | list | apps/mobile/src/lib/helpHistoryStore.ts:32
+## FEATURES OF THIS AREA (id | status | name | first entry)
+F-phone-1700 | behind switch | Open the MettleUp Plus page or the Find my gym page from a link (mettleup://plus, mettleup://find-gym); the page leaves  | apps/mobile/src/plan/PlusPageGate.tsx:3
+F-phone-1701 | behind switch | MettleUp Plus: free month, what stays free, and the 'needs MettleUp Plus' pop-up on paid features (charts, own exercises | apps/mobile/src/plan/memberPlan.ts:40
+F-phone-1702 | behind switch | Free month pop-ups: '5 days left' and 'Your free month has ended' (once each, never during a workout) | apps/mobile/src/plan/PlanNotice.tsx:17
+F-phone-1703 | behind switch | Buy or restore MettleUp Plus through Google Play (monthly, yearly, lifetime); test mode with a stand-in store until paym | apps/mobile/src/plan/playBilling.ts:96
+F-phone-1704 | hidden | AI coach: save your own OpenAI, Anthropic or Groq key on the phone (kept in the phone's secure store) | apps/mobile/src/lib/keys.ts:16
+F-phone-1705 | hidden | AI coach: talk to the coach by voice and hear replies, with a plain reason when the mic cannot listen | apps/mobile/src/lib/voice.ts:17
+F-phone-1706 | live | 'A new version is ready' for copies installed from the GitHub APK (asks GitHub every 6 hours; never shown on a Google Pl | apps/mobile/src/lib/appUpdate.ts:87
+F-phone-1707 | live | Update prompt: full-screen 'A new MettleUp is here' (first launch, then every 7th launch, every 3rd when far behind), 'L | apps/mobile/src/lib/updatePrompt.ts:81
+F-phone-1708 | live | What's new after an update: the card on the Workout tab, 'See earlier updates', and Settings > What's new (release notes | apps/mobile/src/lib/whatsNew.ts:687
+F-phone-1709 | live | Follow the dots: small dots on the tab, button, row and page that lead to a new feature, cleared when the page is opened | apps/mobile/src/lib/newDots.ts:84
+F-phone-1710 | live | 'Backups now go to your MettleUp account' card, shown once on the Workout tab to a phone that had Google Drive linked | apps/mobile/src/lib/backupMoved.ts:36
+F-phone-1711 | live | 'Your workouts are only on this phone' card after the 3rd workout for a member with no account, with 'Hide for 30 days' | apps/mobile/src/lib/safekeepNudge.ts:48
+F-phone-1712 | live | Workout tab shows one notice card at a time; after one is closed the others wait for the next day | apps/mobile/src/lib/workoutNotices.ts:33
+F-phone-1713 | live | Send feedback or ask for help (Settings > Help and feedback): the message goes to MettleUp's feedback box with the app v | apps/mobile/src/lib/feedback.ts:110
+F-phone-1714 | live | Floating feedback button on every screen: drag it to an edge, switch it on or off in Settings, red dot when the team rep | apps/mobile/src/lib/feedbackButton.ts:113
+F-phone-1715 | live | Speak your feedback: record in Hindi or English, the server turns it into text, then check and Send | apps/mobile/src/lib/feedbackVoice.ts:151
+F-phone-1716 | live | Your questions: the list of questions sent from this phone with the AI's answer, 'Did this solve it?' and the MettleUp t | apps/mobile/src/lib/helpHistory.ts:179
+F-phone-1717 | live | Notification 'The MettleUp team answered your question' (Android only, only when notifications are already allowed); a t | apps/mobile/src/lib/helpReplyAlert.ts:57
+F-phone-1718 | live | 'Add my watch's screen log' in Help and feedback: sends the watch's screen diary with the message | apps/mobile/src/lib/watchDiag.ts:284
+F-phone-1719 | live | Crash reports: the app sends a crash (message, short stack, app version; no personal data) to MettleUp by itself | apps/mobile/src/lib/crashReport.ts:83
+F-phone-1720 | live | Suggested weight and reps for today's workout (progressive overload targets from past sets) | apps/mobile/src/engine/overload.ts:44
+F-phone-1721 | live | Estimated 1-rep max and its record rule (reps above 12 count as 12; a lighter set is never a record) | apps/mobile/src/lib/e1rm.ts:25
+F-phone-1722 | hidden | Home summary numbers: recovery score, strength score and the one-line insight (whether each card is on screen today was  | apps/mobile/src/services/dashboard.ts:31
+F-phone-1723 | live | Charts and per-exercise stats (30, 90 or 180 days) | apps/mobile/src/services/analytics.ts:29
+F-phone-1724 | live | Week streak: weeks in a row with at least one workout | apps/mobile/src/lib/streak.ts:11
+F-phone-1725 | live | Units: show weights and distances as 'kg, km' or 'lb, miles', with numbers grouped the phone's way | apps/mobile/src/lib/units.ts:28
+F-phone-1726 | live | The three tabs (Workout, Gym, Profile), the back arrow that always goes somewhere, and Android Back inside a screen with | apps/mobile/src/lib/appTabs.ts:27
+F-phone-1727 | live | Opening the app from a link, an app-icon shortcut or a tapped notification lands on the right page: old page addresses r | apps/mobile/src/lib/alertRoute.ts:13
+F-phone-1728 | live | One-time 'it moved' hints after the layout change (the shop is now in the Gym tab; the Progress-tab hint is retired) | apps/mobile/src/lib/layoutHints.ts:35
+F-phone-1729 | live | Credits page: the third-party drawings, body map and fonts the app uses | apps/mobile/src/lib/credits.ts:1
+F-phone-1730 | live | Take or pick a picture: the picture is kept when Android closes the app behind the camera, a refused permission is expla | apps/mobile/src/lib/pendingPick.ts:41
+F-phone-1731 | hidden | On iPhone, parts not built yet say so on screen instead of showing an Android page (whether an iPhone build is with memb | apps/mobile/src/lib/onIphone.ts:8
+F-phone-1732 | live | Every screen that reads data: loading skeleton, 'Couldn't load' with Try again, quiet retries, a second tap is ignored w | apps/mobile/src/lib/loadState.ts:1
+## NOT LISTED
+5 open promises of this area are not about personal data or law by their words (script filter); they are left to hunt 10 and lens 10.
+28 promises of this area already have the status kept.
