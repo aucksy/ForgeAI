@@ -74,7 +74,10 @@ const result = {
   shared_code: Object.fromEntries([...featureFiles].filter(([, files]) => files.some((f) => sharedFiles.has(f))).sort((a, b) => (a[0] < b[0] ? -1 : 1)).map(([fid, files]) => [fid, files.filter((f) => sharedFiles.has(f))])),
   journeys: Object.fromEntries(Object.entries(out).sort((a, b) => (a[0] < b[0] ? -1 : 1))),
 };
-const text = JSON.stringify(result) + '\n';
+// one line per top-level key and per inner key, so a git diff stays readable
+const text = '{\n' + Object.entries(result).map(([k, v]) => (v && typeof v === 'object' && !Array.isArray(v)
+  ? `${JSON.stringify(k)}: {\n` + Object.entries(v).map(([k2, v2]) => `  ${JSON.stringify(k2)}: ${JSON.stringify(v2)}`).join(',\n') + '\n}'
+  : `${JSON.stringify(k)}: ${JSON.stringify(v)}`)).join(',\n') + '\n}\n';
 const file = path.join(MAP, 'impact.json');
 if (check) {
   const old = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
