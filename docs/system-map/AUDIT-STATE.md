@@ -37,28 +37,28 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 43 | 5.2 (207k tokens) |
+| A5 | 44 | 5.2 (207k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 5 in progress, 140 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 5 in progress, 141 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A5-phone-screens-2-2 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/screens-2; list in _work/items/A5-phone-screens-2-2.txt | in progress | _work/A5-phone-screens-2-2.md |  |
 | A5-phone-screens-2-3 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/screens-2; list in _work/items/A5-phone-screens-2-3.txt | in progress | _work/A5-phone-screens-2-3.md |  |
 | A5-phone-screens-2-4 | A5 | journeys: 7 features (7 feature x role pairs) of phone / phone/screens-2; list in _work/items/A5-phone-screens-2-4.txt | in progress | _work/A5-phone-screens-2-4.md |  |
 | A5-phone-shop-1-1 | A5 | journeys: 10 features (18 feature x role pairs) of phone / phone/shop-1; list in _work/items/A5-phone-shop-1-1.txt | in progress | _work/A5-phone-shop-1-1.md |  |
 | A5-phone-shop-1-2 | A5 | journeys: 10 features (16 feature x role pairs) of phone / phone/shop-1; list in _work/items/A5-phone-shop-1-2.txt | in progress | _work/A5-phone-shop-1-2.md |  |
-| A5-panel-demo-2 | A5 | journeys: 8 features (8 feature x role pairs) of panel / panel/demo; list in _work/items/A5-panel-demo-2.txt | done | _work/A5-panel-demo-2.md | 8 features (8 pairs, all prospect): 46 full journeys and 56 type lines; 2 findings (S3): the demo saves two measurements on one day while the real gym refuses; demo approvals lose the new plan dates; coordinator re-wrote the file as compact JSON and shortened one root_cause_key to 6 words |
+| A5-phone-shop-2-1 | A5 | journeys: 8 features (16 feature x role pairs) of phone / phone/shop-2; list in _work/items/A5-phone-shop-2-1.txt | in progress | _work/A5-phone-shop-2-1.md |  |
 | A5-panel-small-1 | A5 | journeys: 7 features (9 feature x role pairs) of panel / small areas; list in _work/items/A5-panel-small-1.txt | done | _work/A5-panel-small-1.md | 7 features (9 feature x role pairs): 41 full journeys and 70 type lines; 3 findings (S3): branch Open buttons skip the unsent-entries check; All branches says one branch to staff who cannot see the rest; member search stops at 50 with no more line; first Opus helper |
 | A5-phone-screens-1-1 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/screens-1; list in _work/items/A5-phone-screens-1-1.txt | done | _work/A5-phone-screens-1-1.md | 9 features: 57 full journeys and 67 type lines; 2 findings (S3): Calendar says No workout that day when a read fails; Edit profile stays blank with no Try again |
 | A5-phone-screens-1-2 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/screens-1; list in _work/items/A5-phone-screens-1-2.txt | done | _work/A5-phone-screens-1-2.md | 8 features: 52 full journeys and 57 type lines; 2 findings: S2 join-from-link says workouts stay on this phone while trainer sharing is switched on; S3 New exercise Save spins at the free own-exercise limit; phone-only data has no entity ids |
 | A5-phone-screens-1-3 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/screens-1; list in _work/items/A5-phone-screens-1-3.txt | done | _work/A5-phone-screens-1-3.md | 8 features: 54 full journeys and 56 type lines; 0 findings; seen in passing: the member rollup may send body weight to the gym against the What my gym can see promise (trace first in 3H); routine reorder failure is silent |
 | A5-phone-screens-1-4 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/screens-1; list in _work/items/A5-phone-screens-1-4.txt | done | _work/A5-phone-screens-1-4.md | 8 features: 55 full journeys and 60 type lines; 1 finding (S3): a diet plan sent between midnight and 5:30 am shows yesterday's date (world-clock day, not India day) |
 | A5-phone-screens-2-1 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/screens-2; list in _work/items/A5-phone-screens-2-1.txt | done | _work/A5-phone-screens-2-1.md | 2 of 8 features (F-phone-235, F-phone-238): 18 full journeys and 14 type lines; 0 findings; stopped early at its token line; the 6 features left are item A5-phone-screens-2-1b; F-phone-238 invite, check-in and scanner screens not opened |
+| A5-phone-screens-2-2 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/screens-2; list in _work/items/A5-phone-screens-2-2.txt | done | _work/A5-phone-screens-2-2.md | 8 features: 50 full journeys and 59 type lines; 2 findings (S3): Edit routine reorder failure snaps back with no message; a rename saved on leaving can fail silently |
 | A5-phone-screens-2-1b | A5 | journeys: 6 features of phone / phone/screens-2 (the rest of screens-2-1); list in _work/items/A5-phone-screens-2-1b.txt | done | _work/A5-phone-screens-2-1b.md | 6 features: 37 full journeys and 46 type lines; 2 findings: S1 the privacy notice says progress photos never leave your phone, but photo backup copies them to the Google account; S3 Add measures always says the picture stays on your phone |
-(+ 132 older done items, not shown)
+(+ 133 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
