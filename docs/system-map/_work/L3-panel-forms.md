@@ -1,0 +1,13 @@
+# L3-panel-forms checkpoint
+- L3.1 done (checked)
+- L3.2 done (checked)
+- L3.3 done (checked)
+- L3.4 done (checked)
+- L3.5 done (checked)
+- L3.6 done (does-not-apply)
+- L3.7 done (does-not-apply)
+- L3.8 done (checked)
+- L3.9 done (checked)
+- L3.10 done (checked)
+- L3.11 done (checked)
+- grid row and FN-L3-panel-forms-01 written to out/L3-panel-forms.jsonl. ALL ITEMS DONE.
