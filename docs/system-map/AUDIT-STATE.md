@@ -43,24 +43,23 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A5 | 121 | 5.1 (202k tokens) |
 | L4 | 42 | 3.9 (157k tokens) |
 | L5 | 19 | 4.7 (189k tokens) |
-| L3 | 7 | 5.2 (207k tokens) |
+| L3 | 8 | 5.3 (210k tokens) |
 
 ## Work items
-Counts: 0 todo, 2 in progress, 286 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 1 in progress, 287 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L3-server-database-2 | L3 | lens 3 (Security) x server / server/database-2: 11 items | in progress | _work/L3-server-database-2.md |  |
 | L5-web-pages | L5 | lens 5 (Money) x web / web/pages: 4 items | in progress | _work/L5-web-pages.md |  |
-| L3-panel-screens-1 | L3 | lens 3 (Security) x panel / panel/screens-1: 11 items | done | _work/L3-panel-screens-1.md | L3 panel-screens-1: 11 items, 1 new S4 (5 owner features lack cross-gym tests), 1 reused; note: phone app uses spreadsheet lib 0.18.5 with 2 high alerts (for L3 phone items) |
 | L5-panel-ui-shell | L5 | lens 5 (Money) x panel / panel/ui-shell: 4 items | done | _work/L5-panel-ui-shell.md | L5 panel-ui-shell: 4 items, 2 new S3 (no paid/failed word after paying MettleUp, can pay twice; no-refund rule never shown, needs him), 9 reused |
 | L5-phone-shop-1 | L5 | lens 5 (Money) x phone / phone/shop-1: 4 items | done | _work/L5-phone-shop-1.md | L5 phone-shop-1: 4 items, 5 new (S2 old UPI QR shown for 30 days after change; 3 S3: paid order says pay at desk, pay buttons stay after paying, pay box vanishes on expired link; 1 S4), 5 reused |
 | L3-panel-screens-2 | L3 | lens 3 (Security) x panel / panel/screens-2: 11 items | done | _work/L3-panel-screens-2.md | L3 panel-screens-2: 11 items, 1 new S3 (Disconnect the shop never retires the owner key), 1 reused |
 | L5-phone-shop-2 | L5 | lens 5 (Money) x phone / phone/shop-2: 4 items | done | _work/L5-phone-shop-2.md | L5 phone-shop-2: 4 items, 3 new (S3 asked fee vanishes when link expires; S3 Renew shows no price, needs him; S4 renewal words say pay at desk), 3 reused |
 | L3-server-database-1 | L3 | lens 3 (Security) x server / server/database-1: 11 items | done | _work/L3-server-database-1.md | L3 server-database-1: 11 items, 3 new S3 (join codes guessable, no try limit; demo owner key gives free photo hosting; demo and join limits blockable by one script), 5 reused |
+| L3-server-database-2 | L3 | lens 3 (Security) x server / server/database-2: 11 items | done | _work/L3-server-database-2.md | L3 server-database-2: 11 items, 1 new S3 (nightly backup copies server secrets and PIN fingerprints unencrypted for 7 days), 6 reused |
 | L5-phone-screens-1 | L5 | lens 5 (Money) x phone / phone/screens-1: 4 items | done | _work/L5-phone-screens-1.md | L5 phone-screens-1: 4 items, 4 new on Plus (not live): S3 Plus keeps charging after joining a gym; S3 waiting payment never confirmed in session; S4 free month resets on reinstall; S4 yearly named monthly after restore. 3H: -02 ~ screens-2-01, -04 = screens-2-04 |
 | L5-phone-screens-2 | L5 | lens 5 (Money) x phone / phone/screens-2: 4 items | done | _work/L5-phone-screens-2.md | L5 phone-screens-2: 4 items, 4 new on Plus (not live): S3 waiting payment no unlock; S3 no server check of purchases; S3 refunds page wrong once Plus on (needs him); S4 wrong plan named after restore; 2 reused |
-(+ 278 older done items, not shown)
+(+ 279 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
