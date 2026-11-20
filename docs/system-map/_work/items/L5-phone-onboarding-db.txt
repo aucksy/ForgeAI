@@ -1,0 +1,9 @@
+# L5-phone-onboarding-db: 5 x phone / phone/onboarding-db. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-phone-1608 | live | Load demo data (the sample member Arjun: 13 weeks of workouts, records, body weight, meals, a plan and a coach chat) fro | apps/mobile/src/onboarding/components/WelcomeScreen.tsx:729
+F-phone-1620 | live | Active workout plan (the plan's days and exercises in rotation order, read for today's workout) | apps/mobile/src/db/repos/planRepo.ts:95

@@ -1,0 +1,9 @@
+# L5-phone-screens-1: 5 x phone / phone/screens-1. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-phone-102 | live | Workout tab: Up next card (resume, start, done today), start an empty workout, folders and routines, find a plan | apps/mobile/src/app/(tabs)/workout.tsx:99
+F-phone-235 | live | Profile tab and its pages: profile and history chart, edit my profile, badges, calendar, statistics, all records, credit | apps/mobile/src/app/(tabs)/profile.tsx:150

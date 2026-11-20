@@ -1,0 +1,16 @@
+# L5-panel-pay-machines: 5 x panel / panel/pay-machines. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-panel-104 | live | Add a branch (optionally copying plans; gets its own receipt prefix) | apps/dashboard/src/crm/branches/api.ts:31
+F-panel-1114 | behind switch | Online payments: Settings > Payments (UPI QR, gym's own payment company), Pay online inside the money sheets, payments t | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:57
+F-panel-1137 | live | demo copy of server-backed features (staff, trainers, progress, questions, member messages, messages, reminders, offers, | apps/dashboard/src/crm/demo/demoServer.ts:445
+F-panel-118 | live | Demo gym (pretend server, in memory): Diet plans (list, save, withdraw) | apps/dashboard/src/crm/demo/demoServer.ts:578
+F-panel-123 | live | Demo gym (pretend server, in memory): Members' renew/pause plan requests (list, approve or decline) | apps/dashboard/src/crm/demo/demoServer.ts:633
+F-panel-124 | behind switch | Pro pack gate: a Starter gym sees "Part of the Pro pack" in place of Branding, Shop, Challenges, Workout offer, Workout  | apps/dashboard/src/crm/plan/GymPackProvider.tsx:26
+F-panel-125 | live | Payments settings: UPI QR status (uses the gym's UPI ID, no server part) | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:57
+F-panel-126 | behind switch | Connect or disconnect a payment company (Razorpay, Cashfree; PayU and PhonePe only if already on them) by keys or compan | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:129
+F-panel-127 | behind switch | Where members can pay online: "Take payments in the member app" and "Take payments when people join online" switches | apps/dashboard/src/crm/pay/PaymentsScreen.tsx:183

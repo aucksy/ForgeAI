@@ -1,0 +1,14 @@
+# L5-phone-shop-2: 5 x phone / phone/shop-2. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-phone-408 | behind switch | Automatic reminders from the gym (plan ending, birthday wishes and others), set on the phone itself | apps/mobile/src/shop/gymReminders.ts:286
+F-phone-409 | live | My membership: plan, end date, days left, and the "plan ends soon" card on the Workout tab | apps/mobile/src/shop/gymApi.ts:197
+F-phone-410 | live | Ask the desk to pause or renew my plan | apps/mobile/src/shop/gymApi.ts:308
+F-phone-412 | live | Workout plans sent by the gym | apps/mobile/src/shop/gymApi.ts:220
+F-phone-415 | live | Measurements taken by the gym's trainer and diet plans from the gym | apps/mobile/src/shop/gymApi.ts:242
+F-phone-431 | behind switch | Pay the gym from the app: UPI QR, UPI app, or online payment for fees and shop orders | apps/mobile/src/shop/memberPay.ts:1
+F-phone-433 | behind switch | MettleUp Plus: paid extras lock 7 days after the plan ends | apps/mobile/src/shop/gymApi.ts:727

@@ -1,0 +1,9 @@
+# L5-web-pages: 5 x web / web/pages. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-web-113 | behind switch | A gym's own free web page (join.mettleup.fit/<gym>): plans, timings, address and maps links, facilities, photos, WhatsAp | deploy/panel/gymPageServe.js:341
+F-web-139 | live | Company and legal pages: About, Contact, Privacy, Terms, Refunds, Shipping and delivery, Data agreement for gyms, Delete | apps/dashboard/public/about.html:1

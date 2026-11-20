@@ -1,0 +1,9 @@
+# L5-phone-tracker-data: 5 x phone / phone/tracker-data. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-phone-1011 | live | Routine folders (create, rename, follow, reorder, delete, move a routine, folders made from a ready program, the plan bu | apps/mobile/src/tracker/db/folderRepo.ts:271
+F-phone-1013 | live | Plan builder (answer 5 steps, build my plan, leave exercises out; nothing saved until I follow it) | apps/mobile/src/tracker/store/planBuilderStore.ts:53

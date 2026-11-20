@@ -1,0 +1,8 @@
+# L5-phone-cloud-backup-ai: 5 x phone / phone/cloud-backup-ai. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-phone-1532 | behind switch | MettleUp Plus limits (paid member plan): more than 7 exercises of your own and charts older than 3 months are refused wi | apps/mobile/src/cloud/limitsFlag.ts:21

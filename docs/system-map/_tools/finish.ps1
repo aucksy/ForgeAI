@@ -21,7 +21,7 @@ if ($code -ne 0) {
 if ($miss.Count -gt 0) { "NOT MARKED DONE: lines missing"; exit 2 }
 node docs/system-map/_tools/state.mjs done $id $tokens $line
 node docs/system-map/_tools/state.mjs summary | Select-Object -Last 2
-$m = 'C:\Users\AAKASH~1\AppData\Local\Temp\claude\19050ed31f641eaa\1b89a4b1-d974-4f3e-a2d0-a750dd30bb8d\scratchpad\msg.txt'
+$m = 'C:\Users\AAKASH~1\AppData\Local\Temp\claude\19050ed31f641eaa\64149298-3235-4533-ac8b-7cf3c431db65\scratchpad\msg.txt'
 Set-Content $m "Audit: $id merged`n`nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" -Encoding ascii
 git add docs/system-map 2>$null
 git commit -q -F $m

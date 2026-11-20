@@ -1,0 +1,17 @@
+# L5-panel-logic-1: 5 x panel / panel/logic-1. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-panel-604 | live | Notification bell: the gym's alerts as a to-do list (action and info items, read, remove with X, History, three groups,  | apps/dashboard/src/crm/logic/alertInbox.ts:77
+F-panel-608 | live | Messages and offers: choose who gets a message (everyone, running plan, ending in 7 days, ended in 30 days, away, birthd | apps/dashboard/src/crm/logic/audience.ts:91
+F-panel-612 | behind switch | Pay MettleUp online: buy or renew a plan, numbered receipts, plan-end reminder on Today | apps/dashboard/src/crm/logic/billing.ts:89
+F-panel-616 | live | Today: who came in today on an ended plan, with no plan, or owing money | apps/dashboard/src/crm/logic/cameInToday.ts:29
+F-panel-622 | live | Diet plans from the trainer, with six ready-made plans, sent to members or to a membership plan | apps/dashboard/src/crm/logic/dietPlans.ts:460
+F-panel-624 | live | Workout plans: the exercise list a trainer picks from | apps/dashboard/src/crm/logic/exerciseCatalog.ts:224
+F-panel-626 | live | Help and feedback: ask a question, get an AI answer (uses AI credits), 'Your questions' history and replies from MettleU | apps/dashboard/src/crm/logic/feedback.ts:47
+F-panel-628 | live | Get started card on Today: the first setup steps for a new gym (plans, members, logo, staff, timings, go online, poster, | apps/dashboard/src/crm/logic/getStarted.ts:82
+F-panel-629 | live | GST on receipts (tax split out of the amount received, rate by date) and the gym's GSTIN check in Settings | apps/dashboard/src/crm/logic/gst.ts:71
+F-panel-632 | behind switch | Banner when the gym's MettleUp plan or trial has ended (grace, basic, read-only) with 'Pay now' | apps/dashboard/src/crm/logic/gymState.ts:56

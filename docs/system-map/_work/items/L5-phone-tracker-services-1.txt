@@ -1,0 +1,13 @@
+# L5-phone-tracker-services-1: 5 x phone / phone/tracker-services-1. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-phone-507 | live | The Target line for each exercise of a plan day (live workout, Home and the chat coach's 'today's workout'; follows Weig | apps/mobile/src/tracker/services/coachTargets.ts:1
+F-phone-523 | live | Guided first routine (makes a 'My plan' folder and one routine from picked exercises) | apps/mobile/src/tracker/services/firstRoutineGuide.ts:19
+F-phone-526 | behind switch | The gym's diet plans on the phone (kept for offline; removed when the member leaves the gym) | apps/mobile/src/tracker/services/gymBodySync.ts:27
+F-phone-527 | behind switch | Workout plans from the gym appear as routine folders (updated on a new version, relabelled 'No longer sent', a deleted o | apps/mobile/src/tracker/services/gymPlansSync.ts:38
+F-phone-538 | live | Followed plan: which week it is and easy weeks (take one now, skip one, how often) | apps/mobile/src/tracker/services/planState.ts:1
+F-phone-539 | live | Get a routine folder from a ready program, the plan builder or a shared file, and follow it as the plan | apps/mobile/src/tracker/services/plansService.ts:1

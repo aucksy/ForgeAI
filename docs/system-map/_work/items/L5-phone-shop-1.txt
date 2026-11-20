@@ -1,0 +1,18 @@
+# L5-phone-shop-1: 5 x phone / phone/shop-1. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-phone-302 | behind switch | Browse the gym's shop and open a product (category chips, pictures, price, stock, options, add to bag) | apps/mobile/src/shop/ShopScreen.tsx:165
+F-phone-303 | behind switch | Bag and place an order with the gym (change quantity, remove, total, pay at the desk) | apps/mobile/src/shop/BagScreen.tsx:24
+F-phone-305 | behind switch | Pay for a shop order (UPI QR, pay by UPI app, copy UPI ID, pay online) | apps/mobile/src/shop/PayPanel.tsx:144
+F-phone-306 | behind switch | Pay your gym for the membership (UPI QR, pay by UPI app, copy UPI ID, pay online) | apps/mobile/src/shop/PayPanel.tsx:97
+F-phone-312 | live | Leave the gym (the phone forgets the gym, its kept plan, offer, reminders, diet plans and hours, then tells the gym) | apps/mobile/src/shop/gymActions.ts:525
+F-phone-313 | live | My membership (the member's plan from the gym's records, kept on the phone for no-signal use) | apps/mobile/src/shop/MembershipCard.tsx:31
+F-phone-314 | live | Ask the desk to pause or renew my plan (pause calendar, plan list, request sent, the desk's answer) | apps/mobile/src/shop/PlanRequestPanel.tsx:35
+F-phone-316 | live | 'Your plan ends on Friday. Renew at the front desk.' card on the Workout tab | apps/mobile/src/shop/PlanEndsCard.tsx:25
+F-phone-325 | behind switch | Diet plan from the gym's trainer (read-only: goal, calories, protein, meals, notes) | apps/mobile/src/shop/DietPlanScreen.tsx:22
+F-phone-332 | behind switch | Find my gym with my number (verify the mobile number by sending one WhatsApp message, the app finds the gyms that list i | apps/mobile/src/shop/ShopScreen.tsx:99
+F-phone-335 | behind switch | Automatic reminders from the gym (phone notifications at 9:30 am, at most one a day: plan ending, welcome, days added, o | apps/mobile/src/shop/autoReminders.ts:280

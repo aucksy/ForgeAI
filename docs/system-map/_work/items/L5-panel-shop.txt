@@ -1,0 +1,14 @@
+# L5-panel-shop: 5 x panel / panel/shop. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-panel-1117 | behind switch | Invite and join online: invite link and QR poster, one link per gym, 'Become a member' page readiness, free trial for ne | apps/dashboard/src/crm/shop/InviteScreen.tsx:33
+F-panel-801 | live | Shop products: add, edit, price, choices, stock, hide, delete | apps/dashboard/src/crm/shop/ProductSheet.tsx:44
+F-panel-810 | behind switch | Automatic reminders: one switch per reminder (plan ends, birthday, welcome); also feeds the automatic birthday wish on T | apps/dashboard/src/crm/shop/AutoRemindersSection.tsx:1
+F-panel-813 | behind switch | Free trial for new people joining online (Off, 1, 3 or 7 days) | apps/dashboard/src/crm/shop/JoinTrialCard.tsx:1
+F-panel-816 | behind switch | MettleUp billing for the gym: plan, receipts, checkout | apps/dashboard/src/crm/shop/billingApi.ts:17
+F-panel-818 | behind switch | Diet plans for a member: save, withdraw | apps/dashboard/src/crm/shop/bodyApi.ts:30
+F-panel-826 | behind switch | Pay MettleUp: see what the gym owes and report a payment | apps/dashboard/src/crm/shop/payMettleUpApi.ts:14

@@ -1,0 +1,18 @@
+# L5-server-hq-gate-workers: 5 x server / server/hq-gate-workers. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-server-202 | live | See every gym in one list (groups, plan, AI use this month and today, new feedback count) | deploy/hq/api.js:206
+F-server-203 | live | Open one gym's HQ page (gym facts, 30 days of AI use, AI credits, assistant use and allowance, web page switch) | deploy/hq/api.js:225
+F-server-208 | live | "Needs you" counts on HQ: new leads, new feedback, help questions waiting, new gyms to check, payments waiting, payments | deploy/hq/api.js:259
+F-server-209 | live | Confirm or reject what a gym owner says he paid MettleUp by UPI or bank transfer (confirm moves the gym's plan on) | deploy/hq/api.js:304
+F-server-210 | behind switch | Payments to check: online payments that were taken but did not become a plan; mark each refunded or applied by hand | deploy/hq/api.js:310
+F-server-211 | live | Set MettleUp's own payment details (UPI ID, bank account) that gym owners see on Pay MettleUp; needs a sign-in from the  | deploy/hq/api.js:316
+F-server-219 | live | Set a gym's free-trial end date and its MettleUp plan (plan, monthly / yearly / lifetime, paid until) | deploy/hq/api.js:461
+F-server-222 | live | Add AI credits to a gym (a pack it paid for, or a gift) or take credits back, with a note | deploy/hq/api.js:597
+F-server-225 | behind switch | Gym owner buys a MettleUp plan online: a payment link is made, and the payment company's call turns the payment into a p | deploy/hq/billing.js:383
+F-server-226 | behind switch | Nightly billing jobs: plans that ran out are downgraded, plan-end reminders are listed (the message is a stub that sends | deploy/hq/billing.js:411
+F-server-231 | live | The desk's "please pay" fee request reaches the member's phone (each new request becomes one note for the member) | deploy/hq/payFeed.js:52

@@ -1,0 +1,23 @@
+# L5-panel-screens-1: 5 x panel / panel/screens-1. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-panel-1126 | live | Diet plans and body measurements for members | apps/dashboard/src/crm/ui/screens/DietPlans.tsx:138
+F-panel-1130 | behind switch | AI Assistant: ask about the gym, suggestions, voice, tasks, credits, member rules, AI-written plans | apps/dashboard/src/crm/ui/screens/Assistant.tsx:11
+F-panel-1132 | live | Member-app settings: gym timings, busy machines counts, MettleUp Plus lock when a plan ends | apps/dashboard/src/crm/ui/screens/BusyMachines.tsx:82
+F-panel-200 | behind switch | AI Assistant page (owner asks the assistant; paid from the gym AI credits) | apps/dashboard/src/crm/ui/screens/Assistant.tsx:11
+F-panel-202 | live | "Losing the habit" list: paying members who stopped coming, filter by risk band, download as CSV, open a WhatsApp chat w | apps/dashboard/src/crm/ui/screens/Attendance.tsx:756
+F-panel-209 | live | Diet plans: build a plan (or start from a ready-made Indian plan), edit, copy, withdraw, choose who gets it | apps/dashboard/src/crm/ui/screens/DietPlans.tsx:138
+F-panel-210 | live | Diet plan on a member page: see the plan this member has and "Send a diet plan" | apps/dashboard/src/crm/ui/screens/DietPlans.tsx:505
+F-panel-213 | live | Make an enquiry a member (add member, sell plan, then the new member page) | apps/dashboard/src/crm/ui/screens/Enquiries.tsx:297
+F-panel-218 | live | Help and feedback: write to MettleUp, get an answer (AI credits or help pages), rate it, see your past questions | apps/dashboard/src/crm/ui/screens/Feedback.tsx:29
+F-panel-225 | live | Member page: status, what they owe, visits and training pattern, memberships, payments, contact details; edit the member | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:112
+F-panel-230 | live | WhatsApp a member with the message already typed (fees, plan ending, birthday) | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:503
+F-panel-232 | live | Sell or renew a membership and collect a payment from the member page | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:417
+F-panel-234 | live | Freeze / extra days on a plan, and move the start date of a plan not started yet | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:1377
+F-panel-236 | live | Cancel (void) a receipt from the member page | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:1434
+F-panel-238 | live | Send or build a workout plan from the member page | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:643
+F-panel-526 | live | Diet plans and body measurements: send members what to eat, and record a member's weight, body fat and tape measurements | apps/dashboard/src/crm/ui/screens/DietPlans.tsx:138

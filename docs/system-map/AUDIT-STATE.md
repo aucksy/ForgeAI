@@ -1,5 +1,5 @@
 MODEL: OPUS (his switch after the 20 Nov Fable reset). Every helper = Opus 5.5 ("opus"), effort "medium". Only the weekly all-models stop line counts (90, or 95 in its last 24 hours).
-status: PAUSED (pacer-1120-1432 closed 20 Nov about 20:00 IST in the 19:29 window at F5 about 20, weekly all 30, weekly Fable 0; LENS 4 DONE; next pacer run may start lenses 3 and 5)
+status: RUNNING (pacer-1120-1957 started 20 Nov 19:57 IST in the window that resets 00:29, F5 21, weekly all 31; lens 5 pilot L5-panel-pay-machines and lens 3 machine pass M-machine-pass running, each alone)
 phase/step: A2, A3, A4, A4b, A5 (120 of 120), A7 and LENS 4 (42 of 42) DONE. Next: lenses 3 and 5. The first lens-3 and the first lens-5 helper each run ALONE first (pilot, then check the output by hand); lens 3 needs the machine pass in _work/machine-pass.md first. Make their items with node docs/system-map/_work/lens-items-make.mjs <3|5>.
 expected end: not before about 8 Dec 2026 at the present size. projection: about 3.1 weekly periods of 3 (A5 alone needs about 1.6 more: 87 items x 1.7 weekly points): OVER; HIS CHOICE of 19 Nov (live features first) is applied: full journeys only for features with status live; the rest is deferred and listed in the final report
 mode: ANALYSIS ONLY. No app code, tests, workflows, skills or settings change. "Apply" items in 3E/3F = proposals only.
@@ -42,12 +42,15 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A4b | 2 | 5.1 (204k tokens) |
 | A5 | 121 | 5.1 (202k tokens) |
 | L4 | 42 | 3.9 (157k tokens) |
+| L5 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 0 todo, 0 in progress, 259 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 2 in progress, 259 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
+| M-machine-pass | tools | machine pass for lens 3: db-security.json and cve.json (catalog reads only) | in progress | _work/M-machine-pass.md |  |
+| L5-panel-pay-machines | L5 | lens 5 (Money) x panel / panel/pay-machines: 4 items | in progress | _work/L5-panel-pay-machines.md |  |
 | L4-server-database-2 | L4 | lens 4 (Privacy and law) x server / server/database-2: 6 items | done | _work/L4-server-database-2.md | lens 4 x server/database-2: 6 items checked; 5 new findings (S2: promised clean-ups (62/63/60/90/180/30 days) run only when a screen is opened; S2: a deleted member's desk photo and measurements stay (repeat of L4-panel-shop-01: merge in 3H); 3 S3 on not-live features), 1 reused |
 | L4-server-database-3 | L4 | lens 4 (Privacy and law) x server / server/database-3: 6 items | done | _work/L4-server-database-3.md | L4 database-3: 6 rows, 5 new findings (2 S2: notice says 30 workouts/3 months vs 400/12; join form and web-page questions not in the notice) |
 | L4-server-hq-gate-workers | L4 | lens 4 (Privacy and law) x server / server/hq-gate-workers: 6 items | done | _work/L4-server-hq-gate-workers.md | L4 hq-gate-workers: 5 rows, 4 new S3 (door link unencrypted; plan buy payment company unnamed; backup looks not logged; leak notice duty left to gym) |

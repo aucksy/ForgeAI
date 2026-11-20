@@ -1,0 +1,19 @@
+# L5-phone-screens-2: 5 x phone / phone/screens-2. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-phone-118 | behind switch | MettleUp Plus page (where you stand, what is free and paid, prices, buy through Google Play in test mode) | apps/mobile/src/app/plus.tsx:34
+F-phone-122 | live | Find a plan: ready programs, follow one or keep it in your routines | apps/mobile/src/app/programs/index.tsx:54
+F-phone-123 | live | Build a plan from your answers (goal, days, equipment, sore areas, exercises to leave out) | apps/mobile/src/app/plan/build.tsx:73
+F-phone-133 | live | Help and feedback (type or speak, your questions and replies), What's new, About and Credits | apps/mobile/src/app/settings/feedback.tsx:25
+F-phone-138 | behind switch | Gym shop: a product's page, the bag (place an order, pay at the desk), my orders | apps/mobile/src/app/shop/[id].tsx:2
+F-phone-139 | live | Message your gym or ask a trainer, gym messages inbox, the diet plan the trainer sent | apps/mobile/src/app/shop/message.tsx:5
+F-phone-201 | live | Build a plan: answer goal, level, days, equipment, sore areas, leave out exercises, then save or save and follow the pla | apps/mobile/src/app/plan/build.tsx:73
+F-phone-202 | live | Find a plan: browse ready programs (full gym, dumbbells, home), open one, follow it or save it to my routines | apps/mobile/src/app/programs/index.tsx:54
+F-phone-224 | live | What's new (last 3 updates, each with a try-it button) and About (credits, app version) | apps/mobile/src/app/settings/news.tsx:14
+F-phone-226 | behind switch | Gym shop: a product's page, the bag, place an order (pay at the desk), my orders with status and cancel | apps/mobile/src/app/shop/[id].tsx:2
+F-phone-228 | behind switch | Diet plan from my gym's trainer (read-only) | apps/mobile/src/app/shop/diet.tsx:2
+F-phone-239 | behind switch | MettleUp Plus (free and paid parts, three prices, buy through Google Play in test mode) and Find my gym (prove my number | apps/mobile/src/app/plus.tsx:42

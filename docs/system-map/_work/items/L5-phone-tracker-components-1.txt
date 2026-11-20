@@ -1,0 +1,9 @@
+# L5-phone-tracker-components-1: 5 x phone / phone/tracker-components-1. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-phone-711 | live | See how to do an exercise: small picture, moving demo, start and end pictures, steps, drawing credit | apps/mobile/src/tracker/components/ExerciseDemoSheet.tsx:92
+F-phone-729 | live | Stopwatch and countdown for a timed set (planks, holds) | apps/mobile/src/tracker/components/HoldTimerSheet.tsx:50

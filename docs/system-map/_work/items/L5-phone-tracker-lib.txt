@@ -1,0 +1,10 @@
+# L5-phone-tracker-lib: 5 x phone / phone/tracker-lib. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-phone-1102 | live | Exercise pictures: small picture in lists, start and end pictures on the exercise page and demo sheet, line drawing with | apps/mobile/src/tracker/catalog/pictureChoice.ts:21
+F-phone-1104 | live | Pick a date on a month calendar (workout date picker; also used by the plan request panel) | apps/mobile/src/tracker/lib/calendar.ts:5
+F-phone-1114 | live | The gym's plans arrive as folders on the phone (saved, updated, relabelled when the plan or the gym is gone; 'Workouts o | apps/mobile/src/tracker/lib/gymPlanSteps.ts:34

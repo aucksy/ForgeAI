@@ -1,0 +1,16 @@
+# L5-panel-logic-2: 5 x panel / panel/logic-2. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-panel-700 | live | Import members from another software's sheet (plans become real memberships, several sheets, undo this import) | apps/dashboard/src/crm/logic/importTerms.ts:47
+F-panel-701 | live | Joined online: make a member from a join-page request, approve one that paid online, let a free-trial person in | apps/dashboard/src/crm/logic/selfJoin.ts:40
+F-panel-709 | live | Receipts (number per financial year, receipt rules, printable receipt with amount in words, receipt on WhatsApp) | apps/dashboard/src/crm/logic/receiptDoc.ts:95
+F-panel-716 | live | Pass members (FITPASS, cultpass): add, count pass visits, match the company's payment | apps/dashboard/src/crm/logic/passMembers.ts:31
+F-panel-717 | behind switch | Pay MettleUp for a plan (UPI QR or bank transfer, send the reference number) | apps/dashboard/src/crm/logic/payMettleUp.ts:85
+F-panel-720 | behind switch | MettleUp Plus: owner's switch to lock paid extras after a member's plan ends | apps/dashboard/src/crm/logic/plusLock.ts:18
+F-panel-725 | live | Ready WhatsApp message to one member (plan ending, plan ended, birthday, haven't seen you) in English or Hindi, with ren | apps/dashboard/src/crm/logic/whatsapp.ts:259
+F-panel-733 | live | Free-trial banner for the gym owner on Today | apps/dashboard/src/crm/logic/trial.ts:48
+F-panel-737 | live | Workout plans from the gym or trainer, with ready-made programs | apps/dashboard/src/crm/logic/workoutPlans.ts:80

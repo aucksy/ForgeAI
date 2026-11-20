@@ -1,0 +1,15 @@
+# L5-server-database-1: 5 x server / server/database-1. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-server-314 | live | Gym records kept online and synced between devices (members, plans, memberships, receipts, check-ins, enquiries, expense | supabase/migrations/0024_workout_plans.sql:55
+F-server-315 | live | Front-desk limits enforced on the server: no plans, expenses, gym details, voids or cancels; saved receipts cannot chang | supabase/migrations/0019_staff_discount_and_taker.sql:24
+F-server-316 | live | Receipt rules and receipt change history: amounts and prices checked on save, every change to a receipt kept and shown t | supabase/migrations/0021_receipt_rules.sql:91
+F-server-319 | live | My membership in the member app: plan, dates, days left (member matched by first name and check-in number) | supabase/migrations/0023_member_membership.sql:31
+F-server-320 | live | Workout plans from the gym or trainer shown in the member app | supabase/migrations/0024_workout_plans.sql:170
+F-server-331 | live | Free trial and plan of each gym: HQ extends the trial (cap 6 months) and sets the plan, billing and paid-until; nothing  | supabase/migrations/0030_plans_and_trials.sql:126
+F-server-332 | live | Branches: several gyms under one business - list, add, open another branch, rename the business, owners shared across br | supabase/migrations/0031_branches.sql:206
+F-server-335 | hidden | Free plan limits for the member app (routines 4, own exercises 7, charts 3 months), one switch, shipped off (file header | supabase/migrations/0032_member_cloud.sql:111

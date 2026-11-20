@@ -1,0 +1,13 @@
+# L5-panel-auth-data: 5 x panel / panel/auth-data. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-panel-1013 | live | Sign out of this device (the device forgets its key and its saved copy of the gym; unsent payments are kept) | apps/dashboard/src/crm/auth/PeopleScreen.tsx:290
+F-panel-1019 | live | The gym's records online: every desk sees the same members, plans and receipts; two desks never save the same receipt nu | apps/dashboard/src/crm/data/cloud.ts:512
+F-panel-1021 | live | demo copy of the gym's records (a made-up gym with members, plans, payments and check-ins for the sales demo; also the s | apps/dashboard/src/crm/data/demo.ts:82
+F-panel-1022 | live | Offline front desk: the panel still opens and members, plans and dues can be looked up with no internet (a copy of the g | apps/dashboard/src/crm/data/savedCopy.ts:130
+F-panel-1023 | live | Offline front desk waiting list: check-ins, new members, member changes, payments and plans sold with no internet are sh | apps/dashboard/src/crm/data/outbox.ts:163
+F-panel-1024 | live | Import members: see how many receipts and how much money an import will really save, before tapping Add | apps/dashboard/src/crm/data/importPreview.ts:31

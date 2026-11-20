@@ -1,0 +1,35 @@
+# L5-panel-screens-2: 5 x panel / panel/screens-2. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-panel-1112 | live | Plans and memberships: make plans, sell or renew, extend, change start day, cancel a membership, decide members' plan re | apps/dashboard/src/crm/ui/screens/Plans.tsx:39
+F-panel-1113 | live | Money: collect a payment, dues and collections tabs, receipts with amount in words and GST, cancel (void) a receipt, rec | apps/dashboard/src/crm/ui/screens/Money.tsx:75
+F-panel-1125 | live | Workout plans: write, start and send plans to members, exercise list, ready programmes, trainer videos, workout of the d | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:94
+F-panel-1134 | behind switch | Paying MettleUp: Pay MettleUp page, receipts, pay online, free-trial line, stopped-paying banner, Starter/Pro pack and t | apps/dashboard/src/crm/ui/screens/MettleUpReceipt.tsx:31
+F-panel-306 | behind switch | MettleUp receipt: open one receipt for what the gym paid MettleUp, print or save as PDF | apps/dashboard/src/crm/ui/screens/MettleUpReceipt.tsx:31
+F-panel-307 | live | Money -> Collections: every receipt in a date range, totals by method, filter by who took it, export to Excel (CSV), voi | apps/dashboard/src/crm/ui/screens/Money.tsx:75
+F-panel-308 | live | Money -> Dues: who still owes, by age of the due, collect a payment, export the list | apps/dashboard/src/crm/ui/screens/Money.tsx:597
+F-panel-312 | behind switch | Set-up step 'Let people find and join your gym online': free web page on/off, one link and QR poster to share or print,  | apps/dashboard/src/crm/ui/screens/OnlineJourney.tsx:45
+F-panel-314 | behind switch | Pay MettleUp: pick Starter or Pro, monthly or yearly, pay by UPI QR or bank transfer, send the reference number, see wai | apps/dashboard/src/crm/ui/screens/PayMettleUp.tsx:88
+F-panel-315 | live | Membership plans (price list): add, edit, retire a plan, add starter plans, mark a plan as a PT pack with sessions and t | apps/dashboard/src/crm/ui/screens/Plans.tsx:39
+F-panel-317 | behind switch | MettleUp Plus lock switch (Settings -> Member app): lock the paid app extras 7 days after a member's plan ends, or keep  | apps/dashboard/src/crm/ui/screens/PlusLock.tsx:28
+F-panel-319 | live | Member receipt: printable receipt for one payment, send it to the member on WhatsApp (with pay link when a balance is le | apps/dashboard/src/crm/ui/screens/Receipt.tsx:41
+F-panel-320 | live | Settings -> Gym tab: gym or branch details (name, phone, address, GST), install the admin app, alerts, payments link, br | apps/dashboard/src/crm/ui/screens/Settings.tsx:88
+F-panel-321 | live | Settings -> Member app tab: gym app code, join trial, branding link, challenges link, busy machines, bring a friend, Met | apps/dashboard/src/crm/ui/screens/Settings.tsx:311
+F-panel-325 | live | Today home: number tiles that open filtered lists, who to renew, who owes, who stopped coming, who came in, needs-you an | apps/dashboard/src/crm/ui/screens/Today.tsx:72
+F-panel-327 | live | Today nudges: 'N birthdays today' / plans ending open the ready message; 'Give rewards' opens the workout offer | apps/dashboard/src/crm/ui/screens/Today.tsx:540
+F-panel-337 | behind switch | Workout of the day: set one workout for everyone for today or a day in the next week (from a plan's day or built here),  | apps/dashboard/src/crm/ui/screens/WorkoutOfTheDay.tsx:52
+F-panel-338 | live | Workout plans list: the gym's plans, edit, copy, withdraw (asks first), withdrawn plans folded away | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:94
+F-panel-339 | live | Workout plan builder: name, note, days, exercises with starting weights, who gets it (members or everyone on a membershi | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:299
+F-panel-340 | live | New workout plan: start from a ready plan or empty | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:951
+F-panel-341 | live | Send a workout plan to one member (from Member detail): one tap on an existing plan, a ready plan, or build new | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:983
+F-panel-342 | behind switch | Your own video link (YouTube) on an exercise in a workout plan | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:337
+F-panel-504 | live | Set up your gym: the new gym's steps with a progress ring, and the 'find and join your gym online' journey (web page, on | apps/dashboard/src/crm/ui/screens/SetupGym.tsx:10
+F-panel-513 | live | Money: collect dues, the cash book and who still owes, print a receipt, void a receipt | apps/dashboard/src/crm/ui/screens/Money.tsx:75
+F-panel-515 | live | Plans: the gym's price list (add or edit a plan) | apps/dashboard/src/crm/ui/screens/Plans.tsx:39
+F-panel-525 | live | Workout plans: build a routine, start from a ready plan, send it to members, and set the gym's workout of the day | apps/dashboard/src/crm/ui/screens/WorkoutPlans.tsx:94
+F-panel-533 | hidden | MettleUp Plus lock: the owner decides whether a member's paid app extras lock 7 days after their plan ends | apps/dashboard/src/crm/ui/screens/PlusLock.tsx:28
+F-panel-534 | live | Pay MettleUp: the free-trial line on Today, pick Starter or Pro, pay by UPI or bank transfer and send the proof | apps/dashboard/src/crm/ui/screens/PayMettleUp.tsx:88

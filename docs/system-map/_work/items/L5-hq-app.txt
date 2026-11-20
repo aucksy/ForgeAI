@@ -1,0 +1,16 @@
+# L5-hq-app: 5 x hq / hq/app. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-hq-101 | live | Needs you: one list of what waits (leads, feedback, new gyms, payments), with a count on the menu and in the tab title,  | apps/hq/public/app.js:938
+F-hq-105 | live | Gyms with branches: each gym business with its branches, member counts and the extra-branch price | apps/hq/public/app.js:224
+F-hq-108 | live | One gym's page: counts (members, check-ins, takings, cancelled receipts, orders, staff, wrong codes), owner to call, del | apps/hq/public/app.js:461
+F-hq-109 | behind switch | Change a gym's free trial end date (with a reason, up to the cap) | apps/hq/public/app.js:404
+F-hq-110 | behind switch | Set a gym's plan by hand after a payment (Starter or Pro, monthly, yearly or lifetime, paid until), or take the plan off | apps/hq/public/app.js:404
+F-hq-115 | behind switch | AI Assistant credits: see a gym's balance, this month's use and cost, add a paid pack or free credits, or take free cred | apps/hq/public/app.js:590
+F-hq-129 | behind switch | Payments to MettleUp: see what gym owners say they paid (UPI or bank), confirm it (plan moves on) or mark not confirmed  | apps/hq/public/app.js:1122
+F-hq-130 | behind switch | Online payments to check: money a gym paid online that did not become a plan; mark refunded or added by hand with a note | apps/hq/public/app.js:1154
+F-hq-131 | live | Your payment details: set the UPI ID and bank account that gym owners see on Pay MettleUp | apps/hq/public/app.js:1222

@@ -1,0 +1,10 @@
+# L5-phone-lib-core: 5 x phone / phone/lib-core. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-phone-1701 | behind switch | MettleUp Plus: free month, what stays free, and the 'needs MettleUp Plus' pop-up on paid features (charts, own exercises | apps/mobile/src/plan/memberPlan.ts:40
+F-phone-1703 | behind switch | Buy or restore MettleUp Plus through Google Play (monthly, yearly, lifetime); test mode with a stand-in store until paym | apps/mobile/src/plan/playBilling.ts:96
+F-phone-1729 | live | Credits page: the third-party drawings, body map and fonts the app uses | apps/mobile/src/lib/credits.ts:1

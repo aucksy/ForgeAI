@@ -1,0 +1,23 @@
+# L5-server-panel-worker: 5 x server / server/panel-worker. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-server-107 | live | Join online: the gym's "Become a member" page (/m/CODE) shows the gym's plans and prices (and a free trial when on), and | deploy/panel/worker.js:126
+F-server-108 | behind switch | Pay online on the join page: tells the page whether this gym can be paid online, checks the page's own payment, and take | deploy/panel/worker.js:131
+F-server-113 | live | Help and feedback with an AI answer: the message is saved, an answer is written from the help articles (or matched from  | deploy/panel/worker.js:141
+F-server-119 | unknown | Owner's AI Assistant: the owner's typed or spoken sentence becomes 1 to 3 cards from a fixed list of tools and admin pag | deploy/panel/worker.js:149
+F-server-122 | unknown | AI workout plan writer: the assistant writes a plan for one member from the goal, level and days the owner gave, using t | deploy/panel/worker.js:152
+F-server-123 | live | AI question credits: before an AI answer, one question is taken from the gym's AI credits (members and page visitors: 10 | deploy/panel/questionCredits.js:82
+F-server-124 | behind switch | Connect the gym's own payment company: the owner types the company's keys (sealed before they are stored), sees the conn | deploy/panel/worker.js:154
+F-server-125 | behind switch | Connect a payment company by signing in (Razorpay or Cashfree "Connect" button) instead of typing keys | deploy/panel/pay.js:745
+F-server-126 | live | Collect a payment online at the desk: make a payment link (or UPI request) for a member through the gym's own account, c | deploy/panel/pay.js:766
+F-server-128 | live | Member pays in the app: the member sees what can be paid online, pays a due or a shop order through the gym's payment li | deploy/panel/pay.js:778
+F-server-130 | behind switch | Payment company webhook: the company tells us a link was paid (signature checked, each event kept once) and the request  | deploy/panel/pay.js:743
+F-server-131 | behind switch | Every 10 minutes: open payment links are checked with each gym's payment company and marked paid when the money has arri | deploy/panel/worker.js:179
+F-server-132 | behind switch | Owner's two payment switches ("Take payments in the member app", "Take payments when people join online") and the desk's | deploy/panel/pay.js:786
+F-server-136 | behind switch | Pay online for a MettleUp plan: the admin app's "Pay online" request is passed to the HQ server, which makes the payment | deploy/panel/worker.js:156
+F-server-139 | live | Feature switches for the admin app (/api/switches): says whether gym web pages, pay online on the join page, AI credit c | deploy/panel/worker.js:166
+F-server-141 | hidden | Gym's own free web page (join.mettleup.fit/<gym>): the gym's plans and prices, timings, address with map links, faciliti | deploy/panel/worker.js:93

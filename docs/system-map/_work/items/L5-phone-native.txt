@@ -1,0 +1,8 @@
+# L5-phone-native: 5 x phone / phone/native. Made by _work/lens-items-make.mjs. One row per line.
+## ITEMS (id | lens | text)
+L5.1 | 5 | Every price, plan, trial, founding offer, Play Billing / payment flow, refund, receipt, GST wording, credits wallet
+L5.2 | 5 | test mode vs live
+L5.3 | 5 | what happens on failed, pending, refunded, cancelled, expired
+L5.4 | 5 | amounts match across panel, HQ, receipts and messages
+## FEATURES ABOUT PRICE, PLAN, TRIAL, PAY, REFUND, RECEIPT, CREDITS, BILLING (id | status | name | first entry)
+F-phone-1232 | behind switch | Buy MettleUp Plus with Google Play (monthly, yearly, lifetime; prices, pay, what is owned) | apps/mobile/modules/forge-billing/android/src/main/java/com/forgeai/billing/ForgeBillingModule.kt:148
