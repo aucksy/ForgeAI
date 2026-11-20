@@ -37,28 +37,28 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 60 | 5.1 (205k tokens) |
+| A5 | 61 | 5.1 (206k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 5 in progress, 157 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 5 in progress, 158 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A5-phone-tracker-data-1 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-data; list in _work/items/A5-phone-tracker-data-1.txt | in progress | _work/A5-phone-tracker-data-1.md |  |
 | A5-phone-tracker-data-3 | A5 | journeys: 7 features (7 feature x role pairs) of phone / phone/tracker-data; list in _work/items/A5-phone-tracker-data-3.txt | in progress | _work/A5-phone-tracker-data-3.md |  |
 | A5-phone-tracker-engine-1 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-engine; list in _work/items/A5-phone-tracker-engine-1.txt | in progress | _work/A5-phone-tracker-engine-1.md |  |
 | A5-phone-tracker-engine-2 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-engine; list in _work/items/A5-phone-tracker-engine-2.txt | in progress | _work/A5-phone-tracker-engine-2.md |  |
 | A5-phone-tracker-engine-3 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-engine; list in _work/items/A5-phone-tracker-engine-3.txt | in progress | _work/A5-phone-tracker-engine-3.md |  |
-| A5-phone-tracker-components-1-2 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-components-1; list in _work/items/A5-phone-tracker-components-1-2.txt | done | _work/A5-phone-tracker-components-1-2.md | 8 features: 61 full journeys and 56 type lines; 2 findings (S3): an exercise chart opens on its 1-year view for free members when the last workout is older than 3 months; Skip for now hides the first-routine card for good |
+| A5-phone-tracker-engine-4 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-engine; list in _work/items/A5-phone-tracker-engine-4.txt | in progress | _work/A5-phone-tracker-engine-4.md |  |
 | A5-phone-tracker-components-1-3 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-components-1; list in _work/items/A5-phone-tracker-components-1-3.txt | done | _work/A5-phone-tracker-components-1-3.md | 8 features: 38 full journeys and 59 type lines; 1 finding (S3): a treadmill speed above 40 stays in the box but the set saves no speed, with no message; coordinator shortened the root_cause_key |
 | A5-phone-tracker-components-1-4 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-components-1; list in _work/items/A5-phone-tracker-components-1-4.txt | done | _work/A5-phone-tracker-components-1-4.md | 8 features: 38 full journeys and 64 type lines; 1 finding (S4): Muscles ready today is marked live but was switched off on 5 Nov; seen in passing: Back to the standard set wipes own plates with no question |
 | A5-phone-tracker-components-2-1 | A5 | journeys: 10 features (10 feature x role pairs) of phone / phone/tracker-components-2; list in _work/items/A5-phone-tracker-components-2-1.txt | done | _work/A5-phone-tracker-components-2-1.md | 10 features: 77 full journeys and 70 type lines; 1 finding (S3): the routine editor rest picker always offers Default 1:30, not the member's own default rest |
 | A5-phone-tracker-components-2-2 | A5 | journeys: 10 features (10 feature x role pairs) of phone / phone/tracker-components-2; list in _work/items/A5-phone-tracker-components-2-2.txt | done | _work/A5-phone-tracker-components-2-2.md | 10 features: 49 full journeys and 77 type lines; 1 finding (S3): the strength level Everyone/Men/Women pick shows as saved, and a failed save is never told; coordinator pointed the finding at journey 816-04 (816-06 did not exist) |
 | A5-phone-tracker-components-2-3 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/tracker-components-2; list in _work/items/A5-phone-tracker-components-2-3.txt | done | _work/A5-phone-tracker-components-2-3.md | 9 features: 44 full journeys and 68 type lines; 0 findings; seen in passing: the workout photos card says they stay on this phone while backups can carry them |
 | A5-phone-tracker-components-2-4 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/tracker-components-2; list in _work/items/A5-phone-tracker-components-2-4.txt | done | _work/A5-phone-tracker-components-2-4.md | 9 features: 47 full journeys and 70 type lines; 1 finding (S3): New exercise Save stays greyed out after the own-exercise limit pop-up (same as screens-1-2: merge in 3H) |
+| A5-phone-tracker-data-1 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-data; list in _work/items/A5-phone-tracker-data-1.txt | done | _work/A5-phone-tracker-data-1.md | 8 features: 39 full journeys and 62 type lines; 1 finding (S3): Body screen Undo closes before it runs, so a failed undo is never told; seen in passing (again): the member rollup has a body-weight field against the gym-never-gets-body-weight promise |
 | A5-phone-tracker-data-2 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-data; list in _work/items/A5-phone-tracker-data-2.txt | done | _work/A5-phone-tracker-data-2.md | 8 features: 40 full journeys and 58 type lines; 0 findings; 7 seen-in-passing lines (one: Save as routine can leave an empty routine when its second save fails) |
-(+ 149 older done items, not shown)
+(+ 150 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
