@@ -6,3 +6,4 @@ F-phone-524: 6 journeys, 7 type lines
 F-phone-509: 7 journeys, 7 type lines
 F-phone-529: 6 journeys, 7 type lines
 F-phone-520: 6 journeys, 7 type lines
+F-phone-531: 5 journeys, 7 type lines

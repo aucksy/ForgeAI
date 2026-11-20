@@ -12,3 +12,6 @@ seen in passing F-phone-507: getTargetsForPlanDay keeps only the first row of an
 F-phone-511: 7 journeys, 8 type lines
 F-phone-508: 5 journeys, 8 type lines
 seen in passing F-phone-508: no Home screen exists in app/(tabs) (coach, profile, progress, shop, workout); 'today's workout with Targets' is shown by app/today.tsx through coachTargets, not this loader.
+F-phone-513: 8 journeys, 7 type lines
+seen in passing F-phone-513: cardSplit.ts:33 adds weight x reps with no counting and no sign check, so a split assisted card (stored as minus kg) or a two-dumbbell card gets a different kg total than the one volume rule; check whether readers recompute it.
+All 9 items done. Rows: see out file. Findings: FN-A5-phone-tracker-services-1-1-01 (before/after swap), -02 (Home loader with no screen).
