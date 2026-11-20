@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-server-601-hq-admin-10","feature":"F-server-601","role":"HQ admin","type":10,"applies":"no","why_not":"a CI run has no installed old version to upgrade from","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-ci-workflows-2"},
+{"kind":"jtype","id":"JT-F-server-601-hq-admin-11","feature":"F-server-601","role":"HQ admin","type":11,"applies":"no","why_not":"runs on one GitHub runner; no second device or app side shares its state","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-ci-workflows-2"},
+{"kind":"jtype","id":"JT-F-server-601-hq-admin-4","feature":"F-server-601","role":"HQ admin","type":4,"applies":"no","why_not":"no data to vary","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-ci-workflows-2"},
+{"kind":"jtype","id":"JT-F-server-601-hq-admin-5","feature":"F-server-601","role":"HQ admin","type":5,"applies":"no","why_not":"nothing dated","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-ci-workflows-2"},
+{"kind":"jtype","id":"JT-F-server-601-hq-admin-7","feature":"F-server-601","role":"HQ admin","type":7,"applies":"yes","why_not":"none","variants":["T7-doubletap"],"at_step":2,"entity":"E-phone-code-settings","note":"two runs at once are queued by concurrency group whatsapp-setup","wi":"A5-server-ci-workflows-2"},
+{"kind":"jtype","id":"JT-F-server-601-hq-admin-8","feature":"F-server-601","role":"HQ admin","type":8,"applies":"no","why_not":"the inputs register / put_secret / subscribe are the journeys 1-2","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-ci-workflows-2"},
+{"kind":"jtype","id":"JT-F-server-601-hq-admin-9","feature":"F-server-601","role":"HQ admin","type":9,"applies":"no","why_not":"no screen of its own: a GitHub Actions run page, sized by GitHub","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-ci-workflows-2"}
+]

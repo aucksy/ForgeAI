@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-server-621-hq-admin-10","feature":"F-server-621","role":"HQ admin","type":10,"applies":"no","why_not":"a CI run has no installed old version to upgrade from","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-ci-workflows-2"},
+{"kind":"jtype","id":"JT-F-server-621-hq-admin-11","feature":"F-server-621","role":"HQ admin","type":11,"applies":"no","why_not":"runs on one GitHub runner; no second device or app side shares its state","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-ci-workflows-2"},
+{"kind":"jtype","id":"JT-F-server-621-hq-admin-4","feature":"F-server-621","role":"HQ admin","type":4,"applies":"no","why_not":"fixed message text; no data to vary","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-ci-workflows-2"},
+{"kind":"jtype","id":"JT-F-server-621-hq-admin-5","feature":"F-server-621","role":"HQ admin","type":5,"applies":"yes","why_not":"none","variants":["T5-midnight"],"at_step":2,"entity":"none","note":"the plain text works only inside 24 hours after the owner's own message","wi":"A5-server-ci-workflows-2"},
+{"kind":"jtype","id":"JT-F-server-621-hq-admin-7","feature":"F-server-621","role":"HQ admin","type":7,"applies":"no","why_not":"no person mid-run","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-ci-workflows-2"},
+{"kind":"jtype","id":"JT-F-server-621-hq-admin-8","feature":"F-server-621","role":"HQ admin","type":8,"applies":"no","why_not":"no app setting changes this run; its inputs are covered in types 1-3","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-ci-workflows-2"},
+{"kind":"jtype","id":"JT-F-server-621-hq-admin-9","feature":"F-server-621","role":"HQ admin","type":9,"applies":"no","why_not":"no screen of its own: a GitHub Actions run page, sized by GitHub","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-ci-workflows-2"}
+]
