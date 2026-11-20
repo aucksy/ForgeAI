@@ -4,9 +4,12 @@ Phone app has no language setting (English only): T8-language and T9-hinglish ne
 
 F-phone-107: 6 journeys, 7 type lines
 F-phone-108: 6 journeys, 7 type lines
-F-phone-124: 7 journeys, 7 type lines - seen in passing: reorder save failure reloads silently with no message (routines/[id].tsx ~line 316), against the file's own 'a failed save says so' rule; back from guide step 1 drops ticked exercises without asking (only Skip asks)
+F-phone-124: 7 journeys, 7 type lines - seen in passing: reorder save failure reloads silently with no message (routines/[id].tsx line 295), against the file's own 'a failed save says so' rule; back from guide step 1 drops ticked exercises without asking (only Skip asks)
 F-phone-127: 7 journeys, 7 type lines - seen in passing: the add-photo sheet says 'Private: they stay on this phone.' while Settings has 'Include photos in my backup' that copies them to the account; wording may need an 'unless' (not checked further)
 F-phone-126: 7 journeys, 7 type lines - seen in passing: cloud/summary.ts:81 puts weight_kg (body weight) into member_summary, which entities.json says owner and trainer can read; Settings 'What my gym can see' promises body weight is never sent (P-A7-phone-watch-2-28). Not checked whether this path still runs for today's members
 F-phone-132: 5 journeys, 7 type lines
 F-phone-131: 9 journeys, 7 type lines
 F-phone-133: 7 journeys, 7 type lines
+
+STATUS: all 8 items done. 54 journeys, 56 type lines, 0 finding rows. About 1,400 code lines read.
+could-not-check: whether cloud/summary.ts (member_summary with weight_kg) still runs for members who joined a gym in today's app (needs the sync path traced; outside these screens); watch behaviour for T11 lines is from code comments only; no tests opened, so every journey is coverage unknown.
