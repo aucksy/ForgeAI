@@ -43,15 +43,19 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A4b | 2 | 5.1 (204k tokens) |
 | A5 | 121 | 5.1 (202k tokens) |
 | L4 | 42 | 3.9 (157k tokens) |
-| L5 | 22 | 4.6 (185k tokens) |
+| L5 | 23 | 4.5 (182k tokens) |
 | L3 | 9 | 5.3 (214k tokens) |
 
 ## Work items
-Counts: 0 todo, 0 in progress, 291 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 5 in progress, 292 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L3-server-database-1 | L3 | lens 3 (Security) x server / server/database-1: 11 items | done | _work/L3-server-database-1.md | L3 server-database-1: 11 items, 3 new S3 (join codes guessable, no try limit; demo owner key gives free photo hosting; demo and join limits blockable by one script), 5 reused |
+| L5-phone-native | L5 | lens 5 (Money) x phone / phone/native: 4 items | in progress | _work/L5-phone-native.md |  |
+| L5-phone-cloud-backup-ai | L5 | lens 5 (Money) x phone / phone/cloud-backup-ai: 4 items | in progress | _work/L5-phone-cloud-backup-ai.md |  |
+| L5-phone-components-1 | L5 | lens 5 (Money) x phone / phone/components-1: 4 items | in progress | _work/L5-phone-components-1.md |  |
+| L3-hq-app | L3 | lens 3 (Security) x hq / hq/app: 11 items | in progress | _work/L3-hq-app.md |  |
+| L3-web-pages | L3 | lens 3 (Security) x web / web/pages: 11 items | in progress | _work/L3-web-pages.md |  |
 | L3-server-database-2 | L3 | lens 3 (Security) x server / server/database-2: 11 items | done | _work/L3-server-database-2.md | L3 server-database-2: 11 items, 1 new S3 (nightly backup copies server secrets and PIN fingerprints unencrypted for 7 days), 6 reused |
 | L5-phone-screens-1 | L5 | lens 5 (Money) x phone / phone/screens-1: 4 items | done | _work/L5-phone-screens-1.md | L5 phone-screens-1: 4 items, 4 new on Plus (not live): S3 Plus keeps charging after joining a gym; S3 waiting payment never confirmed in session; S4 free month resets on reinstall; S4 yearly named monthly after restore. 3H: -02 ~ screens-2-01, -04 = screens-2-04 |
 | L5-phone-screens-2 | L5 | lens 5 (Money) x phone / phone/screens-2: 4 items | done | _work/L5-phone-screens-2.md | L5 phone-screens-2: 4 items, 4 new on Plus (not live): S3 waiting payment no unlock; S3 no server check of purchases; S3 refunds page wrong once Plus on (needs him); S4 wrong plan named after restore; 2 reused |
@@ -59,7 +63,8 @@ Counts: 0 todo, 0 in progress, 291 done, 0 blocked. Full list: work-items.jsonl.
 | L5-phone-lib-core | L5 | lens 5 (Money) x phone / phone/lib-core: 4 items | done | _work/L5-phone-lib-core.md | L5 phone-lib-core: 4 items, 2 new on Plus (not live): S2 paid member can be charged again after erase; S4 staff unlock never rechecked (3H: = FN-L5-phone-onboarding-db-01), 6 reused |
 | L5-phone-onboarding-db | L5 | lens 5 (Money) x phone / phone/onboarding-db: 4 items | done | _work/L5-phone-onboarding-db.md | L5 phone-onboarding-db: 4 items, 2 new on Plus (not live): S3 staff free access never rechecked; S4 trainers told free, needs him |
 | L3-server-database-3 | L3 | lens 3 (Security) x server / server/database-3: 11 items | done | _work/L3-server-database-3.md | L3 server-database-3: 11 items, 4 new (S3 Ask the gym form takes any number, skips limit; S3 master key reads never logged; 2 S4), 4 reused |
-(+ 283 older done items, not shown)
+| L5-phone-tracker-engine | L5 | lens 5 (Money) x phone / phone/tracker-engine: 4 items | done | _work/L5-phone-tracker-engine.md | L5 phone-tracker-engine: no money code (plan = workout plan); L5.1 checked, L5.2-4 does-not-apply, 0 findings |
+(+ 284 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
