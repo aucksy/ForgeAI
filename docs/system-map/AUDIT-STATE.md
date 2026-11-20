@@ -43,15 +43,13 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A5 | 121 | 5.1 (202k tokens) |
 | L4 | 42 | 3.9 (157k tokens) |
 | L5 | 22 | 4.6 (185k tokens) |
-| L3 | 8 | 5.3 (210k tokens) |
+| L3 | 9 | 5.3 (214k tokens) |
 
 ## Work items
-Counts: 0 todo, 1 in progress, 290 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 0 in progress, 291 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L3-server-database-3 | L3 | lens 3 (Security) x server / server/database-3: 11 items | in progress | _work/L3-server-database-3.md |  |
-| L5-phone-shop-2 | L5 | lens 5 (Money) x phone / phone/shop-2: 4 items | done | _work/L5-phone-shop-2.md | L5 phone-shop-2: 4 items, 3 new (S3 asked fee vanishes when link expires; S3 Renew shows no price, needs him; S4 renewal words say pay at desk), 3 reused |
 | L3-server-database-1 | L3 | lens 3 (Security) x server / server/database-1: 11 items | done | _work/L3-server-database-1.md | L3 server-database-1: 11 items, 3 new S3 (join codes guessable, no try limit; demo owner key gives free photo hosting; demo and join limits blockable by one script), 5 reused |
 | L3-server-database-2 | L3 | lens 3 (Security) x server / server/database-2: 11 items | done | _work/L3-server-database-2.md | L3 server-database-2: 11 items, 1 new S3 (nightly backup copies server secrets and PIN fingerprints unencrypted for 7 days), 6 reused |
 | L5-phone-screens-1 | L5 | lens 5 (Money) x phone / phone/screens-1: 4 items | done | _work/L5-phone-screens-1.md | L5 phone-screens-1: 4 items, 4 new on Plus (not live): S3 Plus keeps charging after joining a gym; S3 waiting payment never confirmed in session; S4 free month resets on reinstall; S4 yearly named monthly after restore. 3H: -02 ~ screens-2-01, -04 = screens-2-04 |
@@ -59,7 +57,8 @@ Counts: 0 todo, 1 in progress, 290 done, 0 blocked. Full list: work-items.jsonl.
 | L5-web-pages | L5 | lens 5 (Money) x web / web/pages: 4 items | done | _work/L5-web-pages.md | L5 web-pages: 4 items, 4 new (S3 refunds page promises auto credit give-back, app asks once; 3 S4), 11 reused; all public prices match the server |
 | L5-phone-lib-core | L5 | lens 5 (Money) x phone / phone/lib-core: 4 items | done | _work/L5-phone-lib-core.md | L5 phone-lib-core: 4 items, 2 new on Plus (not live): S2 paid member can be charged again after erase; S4 staff unlock never rechecked (3H: = FN-L5-phone-onboarding-db-01), 6 reused |
 | L5-phone-onboarding-db | L5 | lens 5 (Money) x phone / phone/onboarding-db: 4 items | done | _work/L5-phone-onboarding-db.md | L5 phone-onboarding-db: 4 items, 2 new on Plus (not live): S3 staff free access never rechecked; S4 trainers told free, needs him |
-(+ 282 older done items, not shown)
+| L3-server-database-3 | L3 | lens 3 (Security) x server / server/database-3: 11 items | done | _work/L3-server-database-3.md | L3 server-database-3: 11 items, 4 new (S3 Ask the gym form takes any number, skips limit; S3 master key reads never logged; 2 S4), 4 reused |
+(+ 283 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
