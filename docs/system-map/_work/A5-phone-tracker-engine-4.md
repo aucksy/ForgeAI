@@ -4,3 +4,4 @@ F-phone-925: 6 journeys, 7 type lines
 seen in passing (F-phone-925): a swap during a workout of a routine NOT in a built plan uses gym equipment and no sore/'never' list (swapContextFor falls back), so the 'never' list only applies inside a built plan folder.
 F-phone-926: 6 journeys, 7 type lines
 F-phone-927: 5 journeys, 7 type lines
+F-phone-928: 5 journeys, 7 type lines
