@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-phone-1222-member-10","feature":"F-phone-1222","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":2,"entity":"none","note":"Old pinned /bodyweight link must still work","wi":"A5-phone-native-1"},
+{"kind":"jtype","id":"JT-F-phone-1222-member-11","feature":"F-phone-1222","role":"member","type":11,"applies":"yes","why_not":"none","variants":["T11-watch"],"at_step":3,"entity":"none","note":"Workout started on the watch: shortcut must say Resume","wi":"A5-phone-native-1"},
+{"kind":"jtype","id":"JT-F-phone-1222-member-4","feature":"F-phone-1222","role":"member","type":4,"applies":"yes","why_not":"none","variants":["T4-long","T4-hinglish","T4-emoji"],"at_step":1,"entity":"none","note":"Routine name cut with dots in the long label","wi":"A5-phone-native-1"},
+{"kind":"jtype","id":"JT-F-phone-1222-member-5","feature":"F-phone-1222","role":"member","type":5,"applies":"yes","why_not":"none","variants":["T5-midnight"],"at_step":1,"entity":"none","note":"Shortcuts are only rewritten when the app runs; after midnight they can still offer yesterday's routine","wi":"A5-phone-native-1"},
+{"kind":"jtype","id":"JT-F-phone-1222-member-7","feature":"F-phone-1222","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-doubletap","T7-closed"],"at_step":2,"entity":"none","note":"Double tap on Start must not make two workouts","wi":"A5-phone-native-1"},
+{"kind":"jtype","id":"JT-F-phone-1222-member-8","feature":"F-phone-1222","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-language"],"at_step":1,"entity":"none","note":"Shortcut labels are fixed English","wi":"A5-phone-native-1"},
+{"kind":"jtype","id":"JT-F-phone-1222-member-9","feature":"F-phone-1222","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-bigfont"],"at_step":1,"entity":"none","note":"Launcher shows the short label when long does not fit","wi":"A5-phone-native-1"}
+]

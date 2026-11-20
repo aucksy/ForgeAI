@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-phone-1225-member-10","feature":"F-phone-1225","role":"member","type":10,"applies":"no","why_not":"the page is on the web: an app update does not change it, and the link address is guarded by a test","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-native-1"},
+{"kind":"jtype","id":"JT-F-phone-1225-member-11","feature":"F-phone-1225","role":"member","type":11,"applies":"no","why_not":"phone only: Health Connect's screen is on the phone; the watch has no such link","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-native-1"},
+{"kind":"jtype","id":"JT-F-phone-1225-member-4","feature":"F-phone-1225","role":"member","type":4,"applies":"no","why_not":"no data: the page is a fixed web address with no member input","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-native-1"},
+{"kind":"jtype","id":"JT-F-phone-1225-member-5","feature":"F-phone-1225","role":"member","type":5,"applies":"no","why_not":"no time edge: the link opens the same page at any hour","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-native-1"},
+{"kind":"jtype","id":"JT-F-phone-1225-member-7","feature":"F-phone-1225","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-offline","T7-back"],"at_step":1,"entity":"none","note":"Offline the browser shows its own error; back must return to Health Connect","wi":"A5-phone-native-1"},
+{"kind":"jtype","id":"JT-F-phone-1225-member-8","feature":"F-phone-1225","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-language"],"at_step":1,"entity":"none","note":"Policy page language does not follow the app's Hinglish setting","wi":"A5-phone-native-1"},
+{"kind":"jtype","id":"JT-F-phone-1225-member-9","feature":"F-phone-1225","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-360"],"at_step":1,"entity":"none","note":"The web page at 360 px","wi":"A5-phone-native-1"}
+]
