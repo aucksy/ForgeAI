@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-hq-113-hq-admin-10","feature":"F-hq-113","role":"HQ admin","type":10,"applies":"no","why_not":"HQ is a web page; nothing is saved in the browser between versions","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-113-hq-admin-11","feature":"F-hq-113","role":"HQ admin","type":11,"applies":"yes","why_not":"none","variants":["T11-apppanel"],"at_step":1,"entity":"E-gym-sessions","note":"every admin app phone and computer of the gym lands on sign-in","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-113-hq-admin-4","feature":"F-hq-113","role":"HQ admin","type":4,"applies":"yes","why_not":"none","variants":["T4-zero","T4-many"],"at_step":1,"entity":"E-gym-sessions","note":"0 or many devices; singular '1 device'","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-113-hq-admin-5","feature":"F-hq-113","role":"HQ admin","type":5,"applies":"no","why_not":"no day or month edge; every live device is ended the moment HQ clicks","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-113-hq-admin-7","feature":"F-hq-113","role":"HQ admin","type":7,"applies":"yes","why_not":"none","variants":["T7-doubletap","T7-offline"],"at_step":1,"entity":"E-gym-sessions","note":"button disabled while running","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-113-hq-admin-8","feature":"F-hq-113","role":"HQ admin","type":8,"applies":"no","why_not":"HQ has no language, theme or units setting","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-113-hq-admin-9","feature":"F-hq-113","role":"HQ admin","type":9,"applies":"yes","why_not":"none","variants":["T9-360","T9-laptop"],"at_step":1,"entity":"E-gym-sessions","note":"card on a phone","wi":"A5-hq-app-1"}
+]

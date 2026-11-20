@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-hq-105-hq-admin-10","feature":"F-hq-105","role":"HQ admin","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":1,"entity":"E-gym-groups","note":"before database update 0031 there are no groups; the card must simply not show","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-105-hq-admin-11","feature":"F-hq-105","role":"HQ admin","type":11,"applies":"no","why_not":"the card only shows the server's grouping; no change is made from it","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-105-hq-admin-4","feature":"F-hq-105","role":"HQ admin","type":4,"applies":"yes","why_not":"none","variants":["T4-one","T4-many","T4-long"],"at_step":1,"entity":"E-gym-groups","note":"one-branch groups must stay hidden; long business names","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-105-hq-admin-5","feature":"F-hq-105","role":"HQ admin","type":5,"applies":"no","why_not":"the card shows current counts and fixed prices; nothing in it is dated","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-105-hq-admin-7","feature":"F-hq-105","role":"HQ admin","type":7,"applies":"no","why_not":"nothing is typed or saved in this card; a failed load is the All gyms page's own failure","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-105-hq-admin-8","feature":"F-hq-105","role":"HQ admin","type":8,"applies":"no","why_not":"HQ has no language, theme or units setting","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-105-hq-admin-9","feature":"F-hq-105","role":"HQ admin","type":9,"applies":"yes","why_not":"none","variants":["T9-360","T9-laptop"],"at_step":1,"entity":"E-gym-groups","note":"long branch lines must wrap","wi":"A5-hq-app-1"}
+]

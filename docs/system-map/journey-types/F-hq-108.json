@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-hq-108-hq-admin-10","feature":"F-hq-108","role":"HQ admin","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":1,"entity":"E-gyms","note":"gyms from before 0030/0031 lack plan and group fields","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-108-hq-admin-11","feature":"F-hq-108","role":"HQ admin","type":11,"applies":"yes","why_not":"none","variants":["T11-twopanels"],"at_step":1,"entity":"E-gyms","note":"the page does not refresh itself after a change on another HQ device","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-108-hq-admin-4","feature":"F-hq-108","role":"HQ admin","type":4,"applies":"yes","why_not":"none","variants":["T4-zero","T4-long"],"at_step":1,"entity":"E-gyms","note":"new gym with zeros; long gym name in the heading","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-108-hq-admin-5","feature":"F-hq-108","role":"HQ admin","type":5,"applies":"yes","why_not":"none","variants":["T5-month1","T5-midnight"],"at_step":1,"entity":"E-gyms","note":"takings and cancelled receipts this month; 24 h and 7-day windows","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-108-hq-admin-7","feature":"F-hq-108","role":"HQ admin","type":7,"applies":"yes","why_not":"none","variants":["T7-offline","T7-back"],"at_step":2,"entity":"E-gym-access-log","note":"history fails to a plain note; back keeps the list state","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-108-hq-admin-8","feature":"F-hq-108","role":"HQ admin","type":8,"applies":"no","why_not":"HQ has no language, theme or units setting","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-108-hq-admin-9","feature":"F-hq-108","role":"HQ admin","type":9,"applies":"yes","why_not":"none","variants":["T9-360","T9-laptop"],"at_step":1,"entity":"E-gyms","note":"nine tiles and long cards on a phone","wi":"A5-hq-app-1"}
+]

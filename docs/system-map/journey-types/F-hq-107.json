@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-hq-107-hq-admin-10","feature":"F-hq-107","role":"HQ admin","type":10,"applies":"no","why_not":"HQ is a web page; nothing is saved in the browser between versions","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-107-hq-admin-11","feature":"F-hq-107","role":"HQ admin","type":11,"applies":"yes","why_not":"none","variants":["T11-apppanel"],"at_step":3,"entity":"E-gym-signin-codes","note":"owner signs in to the admin app with this code","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-107-hq-admin-4","feature":"F-hq-107","role":"HQ admin","type":4,"applies":"yes","why_not":"none","variants":["T4-long","T4-hinglish","T4-emoji"],"at_step":2,"entity":"E-gyms","note":"name boxes stop at 60 letters","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-107-hq-admin-5","feature":"F-hq-107","role":"HQ admin","type":5,"applies":"no","why_not":"no day or month edge; the code's 30-minute life is checked by the server clock, not a template case","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-107-hq-admin-7","feature":"F-hq-107","role":"HQ admin","type":7,"applies":"yes","why_not":"none","variants":["T7-doubletap","T7-back","T7-offline"],"at_step":2,"entity":"E-gyms","note":"leaving the page loses the code for good; a click after success makes a second gym","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-107-hq-admin-8","feature":"F-hq-107","role":"HQ admin","type":8,"applies":"yes","why_not":"none","variants":["T8-permission"],"at_step":3,"entity":"none","note":"clipboard refused: 'Could not copy: select the text above.'","wi":"A5-hq-app-1"},
+{"kind":"jtype","id":"JT-F-hq-107-hq-admin-9","feature":"F-hq-107","role":"HQ admin","type":9,"applies":"yes","why_not":"none","variants":["T9-360","T9-laptop"],"at_step":2,"entity":"E-gyms","note":"code card and message box on a phone","wi":"A5-hq-app-1"}
+]
