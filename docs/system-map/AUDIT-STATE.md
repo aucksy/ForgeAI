@@ -37,19 +37,17 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 69 | 5.2 (206k tokens) |
+| A5 | 70 | 5.2 (206k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 4 in progress, 166 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 3 in progress, 167 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A5-phone-tracker-lib-4 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-lib; list in _work/items/A5-phone-tracker-lib-4.txt | in progress | _work/A5-phone-tracker-lib-4.md |  |
 | A5-phone-tracker-services-1-1 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/tracker-services-1; list in _work/items/A5-phone-tracker-services-1-1.txt | in progress | _work/A5-phone-tracker-services-1-1.md |  |
 | A5-phone-tracker-services-1-2 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-services-1; list in _work/items/A5-phone-tracker-services-1-2.txt | in progress | _work/A5-phone-tracker-services-1-2.md |  |
 | A5-phone-tracker-services-1-3 | A5 | journeys: 8 features (9 feature x role pairs) of phone / phone/tracker-services-1; list in _work/items/A5-phone-tracker-services-1-3.txt | in progress | _work/A5-phone-tracker-services-1-3.md |  |
-| A5-phone-tracker-data-3 | A5 | journeys: 7 features (7 feature x role pairs) of phone / phone/tracker-data; list in _work/items/A5-phone-tracker-data-3.txt | done | _work/A5-phone-tracker-data-3.md | 7 features: 35 full journeys and 52 type lines; 0 findings; seen in passing: a workout in progress that cannot be read back on reopen is dropped with only a log line |
 | A5-phone-tracker-engine-1 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-engine; list in _work/items/A5-phone-tracker-engine-1.txt | done | _work/A5-phone-tracker-engine-1.md | 8 features: 38 full journeys and 61 type lines; 3 findings (S3): fixing today's wrong weigh-in asks Keep it against the wrong number; the body map says nothing trained when it failed to load; a treadmill box keeps a number it did not save (repeat of components-1-3) |
 | A5-phone-tracker-engine-2 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-engine; list in _work/items/A5-phone-tracker-engine-2.txt | done | _work/A5-phone-tracker-engine-2.md | 8 features: 40 full journeys and 58 type lines; 1 finding (S3): body fat above 100 percent can be saved and is drawn on the Body chart |
 | A5-phone-tracker-engine-3 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-engine; list in _work/items/A5-phone-tracker-engine-3.txt | done | _work/A5-phone-tracker-engine-3.md | 8 features: 42 full journeys and 62 type lines; 1 finding (S2): the account cloud copy drops rest times, so a workout brought back on a new phone loses its long-rest marks and the next target rises again |
@@ -57,7 +55,8 @@ Counts: 0 todo, 4 in progress, 166 done, 0 blocked. Full list: work-items.jsonl.
 | A5-phone-tracker-lib-1 | A5 | journeys: 9 features (10 feature x role pairs) of phone / phone/tracker-lib; list in _work/items/A5-phone-tracker-lib-1.txt | done | _work/A5-phone-tracker-lib-1.md | 9 features (10 pairs): 47 full journeys and 79 type lines; 1 finding (S3): Progress muscle map says nothing trained when it failed to load (repeat of engine-1: merge in 3H) |
 | A5-phone-tracker-lib-2 | A5 | journeys: 9 features (10 feature x role pairs) of phone / phone/tracker-lib; list in _work/items/A5-phone-tracker-lib-2.txt | done | _work/A5-phone-tracker-lib-2.md | 9 features (10 pairs): 45 full journeys and 75 type lines; 0 findings; seen in passing: the next-set grey hint can go below last time against a What's new promise |
 | A5-phone-tracker-lib-3 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/tracker-lib; list in _work/items/A5-phone-tracker-lib-3.txt | done | _work/A5-phone-tracker-lib-3.md | 9 features: 43 full journeys and 71 type lines; 1 finding (S3): the Up next card counts days trained but calls them workouts |
-(+ 158 older done items, not shown)
+| A5-phone-tracker-lib-4 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-lib; list in _work/items/A5-phone-tracker-lib-4.txt | done | _work/A5-phone-tracker-lib-4.md | 8 features: 44 full journeys and 58 type lines; 2 findings: S1 the shared workout picture's +N kg line counts body weight on pull-ups and dips, so it can give away body weight; S3 before and after can swap (repeat of components-1-1) |
+(+ 159 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).

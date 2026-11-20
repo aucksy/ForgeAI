@@ -10,3 +10,5 @@ F-phone-504: 7 journeys, 8 type lines
 F-phone-507: 7 journeys, 8 type lines
 seen in passing F-phone-507: getTargetsForPlanDay keeps only the first row of an exercise listed twice, while Home/chat give each row its own card; check which one the live screen uses (targetStore uses getTargetsForCards).
 F-phone-511: 7 journeys, 8 type lines
+F-phone-508: 5 journeys, 8 type lines
+seen in passing F-phone-508: no Home screen exists in app/(tabs) (coach, profile, progress, shop, workout); 'today's workout with Targets' is shown by app/today.tsx through coachTargets, not this loader.

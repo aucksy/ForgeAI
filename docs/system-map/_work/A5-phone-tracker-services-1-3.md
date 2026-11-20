@@ -3,3 +3,5 @@ Entities: phone-local workouts/routines/folders have no entity of their own; E-m
 F-phone-505: 6 journeys, 7 type lines
 F-phone-523: 5 journeys, 7 type lines
 F-phone-524: 6 journeys, 7 type lines
+F-phone-509: 7 journeys, 7 type lines
+F-phone-529: 6 journeys, 7 type lines
