@@ -1,0 +1,1 @@
+﻿F-server-516 | Gym alerts list (the bell): one alert for each thing a member does that the gym should hear about (question, message, plan request, check-in number, shop order, online payment, report sent, member joined, friend referred), shown to each person by what they may see | supabase/migrations/0075_gym_alerts.sql:67
