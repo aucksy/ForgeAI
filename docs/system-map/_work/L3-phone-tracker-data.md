@@ -1,0 +1,12 @@
+# L3-phone-tracker-data checkpoint
+- L3.1 checked (2026-11-21)
+- L3.2 checked (2026-11-21)
+- L3.3 checked (2026-11-21)
+- L3.4 checked (2026-11-21)
+- L3.5 checked (2026-11-21)
+- L3.6 checked (2026-11-21)
+- L3.7 does-not-apply (2026-11-21)
+- L3.8 checked (2026-11-21)
+- L3.9 checked (2026-11-21)
+- L3.10 does-not-apply (2026-11-21)
+- L3.11 checked (2026-11-21)
