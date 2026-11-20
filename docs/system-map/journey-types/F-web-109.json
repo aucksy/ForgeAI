@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-web-109-member-10","feature":"F-web-109","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":2,"entity":"none","note":"Older ForgeAI app installed","wi":"A5-web-pages-1"},
+{"kind":"jtype","id":"JT-F-web-109-member-11","feature":"F-web-109","role":"member","type":11,"applies":"yes","why_not":"none","variants":["T11-apppanel"],"at_step":2,"entity":"E-crm-records","note":"The desk sees the check-in after the app does it","wi":"A5-web-pages-1"},
+{"kind":"jtype","id":"JT-F-web-109-member-4","feature":"F-web-109","role":"member","type":4,"applies":"yes","why_not":"none","variants":["T4-long","T4-nophoto"],"at_step":1,"entity":"E-gyms","note":"Long gym name in Check in at <gym>; no logo","wi":"A5-web-pages-1"},
+{"kind":"jtype","id":"JT-F-web-109-member-5","feature":"F-web-109","role":"member","type":5,"applies":"no","why_not":"no time edge on the page; the check-in time is set in the app","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-1"},
+{"kind":"jtype","id":"JT-F-web-109-member-7","feature":"F-web-109","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-back","T7-offline"],"at_step":2,"entity":"none","note":"Chrome comes back from the app attempt","wi":"A5-web-pages-1"},
+{"kind":"jtype","id":"JT-F-web-109-member-8","feature":"F-web-109","role":"member","type":8,"applies":"no","why_not":"the page has no settings; it shows English and Hinglish lines together","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-1"},
+{"kind":"jtype","id":"JT-F-web-109-member-9","feature":"F-web-109","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-360","T9-dark"],"at_step":1,"entity":"none","note":"Small phone, dark device","wi":"A5-web-pages-1"}
+]

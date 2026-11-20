@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-web-137-system-10","feature":"F-web-137","role":"system","type":10,"applies":"no","why_not":"nothing kept between calls; old app versions fall back to the direct address by themselves","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-1"},
+{"kind":"jtype","id":"JT-F-web-137-system-11","feature":"F-web-137","role":"system","type":11,"applies":"yes","why_not":"none","variants":["T11-apppanel"],"at_step":2,"entity":"E-gym-messages","note":"Sent in the panel, seen on the member phone at once","wi":"A5-web-pages-1"},
+{"kind":"jtype","id":"JT-F-web-137-system-4","feature":"F-web-137","role":"system","type":4,"applies":"no","why_not":"the proxy passes each body as it is; data sizes belong to each call's own feature","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-1"},
+{"kind":"jtype","id":"JT-F-web-137-system-5","feature":"F-web-137","role":"system","type":5,"applies":"no","why_not":"no time edge: the proxy does nothing by date or hour","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-1"},
+{"kind":"jtype","id":"JT-F-web-137-system-7","feature":"F-web-137","role":"system","type":7,"applies":"yes","why_not":"none","variants":["T7-offline"],"at_step":2,"entity":"E-push-jobs","note":"The HQ kick fails: pop-ups wait for HQ's next minute","wi":"A5-web-pages-1"},
+{"kind":"jtype","id":"JT-F-web-137-system-8","feature":"F-web-137","role":"system","type":8,"applies":"no","why_not":"no setting changes the proxy; the apps choose it by themselves","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-1"},
+{"kind":"jtype","id":"JT-F-web-137-system-9","feature":"F-web-137","role":"system","type":9,"applies":"no","why_not":"no screen: a server address","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-1"}
+]

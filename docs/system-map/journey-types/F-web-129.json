@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-web-129-member-10","feature":"F-web-129","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":1,"entity":"E-pay-requests","note":"An open request made before the app update still opens","wi":"A5-web-pages-1"},
+{"kind":"jtype","id":"JT-F-web-129-member-11","feature":"F-web-129","role":"member","type":11,"applies":"yes","why_not":"none","variants":["T11-apppanel"],"at_step":2,"entity":"E-pay-requests","note":"The desk sees the payment as Paid online","wi":"A5-web-pages-1"},
+{"kind":"jtype","id":"JT-F-web-129-member-4","feature":"F-web-129","role":"member","type":4,"applies":"yes","why_not":"none","variants":["T4-zeroprice","T4-partpaid"],"at_step":1,"entity":"E-pay-requests","note":"An order total under ₹1 is refused; part-paid dues","wi":"A5-web-pages-1"},
+{"kind":"jtype","id":"JT-F-web-129-member-5","feature":"F-web-129","role":"member","type":5,"applies":"yes","why_not":"none","variants":["T5-month1"],"at_step":1,"entity":"E-pay-requests","note":"Only requests from the last 30 days are listed; an older open one disappears","wi":"A5-web-pages-1"},
+{"kind":"jtype","id":"JT-F-web-129-member-7","feature":"F-web-129","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-back","T7-closed","T7-offline"],"at_step":2,"entity":"E-pay-requests","note":"Leave to the UPI app and come back; the app must check again","wi":"A5-web-pages-1"},
+{"kind":"jtype","id":"JT-F-web-129-member-8","feature":"F-web-129","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-language"],"at_step":1,"entity":"none","note":"Payment words in Hinglish","wi":"A5-web-pages-1"},
+{"kind":"jtype","id":"JT-F-web-129-member-9","feature":"F-web-129","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-360","T9-bigfont"],"at_step":1,"entity":"none","note":"QR and Pay button on a small phone and big font","wi":"A5-web-pages-1"}
+]
