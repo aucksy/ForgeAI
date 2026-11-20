@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-server-408-member-10","feature":"F-server-408","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":1,"entity":"E-crm-records","note":"Old app without the card","wi":"A5-server-database-2-1"},
+{"kind":"jtype","id":"JT-F-server-408-member-11","feature":"F-server-408","role":"member","type":11,"applies":"no","why_not":"Read-only on one phone","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-database-2-1"},
+{"kind":"jtype","id":"JT-F-server-408-member-4","feature":"F-server-408","role":"member","type":4,"applies":"yes","why_not":"none","variants":["T4-zero","T4-many"],"at_step":1,"entity":"E-crm-records","note":"No check-ins; very many","wi":"A5-server-database-2-1"},
+{"kind":"jtype","id":"JT-F-server-408-member-5","feature":"F-server-408","role":"member","type":5,"applies":"yes","why_not":"none","variants":["T5-midnight","T5-monday","T5-zone"],"at_step":1,"entity":"E-crm-records","note":"Weekday and hour by India time; past-midnight ranges","wi":"A5-server-database-2-1"},
+{"kind":"jtype","id":"JT-F-server-408-member-7","feature":"F-server-408","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-offline"],"at_step":1,"entity":"E-crm-records","note":"Offline: last level with its age","wi":"A5-server-database-2-1"},
+{"kind":"jtype","id":"JT-F-server-408-member-8","feature":"F-server-408","role":"member","type":8,"applies":"no","why_not":"No setting changes the levels","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-database-2-1"},
+{"kind":"jtype","id":"JT-F-server-408-member-9","feature":"F-server-408","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-360","T9-dark"],"at_step":1,"entity":"none","note":"Week bars at 360 px and dark","wi":"A5-server-database-2-1"}
+]
