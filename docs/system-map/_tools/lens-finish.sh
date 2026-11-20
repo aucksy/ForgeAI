@@ -9,5 +9,5 @@ node _tools/state.mjs done $id $2 "$3" && node _tools/state.mjs summary >/dev/nu
 cd ../.. && git add docs/system-map && git commit -q -m "Audit: $id merged
 
 Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>" 2>/dev/null
-for i in 1 2 3; do git pull -q --rebase origin main 2>/dev/null; git push -q origin HEAD:main 2>/dev/null && break; done
+for i in 1 2 3; do git pull -q --rebase --autostash origin main 2>/dev/null; git push -q origin HEAD:main 2>/dev/null && break; done
 git log --oneline -1

@@ -1,0 +1,901 @@
+{
+ "made": "2026-11-21",
+ "source": "Supabase MCP execute_sql (catalog sizes only, no row counts), GitHub REST API with the stored token, supabase.com/pricing and docs.github.com",
+ "flags": [
+  {
+   "row": "GitHub artifacts",
+   "why": "401.5 GB across 4,116 unexpired artifacts (dashboard* 212 GB, qa* 130 GB); if the repo ever goes private this is ~800x the 500 MB Free quota"
+  },
+  {
+   "row": "database",
+   "why": "tables total ~18.3 MiB, far under 500 MB Free limit"
+  }
+ ],
+ "rows": [
+  {
+   "what": "database size (pg_database_size)",
+   "bytes": "could-not-check: execute_sql of pg_database_size asked for a person's approval (unattended run)",
+   "approx_bytes_sum_of_tables_public_storage_auth": 19234816,
+   "limit": "Free plan 500 MB database size per project; Pro 8 GB disk (which plan this project is on: unknown)",
+   "limit_evidence": "url:https://supabase.com/pricing",
+   "evidence": "execute_sql pg_total_relation_size over public, storage, auth (catalog), 21 Nov 2026"
+  },
+  {
+   "what": "table public.member_items",
+   "bytes": 3129344,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.shop_products",
+   "bytes": 1318912,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_members",
+   "bytes": 1163264,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.crm_records",
+   "bytes": 974848,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table storage.objects",
+   "bytes": 737280,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.shop_orders",
+   "bytes": 663552,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_access_log",
+   "bytes": 647168,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.hq_audit",
+   "bytes": 548864,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_alerts",
+   "bytes": 475136,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gyms",
+   "bytes": 344064,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_sessions",
+   "bytes": 286720,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.member_push_tokens",
+   "bytes": 237568,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_staff",
+   "bytes": 229376,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.users",
+   "bytes": 221184,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_member_days",
+   "bytes": 221184,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_progress_summaries",
+   "bytes": 221184,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_creator_ips",
+   "bytes": 188416,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.member_checkin_tries",
+   "bytes": 188416,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.refresh_tokens",
+   "bytes": 188416,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_messages",
+   "bytes": 188416,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.crm_push_log",
+   "bytes": 180224,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_member_photos",
+   "bytes": 155648,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_ai_credit_ledger",
+   "bytes": 147456,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_signin_fails",
+   "bytes": 147456,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_owner_keys",
+   "bytes": 139264,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_checkouts",
+   "bytes": 131072,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.push_jobs",
+   "bytes": 122880,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.one_time_tokens",
+   "bytes": 122880,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.member_push_notes",
+   "bytes": 122880,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_mate_workouts",
+   "bytes": 114688,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_talk_threads",
+   "bytes": 114688,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_phone_links",
+   "bytes": 106496,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.db_direct_reads",
+   "bytes": 106496,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_friend_invites",
+   "bytes": 106496,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.sessions",
+   "bytes": 98304,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_mate_profiles",
+   "bytes": 98304,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_message_seen",
+   "bytes": 98304,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.trainer_questions",
+   "bytes": 98304,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_talk_messages",
+   "bytes": 98304,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.scim_users",
+   "bytes": 90112,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_self_joins",
+   "bytes": 90112,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_report_files",
+   "bytes": 90112,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_friend_referrals",
+   "bytes": 81920,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_signin_codes",
+   "bytes": 81920,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.identities",
+   "bytes": 81920,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.mettleup_payments",
+   "bytes": 81920,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_ai_questions",
+   "bytes": 81920,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_plan_requests",
+   "bytes": 81920,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_report_requests",
+   "bytes": 81920,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.receipt_history",
+   "bytes": 81920,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_page_asks",
+   "bytes": 81920,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_terms_acceptance",
+   "bytes": 81920,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_trainers",
+   "bytes": 81920,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table storage.migrations",
+   "bytes": 73728,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_body_measurements",
+   "bytes": 65536,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.entry_machine_punches",
+   "bytes": 65536,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_payment_ledger",
+   "bytes": 65536,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_receipts",
+   "bytes": 65536,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.photo_tickets",
+   "bytes": 65536,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.phone_proofs_used",
+   "bytes": 65536,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_pt_bookings",
+   "bytes": 65536,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_web_push",
+   "bytes": 65536,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_offers",
+   "bytes": 65536,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.offer_members",
+   "bytes": 65536,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.member_summary",
+   "bytes": 65536,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.hq_delete_requests",
+   "bytes": 65536,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.db_read_log_state",
+   "bytes": 65536,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.entry_machines",
+   "bytes": 65536,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.mfa_factors",
+   "bytes": 57344,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.custom_oauth_providers",
+   "bytes": 57344,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_member_board",
+   "bytes": 57344,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_board_meta",
+   "bytes": 57344,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.oauth_consents",
+   "bytes": 49152,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_trainer_profiles",
+   "bytes": 49152,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table storage.buckets",
+   "bytes": 49152,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_diet_plans",
+   "bytes": 49152,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.entry_machine_members",
+   "bytes": 49152,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.entry_machine_commands",
+   "bytes": 49152,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.scim_tokens",
+   "bytes": 49152,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.offer_log",
+   "bytes": 49152,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_page_reports",
+   "bytes": 49152,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_trainer_members",
+   "bytes": 49152,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_pages",
+   "bytes": 49152,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.mfa_amr_claims",
+   "bytes": 49152,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_ai_tasks",
+   "bytes": 49152,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.hq_grants",
+   "bytes": 49152,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_checkin_misses",
+   "bytes": 49152,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_challenges",
+   "bytes": 49152,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_challenge_hits",
+   "bytes": 49152,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_page_photo_slots",
+   "bytes": 49152,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.profiles",
+   "bytes": 49152,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_message_to",
+   "bytes": 40960,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_ai_question_slots",
+   "bytes": 40960,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.saml_relay_states",
+   "bytes": 40960,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.flow_state",
+   "bytes": 40960,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.oauth_authorizations",
+   "bytes": 40960,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_staff_pins",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_timings",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_alert_reads",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.offer_days",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_groups",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_auto_reminders",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.platform_payment_details",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.entry_machine_strangers",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_plan_changes",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.plan_features",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.webauthn_challenges",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.phone_code_settings",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.webauthn_credentials",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.trial_phones",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.member_find_tries",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.saml_providers",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.sso_providers",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.sso_domains",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_alert_settings",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_page_off",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.app_config",
+   "bytes": 32768,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.oauth_client_states",
+   "bytes": 24576,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_ai_member_rules",
+   "bytes": 24576,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.audit_log_entries",
+   "bytes": 24576,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_billing_reminders",
+   "bytes": 24576,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.oauth_clients",
+   "bytes": 24576,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.branch_lookups",
+   "bytes": 24576,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table storage.lifecycle_abandoned_artifacts",
+   "bytes": 24576,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_exercise_starts",
+   "bytes": 24576,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table storage.bucket_lifecycle_states",
+   "bytes": 24576,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.schema_migrations",
+   "bytes": 24576,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table storage.s3_multipart_uploads",
+   "bytes": 24576,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.mfa_challenges",
+   "bytes": 24576,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table storage.buckets_analytics",
+   "bytes": 24576,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.mfa_recovery_code_sets",
+   "bytes": 24576,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table storage.vector_indexes",
+   "bytes": 24576,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.mfa_recovery_codes",
+   "bytes": 24576,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.receipt_counters",
+   "bytes": 24576,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table storage.s3_multipart_uploads_parts",
+   "bytes": 16384,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_machine_guesses",
+   "bytes": 16384,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table auth.instances",
+   "bytes": 16384,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_plus_settings",
+   "bytes": 16384,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table storage.buckets_vectors",
+   "bytes": 16384,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_machine_setup",
+   "bytes": 16384,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "table public.gym_wods",
+   "bytes": 16384,
+   "limit": "counts toward the database size limit above",
+   "evidence": "execute_sql pg_total_relation_size"
+  },
+  {
+   "what": "storage bytes per bucket",
+   "bytes": "could-not-check: the Supabase guard hook refused a sum over storage.objects (it treats storage.objects as a gym table; a Crispy-only filter cannot give per-bucket totals)",
+   "limit": "Free 1 GB file storage; Pro 100 GB; max upload Free 50 MB",
+   "limit_evidence": "url:https://supabase.com/pricing",
+   "evidence": "unknown"
+  },
+  {
+   "what": "GitHub Actions cache, aucksy/ForgeAI (actions/cache/usage)",
+   "bytes": 310832423,
+   "count": 3,
+   "limit": "10 GB per repository",
+   "limit_evidence": "url:https://docs.github.com/en/actions/reference/limits",
+   "evidence": "url:https://api.github.com/repos/aucksy/ForgeAI/actions/cache/usage"
+  },
+  {
+   "what": "GitHub Actions artifacts, aucksy/ForgeAI (sum of size_in_bytes, all pages of actions/artifacts, none expired)",
+   "bytes": 401501520301,
+   "count": 4116,
+   "by_name_prefix_bytes": {
+    "dashboard": 212347953180,
+    "qa": 129508398956,
+    "admin": 51373608652,
+    "forgeai": 7228797818,
+    "watch": 448476695,
+    "stills": 402141182
+   },
+   "limit": "repo is PUBLIC (api visibility=public). Docs list 500 MB artifact storage for GitHub Free and say standard runners are free in public repos, but do not state whether artifact storage is free for public repos: limit unclear",
+   "limit_evidence": "url:https://docs.github.com/en/actions/reference/limits ; url:https://docs.github.com/en/billing/concepts/product-billing/github-actions",
+   "evidence": "url:https://api.github.com/repos/aucksy/ForgeAI/actions/artifacts"
+  }
+ ]
+}

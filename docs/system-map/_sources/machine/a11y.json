@@ -1,0 +1,25 @@
+{
+ "made": "2026-11-21",
+ "source": "CI workflow ci.yml job 'check', step 'Panel crawl' (apps/dashboard/scripts/crawl.mjs, axe-core via @axe-core/playwright). Newest green run on main: 44800229655 (sha 2cd9c48, 20 Nov 2026 19:14 UTC), job 136510150534 log. The crawl writes NO accessibility file and uploads no artifact: results exist only as log lines, so the job log was read (1 CI run downloaded) and deleted after.",
+ "summary": {
+  "page_views": 74,
+  "pages": 37,
+  "widths": "390px and 1280px",
+  "theme": "dark",
+  "critical_rules": 0,
+  "serious_rules": 0,
+  "evidence": "run:44800229655 (job 136510150534 log lines 27071-27072)"
+ },
+ "rows": [],
+ "rows_note": "No rows: 0 critical and 0 serious rules on 74 page views. Moderate and minor findings are dropped inside the crawl and never logged, so they cannot be listed (evidence: apps/dashboard/scripts/crawl.mjs:79). Only the panel is crawled (demo gym, faked server): HQ, the website, the join page and the phone app get no axe check here.",
+ "flags": [
+  {
+   "row": "crawl.mjs",
+   "why": "moderate/minor axe findings are discarded, not written anywhere (apps/dashboard/scripts/crawl.mjs:79); no a11y artifact for later comparison"
+  },
+  {
+   "row": "crawl.mjs",
+   "why": "serious findings only warn, never fail the build (apps/dashboard/scripts/crawl.mjs:182-185)"
+  }
+ ]
+}

@@ -1,0 +1,103 @@
+{
+ "made": "2026-11-21",
+ "source": "PageSpeed Insights web UI (pagespeed.web.dev, mobile, Lighthouse 13.6.0, Moto G Power, slow 4G), run 21 Nov 2026 01:27-01:33 IST. The keyless PSI API (googleapis pagespeedonline v5) refused all 7 calls with 429 'Queries per day' quota exceeded, so the public web UI was used instead. total_bytes = 'Total size was' from the network-payload audit. INP: field data (CrUX) is 'No Data' for every URL; lab TBT given instead.",
+ "flags": [
+  {
+   "url": "https://gyms.mettleup.fit/",
+   "why": "CLS 0.265 is above Google's 0.25 'poor' line; lowest score (86)"
+  },
+  {
+   "url": "https://mettleup.fit/",
+   "why": "LCP 3.0 s is above Google's 2.5 s 'good' line"
+  },
+  {
+   "url": "https://app.mettleup.fit/j/3A9DE2",
+   "why": "CLS 0.109 just above 0.1 'good' line; heaviest page 491 KiB"
+  }
+ ],
+ "rows": [
+  {
+   "page": "member home",
+   "url": "https://mettleup.fit/",
+   "performance_score": 94,
+   "lcp": "3.0 s",
+   "cls": 0.048,
+   "inp": "no field data (CrUX: No Data)",
+   "tbt": "0 ms",
+   "total_bytes": "339 KiB",
+   "evidence": "url:https://pagespeed.web.dev/analysis/https-mettleup-fit/13sul4lowo?form_factor=mobile"
+  },
+  {
+   "page": "pricing (section #pricing of the gym-owner landing page; no separate pricing page)",
+   "url": "https://gyms.mettleup.fit/",
+   "performance_score": 86,
+   "lcp": "1.7 s",
+   "cls": 0.265,
+   "inp": "no field data (CrUX: No Data)",
+   "tbt": "0 ms",
+   "total_bytes": "211 KiB",
+   "evidence": "url:https://pagespeed.web.dev/analysis/https-gyms-mettleup-fit/ig19y7aat1?form_factor=mobile"
+  },
+  {
+   "page": "privacy",
+   "url": "https://mettleup.fit/privacy",
+   "performance_score": 100,
+   "lcp": "1.0 s",
+   "cls": 0,
+   "inp": "no field data (CrUX: No Data)",
+   "tbt": "0 ms",
+   "total_bytes": "36 KiB",
+   "evidence": "url:https://pagespeed.web.dev/analysis/https-mettleup-fit-privacy/y137clb3wn?form_factor=mobile"
+  },
+  {
+   "page": "terms",
+   "url": "https://mettleup.fit/terms",
+   "performance_score": 100,
+   "lcp": "0.8 s",
+   "cls": 0,
+   "inp": "no field data (CrUX: No Data)",
+   "tbt": "0 ms",
+   "total_bytes": "17 KiB",
+   "evidence": "url:https://pagespeed.web.dev/analysis/https-mettleup-fit-terms/8y1ggon8jx?form_factor=mobile"
+  },
+  {
+   "page": "refund",
+   "url": "https://mettleup.fit/refund",
+   "performance_score": 100,
+   "lcp": "0.8 s",
+   "cls": 0,
+   "inp": "no field data (CrUX: No Data)",
+   "tbt": "0 ms",
+   "total_bytes": "16 KiB",
+   "evidence": "url:https://pagespeed.web.dev/analysis/https-mettleup-fit-refund/2awn4nqqnb?form_factor=mobile"
+  },
+  {
+   "page": "delete-account",
+   "url": "https://mettleup.fit/delete-account",
+   "performance_score": 100,
+   "lcp": "0.8 s",
+   "cls": 0,
+   "inp": "no field data (CrUX: No Data)",
+   "tbt": "0 ms",
+   "total_bytes": "15 KiB",
+   "evidence": "url:https://pagespeed.web.dev/analysis/https-mettleup-fit-delete-account/ma6fvn1qzx?form_factor=mobile"
+  },
+  {
+   "page": "gym page (Crispy Curves)",
+   "url": "MISSING: Crispy Curves has no gym page (gym_pages.slug is null for its gym_id; join.mettleup.fit is hidden per deploy/panel/hosts.js:23-24)",
+   "performance_score": null,
+   "evidence": "deploy/panel/hosts.js:23"
+  },
+  {
+   "page": "join page (Crispy Curves invite link /j/<join code>)",
+   "url": "https://app.mettleup.fit/j/3A9DE2",
+   "performance_score": 97,
+   "lcp": "0.8 s",
+   "cls": 0.109,
+   "inp": "no field data (CrUX: No Data)",
+   "tbt": "0 ms",
+   "total_bytes": "491 KiB",
+   "evidence": "url:https://pagespeed.web.dev/analysis/https-app-mettleup-fit-j-3A9DE2/9pt8iu7nrx?form_factor=mobile"
+  }
+ ]
+}
