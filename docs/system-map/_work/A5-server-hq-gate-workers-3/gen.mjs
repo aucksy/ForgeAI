@@ -345,7 +345,7 @@ const J217 = {};
 {
   const F = 'F-server-228', R = 'the system';
   J(F, R, 1, 'The 03:00 India-time Cron Trigger fires, after the backup', [
-    ['Delete from the Cloudflare database: feedback older than 1 year, leads older than 1 year without a deal, AI use counts older than 1 year', ['Counts of rows removed'], ['A lead with a deal deleted', 'Feedback younger than 1 year deleted']],
+    ['Remove, in the Cloudflare database, feedback older than 1 year, leads older than 1 year without a deal, AI use counts older than 1 year', ['Counts of rows removed'], ['A lead with a deal deleted', 'Feedback younger than 1 year deleted']],
     ['The gym server clean-up runs and logs both', ["Log '[hq-cron] clean-up done'"], ['The clean-up before the backup']],
     ["Delete the tests' own 'QA ...' gyms older than a day, then AI Assistant requests older than 400 days", ["Logs 'test gyms deleted' and 'old AI requests deleted'"], ['A real gym deleted', 'An AI request younger than 400 days deleted']],
   ], ['E-feedback', 'E-leads', 'E-ai-usage', 'E-gym-ai-tasks', 'E-hq-audit'], ['E-feedback', 'E-leads'], ['P-A7-legal-2-11', 'P-A7-legal-2-12', 'P-A7-websites-1-41']);
@@ -388,7 +388,7 @@ rows.push({ kind: 'finding', id: 'FN-A5-server-hq-gate-workers-3-02', date: '202
   title: 'An empty daily limit box switches the gym\'s AI Assistant off',
   what: 'On a gym\'s HQ page, clearing "AI requests a day" or "Spoken minutes a day" and tapping "Save the limit" sends 0, which switches the AI Assistant off for that gym. The server would treat an empty box as the normal limit, but the page never sends it empty.',
   expected: 'An empty box keeps the normal limit, or the page asks for a number.',
-  evidence: ['apps/hq/public/app.js:664', 'deploy/hq/api.js:626-628'],
+  evidence: ['apps/hq/public/app.js:663', 'deploy/hq/api.js:626-628'],
   proof: 'code-read', root_cause_key: 'blank-limit-box-sends-zero', who: 'gym owners (through an HQ slip)',
   how_often: 'when HQ saves with a box left empty', fix_line: 'Send an empty box as empty, not as 0',
   fix_size: 'small', needs_him: false, verified: 'pending', status: 'open' });
