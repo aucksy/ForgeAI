@@ -47,10 +47,28 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L3 | 19 | 4.7 (189k tokens) |
 
 ## Work items
-Counts: 0 todo, 0 in progress, 312 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 12 todo, 6 in progress, 312 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
+| L3-panel-brand-shell | L3 | lens 3 (Security) x panel / panel/brand-shell: 11 items | in progress | _work/L3-panel-brand-shell.md |  |
+| L3-phone-screens-1 | L3 | lens 3 (Security) x phone / phone/screens-1: 11 items | in progress | _work/L3-phone-screens-1.md |  |
+| L3-phone-screens-2 | L3 | lens 3 (Security) x phone / phone/screens-2: 11 items | in progress | _work/L3-phone-screens-2.md |  |
+| L3-phone-shop-1 | L3 | lens 3 (Security) x phone / phone/shop-1: 11 items | in progress | _work/L3-phone-shop-1.md |  |
+| L3-phone-shop-2 | L3 | lens 3 (Security) x phone / phone/shop-2: 11 items | in progress | _work/L3-phone-shop-2.md |  |
+| L3-phone-tracker-components-1 | L3 | lens 3 (Security) x phone / phone/tracker-components-1: 11 items | in progress | _work/L3-phone-tracker-components-1.md |  |
+| L3-phone-tracker-components-2 | L3 | lens 3 (Security) x phone / phone/tracker-components-2: 11 items | todo | _work/L3-phone-tracker-components-2.md |  |
+| L3-phone-tracker-data | L3 | lens 3 (Security) x phone / phone/tracker-data: 11 items | todo | _work/L3-phone-tracker-data.md |  |
+| L3-phone-tracker-engine | L3 | lens 3 (Security) x phone / phone/tracker-engine: 11 items | todo | _work/L3-phone-tracker-engine.md |  |
+| L3-phone-tracker-lib | L3 | lens 3 (Security) x phone / phone/tracker-lib: 11 items | todo | _work/L3-phone-tracker-lib.md |  |
+| L3-phone-tracker-services-1 | L3 | lens 3 (Security) x phone / phone/tracker-services-1: 11 items | todo | _work/L3-phone-tracker-services-1.md |  |
+| L3-phone-tracker-services-2 | L3 | lens 3 (Security) x phone / phone/tracker-services-2: 11 items | todo | _work/L3-phone-tracker-services-2.md |  |
+| L3-phone-native | L3 | lens 3 (Security) x phone / phone/native: 11 items | todo | _work/L3-phone-native.md |  |
+| L3-phone-components-1 | L3 | lens 3 (Security) x phone / phone/components-1: 11 items | todo | _work/L3-phone-components-1.md |  |
+| L3-phone-components-2 | L3 | lens 3 (Security) x phone / phone/components-2: 11 items | todo | _work/L3-phone-components-2.md |  |
+| L3-phone-cloud-backup-ai | L3 | lens 3 (Security) x phone / phone/cloud-backup-ai: 11 items | todo | _work/L3-phone-cloud-backup-ai.md |  |
+| L3-phone-onboarding-db | L3 | lens 3 (Security) x phone / phone/onboarding-db: 11 items | todo | _work/L3-phone-onboarding-db.md |  |
+| L3-phone-lib-core | L3 | lens 3 (Security) x phone / phone/lib-core: 11 items | todo | _work/L3-phone-lib-core.md |  |
 | L3-watch-app | L3 | lens 3 (Security) x watch / watch/app: 11 items | done | _work/L3-watch-app.md | L3 watch-app: 4 checked, 7 does-not-apply, 1 new S4 (old Guava with a published flaw) |
 | L3-server-ci-workflows | L3 | lens 3 (Security) x server / server/ci-workflows: 11 items | done | _work/L3-server-ci-workflows.md | L3 server-ci-workflows: 11 done, 3 new (S3 unpinned actions with strong keys, S3 no dependency alerts, S4 public logs show WhatsApp payment id), 1 reused |
 | L3-panel-forms | L3 | lens 3 (Security) x panel / panel/forms: 11 items | done | _work/L3-panel-forms.md | L3 panel-forms: 9 checked, 2 does-not-apply, 1 new S3 (desk login can set train-at-every-branch), 1 reused |
