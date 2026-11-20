@@ -38,19 +38,17 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 77 | 5.2 (206k tokens) |
+| A5 | 78 | 5.1 (206k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 4 in progress, 174 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 3 in progress, 175 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | A5-phone-tracker-services-2-3 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/tracker-services-2; list in _work/items/A5-phone-tracker-services-2-3.txt | in progress | _work/A5-phone-tracker-services-2-3.md |  |
 | A5-phone-tracker-services-2-4 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/tracker-services-2; list in _work/items/A5-phone-tracker-services-2-4.txt | in progress | _work/A5-phone-tracker-services-2-4.md |  |
 | A5-phone-cloud-backup-ai-2 | A5 | journeys: 5 features (7 feature x role pairs) of phone / phone/cloud-backup-ai; list in _work/items/A5-phone-cloud-backup-ai-2.txt | in progress | _work/A5-phone-cloud-backup-ai-2.md |  |
-| A5-phone-components-1-2 | A5 | journeys: 10 features (20 feature x role pairs) of phone / phone/components-1; list in _work/items/A5-phone-components-1-2.txt | in progress | _work/A5-phone-components-1-2.md |  |
-| A5-phone-tracker-lib-4 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-lib; list in _work/items/A5-phone-tracker-lib-4.txt | done | _work/A5-phone-tracker-lib-4.md | 8 features: 44 full journeys and 58 type lines; 2 findings: S1 the shared workout picture's +N kg line counts body weight on pull-ups and dips, so it can give away body weight; S3 before and after can swap (repeat of components-1-1) |
 | A5-phone-tracker-services-1-1 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/tracker-services-1; list in _work/items/A5-phone-tracker-services-1-1.txt | done | _work/A5-phone-tracker-services-1-1.md | 9 features: 62 full journeys and 68 type lines; 2 findings: S3 before and after swap (third repeat: merge in 3H); S4 home numbers are worked out after every save but no screen shows them |
 | A5-phone-tracker-services-1-2 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/tracker-services-1; list in _work/items/A5-phone-tracker-services-1-2.txt | done | _work/A5-phone-tracker-services-1-2.md | 8 features: 43 full journeys and 60 type lines; 0 findings; seen in passing: the minutes box turns 1.5 into 15 with no message |
 | A5-phone-tracker-services-1-3 | A5 | journeys: 8 features (9 feature x role pairs) of phone / phone/tracker-services-1; list in _work/items/A5-phone-tracker-services-1-3.txt | done | _work/A5-phone-tracker-services-1-3.md | 8 features (9 pairs): 50 full journeys and 64 type lines; 1 finding (S3): an opened but not started hold timer stops the idle pause, so the workout length keeps growing |
@@ -58,7 +56,8 @@ Counts: 0 todo, 4 in progress, 174 done, 0 blocked. Full list: work-items.jsonl.
 | A5-phone-tracker-services-2-1 | A5 | journeys: 10 features (10 feature x role pairs) of phone / phone/tracker-services-2; list in _work/items/A5-phone-tracker-services-2-1.txt | done | _work/A5-phone-tracker-services-2-1.md | 10 features: 62 full journeys and 73 type lines; 2 findings (S3): a queued watch Done tap missing a number is dropped silently in the background; the Muscles ready today help article points to a card switched off on 5 Nov |
 | A5-phone-tracker-services-2-2 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/tracker-services-2; list in _work/items/A5-phone-tracker-services-2-2.txt | done | _work/A5-phone-tracker-services-2-2.md | 9 features: 41 full journeys and 68 type lines; 0 findings; seen in passing: the Update routine question lives only in memory, so a kill between Finish and the summary loses it |
 | A5-phone-cloud-backup-ai-1 | A5 | journeys: 6 features (6 feature x role pairs) of phone / phone/cloud-backup-ai; list in _work/items/A5-phone-cloud-backup-ai-1.txt | done | _work/A5-phone-cloud-backup-ai-1.md | 6 features: 32 full journeys and 45 type lines; 1 finding (S3): Download my data says Saved even when the share sheet is closed without a place, so the member thinks a backup exists |
-(+ 166 older done items, not shown)
+| A5-phone-components-1-2 | A5 | journeys: 10 features (20 feature x role pairs) of phone / phone/components-1; list in _work/items/A5-phone-components-1-2.txt | done | _work/A5-phone-components-1-2.md | 10 features (20 pairs): 116 full journeys and 146 type lines; 1 finding (S3): the body map says nothing trained when the 30 or 90 day read fails (repeat: merge in 3H) |
+(+ 167 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
