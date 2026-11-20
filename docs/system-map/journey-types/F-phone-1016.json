@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-phone-1016-member-10","feature":"F-phone-1016","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":1,"entity":"unknown","note":"Old workouts with no title show the day type","wi":"A5-phone-tracker-data-2"},
+{"kind":"jtype","id":"JT-F-phone-1016-member-11","feature":"F-phone-1016","role":"member","type":11,"applies":"no","why_not":"no watch or panel copy of a workout's name found; gym mates are covered in type 12","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-data-2"},
+{"kind":"jtype","id":"JT-F-phone-1016-member-4","feature":"F-phone-1016","role":"member","type":4,"applies":"yes","why_not":"none","variants":["T4-long","T4-hinglish","T4-emoji"],"at_step":2,"entity":"unknown","note":"slice(0, 60) can split an emoji at the edge","wi":"A5-phone-tracker-data-2"},
+{"kind":"jtype","id":"JT-F-phone-1016-member-5","feature":"F-phone-1016","role":"member","type":5,"applies":"no","why_not":"no time edge: a name is not dated","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-data-2"},
+{"kind":"jtype","id":"JT-F-phone-1016-member-7","feature":"F-phone-1016","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-back"],"at_step":2,"entity":"none","note":"Closing the sheet drops the typed name","wi":"A5-phone-tracker-data-2"},
+{"kind":"jtype","id":"JT-F-phone-1016-member-8","feature":"F-phone-1016","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-language"],"at_step":1,"entity":"none","note":"An unnamed workout's day-type title in Hinglish","wi":"A5-phone-tracker-data-2"},
+{"kind":"jtype","id":"JT-F-phone-1016-member-9","feature":"F-phone-1016","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-bigfont"],"at_step":2,"entity":"none","note":"A 60-letter name in the page header","wi":"A5-phone-tracker-data-2"}
+]
