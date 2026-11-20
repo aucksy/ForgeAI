@@ -1,0 +1,1791 @@
+{
+ "made": "2026-11-21",
+ "source": "Supabase MCP get_advisors(type=performance) + execute_sql: select tablename, indexname, indexdef from pg_indexes where schemaname='public' order by 1,2 (catalog only, no rows)",
+ "advisor_counts": {
+  "unindexed_foreign_keys": 23,
+  "no_primary_key": 5,
+  "unused_index": 4,
+  "multiple_permissive_policies": 10
+ },
+ "advisor": [
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.gym_checkouts` has a foreign key `gym_checkouts_ledger_id_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "gym_checkouts",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "gym_checkouts_ledger_id_fkey",
+    "fkey_columns": [
+     20
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.gym_exercise_starts` has a foreign key `gym_exercise_starts_member_id_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "gym_exercise_starts",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "gym_exercise_starts_member_id_fkey",
+    "fkey_columns": [
+     2
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.gym_member_board` has a foreign key `gym_member_board_member_id_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "gym_member_board",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "gym_member_board_member_id_fkey",
+    "fkey_columns": [
+     2
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.gym_member_days` has a foreign key `gym_member_days_member_id_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "gym_member_days",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "gym_member_days_member_id_fkey",
+    "fkey_columns": [
+     2
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.gym_message_seen` has a foreign key `gym_message_seen_member_id_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "gym_message_seen",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "gym_message_seen_member_id_fkey",
+    "fkey_columns": [
+     2
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.gym_plan_changes` has a foreign key `gym_plan_changes_ledger_id_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "gym_plan_changes",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "gym_plan_changes_ledger_id_fkey",
+    "fkey_columns": [
+     4
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.gym_plan_requests` has a foreign key `gym_plan_requests_app_member_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "gym_plan_requests",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "gym_plan_requests_app_member_fkey",
+    "fkey_columns": [
+     3
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.gym_pt_bookings` has a foreign key `gym_pt_bookings_staff_id_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "gym_pt_bookings",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "gym_pt_bookings_staff_id_fkey",
+    "fkey_columns": [
+     3
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.gym_report_files` has a foreign key `gym_report_files_gym_id_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "gym_report_files",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "gym_report_files_gym_id_fkey",
+    "fkey_columns": [
+     2
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.gym_report_requests` has a foreign key `gym_report_requests_app_member_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "gym_report_requests",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "gym_report_requests_app_member_fkey",
+    "fkey_columns": [
+     11
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.gym_talk_messages` has a foreign key `gym_talk_messages_gym_id_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "gym_talk_messages",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "gym_talk_messages_gym_id_fkey",
+    "fkey_columns": [
+     3
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.gym_talk_messages` has a foreign key `gym_talk_messages_staff_id_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "gym_talk_messages",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "gym_talk_messages_staff_id_fkey",
+    "fkey_columns": [
+     5
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.gym_talk_threads` has a foreign key `gym_talk_threads_to_staff_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "gym_talk_threads",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "gym_talk_threads_to_staff_fkey",
+    "fkey_columns": [
+     15
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.gym_terms_acceptance` has a foreign key `gym_terms_acceptance_staff_id_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "gym_terms_acceptance",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "gym_terms_acceptance_staff_id_fkey",
+    "fkey_columns": [
+     3
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.gym_web_push` has a foreign key `gym_web_push_staff_id_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "gym_web_push",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "gym_web_push_staff_id_fkey",
+    "fkey_columns": [
+     3
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.member_push_notes` has a foreign key `member_push_notes_gym_id_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "member_push_notes",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "member_push_notes_gym_id_fkey",
+    "fkey_columns": [
+     2
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.mettleup_payments` has a foreign key `mettleup_payments_ledger_id_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "mettleup_payments",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "mettleup_payments_ledger_id_fkey",
+    "fkey_columns": [
+     16
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.offer_log` has a foreign key `offer_log_gym_id_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "offer_log",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "offer_log_gym_id_fkey",
+    "fkey_columns": [
+     3
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.photo_tickets` has a foreign key `photo_tickets_gym_id_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "photo_tickets",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "photo_tickets_gym_id_fkey",
+    "fkey_columns": [
+     2
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.push_jobs` has a foreign key `push_jobs_gym_id_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "push_jobs",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "push_jobs_gym_id_fkey",
+    "fkey_columns": [
+     2
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.trainer_questions` has a foreign key `trainer_questions_answered_by_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "trainer_questions",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "trainer_questions_answered_by_fkey",
+    "fkey_columns": [
+     9
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.trainer_questions` has a foreign key `trainer_questions_staff_id_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "trainer_questions",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "trainer_questions_staff_id_fkey",
+    "fkey_columns": [
+     5
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unindexed_foreign_keys",
+   "level": "INFO",
+   "detail": "Table `public.trial_phones` has a foreign key `trial_phones_gym_id_fkey` without a covering index. This can lead to suboptimal query performance.",
+   "object": {
+    "name": "trial_phones",
+    "type": "table",
+    "schema": "public",
+    "fkey_name": "trial_phones_gym_id_fkey",
+    "fkey_columns": [
+     2
+    ]
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "no_primary_key",
+   "level": "INFO",
+   "detail": "Table `public.gym_checkin_misses` does not have a primary key",
+   "object": {
+    "name": "gym_checkin_misses",
+    "type": "table",
+    "schema": "public"
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0004_no_primary_key",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "no_primary_key",
+   "level": "INFO",
+   "detail": "Table `public.member_checkin_tries` does not have a primary key",
+   "object": {
+    "name": "member_checkin_tries",
+    "type": "table",
+    "schema": "public"
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0004_no_primary_key",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "no_primary_key",
+   "level": "INFO",
+   "detail": "Table `public.gym_signin_fails` does not have a primary key",
+   "object": {
+    "name": "gym_signin_fails",
+    "type": "table",
+    "schema": "public"
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0004_no_primary_key",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "no_primary_key",
+   "level": "INFO",
+   "detail": "Table `public.member_find_tries` does not have a primary key",
+   "object": {
+    "name": "member_find_tries",
+    "type": "table",
+    "schema": "public"
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0004_no_primary_key",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "no_primary_key",
+   "level": "INFO",
+   "detail": "Table `public.branch_lookups` does not have a primary key",
+   "object": {
+    "name": "branch_lookups",
+    "type": "table",
+    "schema": "public"
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0004_no_primary_key",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unused_index",
+   "level": "INFO",
+   "detail": "Index `idx_summary_gym_active` on table `public.member_summary` has not been used",
+   "object": {
+    "name": "member_summary",
+    "type": "table",
+    "schema": "public"
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unused_index",
+   "level": "INFO",
+   "detail": "Index `gym_plan_requests_gym` on table `public.gym_plan_requests` has not been used",
+   "object": {
+    "name": "gym_plan_requests",
+    "type": "table",
+    "schema": "public"
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unused_index",
+   "level": "INFO",
+   "detail": "Index `gym_self_joins_trial` on table `public.gym_self_joins` has not been used",
+   "object": {
+    "name": "gym_self_joins",
+    "type": "table",
+    "schema": "public"
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "unused_index",
+   "level": "INFO",
+   "detail": "Index `db_direct_reads_gyms` on table `public.db_direct_reads` has not been used",
+   "object": {
+    "name": "db_direct_reads",
+    "type": "table",
+    "schema": "public"
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0005_unused_index",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "multiple_permissive_policies",
+   "level": "WARN",
+   "detail": "Table `public.member_summary` has multiple permissive policies for role `anon` for action `SELECT`. Policies include `{summary_self,summary_staff_read}`",
+   "object": {
+    "name": "member_summary",
+    "type": "table",
+    "schema": "public"
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "multiple_permissive_policies",
+   "level": "WARN",
+   "detail": "Table `public.member_summary` has multiple permissive policies for role `authenticated` for action `SELECT`. Policies include `{summary_self,summary_staff_read}`",
+   "object": {
+    "name": "member_summary",
+    "type": "table",
+    "schema": "public"
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "multiple_permissive_policies",
+   "level": "WARN",
+   "detail": "Table `public.member_summary` has multiple permissive policies for role `authenticator` for action `SELECT`. Policies include `{summary_self,summary_staff_read}`",
+   "object": {
+    "name": "member_summary",
+    "type": "table",
+    "schema": "public"
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "multiple_permissive_policies",
+   "level": "WARN",
+   "detail": "Table `public.member_summary` has multiple permissive policies for role `dashboard_user` for action `SELECT`. Policies include `{summary_self,summary_staff_read}`",
+   "object": {
+    "name": "member_summary",
+    "type": "table",
+    "schema": "public"
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "multiple_permissive_policies",
+   "level": "WARN",
+   "detail": "Table `public.member_summary` has multiple permissive policies for role `supabase_privileged_role` for action `SELECT`. Policies include `{summary_self,summary_staff_read}`",
+   "object": {
+    "name": "member_summary",
+    "type": "table",
+    "schema": "public"
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "multiple_permissive_policies",
+   "level": "WARN",
+   "detail": "Table `public.profiles` has multiple permissive policies for role `anon` for action `SELECT`. Policies include `{profiles_self,profiles_staff_read}`",
+   "object": {
+    "name": "profiles",
+    "type": "table",
+    "schema": "public"
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "multiple_permissive_policies",
+   "level": "WARN",
+   "detail": "Table `public.profiles` has multiple permissive policies for role `authenticated` for action `SELECT`. Policies include `{profiles_self,profiles_staff_read}`",
+   "object": {
+    "name": "profiles",
+    "type": "table",
+    "schema": "public"
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "multiple_permissive_policies",
+   "level": "WARN",
+   "detail": "Table `public.profiles` has multiple permissive policies for role `authenticator` for action `SELECT`. Policies include `{profiles_self,profiles_staff_read}`",
+   "object": {
+    "name": "profiles",
+    "type": "table",
+    "schema": "public"
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "multiple_permissive_policies",
+   "level": "WARN",
+   "detail": "Table `public.profiles` has multiple permissive policies for role `dashboard_user` for action `SELECT`. Policies include `{profiles_self,profiles_staff_read}`",
+   "object": {
+    "name": "profiles",
+    "type": "table",
+    "schema": "public"
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  },
+  {
+   "lint": "multiple_permissive_policies",
+   "level": "WARN",
+   "detail": "Table `public.profiles` has multiple permissive policies for role `supabase_privileged_role` for action `SELECT`. Policies include `{profiles_self,profiles_staff_read}`",
+   "object": {
+    "name": "profiles",
+    "type": "table",
+    "schema": "public"
+   },
+   "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0006_multiple_permissive_policies",
+   "observed_at": "2026-11-20T19:54:28.714Z"
+  }
+ ],
+ "indexes": [
+  {
+   "tablename": "app_config",
+   "indexname": "app_config_pkey",
+   "indexdef": "CREATE UNIQUE INDEX app_config_pkey ON public.app_config USING btree (key)"
+  },
+  {
+   "tablename": "branch_lookups",
+   "indexname": "branch_lookups_gym",
+   "indexdef": "CREATE INDEX branch_lookups_gym ON public.branch_lookups USING btree (gym_id, at)"
+  },
+  {
+   "tablename": "crm_push_log",
+   "indexname": "crm_push_log_pkey",
+   "indexdef": "CREATE UNIQUE INDEX crm_push_log_pkey ON public.crm_push_log USING btree (gym_id, push_id)"
+  },
+  {
+   "tablename": "crm_records",
+   "indexname": "crm_records_member_phone",
+   "indexdef": "CREATE INDEX crm_records_member_phone ON public.crm_records USING btree (_norm_phone((data ->> 'phone'::text))) WHERE ((kind = 'member'::text) AND (NOT deleted))"
+  },
+  {
+   "tablename": "crm_records",
+   "indexname": "crm_records_pkey",
+   "indexdef": "CREATE UNIQUE INDEX crm_records_pkey ON public.crm_records USING btree (gym_id, kind, id)"
+  },
+  {
+   "tablename": "crm_records",
+   "indexname": "crm_records_receipt_no",
+   "indexdef": "CREATE INDEX crm_records_receipt_no ON public.crm_records USING btree (gym_id, btrim((data ->> 'receiptNo'::text))) WHERE ((kind = 'payment'::text) AND (NOT deleted))"
+  },
+  {
+   "tablename": "crm_records",
+   "indexname": "crm_records_version",
+   "indexdef": "CREATE INDEX crm_records_version ON public.crm_records USING btree (gym_id, version)"
+  },
+  {
+   "tablename": "crm_records",
+   "indexname": "crm_records_visit_day",
+   "indexdef": "CREATE INDEX crm_records_visit_day ON public.crm_records USING btree (gym_id, ((data ->> 'visitedOn'::text))) WHERE ((kind = 'visit'::text) AND (NOT deleted))"
+  },
+  {
+   "tablename": "db_direct_reads",
+   "indexname": "db_direct_reads_at",
+   "indexdef": "CREATE INDEX db_direct_reads_at ON public.db_direct_reads USING btree (at DESC)"
+  },
+  {
+   "tablename": "db_direct_reads",
+   "indexname": "db_direct_reads_gyms",
+   "indexdef": "CREATE INDEX db_direct_reads_gyms ON public.db_direct_reads USING gin (gym_ids)"
+  },
+  {
+   "tablename": "db_direct_reads",
+   "indexname": "db_direct_reads_pkey",
+   "indexdef": "CREATE UNIQUE INDEX db_direct_reads_pkey ON public.db_direct_reads USING btree (look_id)"
+  },
+  {
+   "tablename": "db_read_log_state",
+   "indexname": "db_read_log_state_pkey",
+   "indexdef": "CREATE UNIQUE INDEX db_read_log_state_pkey ON public.db_read_log_state USING btree (id)"
+  },
+  {
+   "tablename": "entry_machine_commands",
+   "indexname": "entry_machine_commands_due",
+   "indexdef": "CREATE INDEX entry_machine_commands_due ON public.entry_machine_commands USING btree (machine_id, status, created_at)"
+  },
+  {
+   "tablename": "entry_machine_commands",
+   "indexname": "entry_machine_commands_pkey",
+   "indexdef": "CREATE UNIQUE INDEX entry_machine_commands_pkey ON public.entry_machine_commands USING btree (command_id)"
+  },
+  {
+   "tablename": "entry_machine_members",
+   "indexname": "entry_machine_members_member",
+   "indexdef": "CREATE UNIQUE INDEX entry_machine_members_member ON public.entry_machine_members USING btree (gym_id, member_id)"
+  },
+  {
+   "tablename": "entry_machine_members",
+   "indexname": "entry_machine_members_pkey",
+   "indexdef": "CREATE UNIQUE INDEX entry_machine_members_pkey ON public.entry_machine_members USING btree (gym_id, member_no)"
+  },
+  {
+   "tablename": "entry_machine_punches",
+   "indexname": "entry_machine_punches_gym",
+   "indexdef": "CREATE INDEX entry_machine_punches_gym ON public.entry_machine_punches USING btree (gym_id, at DESC)"
+  },
+  {
+   "tablename": "entry_machine_punches",
+   "indexname": "entry_machine_punches_machine_id_member_no_at_key",
+   "indexdef": "CREATE UNIQUE INDEX entry_machine_punches_machine_id_member_no_at_key ON public.entry_machine_punches USING btree (machine_id, member_no, at)"
+  },
+  {
+   "tablename": "entry_machine_punches",
+   "indexname": "entry_machine_punches_pkey",
+   "indexdef": "CREATE UNIQUE INDEX entry_machine_punches_pkey ON public.entry_machine_punches USING btree (punch_id)"
+  },
+  {
+   "tablename": "entry_machine_strangers",
+   "indexname": "entry_machine_strangers_pkey",
+   "indexdef": "CREATE UNIQUE INDEX entry_machine_strangers_pkey ON public.entry_machine_strangers USING btree (serial)"
+  },
+  {
+   "tablename": "entry_machines",
+   "indexname": "entry_machines_gym",
+   "indexdef": "CREATE INDEX entry_machines_gym ON public.entry_machines USING btree (gym_id)"
+  },
+  {
+   "tablename": "entry_machines",
+   "indexname": "entry_machines_pkey",
+   "indexdef": "CREATE UNIQUE INDEX entry_machines_pkey ON public.entry_machines USING btree (machine_id)"
+  },
+  {
+   "tablename": "entry_machines",
+   "indexname": "entry_machines_serial_key",
+   "indexdef": "CREATE UNIQUE INDEX entry_machines_serial_key ON public.entry_machines USING btree (serial)"
+  },
+  {
+   "tablename": "gym_access_log",
+   "indexname": "gym_access_log_at",
+   "indexdef": "CREATE INDEX gym_access_log_at ON public.gym_access_log USING btree (at)"
+  },
+  {
+   "tablename": "gym_access_log",
+   "indexname": "gym_access_log_gym",
+   "indexdef": "CREATE INDEX gym_access_log_gym ON public.gym_access_log USING btree (gym_id, at DESC)"
+  },
+  {
+   "tablename": "gym_access_log",
+   "indexname": "gym_access_log_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_access_log_pkey ON public.gym_access_log USING btree (log_id)"
+  },
+  {
+   "tablename": "gym_ai_credit_ledger",
+   "indexname": "gym_ai_credit_expire_once",
+   "indexdef": "CREATE UNIQUE INDEX gym_ai_credit_expire_once ON public.gym_ai_credit_ledger USING btree (gym_id, month) WHERE (reason = 'expire'::text)"
+  },
+  {
+   "tablename": "gym_ai_credit_ledger",
+   "indexname": "gym_ai_credit_ledger_gym",
+   "indexdef": "CREATE INDEX gym_ai_credit_ledger_gym ON public.gym_ai_credit_ledger USING btree (gym_id, created_at DESC)"
+  },
+  {
+   "tablename": "gym_ai_credit_ledger",
+   "indexname": "gym_ai_credit_ledger_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_ai_credit_ledger_pkey ON public.gym_ai_credit_ledger USING btree (entry_id)"
+  },
+  {
+   "tablename": "gym_ai_credit_ledger",
+   "indexname": "gym_ai_credit_monthly_once",
+   "indexdef": "CREATE UNIQUE INDEX gym_ai_credit_monthly_once ON public.gym_ai_credit_ledger USING btree (gym_id, month) WHERE (reason = 'monthly'::text)"
+  },
+  {
+   "tablename": "gym_ai_credit_ledger",
+   "indexname": "gym_ai_credit_refund_once",
+   "indexdef": "CREATE UNIQUE INDEX gym_ai_credit_refund_once ON public.gym_ai_credit_ledger USING btree (task_id) WHERE (reason = 'refund'::text)"
+  },
+  {
+   "tablename": "gym_ai_credit_ledger",
+   "indexname": "gym_ai_credit_spend_once",
+   "indexdef": "CREATE UNIQUE INDEX gym_ai_credit_spend_once ON public.gym_ai_credit_ledger USING btree (task_id) WHERE (reason = 'spend'::text)"
+  },
+  {
+   "tablename": "gym_ai_credit_ledger",
+   "indexname": "gym_ai_credit_welcome_once",
+   "indexdef": "CREATE UNIQUE INDEX gym_ai_credit_welcome_once ON public.gym_ai_credit_ledger USING btree (gym_id) WHERE (reason = 'welcome'::text)"
+  },
+  {
+   "tablename": "gym_ai_member_rules",
+   "indexname": "gym_ai_member_rules_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_ai_member_rules_pkey ON public.gym_ai_member_rules USING btree (gym_id)"
+  },
+  {
+   "tablename": "gym_ai_question_slots",
+   "indexname": "gym_ai_question_slots_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_ai_question_slots_pkey ON public.gym_ai_question_slots USING btree (gym_id)"
+  },
+  {
+   "tablename": "gym_ai_questions",
+   "indexname": "gym_ai_questions_day",
+   "indexdef": "CREATE INDEX gym_ai_questions_day ON public.gym_ai_questions USING btree (gym_id, day, who, person)"
+  },
+  {
+   "tablename": "gym_ai_questions",
+   "indexname": "gym_ai_questions_month",
+   "indexdef": "CREATE INDEX gym_ai_questions_month ON public.gym_ai_questions USING btree (gym_id, month)"
+  },
+  {
+   "tablename": "gym_ai_questions",
+   "indexname": "gym_ai_questions_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_ai_questions_pkey ON public.gym_ai_questions USING btree (question_id)"
+  },
+  {
+   "tablename": "gym_ai_tasks",
+   "indexname": "gym_ai_tasks_gym",
+   "indexdef": "CREATE INDEX gym_ai_tasks_gym ON public.gym_ai_tasks USING btree (gym_id, created_at DESC)"
+  },
+  {
+   "tablename": "gym_ai_tasks",
+   "indexname": "gym_ai_tasks_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_ai_tasks_pkey ON public.gym_ai_tasks USING btree (task_id)"
+  },
+  {
+   "tablename": "gym_alert_reads",
+   "indexname": "gym_alert_reads_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_alert_reads_pkey ON public.gym_alert_reads USING btree (alert_id, reader)"
+  },
+  {
+   "tablename": "gym_alert_settings",
+   "indexname": "gym_alert_settings_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_alert_settings_pkey ON public.gym_alert_settings USING btree (gym_id)"
+  },
+  {
+   "tablename": "gym_alerts",
+   "indexname": "gym_alerts_by_gym",
+   "indexdef": "CREATE INDEX gym_alerts_by_gym ON public.gym_alerts USING btree (gym_id, created_at DESC)"
+  },
+  {
+   "tablename": "gym_alerts",
+   "indexname": "gym_alerts_by_ref",
+   "indexdef": "CREATE INDEX gym_alerts_by_ref ON public.gym_alerts USING btree (gym_id, ref_id) WHERE (handled_at IS NULL)"
+  },
+  {
+   "tablename": "gym_alerts",
+   "indexname": "gym_alerts_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_alerts_pkey ON public.gym_alerts USING btree (alert_id)"
+  },
+  {
+   "tablename": "gym_alerts",
+   "indexname": "gym_alerts_tag_key",
+   "indexdef": "CREATE UNIQUE INDEX gym_alerts_tag_key ON public.gym_alerts USING btree (tag)"
+  },
+  {
+   "tablename": "gym_alerts",
+   "indexname": "gym_alerts_tests",
+   "indexdef": "CREATE INDEX gym_alerts_tests ON public.gym_alerts USING btree (sub_id, created_at DESC) WHERE (sub_id IS NOT NULL)"
+  },
+  {
+   "tablename": "gym_alerts",
+   "indexname": "gym_alerts_waiting",
+   "indexdef": "CREATE INDEX gym_alerts_waiting ON public.gym_alerts USING btree (created_at) WHERE (sent_at IS NULL)"
+  },
+  {
+   "tablename": "gym_auto_reminders",
+   "indexname": "gym_auto_reminders_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_auto_reminders_pkey ON public.gym_auto_reminders USING btree (gym_id)"
+  },
+  {
+   "tablename": "gym_billing_reminders",
+   "indexname": "gym_billing_reminders_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_billing_reminders_pkey ON public.gym_billing_reminders USING btree (gym_id, paid_until, days_before)"
+  },
+  {
+   "tablename": "gym_board_meta",
+   "indexname": "gym_board_meta_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_board_meta_pkey ON public.gym_board_meta USING btree (gym_id)"
+  },
+  {
+   "tablename": "gym_body_measurements",
+   "indexname": "gym_body_measurements_gym_id_member_id_measured_on_key",
+   "indexdef": "CREATE UNIQUE INDEX gym_body_measurements_gym_id_member_id_measured_on_key ON public.gym_body_measurements USING btree (gym_id, member_id, measured_on)"
+  },
+  {
+   "tablename": "gym_body_measurements",
+   "indexname": "gym_body_measurements_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_body_measurements_pkey ON public.gym_body_measurements USING btree (measure_id)"
+  },
+  {
+   "tablename": "gym_body_measurements",
+   "indexname": "idx_body_measurements_member",
+   "indexdef": "CREATE INDEX idx_body_measurements_member ON public.gym_body_measurements USING btree (gym_id, member_id, measured_on DESC)"
+  },
+  {
+   "tablename": "gym_challenge_hits",
+   "indexname": "gym_challenge_hits_pending",
+   "indexdef": "CREATE INDEX gym_challenge_hits_pending ON public.gym_challenge_hits USING btree (challenge_id) WHERE (reward_state = 'pending'::text)"
+  },
+  {
+   "tablename": "gym_challenge_hits",
+   "indexname": "gym_challenge_hits_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_challenge_hits_pkey ON public.gym_challenge_hits USING btree (challenge_id, member_id)"
+  },
+  {
+   "tablename": "gym_challenges",
+   "indexname": "gym_challenges_by_gym",
+   "indexdef": "CREATE INDEX gym_challenges_by_gym ON public.gym_challenges USING btree (gym_id, starts_on DESC)"
+  },
+  {
+   "tablename": "gym_challenges",
+   "indexname": "gym_challenges_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_challenges_pkey ON public.gym_challenges USING btree (id)"
+  },
+  {
+   "tablename": "gym_checkin_misses",
+   "indexname": "gym_checkin_misses_gym",
+   "indexdef": "CREATE INDEX gym_checkin_misses_gym ON public.gym_checkin_misses USING btree (gym_id, at)"
+  },
+  {
+   "tablename": "gym_checkouts",
+   "indexname": "gym_checkouts_founding",
+   "indexdef": "CREATE INDEX gym_checkouts_founding ON public.gym_checkouts USING btree (kind, status) WHERE (kind = 'founding'::text)"
+  },
+  {
+   "tablename": "gym_checkouts",
+   "indexname": "gym_checkouts_gym",
+   "indexdef": "CREATE INDEX gym_checkouts_gym ON public.gym_checkouts USING btree (gym_id, created_at DESC)"
+  },
+  {
+   "tablename": "gym_checkouts",
+   "indexname": "gym_checkouts_link",
+   "indexdef": "CREATE UNIQUE INDEX gym_checkouts_link ON public.gym_checkouts USING btree (provider, link_id) WHERE (link_id IS NOT NULL)"
+  },
+  {
+   "tablename": "gym_checkouts",
+   "indexname": "gym_checkouts_open",
+   "indexdef": "CREATE INDEX gym_checkouts_open ON public.gym_checkouts USING btree (provider, created_at) WHERE (status = 'open'::text)"
+  },
+  {
+   "tablename": "gym_checkouts",
+   "indexname": "gym_checkouts_our_ref_key",
+   "indexdef": "CREATE UNIQUE INDEX gym_checkouts_our_ref_key ON public.gym_checkouts USING btree (our_ref)"
+  },
+  {
+   "tablename": "gym_checkouts",
+   "indexname": "gym_checkouts_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_checkouts_pkey ON public.gym_checkouts USING btree (checkout_id)"
+  },
+  {
+   "tablename": "gym_checkouts",
+   "indexname": "gym_checkouts_to_check",
+   "indexdef": "CREATE INDEX gym_checkouts_to_check ON public.gym_checkouts USING btree (paid_at) WHERE (status = ANY (ARRAY['mismatch'::text, 'failed'::text]))"
+  },
+  {
+   "tablename": "gym_creator_ips",
+   "indexname": "gym_creator_ips_ip",
+   "indexdef": "CREATE INDEX gym_creator_ips_ip ON public.gym_creator_ips USING btree (ip, created_at)"
+  },
+  {
+   "tablename": "gym_creator_ips",
+   "indexname": "gym_creator_ips_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_creator_ips_pkey ON public.gym_creator_ips USING btree (gym_id)"
+  },
+  {
+   "tablename": "gym_diet_plans",
+   "indexname": "gym_diet_plans_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_diet_plans_pkey ON public.gym_diet_plans USING btree (plan_id)"
+  },
+  {
+   "tablename": "gym_diet_plans",
+   "indexname": "idx_diet_plans_gym",
+   "indexdef": "CREATE INDEX idx_diet_plans_gym ON public.gym_diet_plans USING btree (gym_id, updated_at DESC)"
+  },
+  {
+   "tablename": "gym_exercise_starts",
+   "indexname": "gym_exercise_starts_by_day",
+   "indexdef": "CREATE INDEX gym_exercise_starts_by_day ON public.gym_exercise_starts USING btree (gym_id, day)"
+  },
+  {
+   "tablename": "gym_exercise_starts",
+   "indexname": "gym_exercise_starts_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_exercise_starts_pkey ON public.gym_exercise_starts USING btree (gym_id, member_id, day, hour, ex)"
+  },
+  {
+   "tablename": "gym_friend_invites",
+   "indexname": "gym_friend_invites_gym",
+   "indexdef": "CREATE INDEX gym_friend_invites_gym ON public.gym_friend_invites USING btree (gym_id)"
+  },
+  {
+   "tablename": "gym_friend_invites",
+   "indexname": "gym_friend_invites_member_id_key",
+   "indexdef": "CREATE UNIQUE INDEX gym_friend_invites_member_id_key ON public.gym_friend_invites USING btree (member_id)"
+  },
+  {
+   "tablename": "gym_friend_invites",
+   "indexname": "gym_friend_invites_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_friend_invites_pkey ON public.gym_friend_invites USING btree (code)"
+  },
+  {
+   "tablename": "gym_friend_referrals",
+   "indexname": "gym_friend_referrals_code",
+   "indexdef": "CREATE INDEX gym_friend_referrals_code ON public.gym_friend_referrals USING btree (code, created_at DESC)"
+  },
+  {
+   "tablename": "gym_friend_referrals",
+   "indexname": "gym_friend_referrals_gym",
+   "indexdef": "CREATE INDEX gym_friend_referrals_gym ON public.gym_friend_referrals USING btree (gym_id, created_at DESC)"
+  },
+  {
+   "tablename": "gym_friend_referrals",
+   "indexname": "gym_friend_referrals_member",
+   "indexdef": "CREATE INDEX gym_friend_referrals_member ON public.gym_friend_referrals USING btree (member_id)"
+  },
+  {
+   "tablename": "gym_friend_referrals",
+   "indexname": "gym_friend_referrals_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_friend_referrals_pkey ON public.gym_friend_referrals USING btree (enquiry_id)"
+  },
+  {
+   "tablename": "gym_groups",
+   "indexname": "gym_groups_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_groups_pkey ON public.gym_groups USING btree (group_id)"
+  },
+  {
+   "tablename": "gym_machine_guesses",
+   "indexname": "gym_machine_guesses_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_machine_guesses_pkey ON public.gym_machine_guesses USING btree (gym_id, week_start, machine_id)"
+  },
+  {
+   "tablename": "gym_machine_setup",
+   "indexname": "gym_machine_setup_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_machine_setup_pkey ON public.gym_machine_setup USING btree (gym_id)"
+  },
+  {
+   "tablename": "gym_mate_profiles",
+   "indexname": "gym_mate_profiles_by_gym",
+   "indexdef": "CREATE INDEX gym_mate_profiles_by_gym ON public.gym_mate_profiles USING btree (gym_id)"
+  },
+  {
+   "tablename": "gym_mate_profiles",
+   "indexname": "gym_mate_profiles_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_mate_profiles_pkey ON public.gym_mate_profiles USING btree (member_id)"
+  },
+  {
+   "tablename": "gym_mate_profiles",
+   "indexname": "gym_mate_profiles_share_id_key",
+   "indexdef": "CREATE UNIQUE INDEX gym_mate_profiles_share_id_key ON public.gym_mate_profiles USING btree (share_id)"
+  },
+  {
+   "tablename": "gym_mate_workouts",
+   "indexname": "gym_mate_workouts_by_day",
+   "indexdef": "CREATE INDEX gym_mate_workouts_by_day ON public.gym_mate_workouts USING btree (gym_id, day)"
+  },
+  {
+   "tablename": "gym_mate_workouts",
+   "indexname": "gym_mate_workouts_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_mate_workouts_pkey ON public.gym_mate_workouts USING btree (member_id, workout_id)"
+  },
+  {
+   "tablename": "gym_member_board",
+   "indexname": "gym_member_board_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_member_board_pkey ON public.gym_member_board USING btree (gym_id, member_id)"
+  },
+  {
+   "tablename": "gym_member_days",
+   "indexname": "gym_member_days_by_day",
+   "indexdef": "CREATE INDEX gym_member_days_by_day ON public.gym_member_days USING btree (gym_id, day)"
+  },
+  {
+   "tablename": "gym_member_days",
+   "indexname": "gym_member_days_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_member_days_pkey ON public.gym_member_days USING btree (gym_id, member_id, day)"
+  },
+  {
+   "tablename": "gym_member_photos",
+   "indexname": "gym_member_photos_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_member_photos_pkey ON public.gym_member_photos USING btree (gym_id, member_id)"
+  },
+  {
+   "tablename": "gym_members",
+   "indexname": "gym_members_join_hash",
+   "indexdef": "CREATE INDEX gym_members_join_hash ON public.gym_members USING btree (gym_id, join_hash) WHERE (join_hash IS NOT NULL)"
+  },
+  {
+   "tablename": "gym_members",
+   "indexname": "gym_members_key_hash_key",
+   "indexdef": "CREATE UNIQUE INDEX gym_members_key_hash_key ON public.gym_members USING btree (key_hash)"
+  },
+  {
+   "tablename": "gym_members",
+   "indexname": "gym_members_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_members_pkey ON public.gym_members USING btree (member_id)"
+  },
+  {
+   "tablename": "gym_members",
+   "indexname": "idx_gym_members_gym",
+   "indexdef": "CREATE INDEX idx_gym_members_gym ON public.gym_members USING btree (gym_id, joined_at DESC)"
+  },
+  {
+   "tablename": "gym_message_seen",
+   "indexname": "gym_message_seen_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_message_seen_pkey ON public.gym_message_seen USING btree (message_id, member_id)"
+  },
+  {
+   "tablename": "gym_message_to",
+   "indexname": "gym_message_to_member",
+   "indexdef": "CREATE INDEX gym_message_to_member ON public.gym_message_to USING btree (member_id)"
+  },
+  {
+   "tablename": "gym_message_to",
+   "indexname": "gym_message_to_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_message_to_pkey ON public.gym_message_to USING btree (message_id, member_id)"
+  },
+  {
+   "tablename": "gym_messages",
+   "indexname": "gym_messages_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_messages_pkey ON public.gym_messages USING btree (message_id)"
+  },
+  {
+   "tablename": "gym_messages",
+   "indexname": "idx_gym_messages_gym",
+   "indexdef": "CREATE INDEX idx_gym_messages_gym ON public.gym_messages USING btree (gym_id, created_at DESC)"
+  },
+  {
+   "tablename": "gym_offers",
+   "indexname": "gym_offers_gym",
+   "indexdef": "CREATE INDEX gym_offers_gym ON public.gym_offers USING btree (gym_id, created_at DESC)"
+  },
+  {
+   "tablename": "gym_offers",
+   "indexname": "gym_offers_one_running",
+   "indexdef": "CREATE UNIQUE INDEX gym_offers_one_running ON public.gym_offers USING btree (gym_id) WHERE (stopped_at IS NULL)"
+  },
+  {
+   "tablename": "gym_offers",
+   "indexname": "gym_offers_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_offers_pkey ON public.gym_offers USING btree (offer_id)"
+  },
+  {
+   "tablename": "gym_owner_keys",
+   "indexname": "gym_owner_keys_key_hash_key",
+   "indexdef": "CREATE UNIQUE INDEX gym_owner_keys_key_hash_key ON public.gym_owner_keys USING btree (key_hash)"
+  },
+  {
+   "tablename": "gym_owner_keys",
+   "indexname": "gym_owner_keys_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_owner_keys_pkey ON public.gym_owner_keys USING btree (gym_id)"
+  },
+  {
+   "tablename": "gym_page_asks",
+   "indexname": "gym_page_asks_gym",
+   "indexdef": "CREATE INDEX gym_page_asks_gym ON public.gym_page_asks USING btree (gym_id, created_at)"
+  },
+  {
+   "tablename": "gym_page_asks",
+   "indexname": "gym_page_asks_phone",
+   "indexdef": "CREATE INDEX gym_page_asks_phone ON public.gym_page_asks USING btree (phone, created_at)"
+  },
+  {
+   "tablename": "gym_page_asks",
+   "indexname": "gym_page_asks_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_page_asks_pkey ON public.gym_page_asks USING btree (id)"
+  },
+  {
+   "tablename": "gym_page_off",
+   "indexname": "gym_page_off_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_page_off_pkey ON public.gym_page_off USING btree (gym_id)"
+  },
+  {
+   "tablename": "gym_page_photo_slots",
+   "indexname": "gym_page_photo_slots_gym",
+   "indexdef": "CREATE INDEX gym_page_photo_slots_gym ON public.gym_page_photo_slots USING btree (gym_id, created_at)"
+  },
+  {
+   "tablename": "gym_page_photo_slots",
+   "indexname": "gym_page_photo_slots_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_page_photo_slots_pkey ON public.gym_page_photo_slots USING btree (photo_id)"
+  },
+  {
+   "tablename": "gym_page_reports",
+   "indexname": "gym_page_reports_gym",
+   "indexdef": "CREATE INDEX gym_page_reports_gym ON public.gym_page_reports USING btree (gym_id, created_at)"
+  },
+  {
+   "tablename": "gym_page_reports",
+   "indexname": "gym_page_reports_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_page_reports_pkey ON public.gym_page_reports USING btree (id)"
+  },
+  {
+   "tablename": "gym_pages",
+   "indexname": "gym_pages_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_pages_pkey ON public.gym_pages USING btree (gym_id)"
+  },
+  {
+   "tablename": "gym_pages",
+   "indexname": "gym_pages_slug_key",
+   "indexdef": "CREATE UNIQUE INDEX gym_pages_slug_key ON public.gym_pages USING btree (slug)"
+  },
+  {
+   "tablename": "gym_payment_ledger",
+   "indexname": "gym_payment_ledger_gym",
+   "indexdef": "CREATE INDEX gym_payment_ledger_gym ON public.gym_payment_ledger USING btree (gym_id, applied_at DESC)"
+  },
+  {
+   "tablename": "gym_payment_ledger",
+   "indexname": "gym_payment_ledger_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_payment_ledger_pkey ON public.gym_payment_ledger USING btree (ledger_id)"
+  },
+  {
+   "tablename": "gym_payment_ledger",
+   "indexname": "gym_payment_ledger_source_reference_key",
+   "indexdef": "CREATE UNIQUE INDEX gym_payment_ledger_source_reference_key ON public.gym_payment_ledger USING btree (source, reference)"
+  },
+  {
+   "tablename": "gym_phone_links",
+   "indexname": "gym_phone_links_gym",
+   "indexdef": "CREATE INDEX gym_phone_links_gym ON public.gym_phone_links USING btree (gym_id, status, created_at DESC)"
+  },
+  {
+   "tablename": "gym_phone_links",
+   "indexname": "gym_phone_links_one_pending",
+   "indexdef": "CREATE UNIQUE INDEX gym_phone_links_one_pending ON public.gym_phone_links USING btree (app_member) WHERE (status = 'pending'::text)"
+  },
+  {
+   "tablename": "gym_phone_links",
+   "indexname": "gym_phone_links_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_phone_links_pkey ON public.gym_phone_links USING btree (link_id)"
+  },
+  {
+   "tablename": "gym_plan_changes",
+   "indexname": "gym_plan_changes_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_plan_changes_pkey ON public.gym_plan_changes USING btree (gym_id)"
+  },
+  {
+   "tablename": "gym_plan_requests",
+   "indexname": "gym_plan_requests_gym",
+   "indexdef": "CREATE INDEX gym_plan_requests_gym ON public.gym_plan_requests USING btree (gym_id, status, created_at DESC)"
+  },
+  {
+   "tablename": "gym_plan_requests",
+   "indexname": "gym_plan_requests_member",
+   "indexdef": "CREATE INDEX gym_plan_requests_member ON public.gym_plan_requests USING btree (gym_id, roster_id, created_at DESC)"
+  },
+  {
+   "tablename": "gym_plan_requests",
+   "indexname": "gym_plan_requests_one_pending",
+   "indexdef": "CREATE UNIQUE INDEX gym_plan_requests_one_pending ON public.gym_plan_requests USING btree (gym_id, roster_id, kind) WHERE (status = 'pending'::text)"
+  },
+  {
+   "tablename": "gym_plan_requests",
+   "indexname": "gym_plan_requests_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_plan_requests_pkey ON public.gym_plan_requests USING btree (request_id)"
+  },
+  {
+   "tablename": "gym_plus_settings",
+   "indexname": "gym_plus_settings_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_plus_settings_pkey ON public.gym_plus_settings USING btree (gym_id)"
+  },
+  {
+   "tablename": "gym_progress_summaries",
+   "indexname": "gym_progress_summaries_by_gym",
+   "indexdef": "CREATE INDEX gym_progress_summaries_by_gym ON public.gym_progress_summaries USING btree (gym_id, roster_id)"
+  },
+  {
+   "tablename": "gym_progress_summaries",
+   "indexname": "gym_progress_summaries_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_progress_summaries_pkey ON public.gym_progress_summaries USING btree (member_id)"
+  },
+  {
+   "tablename": "gym_pt_bookings",
+   "indexname": "gym_pt_bookings_by_day",
+   "indexdef": "CREATE INDEX gym_pt_bookings_by_day ON public.gym_pt_bookings USING btree (gym_id, day) WHERE (cancelled_at IS NULL)"
+  },
+  {
+   "tablename": "gym_pt_bookings",
+   "indexname": "gym_pt_bookings_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_pt_bookings_pkey ON public.gym_pt_bookings USING btree (booking_id)"
+  },
+  {
+   "tablename": "gym_pt_bookings",
+   "indexname": "gym_pt_bookings_request",
+   "indexdef": "CREATE UNIQUE INDEX gym_pt_bookings_request ON public.gym_pt_bookings USING btree (gym_id, request_id) WHERE (request_id IS NOT NULL)"
+  },
+  {
+   "tablename": "gym_receipts",
+   "indexname": "gym_receipts_gym",
+   "indexdef": "CREATE INDEX gym_receipts_gym ON public.gym_receipts USING btree (gym_id, issued_at DESC)"
+  },
+  {
+   "tablename": "gym_receipts",
+   "indexname": "gym_receipts_ledger_id_key",
+   "indexdef": "CREATE UNIQUE INDEX gym_receipts_ledger_id_key ON public.gym_receipts USING btree (ledger_id)"
+  },
+  {
+   "tablename": "gym_receipts",
+   "indexname": "gym_receipts_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_receipts_pkey ON public.gym_receipts USING btree (receipt_no)"
+  },
+  {
+   "tablename": "gym_report_files",
+   "indexname": "gym_report_files_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_report_files_pkey ON public.gym_report_files USING btree (request_id)"
+  },
+  {
+   "tablename": "gym_report_requests",
+   "indexname": "gym_report_requests_expiry",
+   "indexdef": "CREATE INDEX gym_report_requests_expiry ON public.gym_report_requests USING btree (gym_id, expires_at) WHERE (status = ANY (ARRAY['pending'::text, 'sent'::text]))"
+  },
+  {
+   "tablename": "gym_report_requests",
+   "indexname": "gym_report_requests_member",
+   "indexdef": "CREATE INDEX gym_report_requests_member ON public.gym_report_requests USING btree (gym_id, roster_id, created_at DESC)"
+  },
+  {
+   "tablename": "gym_report_requests",
+   "indexname": "gym_report_requests_one_pending",
+   "indexdef": "CREATE UNIQUE INDEX gym_report_requests_one_pending ON public.gym_report_requests USING btree (gym_id, roster_id) WHERE (status = 'pending'::text)"
+  },
+  {
+   "tablename": "gym_report_requests",
+   "indexname": "gym_report_requests_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_report_requests_pkey ON public.gym_report_requests USING btree (request_id)"
+  },
+  {
+   "tablename": "gym_self_joins",
+   "indexname": "gym_self_joins_gym",
+   "indexdef": "CREATE INDEX gym_self_joins_gym ON public.gym_self_joins USING btree (gym_id, created_at DESC)"
+  },
+  {
+   "tablename": "gym_self_joins",
+   "indexname": "gym_self_joins_phone",
+   "indexdef": "CREATE INDEX gym_self_joins_phone ON public.gym_self_joins USING btree (phone, created_at DESC)"
+  },
+  {
+   "tablename": "gym_self_joins",
+   "indexname": "gym_self_joins_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_self_joins_pkey ON public.gym_self_joins USING btree (join_id)"
+  },
+  {
+   "tablename": "gym_self_joins",
+   "indexname": "gym_self_joins_trial",
+   "indexdef": "CREATE INDEX gym_self_joins_trial ON public.gym_self_joins USING btree (gym_id, phone) WHERE trial"
+  },
+  {
+   "tablename": "gym_sessions",
+   "indexname": "gym_sessions_key_hash_key",
+   "indexdef": "CREATE UNIQUE INDEX gym_sessions_key_hash_key ON public.gym_sessions USING btree (key_hash)"
+  },
+  {
+   "tablename": "gym_sessions",
+   "indexname": "gym_sessions_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_sessions_pkey ON public.gym_sessions USING btree (session_id)"
+  },
+  {
+   "tablename": "gym_sessions",
+   "indexname": "gym_sessions_staff",
+   "indexdef": "CREATE INDEX gym_sessions_staff ON public.gym_sessions USING btree (staff_id)"
+  },
+  {
+   "tablename": "gym_signin_codes",
+   "indexname": "gym_signin_codes_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_signin_codes_pkey ON public.gym_signin_codes USING btree (code_id)"
+  },
+  {
+   "tablename": "gym_signin_codes",
+   "indexname": "gym_signin_codes_staff",
+   "indexdef": "CREATE INDEX gym_signin_codes_staff ON public.gym_signin_codes USING btree (staff_id)"
+  },
+  {
+   "tablename": "gym_signin_fails",
+   "indexname": "gym_signin_fails_phone",
+   "indexdef": "CREATE INDEX gym_signin_fails_phone ON public.gym_signin_fails USING btree (phone, at)"
+  },
+  {
+   "tablename": "gym_signin_fails",
+   "indexname": "gym_signin_fails_phone_ip",
+   "indexdef": "CREATE INDEX gym_signin_fails_phone_ip ON public.gym_signin_fails USING btree (phone, ip, at)"
+  },
+  {
+   "tablename": "gym_signin_fails",
+   "indexname": "gym_signin_fails_staff",
+   "indexdef": "CREATE INDEX gym_signin_fails_staff ON public.gym_signin_fails USING btree (staff_id, at)"
+  },
+  {
+   "tablename": "gym_staff",
+   "indexname": "gym_staff_by_phone",
+   "indexdef": "CREATE INDEX gym_staff_by_phone ON public.gym_staff USING btree (phone) WHERE (removed_at IS NULL)"
+  },
+  {
+   "tablename": "gym_staff",
+   "indexname": "gym_staff_phone_live",
+   "indexdef": "CREATE UNIQUE INDEX gym_staff_phone_live ON public.gym_staff USING btree (gym_id, phone) WHERE (removed_at IS NULL)"
+  },
+  {
+   "tablename": "gym_staff",
+   "indexname": "gym_staff_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_staff_pkey ON public.gym_staff USING btree (staff_id)"
+  },
+  {
+   "tablename": "gym_staff_pins",
+   "indexname": "gym_staff_pins_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_staff_pins_pkey ON public.gym_staff_pins USING btree (staff_id)"
+  },
+  {
+   "tablename": "gym_talk_messages",
+   "indexname": "gym_talk_messages_by_thread",
+   "indexdef": "CREATE INDEX gym_talk_messages_by_thread ON public.gym_talk_messages USING btree (thread_id, created_at, seq)"
+  },
+  {
+   "tablename": "gym_talk_messages",
+   "indexname": "gym_talk_messages_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_talk_messages_pkey ON public.gym_talk_messages USING btree (msg_id)"
+  },
+  {
+   "tablename": "gym_talk_threads",
+   "indexname": "gym_talk_threads_by_gym",
+   "indexdef": "CREATE INDEX gym_talk_threads_by_gym ON public.gym_talk_threads USING btree (gym_id, last_at DESC)"
+  },
+  {
+   "tablename": "gym_talk_threads",
+   "indexname": "gym_talk_threads_by_member",
+   "indexdef": "CREATE INDEX gym_talk_threads_by_member ON public.gym_talk_threads USING btree (member_id, last_at DESC)"
+  },
+  {
+   "tablename": "gym_talk_threads",
+   "indexname": "gym_talk_threads_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_talk_threads_pkey ON public.gym_talk_threads USING btree (thread_id)"
+  },
+  {
+   "tablename": "gym_terms_acceptance",
+   "indexname": "gym_terms_acceptance_gym",
+   "indexdef": "CREATE INDEX gym_terms_acceptance_gym ON public.gym_terms_acceptance USING btree (gym_id, accepted_at DESC)"
+  },
+  {
+   "tablename": "gym_terms_acceptance",
+   "indexname": "gym_terms_acceptance_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_terms_acceptance_pkey ON public.gym_terms_acceptance USING btree (acceptance_id)"
+  },
+  {
+   "tablename": "gym_timings",
+   "indexname": "gym_timings_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_timings_pkey ON public.gym_timings USING btree (gym_id)"
+  },
+  {
+   "tablename": "gym_trainer_members",
+   "indexname": "gym_trainer_members_by_staff",
+   "indexdef": "CREATE INDEX gym_trainer_members_by_staff ON public.gym_trainer_members USING btree (staff_id)"
+  },
+  {
+   "tablename": "gym_trainer_members",
+   "indexname": "gym_trainer_members_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_trainer_members_pkey ON public.gym_trainer_members USING btree (gym_id, roster_id)"
+  },
+  {
+   "tablename": "gym_trainer_profiles",
+   "indexname": "gym_trainer_profiles_by_gym",
+   "indexdef": "CREATE INDEX gym_trainer_profiles_by_gym ON public.gym_trainer_profiles USING btree (gym_id)"
+  },
+  {
+   "tablename": "gym_trainer_profiles",
+   "indexname": "gym_trainer_profiles_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_trainer_profiles_pkey ON public.gym_trainer_profiles USING btree (staff_id)"
+  },
+  {
+   "tablename": "gym_trainers",
+   "indexname": "gym_trainers_by_gym",
+   "indexdef": "CREATE INDEX gym_trainers_by_gym ON public.gym_trainers USING btree (gym_id)"
+  },
+  {
+   "tablename": "gym_trainers",
+   "indexname": "gym_trainers_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_trainers_pkey ON public.gym_trainers USING btree (staff_id)"
+  },
+  {
+   "tablename": "gym_web_push",
+   "indexname": "gym_web_push_by_gym",
+   "indexdef": "CREATE INDEX gym_web_push_by_gym ON public.gym_web_push USING btree (gym_id, created_at)"
+  },
+  {
+   "tablename": "gym_web_push",
+   "indexname": "gym_web_push_endpoint_key",
+   "indexdef": "CREATE UNIQUE INDEX gym_web_push_endpoint_key ON public.gym_web_push USING btree (endpoint)"
+  },
+  {
+   "tablename": "gym_web_push",
+   "indexname": "gym_web_push_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_web_push_pkey ON public.gym_web_push USING btree (sub_id)"
+  },
+  {
+   "tablename": "gym_wods",
+   "indexname": "gym_wods_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gym_wods_pkey ON public.gym_wods USING btree (gym_id, day)"
+  },
+  {
+   "tablename": "gyms",
+   "indexname": "gyms_creator_ip",
+   "indexdef": "CREATE INDEX gyms_creator_ip ON public.gyms USING btree (creator_ip, created_at)"
+  },
+  {
+   "tablename": "gyms",
+   "indexname": "gyms_group",
+   "indexdef": "CREATE INDEX gyms_group ON public.gyms USING btree (group_id, created_at) WHERE (group_id IS NOT NULL)"
+  },
+  {
+   "tablename": "gyms",
+   "indexname": "gyms_group_prefix",
+   "indexdef": "CREATE UNIQUE INDEX gyms_group_prefix ON public.gyms USING btree (group_id, receipt_prefix) WHERE ((group_id IS NOT NULL) AND (receipt_prefix IS NOT NULL))"
+  },
+  {
+   "tablename": "gyms",
+   "indexname": "gyms_join_code_key",
+   "indexdef": "CREATE UNIQUE INDEX gyms_join_code_key ON public.gyms USING btree (join_code)"
+  },
+  {
+   "tablename": "gyms",
+   "indexname": "gyms_pkey",
+   "indexdef": "CREATE UNIQUE INDEX gyms_pkey ON public.gyms USING btree (gym_id)"
+  },
+  {
+   "tablename": "hq_audit",
+   "indexname": "hq_audit_at",
+   "indexdef": "CREATE INDEX hq_audit_at ON public.hq_audit USING btree (at DESC)"
+  },
+  {
+   "tablename": "hq_audit",
+   "indexname": "hq_audit_gym",
+   "indexdef": "CREATE INDEX hq_audit_gym ON public.hq_audit USING btree (gym_id, at DESC)"
+  },
+  {
+   "tablename": "hq_audit",
+   "indexname": "hq_audit_pkey",
+   "indexdef": "CREATE UNIQUE INDEX hq_audit_pkey ON public.hq_audit USING btree (audit_id)"
+  },
+  {
+   "tablename": "hq_delete_requests",
+   "indexname": "hq_delete_requests_open",
+   "indexdef": "CREATE INDEX hq_delete_requests_open ON public.hq_delete_requests USING btree (requested_at) WHERE ((done_at IS NULL) AND (cancelled_at IS NULL))"
+  },
+  {
+   "tablename": "hq_delete_requests",
+   "indexname": "hq_delete_requests_pkey",
+   "indexdef": "CREATE UNIQUE INDEX hq_delete_requests_pkey ON public.hq_delete_requests USING btree (request_id)"
+  },
+  {
+   "tablename": "hq_delete_requests",
+   "indexname": "hq_delete_requests_source",
+   "indexdef": "CREATE UNIQUE INDEX hq_delete_requests_source ON public.hq_delete_requests USING btree (source, source_ref) WHERE (source_ref IS NOT NULL)"
+  },
+  {
+   "tablename": "hq_grants",
+   "indexname": "hq_grants_gym",
+   "indexdef": "CREATE INDEX hq_grants_gym ON public.hq_grants USING btree (gym_id, starts_at DESC)"
+  },
+  {
+   "tablename": "hq_grants",
+   "indexname": "hq_grants_pkey",
+   "indexdef": "CREATE UNIQUE INDEX hq_grants_pkey ON public.hq_grants USING btree (grant_id)"
+  },
+  {
+   "tablename": "member_checkin_tries",
+   "indexname": "member_checkin_tries_member",
+   "indexdef": "CREATE INDEX member_checkin_tries_member ON public.member_checkin_tries USING btree (member_id, at)"
+  },
+  {
+   "tablename": "member_find_tries",
+   "indexname": "member_find_tries_nonce",
+   "indexdef": "CREATE INDEX member_find_tries_nonce ON public.member_find_tries USING btree (nonce)"
+  },
+  {
+   "tablename": "member_items",
+   "indexname": "member_items_pkey",
+   "indexdef": "CREATE UNIQUE INDEX member_items_pkey ON public.member_items USING btree (member_id, kind, item_id)"
+  },
+  {
+   "tablename": "member_push_notes",
+   "indexname": "member_push_notes_due",
+   "indexdef": "CREATE INDEX member_push_notes_due ON public.member_push_notes USING btree (created_at) WHERE (done_at IS NULL)"
+  },
+  {
+   "tablename": "member_push_notes",
+   "indexname": "member_push_notes_member",
+   "indexdef": "CREATE INDEX member_push_notes_member ON public.member_push_notes USING btree (member_id)"
+  },
+  {
+   "tablename": "member_push_notes",
+   "indexname": "member_push_notes_pkey",
+   "indexdef": "CREATE UNIQUE INDEX member_push_notes_pkey ON public.member_push_notes USING btree (note_id)"
+  },
+  {
+   "tablename": "member_push_notes",
+   "indexname": "member_push_notes_tag_key",
+   "indexdef": "CREATE UNIQUE INDEX member_push_notes_tag_key ON public.member_push_notes USING btree (tag)"
+  },
+  {
+   "tablename": "member_push_tokens",
+   "indexname": "member_push_tokens_gym",
+   "indexdef": "CREATE INDEX member_push_tokens_gym ON public.member_push_tokens USING btree (gym_id, token)"
+  },
+  {
+   "tablename": "member_push_tokens",
+   "indexname": "member_push_tokens_member",
+   "indexdef": "CREATE INDEX member_push_tokens_member ON public.member_push_tokens USING btree (member_id)"
+  },
+  {
+   "tablename": "member_push_tokens",
+   "indexname": "member_push_tokens_pkey",
+   "indexdef": "CREATE UNIQUE INDEX member_push_tokens_pkey ON public.member_push_tokens USING btree (token)"
+  },
+  {
+   "tablename": "member_summary",
+   "indexname": "idx_summary_gym_active",
+   "indexdef": "CREATE INDEX idx_summary_gym_active ON public.member_summary USING btree (gym_id, last_active_at DESC)"
+  },
+  {
+   "tablename": "member_summary",
+   "indexname": "idx_summary_gym_streak",
+   "indexdef": "CREATE INDEX idx_summary_gym_streak ON public.member_summary USING btree (gym_id, current_streak DESC)"
+  },
+  {
+   "tablename": "member_summary",
+   "indexname": "member_summary_pkey",
+   "indexdef": "CREATE UNIQUE INDEX member_summary_pkey ON public.member_summary USING btree (member_id)"
+  },
+  {
+   "tablename": "mettleup_payments",
+   "indexname": "mettleup_payments_gym",
+   "indexdef": "CREATE INDEX mettleup_payments_gym ON public.mettleup_payments USING btree (gym_id, reported_at DESC)"
+  },
+  {
+   "tablename": "mettleup_payments",
+   "indexname": "mettleup_payments_pkey",
+   "indexdef": "CREATE UNIQUE INDEX mettleup_payments_pkey ON public.mettleup_payments USING btree (payment_id)"
+  },
+  {
+   "tablename": "mettleup_payments",
+   "indexname": "mettleup_payments_ref",
+   "indexdef": "CREATE UNIQUE INDEX mettleup_payments_ref ON public.mettleup_payments USING btree (reference) WHERE (status <> 'rejected'::text)"
+  },
+  {
+   "tablename": "mettleup_payments",
+   "indexname": "mettleup_payments_status",
+   "indexdef": "CREATE INDEX mettleup_payments_status ON public.mettleup_payments USING btree (status, reported_at)"
+  },
+  {
+   "tablename": "offer_days",
+   "indexname": "offer_days_pkey",
+   "indexdef": "CREATE UNIQUE INDEX offer_days_pkey ON public.offer_days USING btree (offer_id, roster_id, day)"
+  },
+  {
+   "tablename": "offer_log",
+   "indexname": "offer_log_offer",
+   "indexdef": "CREATE INDEX offer_log_offer ON public.offer_log USING btree (offer_id, at)"
+  },
+  {
+   "tablename": "offer_log",
+   "indexname": "offer_log_pkey",
+   "indexdef": "CREATE UNIQUE INDEX offer_log_pkey ON public.offer_log USING btree (log_id)"
+  },
+  {
+   "tablename": "offer_members",
+   "indexname": "offer_members_gym",
+   "indexdef": "CREATE INDEX offer_members_gym ON public.offer_members USING btree (gym_id)"
+  },
+  {
+   "tablename": "offer_members",
+   "indexname": "offer_members_member",
+   "indexdef": "CREATE INDEX offer_members_member ON public.offer_members USING btree (member_id)"
+  },
+  {
+   "tablename": "offer_members",
+   "indexname": "offer_members_pkey",
+   "indexdef": "CREATE UNIQUE INDEX offer_members_pkey ON public.offer_members USING btree (offer_id, roster_id)"
+  },
+  {
+   "tablename": "phone_code_settings",
+   "indexname": "phone_code_settings_pkey",
+   "indexdef": "CREATE UNIQUE INDEX phone_code_settings_pkey ON public.phone_code_settings USING btree (id)"
+  },
+  {
+   "tablename": "phone_proofs_used",
+   "indexname": "phone_proofs_used_pkey",
+   "indexdef": "CREATE UNIQUE INDEX phone_proofs_used_pkey ON public.phone_proofs_used USING btree (nonce)"
+  },
+  {
+   "tablename": "photo_tickets",
+   "indexname": "photo_tickets_pkey",
+   "indexdef": "CREATE UNIQUE INDEX photo_tickets_pkey ON public.photo_tickets USING btree (ticket)"
+  },
+  {
+   "tablename": "plan_features",
+   "indexname": "plan_features_pkey",
+   "indexdef": "CREATE UNIQUE INDEX plan_features_pkey ON public.plan_features USING btree (plan, feature)"
+  },
+  {
+   "tablename": "platform_payment_details",
+   "indexname": "platform_payment_details_pkey",
+   "indexdef": "CREATE UNIQUE INDEX platform_payment_details_pkey ON public.platform_payment_details USING btree (id)"
+  },
+  {
+   "tablename": "profiles",
+   "indexname": "idx_profiles_gym",
+   "indexdef": "CREATE INDEX idx_profiles_gym ON public.profiles USING btree (gym_id, role)"
+  },
+  {
+   "tablename": "profiles",
+   "indexname": "profiles_pkey",
+   "indexdef": "CREATE UNIQUE INDEX profiles_pkey ON public.profiles USING btree (id)"
+  },
+  {
+   "tablename": "push_jobs",
+   "indexname": "push_jobs_due",
+   "indexdef": "CREATE INDEX push_jobs_due ON public.push_jobs USING btree (due_at) WHERE (done_at IS NULL)"
+  },
+  {
+   "tablename": "push_jobs",
+   "indexname": "push_jobs_one_per_ref",
+   "indexdef": "CREATE UNIQUE INDEX push_jobs_one_per_ref ON public.push_jobs USING btree (kind, ref_id)"
+  },
+  {
+   "tablename": "push_jobs",
+   "indexname": "push_jobs_pkey",
+   "indexdef": "CREATE UNIQUE INDEX push_jobs_pkey ON public.push_jobs USING btree (job_id)"
+  },
+  {
+   "tablename": "receipt_counters",
+   "indexname": "receipt_counters_pkey",
+   "indexdef": "CREATE UNIQUE INDEX receipt_counters_pkey ON public.receipt_counters USING btree (yr)"
+  },
+  {
+   "tablename": "receipt_history",
+   "indexname": "receipt_history_gym",
+   "indexdef": "CREATE INDEX receipt_history_gym ON public.receipt_history USING btree (gym_id, changed_at DESC)"
+  },
+  {
+   "tablename": "receipt_history",
+   "indexname": "receipt_history_pkey",
+   "indexdef": "CREATE UNIQUE INDEX receipt_history_pkey ON public.receipt_history USING btree (history_id)"
+  },
+  {
+   "tablename": "shop_orders",
+   "indexname": "idx_orders_gym",
+   "indexdef": "CREATE INDEX idx_orders_gym ON public.shop_orders USING btree (gym_id, created_at DESC)"
+  },
+  {
+   "tablename": "shop_orders",
+   "indexname": "idx_orders_member",
+   "indexdef": "CREATE INDEX idx_orders_member ON public.shop_orders USING btree (member_id, created_at DESC)"
+  },
+  {
+   "tablename": "shop_orders",
+   "indexname": "shop_orders_gym_id_order_no_key",
+   "indexdef": "CREATE UNIQUE INDEX shop_orders_gym_id_order_no_key ON public.shop_orders USING btree (gym_id, order_no)"
+  },
+  {
+   "tablename": "shop_orders",
+   "indexname": "shop_orders_member_client_order",
+   "indexdef": "CREATE INDEX shop_orders_member_client_order ON public.shop_orders USING btree (member_id, client_order_id) WHERE (client_order_id IS NOT NULL)"
+  },
+  {
+   "tablename": "shop_orders",
+   "indexname": "shop_orders_pkey",
+   "indexdef": "CREATE UNIQUE INDEX shop_orders_pkey ON public.shop_orders USING btree (order_id)"
+  },
+  {
+   "tablename": "shop_products",
+   "indexname": "idx_products_gym",
+   "indexdef": "CREATE INDEX idx_products_gym ON public.shop_products USING btree (gym_id, sort, created_at)"
+  },
+  {
+   "tablename": "shop_products",
+   "indexname": "shop_products_pkey",
+   "indexdef": "CREATE UNIQUE INDEX shop_products_pkey ON public.shop_products USING btree (product_id)"
+  },
+  {
+   "tablename": "trainer_questions",
+   "indexname": "trainer_questions_by_gym",
+   "indexdef": "CREATE INDEX trainer_questions_by_gym ON public.trainer_questions USING btree (gym_id, asked_at DESC)"
+  },
+  {
+   "tablename": "trainer_questions",
+   "indexname": "trainer_questions_by_member",
+   "indexdef": "CREATE INDEX trainer_questions_by_member ON public.trainer_questions USING btree (member_id, asked_at DESC)"
+  },
+  {
+   "tablename": "trainer_questions",
+   "indexname": "trainer_questions_pkey",
+   "indexdef": "CREATE UNIQUE INDEX trainer_questions_pkey ON public.trainer_questions USING btree (question_id)"
+  },
+  {
+   "tablename": "trial_phones",
+   "indexname": "trial_phones_pkey",
+   "indexdef": "CREATE UNIQUE INDEX trial_phones_pkey ON public.trial_phones USING btree (phone)"
+  }
+ ],
+ "rows": [
+  {
+   "kind": "advisor",
+   "n": 42
+  },
+  {
+   "kind": "index",
+   "n": 234,
+   "tables": 104
+  }
+ ]
+}
