@@ -43,28 +43,28 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A5 | 121 | 5.1 (202k tokens) |
 | L4 | 42 | 3.9 (157k tokens) |
 | L5 | 10 | 4.9 (195k tokens) |
-| L3 | 1 | 5.2 (207k tokens) |
+| L3 | 2 | 5.4 (215k tokens) |
 
 ## Work items
-Counts: 0 todo, 6 in progress, 271 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 6 in progress, 272 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L3-server-panel-worker | L3 | lens 3 (Security) x server / server/panel-worker: 11 items | in progress | _work/L3-server-panel-worker.md |  |
 | L5-server-database-1 | L5 | lens 5 (Money) x server / server/database-1: 4 items | in progress | _work/L5-server-database-1.md |  |
 | L3-panel-auth-data | L3 | lens 3 (Security) x panel / panel/auth-data: 11 items | in progress | _work/L3-panel-auth-data.md |  |
 | L5-panel-shop | L5 | lens 5 (Money) x panel / panel/shop: 4 items | in progress | _work/L5-panel-shop.md |  |
 | L5-panel-assistant | L5 | lens 5 (Money) x panel / panel/assistant: 4 items | in progress | _work/L5-panel-assistant.md |  |
 | L5-panel-auth-data | L5 | lens 5 (Money) x panel / panel/auth-data: 4 items | in progress | _work/L5-panel-auth-data.md |  |
-| L5-panel-screens-1 | L5 | lens 5 (Money) x panel / panel/screens-1: 4 items | done | _work/L5-panel-screens-1.md | L5 panel-screens-1: 4 items, 4 new (S2 online-paid enquiry shows Not paid, desk can charge twice; S3 Make member uses today's price; S3 cancel online receipt no refund note; S3 plan-ending message quotes switched-off plan) |
+| L3-panel-pay-machines | L3 | lens 3 (Security) x panel / panel/pay-machines: 11 items | in progress | _work/L3-panel-pay-machines.md |  |
 | L5-panel-forms | L5 | lens 5 (Money) x panel / panel/forms: 4 items | done | _work/L5-panel-forms.md | L5 panel-forms: 4 items, 4 new (S2 cash saved while online link stays payable; S3 cancel online receipt no refund; 2 S4), 5 reused |
 | L5-server-panel-worker | L5 | lens 5 (Money) x server / server/panel-worker: 4 items | done | _work/L5-server-panel-worker.md | L5 server-panel-worker: 4 items, 2 new (S2 member app shows test payment as paid; S3 trial gym AI stopped despite credits), 5 reused |
 | L5-server-database-3 | L5 | lens 5 (Money) x server / server/database-3: 4 items | done | _work/L5-server-database-3.md | L5 server-database-3: 4 items, 4 new (S2 test payment gives real plan time and receipt; S2 test payments look real to members; S2 held payment invisible to owner; S3 upgrade counts one day too many), 6 reused |
+| L3-server-panel-worker | L3 | lens 3 (Security) x server / server/panel-worker: 11 items | done | _work/L3-server-panel-worker.md | L3 server-panel-worker: 11 items, 3 new (S2 rate limits count one shared Cloudflare address: desk lockout + sign-up busy; S3 code-try limit races, not live; S4 missing cross-member tests) |
 | L5-panel-logic-1 | L5 | lens 5 (Money) x panel / panel/logic-1: 4 items | done | _work/L5-panel-logic-1.md | L5 panel-logic-1: 4 items, 2 new (S3 GST counted as profit; S4 two Collected amounts), 5 reused |
 | L5-panel-logic-2 | L5 | lens 5 (Money) x panel / panel/logic-2: 4 items | done | _work/L5-panel-logic-2.md | L5 panel-logic-2: 4 items, 2 new S3 (QR pass visits move company after month closed; joining-fee line on every part payment), 4 reused |
 | L5-server-database-2 | L5 | lens 5 (Money) x server / server/database-2: 4 items | done | _work/L5-server-database-2.md | L5 server-database-2: 4 items, 3 new S3 (confirmed UPI payment can never be refunded/recorded; repeat-number trial ends at once, not shown; read-only gym refuses paid receipts and check-ins), 3 reused |
 | L5-hq-app | L5 | lens 5 (Money) x hq / hq/app: 4 items | done | _work/L5-hq-app.md | L5 hq-app: 4 items, 8 new (S2 hand-set plan undone by old Starter switch; S2 credits card says 100 for Starter yearly (50); 5 S3; 1 S4), 4 reused; -06 repeats server-database-2-01 (merge in 3H) |
-(+ 263 older done items, not shown)
+(+ 264 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
