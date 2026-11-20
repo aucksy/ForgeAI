@@ -1,0 +1,5 @@
+F-phone-103: 6 journeys, 7 type lines
+F-phone-137: 7 journeys, 7 type lines
+F-phone-102: 7 journeys, 8 type lines (incl. type 12 no)
+F-phone-101: 7 journeys, 8 type lines (incl. type 12 no)
+F-phone-100: 7 journeys, 7 type lines
