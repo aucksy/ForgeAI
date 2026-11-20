@@ -1,0 +1,2078 @@
+{
+ "made_on": "2026-11-20",
+ "source": "npm-audit + osv",
+ "dependabot": "disabled",
+ "dependabot_detail": "GET /repos/aucksy/ForgeAI/dependabot/alerts returned 403: Dependabot alerts are disabled for this repository.",
+ "npm_audit": {
+  "command": "npm audit --package-lock-only --json (repo root)",
+  "counts_by_package": {
+   "info": 0,
+   "low": 0,
+   "moderate": 22,
+   "high": 17,
+   "critical": 3,
+   "total": 42
+  },
+  "dependencies": {
+   "prod": 696,
+   "dev": 202,
+   "optional": 76,
+   "peer": 11,
+   "peerOptional": 0,
+   "total": 919
+  },
+  "note": "npm counts one row per vulnerable package; a package flagged only because it depends on a flagged package has advisory 'pulled in through: ...'."
+ },
+ "gradle_note": "No Gradle lock file. Versions read from the build.gradle lines; each pinned name+version checked against api.osv.dev/v1/query (Maven). Lines whose version comes from React Native / Expo (no version in the file) are listed but not checked. Transitive Gradle libraries are not checked.",
+ "counts": {
+  "npm-audit:high": 49,
+  "npm-audit:moderate": 41,
+  "npm-audit:low": 7,
+  "npm-audit:critical": 3,
+  "osv:high": 1,
+  "osv:moderate": 1
+ },
+ "alerts": [
+  {
+   "id": "npm:@expo/cli",
+   "source": "npm-audit",
+   "package": "@expo/cli",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "pulled in through: @expo/config, @expo/config-plugins, @expo/inline-modules, @expo/metro-config, @expo/prebuild-config, glob, zod",
+   "range": "0.19.0-canary-20240625-2333e70 - 57.0.32 || 58.0.0-canary-20260806-8c2d007 - 58.1.19",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/expo/node_modules/@expo/cli"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@expo/config",
+   "source": "npm-audit",
+   "package": "@expo/config",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "pulled in through: @expo/config-plugins, glob",
+   "range": "9.1.0-canary-20240628-1ba8152 - 57.0.10 || 58.0.0-canary-20260806-8c2d007 - 58.0.10",
+   "fixed_in": null,
+   "fix_available": "yes, via expo@52.0.49 (major)",
+   "paths": [
+    "node_modules/@expo/config"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@expo/config-plugins",
+   "source": "npm-audit",
+   "package": "@expo/config-plugins",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "pulled in through: glob, xcode",
+   "range": "<=57.0.11 || 58.0.0-canary-20260806-8c2d007 - 58.0.11",
+   "fixed_in": null,
+   "fix_available": "yes, via expo-sharing@58.0.23 (major)",
+   "paths": [
+    "node_modules/@expo/config-plugins"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@expo/fingerprint",
+   "source": "npm-audit",
+   "package": "@expo/fingerprint",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "pulled in through: glob, minimatch",
+   "range": ">=0.11.12-canary-20250303-4dba60e",
+   "fixed_in": null,
+   "fix_available": "yes, via expo@52.0.49 (major)",
+   "paths": [
+    "node_modules/@expo/fingerprint"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@expo/inline-modules",
+   "source": "npm-audit",
+   "package": "@expo/inline-modules",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "pulled in through: @expo/config-plugins",
+   "range": "0.0.2-canary-20260409-6fc2991 - 0.1.0-canary-20260624-9d83b81 || 0.1.5-canary-20260806-8c2d007 || 0.1.6-canary-20260812-27f94d4 || 0.1.8-canary-20260902-26df09e - 0.1.8-canary-20260909-ea7a89a || 0.2.0-canary-20260629-3010085 - 0.2.0-canary-20260723-64edab9",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@expo/inline-modules"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@expo/local-build-cache-provider",
+   "source": "npm-audit",
+   "package": "@expo/local-build-cache-provider",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "pulled in through: @expo/config",
+   "range": "<=57.0.0-canary-20260723-64edab9 || 58.0.0-canary-20260806-8c2d007 - 58.0.0-canary-20260909-ea7a89a",
+   "fixed_in": null,
+   "fix_available": "yes, via expo@52.0.49 (major)",
+   "paths": [
+    "node_modules/@expo/local-build-cache-provider"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@expo/metro-config",
+   "source": "npm-audit",
+   "package": "@expo/metro-config",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "pulled in through: @expo/config, glob",
+   "range": "0.19.0-canary-20240625-2333e70 - 57.0.13 || 58.0.0-canary-20260806-8c2d007 - 58.0.20",
+   "fixed_in": null,
+   "fix_available": "yes, via expo@52.0.49 (major)",
+   "paths": [
+    "node_modules/@expo/metro-config"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@expo/prebuild-config",
+   "source": "npm-audit",
+   "package": "@expo/prebuild-config",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "pulled in through: @expo/config, @expo/config-plugins",
+   "range": "7.0.9-canary-20240719-83ee47b - 7.0.9-canary-20240814-ce0f7d5 || 7.1.0-canary-20240904-69100c1 - 57.0.0-canary-20260723-64edab9 || 58.0.0-canary-20260806-8c2d007 - 58.0.0-canary-20260909-ea7a89a",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@expo/prebuild-config"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@playwright/test",
+   "source": "npm-audit",
+   "package": "@playwright/test",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "pulled in through: playwright",
+   "range": "0.9.7 - 0.1112.0-alpha2 || 1.38.0-alpha-1692262648000 - 1.55.1-beta-1758616458000",
+   "fixed_in": null,
+   "fix_available": "yes, via @playwright/test@1.65.1",
+   "paths": [
+    "node_modules/@playwright/test"
+   ],
+   "direct": true
+  },
+  {
+   "id": "npm:@typescript-eslint/eslint-plugin",
+   "source": "npm-audit",
+   "package": "@typescript-eslint/eslint-plugin",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "pulled in through: @typescript-eslint/type-utils, @typescript-eslint/utils",
+   "range": "6.16.0 - 8.72.2",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@typescript-eslint/eslint-plugin"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@typescript-eslint/parser",
+   "source": "npm-audit",
+   "package": "@typescript-eslint/parser",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "pulled in through: @typescript-eslint/typescript-estree",
+   "range": "6.16.0 - 8.72.2",
+   "fixed_in": null,
+   "fix_available": "yes, via typescript-eslint@8.73.0",
+   "paths": [
+    "node_modules/@typescript-eslint/parser"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@typescript-eslint/type-utils",
+   "source": "npm-audit",
+   "package": "@typescript-eslint/type-utils",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "pulled in through: @typescript-eslint/typescript-estree, @typescript-eslint/utils",
+   "range": "6.16.0 - 8.72.2",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@typescript-eslint/type-utils"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@typescript-eslint/typescript-estree",
+   "source": "npm-audit",
+   "package": "@typescript-eslint/typescript-estree",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "pulled in through: minimatch",
+   "range": "6.16.0 - 8.72.2",
+   "fixed_in": null,
+   "fix_available": "yes, via typescript-eslint@8.73.0",
+   "paths": [
+    "node_modules/@typescript-eslint/typescript-estree"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@typescript-eslint/utils",
+   "source": "npm-audit",
+   "package": "@typescript-eslint/utils",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "pulled in through: @typescript-eslint/typescript-estree",
+   "range": "6.16.0 - 8.72.2",
+   "fixed_in": null,
+   "fix_available": "yes, via typescript-eslint@8.73.0",
+   "paths": [
+    "node_modules/@typescript-eslint/utils"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@vitest/mocker:GHSA-82fw-gwwq-j7x9",
+   "source": "npm-audit",
+   "package": "@vitest/mocker",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-82fw-gwwq-j7x9",
+   "title": "Vitest: Path Traversal / Arbitrary File Read via @vitest/mocker Redirect Mock",
+   "range": ">=2.1.0 <4.1.11",
+   "fixed_in": null,
+   "fix_available": "yes, via vitest@5.1.1 (major)",
+   "paths": [
+    "node_modules/@vitest/mocker"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@vitest/mocker:GHSA-qxg6-89mg-rqv8",
+   "source": "npm-audit",
+   "package": "@vitest/mocker",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-qxg6-89mg-rqv8",
+   "title": "Vitest: Code injection via unauthenticated manual mock registration",
+   "range": ">=2.1.0-beta.7 <4.1.12",
+   "fixed_in": null,
+   "fix_available": "yes, via vitest@5.1.1 (major)",
+   "paths": [
+    "node_modules/@vitest/mocker"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-6gmq-8vp8-gcm6",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-6gmq-8vp8-gcm6",
+   "title": "xmldom: XML fragment injection via invalid EntityReference.nodeName during requireWellFormed serialization",
+   "range": ">=0.9.0 <=0.9.11",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-6gmq-8vp8-gcm6",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-6gmq-8vp8-gcm6",
+   "title": "xmldom: XML fragment injection via invalid EntityReference.nodeName during requireWellFormed serialization",
+   "range": ">=0.7.0 <=0.8.14",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-6mj3-qw4j-hgrw",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-6mj3-qw4j-hgrw",
+   "title": "xmldom: HTML raw-text closing-tag case mismatch causes output amplification",
+   "range": ">=0.9.0-beta.1 <=0.9.11",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-g53g-w8rj-fmg7",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-g53g-w8rj-fmg7",
+   "title": "xmldom PI grammar regex ReDoS: quadratic backtracking on unterminated processing instructions",
+   "range": ">=0.9.0-beta.9 <=0.9.10",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-w2rr-34g9-rvrj",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-w2rr-34g9-rvrj",
+   "title": "xmldom: Element name injection via createElement() bypasses requireWellFormed",
+   "range": ">=0.7.0 <=0.8.13",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-w2rr-34g9-rvrj",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-w2rr-34g9-rvrj",
+   "title": "xmldom: Element name injection via createElement() bypasses requireWellFormed",
+   "range": ">=0.9.0 <=0.9.10",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-4w3w-2rp5-g8jm",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-4w3w-2rp5-g8jm",
+   "title": "xmldom: Attribute name injection via setAttribute() bypasses requireWellFormed",
+   "range": ">=0.7.0 <=0.8.13",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-4w3w-2rp5-g8jm",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-4w3w-2rp5-g8jm",
+   "title": "xmldom: Attribute name injection via setAttribute() bypasses requireWellFormed",
+   "range": ">=0.9.0 <=0.9.10",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-c7q8-3ch8-vqpv",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-c7q8-3ch8-vqpv",
+   "title": "xmldom: Processing Instruction Target Injection Bypasses requireWellFormed",
+   "range": ">=0.9.0 <=0.9.11",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-c7q8-3ch8-vqpv",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-c7q8-3ch8-vqpv",
+   "title": "xmldom: Processing Instruction Target Injection Bypasses requireWellFormed",
+   "range": ">=0.7.0 <=0.8.14",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-27p8-2357-5qqv",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-27p8-2357-5qqv",
+   "title": "xmldom: DocType `name` Injection Bypasses requireWellFormed",
+   "range": ">=0.9.0 <=0.9.11",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-27p8-2357-5qqv",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-27p8-2357-5qqv",
+   "title": "xmldom: DocType `name` Injection Bypasses requireWellFormed",
+   "range": ">=0.7.0 <=0.8.14",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-3px3-54cx-rmw9",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-3px3-54cx-rmw9",
+   "title": "xmldom: Creation-time XML Name/QName validation is bypassable via an embedded line terminator, allowing injection on the default serialization path",
+   "range": ">=0.9.0 <=0.9.11",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-vr34-hp96-76pp",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-vr34-hp96-76pp",
+   "title": "xmldom: requireWellFormed DocType publicId/systemId validation is bypassable via an embedded line terminator",
+   "range": ">=0.9.10 <=0.9.11",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-6h8r-xr42-gp59",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-6h8r-xr42-gp59",
+   "title": "xmldom: Parser silently accepts a not-well-formed end tag whose name is followed by a line break and trailing content",
+   "range": ">=0.9.0 <=0.9.11",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-6h8r-xr42-gp59",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-6h8r-xr42-gp59",
+   "title": "xmldom: Parser silently accepts a not-well-formed end tag whose name is followed by a line break and trailing content",
+   "range": ">=0.7.0 <=0.8.14",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-8344-3jmq-59r6",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-8344-3jmq-59r6",
+   "title": "xmldom: Quadratic-time attribute deduplication",
+   "range": ">=0.9.0 <=0.9.11",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-8344-3jmq-59r6",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-8344-3jmq-59r6",
+   "title": "xmldom: Quadratic-time attribute deduplication",
+   "range": ">=0.7.0 <=0.8.14",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-x4fp-j954-r2f4",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-x4fp-j954-r2f4",
+   "title": "xmldom: End-tag Whitespace-Trim Regex ReDoS — quadratic backtracking in the 0.8.x end-tag parser",
+   "range": ">=0.7.0 <=0.8.14",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-965w-775f-mr7g",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-965w-775f-mr7g",
+   "title": "xmldom: Quadratic-memory consumption",
+   "range": ">=0.9.0 <=0.9.11",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-965w-775f-mr7g",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-965w-775f-mr7g",
+   "title": "xmldom: Quadratic-memory consumption",
+   "range": ">=0.7.0 <=0.8.14",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-93r5-fhx6-vmg9",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-93r5-fhx6-vmg9",
+   "title": "xmldom: Quadratic-time parsing via the malformed-input recovery path — `parseElementStartPart` re-scan and `normalize()` adjacent-text merge",
+   "range": ">=0.9.0 <=0.9.11",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:@xmldom/xmldom:GHSA-93r5-fhx6-vmg9",
+   "source": "npm-audit",
+   "package": "@xmldom/xmldom",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-93r5-fhx6-vmg9",
+   "title": "xmldom: Quadratic-time parsing via the malformed-input recovery path — `parseElementStartPart` re-scan and `normalize()` adjacent-text merge",
+   "range": ">=0.7.0 <=0.8.14",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/@xmldom/xmldom",
+    "node_modules/plist/node_modules/@xmldom/xmldom"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:baseline-browser-mapping:GHSA-w5vr-8v7q-w6rv",
+   "source": "npm-audit",
+   "package": "baseline-browser-mapping",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-w5vr-8v7q-w6rv",
+   "title": "baseline-browser-mapping process termination on invalid input causes denial of service",
+   "range": ">=2.0.0 <2.11.0",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/baseline-browser-mapping"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:brace-expansion:GHSA-mh99-v99m-4gvg",
+   "source": "npm-audit",
+   "package": "brace-expansion",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-mh99-v99m-4gvg",
+   "title": "brace-expansion: DoS via unbounded expansion length causing an out-of-memory process crash",
+   "range": ">=4.0.0 <5.0.8",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/brace-expansion"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:brace-expansion:GHSA-rgw5-rvv9-x895",
+   "source": "npm-audit",
+   "package": "brace-expansion",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-rgw5-rvv9-x895",
+   "title": "brace-expansion: DoS via unbounded intermediate arrays, bypassing the CVE-2026-14257 mitigation",
+   "range": ">=4.0.0 <5.0.9",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/brace-expansion"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:brace-expansion:GHSA-q2hr-2g5m-vwhr",
+   "source": "npm-audit",
+   "package": "brace-expansion",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-q2hr-2g5m-vwhr",
+   "title": "brace-expansion: Quadratic-time expansion of the `{a},b}` rewrite causes CPU denial of service",
+   "range": ">=4.0.0 <5.0.12",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/brace-expansion"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:brace-expansion:GHSA-qhr7-859c-m2p7",
+   "source": "npm-audit",
+   "package": "brace-expansion",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-qhr7-859c-m2p7",
+   "title": "brace-expansion: DoS via uncontrolled recursion on nested brace groups causing stack exhaustion",
+   "range": ">=4.0.0 <5.0.11",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/brace-expansion"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:brace-expansion:GHSA-6j4f-fj2g-mc7p",
+   "source": "npm-audit",
+   "package": "brace-expansion",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-6j4f-fj2g-mc7p",
+   "title": "brace-expansion: DoS via uncontrolled recursion in parseCommaParts causing stack exhaustion",
+   "range": ">=4.0.0 <5.0.10",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/brace-expansion"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:browserslist:GHSA-c83g-rgw3-j3cx",
+   "source": "npm-audit",
+   "package": "browserslist",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-c83g-rgw3-j3cx",
+   "title": "Browserslist: Unbounded memory growth (no cache eviction) via distinct query results, leading to eventual OOM",
+   "range": "<=4.28.6",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/browserslist"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:browserslist:GHSA-73wf-gq98-2v4g",
+   "source": "npm-audit",
+   "package": "browserslist",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-73wf-gq98-2v4g",
+   "title": "Browserslist: Uncaught crash / prototype write via untrusted browserslist-stats.json custom stats (normalizeStats)",
+   "range": "<=4.28.6",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/browserslist"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:decode-uri-component:GHSA-vcc3-ghjq-m6fr",
+   "source": "npm-audit",
+   "package": "decode-uri-component",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-vcc3-ghjq-m6fr",
+   "title": "decode-uri-component: Denial of service via exponential decoding of malformed percent-encoded input",
+   "range": "<=0.4.2",
+   "fixed_in": null,
+   "fix_available": "yes, via expo-router@58.0.32 (major)",
+   "paths": [
+    "node_modules/decode-uri-component"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:decode-uri-component:GHSA-qr28-fpjm-wq7f",
+   "source": "npm-audit",
+   "package": "decode-uri-component",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-qr28-fpjm-wq7f",
+   "title": "decode-uri-component vulnerable to denial of service via quadratic replacement of percent-encoded runs",
+   "range": "<=0.5.0",
+   "fixed_in": null,
+   "fix_available": "yes, via expo-router@58.0.32 (major)",
+   "paths": [
+    "node_modules/decode-uri-component"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:expo",
+   "source": "npm-audit",
+   "package": "expo",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "pulled in through: @expo/cli, @expo/config, @expo/config-plugins, @expo/fingerprint, @expo/local-build-cache-provider, @expo/metro-config",
+   "range": ">=52.0.0-canary-20240625-2333e70",
+   "fixed_in": null,
+   "fix_available": "yes, via expo@52.0.49 (major)",
+   "paths": [
+    "node_modules/expo"
+   ],
+   "direct": true
+  },
+  {
+   "id": "npm:expo-router",
+   "source": "npm-audit",
+   "package": "expo-router",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "pulled in through: query-string",
+   "range": "1.2.2 - 3.1.2 || 5.2.0-canary-20250611-f0afe80 - 58.0.12",
+   "fixed_in": null,
+   "fix_available": "yes, via expo-router@58.0.32 (major)",
+   "paths": [
+    "apps/mobile/node_modules/expo-router"
+   ],
+   "direct": true
+  },
+  {
+   "id": "npm:expo-sharing",
+   "source": "npm-audit",
+   "package": "expo-sharing",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "pulled in through: @expo/config-plugins",
+   "range": "14.0.9-canary-20251205-756eb7a - 57.0.0-canary-20260723-64edab9 || 58.0.0-canary-20260806-8c2d007 - 58.0.0-canary-20260909-ea7a89a",
+   "fixed_in": null,
+   "fix_available": "yes, via expo-sharing@58.0.23 (major)",
+   "paths": [
+    "node_modules/expo-sharing"
+   ],
+   "direct": true
+  },
+  {
+   "id": "npm:expo-splash-screen",
+   "source": "npm-audit",
+   "package": "expo-splash-screen",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "pulled in through: @expo/config-plugins",
+   "range": "55.0.10-canary-20260424-7bedc9d - 55.0.10-canary-20260429-a5e59cf || 56.0.0-canary-20260212-4f61309 - 57.0.0-canary-20260723-64edab9 || 58.0.0-canary-20260806-8c2d007 - 58.0.0-canary-20260909-ea7a89a",
+   "fixed_in": null,
+   "fix_available": "yes, via expo-splash-screen@58.0.14 (major)",
+   "paths": [
+    "node_modules/expo-splash-screen"
+   ],
+   "direct": true
+  },
+  {
+   "id": "npm:glob:GHSA-3g3m-2fjr-6pw4",
+   "source": "npm-audit",
+   "package": "glob",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-3g3m-2fjr-6pw4",
+   "title": "Glob: AbortSignal cancellation bypass allows post-timeout filesystem traversal",
+   "range": ">=9.0.0 <=14.0.1",
+   "fixed_in": null,
+   "fix_available": "yes, via expo@52.0.49 (major)",
+   "paths": [
+    "node_modules/glob"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:image-size:GHSA-5p2g-fcmc-qvqq",
+   "source": "npm-audit",
+   "package": "image-size",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-5p2g-fcmc-qvqq",
+   "title": "image-size: JXL and HEIF parsers allow denial of service through infinite loops",
+   "range": ">=1.2.0 <=2.0.2",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/image-size"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:image-size:GHSA-w3rx-r6r6-pgpr",
+   "source": "npm-audit",
+   "package": "image-size",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-w3rx-r6r6-pgpr",
+   "title": "image-size: ICNS parser allows denial of service through an infinite loop",
+   "range": ">=0.6.3 <=2.0.2",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/image-size"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:minimatch:GHSA-g3hv-75wg-m249",
+   "source": "npm-audit",
+   "package": "minimatch",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-g3hv-75wg-m249",
+   "title": "minimatch has potential denial of service via globparts amplification",
+   "range": ">=7.0.0 <11.0.1",
+   "fixed_in": null,
+   "fix_available": "yes, via expo@52.0.49 (major)",
+   "paths": [
+    "node_modules/minimatch"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:nanoid:GHSA-28wg-ghj8-5hjv",
+   "source": "npm-audit",
+   "package": "nanoid",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-28wg-ghj8-5hjv",
+   "title": "nanoid: non-secure generators can loop indefinitely with negative size",
+   "range": "<3.3.16",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/nanoid"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:nanoid:GHSA-2v37-7h3g-55p8",
+   "source": "npm-audit",
+   "package": "nanoid",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-2v37-7h3g-55p8",
+   "title": "nanoid: custom generators can loop indefinitely when size is zero",
+   "range": "<3.3.18",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/nanoid"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-86w9-cpqp-85rv",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-86w9-cpqp-85rv",
+   "title": "node-forge RSA PKCS#1 v1.5 signature verification accepts extra nested DigestAlgorithm elements",
+   "range": "<=1.4.0",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-4642-5mcj-2rqw",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "low",
+   "advisory": "GHSA-4642-5mcj-2rqw",
+   "title": "Forge: ASN.1 OID first arc truncation in asn1.oidToDer",
+   "range": "<=1.4.0",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-6wvx-3r32-xmcg",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-6wvx-3r32-xmcg",
+   "title": "Forge: Prototype Pollution in forge.http cookie handling via a malicious Set-Cookie",
+   "range": "<=1.4.0",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-525v-9gp9-w22h",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-525v-9gp9-w22h",
+   "title": "Forge: TLS client crash when the server sends no certificate",
+   "range": "<=1.4.0",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-7wch-p9px-956x",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-7wch-p9px-956x",
+   "title": "Forge: Regular expression denial of service in PEM decoding (pem.decode)",
+   "range": "<=1.4.0",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-h6cr-wjv9-3cpp",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "low",
+   "advisory": "GHSA-h6cr-wjv9-3cpp",
+   "title": "Forge: Denial of Service via infinite loop in BigInteger.modInverse() with negative input (incomplete fix of CVE-2026-33891)",
+   "range": "<=1.4.0",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-4487-j8r4-4g2f",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "low",
+   "advisory": "GHSA-4487-j8r4-4g2f",
+   "title": "Forge: verifyCertificateChain() removes trusted CA certificates with the same subject from the CA store",
+   "range": "<=1.4.0",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-5cwg-6vw7-rj6p",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-5cwg-6vw7-rj6p",
+   "title": "Forge: AES-GCM authentication bypass via unvalidated tagLength option",
+   "range": "<=1.4.0",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-jc66-7q78-782g",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-jc66-7q78-782g",
+   "title": "Forge: PKCS#12 MAC forgery and constant-key PBE via zero iteration count",
+   "range": "<=1.4.0",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-8hrf-8g6f-7xwp",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-8hrf-8g6f-7xwp",
+   "title": "Forge: Denial of service in TLS record processing via a record interleaved with a fragmented handshake message",
+   "range": "<=1.4.0",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-hqq3-7jhf-c5jx",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-hqq3-7jhf-c5jx",
+   "title": "Forge: Denial of service in TLS record processing via call stack exhaustion",
+   "range": "<=1.4.0",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-5x38-2vff-x55p",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-5x38-2vff-x55p",
+   "title": "Forge: X.509 basicConstraints bypass in verifyCertificateChain() via deprecated extension OIDs 2.5.29.10 and 2.5.29.13",
+   "range": "<=1.4.0",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-9wg5-mj3p-v49q",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "low",
+   "advisory": "GHSA-9wg5-mj3p-v49q",
+   "title": "Forge: Certificate signature verified with the issuer's RSA signature scheme",
+   "range": "<=1.4.0",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-2vgq-wchc-25w7",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "low",
+   "advisory": "GHSA-2vgq-wchc-25w7",
+   "title": "Forge: Incomplete PKCS#7 padding validation in AES/DES CBC and ECB decryption",
+   "range": "<=1.4.0",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-h46v-rmh6-fq4f",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-h46v-rmh6-fq4f",
+   "title": "Forge: X.509 pathLenConstraint not enforced by verifyCertificateChain() for CA certificates without keyUsage",
+   "range": "<=1.4.0",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-rhr8-3pm8-cq29",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-rhr8-3pm8-cq29",
+   "title": "Forge: ASN.1 resource exhaustion via BIT STRING decoding in asn1.fromDer",
+   "range": "<=1.4.0",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-6qrw-m8cv-hcxf",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-6qrw-m8cv-hcxf",
+   "title": "Forge: RSA PKCS#1 v1.5 signature forgery via non-canonical DigestInfo encoding",
+   "range": "<=1.4.0",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-6889-vf6x-f3g5",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "low",
+   "advisory": "GHSA-6889-vf6x-f3g5",
+   "title": "Forge: Ed25519 signature verification accepts small-order public keys",
+   "range": "<=1.4.2",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-w4xr-hqv8-ch44",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-w4xr-hqv8-ch44",
+   "title": "Forge: TLS client crash on an unsupported ServerHello compression method",
+   "range": "<=1.4.2",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-6cv4-p8m7-4r25",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-6cv4-p8m7-4r25",
+   "title": "Forge: ReDoS in forge.http response header and cookie trimming",
+   "range": ">=0.1.2 <=1.4.2",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:node-forge:GHSA-j8rw-jp99-435v",
+   "source": "npm-audit",
+   "package": "node-forge",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-j8rw-jp99-435v",
+   "title": "Forge: TLS client crash on a handshake record received without a session",
+   "range": "<=1.4.2",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/node-forge"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:playwright:GHSA-7mvr-c777-76hp",
+   "source": "npm-audit",
+   "package": "playwright",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-7mvr-c777-76hp",
+   "title": "Playwright downloads and installs browsers without verifying the authenticity of the SSL certificate",
+   "range": "<1.55.1",
+   "fixed_in": null,
+   "fix_available": "yes, via @playwright/test@1.65.1",
+   "paths": [
+    "node_modules/playwright"
+   ],
+   "direct": true
+  },
+  {
+   "id": "npm:postcss:GHSA-fxqj-rqcc-2cmp",
+   "source": "npm-audit",
+   "package": "postcss",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-fxqj-rqcc-2cmp",
+   "title": "PostCSS: incomplete fix of GHSA-6g55-p6wh-862q — attacker-controlled sourceMappingURL reads arbitrary .map files when `from` is unset",
+   "range": "<=8.5.22",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/postcss"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:postcss:GHSA-r28c-9q8g-f849",
+   "source": "npm-audit",
+   "package": "postcss",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-r28c-9q8g-f849",
+   "title": "PostCSS: Path Traversal in Previous Source Map Auto-Loading (sourceMappingURL) leads to Arbitrary .map File Disclosure",
+   "range": "<=8.5.17",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/postcss"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:query-string",
+   "source": "npm-audit",
+   "package": "query-string",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "pulled in through: decode-uri-component",
+   "range": "5.0.0 - 9.4.1",
+   "fixed_in": null,
+   "fix_available": "yes, via expo-router@58.0.32 (major)",
+   "paths": [
+    "node_modules/query-string"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:shell-quote:GHSA-pqg4-j6r4-53mv",
+   "source": "npm-audit",
+   "package": "shell-quote",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "critical",
+   "advisory": "GHSA-pqg4-j6r4-53mv",
+   "title": "shell-quote: `quote()` command injection via a line terminator in a token after a `{ comment }` token",
+   "range": ">=1.8.4 <1.11.0",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/shell-quote"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:source-map-js:GHSA-68fv-2mgg-jv7q",
+   "source": "npm-audit",
+   "package": "source-map-js",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-68fv-2mgg-jv7q",
+   "title": "source-map-js allows event-loop denial of service through indexed source-map section offsets",
+   "range": ">=1.0.0 <1.2.2",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/source-map-js"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:tinypool:GHSA-5gmw-xhrv-c9v3",
+   "source": "npm-audit",
+   "package": "tinypool",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "critical",
+   "advisory": "GHSA-5gmw-xhrv-c9v3",
+   "title": "Tinypool: Prototype Pollution gadget in worker options leads to Remote Code Execution",
+   "range": "<=2.1.0",
+   "fixed_in": null,
+   "fix_available": "yes, via vitest@5.1.1 (major)",
+   "paths": [
+    "node_modules/tinypool"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:tinypool:GHSA-85c8-ppgw-ccpr",
+   "source": "npm-audit",
+   "package": "tinypool",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "critical",
+   "advisory": "GHSA-85c8-ppgw-ccpr",
+   "title": "Tinypool: Prototype Pollution Gadget to RCE in run() options",
+   "range": "<2.1.2",
+   "fixed_in": null,
+   "fix_available": "yes, via vitest@5.1.1 (major)",
+   "paths": [
+    "node_modules/tinypool"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:typescript-eslint",
+   "source": "npm-audit",
+   "package": "typescript-eslint",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "pulled in through: @typescript-eslint/eslint-plugin, @typescript-eslint/parser, @typescript-eslint/typescript-estree, @typescript-eslint/utils",
+   "range": "<=8.72.2",
+   "fixed_in": null,
+   "fix_available": "yes, via typescript-eslint@8.73.0",
+   "paths": [
+    "node_modules/typescript-eslint"
+   ],
+   "direct": true
+  },
+  {
+   "id": "npm:uuid:GHSA-w5hq-g745-h8pq",
+   "source": "npm-audit",
+   "package": "uuid",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-w5hq-g745-h8pq",
+   "title": "uuid: Missing buffer bounds check in v3/v5/v6 when buf is provided",
+   "range": "<11.1.1",
+   "fixed_in": null,
+   "fix_available": "yes, via expo-sharing@58.0.23 (major)",
+   "paths": [
+    "node_modules/uuid"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:vite:GHSA-698v-4r3x-3vcv",
+   "source": "npm-audit",
+   "package": "vite",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-698v-4r3x-3vcv",
+   "title": "launch-editor: escapeCmdArgs() omits % escaping on Windows",
+   "range": "<=6.4.3",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/vite"
+   ],
+   "direct": true
+  },
+  {
+   "id": "npm:vite:GHSA-r825-w8mm-5pxw",
+   "source": "npm-audit",
+   "package": "vite",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-r825-w8mm-5pxw",
+   "title": "launch-editor: Editor CLI flag misinterpretation causing arbitrary command execution for some editors",
+   "range": "<=6.4.3",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/vite"
+   ],
+   "direct": true
+  },
+  {
+   "id": "npm:vite:GHSA-587h-7wmj-h5pm",
+   "source": "npm-audit",
+   "package": "vite",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-587h-7wmj-h5pm",
+   "title": "launch-editor: `fs.existsSync()` existence check can be bypassed on Windows",
+   "range": "<=6.4.3",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/vite"
+   ],
+   "direct": true
+  },
+  {
+   "id": "npm:vite:GHSA-9jrq-w75r-8gcw",
+   "source": "npm-audit",
+   "package": "vite",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "low",
+   "advisory": "GHSA-9jrq-w75r-8gcw",
+   "title": "Vite: Cross origin script execution through Vite custom middleware",
+   "range": "<=6.4.3",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/vite"
+   ],
+   "direct": true
+  },
+  {
+   "id": "npm:vite:GHSA-rq7h-c2jc-7f22",
+   "source": "npm-audit",
+   "package": "vite",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-rq7h-c2jc-7f22",
+   "title": "Vite: Files outside `server.fs.allow` could be served when project paths match system paths on non-Windows machine",
+   "range": "<=6.4.3",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/vite"
+   ],
+   "direct": true
+  },
+  {
+   "id": "npm:vitest:GHSA-82fw-gwwq-j7x9",
+   "source": "npm-audit",
+   "package": "vitest",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "GHSA-82fw-gwwq-j7x9",
+   "title": "Vitest: Path Traversal / Arbitrary File Read via @vitest/mocker Redirect Mock",
+   "range": ">=2.1.0 <4.1.11",
+   "fixed_in": null,
+   "fix_available": "yes, via vitest@5.1.1 (major)",
+   "paths": [
+    "node_modules/vitest"
+   ],
+   "direct": true
+  },
+  {
+   "id": "npm:xcode",
+   "source": "npm-audit",
+   "package": "xcode",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "moderate",
+   "advisory": "pulled in through: uuid",
+   "range": "0.9.2 - 3.0.2-nightly.20251125002453809.sha.e6b981ec",
+   "fixed_in": null,
+   "fix_available": "yes, via expo-sharing@58.0.23 (major)",
+   "paths": [
+    "node_modules/xcode"
+   ],
+   "direct": false
+  },
+  {
+   "id": "npm:xlsx:GHSA-4r6h-8v6p-xvw6",
+   "source": "npm-audit",
+   "package": "xlsx",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-4r6h-8v6p-xvw6",
+   "title": "Prototype Pollution in sheetJS",
+   "range": "<0.19.3",
+   "fixed_in": null,
+   "fix_available": "no",
+   "paths": [
+    "node_modules/xlsx"
+   ],
+   "direct": true
+  },
+  {
+   "id": "npm:xlsx:GHSA-5pgg-2g8v-p4x9",
+   "source": "npm-audit",
+   "package": "xlsx",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-5pgg-2g8v-p4x9",
+   "title": "SheetJS Regular Expression Denial of Service (ReDoS)",
+   "range": "<0.20.2",
+   "fixed_in": null,
+   "fix_available": "no",
+   "paths": [
+    "node_modules/xlsx"
+   ],
+   "direct": true
+  },
+  {
+   "id": "npm:zod:GHSA-mrhx-c7xc-m3w5",
+   "source": "npm-audit",
+   "package": "zod",
+   "ecosystem": "npm",
+   "manifest": "package-lock.json",
+   "severity": "high",
+   "advisory": "GHSA-mrhx-c7xc-m3w5",
+   "title": "Zod can exhaust memory while validating oversized constrained collections",
+   "range": "<4.6.6",
+   "fixed_in": null,
+   "fix_available": "yes",
+   "paths": [
+    "node_modules/zod"
+   ],
+   "direct": false
+  },
+  {
+   "id": "osv:GHSA-xxph-c9ww-hj94:apps/mobile/android/wear/build.gradle",
+   "source": "osv",
+   "package": "com.google.guava:guava",
+   "ecosystem": "Maven",
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "severity": "high",
+   "advisory": "GHSA-xxph-c9ww-hj94 (CVE-2026-102554)",
+   "title": "Google Guava: CompactHashMap/CompactHashSet/MapMakerInternalMap deserialization triggers uncontrolled memory allocation",
+   "range": "version 32.0.1-android affected",
+   "fixed_in": "33.7.2",
+   "config": "implementation"
+  },
+  {
+   "id": "osv:GHSA-ghc9-756g-vrcv:apps/mobile/modules/forge-rest/android/build.gradle",
+   "source": "osv",
+   "package": "org.json:json",
+   "ecosystem": "Maven",
+   "manifest": "apps/mobile/modules/forge-rest/android/build.gradle",
+   "severity": "moderate",
+   "advisory": "GHSA-ghc9-756g-vrcv (CVE-2026-59171)",
+   "title": "JSON-java: JSONTokener Has Unbounded Numeric String Resource-Exhaustion DoS",
+   "range": "version 20240303 affected",
+   "fixed_in": "20260719",
+   "config": "testImplementation"
+  }
+ ],
+ "gradle": [
+  {
+   "manifest": "apps/mobile/android/build.gradle",
+   "config": "classpath",
+   "package": "com.google.gms:google-services",
+   "version": "4.4.2",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "config": "implementation",
+   "package": "androidx.core:core-ktx",
+   "version": "1.16.0",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "config": "implementation",
+   "package": "androidx.activity:activity-compose",
+   "version": "1.10.1",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "config": "implementation",
+   "package": "androidx.fragment:fragment",
+   "version": "1.8.6",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "config": "implementation",
+   "package": "androidx.wear.compose:compose-material",
+   "version": "1.4.1",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "config": "implementation",
+   "package": "androidx.wear.compose:compose-foundation",
+   "version": "1.4.1",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "config": "implementation",
+   "package": "androidx.wear:wear-ongoing",
+   "version": "1.0.0",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "config": "implementation",
+   "package": "androidx.wear:wear-phone-interactions",
+   "version": "1.1.0",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "config": "implementation",
+   "package": "androidx.wear:wear-remote-interactions",
+   "version": "1.1.0",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "config": "implementation",
+   "package": "androidx.health:health-services-client",
+   "version": "1.1.0",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "config": "implementation",
+   "package": "com.google.guava:guava",
+   "version": "32.0.1-android",
+   "osv": [
+    {
+     "id": "GHSA-xxph-c9ww-hj94",
+     "aliases": [
+      "CVE-2026-102554"
+     ],
+     "summary": "Google Guava: CompactHashMap/CompactHashSet/MapMakerInternalMap deserialization triggers uncontrolled memory allocation",
+     "severity": "HIGH",
+     "fixed_in": [
+      "33.7.2"
+     ]
+    }
+   ]
+  },
+  {
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "config": "implementation",
+   "package": "com.google.android.gms:play-services-wearable",
+   "version": "20.0.1",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "config": "implementation",
+   "package": "androidx.wear:wear",
+   "version": "1.3.0",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "config": "testImplementation",
+   "package": "junit:junit",
+   "version": "4.13.2",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "config": "testImplementation",
+   "package": "org.robolectric:robolectric",
+   "version": "4.14.1",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "config": "testImplementation",
+   "package": "io.github.takahirom.roborazzi:roborazzi",
+   "version": "1.60.0",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "config": "testImplementation",
+   "package": "io.github.takahirom.roborazzi:roborazzi-compose",
+   "version": "1.60.0",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "config": "testImplementation",
+   "package": "androidx.test:core",
+   "version": "1.6.1",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "config": "testImplementation",
+   "package": "androidx.test.ext:junit",
+   "version": "1.2.1",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/modules/forge-billing/android/build.gradle",
+   "config": "implementation",
+   "package": "com.android.billingclient:billing",
+   "version": "8.0.0",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/modules/forge-phone/android/build.gradle",
+   "config": "implementation",
+   "package": "androidx.health.connect:connect-client",
+   "version": "1.1.0",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/modules/forge-phone/android/build.gradle",
+   "config": "implementation",
+   "package": "org.jetbrains.kotlinx:kotlinx-coroutines-android",
+   "version": "1.10.2",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/modules/forge-phone/android/build.gradle",
+   "config": "implementation",
+   "package": "androidx.activity:activity",
+   "version": "1.8.0",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/modules/forge-phone/android/build.gradle",
+   "config": "implementation",
+   "package": "com.google.android.play:app-update",
+   "version": "2.1.0",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/modules/forge-phone/android/build.gradle",
+   "config": "implementation",
+   "package": "androidx.core:core",
+   "version": "1.12.0",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/modules/forge-phone/android/build.gradle",
+   "config": "testImplementation",
+   "package": "junit:junit",
+   "version": "4.13.2",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/modules/forge-phone/android/build.gradle",
+   "config": "testImplementation",
+   "package": "org.robolectric:robolectric",
+   "version": "4.14.1",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/modules/forge-phone/android/build.gradle",
+   "config": "testImplementation",
+   "package": "androidx.test:core",
+   "version": "1.6.1",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/modules/forge-rest/android/build.gradle",
+   "config": "implementation",
+   "package": "com.google.android.gms:play-services-wearable",
+   "version": "20.0.1",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/modules/forge-rest/android/build.gradle",
+   "config": "implementation",
+   "package": "androidx.wear:wear-remote-interactions",
+   "version": "1.1.0",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/modules/forge-rest/android/build.gradle",
+   "config": "implementation",
+   "package": "com.google.guava:listenablefuture",
+   "version": "1.0",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/modules/forge-rest/android/build.gradle",
+   "config": "testImplementation",
+   "package": "junit:junit",
+   "version": "4.13.2",
+   "osv": []
+  },
+  {
+   "manifest": "apps/mobile/modules/forge-rest/android/build.gradle",
+   "config": "testImplementation",
+   "package": "org.json:json",
+   "version": "20240303",
+   "osv": [
+    {
+     "id": "GHSA-ghc9-756g-vrcv",
+     "aliases": [
+      "CVE-2026-59171"
+     ],
+     "summary": "JSON-java: JSONTokener Has Unbounded Numeric String Resource-Exhaustion DoS",
+     "severity": "MODERATE",
+     "fixed_in": [
+      "20260719"
+     ]
+    }
+   ]
+  },
+  {
+   "manifest": "apps/mobile/android/build.gradle",
+   "config": "classpath",
+   "package": "com.android.tools.build:gradle",
+   "version": null,
+   "osv": "not checked: version set by the React Native / Expo build, not written in the file"
+  },
+  {
+   "manifest": "apps/mobile/android/build.gradle",
+   "config": "classpath",
+   "package": "com.facebook.react:react-native-gradle-plugin",
+   "version": null,
+   "osv": "not checked: version set by the React Native / Expo build, not written in the file"
+  },
+  {
+   "manifest": "apps/mobile/android/build.gradle",
+   "config": "classpath",
+   "package": "org.jetbrains.kotlin:kotlin-gradle-plugin",
+   "version": null,
+   "osv": "not checked: version set by the React Native / Expo build, not written in the file"
+  },
+  {
+   "manifest": "apps/mobile/android/wear/build.gradle",
+   "config": "classpath",
+   "package": "org.jetbrains.kotlin.plugin.compose:...gradle.plugin (kotlinVersion)",
+   "version": null,
+   "osv": "not checked: version set by the React Native / Expo build, not written in the file"
+  },
+  {
+   "manifest": "apps/mobile/android/app/build.gradle",
+   "config": "implementation",
+   "package": "com.facebook.react:react-android",
+   "version": null,
+   "osv": "not checked: version set by the React Native / Expo build, not written in the file"
+  },
+  {
+   "manifest": "apps/mobile/android/app/build.gradle",
+   "config": "implementation",
+   "package": "com.facebook.react:hermes-android",
+   "version": null,
+   "osv": "not checked: version set by the React Native / Expo build, not written in the file"
+  },
+  {
+   "manifest": "apps/mobile/android/app/build.gradle",
+   "config": "implementation",
+   "package": "com.facebook.fresco:animated-gif / webpsupport / animated-webp (expoLibs fresco version)",
+   "version": null,
+   "osv": "not checked: version set by the React Native / Expo build, not written in the file"
+  },
+  {
+   "manifest": "apps/mobile/android/app/build.gradle",
+   "config": "implementation",
+   "package": "jscFlavor",
+   "version": null,
+   "osv": "not checked: version set by the React Native / Expo build, not written in the file"
+  }
+ ]
+}

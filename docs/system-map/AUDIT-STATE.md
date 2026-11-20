@@ -28,7 +28,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | step | helpers so far | average cost |
 |---|---|---|
 | plan-review | 1 | 4.3 (171k tokens) |
-| tools | 4 | 5.0 (199k tokens) |
+| tools | 5 | 4.6 (185k tokens) |
 | A1b | 1 | 5.0 (201k tokens) |
 | A2 | 37 | 3.9 (158k tokens) |
 | A7 | 19 | 4.4 (176k tokens) |
@@ -45,13 +45,11 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L5 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 0 todo, 2 in progress, 259 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 1 in progress, 260 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| M-machine-pass | tools | machine pass for lens 3: db-security.json and cve.json (catalog reads only) | in progress | _work/M-machine-pass.md |  |
 | L5-panel-pay-machines | L5 | lens 5 (Money) x panel / panel/pay-machines: 4 items | in progress | _work/L5-panel-pay-machines.md |  |
-| L4-server-database-2 | L4 | lens 4 (Privacy and law) x server / server/database-2: 6 items | done | _work/L4-server-database-2.md | lens 4 x server/database-2: 6 items checked; 5 new findings (S2: promised clean-ups (62/63/60/90/180/30 days) run only when a screen is opened; S2: a deleted member's desk photo and measurements stay (repeat of L4-panel-shop-01: merge in 3H); 3 S3 on not-live features), 1 reused |
 | L4-server-database-3 | L4 | lens 4 (Privacy and law) x server / server/database-3: 6 items | done | _work/L4-server-database-3.md | L4 database-3: 6 rows, 5 new findings (2 S2: notice says 30 workouts/3 months vs 400/12; join form and web-page questions not in the notice) |
 | L4-server-hq-gate-workers | L4 | lens 4 (Privacy and law) x server / server/hq-gate-workers: 6 items | done | _work/L4-server-hq-gate-workers.md | L4 hq-gate-workers: 5 rows, 4 new S3 (door link unencrypted; plan buy payment company unnamed; backup looks not logged; leak notice duty left to gym) |
 | L4-server-panel-worker | L4 | lens 4 (Privacy and law) x server / server/panel-worker: 6 items | done | _work/L4-server-panel-worker.md | L4 panel-worker: 2 rows, 1 new S1 (owner voice goes to Sarvam, not named in the notice) |
@@ -59,7 +57,8 @@ Counts: 0 todo, 2 in progress, 259 done, 0 blocked. Full list: work-items.jsonl.
 | L4-web-pages-p2 | L4 | lens 4 (Privacy and law) x web / web/pages part 2: 1 items | done | _work/L4-web-pages-p2.md | L4 web-pages-p2: 6 rows, 5 new S3 (AI tag overclaims; web chat kept 90 days; notice changes not told; reminders unused; free-then-3-credits) |
 | L4-web-pages-p3 | L4 | lens 4 (Privacy and law) x web / web/pages part 3: 1 items | done | _work/L4-web-pages-p3.md | L4 web-pages-p3: 1 grid row, 11 reused, no new |
 | L4-web-pages | L4 | lens 4 (Privacy and law) x web / web/pages: 6 items | done | _work/L4-web-pages.md | L4 web-pages: 4 rows, 3 new (S2 Play deletion page wrong for phone-only members; S3 Google fonts; S3 friend form lacks notice) |
-(+ 251 older done items, not shown)
+| M-machine-pass | tools | machine pass for lens 3: db-security.json and cve.json (catalog reads only) | done | _work/M-machine-pass.md | db-security.json + cve.json made; 109 tables RLS on with 0 policies; ~220 definer fns open to anon; npm 3 critical/17 high; Dependabot off; definer settings query refused (needs his approval box) |
+(+ 252 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
