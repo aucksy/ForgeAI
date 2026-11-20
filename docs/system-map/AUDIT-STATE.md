@@ -42,22 +42,20 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A4b | 2 | 5.1 (204k tokens) |
 | A5 | 121 | 5.1 (202k tokens) |
 | L4 | 42 | 3.9 (157k tokens) |
-| L5 | 12 | 4.9 (194k tokens) |
+| L5 | 13 | 4.8 (193k tokens) |
 | L3 | 2 | 5.4 (215k tokens) |
 
 ## Work items
-Counts: 0 todo, 7 in progress, 274 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 6 in progress, 275 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | L3-panel-auth-data | L3 | lens 3 (Security) x panel / panel/auth-data: 11 items | in progress | _work/L3-panel-auth-data.md |  |
-| L5-panel-assistant | L5 | lens 5 (Money) x panel / panel/assistant: 4 items | in progress | _work/L5-panel-assistant.md |  |
 | L5-panel-auth-data | L5 | lens 5 (Money) x panel / panel/auth-data: 4 items | in progress | _work/L5-panel-auth-data.md |  |
 | L3-panel-pay-machines | L3 | lens 3 (Security) x panel / panel/pay-machines: 11 items | in progress | _work/L3-panel-pay-machines.md |  |
 | L3-panel-screens-1 | L3 | lens 3 (Security) x panel / panel/screens-1: 11 items | in progress | _work/L3-panel-screens-1.md |  |
 | L5-panel-ui-shell | L5 | lens 5 (Money) x panel / panel/ui-shell: 4 items | in progress | _work/L5-panel-ui-shell.md |  |
 | L5-phone-shop-1 | L5 | lens 5 (Money) x phone / phone/shop-1: 4 items | in progress | _work/L5-phone-shop-1.md |  |
-| L5-server-database-3 | L5 | lens 5 (Money) x server / server/database-3: 4 items | done | _work/L5-server-database-3.md | L5 server-database-3: 4 items, 4 new (S2 test payment gives real plan time and receipt; S2 test payments look real to members; S2 held payment invisible to owner; S3 upgrade counts one day too many), 6 reused |
 | L3-server-panel-worker | L3 | lens 3 (Security) x server / server/panel-worker: 11 items | done | _work/L3-server-panel-worker.md | L3 server-panel-worker: 11 items, 3 new (S2 rate limits count one shared Cloudflare address: desk lockout + sign-up busy; S3 code-try limit races, not live; S4 missing cross-member tests) |
 | L5-panel-logic-1 | L5 | lens 5 (Money) x panel / panel/logic-1: 4 items | done | _work/L5-panel-logic-1.md | L5 panel-logic-1: 4 items, 2 new (S3 GST counted as profit; S4 two Collected amounts), 5 reused |
 | L5-panel-logic-2 | L5 | lens 5 (Money) x panel / panel/logic-2: 4 items | done | _work/L5-panel-logic-2.md | L5 panel-logic-2: 4 items, 2 new S3 (QR pass visits move company after month closed; joining-fee line on every part payment), 4 reused |
@@ -65,7 +63,8 @@ Counts: 0 todo, 7 in progress, 274 done, 0 blocked. Full list: work-items.jsonl.
 | L5-server-database-1 | L5 | lens 5 (Money) x server / server/database-1: 4 items | done | _work/L5-server-database-1.md | L5 server-database-1: 4 items, 6 new (3 S3: branch trials drift, trial can be cut below 3 months (needs him), shop Collected cannot be undone; 3 S4), 2 reused |
 | L5-hq-app | L5 | lens 5 (Money) x hq / hq/app: 4 items | done | _work/L5-hq-app.md | L5 hq-app: 4 items, 8 new (S2 hand-set plan undone by old Starter switch; S2 credits card says 100 for Starter yearly (50); 5 S3; 1 S4), 4 reused; -06 repeats server-database-2-01 (merge in 3H) |
 | L5-panel-shop | L5 | lens 5 (Money) x panel / panel/shop: 4 items | done | _work/L5-panel-shop.md | L5 panel-shop: 4 items, 4 new (3 S2: online-paid shop order shows unpaid, desk charges again; paid order cancellable, no refund; test payment releases goods; S3 join poster says pay at desk), 6 reused |
-(+ 266 older done items, not shown)
+| L5-panel-assistant | L5 | lens 5 (Money) x panel / panel/assistant: 4 items | done | _work/L5-panel-assistant.md | L5 panel-assistant: 4 items, 5 new (3 S3: credit pack price never shown; server trusts app credit count; record payment fails on two plans; 2 S4), 7 reused |
+(+ 267 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
