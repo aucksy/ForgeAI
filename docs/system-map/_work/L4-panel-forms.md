@@ -1,0 +1,1 @@
+- 2026-11-20 started; inputs read (0 promises, 0 entities, 0 readers).
