@@ -44,23 +44,22 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A5 | 121 | 5.1 (202k tokens) |
 | L4 | 42 | 3.9 (157k tokens) |
 | L5 | 33 | 4.1 (163k tokens) |
-| L3 | 36 | 4.4 (174k tokens) |
+| L3 | 37 | 4.4 (174k tokens) |
 
 ## Work items
-Counts: 0 todo, 1 in progress, 329 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 0 in progress, 330 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L3-phone-onboarding-db | L3 | lens 3 (Security) x phone / phone/onboarding-db: 11 items | in progress | _work/L3-phone-onboarding-db.md |  |
-| L3-phone-tracker-lib | L3 | lens 3 (Security) x phone / phone/tracker-lib: 11 items | done | _work/L3-phone-tracker-lib.md | L3 phone-tracker-lib: 9 checked, 2 does-not-apply, 0 new, 0 reused |
 | L3-phone-tracker-services-1 | L3 | lens 3 (Security) x phone / phone/tracker-services-1: 11 items | done | _work/L3-phone-tracker-services-1.md | L3 phone-tracker-services-1: 10 checked, 1 does-not-apply, 1 new S4 (spreadsheet formula in history export), 2 reused |
 | L3-phone-tracker-services-2 | L3 | lens 3 (Security) x phone / phone/tracker-services-2: 11 items | done | _work/L3-phone-tracker-services-2.md | L3 phone-tracker-services-2: 10 checked, 1 does-not-apply, 0 new, 2 reused |
 | L3-phone-native | L3 | lens 3 (Security) x phone / phone/native: 11 items | done | _work/L3-phone-native.md | L3 phone-native: 11 checked, 0 new, 4 reused (Plus checked only on the phone = FN-L5-phone-screens-2-02) |
 | L3-phone-components-1 | L3 | lens 3 (Security) x phone / phone/components-1: 11 items | done | _work/L3-phone-components-1.md | L3 phone-components-1: 11 checked, 0 new, 1 reused |
 | L3-phone-components-2 | L3 | lens 3 (Security) x phone / phone/components-2: 11 items | done | _work/L3-phone-components-2.md | L3 phone-components-2: 11 checked, 0 new, 5 reused |
 | L3-phone-cloud-backup-ai | L3 | lens 3 (Security) x phone / phone/cloud-backup-ai: 11 items | done | _work/L3-phone-cloud-backup-ai.md | L3 phone-cloud-backup-ai: 11 checked, 1 new S4 (sign-in kept in backed-up storage), 2 reused |
+| L3-phone-onboarding-db | L3 | lens 3 (Security) x phone / phone/onboarding-db: 11 items | done | _work/L3-phone-onboarding-db.md | L3 phone-onboarding-db: 11 checked, 0 new, 5 reused |
 | L3-phone-lib-core | L3 | lens 3 (Security) x phone / phone/lib-core: 11 items | done | _work/L3-phone-lib-core.md | L3 phone-lib-core: 10 checked, 1 does-not-apply, 0 new, 2 reused |
-(+ 321 older done items, not shown)
+(+ 322 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
