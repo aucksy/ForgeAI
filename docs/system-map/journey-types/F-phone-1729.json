@@ -1,0 +1,10 @@
+[
+{"kind":"jtype","id":"JT-F-phone-1729-member-10","feature":"F-phone-1729","role":"member","type":10,"applies":"no","why_not":"no saved data","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-lib-core-1"},
+{"kind":"jtype","id":"JT-F-phone-1729-member-11","feature":"F-phone-1729","role":"member","type":11,"applies":"no","why_not":"phone page only","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-lib-core-1"},
+{"kind":"jtype","id":"JT-F-phone-1729-member-12","feature":"F-phone-1729","role":"member","type":12,"applies":"no","why_not":"shows only public licence facts; no member data is shown or stored","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-lib-core-1"},
+{"kind":"jtype","id":"JT-F-phone-1729-member-4","feature":"F-phone-1729","role":"member","type":4,"applies":"no","why_not":"fixed list of four credits written in the code","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-lib-core-1"},
+{"kind":"jtype","id":"JT-F-phone-1729-member-5","feature":"F-phone-1729","role":"member","type":5,"applies":"no","why_not":"no time edge","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-lib-core-1"},
+{"kind":"jtype","id":"JT-F-phone-1729-member-7","feature":"F-phone-1729","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-back"],"at_step":1,"entity":"none","note":"Back from the browser returns to Credits","wi":"A5-phone-lib-core-1"},
+{"kind":"jtype","id":"JT-F-phone-1729-member-8","feature":"F-phone-1729","role":"member","type":8,"applies":"no","why_not":"no setting changes the credits","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-lib-core-1"},
+{"kind":"jtype","id":"JT-F-phone-1729-member-9","feature":"F-phone-1729","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-360","T9-bigfont","T9-light"],"at_step":2,"entity":"none","note":"Long licence text and long author names must wrap","wi":"A5-phone-lib-core-1"}
+]

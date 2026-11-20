@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-phone-1710-member-10","feature":"F-phone-1710","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":1,"entity":"none","note":"Depends on the Drive link saved by older versions","wi":"A5-phone-lib-core-1"},
+{"kind":"jtype","id":"JT-F-phone-1710-member-11","feature":"F-phone-1710","role":"member","type":11,"applies":"no","why_not":"the card is on this phone only; the watch has no backup","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-lib-core-1"},
+{"kind":"jtype","id":"JT-F-phone-1710-member-4","feature":"F-phone-1710","role":"member","type":4,"applies":"no","why_not":"no data shown: one fixed sentence and two buttons","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-lib-core-1"},
+{"kind":"jtype","id":"JT-F-phone-1710-member-5","feature":"F-phone-1710","role":"member","type":5,"applies":"no","why_not":"no time edge: the card shows until it is closed","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-lib-core-1"},
+{"kind":"jtype","id":"JT-F-phone-1710-member-7","feature":"F-phone-1710","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-closed","T7-doubletap"],"at_step":2,"entity":"none","note":"The 'seen' mark is written in the write queue; the app swiped away before it is written shows the card again","wi":"A5-phone-lib-core-1"},
+{"kind":"jtype","id":"JT-F-phone-1710-member-8","feature":"F-phone-1710","role":"member","type":8,"applies":"no","why_not":"no setting changes the card; only the Drive link and sign-in do","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-lib-core-1"},
+{"kind":"jtype","id":"JT-F-phone-1710-member-9","feature":"F-phone-1710","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-360","T9-bigfont"],"at_step":1,"entity":"none","note":"Two buttons side by side in the notice slot","wi":"A5-phone-lib-core-1"}
+]

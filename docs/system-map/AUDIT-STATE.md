@@ -38,15 +38,14 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 84 | 5.1 (204k tokens) |
+| A5 | 85 | 5.1 (204k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 0 in progress, 181 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 0 in progress, 182 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| A5-phone-tracker-services-2-3 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/tracker-services-2; list in _work/items/A5-phone-tracker-services-2-3.txt | done | _work/A5-phone-tracker-services-2-3.md | 9 features: 51 full journeys and 66 type lines; 0 findings; seen in passing: the welcome screen's From Strong/Hevy choice is lost if the app closes before the Workout tab |
 | A5-phone-tracker-services-2-4 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/tracker-services-2; list in _work/items/A5-phone-tracker-services-2-4.txt | done | _work/A5-phone-tracker-services-2-4.md | 9 features: 46 full journeys and 66 type lines; 0 findings; seen in passing: a What's new line says Save a backup includes photos, but workout photos are left out |
 | A5-phone-cloud-backup-ai-1 | A5 | journeys: 6 features (6 feature x role pairs) of phone / phone/cloud-backup-ai; list in _work/items/A5-phone-cloud-backup-ai-1.txt | done | _work/A5-phone-cloud-backup-ai-1.md | 6 features: 32 full journeys and 45 type lines; 1 finding (S3): Download my data says Saved even when the share sheet is closed without a place, so the member thinks a backup exists |
 | A5-phone-cloud-backup-ai-2 | A5 | journeys: 5 features (7 feature x role pairs) of phone / phone/cloud-backup-ai; list in _work/items/A5-phone-cloud-backup-ai-2.txt | done | _work/A5-phone-cloud-backup-ai-2.md | 5 features (7 pairs): 40 full journeys and 52 type lines; 2 findings (S3): the Drive sign-in-again message names buttons that do not exist; a refused item shows waiting for the internet while online and hides Last saved |
@@ -54,7 +53,8 @@ Counts: 0 todo, 0 in progress, 181 done, 0 blocked. Full list: work-items.jsonl.
 | A5-phone-components-2-1 | A5 | journeys: 7 features (14 feature x role pairs) of phone / phone/components-2; list in _work/items/A5-phone-components-2-1.txt | done | _work/A5-phone-components-2-1.md | 7 features (14 pairs): 70 full journeys and 102 type lines; 1 finding (S3, needs him): the privacy notice leaves out that Help and feedback also sends the push address and gym member key |
 | A5-phone-components-2-2 | A5 | journeys: 7 features (14 feature x role pairs) of phone / phone/components-2; list in _work/items/A5-phone-components-2-2.txt | done | _work/A5-phone-components-2-2.md | 7 features (14 pairs): 70 full journeys and 100 type lines; 1 finding (S2): Erase phone and delete account says Nothing was deleted after the account is already gone, when the phone erase fails |
 | A5-phone-components-2-3 | A5 | journeys: 7 features (14 feature x role pairs) of phone / phone/components-2; list in _work/items/A5-phone-components-2-3.txt | done | _work/A5-phone-components-2-3.md | 7 features (14 pairs): 73 full journeys and 108 type lines; 1 finding (S4): two notices say OK, though the app's rule says Close |
-(+ 173 older done items, not shown)
+| A5-phone-lib-core-1 | A5 | journeys: 9 features (10 feature x role pairs) of phone / phone/lib-core; list in _work/items/A5-phone-lib-core-1.txt | done | _work/A5-phone-lib-core-1.md | 9 features (10 pairs): 49 full journeys and 74 type lines; 2 findings (S3): a clock set back stops the app update check; the privacy notice leaves out what help questions send (repeat of components-2-1: merge in 3H) |
+(+ 174 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
