@@ -38,18 +38,19 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 97 | 5.1 (203k tokens) |
+| A5 | 98 | 5.1 (204k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 3 in progress, 194 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 5 in progress, 195 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | A5-server-database-1-2 | A5 | journeys: 9 features (17 feature x role pairs) of server / server/database-1; list in _work/items/A5-server-database-1-2.txt | in progress | _work/A5-server-database-1-2.md |  |
-| A5-server-database-1-3 | A5 | journeys: 9 features (18 feature x role pairs) of server / server/database-1; list in _work/items/A5-server-database-1-3.txt | in progress | _work/A5-server-database-1-3.md |  |
 | A5-server-database-1-4 | A5 | journeys: 8 features (12 feature x role pairs) of server / server/database-1; list in _work/items/A5-server-database-1-4.txt | in progress | _work/A5-server-database-1-4.md |  |
-| A5-phone-native-3 | A5 | journeys: 8 features (9 feature x role pairs) of phone / phone/native; list in _work/items/A5-phone-native-3.txt | done | _work/A5-phone-native-3.md | 8 features (9 pairs): 51 full journeys and 64 type lines; 0 findings; seen in passing: workout notifications show set names on the lock screen; watch taps while disconnected are not queued |
+| A5-server-database-2-1 | A5 | journeys: 9 features (25 feature x role pairs) of server / server/database-2; list in _work/items/A5-server-database-2-1.txt | in progress | _work/A5-server-database-2-1.md |  |
+| A5-server-database-2-2 | A5 | journeys: 8 features (21 feature x role pairs) of server / server/database-2; list in _work/items/A5-server-database-2-2.txt | in progress | _work/A5-server-database-2-2.md |  |
+| A5-server-database-2-3 | A5 | journeys: 8 features (22 feature x role pairs) of server / server/database-2; list in _work/items/A5-server-database-2-3.txt | in progress | _work/A5-server-database-2-3.md |  |
 | A5-phone-native-4 | A5 | journeys: 8 features (9 feature x role pairs) of phone / phone/native; list in _work/items/A5-phone-native-4.txt | done | _work/A5-phone-native-4.md | 8 features (9 pairs): 46 full journeys and 63 type lines; 1 finding (S2): Erase all data can leave reminders and Health Connect on when an unrelated refresh fails |
 | A5-phone-onboarding-db-1 | A5 | journeys: 9 features (19 feature x role pairs) of phone / phone/onboarding-db; list in _work/items/A5-phone-onboarding-db-1.txt | done | _work/A5-phone-onboarding-db-1.md | 9 features (19 pairs): 88 full journeys and 140 type lines; 2 findings: S2 (needs him) Save my data file shares body weight and notes with the gym; S3 deleting a workout can lose its records but say It is still here |
 | A5-phone-onboarding-db-2 | A5 | journeys: 8 features (18 feature x role pairs) of phone / phone/onboarding-db; list in _work/items/A5-phone-onboarding-db-2.txt | done | _work/A5-phone-onboarding-db-2.md | 8 features (18 pairs): 85 full journeys and 140 type lines; 1 finding (S1): Load demo data on the welcome screen deletes the member's own routines, body weight and photos with a warning that names only workouts |
@@ -57,7 +58,8 @@ Counts: 0 todo, 3 in progress, 194 done, 0 blocked. Full list: work-items.jsonl.
 | A5-server-ci-workflows-1 | A5 | journeys: 8 features (10 feature x role pairs) of server / server/ci-workflows; list in _work/items/A5-server-ci-workflows-1.txt | done | _work/A5-server-ci-workflows-1.md | 8 features (10 pairs): 44 full journeys and 78 type lines; 2 findings (S3): a third Play run can cancel the release's own upload; missing Razorpay test keys pass green as SKIPPED |
 | A5-server-ci-workflows-2 | A5 | journeys: 8 features (11 feature x role pairs) of server / server/ci-workflows; list in _work/items/A5-server-ci-workflows-2.txt | done | _work/A5-server-ci-workflows-2.md | 8 features (11 pairs): 47 full journeys and 85 type lines; 1 finding (S3): a push that changes only the release signing script starts no signing rehearsal |
 | A5-server-database-1-1 | A5 | journeys: 9 features (19 feature x role pairs) of server / server/database-1; list in _work/items/A5-server-database-1-1.txt | done | _work/A5-server-database-1-1.md | 9 features (19 pairs): 91 full journeys and 143 type lines; 1 finding (S2): the gym order list returns only the newest 300 orders, so an older open order can never be handed over or cancelled |
-(+ 186 older done items, not shown)
+| A5-server-database-1-3 | A5 | journeys: 9 features (18 feature x role pairs) of server / server/database-1; list in _work/items/A5-server-database-1-3.txt | done | _work/A5-server-database-1-3.md | 9 features (18 pairs): 79 full journeys and 137 type lines; 1 finding (S1): owner screens say support looks only when you let them, but the emergency door opens member data for an hour without asking (promise rows already GAP) |
+(+ 187 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).

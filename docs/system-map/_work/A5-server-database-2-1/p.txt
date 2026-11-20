@@ -1,0 +1,1089 @@
+P-A7-help-1-01 | Help article: Add a new member, or find one (admin app) | Only these two are needed.
+P-A7-help-1-02 | Help article: Renew a membership or collect a payment (admin app) | Tap "Collect payment" (it shows only when money is due).
+P-A7-help-1-03 | Help article: Other things you can do on a member's page (admin app), about Freeze / extra days | Only the owner can do this.
+P-A7-help-1-04 | Help article: FITPASS, cultpass and other pass members (admin app) | They have no plan and no dues, and are never on the renewal list.
+P-A7-help-1-05 | Help article: Bring in members from Excel or old gym software (admin app) | Aadhaar and PAN numbers are never imported.
+P-A7-help-1-06 | Help article: Send a message or offer to members (admin app) | Only the owner can send messages.
+P-A7-help-1-07 | Help article: Members bring a friend (free days for each friend who joins) (admin app) | Only the owner can give them.
+P-A7-help-1-08 | Help article: Ask the AI Assistant, or give it a task (admin app) | Only the gym owner sees the AI Assistant.
+P-A7-help-1-09 | Help article: Ask the AI Assistant, or give it a task (admin app) | Questions, like "Who has not paid?", are free.
+P-A7-help-1-10 | Help article: Ask the AI Assistant, or give it a task (admin app) | It can also write a workout plan for a member from your gym's exercises, for free.
+P-A7-help-1-11 | Help article: Free MettleUp Plus for your members, and when it ends (admin app) | Your members get every paid feature of the MettleUp app free while their plan is active: the watch app, older charts, suggested weights and the calculators.
+P-A7-help-1-12 | Help article: Free MettleUp Plus for your members, and when it ends (admin app) | Members never lose their workouts or history.
+P-A7-help-1-13 | Help article: Free MettleUp Plus for your members, and when it ends (admin app) | Only the owner can change this; the front desk sees it.
+P-A7-help-1-14 | Help article: See your members' workout progress (My members) (admin app) | Only trainers and the owner see it.
+P-A7-help-1-15 | Help article: See your members' workout progress (My members) (admin app) | A member shows here only after they switch on "Share my workouts with my trainers" in their app.
+P-A7-help-1-16 | Help article: Answer members' workout questions (Member questions) (admin app) | Only the person the member picked sees it; "Any trainer or the owner" questions go to every trainer and the owner.
+P-A7-help-1-17 | Help article: Answer members' workout questions (Member questions) (admin app) | Only trainers (ticked in Staff & sign-in) and the owner can open Member questions.
+P-A7-help-1-18 | Help article: Who reads member questions, feedback and complaints, and how long messages are kept (admin app) | If a member's app asks "Who should read it?", a question goes to "Gym owner" or one trainer by name (only that trainer is alerted).
+P-A7-help-1-19 | Help article: Who reads member questions, feedback and complaints, and how long messages are kept (admin app) | Trainers never see feedback or complaints.
+P-A7-help-1-20 | Help article: Who reads member questions, feedback and complaints, and how long messages are kept (admin app) | Trainers read only questions.
+P-A7-help-1-21 | Help article: Who reads member questions, feedback and complaints, and how long messages are kept (admin app) | Only the owner reads complaints.
+P-A7-help-1-22 | Help article: Who reads member questions, feedback and complaints, and how long messages are kept (admin app) | Messages are deleted 180 days after the last one, or when the member leaves.
+P-A7-help-1-23 | Help article: See a member's workout progress on their page (admin app) | It shows only while the member has "Share my workouts with my trainers" switched on in their app.
+P-A7-help-1-24 | Help article: See a member's workout progress on their page (admin app) | Body weight, photos and notes are never shared.
+P-A7-help-1-25 | Help article: See a member's workout progress on their page (admin app) | A line like "No new best in 6 weeks" is only for staff: it suggests a good time to offer personal training.
+P-A7-help-1-26 | Help article: Run a challenge and see the leaderboard (admin app) | Members see it in the MettleUp app within 10 minutes.
+P-A7-help-1-27 | Help article: Run a challenge and see the leaderboard (admin app) | Only the owner can start or change a challenge.
+P-A7-help-1-28 | Help article: Handle shop orders and products (admin app) | "Hide from app" takes a product off the app without deleting it.
+P-A7-help-1-29 | Help article: A member cannot join your gym in the app (admin app) | If it asks to turn the member app on first, only the owner can do it, with "Turn on the shop".
+P-A7-help-1-30 | Help article: Change your gym details and admin settings (admin app) | "Sign-in & data": "Staff & sign-in", "Download a backup" (an Excel file of all your gym data), "Your gym’s records" (how many members, memberships sold, payments and chec
+P-A7-help-1-31 | Help article: Set gym timings and busy machines for members (admin app) | Only the owner can change these.
+P-A7-help-1-32 | Help article: Make your free gym web page (admin app) | Your gym gets its own free page at join.mettleup.fit.
+P-A7-help-1-33 | Help article: Make your free gym web page (admin app) | Only the owner can change the page.
+P-A7-help-1-34 | Help article: Put your logo and colours in the member app (Branding) (admin app) | Only the owner can change it.
+P-A7-help-1-35 | Help article: See if your gym is growing (Your growth) (admin app) | Only the owner sees it.
+P-A7-help-1-36 | Help article: Invite a friend to your gym (member app) | Only the gym sees their number.
+P-A7-help-1-37 | Help article: Invite a friend to your gym (member app) | If your gym gives free days for this, the card says how many.
+P-A7-help-1-38 | Help article: Message your gym: a question, feedback or a complaint (member app) | Trainers never see feedback or a complaint.
+P-A7-help-1-39 | Help article: Message your gym: a question, feedback or a complaint (member app) | If not asked, the owner and front desk read feedback; only the owner reads a complaint.
+P-A7-help-1-40 | Help article: Log body weight, measurements and progress photos (member app) | Your photos are private.
+P-A7-help-1-41 | Help article: Save a spreadsheet, erase your data, What's new and About (member app) | "Erase or start over": "Erase all data" deletes everything on this phone and starts over.
+P-A7-help-1-42 | Help article: See which muscles are ready today, and build a quick workout (member app) | It uses only the workouts you logged; sleep and soreness are not counted.
+P-A7-help-1-43 | Help article: Find your gym with your mobile number (member app) | Tap "Join" to join it and get every feature free.
+P-A7-help-1-44 | Help article: MettleUp Plus: what is free and what is paid (member app) | Free for everyone, always: logging workouts, your history, routines, the rest timer, backup and export, and charts of the last 3 months.
+P-A7-help-1-45 | Help article: MettleUp Plus: what is free and what is paid (member app) | New members get every feature free for their first month.
+P-A7-help-1-46 | Help article: MettleUp Plus: what is free and what is paid (member app) | Members of a gym that uses MettleUp, gym owners and desk staff get every feature free.
+P-A7-help-1-47 | Help article: MettleUp Plus: what is free and what is paid (member app) | Your workouts and history are never locked.
+P-A7-help-1-48 | Help chat answer when AI answers are off or used up (admin app and member app help) | We read every message and reply as soon as we can.
+P-A7-legal-2-01 | Privacy notice, section 4D, Sign in with your phone number | You prove the number by sending us one WhatsApp message; we do not keep the number for this.
+P-A7-legal-2-02 | Privacy notice, section 4E, Gym owners and staff | Your PIN is kept only in a coded form that cannot be turned back into the PIN.
+P-A7-legal-2-03 | Privacy notice, section 4E, Sign-in records | Wrong attempts are recorded too.
+P-A7-legal-2-04 | Privacy notice, section 4E, WhatsApp checks | We check that it is your number, and keep only a coded form of it.
+P-A7-legal-2-05 | Privacy notice, section 4E, Your acceptance of our terms | Someone could still match that code to an address, so we protect it like other personal data.
+P-A7-legal-2-06 | Privacy notice, section 4E, the gym's own records | Signing that device out deletes the copy.
+P-A7-legal-2-07 | Privacy notice, section 4E, The AI Assistant | The AI Assistant (gym owners only): what the owner types or says goes to Anthropic's Claude AI so it can understand the request and get a message or a change ready.
+P-A7-legal-2-08 | Privacy notice, section 4E, The AI Assistant | A member's name goes only if the owner says it.
+P-A7-legal-2-09 | Privacy notice, section 4E, The AI Assistant | When the owner asks it to write a workout plan, Claude gets the goal, level, days a week and session length he picks, his short notes on focus and equipment (including an
+P-A7-legal-2-10 | Privacy notice, section 4E, The AI Assistant | A spoken request goes through our server to Groq, which turns it into text; neither we nor Groq keep the recording.
+P-A7-legal-2-11 | Privacy notice, section 4E, The AI Assistant | We keep each request, what the owner did with it and the credits it used for 400 days, so the owner can see them in the admin app.
+P-A7-legal-2-12 | Privacy notice, section 4E, The AI Assistant | After 400 days the request and its words are deleted; only the number of credits used stays, for our accounts.
+P-A7-legal-2-13 | Privacy notice, section 4E, support access | MettleUp support looks at a gym's records only in a short window.
+P-A7-legal-2-14 | Privacy notice, section 4E, support access | In an emergency, such as a fault that stops the desk, we open it for up to 1 hour and write down why.
+P-A7-legal-2-15 | Privacy notice, section 4E, support access | We can only read the records, never change them.
+P-A7-legal-2-16 | Privacy notice, section 4E, support access | Every look is recorded, and the owner can see each one in the admin app.
+P-A7-legal-2-17 | Privacy notice, section 4F, Our websites | A page may remember your light or dark choice, on your device only.
+P-A7-legal-2-18 | Privacy notice, section 4F, the demo form | We use it only to call you back about MettleUp.
+P-A7-legal-2-19 | Privacy notice, section 4F, Our websites | A friend's invite page sends your details only to that friend's gym (section 4B).
+P-A7-legal-2-20 | Privacy notice, section 5 | We never sell your data.
+P-A7-legal-2-21 | Privacy notice, section 5 | They may use the data only to do that work for us:
+P-A7-legal-2-22 | Privacy notice, section 5, table row Google | Google Drive is used only to bring back an old Drive backup.
+P-A7-legal-2-23 | Privacy notice, section 5, table row Your gym's payment company | Takes your payment to your gym, only when you pay online
+P-A7-legal-2-24 | Privacy notice, section 5 | We also share data when Indian law requires it, for example with a court or the police.
+P-A7-legal-2-25 | Privacy notice, section 6, table row Your MettleUp account and saved copy | Until you delete your account.
+P-A7-legal-2-26 | Privacy notice, section 6, table row Your MettleUp account and saved copy | When you delete an item in the app, it is deleted on our server too.
+P-A7-legal-2-27 | Privacy notice, section 6, table row Your MettleUp account and saved copy | We keep only an empty marker, so another phone of yours does not bring it back.
+P-A7-legal-2-28 | Privacy notice, section 6, table row Your link to a gym | If the gym leaves MettleUp, we delete its records within 30 days of its request.
+P-A7-legal-2-29 | Privacy notice, section 6, table row Leaderboard numbers | All of them are deleted when you leave the gym.
+P-A7-legal-2-30 | Privacy notice, section 6, table row Trainer summary | Deleted at once when you switch it off or leave the gym, or after 90 days with no update.
+P-A7-legal-2-31 | Privacy notice, section 6, table row Questions to a trainer | Deleted at once when you leave the gym.
+P-A7-legal-2-32 | Privacy notice, section 6, table row Machine use | Deleted at once when you leave the gym.
+P-A7-legal-2-33 | Privacy notice, section 6, table row Workouts shared with gym mates | All of them are deleted at once when you switch it off or leave the gym.
+P-A7-legal-2-34 | Privacy notice, section 6 | From 13 May 2027, the law also asks us to keep sign-in and technical logs for 1 year, even after an account is deleted.
+P-A7-legal-2-35 | Privacy notice, section 6 | We use them only to look into security problems.
+P-A7-legal-2-36 | Privacy notice, section 7 | Your saved copy and MettleUp account: Settings → Your data → Backup and restore → "Delete my account".
+P-A7-legal-2-37 | Privacy notice, section 7 | Both are deleted from our server at once; backup copies expire within 7 days.
+P-A7-legal-2-38 | Privacy notice, section 7 | If your Google account is also used for another MettleUp sign-in, we delete your saved workouts but keep that other sign-in working.
+P-A7-legal-2-39 | Privacy notice, section 7 | Your leaderboard numbers, trainer summary, machine use, shared workouts and questions are then deleted.
+P-A7-legal-2-40 | Privacy notice, section 8 | Where section 6 says so, what was shared is deleted at once too.
+P-A7-legal-2-41 | Privacy notice, section 8 | We answer within 30 days.
+P-A7-legal-2-42 | Privacy notice, section 9 | MettleUp is only for people aged 18 or over.
+P-A7-legal-2-43 | Privacy notice, section 9 | If we learn that we hold data of someone under 18, we delete it.
+P-A7-legal-2-44 | Privacy notice, section 10 | Each gym can reach only its own records.
+P-A7-legal-2-45 | Privacy notice, section 10 | Only people the gym's owner adds can sign in to its admin app.
+P-A7-legal-2-46 | Privacy notice, section 10 | MettleUp support can look only in a recorded window (section 4E).
+P-A7-legal-2-47 | Privacy notice, section 10 | We keep backup copies so data is not lost.
+P-A7-legal-2-48 | Privacy notice, section 10 | If your data leaks, we tell you without delay, in the app or by message.
+P-A7-legal-2-49 | Privacy notice, section 10 | We tell you what happened, what it means for you and what you can do.
+P-A7-legal-2-50 | Privacy notice, section 10 | We report it to the Data Protection Board as the law requires.
+P-A7-legal-2-51 | Privacy notice, section 10 | If it involves a gym's records, we also tell that gym within 24 hours.
+P-A7-legal-2-52 | Privacy notice, section 11 | They get only what the table in section 5 says.
+P-A7-legal-2-53 | Privacy notice, section 12, Who is responsible for your data | We only handle those records for your gym.
+P-A7-legal-2-54 | Privacy notice, section 12, The legal reason for each use | Legitimate interest: we have a fair reason, and you can object to it at any time.
+P-A7-legal-2-55 | Privacy notice, section 12, Health data | We keep them on our server only if you sign in with Google to keep a copy.
+P-A7-legal-2-56 | Privacy notice, section 12, Health data | To take back your consent, delete those entries in the app, or delete your account (section 7).
+P-A7-legal-2-57 | Privacy notice, section 12, Health data | Entries you delete in the app are deleted on our server too.
+P-A7-legal-2-58 | Privacy notice, section 12, Health data | Your progress photos never leave your phone, so we never get them.
+P-A7-legal-2-59 | Privacy notice, section 12, Health data | We never get your sleep, steps or heart rate either.
+P-A7-legal-2-60 | Privacy notice, section 12, Health data | The app only shows them on your phone or watch.
+P-A7-legal-2-61 | Privacy notice, section 12, Your rights | You can ask us for a copy of your data, and ask us to correct it or delete it.
+P-A7-legal-2-62 | Privacy notice, section 12, Your rights | We then stop, unless we have a strong reason the law accepts.
+P-A7-legal-2-63 | Privacy notice, section 12, How to ask | It is free, and we answer within 30 days.
+P-A7-legal-2-64 | Privacy notice, section 12, How to ask | We may ask you to show that the data is yours.
+P-A7-legal-2-65 | Privacy notice, section 12, How to ask | If you never signed in, your data is only on your phone, and you can see and erase it there (section 7).
+P-A7-legal-2-66 | Privacy notice, section 12, Complaints | You can also write to us first, and we will try to fix it.
+P-A7-legal-2-67 | Privacy notice, section 12, Other points | Age: MettleUp is only for people aged 18 or over, in every country.
+P-A7-legal-2-68 | Privacy notice, section 12, Other points | Decisions by computer: we never make a decision about you by computer alone that has a legal or similarly big effect on you.
+P-A7-legal-2-69 | Privacy notice, section 13 | Before a change that affects you, we tell you in the app.
+P-A7-legal-2-70 | Privacy notice, section 13, change note of 12 Nov 2026 | Nothing changed in what we collect or share.
+P-A7-legal-2-71 | Privacy notice, section 13, change note of 10 Nov 2026 | Changed: crash reports now go to a private bug list on GitHub.
+P-A7-legal-2-72 | Privacy notice, Hindi part, section 7 | आपकी सेव की गई कॉपी और MettleUp खाता: Settings → Your data → Backup and restore → "Delete my account"।
+P-A7-legal-2-73 | Refunds and cancellation page, intro | Members of a gym never pay MettleUp: the member app is free.
+P-A7-legal-2-74 | Refunds and cancellation page, section 1 | Every new gym gets 3 months free.
+P-A7-legal-2-75 | Refunds and cancellation page, section 1 | You pay nothing during the free months, so there is nothing to refund.
+P-A7-legal-2-76 | Refunds and cancellation page, section 2 | You pay only when you choose to pay.
+P-A7-legal-2-77 | Refunds and cancellation page, section 2 | We never take money from your card or bank account on our own.
+P-A7-legal-2-78 | Refunds and cancellation page, section 2 | If we add automatic payments later, they stay off unless you switch them on.
+P-A7-legal-2-79 | Refunds and cancellation page, section 3 | Once your paid plan is on, payments are not refunded.
+P-A7-legal-2-80 | Refunds and cancellation page, section 3 | If you paid twice by mistake, or paid more than the price, we refund the extra amount.
+P-A7-legal-2-81 | Refunds and cancellation page, section 4 | AI credits you buy are not refunded and cannot be changed into cash.
+P-A7-legal-2-82 | Refunds and cancellation page, section 4 | Credits you buy never expire.
+P-A7-legal-2-83 | Refunds and cancellation page, section 4 | Free credits for a month end on the last day of that month.
+P-A7-legal-2-84 | Refunds and cancellation page, section 4 | Unused free credits do not move to the next month.
+P-A7-legal-2-85 | Refunds and cancellation page, section 5 | Changing your plan: today, email us and we set it up for you.
+P-A7-legal-2-86 | Refunds and cancellation page, section 5 | When online payments start: a smaller plan starts when your paid time ends, with no money back for the days left; a bigger plan starts at once, and you pay only the diffe
+P-A7-legal-2-87 | Refunds and cancellation page, section 6 | We tell you in the admin app first.
+P-A7-legal-2-88 | Refunds and cancellation page, section 6 | After that, we may switch off the paid features step by step.
+P-A7-legal-2-89 | Refunds and cancellation page, section 6 | We never delete your data because a payment is late.
+P-A7-legal-2-90 | Refunds and cancellation page, section 6 | If you ask us to, we delete your gym's data within 30 days.
+P-A7-legal-2-91 | Refunds and cancellation page, section 7 | Refunds go back to the same way you paid (the same UPI, card or bank account).
+P-A7-legal-2-92 | Refunds and cancellation page, section 7 | The money reaches you within 5–7 working days (Monday to Saturday) after we approve the refund.
+P-A7-legal-2-93 | Refunds and cancellation page, section 7 | No GST is charged, so a refund has no GST in it.
+P-A7-legal-2-94 | Terms page, In short | The MettleUp app is free for gym members.
+P-A7-legal-3-01 | Terms of use, In short | Your membership, fees and refunds at your gym are between you and your gym.
+P-A7-legal-3-02 | Terms of use, In short | Payments are not refunded, except a double payment or a payment above the price.
+P-A7-legal-3-03 | Terms of use, part A section 2 | The app is only for people aged 18 or over.
+P-A7-legal-3-04 | Terms of use, part A section 3 | MettleUp is a free workout log for your phone and watch.
+P-A7-legal-3-05 | Terms of use, part A section 5 | If you do not sign in, your workouts are only on your phone, so keep your phone backed up.
+P-A7-legal-3-06 | Terms of use, part A section 5 | You can download them (Settings → Your data → Backup and restore → "Download my data") or delete them at any time.
+P-A7-legal-3-07 | Terms of use, part A section 6 | Your membership, prices, payments and refunds are between you and your gym.
+P-A7-legal-3-08 | Terms of use, part A section 6 | We do not take or hold your money.
+P-A7-legal-3-09 | Terms of use, part A section 6 | Some features exist only if your gym switches them on.
+P-A7-legal-3-10 | Terms of use, part A section 10 | You can stop using the app, leave your gym or delete your account at any time.
+P-A7-legal-3-11 | Terms of use, part A section 11 | If you did not sign in and you lose your phone, we cannot bring your workouts back.
+P-A7-legal-3-12 | Terms of use, part A section 12 | Before a change takes effect, we tell you in the app.
+P-A7-legal-3-13 | Terms of use, part A section 12 | If you do not agree, stop using it and you can delete your account.
+P-A7-legal-3-14 | Terms of use, part A section 13 | We answer within 30 days.
+P-A7-legal-3-15 | Terms of use, part B section 2 | Every new gym gets 3 months free.
+P-A7-legal-3-16 | Terms of use, part B section 2 | When the trial ends, we ask you to pick a plan and pay.
+P-A7-legal-3-17 | Terms of use, part B section 3 | Your plan starts or extends when we confirm the payment.
+P-A7-legal-3-18 | Terms of use, part B section 4 | Once a paid plan is on, payments are not refunded.
+P-A7-legal-3-19 | Terms of use, part B section 4 | If you paid twice by mistake, or paid more than the price, we refund the extra amount to the same account.
+P-A7-legal-3-20 | Terms of use, part B section 5 | We tell you in the admin app first.
+P-A7-legal-3-21 | Terms of use, part B section 5 | After that, we may switch off the paid features step by step.
+P-A7-legal-3-22 | Terms of use, part B section 5 | We never delete your records because a payment is late, and you can always see and export them.
+P-A7-legal-3-23 | Terms of use, part B section 6 | Your gym is in charge of them, and MettleUp only stores them for you.
+P-A7-legal-3-24 | Terms of use, part B section 7 | Only the owner can cancel a receipt, with the true reason.
+P-A7-legal-3-25 | Terms of use, part B section 8 | We only ask it to make payment links and to tell us when they are paid.
+P-A7-legal-3-26 | Terms of use, part B section 8 | We keep your connection keys locked and never show them again.
+P-A7-legal-3-27 | Terms of use, part B section 9 | You can also ask us to delete your gym.
+P-A7-legal-3-28 | Terms of use, part B section 9 | We delete its records within 30 days of your request (section 9 of the data agreement).
+P-A7-legal-3-29 | Terms of use, part B section 9 | We may end this agreement with 30 days' notice, or at once for serious misuse.
+P-A7-legal-3-30 | Terms of use, part B section 10 | You decide which plans to send, and you can change, delete or add plans at any time.
+P-A7-legal-3-31 | Terms of use, part B section 13 | Before a new version applies, we tell the owner in the admin app and ask them to accept it again.
+P-A7-panel-1-01 | Panel, AI Assistant: quiet line above the ask box | 1 free question left today.
+P-A7-panel-1-02 | Panel, AI Assistant: quiet line above the ask box | {n} free questions left today.
+P-A7-panel-1-03 | Panel, AI Assistant: line at the daily limit (continues: Your credits are safe. Ask again tomorrow.) | You have used today's {n} free questions.
+P-A7-panel-1-04 | Panel, AI Assistant: line at the daily limit when the number is not known | You have used today's free questions.
+P-A7-panel-1-05 | Panel, AI Assistant: answer card for a money question | Only the gym owner can see money totals.
+P-A7-panel-1-06 | Panel, AI Assistant: note under the language chips on a message card | The AI writes the Hindi words first, for free.
+P-A7-panel-1-07 | Panel, AI Assistant: note on a message card when Hindi could not be written | The message will go in English only, unless you try again.
+P-A7-panel-1-08 | Panel, AI Assistant: problem line on a workout plan card | Only a plan the AI wrote uses credits.
+P-A7-panel-1-09 | Panel, AI Assistant home: quiet line under the examples | Asking is free.
+P-A7-panel-1-10 | Panel, AI Assistant home: quiet line under the examples | A task uses credits only when you send or save it.
+P-A7-panel-1-11 | Panel, AI Assistant home: words inside the locked ask box | No more free questions today.
+P-A7-panel-1-12 | Panel, AI Assistant: how-to card | This never uses credits.
+P-A7-panel-1-13 | Panel, AI Assistant: workout plan writer card | Writing the plan is free.
+P-A7-panel-1-14 | Panel, AI Assistant: foot of every answer card | Questions never use credits.
+P-A7-panel-1-15 | Panel, AI credits sheet: low or empty credits warning | Questions stay free.
+P-A7-panel-1-16 | Panel, AI credits sheet | Your plan gets {n} free credits every month.
+P-A7-panel-1-17 | Panel, AI credits sheet (monthly plans) | Yearly plans get free credits every month.
+P-A7-panel-1-18 | Panel, AI credits sheet (continues: They are used first and end on {day}.) | {n} of them are this month's free credits.
+P-A7-panel-1-19 | Panel sign-in: Forgot your PIN, first step | First we check that this mobile number is yours.
+P-A7-panel-1-20 | Panel sign-in: Forgot your PIN, first step (about the one WhatsApp message the person sends) | It is free.
+P-A7-panel-1-21 | Panel sign-in: Forgot your PIN, the older code-by-WhatsApp way | We send a 6-digit code to your mobile number on WhatsApp.
+P-A7-panel-1-22 | Panel Settings: demo gym card (demo opened without the online shop) | Its members are made up, and they are kept only in this browser.
+P-A7-panel-1-23 | Panel Settings: demo gym card (demo opened with the online shop) | Its members are made up, and they are kept only in this browser.
+P-A7-panel-1-24 | Panel Settings: Put your gym online card | Right now your members and payments are only in this browser.
+P-A7-panel-1-25 | Panel: the screen staff get on an owner-only page | Only an owner can see this
+P-A7-panel-1-26 | Panel: Staff & sign-in, as seen by staff | Only an owner can add people or make sign-in codes.
+P-A7-panel-1-27 | Panel: Set up a new gym, hint under the mobile number (WhatsApp message way) | It is free.
+P-A7-panel-1-28 | Panel: Set up a new gym, hint under the mobile number (code way) | We check it with a code on WhatsApp.
+P-A7-panel-1-29 | Panel: Set up a new gym, after asking for a code (continues: It works for 10 minutes.) | We sent a 6-digit code to {phone} on WhatsApp.
+P-A7-panel-1-30 | Panel: Verify with WhatsApp | We check it in a few seconds.
+P-A7-panel-1-31 | Panel: Verify with WhatsApp, no-internet line | We keep checking when it is back.
+P-A7-panel-1-32 | Panel: Staff & sign-in, staff rights line (gyms with branches) | Staff work only at the branch they are added to.
+P-A7-panel-1-33 | Panel: Staff & sign-in, staff rights line | Staff can date a payment at most 31 days back, never ahead.
+P-A7-panel-1-34 | Panel sign-in: Other ways back in, step 3 | We call you to check it is you, then give you a sign-in code.
+P-A7-panel-1-35 | Panel: message when a change is refused after the plan ran out | Your MettleUp plan has run out, so only check-in, fees and the member list work for now.
+P-A7-panel-1-36 | Panel: terms notice | We updated the MettleUp terms and the data agreement on {day}.
+P-A7-panel-1-37 | Panel: Branches card, before opening a new branch | Every owner of this gym is an owner of the new branch too.
+P-A7-panel-1-38 | Panel: Branches card, before opening a new branch | Its receipt numbers start with its own code (like B2), so two branches never print the same number.
+P-A7-panel-1-39 | Panel: Branches card, before opening a new branch | Its free trial ends when your first branch’s does, on the same MettleUp plan.
+P-A7-panel-1-40 | Panel: check-in at a branch the member does not belong to | Their plan is for that branch only.
+P-A7-panel-1-41 | Panel: refusal line for a check-in at another branch | This member’s plan is for their own branch only.
+P-A7-panel-1-42 | Panel: App look (branding), after Save | The app checks at most once an hour, and never in the middle of a workout.
+P-A7-panel-1-43 | Panel: App look (branding), remove my look | Members see MettleUp’s look on a later visit to the app, never in the middle of a workout.
+P-A7-panel-1-44 | Panel: App look (branding), logo box | If it sits on a plain white or coloured box, we take the box off for you.
+P-A7-panel-1-45 | Panel: App look (branding), note after a logo with a photo or pattern behind it | We can only take off a plain background, so we kept your logo as it is.
+P-A7-panel-1-46 | Panel: App look (branding), points to an outside background remover | You can remove it for free:
+P-A7-panel-1-47 | Panel: App look (branding), logo help | We take off a plain background for you, but not a photo or a pattern.
+P-A7-panel-1-48 | Panel: App look (branding), points to an outside background remover | You can remove those for free:
+P-A7-panel-1-49 | Panel demo gym: a page that is switched off in the demo | {page.body} The demo gym is made-up data kept only on this page, so this part is switched off here.
+P-A7-panel-1-50 | Panel in Hinglish: menu row for the gym's web page | Aapke gym ka free page: fees, timings aur photos
+P-A7-panel-1-51 | Panel in Hinglish: first screen, under Set up your gym (same line: 3 mahine free. Card nahi chahiye.) | Aapke members ki app hamesha free hai.
+P-A7-panel-1-52 | Panel in Hinglish: Forgot your PIN, first step | Yeh free hai.
+P-A7-panel-1-53 | Panel in Hinglish: Set up a new gym, hint under the mobile number | Yeh free hai.
+P-A7-panel-1-54 | Panel in Hinglish: gym web page and join link intro | Apna free web page banao, apna ek link aur QR poster share karo, aur dekho log paise kaise denge.
+P-A7-panel-1-55 | Panel in Hinglish: gym web page and join link intro | Teen hisse, isi kram mein: aapka free web page, aapka ek link aur QR poster, aur log paise kaise denge.
+P-A7-panel-1-56 | Panel in Hinglish: gym web page screen | MettleUp join.mettleup.fit par aapke gym ka free web page banata hai.
+P-A7-panel-1-57 | Panel in Hinglish: Challenges | Goal tak pahunchne wale har member ko unki membership par {n} free din milte hain.
+P-A7-panel-1-58 | Panel in Hinglish: Challenges | Goal tak pahunchne wale har member ko unki membership par 1 free din milta hai.
+P-A7-panel-1-59 | Panel in Hinglish: Challenges, after giving winners their days | Free din jaldi jud jayenge.
+P-A7-panel-1-60 | Panel in Hinglish: Challenges, after giving winners their days | Free din har winner ke plan mein apne aap jud gaye.
+P-A7-panel-1-61 | Panel: Challenges, server refusal line (the English key in the Hinglish file) | A challenge that has started can only be cancelled.
+P-A7-panel-1-62 | Panel in Hinglish: Challenges, empty state | Goal tak pahunchne wale sabhi free din jeette hain.
+P-A7-panel-1-63 | Panel in Hinglish: share card for the join link | Apna free gym web page banao, phir yeh card wahi page bhejega.
+P-A7-panel-1-64 | Panel in Hinglish: online join payment review | Yeh online payment refund ho gaya, isliye kuch save nahi hua.
+P-A7-panel-1-65 | Panel in Hinglish: online payment review | Yeh payment, payment company par refund ho gaya, isliye receipt nahi bani.
+P-A7-panel-1-66 | Panel in Hinglish: AI Assistant home | Poochhna free hai.
+P-A7-panel-1-67 | Panel in Hinglish: AI Assistant message card | AI pehle Hindi mein likhega, free mein.
+P-A7-panel-1-68 | Panel in Hinglish: AI credits sheet | Inmein se {n} is mahine ke free credits hain.
+P-A7-panel-1-69 | Panel in Hinglish: AI credits sheet, credits running low | Sawaal free hi rahenge.
+P-A7-panel-1-70 | Panel in Hinglish: AI credits sheet, no credits left | Sawaal free hi rahenge.
+P-A7-panel-1-71 | Panel in Hinglish: AI Assistant, line above the ask box | Aaj 1 free sawaal bacha hai.
+P-A7-panel-1-72 | Panel in Hinglish: AI Assistant, line above the ask box | Aaj {n} free sawaal bache hain.
+P-A7-panel-1-73 | Panel in Hinglish: AI Assistant, line at the daily limit | Aaj ke {n} free sawaal ho gaye.
+P-A7-panel-2-01 | Admin app, AI assistant: daily question limit message (Hinglish) | Aaj ke free sawaal ho gaye.
+P-A7-panel-2-02 | Admin app, AI assistant: daily question limit message (Hinglish) | Aaj ke free sawaal khatam.
+P-A7-panel-2-03 | Admin app, AI assistant: diet/workout plan card (Hinglish of apps/dashboard/src/crm/assistant/ui/Cards.tsx:245) | Plan likhwana free hai.
+P-A7-panel-2-04 | Admin app, AI credits sheet (Hinglish of apps/dashboard/src/crm/assistant/ui/CreditsSheet.tsx:115) | Aapke plan mein har mahine {n} free credits milte hain.
+P-A7-panel-2-05 | Admin app, AI credits sheet (Hinglish of apps/dashboard/src/crm/assistant/ui/CreditsSheet.tsx:117) | Saal wale plans mein har mahine free credits milte hain.
+P-A7-panel-2-06 | Admin app, Settings: Free trial for new people (Hinglish) | Jo log aapka "Become a member" link kholte hain, woh plan chunne se pehle aapka gym free mein try kar sakte hain.
+P-A7-panel-2-07 | Admin app, Settings: Free trial for new people, saved message (Hinglish) | Free trial band hai.
+P-A7-panel-2-08 | Admin app, Settings: Free trial for new people, saved message (Hinglish) | Naye log aapka gym 1 din free mein try kar sakte hain.
+P-A7-panel-2-09 | Admin app, Settings: Free trial for new people, saved message (Hinglish) | Naye log aapka gym {n} din free mein try kar sakte hain.
+P-A7-panel-2-10 | Admin app, Settings: Free trial for new people (Hinglish) | Aapke gym mein har mobile number ko ek hi free trial milta hai.
+P-A7-panel-2-11 | Admin app, Settings: Free trial for new people (Hinglish) | Free trial wala vyakti abhi member nahi hai.
+P-A7-panel-2-12 | Admin app, Settings: Bring a friend free days helper line (Hinglish of apps/dashboard/src/crm/logic/settingLines.ts:47) | Likhein ki member ke invite link se judne wale har dost ke liye us member ko kitne free din milenge (aap unhe ek tap se dete hain), ya koi din na dene ke liye ise khali c
+P-A7-panel-2-13 | Admin app, Member questions screen: not-allowed message | Only trainers and the owner can see questions.
+P-A7-panel-2-14 | Admin app, Automatic reminders: "We haven't seen you" row | Kind words, never an offer.
+P-A7-panel-2-15 | Admin app, Billing (pay online): line under the upgrade button | You pay only the difference for the days left.
+P-A7-panel-2-16 | Admin app, Billing (pay online): scheduled plan line | {name} starts when your free trial ends on {payDate(info.scheduled.from)}.
+P-A7-panel-2-17 | Admin app, Billing: error message | Only the gym owner can pay MettleUp.
+P-A7-panel-2-18 | Admin app, Busy machines: how it works note | Only machines you have 1 or 2 of can get busy.
+P-A7-panel-2-19 | Admin app, Busy machines: how it works note | Members see a tip only after it has been right 4 weeks out of 6 (usually 6 to 8 weeks).
+P-A7-panel-2-20 | Admin app, Challenges: finished challenge note | The free days will be added soon.
+P-A7-panel-2-21 | Admin app, Challenges: finished challenge note | The free days were added to each winner’s plan by themselves.
+P-A7-panel-2-22 | Admin app, Challenges: check-in challenge note | Only members who use the MettleUp app take part.
+P-A7-panel-2-23 | Admin app, Challenges: leaderboard note | Their name shows only if they switch it on in the app (first name and initial).
+P-A7-panel-2-24 | Admin app, Send feedback to MettleUp: sent message | We read every message.
+P-A7-panel-2-25 | Admin app, Send feedback to MettleUp: sent message | We reply as soon as we can.
+P-A7-panel-2-26 | Admin app, Get started list: web page step | Make your free web page, share your one link and QR poster, and see how people pay.
+P-A7-panel-2-27 | Admin app, Get started list: staff step | A trainer sees only their own members.
+P-A7-panel-2-28 | Admin app, Workout report request: help line | Only workouts from the day they joined your gym are included.
+P-A7-panel-2-29 | Admin app, Workout report request: expired status | No report came within 30 days.
+P-A7-panel-2-30 | Admin app, Gym timings: saved message | Members see them in the MettleUp app (Gym tab) within 10 minutes.
+P-A7-panel-2-31 | Admin app, Import members: row warning | “{e.label}” is not kept for this member.
+P-A7-panel-2-32 | Admin app, Import members: row warning | ID numbers are never imported.
+P-A7-panel-2-33 | Admin app, Messages from members: note for front desk | Messages a member sent only to the owner or to a trainer are not shown here.
+P-A7-panel-2-34 | Admin app, Messages from members: note for front desk | Complaints show here only when the member picked "Gym admin".
+P-A7-panel-2-35 | Admin app, Messages from members: note for trainers | Feedback and complaints never go to trainers, so they are not shown here.
+P-A7-panel-2-36 | Admin app, Messages from members: note for trainers | Neither are questions a member sent only to the owner or another trainer.
+P-A7-panel-2-37 | Admin app, Messages from members: how long kept | Messages are deleted 180 days after the last one in a conversation, or as soon as the member leaves the gym.
+P-A7-panel-2-38 | Admin app, Settings: Free MettleUp Plus for your members | Your members get every paid feature of the MettleUp app free while their plan is active: the watch app, charts older than 3 months, suggested weights, the calculators and
+P-A7-panel-2-39 | Admin app, Settings: Free MettleUp Plus for your members | Only the owner can change this.
+P-A7-panel-2-40 | Admin app, Ready-made challenges: intro | Only one challenge runs at a time, so members always have one clear goal.
+P-A7-panel-2-41 | Admin app, Ready-made challenges: note for staff | Only the owner can turn these challenges on or off.
+P-A7-panel-2-42 | Admin app, Ready-made challenges: waits line | Only one challenge runs at a time, so this one would start on {day}, after “{other}” ends.
+P-A7-panel-2-43 | Admin app, Ready-made challenges: reward line | Everyone who reaches the goal wins {n} free days on their membership.
+P-A7-panel-2-44 | Admin app, Ready-made challenges: reward line | Everyone who reaches the goal wins 1 free day on their membership.
+P-A7-panel-2-45 | Admin app, Ready-made challenges: turned-on message | Members see “{title}” in the MettleUp app within 10 minutes.
+P-A7-panel-2-46 | Admin app, New sale: joining fee warning | Only the owner can remove it.
+P-A7-panel-2-47 | Admin app, Settings: Free MettleUp Plus switch, simple-words line | Tick this box to stop the paid features {n} days after a member’s plan ends until they renew, while their workouts are always kept.
+P-A7-panel-2-48 | Admin app, Settings: Bring a friend free days, simple-words line | Type how many free days a member gets, with one tap from you, for each friend who joins through their invite link, or leave it empty to give none.
+P-A7-panel-2-49 | Admin app, Settings: web page, Google search switch, simple-words line | Tick this box so that Google may show your web page in search results, or leave it unticked so that only people with the link find it.
+P-A7-panel-2-50 | Admin app, Settings > People: Front desk job hint | Never sees money totals.
+P-A7-panel-2-51 | Admin app, Settings > People: Front desk (one branch) job hint | Works only at this branch: adds members, collects fees and checks members in.
+P-A7-panel-2-52 | Admin app, Settings > People: Front desk (one branch) job hint | Never sees money totals.
+P-A7-panel-2-53 | Admin app, Settings > People: other job hint | The job only shows next to their name.
+P-A7-panel-2-54 | Admin app, Training progress: message to a member, staff note | Only the gym owner can send these from here for now.
+P-A7-panel-2-55 | Admin app, Welcome / start page (apps/dashboard/src/crm/ui/Welcome.tsx:88) | Free for 3 months.
+P-A7-panel-2-56 | Admin app, Welcome / start page (apps/dashboard/src/crm/ui/Welcome.tsx:88) | Your members’ app is free, always.
+P-A7-panel-2-57 | Admin app, Alerts settings: note (owner) | These always come at once: complaints, new shop orders, a member waiting at the check-in poster, a friend who wants to join, and a pause or renew request when the plan is
+P-A7-panel-2-58 | Admin app, Alerts settings: note (staff) | These always come at once: new shop orders, a member waiting at the check-in poster, a friend who wants to join, a pause or renew request when the plan is about to end, a
+P-A7-panel-2-59 | Admin app, Alerts settings: staff note | Only the owner can change when they come.
+P-A7-panel-2-60 | Admin app, Alerts: test alert card | Only this device gets the test.
+P-A7-panel-2-61 | Admin app, Entry machines: set-up step | It shows Online within a minute.
+P-A7-panel-2-62 | Admin app, Entry machines: staff note | Only the gym owner can add or remove a machine.
+P-A7-panel-2-63 | Admin app, Move to the new address page | {head} Your gym's records are only in this browser.
+P-A7-panel-2-64 | Admin app, Paid online card on Today | This payment was refunded at the payment company, so no receipt was made.
+P-A7-panel-2-65 | Admin app, Payments screen: staff note (join-page payments) | Only the owner can change these.
+P-A7-panel-2-66 | Admin app, Payments screen: staff note | Only the owner can change this.
+P-A7-panel-2-67 | Admin app, Payments screen: secret key box hint | Shown only while you type.
+P-A7-panel-2-68 | Admin app, Payments screen: secret key box hint | After you connect, only its last 4 letters show.
+P-A7-panel-2-69 | Admin app, Payments screen: staff note | Only the gym owner can connect a payment company.
+P-A7-panel-2-70 | Admin app, Payments screen: error message | Only the gym owner can connect a payment company.
+P-A7-panel-2-71 | Admin app, Automatic reminders section | Members with the MettleUp app get these on their phone at 9:30 am, never more than one a day.
+P-A7-panel-2-72 | Admin app, Automatic reminders section: staff note | Only the owner can change these.
+P-A7-panel-2-73 | Admin app, Check-in QR poster screen: How it works | It asks for the number only the first time.
+P-A7-panel-3-01 | Panel, Help and feedback, MettleUp access card | MettleUp sees only your gym’s totals (how many members, check-ins and money in all), never a member’s name or number.
+P-A7-panel-3-02 | Panel, Help and feedback, MettleUp access card | MettleUp support can look at your records only when you let them, for one hour at most, and only to read.
+P-A7-panel-3-03 | Panel, Help and feedback, MettleUp access card (empty list) | MettleUp has never opened your records.
+P-A7-panel-3-04 | Panel, Settings, Your data | MettleUp support can look at your records only if you let them.
+P-A7-panel-3-05 | Panel, Settings, Your data, delete gym sheet | Then we delete every member, payment, check-in and shop order of this gym from our server within 30 days, and call you on the gym’s number to confirm before we do.
+P-A7-panel-3-06 | Panel, Settings, Your data, after sending a delete request | We will call you on the gym’s number before anything is deleted.
+P-A7-panel-3-07 | Panel, member photo camera sheet | Only your gym’s staff can see this photo.
+P-A7-panel-3-08 | Panel, member form, photo hint | Only your gym’s staff can see it.
+P-A7-panel-3-09 | Panel, member card sheet | The QR has only the member’s ID, not their name or phone number.
+P-A7-panel-3-10 | Panel, member progress view | Body weight, photos and notes are never shared.
+P-A7-panel-3-11 | Panel, My members | Body weight, photos and notes are never shared.
+P-A7-panel-3-12 | Panel, My members | Only trainers and the owner see this
+P-A7-panel-3-13 | Panel, My members, one member | Only the owner and this member’s own trainer can see this.
+P-A7-panel-3-14 | Panel, member progress view | (Only staff see this line.)
+P-A7-panel-3-15 | Panel, cancel a receipt sheet | Its number is never used again.
+P-A7-panel-3-16 | Panel, Import members | Aadhaar and PAN numbers are never imported.
+P-A7-panel-3-17 | Panel, Import members, column list | ID numbers are never imported.
+P-A7-panel-3-18 | Panel, Enquiries, a web page chat | The chat's messages were deleted 90 days after the last one.
+P-A7-panel-3-19 | Panel, Web page | The AI helper answers visitors only from what is on your page: your fees, timings, address and facilities.
+P-A7-panel-3-20 | Panel, Join code, free trial card | Each mobile number gets one free trial at your gym.
+P-A7-panel-3-21 | Panel, Messages and offers, Offers | A workout counts only on a day your register shows a check-in for that member, and only if they logged 20+ minutes with 6+ sets in the MettleUp app.
+P-A7-panel-3-22 | Panel, Invite members | Make your free gym web page, and this card will share it instead.
+P-A7-panel-3-23 | Panel, Join code (member app and shop not turned on) | Only an owner can turn them on.
+P-A7-panel-3-24 | Panel, Join code, turning on the shop | It comes with 12 sample products you can change or delete.
+P-A7-panel-3-25 | Panel, Join code, free trial card | New people can try your gym free for 1 day.
+P-A7-panel-3-26 | Panel, Join code, free trial card | New people can try your gym free for {n} days.
+P-A7-panel-3-27 | Panel, Join code, free trial card | People who open your "Become a member" link can try your gym free before they pick a plan.
+P-A7-panel-3-28 | Panel, Join code, free trial card | A person on a free trial is not a member yet.
+P-A7-panel-3-29 | Panel, Messages and offers, personal messages | Sent on WhatsApp only, one member at a time, each with their own name and dates.
+P-A7-panel-3-30 | Panel, Messages and offers, send confirmation | Goes to all {…} in the app, not only this group.
+P-A7-panel-3-31 | Panel, Messages and offers, Offers | No receipt and no GST: free days are not a sale.
+P-A7-panel-3-32 | Panel, Messages and offers, a running offer | Only desk check-ins count.
+P-A7-panel-3-33 | WhatsApp invite message the panel writes for members | Get the free MettleUp app{…} to track your workouts.
+P-A7-panel-3-34 | Panel, paying MettleUp online | Pay by UPI, card or net banking on the payment company’s secure page.
+P-A7-panel-3-35 | Panel, business growth, how it is counted | Old records count only if you added them.
+P-A7-panel-3-36 | Panel, Joined online card | People on a free trial may visit until the day shown.
+P-A7-panel-3-37 | Panel, Joined online card, approve error | This online payment was refunded, so nothing was saved.
+P-A7-panel-3-38 | Panel, quick actions | Staff see only the ones they may use.
+P-A7-panel-3-39 | Panel, member form, pass company member switch | No plan and no dues, and never on the renewal list.
+P-A7-panel-3-40 | Panel, offline changes waiting | It was never sent, so it will be gone.
+P-A7-panel-3-41 | Panel, Settings, offline copy on this device | Clearing it deletes only that copy.
+P-A7-panel-3-42 | Panel, Settings, clear offline copy question | Nothing is deleted from your gym’s records online.
+P-A7-panel-3-43 | Panel, Settings, clear offline copy with changes waiting | Clearing deletes {…} for good.
+P-A7-panel-3-44 | Panel, Attendance, members not coming (empty) | Nobody is listed just because their visits were never added.
+P-A7-panel-3-45 | Panel, Attendance, members not coming | Everyone here has weeks left on their plan, but they stopped coming or never really started.
+P-A7-panel-3-46 | Panel, Bring a friend | A member gets {c.days} free {…} for each friend who joins.
+P-A7-panel-3-47 | Panel, Bring a friend | No free days for a friend who joins.
+P-A7-panel-3-48 | Panel, Busy machines | Only the owner can change this.
+P-A7-panel-3-49 | Panel, Challenges | Only the owner can start, change or cancel a challenge.
+P-A7-panel-3-50 | Panel, Challenges | Everyone who reaches it wins free days.
+P-A7-panel-3-51 | Panel, Challenges, saved message | Members see it in the MettleUp app within 10 minutes.
+P-A7-panel-3-52 | Panel, Challenges, cancel question | Nobody gets free days for it.
+P-A7-panel-3-53 | Panel, Entry machines, saved message | {name} shows Online within a minute of its first call.
+P-A7-panel-3-54 | Panel, Gym timings | Only the owner can change the gym timings.
+P-A7-panel-3-55 | Panel, Import members, column matching | We matched them from the column names and what is in them.
+P-A7-panel-3-56 | Panel, Import members | Only the first {MAX_IMPORT_ROWS} rows can be imported at once.
+P-A7-panel-3-57 | Panel, Import members, members already in the list | Only empty details are filled in.
+P-A7-panel-3-58 | Panel, Import members, column list | AI says this column is not needed, so it is not kept.
+P-A7-panel-3-59 | Panel, Import members, column list | It only numbers the rows, so it is not kept.
+P-A7-panel-3-60 | Panel, Import members, column list | A ticked column with no name is not kept.
+P-A7-panel-3-61 | Panel, Import members, result for one branch of several | Then import the same file again, so every payment comes in only once.
+P-A7-panel-3-62 | Panel, Import members, result | Then import the same file again, so every payment comes in only once.
+P-A7-panel-3-63 | Panel, Import members, result for staff | Only the owner can add the plans and payments in this file.
+P-A7-panel-3-64 | Panel, Import members | Only the owner can add plans and payments.
+P-A7-panel-3-65 | Panel, member page, PT pack | Only the owner can extend it.
+P-A7-panel-3-66 | Panel, member measurements | Desk note (only your gym sees it)
+P-A7-panel-3-67 | Panel, More menu | Your gym’s free page: fees, timings and photos
+P-A7-panel-3-68 | Panel, Get members online | MettleUp makes a free web page for your gym at join.mettleup.fit.
+P-A7-panel-3-69 | Panel, Pay MettleUp | Only the gym owner can pay MettleUp
+P-A7-panel-3-70 | Panel, Pay MettleUp (not ready yet) | To pay now, message MettleUp and we will send you the payment details.
+P-A7-panel-3-71 | Panel, Plans, editing a plan | A new price is used only for new sales.
+P-A7-panel-3-72 | Panel, Settings (gym not online) | Your gym is saved in this browser only.
+P-A7-panel-3-73 | Panel, Settings | Everyone who reaches it wins free days.
+P-A7-panel-3-74 | Panel, Settings, Your data (demo gym) | Saved in this browser only.
+P-A7-panel-3-75 | Panel, Settings, Your data (demo gym) | A demo gym is never put online.
+P-A7-panel-3-76 | Panel, Settings, Your data (gym not online) | Saved in this browser only.
+P-A7-panel-3-77 | Panel, Trainers, a booking | This booking has started, so only the gym owner can cancel it.
+P-A7-panel-3-78 | Panel, Web page | Your gym’s own free page, for people who may join: fees, timings, photos and a way to ask you a question.
+P-A7-panel-3-79 | Panel, Web page | Only the owner can change the web page.
+P-A7-panel-3-80 | Panel, Web page, where the page gets its details | Members, money and staff never show on the page.
+P-A7-panel-4-01 | Gym panel, Workout plans screen (list, builder and send sheet) while the gym is not online; also joined to 'No workout plan sent yet.' on Member detail (apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:655) | Members get these plans only once your gym is online (Settings → Sign-in & data).
+P-A7-panel-4-02 | Join page link preview (WhatsApp / search description of the gym's online join page), only when the owner's free trial is on | You can try {g.gymName} free for {days} {…}, or pick a plan and send your details.
+P-A7-panel-4-03 | AI credits wallet, recent entries list (ledger note 'Free credits of <month> not used', sent to the owner in owner wallet 'recent'.note, supabase/migrations/0071_ai_assistant.sql:209-211) | Free credits of
+P-A7-panel-4-04 | AI credits wallet, recent entries list (ledger note 'Free credits for <month>', sent to the owner in owner wallet 'recent'.note, supabase/migrations/0071_ai_assistant.sql:209-211) | Free credits for
+P-A7-panel-4-05 | Gym panel / older admin app, Enquiries row 'interest' line of a new online free-trial enquiry (full line ends 'Not a member yet.') | Free trial online: %s %s, %s to %s.
+P-A7-panel-4-06 | Gym alert to everyone at the gym (kind online_join) when a person starts a free trial online | %s started a free %s-day trial online (%s to %s).
+P-A7-panel-4-07 | Direct database reads log, 'gap' row text (stored as the row's query text; the gym owner's access list gets the gap row but never the query text, supabase/migrations/0097_direct_read_log.sql:278) | Not recorded: no pull read the log before Supabase deleted it.
+P-A7-phone-watch-1-01 | Android microphone permission pop-up (phone app) | MettleUp uses the microphone only when you tap Speak to send us feedback.
+P-A7-phone-watch-1-02 | Phone notification after tapping Done while the app is closed | Open it within 10 min to log this set.
+P-A7-phone-watch-1-03 | Android notification settings: channel 'Rest is over, through Do Not Disturb: <sound>' | Used only when you turn on Ring through Do Not Disturb in MettleUp
+P-A7-phone-watch-1-04 | Android notification settings: channel 'Rest countdown on the lock screen' | Never makes a sound.
+P-A7-phone-watch-1-05 | Android notification settings: channel 'Rest is over, through Do Not Disturb' | Used only when you turn on Ring through Do Not Disturb in MettleUp
+P-A7-phone-watch-1-06 | Android notification settings: channel 'Live workout' | Never makes a sound.
+P-A7-phone-watch-1-07 | Coach chat answer (phone app) | No records yet — log a few workouts and we will start tracking them.
+P-A7-phone-watch-1-08 | Coach tab, 'Clear conversation?' pop-up | This deletes your entire chat history with the coach.
+P-A7-phone-watch-1-09 | Workout tab, 'Discard workout?' pop-up | Your in-progress workout will be deleted.
+P-A7-phone-watch-1-10 | Exercise page, merge picker | Only ones logged the same way are listed.
+P-A7-phone-watch-1-11 | Import screen, 'Import is running — keep waiting?' pop-up | It is never stopped half-way.
+P-A7-phone-watch-1-12 | Import screen, 'Replace' option | Delete all {ownWorkouts} of your workout{…} in MettleUp, then import.
+P-A7-phone-watch-1-13 | Import screen, 'Merge' option | A workout already here is skipped, also one you logged in MettleUp too (same day, started within 30 minutes), so it’s safe to re-run.
+P-A7-phone-watch-1-14 | Measurements screen, History heading | Tap your own entry to fix or delete it.
+P-A7-phone-watch-1-15 | Measurements screen, History heading | Ask your gym to change the ones they recorded.
+P-A7-phone-watch-1-16 | Measurements screen, History heading | Tap an entry to fix or delete it.
+P-A7-phone-watch-1-17 | Ready to train screen, caption | Worked out only from the workouts you logged in this app.
+P-A7-phone-watch-1-18 | Open workout, 'Discard workout?' pop-up | This workout and its sets will be deleted.
+P-A7-phone-watch-1-19 | Open workout, 'Workout deleted' message | This workout was deleted, so your changes were discarded.
+P-A7-phone-watch-1-20 | Swap exercise screen, subtitle | Instead of {swapName}, for this workout only
+P-A7-phone-watch-1-21 | Swap exercise screen, subtitle | For this workout only
+P-A7-phone-watch-1-22 | Workout finished screen, 'Summary unavailable' | Your workout was saved — we just couldn't load its summary.
+P-A7-phone-watch-1-23 | Settings, Coach (AI keys) | Keys are stored securely on this device.
+P-A7-phone-watch-1-24 | Settings, backup file panel | Your phone number and your gym membership are never in the file.
+P-A7-phone-watch-1-25 | Settings, restore from a backup file, choice text | “{ADD_LABEL}”: only what this phone doesn’t have yet comes in; your settings stay.
+P-A7-phone-watch-1-26 | Settings, MettleUp account card | Only you can see what is saved.
+P-A7-phone-watch-1-27 | Settings, MettleUp account card | Your space on MettleUp is full, so new workouts stay on this phone only.
+P-A7-phone-watch-1-28 | Settings, 'Delete your MettleUp account?' pop-up | This deletes your account and everything saved on MettleUp’s server.
+P-A7-phone-watch-1-29 | Settings, message after deleting the account | Your account and everything saved on MettleUp are deleted.
+P-A7-phone-watch-1-30 | Settings, message after deleting the account when the sign-in is kept | Everything saved on MettleUp is deleted.
+P-A7-phone-watch-1-31 | Open workout, save problem banner | Free some space; we'll keep trying.
+P-A7-phone-watch-1-32 | Open workout, save problem banner | We'll keep trying.
+P-A7-phone-watch-1-33 | Open workout, finish problem banner | It's still open: free some space, then tap Finish again.
+P-A7-phone-watch-1-34 | Editing a saved workout, save problem banner | They're still open: free some space, then tap Save changes again.
+P-A7-phone-watch-1-35 | Settings, Data card, sample data warning | Your {ownWorkouts} workout{…}, profile, routines, body weight, measurements and photos are deleted
+P-A7-phone-watch-1-36 | Settings, Data card, sample data warning | Your profile, routines, body weight, measurements and photos are deleted
+P-A7-phone-watch-1-37 | Settings, Data card, message when erasing fails | Nothing was deleted.
+P-A7-phone-watch-1-38 | Settings, Data card, under the erase button | Deletes everything on this phone and starts over from the welcome screen.
+P-A7-phone-watch-1-39 | Settings, 'Include photos in my backup' card | Off: photos stay on this phone only.
+P-A7-phone-watch-1-40 | Settings, 'Include photos in my backup' card | Turning this off deletes the copies.
+P-A7-phone-watch-1-41 | Help and feedback, after sending | We read every message.
+P-A7-phone-watch-1-42 | Help and feedback, after answering 'No' to 'Did this solve it?' | We reply as soon as we can.
+P-A7-phone-watch-1-43 | Help and feedback, privacy line under Speak | Only the recording is sent.
+P-A7-phone-watch-1-44 | Help and feedback, privacy line under Speak | Neither we nor that service keep it.
+P-A7-phone-watch-1-45 | Help and feedback, privacy line under Speak | The text reaches us only if you tap Send.
+P-A7-phone-watch-1-46 | 'Keep your workouts safe' card (phone app) | Your workouts are only on this phone.
+P-A7-phone-watch-1-47 | Help and feedback, 'Add my watch's screen log' caption | It holds only the times your watch screen turned on, off or dim, and your watch's Battery Saver and screen settings.
+P-A7-phone-watch-1-48 | Welcome screen, sample data option | Your {kept} workout{…} on this phone {…} deleted.
+P-A7-phone-watch-1-49 | Welcome screen, phone number hint | Only for your gym, once you link one.
+P-A7-phone-watch-1-50 | Settings, Data card, 'What do you want to erase?' choice | Erase this phone only
+P-A7-phone-watch-1-51 | Settings, Data card, 'What do you want to erase?' choice | Erase this phone and delete my MettleUp account
+P-A7-phone-watch-1-52 | Settings, Data card, 'What do you want to erase?' choice | Your MettleUp account and everything saved in it are deleted too.
+P-A7-phone-watch-1-53 | Settings, Data card, message when the account delete fails | Could not delete your MettleUp account, so nothing was erased.
+P-A7-phone-watch-1-54 | Intro slides, gym slide | If your gym uses MettleUp gym software, sign in with your phone number and we find your gym for you.
+P-A7-phone-watch-1-55 | Phone number sign-in, after the gym is found (member) | {m.gymName} gives you every MettleUp feature free while your gym plan is active.
+P-A7-phone-watch-1-56 | Phone number sign-in, after the gym is found (owner, trainer, desk staff) | As {…}, you get every MettleUp feature free.
+P-A7-phone-watch-1-57 | Phone number sign-in, intro | We use it to find your gym and link this app to it.
+P-A7-phone-watch-1-58 | Phone number sign-in, how the WhatsApp check works | You pay nothing, and we never message you.
+P-A7-phone-watch-1-59 | Phone number sign-in, privacy line | We only use your number to find your gym.
+P-A7-phone-watch-1-60 | Phone number sign-in, privacy line | Your number is checked once and is not kept for this.
+P-A7-phone-watch-1-61 | Phone number sign-in, 'Send the message in WhatsApp' step | We look for your gym as soon as it arrives.
+P-A7-phone-watch-1-62 | Exercise card, next-step tip (phone app) | Top set hit {lastS.topReps} at {trimNum(lastS.topWeightKg)} kg — bring every set to {target.repRangeMax} and we add weight.
+P-A7-phone-watch-2-01 | Home, the note after joining a gym straight in | We set you up as "New to lifting" and "Build muscle".
+P-A7-phone-watch-2-02 | Welcome, bring back a backup: the replace warning | The 1 workout on this phone is deleted and your backup takes its place.
+P-A7-phone-watch-2-03 | Welcome, bring back a backup: the replace warning | The {workouts} workouts on this phone are deleted and your backup takes their place.
+P-A7-phone-watch-2-04 | MettleUp Plus screen, the free list's title | Free for everyone, always
+P-A7-phone-watch-2-05 | MettleUp Plus screen, the gym card | Members of a gym that uses MettleUp get every feature free.
+P-A7-phone-watch-2-06 | MettleUp Plus screen top line and Settings, while the plan switch is off | Every feature is free.
+P-A7-phone-watch-2-07 | MettleUp Plus screen top line and Settings | Your free month ends today.
+P-A7-phone-watch-2-08 | MettleUp Plus screen top line and Settings | Your free month: every feature is open for {dayWord(a.daysLeft)}.
+P-A7-phone-watch-2-09 | MettleUp Plus screen top line and Settings | You work at {a.gymName}, so every feature is free for you.
+P-A7-phone-watch-2-10 | MettleUp Plus screen top line and Settings, after a gym plan ended | Renew at {a.gymName} to keep them free.
+P-A7-phone-watch-2-11 | MettleUp Plus screen top line and Settings | {a.gymName} gives you every feature free, because you are a member there.
+P-A7-phone-watch-2-12 | MettleUp Plus screen top line and Settings, gym plan ended | Renew there to get every feature free again, or get {PLUS_NAME}.
+P-A7-phone-watch-2-13 | MettleUp Plus screen top line and Settings | Your free month has ended.
+P-A7-phone-watch-2-14 | MettleUp Plus screen top line and Settings | Everything under "Free for everyone" stays free.
+P-A7-phone-watch-2-15 | MettleUp Plus screen, the Renew at your gym card | Your gym plan gave you every MettleUp feature free.
+P-A7-phone-watch-2-16 | The pop-up when a locked feature is tapped | Your workouts, history and routines stay free.
+P-A7-phone-watch-2-17 | The pop-up when a locked feature is tapped | Members of a gym that uses MettleUp get every feature free.
+P-A7-phone-watch-2-18 | The one-time pop-up in the free month's last 5 days (title) | Your free month ends today
+P-A7-phone-watch-2-19 | The one-time pop-up in the free month's last 5 days (title) | Your free month has {daysLeft} days left
+P-A7-phone-watch-2-20 | The one-time pop-up in the free month's last 5 days | After that, logging, history and routines stay free.
+P-A7-phone-watch-2-21 | The one-time pop-up in the free month's last 5 days | You get them free if your gym uses MettleUp.
+P-A7-phone-watch-2-22 | The one-time pop-up after the free month (title) | Your free month has ended
+P-A7-phone-watch-2-23 | The one-time pop-up after the free month | Your workouts, history and routines stay free, and nothing was deleted.
+P-A7-phone-watch-2-24 | The card 'Do you run a gym on MettleUp?' | Gym owners and desk staff also get every feature of {PLUS_NAME} free.
+P-A7-phone-watch-2-25 | Gym tab, Message your gym: under 'Who should answer?' | Only the person you pick sees your question.
+P-A7-phone-watch-2-26 | Gym tab, leaderboard card | You hit the goal: {prizeDays} free {…}.
+P-A7-phone-watch-2-27 | The Join a gym screen | Other members see your name only if you switch it on.
+P-A7-phone-watch-2-28 | Settings, Your gym, What my gym can see | MettleUp never sends which exercises you did, your body weight, photos or notes.
+P-A7-phone-watch-2-29 | Settings, Your gym, What my gym can see (gym with machines or trainers) | MettleUp never sends your body weight, photos or notes.
+P-A7-phone-watch-2-30 | Settings, Your gym, What my gym can see: Busy machines | Your gym sees only totals, never your name.
+P-A7-phone-watch-2-31 | Settings, Your gym, What my gym can see: name switch caption | Your gym's staff always see your name.
+P-A7-phone-watch-2-32 | Gym tab, Bring a friend card | When a friend joins, your gym can add {days} free {…} to your plan.
+P-A7-phone-watch-2-33 | Check in screen, asking for the mobile number | The app asks only once.
+P-A7-phone-watch-2-34 | Check in screen, first check-in at the desk | You do this only once.
+P-A7-phone-watch-2-35 | Find my gym card | If your gym uses MettleUp, we can find your membership with your mobile number.
+P-A7-phone-watch-2-36 | Find my gym card | Members of a MettleUp gym get every feature free.
+P-A7-phone-watch-2-37 | Find my gym screen, intro | We check your number against the member lists of gyms that use MettleUp.
+P-A7-phone-watch-2-38 | Find my gym screen, intro | We only show you your own gym.
+P-A7-phone-watch-2-39 | Find my gym screen, under the form | Your number is checked once and is not kept for this.
+P-A7-phone-watch-2-40 | Find my gym screen, how it works | You pay nothing, and we never message you.
+P-A7-phone-watch-2-41 | Find my gym screen, waiting for the WhatsApp message | We look for your gym as soon as it arrives.
+P-A7-phone-watch-2-42 | Find my gym screen, gym found | {gym} gives you every MettleUp feature free while your gym plan is active.
+P-A7-phone-watch-2-43 | Find my gym screen, gym not found | You can unlock every feature free if your gym uses MettleUp.
+P-A7-phone-watch-2-44 | Find my gym screen, gym not found | We look only for a plan that runs today, under the number and first name your gym has for you.
+P-A7-phone-watch-2-45 | Find my gym screen, Tell my gym | We never share your number.
+P-A7-phone-watch-2-46 | The message 'Tell my gym' shares | Every member of a MettleUp gym also gets every feature of the MettleUp workout app free.
+P-A7-phone-watch-2-47 | Gym tab, Message your gym: who reads it | Only the owner of {gym} reads your {noun}.
+P-A7-phone-watch-2-48 | Gym tab, Message your gym: who reads it | Only the owner and front desk at {gym} read your feedback.
+P-A7-phone-watch-2-49 | Gym tab, Message your gym: who reads it | Only the owner of {gym} reads your complaint.
+P-A7-phone-watch-2-50 | Gym tab, Message your gym: error line | Only feedback can be sent without your name.
+P-A7-phone-watch-2-51 | Settings, Your gym, What my gym can see: gym mates switch | Never photos, body weight, notes or your phone number.
+P-A7-phone-watch-2-52 | Settings, Your gym, What my gym can see: gym mates switch | Turn it off and what you shared is deleted at once.
+P-A7-phone-watch-2-53 | Settings, Your gym, What my gym can see | Gym mates can open your workouts only while 'Show my name on my gym's leaderboard' is on.
+P-A7-phone-watch-2-54 | Gym tab, Workout offer: the consent screen | What the gym gets: only the dates of those workouts.
+P-A7-phone-watch-2-55 | Gym tab, Workout offer: the consent screen | Never your exercises, weights, sets, body weight or photos.
+P-A7-phone-watch-2-56 | Gym tab, Workout offer: the consent screen | The dates are deleted and nothing more is sent.
+P-A7-phone-watch-2-57 | Gym tab, Workout offer: Leave the offer? | Your workout dates are deleted from the gym, and nothing more is sent.
+P-A7-phone-watch-2-58 | The card 'Is your gym not on MettleUp yet?' | Every member of a MettleUp gym gets every feature of this app free, and can also get their trainer's workout plans in it.
+P-A7-phone-watch-2-59 | The message 'Recommend MettleUp to my gym' shares | Every member also gets a free workout app.
+P-A7-phone-watch-2-60 | Staff sign-in box on 'Do you run a gym on MettleUp?' | Your PIN is only checked.
+P-A7-phone-watch-2-61 | Staff sign-in box on 'Do you run a gym on MettleUp?' | It is never saved on this phone.
+P-A7-phone-watch-2-62 | Settings, Your gym, What my gym can see: trainer switch (older server) | Never your body weight, photos or notes.
+P-A7-phone-watch-2-63 | Settings, Your gym, What my gym can see: trainer switch (older server) | Off: the gym deletes it at once.
+P-A7-phone-watch-2-64 | Settings, Your gym, What my gym can see: trainer switch | They never see your body weight, photos or notes.
+P-A7-phone-watch-2-65 | Settings, Your gym, What my gym can see: trainer switch | If you switch this off or leave the gym, the gym deletes it at once.
+P-A7-phone-watch-2-66 | Workout screen, swap an exercise | For this workout only.
+P-A7-phone-watch-2-67 | Workout screen, how an exercise is counted | How {exercise.name} is counted in this workout only.
+P-A7-phone-watch-2-68 | Routines, the folder picker | Your plan only changes if you pick it.
+P-A7-phone-watch-2-69 | Bring in routines, new exercises step | We add {…} to your exercises with the same name, so your Hevy history and these routines stay together.
+P-A7-phone-watch-2-70 | Bring in routines, pick a folder | Your plan only changes if you pick it.
+P-A7-phone-watch-2-71 | Exercise page, Strength level: What this means | Your body weight stays private and is never shown.
+P-A7-phone-watch-2-72 | Workout, Remove this photo? | It is deleted from this workout and from the app for good.
+P-A7-phone-watch-2-73 | Workout, Add a photo to this workout | Private: they stay on this phone.
+P-A7-phone-watch-2-74 | Smart suggestion: Why we suggest this | We added up the sets planned in your {nameList(w.routineNames)} routine.
+P-A7-phone-watch-2-75 | Smart suggestion: Why we suggest this | We added up the sets planned in your {n} routines: {nameList(w.routineNames)}.
+P-A7-phone-watch-2-76 | Smart suggestion: Why we suggest this | For shoulders, only shoulder exercises count.
+P-A7-phone-watch-2-77 | Workout, suggestion for a first-time assisted exercise | Next time we take it from there.
+P-A7-phone-watch-2-78 | Workout, suggestion for a first-time body-weight exercise | Next time we take it from there.
+P-A7-phone-watch-2-79 | Workout, suggestion for a first-time exercise | Next time we take it from there.
+P-A7-phone-watch-3-01 | Phone app, Settings > Health apps > Sleep and workouts (switch on) | Your sleep stays on this phone and is never sent anywhere.
+P-A7-phone-watch-3-02 | Phone app, share sheet, line under the Share button (gym shown) | It never shows your name or body weight.
+P-A7-phone-watch-3-03 | Phone app, share sheet, line under the Share button (gym hidden or no gym) | The picture never shows your name, your gym or your body weight.
+P-A7-phone-watch-3-04 | Phone app, Settings > Health apps, line under Send past workouts | Workouts on demo data are never sent.
+P-A7-phone-watch-3-05 | Phone app, Settings > Health apps, notice after tapping Send past workouts | Nothing to send: workouts on demo data never leave your phone.
+P-A7-phone-watch-3-06 | Phone app, Settings > Health apps, line under Send past workouts when older workouts are left out | Only workouts logged in MettleUp are sent.
+P-A7-phone-watch-3-07 | Phone app, Health Connect page, Weight from Health Connect (about line) | A weight you typed yourself is never changed.
+P-A7-phone-watch-3-08 | Phone app, Health Connect page, Weight from Health Connect (switch on) | A weight you typed yourself is never changed.
+P-A7-phone-watch-3-09 | Phone app, workout actions, error after Delete (full line adds: It is still here. Please try again.) | Could not delete this workout.
+P-A7-phone-watch-3-10 | Phone app, pop-up 'A workout is already open' when starting another workout | Discarding deletes its {ticked} {…}.
+P-A7-phone-watch-3-11 | Phone app, workout photos, error when adding a photo | This workout was deleted, so the photo wasn’t added.
+P-A7-phone-watch-3-12 | Phone app, Profile > Backup, photos line when some photos could not be copied | ; older ones stay on this phone only
+P-A7-phone-watch-3-13 | Phone app, Profile > Backup, photos line when only the newest photos fit | Older ones stay on this phone only.
+P-A7-phone-watch-3-14 | Phone app, live workout, Workout timer sheet | Paused time never counts toward the workout.
+P-A7-phone-watch-3-15 | Phone app, plan builder, i beside 'Go easy on' | We leave out moves that often bother that area.
+P-A7-phone-watch-3-16 | Phone app, Settings, machine weight step sheet (line under the choices) | The app then suggests only weights your machines and cables really have.
+P-A7-phone-watch-3-17 | Phone app, Settings > workout choices, line under Weight jumps | On barbell lifts we use your gym's smallest plates.
+P-A7-phone-watch-3-18 | Phone app, Settings > Rest timer and sounds, rest sound sheet footnote | Workout sounds are off, so Rest is over only buzzes.
+P-A7-phone-watch-3-19 | Phone app, exercise page, under the Records heading | Best pace counts only sets of {words} or more, so a short sprint can't set it.
+P-A7-phone-watch-3-20 | Phone app, Workout tab, 'Make your first routine' card | We will help you make one in 4 short steps.
+P-A7-phone-watch-3-21 | Phone app, import screen, Strong row subtitle | We build your routines from it.
+P-A7-phone-watch-3-22 | Phone app, import screen, line before picking the file (Strong) | After your workouts come in, we build your routines from the workouts you repeat most.
+P-A7-phone-watch-3-23 | Phone app, import screen, line before picking the file (Hevy) | After your workouts come in, we build your routines from the workouts you repeat most.
+P-A7-phone-watch-3-24 | Phone app, import screen, routines offer after the import | We built {n} routine{…} from the workouts you repeat most.
+P-A7-phone-watch-3-25 | Phone app, live workout screen, line beside Start blank | We added the exercises from your last empty workout.
+P-A7-phone-watch-3-26 | Phone app, exercise card, target reason for a first timed hold | Next time we take it from there.
+P-A7-pilot-01 | Data agreement for gyms, section 1 | Under India's data law (the DPDP Act 2023), you are the Data Fiduciary for them and we are your Data Processor .
+P-A7-pilot-02 | Data agreement for gyms, section 2 | We store and process your records only to run MettleUp for your gym, as the app's features and your staff direct.
+P-A7-pilot-03 | Data agreement for gyms, section 2 | We do not sell them, use them for ads or for our own marketing, or share them with other gyms.
+P-A7-pilot-04 | Data agreement for gyms, section 2 | We may count them in totals that name no gym and no person (for example, how many check-ins MettleUp handled).
+P-A7-pilot-05 | Data agreement for gyms, section 3 | Google Gemini, then Anthropic Claude if Gemini fails: only when you import a member list.
+P-A7-pilot-06 | Data agreement for gyms, section 3 | The AI only says which column is which, and we keep nothing from the file.
+P-A7-pilot-07 | Data agreement for gyms, section 3 | We tell you in the admin app before we add a new company that sees your records.
+P-A7-pilot-08 | Data agreement for gyms, section 4 | Each gym can reach only its own records.
+P-A7-pilot-09 | Data agreement for gyms, section 4 | Only people the owner adds can sign in, with their own PIN or a one-time code.
+P-A7-pilot-10 | Data agreement for gyms, section 4 | PINs are kept only in scrambled form.
+P-A7-pilot-11 | Data agreement for gyms, section 4 | Signing that device out deletes the copy.
+P-A7-pilot-12 | Data agreement for gyms, section 4, Support access | We look at your records only in a window that you open (in Settings, for 1 hour).
+P-A7-pilot-13 | Data agreement for gyms, section 4, Support access | In an emergency, such as a fault that stops your desk, we open it for up to 1 hour and write down why.
+P-A7-pilot-14 | Data agreement for gyms, section 4, Support access | We can only read, never change.
+P-A7-pilot-15 | Data agreement for gyms, section 4, Support access | Every look is recorded, and you can see each one in the admin app.
+P-A7-pilot-16 | Data agreement for gyms, section 5 | We tell you in writing within 24 hours of finding out.
+P-A7-pilot-17 | Data agreement for gyms, section 5 | We say what happened, what data, what we did and what comes next.
+P-A7-pilot-18 | Data agreement for gyms, section 5 | We help you tell the Data Protection Board straight away and send the full report within 72 hours, and we help tell the members affected.
+P-A7-pilot-19 | Data agreement for gyms, section 7 | If a member asks you to see, correct or erase their details, you handle it, and we help when you ask.
+P-A7-pilot-20 | Data agreement for gyms, section 7 | If a member asks us, we pass it to you.
+P-A7-pilot-21 | Data agreement for gyms, section 8 | If that does not work for you, we send you the same within 7 days of asking.
+P-A7-pilot-22 | Data agreement for gyms, section 9 | We call the gym's number to confirm and remind you to download first.
+P-A7-pilot-23 | Data agreement for gyms, section 9 | Then we delete every member, payment, check-in and shop order of your gym from our server within 30 days of the request.
+P-A7-pilot-24 | Data agreement for gyms, section 9 | We keep the deletion request itself for 2 years, as proof.
+P-A7-pilot-25 | Data agreement for gyms, section 10 | You, your trainers and your desk cannot see it, and deleting your gym does not delete it.
+P-A7-pilot-26 | Data agreement for gyms, section 11 | When your owner ticks "I agree", we keep: the gym, who ticked it (their name as signed in), when, which version, how (at "Create my gym" or at a later sign-in), and a scr
+P-A7-pilot-27 | Data agreement for gyms, section 11 | That scrambled form can still be traced back, so we protect it like other personal data.
+P-A7-pilot-28 | Data agreement for gyms, section 11 | We keep this record while your gym uses MettleUp.
+P-A7-pilot-29 | Data agreement for gyms, section 12 | You can stop at any time and ask us to delete your gym (point 9).
+P-A7-pilot-30 | Data agreement for gyms, section 12 | We may end it with 30 days' notice, or at once for serious misuse.
+P-A7-pilot-31 | Data agreement for gyms, section 12 | Even after it ends, points 5, 9 and 10 (leaks, deleting your gym, and members' own workouts) still apply until your records are deleted.
+P-A7-pilot-32 | Data agreement for gyms, section 14 | Before a new version applies, we tell the owner in the admin app and ask them to accept it again.
+P-A7-pilot-33 | Delete your account page, intro | You only have an account if you tapped Continue with Google in the app.
+P-A7-pilot-34 | Delete your account page, intro | If you never did, nothing is saved on our server: your workouts are only on your phone, and there is nothing for us to delete.
+P-A7-pilot-35 | Delete your account page, Delete it in the app, step 2 | Tap Delete my account .
+P-A7-pilot-36 | Delete your account page, Delete it in the app, step 3 | Confirm with Delete account .
+P-A7-pilot-37 | Delete your account page, Delete it in the app | We delete your account and everything saved on our server at once.
+P-A7-pilot-38 | Delete your account page, No app any more? Email us | We do it within 30 days and reply when it is done.
+P-A7-pilot-39 | Delete your account page, What we delete | The photos themselves stay on your phone, because we never save them on our server.
+P-A7-pilot-40 | Delete your account page, What we delete | Your profile, and the email, name and picture link we got from Google.
+P-A7-pilot-41 | Delete your account page, What is kept, and for how long | Backup copies: we remove every backup copy of your data within 7 days of deletion.
+P-A7-pilot-42 | Delete your account page, What is kept, and for how long | If you also run or work at a gym with the same Google account (as an owner or trainer): we delete your saved workouts but keep that sign-in, so the gym's app keeps workin
+P-A7-pilot-43 | Delete your account page, What is kept, and for how long | When you leave the gym in the app, we erase your mobile number from them.
+P-A7-pilot-44 | Delete your account page, What is kept, and for how long | Your trainers' weekly summary of your workouts is deleted when you turn off Share my workouts with my trainers or leave the gym.
+P-A7-pilot-45 | Shipping and delivery page, intro | Your members use the free MettleUp app on their phones.
+P-A7-pilot-46 | Shipping and delivery page, When you get access | Free trial: starts as soon as you sign up.
+P-A7-pilot-47 | Shipping and delivery page, When you get access | We check it and turn your plan on.
+P-A7-pilot-48 | Shipping and delivery page, How you pay | Coming soon: card and net banking, on the payment company's own secure page.
+P-A7-pilot-49 | Shipping and delivery page, How you pay | Today, the "Pay MettleUp" screen lists each payment you sent and whether we confirmed it.
+P-A7-pilot-50 | Shipping and delivery page, How long access lasts | When online payments start, we will remind you in the admin app 7, 3 and 1 days before a monthly or yearly plan ends.
+P-A7-pilot-51 | Shipping and delivery page, How long access lasts | If you do not pay, we tell you in the admin app first.
+P-A7-pilot-52 | Shipping and delivery page, How long access lasts | After that, we may switch off the paid features step by step.
+P-A7-pilot-53 | Shipping and delivery page, How long access lasts | We never delete your data because a payment is late.
+P-A7-pilot-54 | Shipping and delivery page, How long access lasts | If you ask us to, we delete your gym's data within 30 days.
+P-A7-pilot-55 | Privacy notice, summary box at the top | We only store them for it.
+P-A7-pilot-56 | Privacy notice, summary box at the top | We never sell your data or show ads.
+P-A7-pilot-57 | Privacy notice, summary box at the top | Data from Health Connect never goes to your gym or to any AI.
+P-A7-pilot-58 | Privacy notice, summary box at the top | You can see, correct or delete your data at any time.
+P-A7-pilot-59 | Privacy notice, section 1 | We answer within 30 days.
+P-A7-pilot-60 | Privacy notice, section 2 | We are also in charge of help and feedback messages, crash reports, workouts you share with gym mates, and our technical logs.
+P-A7-pilot-61 | Privacy notice, section 2 | (Under India's data law, we are the "Data Fiduciary" for these.)
+P-A7-pilot-62 | Privacy notice, section 2 | We only store these records for your gym, under a written agreement.
+P-A7-pilot-63 | Privacy notice, section 2 | (Your gym is the "Data Fiduciary" and we are its "Data Processor".)
+P-A7-pilot-64 | Privacy notice, section 2 | If you write to us instead, we pass your request to your gym and help it answer.
+P-A7-pilot-65 | Privacy notice, section 3 | Your progress photos never leave your phone.
+P-A7-pilot-66 | Privacy notice, section 3 | "Ask an AI about your workouts" (Settings → Your data) only opens your phone's share menu.
+P-A7-pilot-67 | Privacy notice, section 4A | This copy never holds your mobile number.
+P-A7-pilot-68 | Privacy notice, section 4A | Who can see it: only you.
+P-A7-pilot-69 | Privacy notice, section 4A | We look at it only to fix a fault, or when the law makes us.
+P-A7-pilot-70 | Privacy notice, section 4B | Find my gym: if you check your mobile number in the app, we look for it on the member lists of gyms that use MettleUp, only to show you your own gym.
+P-A7-pilot-71 | Privacy notice, section 4B | The number is checked once and is not kept for this.
+P-A7-pilot-72 | Privacy notice, section 4B | Tell my gym: if you type your gym's name and city, we keep only those two, so our team can contact that gym.
+P-A7-pilot-73 | Privacy notice, section 4B | We never share your number.
+P-A7-pilot-74 | Privacy notice, section 4B table, Check-ins row | Members see only how busy the gym is, never who came
+P-A7-pilot-75 | Privacy notice, section 4B table, machines row | Which machines you used, and when (only if your gym turned on busy machines)
+P-A7-pilot-76 | Privacy notice, section 4B table, Workout report row | Only if the gym asks and you tap yes
+P-A7-pilot-77 | Privacy notice, section 4B, Trainer summary | It never includes your body weight, photos, notes, food or mobile number.
+P-A7-pilot-78 | Privacy notice, section 4B | Messages you send to your gym from the Gym tab (questions, feedback, complaints) and the gym's replies are kept for 180 days after the last message, and deleted when you 
+P-A7-pilot-79 | Privacy notice, section 4B, Bring a friend | You see only how many friends joined.
+P-A7-pilot-80 | Privacy notice, section 4B, Paying your gym online | We pass the company your name, mobile number and the amount.
+P-A7-pilot-81 | Privacy notice, section 4B, Paying your gym online | We never see your card, UPI or bank details.
+P-A7-pilot-82 | Privacy notice, section 4C | Data from Health Connect never goes to your gym, to advertisers or to any AI.
+P-A7-pilot-83 | Privacy notice, section 4D | Help and feedback (Settings → Help and feedback): we get your message, the app and its version, your phone model, the screen you were on and your gym's code.
+P-A7-pilot-84 | Privacy notice, section 4D | We also get a random number for this install and a coded form of your internet (IP) address, used only to stop misuse.
+P-A7-pilot-85 | Privacy notice, section 4D | We do not get your name or mobile number, unless you type them.
+P-A7-pilot-86 | Privacy notice, section 4D, Spoken feedback | Neither we nor Groq keep the recording.
+P-A7-pilot-87 | Privacy notice, section 4D, Spoken feedback | To stop misuse, we count how many recordings each phone and each coded internet address makes a day.
+P-A7-pilot-88 | Privacy notice, section 4D, Crash reports | A report never holds your workouts, name, gym or phone details.
+P-A7-pilot-89 | Privacy notice, section 4D, Crash reports | The error text is copied to our private bug list on GitHub.
+P-A7-pilot-90 | Privacy notice, section 4D | Sign in with your phone number: when you check your mobile number in the app, we look for it on the member and staff lists of gyms that use MettleUp, only to show you you
+P-A7-store-1-01 | Google Play store listing draft, full description (FULL23, under SEE YOUR PROGRESS) | • Track body weight and measurements, and keep private progress photos to compare side by side.
+P-A7-store-1-02 | Google Play store listing draft, full description (FULL40, closing line) | Logging your workouts is free, and there are no ads.
+P-A7-templates-1-01 | Gym panel, Messages, ready message 'Closed for a festival' (English), sent to members | The gym is closed on {closedOn} for {festival}. We open again on {openOn} at {openAt}. Happy {festival}!
+P-A7-templates-1-02 | Gym panel, Messages, ready message 'Closed for a festival' (Hindi title), sent to members | {closedOn} को जिम बंद रहेगा
+P-A7-templates-1-03 | Gym panel, Messages, ready message 'Closed for a festival' (Hindi), sent to members | {festival} के कारण {closedOn} को जिम बंद रहेगा। {openOn} को {openAt} से फिर खुलेगा। {festival} की शुभकामनाएँ!
+P-A7-templates-1-04 | Gym panel, Messages, ready message 'Closed today' (English title), sent to members | Gym closed today
+P-A7-templates-1-05 | Gym panel, Messages, ready message 'Closed today' (English), sent to members | Sorry, the gym is closed today because of {reason}. We open again on {openOn} at {openAt}.
+P-A7-templates-1-06 | Gym panel, Messages, ready message 'Closed today' (Hindi title), sent to members | आज जिम बंद है
+P-A7-templates-1-07 | Gym panel, Messages, ready message 'Closed today' (Hindi), sent to members | माफ़ कीजिए, {reason} के कारण आज जिम बंद है। {openOn} को {openAt} से फिर खुलेगा।
+P-A7-templates-1-08 | Gym panel, Messages, ready message 'New timings' (English), sent to members | From {from} the gym is open {opens} to {closes}.<< Sunday: {sunOpens} to {sunCloses}.>>
+P-A7-templates-1-09 | Gym panel, Messages, ready message 'New timings' (Hindi), sent to members | {from} से जिम {opens} से {closes} तक खुलेगा।<< रविवार: {sunOpens} से {sunCloses} तक।>>
+P-A7-templates-1-10 | Gym panel, Messages, ready message 'Festival timings' (English), sent to members | On {on} the gym is open only {opens} to {closes}.
+P-A7-templates-1-11 | Gym panel, Messages, ready message 'Festival timings' (Hindi), sent to members | {on} को जिम सिर्फ़ {opens} से {closes} तक खुला रहेगा।
+P-A7-templates-1-12 | Gym panel, Messages, ready message 'Machine under repair' (English title), sent to members | {machine} under repair
+P-A7-templates-1-13 | Gym panel, Messages, ready message 'Machine under repair' (English), sent to members | The {machine} is under repair till {till}. Sorry for the trouble. Ask a trainer for another exercise.
+P-A7-templates-1-14 | Gym panel, Messages, ready message 'Machine under repair' (Hindi title), sent to members | {machine} की मरम्मत चल रही है
+P-A7-templates-1-15 | Gym panel, Messages, ready message 'Machine under repair' (Hindi), sent to members | {till} तक {machine} की मरम्मत चल रही है। असुविधा के लिए माफ़ी। ट्रेनर से दूसरी एक्सरसाइज़ पूछें।
+P-A7-templates-1-16 | Gym panel, Messages, ready message 'New batch' (English), sent to members | A new {batch} batch starts on {starts}, {from} to {to}. Ask at the desk to join.
+P-A7-templates-1-17 | Gym panel, Messages, ready message 'New batch' (Hindi), sent to members | {starts} से नया {batch} बैच शुरू, {from} से {to} तक। जुड़ने के लिए डेस्क पर पूछें।
+P-A7-templates-1-18 | Gym panel, Messages, ready message 'New trainer' (English), sent to members | {name} joins us from {from} and trains {what}. Say hello at the gym!
+P-A7-templates-1-19 | Gym panel, Messages, ready message 'New trainer' (Hindi), sent to members | {from} से {name} हमारे साथ हैं। वे {what} सिखाते हैं। जिम में मिलिए!
+P-A7-templates-1-20 | Gym panel, Messages, ready message 'Festival offer' (English title), sent to members | {festival} offer: {discount} off
+P-A7-templates-1-21 | Gym panel, Messages, ready message 'Festival offer' (English), sent to members | Join or renew by {by} and get {discount} off the {plan} plan. Ask at the desk.
+P-A7-templates-1-22 | Gym panel, Messages, ready message 'Festival offer' (Hindi title), sent to members | {festival} ऑफ़र: {discount} की छूट
+P-A7-templates-1-23 | Gym panel, Messages, ready message 'Festival offer' (Hindi), sent to members | {by} तक जॉइन या रिन्यू करें और {plan} प्लान पर {discount} की छूट पाएँ। डेस्क पर पूछें।
+P-A7-templates-1-24 | Gym panel, Messages, ready message 'Renew early' (English title), sent to members whose plan ends soon | Renew early, get {days} free
+P-A7-templates-1-25 | Gym panel, Messages, ready message 'Renew early' (English), sent to members whose plan ends soon | Renew before your plan ends and get {days} extra free. Offer till {till}.
+P-A7-templates-1-26 | Gym panel, Messages, ready message 'Renew early' (Hindi title), sent to members whose plan ends soon | जल्दी रिन्यू करें, {days} मुफ़्त
+P-A7-templates-1-27 | Gym panel, Messages, ready message 'Renew early' (Hindi), sent to members whose plan ends soon | प्लान ख़त्म होने से पहले रिन्यू करें और {days} मुफ़्त पाएँ। ऑफ़र {till} तक।
+P-A7-templates-1-28 | Gym panel, Messages, ready message 'Bring a friend' (English title), sent to active members | Bring a friend, get {days} free
+P-A7-templates-1-29 | Gym panel, Messages, ready message 'Bring a friend' (English), sent to active members | When a friend joins and names you, you get {days} extra and your friend gets {discount} off. Till {till}.
+P-A7-templates-1-30 | Gym panel, Messages, ready message 'Bring a friend' (Hindi title), sent to active members | दोस्त को लाएँ, {days} मुफ़्त
+P-A7-templates-1-31 | Gym panel, Messages, ready message 'Bring a friend' (Hindi), sent to active members | आपका नाम लेकर दोस्त जॉइन करे तो आपको {days} ज़्यादा और दोस्त को {discount} की छूट। {till} तक।
+P-A7-templates-1-32 | Gym panel, Messages, ready message 'Couple and family' (English), sent to members | Join together and save: {discount} off each for 2 or more family members, any plan. Till {till}.
+P-A7-templates-1-33 | Gym panel, Messages, ready message 'Couple and family' (Hindi), sent to members | साथ जॉइन करें: परिवार के 2 या ज़्यादा लोगों में हर सदस्य को किसी भी प्लान पर {discount} की छूट। {till} तक।
+P-A7-templates-1-34 | Gym panel, Messages, ready message 'Student offer' (English title), sent to members | Student offer: {price} a month
+P-A7-templates-1-35 | Gym panel, Messages, ready message 'Student offer' (English), sent to members | Students get the {plan} plan for {price} a month. Show your college ID at the desk.
+P-A7-templates-1-36 | Gym panel, Messages, ready message 'Student offer' (Hindi title), sent to members | स्टूडेंट ऑफ़र: {price} प्रति महीना
+P-A7-templates-1-37 | Gym panel, Messages, ready message 'Student offer' (Hindi), sent to members | स्टूडेंट्स को {plan} प्लान {price} प्रति महीना। डेस्क पर कॉलेज आईडी दिखाएँ।
+P-A7-templates-1-38 | Gym panel, Messages, ready message 'Longer plan saves money' (English title), sent to members on one plan | Save with a {months}-month plan
+P-A7-templates-1-39 | Gym panel, Messages, ready message 'Longer plan saves money' (English), sent to members on one plan | Take the {months}-month plan for {price} and save {saving} over paying monthly. Till {till}.
+P-A7-templates-1-40 | Gym panel, Messages, ready message 'Longer plan saves money' (Hindi title), sent to members on one plan | {months} महीने के प्लान पर बचत
+P-A7-templates-1-41 | Gym panel, Messages, ready message 'Longer plan saves money' (Hindi), sent to members on one plan | {months} महीने का प्लान {price} में लें। हर महीने फ़ीस देने के मुक़ाबले {saving} की बचत। {till} तक।
+P-A7-templates-1-42 | Gym panel, Messages, ready message 'Event' (English), sent to members | Join us for {event} on {on} at {at}. Free for members. Bring a friend!
+P-A7-templates-1-43 | Gym panel, Messages, ready message 'Event' (Hindi), sent to members | {on} को {at} {event} में आइए। मेंबर्स के लिए मुफ़्त। दोस्त को भी लाएँ!
+P-A7-templates-1-44 | Gym panel, Messages, ready message 'Challenge' (English), sent to active members | Our {challenge} starts on {starts}. Sign up at the desk. Prize: {prize}.
+P-A7-templates-1-45 | Gym panel, Messages, ready message 'Challenge' (Hindi title), sent to active members | {starts} से {challenge} शुरू
+P-A7-templates-1-46 | Gym panel, Messages, ready message 'Challenge' (Hindi), sent to active members | {starts} से हमारा {challenge} शुरू। डेस्क पर नाम लिखवाएँ। इनाम: {prize}।
+P-A7-templates-1-47 | Gym panel, WhatsApp message to one member, 'Plan ending' and 'Plan ended' (Hindi) | या {offer.months} महीने का प्लान {formatINR(offer.priceP)} में लें। हर महीने फ़ीस देने के मुक़ाबले {formatINR(offer.savingP)} की बचत।
+P-A7-templates-1-48 | Gym panel, WhatsApp message to one member, 'Plan ending' and 'Plan ended' (English) | Or take the {offer.months}-month plan for {formatINR(offer.priceP)} and save {formatINR(offer.savingP)} over paying month by month.
+P-A7-templates-1-49 | Gym panel, WhatsApp message to one member, 'Fees reminder' (English) | {hi} {formatINR(v.outstandingP)} of your fees is due. Please pay at the front desk or on UPI.
+P-A7-templates-1-50 | Gym panel, WhatsApp message to one member, 'Plan ending' (English) | {hi} your {plan} plan ends {when}. Renew at the desk to keep training without a break.
+P-A7-templates-1-51 | Gym panel, WhatsApp message to one member, 'Plan ended' (English) | your {plan} plan ended on {ended}. We miss you at the gym. Renew and come back any day.
+P-A7-templates-1-52 | Gym panel, WhatsApp message to one member, 'Welcome' (English) | Your {plan} plan runs till {formatDay(v.coversUntil)}.
+P-A7-templates-1-53 | Gym panel, WhatsApp message to one member, 'Haven’t seen you' (English) | we haven’t seen you at the gym yet.
+P-A7-templates-1-54 | Gym panel, WhatsApp message to one member, 'Haven’t seen you' (English) | we haven’t seen you in {…}.
+P-A7-templates-1-55 | Gym panel, WhatsApp message to one member, 'Haven’t seen you' (English) | Your plan runs till {formatDay(v.coversUntil)}.
+P-A7-templates-1-56 | Gym panel, WhatsApp message to one member, 'Years with us' (English) | {hi} today you complete {span} {where}. Thank you for training with us!
+P-A7-templates-1-57 | Gym panel, WhatsApp message to one member, 'Fees reminder' (Hindi) | {hi} आपकी {formatINR(v.outstandingP)} फ़ीस बाक़ी है। कृपया डेस्क पर या UPI से जमा करें।
+P-A7-templates-1-58 | Gym panel, WhatsApp message to one member, 'Plan ending' (Hindi) | {hi} {plan} {when} ख़त्म हो रहा है। बिना ब्रेक ट्रेनिंग जारी रखने के लिए डेस्क पर रिन्यू करें।
+P-A7-templates-1-59 | Gym panel, WhatsApp message to one member, 'Plan ended' (Hindi) | {plan} {formatDayHi(v.current.endsOn)} को ख़त्म हो गया। जिम में आपकी कमी महसूस हो रही है। कभी भी रिन्यू करके वापस आइए।
+P-A7-templates-1-60 | Gym panel, WhatsApp message to one member, 'Welcome' (Hindi) | {plan} {formatDayHi(v.coversUntil)} तक है।
+P-A7-templates-1-61 | Gym panel, WhatsApp message to one member, 'Haven’t seen you' (Hindi) | आप अभी तक जिम नहीं आए।
+P-A7-templates-1-62 | Gym panel, WhatsApp message to one member, 'Haven’t seen you' (Hindi) | {n} दिन से आप जिम नहीं आए।
+P-A7-templates-1-63 | Gym panel, WhatsApp message to one member, 'Haven’t seen you' (Hindi) | आपका प्लान {formatDayHi(v.coversUntil)} तक है।
+P-A7-templates-1-64 | Gym panel, WhatsApp message to one member, 'Years with us' (Hindi) | आपका 1 साल पूरा हुआ
+P-A7-templates-2-01 | WhatsApp message to a member from the admin app: gym anniversary, Hindi | {hi} आज {where} {span}। हमारे साथ ट्रेनिंग के लिए शुक्रिया!
+P-A7-templates-2-02 | WhatsApp receipt message to a member from the admin app | Received by {taker}.
+P-A7-templates-2-03 | WhatsApp receipt message to a member from the admin app | {hello(memberName)} we received your {formatINR(p.amountP)} on {formatDay(p.paidOn)} ({methodLabel(p.method)}). Receipt no. {p.receiptNo}.{…} Thank you!
+P-A7-templates-2-04 | WhatsApp receipt message to a member from the admin app | {formatINR(stillDueP)} is still due.
+P-A7-templates-2-05 | Admin app, Messages and offers, write a message | Keep the title to {TITLE_MAX} letters.
+P-A7-templates-2-06 | Admin app, Messages and offers, write a message | Keep the message to {BODY_MAX} letters.
+P-A7-templates-2-07 | Admin app, Messages and offers, before sending | You sent {DAY_MAX} messages today. That is the most for one day. Send it in the app tomorrow, or on WhatsApp now.
+P-A7-templates-2-08 | Admin app, Messages and offers, before sending | You already sent an offer or event today. Members get at most one a day in the app. Send it tomorrow, or on WhatsApp now.
+P-A7-templates-2-09 | Admin app, Messages and offers, before sending a timed message | An offer or event already goes out that day. Members get at most one a day in the app. Pick another day.
+P-A7-templates-2-10 | Admin app, Messages and offers, before sending | You sent {OFFERS_A_WEEK} offers or events this week. Members get at most {OFFERS_A_WEEK} a week in the app. Wait a few days, or use WhatsApp now.
+P-A7-templates-2-11 | Admin app, Messages and offers, line above Send in the app | This is your {ordinal(thisDay)} message {day}, so members get it in the app without a phone pop-up. {ignore}.
+P-A7-templates-2-12 | Admin app, Messages and offers, line above Send in the app | This is your {ordinal(thisDay)} message {day}. {ignore}, so send only what matters.
+P-A7-templates-2-13 | Admin app, Messages and offers, line above Send in the app | This is your {ordinal(thisWeek)} message {…}. {ignore}, so send only what matters.
+P-A7-templates-2-14 | Admin app, Messages and offers, Pick a day and time | Pick a time at least 5 minutes from now.
+P-A7-templates-2-15 | Admin app, Messages and offers, Pick a day and time | Pick a time within the next 30 days.
+P-A7-templates-2-16 | Admin app, Messages and offers, Sent list | No app members yet
+P-A7-templates-2-17 | Admin app, Messages and offers, after the server refuses a send | You already sent an offer or event today. Members get at most one a day. Send it tomorrow.
+P-A7-templates-2-18 | Admin app, Messages and offers, after the server refuses a send | You sent 3 offers or events this week. Members get at most 3 a week. Wait a few days.
+P-A7-templates-2-19 | Admin app, Messages and offers, after the server refuses a send | You sent {DAY_MAX} messages today. That is the most for one day. Send it tomorrow.
+P-A7-templates-2-20 | Admin app, Messages and offers, after the server refuses a send | Keep the title to {TITLE_MAX} letters and the message to {BODY_MAX}.
+P-A7-templates-2-21 | Member phone app, gym reminder pop-up at 9:30 am | Your plan ends tomorrow. Renew at the desk to keep training.
+P-A7-templates-2-22 | Member phone app, gym reminder pop-up at 9:30 am | Your plan ends in {n} days, on {…}. Renew at the desk to keep training.
+P-A7-templates-2-23 | Member phone app, gym reminder pop-up at 9:30 am | Your plan ends today. Renew at the desk to keep training.
+P-A7-templates-2-24 | Member phone app, gym reminder pop-up at 9:30 am | Your plan ended on {…}. Renew at the desk to keep your progress going.
+P-A7-templates-2-25 | Member phone app, gym reminder pop-up at 9:30 am | Happy birthday{…}! Best wishes from all of us at {gym}.
+P-A7-templates-2-26 | Member phone app, gym reminder pop-up at 9:30 am | Welcome to {gym}{…}! Your plan and the gym's news are in MettleUp.
+P-A7-templates-2-27 | Member phone app, gym reminder pop-up at 9:30 am | {…} added to your plan for your workouts. It now ends on {…}.
+P-A7-templates-2-28 | Member phone app, gym reminder pop-up at 9:30 am | Your workout offer ends on {…}: {…} for {…}.
+P-A7-templates-2-29 | Member phone app, gym reminder pop-up at 9:30 am | {…} for your {…}. Check in and train today.
+P-A7-templates-2-30 | Member phone app, gym reminder pop-up at 9:30 am | Personal training: {left} of {total} left. Ask the desk to add more.
+P-A7-templates-2-31 | Member phone app, gym reminder pop-up at 9:30 am | We haven't seen you for {days} days{…}. Come in when you can.
+P-A7-templates-2-32 | Member phone app, gym reminder pop-up at 9:30 am | {…} with {gym} today. Thank you for training with us!
+P-A7-templates-2-33 | Member phone app, Settings, Your gym, under Reminders from my gym | Your plan ending, birthday wishes and other news from {…}, at 9:30 am. Never more than one a day.
+P-A7-templates-2-34 | Member phone, Android notification settings, Gym reminders channel | Plan ending, birthday wishes and other reminders from your gym
+P-A7-templates-2-35 | Member phone, Android notification settings, Messages from your gym channel | News from your gym: a holiday, new timings or an offer
+P-A7-templates-2-36 | Member phone app, Settings, Your gym, under Messages from my gym | No message from your gym can pop up. Turn them on in your phone's settings.
+P-A7-templates-2-37 | Member phone app, Settings, Your gym, under Messages from my gym | Get a pop-up when {name} sends news, like a holiday, new timings or an offer. It can take a few minutes to reach you.
+P-A7-templates-2-38 | Member phone, pop-up for more than 3 new gym messages | Tap to read them.
+P-A7-templates-2-39 | Member phone, Android notification settings, Rest timer channel | Tells you when your rest is over
+P-A7-templates-2-40 | Member phone, Android notification settings, Workout in progress channel | Shows your open workout so you can jump back in
+P-A7-templates-2-41 | Member phone, rest timer pop-up | Rest is over
+P-A7-templates-2-42 | Member phone, rest timer pop-up | Time for your next set
+P-A7-templates-2-43 | Admin app, browser pop-up to the gym's people (free trial started online) | $1 started a free $2-day trial online, from $3 to $4. Please let them in until $5. If they join, make them a member from Today.
+P-A7-templates-2-44 | Admin app, browser pop-up to the gym's people (a member asked a question) | Open Member questions
+P-A7-templates-2-45 | Member phone, pop-up when HQ answers a help question | The MettleUp team replied to your question. Tap to read it.
+P-A7-templates-2-46 | WhatsApp reply from MettleUp after a number check started on a web page | Your phone number is successfully verified for MettleUp. Go back to the MettleUp page to finish.
+P-A7-templates-2-47 | WhatsApp reply from MettleUp after a number check started in the member app | Your phone number is successfully verified for MettleUp. Go back to the MettleUp app to finish.
+P-A7-templates-2-48 | WhatsApp reply from MettleUp when the message came without the code | We could not find your MettleUp code in this message. Go back to the MettleUp page, tap "Open WhatsApp again" and send the message without changes.
+P-A7-templates-2-49 | Admin app, enquiry row note for a free trial started online (older admin app) | Free trial online: %s %s, %s to %s.
+P-A7-templates-2-50 | Admin app, alert to the gym's people (free trial started online) | %s started a free %s-day trial online, from %s to %s.
+P-A7-websites-1-01 | About page (about.html), What it does | For every member: a free workout app with the gym's name.
+P-A7-websites-1-02 | About page (about.html), What it does | Members never pay MettleUp.
+P-A7-websites-1-03 | About page (about.html), What it costs | Every gym starts with 3 months free.
+P-A7-websites-1-04 | About page (about.html), founding gym offer | You never pay for this plan again.
+P-A7-websites-1-05 | About page (about.html), founding gym offer | Only for the first 25 gyms, and only until 31 March 2027.
+P-A7-websites-1-06 | About page (about.html), AI Assistant | Asking is free.
+P-A7-websites-1-07 | About page (about.html), AI Assistant | You use AI credits only when the AI finishes a task for you.
+P-A7-websites-1-08 | About page (about.html), AI Assistant | Free credits end on the last day of each month.
+P-A7-websites-1-09 | About page (about.html), AI Assistant | Credit packs you buy never expire:
+P-A7-websites-1-10 | About page (about.html), Our promises to gyms | Free set-up, and we move your data from your old software or Excel.
+P-A7-websites-1-11 | About page (about.html), Our promises to gyms | Free training for your trainers and desk staff, when you ask.
+P-A7-websites-1-12 | About page (about.html), Our way of working | We never charge you automatically.
+P-A7-websites-1-13 | About page (about.html), Our way of working | You pay only when you choose to pay.
+P-A7-websites-1-14 | Contact page (contact.html), Complaints | We confirm we got your complaint within 48 hours and resolve it within one month.
+P-A7-websites-1-15 | Contact page (contact.html), If you are a gym member | Your membership, fees and refunds are handled by your gym.
+P-A7-websites-1-16 | Bring-a-friend invite page (friend.html), under the form | Only the gym sees your number.
+P-A7-websites-1-17 | Get the app page (get-app.html) | The free MettleUp app tracks your workouts and connects you with your gym.
+P-A7-websites-1-18 | Gym website home, after the demo form is sent | We will call you soon.
+P-A7-websites-1-19 | Gym website home, search-result description | Free for 3 months, no card.
+P-A7-websites-1-20 | Gym website home, search-result description | Every member gets a free workout app in your gym's name: they see their progress, so they keep coming.
+P-A7-websites-1-21 | Gym website home, top section | Call me for a free demo
+P-A7-websites-1-22 | Gym website home, member app section | Every member gets it free, in every pack.
+P-A7-websites-1-23 | Gym website home, watch section | The free MettleUp watch app works on Android (Wear OS) watches.
+P-A7-websites-1-24 | Gym website home, AI Assistant section | Asking is free.
+P-A7-websites-1-25 | Gym website home, AI Assistant section | Try it free: 20 AI credits in your free trial.
+P-A7-websites-1-26 | Gym website home, AI Assistant section | Yearly plans get free credits every month: 50 on Starter, 100 on Pro.
+P-A7-websites-1-27 | Gym website home, AI Assistant section | A credit is used only when the AI Assistant sends or saves something.
+P-A7-websites-1-28 | Gym website home, Import members with AI card | AI never sees member details
+P-A7-websites-1-29 | Gym website home, features | Free messages to everyone
+P-A7-websites-1-30 | Gym website home, features | Your member data is safe and private.
+P-A7-websites-1-31 | Gym website home, pricing | Every pack starts with 3 months free, for as many members as you have.
+P-A7-websites-1-32 | Gym website home, pricing, Yearly switch | Yearly · 2 months free + free AI credits
+P-A7-websites-1-33 | Gym website home, pricing | After the free 3 months, pay by UPI or bank transfer.
+P-A7-websites-1-34 | Gym website home, pricing | We confirm the payment and your plan starts.
+P-A7-websites-1-35 | Gym website home, founding offer | Pay ₹29,999 once for one branch, and never pay for Pro again.
+P-A7-websites-1-36 | Gym website home, founding offer | Only for the first 25 gyms, and only until 31 March 2027.
+P-A7-websites-1-37 | Gym website home, founding offer | When the AI Assistant comes, you also get 100 free AI credits every month.
+P-A7-websites-1-38 | Gym website home, how it starts | Members join with one scan, free.
+P-A7-websites-1-39 | Gym website home, questions | We call you and set it up with you at your gym.
+P-A7-websites-1-40 | Gym website home, demo form | We use these details only to call you about a demo.
+P-A7-websites-1-41 | Gym website home, demo form | If we don't work together they are deleted within 12 months.
+P-A7-websites-1-42 | Gym website home, bottom bar | 3 months free No card, no setup fee
+P-A7-websites-1-43 | Join online page (join-online.html), mobile number step | We check that this number is yours.
+P-A7-websites-1-44 | Join online page (join-online.html), mobile number step | It is free.
+P-A7-websites-1-45 | Join online page (join-online.html), details step | Only {gym} sees your details.
+P-A7-websites-1-46 | Join online page (join-online.html), first step | Join in 3 short steps, or try the gym free for {n} days.
+P-A7-websites-1-47 | Join online page (join-online.html), trial step | The free trial costs nothing.
+P-A7-websites-1-48 | Join online page (join-online.html), trial step | You have already used a free trial at this gym with this mobile number.
+P-A7-websites-1-49 | Member website home (member-site) | MettleUp is a free workout log.
+P-A7-websites-1-50 | Member website home (member-site), watch section | The free MettleUp watch app works on Android (Wear OS) watches.
+P-A7-websites-1-51 | Member website home (member-site), features | Progress photos stay on your phone, so they stay private.
+P-A7-websites-1-52 | Member website home (member-site), get the app | iPhone and Apple Watch We are working on them.
+P-A7-websites-1-53 | Member website home (member-site), recommend to your gym | Every member of a MettleUp gym gets every feature of this app free.
+P-A7-websites-1-54 | Member website, the text of the 'Send to my gym' share | Every member also gets a free workout app.
+P-A7-websites-1-55 | A gym's public page, enquiry form | Only this gym sees them.
+P-A7-websites-1-56 | A gym's public page, chat contact box | Only this gym sees them.
+P-A7-websites-1-57 | A gym's public page, chat contact box | Your chat is saved and seen by {gn}.
+P-A7-websites-1-58 | A gym's public page, footer | Get a free page like this one.
+P-A7-whats-new-1-01 | Admin app, What's new (card on Today and Settings, What's new) | The bell is now your to-do list. A message or request stays there until someone handles it in its page. News, like a new member or a payment, stays until you open it.
+P-A7-whats-new-1-02 | Admin app, What's new (card on Today and Settings, What's new) | Each person has their own bell. Tap the X to take a line off your list. It still waits in its page. “History” at the top of the bell keeps the last 7 days.
+P-A7-whats-new-1-03 | Admin app, What's new (card on Today and Settings, What's new) | Alerts on your phone now count only what is new to you and not done yet. When everything is done, no alert comes.
+P-A7-whats-new-1-04 | Admin app, What's new (card on Today and Settings, What's new) | With the automatic birthday wish on, the AI Assistant and Today ask you to wish only members who will not get it. A member gets it on the app at 9:30 am if their mobile n
+P-A7-whats-new-1-05 | Admin app, What's new (card on Today and Settings, What's new) | Today now shows only what still needs you. A member message leaves Today once you reply or mark it done, and news like a new member shows once. The bell still keeps every
+P-A7-whats-new-1-06 | Admin app, What's new (card on Today and Settings, What's new) | The AI Assistant card on Today now fits small phones, in English and Hinglish. Long ideas wrap onto the next line instead of running off the screen.
+P-A7-whats-new-1-07 | Admin app, What's new (card on Today and Settings, What's new) | The AI Assistant ideas on Today now name the members, like “Asha: no visit in 12 days”. Tap “See who” for the list. Someone who joined today is no longer counted as not s
+P-A7-whats-new-1-08 | Admin app, What's new (card on Today and Settings, What's new) | New: you can check that alerts reach this phone or computer. In Settings, under “Alerts from your members”, tap “Send a test alert”. Within about a minute and a half, it 
+P-A7-whats-new-1-09 | Admin app, What's new (card on Today and Settings, What's new) | Mobile number boxes now keep only the 10-digit number. When a phone fills in “+91 98765 43210”, the box shows 9876543210, on sign-in, Add member, Enquiries and your join 
+P-A7-whats-new-1-10 | Admin app, What's new (card on Today and Settings, What's new) | The menu headings are now easier to see, and the menu is wider, so every page name fits on one line. "Set up your gym" shows how many steps are done wherever it sits in t
+P-A7-whats-new-1-11 | Admin app, What's new (card on Today and Settings, What's new) | The bell now puts your notices in three groups: “Your gym”, “From MettleUp” and “What’s new”. Payments get their own colour and a “Payment” label, so you can spot them qu
+P-A7-whats-new-1-12 | Admin app, What's new (card on Today and Settings, What's new) | The top of every page now says when it was last updated, like "Updated 30 s ago". Tap Refresh there to get the newest for the whole page without losing your place.
+P-A7-whats-new-1-13 | Admin app, What's new (card on Today and Settings, What's new) | English or Hinglish and light or dark now sit at the top of every page. On a phone, tap the round button at the top right. When alerts are off on this device, the bell sh
+P-A7-whats-new-1-14 | Admin app, What's new (card on Today and Settings, What's new) | Each setting now has one short line under it that says what it does for your gym.
+P-A7-whats-new-1-15 | Admin app, What's new (card on Today and Settings, What's new) | Every date box in the admin app now shows the day first, like "17 Oct 2026", whatever language your phone or computer uses. Tap it to open the calendar, as before.
+P-A7-whats-new-1-16 | Admin app, What's new (card on Today and Settings, What's new) | Help and feedback now answers questions about member messages: who reads questions, feedback and complaints, and how to reply in "Member messages".
+P-A7-whats-new-1-17 | Admin app, What's new (card on Today and Settings, What's new) | Set up your gym has a new step, “Let people join your gym online”. It puts your join link, your QR poster and how people pay in one place. The step is done once you share
+P-A7-whats-new-1-18 | Admin app, What's new (card on Today and Settings, What's new) | When you upload a logo on a plain white or coloured box, Branding now takes the box off for you. You see both logos side by side first, and you can keep yours as it is.
+P-A7-whats-new-1-19 | Admin app, What's new (card on Today and Settings, What's new) | Each member’s page now has a “Share app link” button. Tap it to send that member the app link and your gym code on WhatsApp, for example when they get a new phone.
+P-A7-whats-new-1-20 | Admin app, What's new (card on Today and Settings, What's new) | Your gym’s link now shows the right page on any phone or computer. On Android it opens the app or Google Play. On an iPhone it says the iPhone app is coming soon. On a co
+P-A7-whats-new-1-21 | Admin app, What's new (card on Today and Settings, What's new) | Gym timings: after you save, the button shows “Saved ✓” and a line under it says your members can see these timings. Change any time to save again.
+P-A7-whats-new-1-22 | Admin app, What's new (card on Today and Settings, What's new) | Your gym’s logo now shows at the top of the admin app, next to your gym’s name. Your staff see it too. To add or change it, open Branding.
+P-A7-whats-new-1-23 | Admin app, What's new (card on Today and Settings, What's new) | In the menu, pages now sit under five headings: Members, Money, Training, Reach members and Your gym. Your first steps moved from Today to a new page, "Set up your gym". 
+P-A7-whats-new-1-24 | Admin app, What's new (card on Today and Settings, What's new) | "Set up your gym" has a new step, "Set your gym timings". It ticks itself once you save your opening hours in Gym timings.
+P-A7-whats-new-1-25 | Admin app, What's new (card on Today and Settings, What's new) | New: people can ask to join your gym from a phone or a computer, with no app. In Invite members, under "Your gym’s join link", send the join link on WhatsApp or download 
+P-A7-whats-new-1-26 | Admin app, What's new (card on Today and Settings, What's new) | Each request shows on Today under "Joined online". When the person comes in and pays, tap "Make member". The Add member form opens with their details filled in.
+P-A7-whats-new-1-27 | Admin app, What's new (card on Today and Settings, What's new) | New on Today: "Latest from your members". It shows when a member asks a question, sends a message or a complaint, orders from the shop, pays online or joins your gym. Tap
+P-A7-whats-new-1-28 | Admin app, What's new (card on Today and Settings, What's new) | Needs you on Today now also counts member questions and member messages waiting for your reply. It goes down as soon as you reply. With alerts on, you hear a sound when a
+P-A7-whats-new-1-29 | Admin app, What's new (card on Today and Settings, What's new) | Enquiries and Needs you on Today now say when they were last updated, like "Updated 30 s ago". Tap Refresh to see the newest at once.
+P-A7-whats-new-1-30 | Admin app, What's new (card on Today and Settings, What's new) | New: alerts on your phone or computer even when the admin app is closed. Complaints, shop orders and members waiting at the check-in poster come at once. Turn them on, an
+P-A7-whats-new-1-31 | Admin app, What's new (card on Today and Settings, What's new) | Members’ workout questions are now in "Member questions", in the menu. Members send them from "Ask about your workout" in their app. You can answer them, and your reply r
+P-A7-whats-new-1-32 | Admin app, What's new (card on Today and Settings, What's new) | Member messages now opens on the right type when you tap a line on Today. Feedback there now reaches only you and the front desk, not trainers. Complaints still reach onl
+P-A7-whats-new-1-33 | Admin app, What's new (card on Today and Settings, What's new) | In Staff & sign-in, "Add a person" now asks for their job: Owner, Staff (front desk), Trainer or Other. For Other, type the job, like Manager. It shows next to their name
+P-A7-whats-new-1-34 | Admin app, What's new (card on Today and Settings, What's new) | "Diet plans" now has six ready-made plans, veg and non-veg. Start from one and change what you like. The food and notes boxes now grow as you type, so you can read every 
+P-A7-whats-new-1-35 | Admin app, What's new (card on Today and Settings, What's new) | Training progress now shows each member’s progress as line charts. After members update their app, it can show up to 12 months of their workouts since they joined your gy
+P-A7-whats-new-1-36 | Admin app, What's new (card on Today and Settings, What's new) | When a member uses Bring a friend for someone already in your Enquiries, it now reaches you. That enquiry shows "Invited again by" and the member’s name.
+P-A7-whats-new-1-37 | Admin app, What's new (card on Today and Settings, What's new) | In Settings, under Payments, the payment companies you can connect are now Razorpay and Cashfree.
+P-A7-whats-new-1-38 | Admin app, What's new (card on Today and Settings, What's new) | Members’ AI answers in the MettleUp app now use your gym’s AI credits: 10 answers use 1 credit. Your and your staff’s questions stay free. To set a limit, tap your credit
+P-A7-whats-new-1-39 | Admin app, What's new (card on Today and Settings, What's new) | Today now shows one setup card at a time (first alerts, then putting the admin app on your phone), so the page is shorter.
+P-A7-whats-new-1-40 | Admin app, What's new (card on Today and Settings, What's new) | In the AI Assistant, a day you pick now also shows in words, like "Sun, 18 Oct". When a message is ready, its Send button comes fully into view.
+P-A7-whats-new-1-41 | Admin app, What's new (card on Today and Settings, What's new) | A member photo taken with the camera now looks exactly like the camera preview. It no longer flips after you tap "Take photo".
+P-A7-whats-new-1-42 | Admin app, What's new (card on Today and Settings, What's new) | In the AI Assistant, tapping Hindi or Both on a message now writes the Hindi words first, so you see them before you send. Before, the message could still go out in Engli
+P-A7-whats-new-1-43 | Admin app, What's new (card on Today and Settings, What's new) | In the AI Assistant, a "Gym closed" message now always says which day, with the date. Its button says when it goes: "Send now", or the day and time you picked.
+P-A7-whats-new-1-44 | Admin app, What's new (card on Today and Settings, What's new) | New: the AI Assistant, in the menu. Type or say what you need, in Hindi or English. It gets a message or a change ready for you to check. Nothing is sent or saved until y
+P-A7-whats-new-1-45 | Admin app, What's new (card on Today and Settings, What's new) | Asking the AI Assistant a question is free. Each message it sends, and each member or payment it saves, uses 1 AI credit. Each workout plan it writes and you save uses 3.
+P-A7-whats-new-1-46 | Admin app, What's new (card on Today and Settings, What's new) | Your free trial comes with 20 AI credits, once. Paid yearly plans and founding gyms get free credits every month: 50 on Starter, 100 on Pro. Monthly plans get none.
+P-A7-whats-new-1-47 | Admin app, What's new (card on Today and Settings, What's new) | The MettleUp privacy notice now explains what the AI Assistant sends to Claude and Groq, and how long your requests are kept. Read it at mettleup.fit/privacy.
+P-A7-whats-new-1-48 | Admin app, What's new (card on Today and Settings, What's new) | The MettleUp website now has pages on refunds and cancelling, how you get access after you pay, how to contact us, and about MettleUp. Find them at the bottom of gyms.met
+P-A7-whats-new-1-49 | Admin app, What's new (card on Today and Settings, What's new) | The MettleUp privacy notice has a new section for members in the EU, the EEA and the UK. It explains their rights and the legal reason for each use of their data. Read it
+P-A7-whats-new-1-50 | Admin app, What's new (card on Today and Settings, What's new) | New: Member messages. When members update their app, they can send you questions, feedback and complaints here.
+P-A7-whats-new-1-51 | Admin app, What's new (card on Today and Settings, What's new) | Forgot your PIN? Tap "Can’t use WhatsApp? Other ways back in". For example, make a sign-in code on another phone or computer where you are signed in. Then choose a new PI
+P-A7-whats-new-1-52 | Admin app, What's new (card on Today and Settings, What's new) | Checking your number on WhatsApp: the message now tells you to come back to the MettleUp page after you tap Send. Back on the page, it says "Checking your message…".
+P-A7-whats-new-1-53 | Admin app, What's new (card on Today and Settings, What's new) | In Settings → Sign-in & data, the button "Clear this device’s saved data" is now "Clear offline copy", with a note on what it does. It never deletes your gym’s records on
+P-A7-whats-new-1-54 | Admin app, What's new (card on Today and Settings, What's new) | The card to put the admin app on your phone or computer is now on the first Settings tab, Gym.
+P-A7-whats-new-1-55 | Admin app, What's new (card on Today and Settings, What's new) | "MettleUp access", where you let MettleUp support look at your records and see each time they did, is now on Help and feedback.
+P-A7-whats-new-1-56 | Admin app, What's new (card on Today and Settings, What's new) | Money → Dues: each filter ("Up to 30 days" and the others) now shows how many people are in its list. Each tile says how many memberships are not fully paid.
+P-A7-whats-new-1-57 | Admin app, What's new (card on Today and Settings, What's new) | We updated the MettleUp terms and the data agreement for gyms. The next time you sign in as the owner, please read them and tick "I agree" again. Your staff are not asked
+P-A7-whats-new-1-58 | Admin app, What's new (card on Today and Settings, What's new) | The data agreement now ends with a short notice for your members. It tells them your gym keeps their membership, payments and visits in MettleUp. Copy it from mettleup.fi
+P-A7-whats-new-1-59 | Admin app, What's new (card on Today and Settings, What's new) | We rewrote the MettleUp privacy notice in simpler words. It now lists every company that helps run MettleUp. Read it at mettleup.fit/privacy.
+P-A7-whats-new-1-60 | Admin app, What's new (card on Today and Settings, What's new) | The MettleUp name now has its new look on the sign-in page and at the bottom of the menu, the same as in the member app.
+P-A7-whats-new-1-61 | Admin app, What's new (card on Today and Settings, What's new) | On iPhone, Settings now shows clear numbered steps to put the admin app on your home screen. The first time you open it from there, sign in once more. After that, you sta
+P-A7-whats-new-1-62 | Admin app, What's new (card on Today and Settings, What's new) | The small "new" dots in the menu now only show for things added after your gym joined MettleUp.
+P-A7-whats-new-1-63 | Admin app, What's new (card on Today and Settings, What's new) | On the sign-in page, "Sign in" is now the main button. To start a new gym, tap "Set up a new gym" under "New to MettleUp?".
+P-A7-whats-new-1-64 | Admin app, What's new (card on Today and Settings, What's new) | On a computer, the whole menu on the left now fits most screens, with "Invite members" added. "Dark" and "Light" moved to the top right. In a small window, tap "More belo
+P-A7-whats-new-1-65 | Admin app, What's new (card on Today and Settings, What's new) | In Settings → Sign-in & data, two cards have clearer names: "Download a backup" and "Your gym’s records".
+P-A7-whats-new-1-66 | Admin app, What's new (card on Today and Settings, What's new) | New "Questions" page: members can now ask a trainer a question in their MettleUp app. You or the trainer they picked reply here, and the member gets a notification on the
+P-A7-whats-new-1-67 | Admin app, What's new (card on Today and Settings, What's new) | Members now get a notification on their phone when you approve their pause or renewal, send the workout report they asked for, or have their shop order ready.
+P-A7-whats-new-1-68 | Admin app, What's new (card on Today and Settings, What's new) | Forgot your PIN? On the sign-in page, tap "Verify with WhatsApp" and send MettleUp one free WhatsApp message. Then choose a new PIN.
+P-A7-whats-new-1-69 | Admin app, What's new (card on Today and Settings, What's new) | More → Trainers: each trainer gets a page with their photo, hours and personal-training members. Book members with a free trainer for personal training.
+P-A7-whats-new-1-70 | Admin app, What's new (card on Today and Settings, What's new) | Settings → Branding: the page no longer loses the logo or colour you pick before you tap Save.
+P-A7-whats-new-1-71 | Admin app, What's new (card on Today and Settings, What's new) | Settings → Pay MettleUp: if you pay during your free trial, you keep every free day. Your paid plan starts when the trial ends.
+P-A7-whats-new-1-72 | Admin app, What's new (card on Today and Settings, What's new) | A small orange dot now shows the way to each new feature: on the menu, on the button, and next to the page title. Open the feature and its dot goes away.
+P-A7-whats-new-1-73 | Admin app, What's new (card on Today and Settings, What's new) | Settings → Branding: see how your logo looks as an icon on a member’s phone home screen. It shows right under your logo.
+P-A7-whats-new-1-74 | Admin app, What's new (card on Today and Settings, What's new) | Settings → Pay MettleUp: pay for your MettleUp plan by UPI or bank transfer, then send us the reference number. This page shows when we confirm your payment and until whe
+P-A7-whats-new-1-75 | Admin app, What's new (card on Today and Settings, What's new) | FITPASS, cultpass and other pass members: open a member and turn on "Comes with a pass". They get no plan and no dues, and each check-in counts as a pass visit under Visi
+P-A7-whats-new-1-76 | Admin app, What's new (card on Today and Settings, What's new) | Bring a friend: members can now send a friend a link to your gym from the MettleUp app. The friend shows in Enquiries with the member’s name. In Settings → Member app, ch
+P-A7-whats-new-1-77 | Admin app, What's new (card on Today and Settings, What's new) | Settings → Payments: add your UPI ID, and the desk can show a UPI QR code for each payment. Online payment links work in test mode only for now: no real money moves.
+P-A7-whats-new-1-78 | Admin app, What's new (card on Today and Settings, What's new) | Trainers: in Settings → People, tick "Trainer" on a staff member. They then see their members’ weekly progress under "Training progress". This page was called "My members
+P-A7-whats-new-1-79 | Admin app, What's new (card on Today and Settings, What's new) | Busy machines: switch it on in Settings → Member app, and members see when each machine is usually busy, so they can pick a quieter time.
+P-A7-whats-new-1-80 | Admin app, What's new (card on Today and Settings, What's new) | Small fixes: Today’s numbers now say "Fees due" in full rupees, a pass member’s page no longer asks you to sell a membership twice, and pages that send you to Settings na
+P-A7-whats-new-1-81 | Admin app, What's new (card on Today and Settings, What's new) | On Money and Today you now see full amounts, like ₹12,500, not short forms like ₹12.5k.
+P-A7-whats-new-1-82 | Admin app, What's new (card on Today and Settings, What's new) | Sell membership: if the price is above the plan’s price, or the plan starts over 30 days later than usual, the app asks you to check once. Tap "Yes, save" to keep it.
+P-A7-whats-new-1-83 | Admin app, What's new (card on Today and Settings, What's new) | Collect payment: the app no longer takes more than the member owes.
+P-A7-whats-new-1-84 | Admin app, What's new (card on Today and Settings, What's new) | The sign-in page now has two tabs: "Sign in" and "Set up a new gym".
+P-A7-whats-new-1-85 | Admin app, What's new (card on Today and Settings, What's new) | On Today, "Requests from the app" shows members who asked to pause or renew their plan. Tap Approve or Decline.
+P-A7-whats-new-1-86 | Admin app, What's new (card on Today and Settings, What's new) | On a member’s page, tap "Request workout report". When their app sends it, tap "Download report".
+P-A7-whats-new-1-87 | Admin app, What's new (card on Today and Settings, What's new) | On Today, "Your numbers" shows 5 key numbers for your gym. Tap one to see the members behind it, call or WhatsApp them, or download the list.
+P-A7-whats-new-1-88 | Admin app, What's new (card on Today and Settings, What's new) | "Your growth" (owners only, under More): see month by month if your gym is growing since it started on MettleUp.
+P-A7-whats-new-1-89 | Admin app, What's new (card on Today and Settings, What's new) | When you add or edit a member, "Take photo" uses the desk computer’s camera.
+P-A7-whats-new-1-90 | Admin app, What's new (card on Today and Settings, What's new) | Settings → Branding: the app suggests a gym colour from your logo.
+P-A7-whats-new-1-91 | Admin app, What's new (card on Today and Settings, What's new) | Import members: the app now matches your Excel columns by itself, using AI. Check the columns and change any that are wrong.
+P-A7-whats-new-1-92 | Admin app, What's new (card on Today and Settings, What's new) | Import members: if your sheet has more than one phone column, the app picks the one with real mobile numbers. You can change it on the same page.
+P-A7-whats-new-1-93 | Admin app, What's new (card on Today and Settings, What's new) | Messages and offers you send from "Messages & offers" now pop up on members' phones at once, even when their app is closed. Members need MettleUp 0.59.0 or newer, with no
+P-A7-whats-new-1-94 | Admin app, What's new (card on Today and Settings, What's new) | New "Challenges" page: set a goal for the month, in workouts or kg lifted. Every member who reaches it wins, and members see a top 10 list in their app.
+P-A7-whats-new-1-95 | Admin app, What's new (card on Today and Settings, What's new) | New "Gym timings" page: add your morning and evening hours for each day (or 24 hours) and holidays. Members see in their app if you are open now.
+P-A7-whats-new-1-96 | Admin app, What's new (card on Today and Settings, What's new) | New "Diet plans" page: trainers send members what to eat. Members read it in their app.
+P-A7-whats-new-1-97 | Admin app, What's new (card on Today and Settings, What's new) | On a member's page, "Body measurements" lets the trainer note weight and body sizes, so you can see their progress.
+P-A7-whats-new-1-98 | Admin app, What's new (card on Today and Settings, What's new) | Each person who signs in now has their own 6-digit PIN that keeps working, so nobody waits for a new code.
+P-A7-whats-new-1-99 | Admin app, What's new waiting list (not shown to owners yet) | In the newest MettleUp app, members pick who reads their message. A question goes to “Gym owner” or a trainer by name. Feedback or a complaint goes to “Gym owner” or “Gym
+P-A7-whats-new-2-01 | Admin panel, What's new waiting list (ADMIN_NEWS_PENDING): written, not shown to anyone yet | In “Member messages”, each message now says who the member sent it to, like “To: Gym owner”. Messages from an older app have no “To:” line.
+P-A7-whats-new-2-02 | Admin panel, What's new waiting list (ADMIN_NEWS_PENDING): written, not shown to anyone yet | New: a free web page for your gym at join.mettleup.fit, with your fees, timings, photos and a “Become a member” button. Make it in Set up your gym, under “Let people find
+P-A7-whats-new-2-03 | Admin panel, What's new waiting list (ADMIN_NEWS_PENDING): written, not shown to anyone yet | Your page is on by default, and it is your choice: you can turn it off or on again there at any time.
+P-A7-whats-new-2-04 | Admin panel, What's new waiting list (ADMIN_NEWS_PENDING): written, not shown to anyone yet | Your members now get every paid feature of the MettleUp app free while their plan is active. In Settings, Member app, choose whether those features lock 7 days after a pl
+P-A7-whats-new-2-05 | Phone app, What's new list (Settings, What's new and the update card) | "Message your gym" on the Gym tab now lets you pick who reads it, like the owner or a trainer.
+P-A7-whats-new-2-06 | Phone app, What's new list (Settings, What's new and the update card) | In a workout, "Today's target" now always beats your previous workout. If it can't, tap "i" to see why.
+P-A7-whats-new-2-07 | Phone app, What's new list (Settings, What's new and the update card) | On some phones, gym messages and "Rest is over" made no sound. Now they do.
+P-A7-whats-new-2-08 | Phone app, What's new list (Settings, What's new and the update card) | Tapping a notification now opens its page, like your gym's reply.
+P-A7-whats-new-2-09 | Phone app, What's new list (Settings, What's new and the update card) | "New exercise" is simpler: tap a row, like "Main muscle", to change it.
+P-A7-whats-new-2-10 | Phone app, What's new list (Settings, What's new and the update card) | Your watch keeps its big numbers full size at the largest text size.
+P-A7-whats-new-2-11 | Phone app, What's new list (Settings, What's new and the update card) | On the Gym tab, tap "Message your gym" to ask a question, give feedback or make a complaint.
+P-A7-whats-new-2-12 | Phone app, What's new list (Settings, What's new and the update card) | Messages from your gym now pop up even while the app is open.
+P-A7-whats-new-2-13 | Phone app, What's new list (Settings, What's new and the update card) | In a workout, a bar under each exercise shows the kilos you lifted and the kilos still to go.
+P-A7-whats-new-2-14 | Phone app, What's new list (Settings, What's new and the update card) | Suggested reps never drop below what each set did in your previous workout at the same weight.
+P-A7-whats-new-2-15 | Phone app, What's new list (Settings, What's new and the update card) | 81 exercises now have new pictures that show how to do each move.
+P-A7-whats-new-2-16 | Phone app, What's new list (Settings, What's new and the update card) | On your watch, turn the dial to change your reps straight away.
+P-A7-whats-new-2-17 | Phone app, What's new list (Settings, What's new and the update card) | Light mode is here: the app now follows your phone's light or dark setting.
+P-A7-whats-new-2-18 | Phone app, What's new list (Settings, What's new and the update card) | Tap "Start empty workout" to get the exercises of your last one. "Start blank" removes them.
+P-A7-whats-new-2-19 | Phone app, What's new list (Settings, What's new and the update card) | Suggested reps now follow the same set last time, not the set you just did.
+P-A7-whats-new-2-20 | Phone app, What's new list (Settings, What's new and the update card) | Your watch screen now stays on dimmed during a workout, even with Always-on display off.
+P-A7-whats-new-2-21 | Phone app, What's new list (Settings, What's new and the update card) | The phone now tells you when your watch app has an update.
+P-A7-whats-new-2-22 | Phone app, What's new list (Settings, What's new and the update card) | Before Google sign-in, tick once to confirm you are 18 or older and accept our terms.
+P-A7-whats-new-2-23 | Phone app, What's new list (Settings, What's new and the update card) | Your progress is now on the Profile tab: Charts, Exercises, Records, Body and Reports.
+P-A7-whats-new-2-24 | Phone app, What's new list (Settings, What's new and the update card) | On any chart, tap a dot or bar, then tap the date to see those workouts.
+P-A7-whats-new-2-25 | Phone app, What's new list (Settings, What's new and the update card) | Bar charts now show month names along the bottom.
+P-A7-whats-new-2-26 | Phone app, What's new list (Settings, What's new and the update card) | In Settings, Plates and bars, pick 2.5 kg or 5 kg steps for machines and cables, so suggested weights match your gym.
+P-A7-whats-new-2-27 | Phone app, What's new list (Settings, What's new and the update card) | Exercise charts now add up your total for the time you pick, for example all-time kg lifted.
+P-A7-whats-new-2-28 | Phone app, What's new list (Settings, What's new and the update card) | On an exercise chart, tap a dot, then tap its date to open that day's workout.
+P-A7-whats-new-2-29 | Phone app, What's new list (Settings, What's new and the update card) | New features now have a small dot. Start on the Profile tab and follow the dots to find them.
+P-A7-whats-new-2-30 | Phone app, What's new list (Settings, What's new and the update card) | Suggested weights are simpler: 1 more rep on each set until all sets reach the top of your rep range, then more weight.
+P-A7-whats-new-2-31 | Phone app, What's new list (Settings, What's new and the update card) | Bodyweight exercises: the green line says when you beat last time's total reps.
+P-A7-whats-new-2-32 | Phone app, What's new list (Settings, What's new and the update card) | Turn on "Sleep and workouts" in Settings to see if you slept under 6 hours before a lighter workout.
+P-A7-whats-new-2-33 | Phone app, What's new list (Settings, What's new and the update card) | Watch: bigger -15 and +15 buttons on the rest timer, and long names fit.
+P-A7-whats-new-2-34 | Phone app, What's new list (Settings, What's new and the update card) | "Muscles ready today" and Quick workout are gone from the Workout tab.
+P-A7-whats-new-2-35 | Phone app, What's new list (Settings, What's new and the update card) | Ask your own AI app about your workouts: open Settings, then "Ask an AI about your workouts".
+P-A7-whats-new-2-36 | Phone app, What's new list (Settings, What's new and the update card) | If you train at a gym, your share pictures can show its logo. In Progress photos, tap "Share before and after".
+P-A7-whats-new-2-37 | Phone app, What's new list (Settings, What's new and the update card) | Tap "Invite a friend" on the Gym tab to send a friend a link to your gym.
+P-A7-whats-new-2-38 | Phone app, What's new list (Settings, What's new and the update card) | After a set on a machine or barbell, your phone shows "In use" and how many kg you need to beat your previous total.
+P-A7-whats-new-2-39 | Phone app, What's new list (Settings, What's new and the update card) | Each set now gets its own rep goal. If you are stuck at a weight, the app asks before it suggests a lighter one.
+P-A7-whats-new-2-40 | Phone app, What's new list (Settings, What's new and the update card) | Suggested machine weights now follow the steps on the machine, like 35, 40 and 45 kg.
+P-A7-whats-new-2-41 | Phone app, What's new list (Settings, What's new and the update card) | On the chart of an exercise, tap a point and then its label to open that workout.
+P-A7-whats-new-2-42 | Phone app, What's new list (Settings, What's new and the update card) | On your watch, you can now log each set with the dial and one tap on Done.
+P-A7-whats-new-2-43 | Phone app, What's new list (Settings, What's new and the update card) | Your gym can post a workout of the day. Find it on the Workout tab and start it with one tap.
+P-A7-whats-new-2-44 | Phone app, What's new list (Settings, What's new and the update card) | If your trainer filmed an exercise, tap "Watch your trainer" on that exercise's page.
+P-A7-whats-new-2-45 | Phone app, What's new list (Settings, What's new and the update card) | Want your trainer to follow your progress? Switch on "Share my workouts with my trainers".
+P-A7-whats-new-2-46 | Phone app, What's new list (Settings, What's new and the update card) | If your gym shows busy machines, "What my gym can see" says what is shared, and you can switch it off.
+P-A7-whats-new-2-47 | Phone app, What's new list (Settings, What's new and the update card) | Your main lifts now show a strength level on the exercise page. Your body weight stays private.
+P-A7-whats-new-2-48 | Phone app, What's new list (Settings, What's new and the update card) | Earn badges by training, like 50 workouts. Tap "Badges" on your Profile to see them all.
+P-A7-whats-new-2-49 | Phone app, What's new list (Settings, What's new and the update card) | If a set felt easy, the next sets suggest a little more. Rest that runs over now shows in red.
+P-A7-whats-new-2-50 | Phone app, What's new list (Settings, What's new and the update card) | Charts spots a muscle you train much less than the rest and offers one exercise swap for 8 weeks.
+P-A7-whats-new-2-51 | Phone app, What's new list (Settings, What's new and the update card) | Settings is simpler, with one place for backup. The muscle map can show the last 30 or 90 days.
+P-A7-whats-new-2-52 | Phone app, What's new list (Settings, What's new and the update card) | At gym check-in, the front desk confirms your mobile number once, so nobody else can use it.
+P-A7-whats-new-2-53 | Phone app, What's new list (Settings, What's new and the update card) | Exercise pictures now use the MettleUp colours. The exercise list shows a close-up of each one.
+P-A7-whats-new-2-54 | Phone app, What's new list (Settings, What's new and the update card) | Triceps Dip, Cable Lateral Raise, Walking Lunge and Plank now have pictures.
+P-A7-whats-new-2-55 | Phone app, What's new list (Settings, What's new and the update card) | Settings → Health Connect can now add weigh-ins from your smart scale to your body weight, and show today's steps.
+P-A7-whats-new-2-56 | Phone app, What's new list (Settings, What's new and the update card) | On your watch, the rest timer has bigger text, and "Workout saved" shows when you finish.
+P-A7-whats-new-2-57 | Phone app, What's new list (Settings, What's new and the update card) | When you join a gym, you can scan the gym poster instead of typing the code. A wrong code is caught at once.
+P-A7-whats-new-2-58 | Phone app, What's new list (Settings, What's new and the update card) | Is your gym not on MettleUp yet? Open the Gym tab and tap "Recommend MettleUp to my gym".
+P-A7-whats-new-2-59 | Phone app, What's new list (Settings, What's new and the update card) | The new MettleUp logo now shows when the app opens and at the top of the Workout, Progress and Gym tabs.
+P-A7-whats-new-2-60 | Phone app, What's new list (Settings, What's new and the update card) | When a new version is ready, a pop-up tells you (never during a workout). "Later" asks again in 3 days.
+P-A7-whats-new-2-61 | Phone app, What's new list (Settings, What's new and the update card) | Touch and hold the app icon and tap "Resume workout". It now opens your workout, not the Workout tab.
+P-A7-whats-new-2-62 | Phone app, What's new list (Settings, What's new and the update card) | Have a Wear OS watch? Start a workout and tap "Install on watch" at the top to see rest, next set and heart rate there.
+P-A7-whats-new-2-63 | Phone app, What's new list (Settings, What's new and the update card) | Your watch now keeps MettleUp open all workout. It dims with your wrist down and lights up when you look.
+P-A7-whats-new-2-64 | Phone app, What's new list (Settings, What's new and the update card) | During a workout, each exercise now shows your next set first, like "Next: 75 kg × 5".
+P-A7-whats-new-2-65 | Phone app, What's new list (Settings, What's new and the update card) | In the exercises list, exercises without a drawing now show a photo of the start position.
+P-A7-whats-new-2-66 | Phone app, What's new list (Settings, What's new and the update card) | On the Gym tab, "Leaderboard" is now called "Ranking", so it fits when you use big text.
+P-A7-whats-new-2-67 | Phone app, What's new list (Settings, What's new and the update card) | To join a gym, "Scan the poster" is now the first button on the Gym tab. You can still type the code.
+P-A7-whats-new-2-68 | Phone app, What's new list (Settings, What's new and the update card) | On the Progress photos screen, if your phone blocks the camera, tap "Allow the camera in Settings" to turn it on.
+P-A7-whats-new-2-69 | Phone app, What's new list (Settings, What's new and the update card) | "Check in" on the Gym tab now opens a scanner in MettleUp. Point it at the QR poster at your gym’s desk.
+P-A7-whats-new-2-70 | Phone app, What's new list (Settings, What's new and the update card) | Fixed: MettleUp could close by itself when a message from your gym came in.
+P-A7-whats-new-2-71 | Phone app, What's new list (Settings, What's new and the update card) | The Gym tab now has 3 parts at the top: "Shop" (only if your gym sells things), "My gym" and "Leaderboard".
+P-A7-whats-new-2-72 | Phone app, What's new list (Settings, What's new and the update card) | To pause or renew your membership, go to Gym, then "My gym", and tap "Pause my plan" or "Renew my plan".
+P-A7-whats-new-2-73 | Phone app, What's new list (Settings, What's new and the update card) | If your gym wants to see your workout report, the app asks you first. Nothing is sent unless you say yes.
+P-A7-whats-new-2-74 | Phone app, What's new list (Settings, What's new and the update card) | Many exercises now show a start and an end picture, so you can check your body position.
+P-A7-whats-new-2-75 | Phone app, What's new list (Settings, What's new and the update card) | On an exercise page, tap "1-rep max and % calculator" to see the most you can lift once, and any % of it.
+P-A7-whats-new-2-76 | Phone app, What's new list (Settings, What's new and the update card) | Voice feedback now has a second way to send. If you saw "Couldn't reach us" before, please try again.
+P-A7-whats-new-2-77 | Phone app, What's new list (Settings, What's new and the update card) | In the feedback box, tap "Speak" and talk in Hindi or English. The app writes it as text you can fix before "Send".
+P-A7-whats-new-2-78 | Phone app, What's new list (Settings, What's new and the update card) | Your gym's first 2 messages a day still pop up. Any more that day wait quietly in the Gym tab, so your phone stays calm.
+P-A7-whats-new-2-79 | Phone app, What's new list (Settings, What's new and the update card) | Tap the round button on any screen to tell us what is wrong or what you want, by speaking or typing.
+P-A7-whats-new-2-80 | Phone app, What's new list (Settings, What's new and the update card) | After a workout, see the kg you lifted today next to last time. Each exercise's History shows kg per workout too.
+P-A7-whats-new-2-81 | Phone app, What's new list (Settings, What's new and the update card) | Pull-ups, push-ups and other body-weight moves now show last time's numbers from any workout, in any routine.
+P-A7-whats-new-2-82 | Phone app, What's new list (Settings, What's new and the update card) | On the Gym tab, see how busy your gym is right now and its quiet hours later today.
+P-A7-whats-new-2-83 | Phone app, What's new list (Settings, What's new and the update card) | Tap a name on your gym's leaderboard to see the workouts that member shares. Sharing yours is off until you turn it on.
+P-A7-whats-new-2-84 | Phone app, What's new list (Settings, What's new and the update card) | Lateral Raise and Incline Dumbbell Press now have a short moving demo on their exercise page, to check your form.
+P-A7-whats-new-2-85 | Phone app, What's new list (Settings, What's new and the update card) | Messages and offers from your gym now pop up on your phone right away, even when the app is closed.
+P-A7-whats-new-2-86 | Phone app, What's new list (Settings, What's new and the update card) | During a workout, the "kg to beat" and the PREVIOUS column now come from the same last workout, so the numbers match.
+P-A7-whats-new-2-87 | Phone app, What's new list (Settings, What's new and the update card) | If a lighter first set hit the top of its reps last time, the app now suggests your main weight for it.
+P-A7-whats-new-2-88 | Phone app, What's new list (Settings, What's new and the update card) | Match the "kg to beat" exactly and the app says "reached". It says "beaten" only when you lift more.
+P-A7-whats-new-2-89 | Phone app, What's new list (Settings, What's new and the update card) | "Resume workout" now opens at the exercise you were on, so you do not have to scroll.
+P-A7-whats-new-2-90 | Phone app, What's new list (Settings, What's new and the update card) | Gym tab: a leaderboard of your gym for the last 30 days, by workouts or by kg lifted. See your place and the top 10.
+P-A7-whats-new-2-91 | Phone app, What's new list (Settings, What's new and the update card) | Reach the challenge goal shown in the Gym tab, then show that screen at the front desk for your reward.
+P-A7-whats-new-2-92 | Phone app, What's new list (Settings, What's new and the update card) | Other members see your name only if you switch it on: Settings → Your gym → What my gym can see.
+P-A7-whats-new-2-93 | Phone app, What's new list (Settings, What's new and the update card) | Progress tab: new tabs at the top, Kg lifted, Sets and Duration. Tap one to see your totals for it.
+P-A7-whats-new-2-94 | Phone app, What's new list (Settings, What's new and the update card) | Progress also shows your next workout's total kg if you hit every target, next to last time's total.
+P-A7-whats-new-2-95 | Phone app, What's new list (Settings, What's new and the update card) | New phone? Tap "Continue with Google" on the first screen to find and restore your Google Drive backup.
+P-A7-whats-new-2-96 | Phone app, What's new list (Settings, What's new and the update card) | Settings → Back up and restore → "Save a backup": one file with your workouts, routines, photos and settings.
+P-A7-whats-new-2-97 | Phone app, What's new list (Settings, What's new and the update card) | New phone, or back after a while? Tap "Restore from a backup" to bring it all back, even from the old ForgeAI app.
+P-A7-whats-new-2-98 | Phone app, What's new list (Settings, What's new and the update card) | Gym members: measurements your trainer takes now show in Progress → Body, marked with your gym's name.
+P-A7-whats-new-2-99 | Phone app, What's new list (Settings, What's new and the update card) | Your trainer can now send you a diet plan. Once sent, tap "Diet plan" in the Gym tab to see your meals.
+P-A7-whats-new-3-01 | Phone app, What's new (version above 0.56.1) | The Gym tab now shows if your gym is open right now, with its hours for the week and any holiday.
+P-A7-whats-new-3-02 | Phone app, What's new (version 0.56.1) | When MettleUp asks, turn on "Alarms & reminders" so "Rest is over" rings on time, even on a locked phone.
+P-A7-whats-new-3-03 | Phone app, What's new (version 0.56.0) | ForgeAI is now called MettleUp, with a new orange logo. Same app: your workouts and history are all still here.
+P-A7-whats-new-3-04 | Phone app, What's new (version 0.56.0) | At the bottom of the screen, the same 4 tabs always show: Workout, Progress, Gym and Profile. They never move.
+P-A7-whats-new-3-05 | Phone app, What's new (version 0.56.0) | Your charts, records and body weight are now together in the new Progress tab.
+P-A7-whats-new-3-06 | Phone app, What's new (version 0.56.0) | In the Gym tab, join your gym, or check in at the front desk by scanning the poster with your camera.
+P-A7-whats-new-3-07 | Phone app, What's new (version 0.56.0) | Settings is now in clear groups. Rest timer options and sounds have their own page, "Rest timer and sounds".
+P-A7-whats-new-3-08 | Phone app, What's new (version 0.56.0) | Health Connect (Google's health app) now stays on. Your workouts are sent even if you don't allow calories there.
+P-A7-whats-new-3-09 | Phone app, What's new (version 0.55.1) | "What's new" is now easier to read, and a button under a change takes you straight to it.
+P-A7-whats-new-3-10 | Phone app, What's new (version 0.55.1) | Settings → "What's new" shows your last 3 updates.
+P-A7-whats-new-3-11 | Phone app, What's new (version 0.55.0) | Gym members: your gym can reward you for training. Hit its target days and get free days on your membership.
+P-A7-whats-new-3-12 | Phone app, What's new (version 0.55.0) | Only the dates of the workouts that count leave your phone, and only after you tap Join. Leave the offer any time.
+P-A7-whats-new-3-13 | Phone app, What's new (version 0.54.1) | Scrolling a workout is easier. A swipe that starts on a weight or reps box now scrolls the page.
+P-A7-whats-new-3-14 | Phone app, What's new (version 0.54.0) | Joined a gym that has its own look? The app changes to your gym's name and colours.
+P-A7-whats-new-3-15 | Phone app, What's new (version 0.54.0) | After you join, a "Gym" button appears at the bottom.
+P-A7-whats-new-3-16 | Phone app, What's new (version 0.54.0) | To leave your gym, open Settings, then "Your gym".
+P-A7-whats-new-3-17 | Phone app, What's new (version 0.53.0) | After a workout, see if you beat your last time on the same routine. Tap the result to see each exercise.
+P-A7-whats-new-3-18 | Phone app, What's new (version 0.53.0) | Haven't trained a muscle in 3 weeks? The Workout tab may suggest a few sets for it.
+P-A7-whats-new-3-19 | Phone app, What's new (version 0.53.0) | Gym members: show your workout days to the front desk on your screen, from "My membership".
+P-A7-whats-new-3-20 | Phone app, What's new (version 0.52.0) | Each exercise shows how many kilos you still need to beat last time. It turns green when you do.
+P-A7-whats-new-3-21 | Phone app, What's new (version 0.52.0) | Last time's numbers now come from the last time you did that exercise, in any routine.
+P-A7-whats-new-3-22 | Phone app, What's new (version 0.52.0) | Warm-up sets stay as they were last time. The app never changes them.
+P-A7-whats-new-3-23 | Phone app, What's new (version 0.52.0) | Push-ups, pull-ups and other bodyweight moves now show how many reps beat last time.
+P-A7-whats-new-3-24 | Phone app, What's new (version 0.52.0) | Turn on a big "In use" screen after each set, so others know the machine is taken.
+P-A7-whats-new-3-25 | Phone app, What's new (version 0.52.0) | The app now asks before sending past workouts to Health Connect (Google's health app).
+P-A7-whats-new-3-26 | Phone app, What's new (version 0.51.0) | During a workout, your phone's notifications show how long you've been training.
+P-A7-whats-new-3-27 | Phone app, What's new (version 0.51.0) | Pick the sound that plays when your rest is over: chime, bell, double beep or whistle.
+P-A7-whats-new-3-28 | Phone app, What's new (version 0.50.0) | Did a workout without a routine? Save it as a routine in one tap when you finish.
+P-A7-whats-new-3-29 | Phone app, What's new (version 0.50.0) | Resting? Tap the rest timer to show a big "In use" screen, so others know the machine is taken.
+P-A7-whats-new-3-30 | Phone app, What's new (version 0.50.0) | Change an exercise's rest time while you rest, and the running timer changes too.
+P-A7-whats-new-3-31 | Phone app, What's new (version 0.49.0) | The Workout tab now tells you when a new version of MettleUp is ready.
+P-A7-whats-new-3-32 | Phone app, What's new (version 0.49.0) | Tell us what to fix or add, by typing or speaking.
+P-A7-whats-new-3-33 | Phone app, What's new (version 0.49.0) | Joining a gym now asks you to confirm you are 18 or older and agree to the terms.
+P-A7-whats-new-3-34 | Phone app, What's new (version 0.49.0) | MettleUp no longer asks to use your microphone.
+P-A7-whats-new-3-35 | Phone app, What's new (version 0.48.0) | Your trainer's workout plans now appear on your Workout tab by themselves.
+P-A7-whats-new-3-36 | Phone app, What's new (version 0.48.0) | In a routine, each exercise shows the kilos to beat, and each set shows what to aim for.
+P-A7-whats-new-3-37 | Phone app, What's new (version 0.48.0) | New "My membership" page: your plan, end date, days left and visits this month.
+P-A7-whats-new-3-38 | Phone app, What's new (version 0.48.0) | Scan the QR code at your gym's desk, then start today's workout in one tap.
+P-A7-whats-new-3-39 | Phone app, What's new (version 0.48.0) | Got a code from your gym? Join from the first screen and add your gym's logo to your home screen.
+P-A7-whats-new-3-40 | Phone app, What's new (version 0.47.1) | After you rate how hard a set felt, the tick shows once and keeps the numbers you typed.
+P-A7-whats-new-3-41 | Phone app, What's new (version 0.47.1) | Switching gyms while a shop order is waiting now asks you first, because switching cancels it.
+P-A7-whats-new-3-42 | Phone app, What's new (version 0.47.0) | Join your gym with its code.
+P-A7-whats-new-3-43 | Phone app, What's new (version 0.47.0) | Rate how hard a set felt, and the set ticks itself before your rest starts.
+P-A7-whats-new-3-44 | Phone app, What's new (version 0.47.0) | A small handle shows which exercises and routines you can drag to move.
+P-A7-whats-new-3-45 | Phone app, What's new (version 0.47.0) | Fixes for large text sizes, and for the keyboard after opening the app from its home-screen shortcut.
+P-A7-whats-new-3-46 | Phone app, What's new (version 0.46.0) | New: the MettleUp watch app. Your rest counts down and buzzes on your Wear OS watch.
+P-A7-whats-new-3-47 | Phone app, What's new (version 0.46.0) | Said no to the camera? The app now tells you and opens your phone's Settings to allow it.
+P-A7-whats-new-3-48 | Phone app, What's new (version 0.45.0) | The rep range you set in Settings now shows when you edit a routine.
+P-A7-whats-new-3-49 | Phone app, What's new (version 0.45.0) | A new app icon that fits round home screens.
+P-A7-whats-new-3-50 | Phone app, What's new (version below 0.45.0) | Rate how hard a set felt with one tap, and your rest timer starts.
+P-A7-whats-new-3-51 | Phone app, What's new (version below 0.45.0) | The "Rest is over" sound is now the same with the screen off as with the app open.
+P-A7-whats-new-3-52 | Phone app, What's new (version below 0.45.0) | A new record pops up with confetti and names the record you beat.
+P-A7-whats-new-3-53 | Phone app, What's new (version below 0.45.0) | During a workout, hold and drag an exercise to move it.
+P-A7-whats-new-3-54 | Phone app, What's new (version below 0.45.0) | Choose how big each suggested weight increase is: "Weight jumps".

@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-server-325-hq-admin-10","feature":"F-server-325","role":"HQ admin","type":10,"applies":"no","why_not":"new rows only","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-database-1-3"},
+{"kind":"jtype","id":"JT-F-server-325-hq-admin-11","feature":"F-server-325","role":"HQ admin","type":11,"applies":"yes","why_not":"none","variants":["T11-twopanels"],"at_step":1,"entity":"E-gym-sessions","note":"every device of the gym ends together","wi":"A5-server-database-1-3"},
+{"kind":"jtype","id":"JT-F-server-325-hq-admin-4","feature":"F-server-325","role":"HQ admin","type":4,"applies":"yes","why_not":"none","variants":["T4-long","T4-hinglish","T4-emoji"],"at_step":1,"entity":"E-gyms","note":"names cut to 60 letters without a word to HQ","wi":"A5-server-database-1-3"},
+{"kind":"jtype","id":"JT-F-server-325-hq-admin-5","feature":"F-server-325","role":"HQ admin","type":5,"applies":"yes","why_not":"none","variants":["T5-midnight"],"at_step":2,"entity":"E-gym-signin-codes","note":"code ends 30 minutes after it is made","wi":"A5-server-database-1-3"},
+{"kind":"jtype","id":"JT-F-server-325-hq-admin-7","feature":"F-server-325","role":"HQ admin","type":7,"applies":"yes","why_not":"none","variants":["T7-doubletap"],"at_step":1,"entity":"E-gyms","note":"no duplicate check: a double tap makes two gyms for one lead","wi":"A5-server-database-1-3"},
+{"kind":"jtype","id":"JT-F-server-325-hq-admin-8","feature":"F-server-325","role":"HQ admin","type":8,"applies":"no","why_not":"no setting","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-database-1-3"},
+{"kind":"jtype","id":"JT-F-server-325-hq-admin-9","feature":"F-server-325","role":"HQ admin","type":9,"applies":"no","why_not":"server function: no screen","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-server-database-1-3"}
+]
