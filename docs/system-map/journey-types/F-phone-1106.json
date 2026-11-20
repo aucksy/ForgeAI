@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-phone-1106-member-10","feature":"F-phone-1106","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":1,"entity":"unknown","note":"Old workouts spaced by their real dates","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1106-member-11","feature":"F-phone-1106","role":"member","type":11,"applies":"no","why_not":"charts drawn on the phone only","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1106-member-4","feature":"F-phone-1106","role":"member","type":4,"applies":"yes","why_not":"none","variants":["T4-one","T4-many"],"at_step":1,"entity":"unknown","note":"One point sits in the middle (chartTime.ts:14-17)","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1106-member-5","feature":"F-phone-1106","role":"member","type":5,"applies":"yes","why_not":"none","variants":["T5-midnight","T5-zone"],"at_step":1,"entity":"unknown","note":"Spacing uses daysBetween on ISO days","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1106-member-7","feature":"F-phone-1106","role":"member","type":7,"applies":"no","why_not":"charts only read","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1106-member-8","feature":"F-phone-1106","role":"member","type":8,"applies":"yes","why_not":"none","variants":["T8-units"],"at_step":1,"entity":"unknown","note":"kg or lb on axis and box","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1106-member-9","feature":"F-phone-1106","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-360","T9-dark","T9-bigfont"],"at_step":2,"entity":"none","note":"Picked box and label kept inside the plot (lastLabelY)","wi":"A5-phone-tracker-lib-1"}
+]

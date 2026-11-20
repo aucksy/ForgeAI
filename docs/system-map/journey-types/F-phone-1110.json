@@ -1,0 +1,10 @@
+[
+{"kind":"jtype","id":"JT-F-phone-1110-member-10","feature":"F-phone-1110","role":"member","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":1,"entity":"unknown","note":"Old workouts give the Last dates","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1110-member-11","feature":"F-phone-1110","role":"member","type":11,"applies":"yes","why_not":"none","variants":["T11-watch"],"at_step":1,"entity":"unknown","note":"A watch workout should make its exercises Recent","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1110-member-12","feature":"F-phone-1110","role":"member","type":12,"applies":"no","why_not":"the member's own list on their phone; nothing shared","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1110-member-4","feature":"F-phone-1110","role":"member","type":4,"applies":"yes","why_not":"none","variants":["T4-many","T4-zero"],"at_step":1,"entity":"unknown","note":"Bands drop when empty (exercisesView.ts:61-65)","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1110-member-5","feature":"F-phone-1110","role":"member","type":5,"applies":"yes","why_not":"none","variants":["T5-midnight","T5-zone"],"at_step":1,"entity":"unknown","note":"Two workouts on one day ordered by start time; year shown when not this year","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1110-member-7","feature":"F-phone-1110","role":"member","type":7,"applies":"no","why_not":"the list only reads","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1110-member-8","feature":"F-phone-1110","role":"member","type":8,"applies":"no","why_not":"no setting changes the order","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1110-member-9","feature":"F-phone-1110","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-360","T9-bigfont"],"at_step":1,"entity":"none","note":"Name plus 'Last:' note on one row","wi":"A5-phone-tracker-lib-1"}
+]

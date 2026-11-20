@@ -1,0 +1,10 @@
+[
+{"kind":"jtype","id":"JT-F-phone-1104-member-10","feature":"F-phone-1104","role":"member","type":10,"applies":"no","why_not":"nothing stored by the picker itself","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1104-member-11","feature":"F-phone-1104","role":"member","type":11,"applies":"no","why_not":"phone only","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1104-member-12","feature":"F-phone-1104","role":"member","type":12,"applies":"no","why_not":"a date choice only; nothing shared","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1104-member-4","feature":"F-phone-1104","role":"member","type":4,"applies":"no","why_not":"no list or text; month lengths and leap days are date maths, covered by type 5","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1104-member-5","feature":"F-phone-1104","role":"member","type":5,"applies":"yes","why_not":"none","variants":["T5-midnight","T5-month1","T5-zone"],"at_step":2,"entity":"unknown","note":"today and the grid use the phone's local clock (calendar.ts:5-12)","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1104-member-7","feature":"F-phone-1104","role":"member","type":7,"applies":"yes","why_not":"none","variants":["T7-back"],"at_step":2,"entity":"unknown","note":"Back with a day picked but the past workout not started","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1104-member-8","feature":"F-phone-1104","role":"member","type":8,"applies":"no","why_not":"no setting changes the grid; weeks always start Monday","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-phone-tracker-lib-1"},
+{"kind":"jtype","id":"JT-F-phone-1104-member-9","feature":"F-phone-1104","role":"member","type":9,"applies":"yes","why_not":"none","variants":["T9-360","T9-bigfont"],"at_step":1,"entity":"none","note":"Seven 48 px cells per row","wi":"A5-phone-tracker-lib-1"}
+]
