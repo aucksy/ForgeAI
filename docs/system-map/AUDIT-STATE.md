@@ -38,20 +38,19 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A3 | 11 | 5.2 (207k tokens) |
 | A4 | 13 | 4.1 (162k tokens) |
 | A4b | 2 | 5.1 (204k tokens) |
-| A5 | 112 | 5.1 (204k tokens) |
+| A5 | 113 | 5.1 (204k tokens) |
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 5 in progress, 209 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 5 in progress, 210 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | A5-web-pages-1 | A5 | journeys: 8 features (20 feature x role pairs) of web / web/pages; list in _work/items/A5-web-pages-1.txt | in progress | _work/A5-web-pages-1.md |  |
 | A5-web-pages-2 | A5 | journeys: 8 features (17 feature x role pairs) of web / web/pages; list in _work/items/A5-web-pages-2.txt | in progress | _work/A5-web-pages-2.md |  |
-| A5-web-pages-3 | A5 | journeys: 8 features (11 feature x role pairs) of web / web/pages; list in _work/items/A5-web-pages-3.txt | in progress | _work/A5-web-pages-3.md |  |
 | A5-hq-app-1 | A5 | journeys: 9 features (9 feature x role pairs) of hq / hq/app; list in _work/items/A5-hq-app-1.txt | in progress | _work/A5-hq-app-1.md |  |
 | A5-hq-app-2 | A5 | journeys: 8 features (8 feature x role pairs) of hq / hq/app; list in _work/items/A5-hq-app-2.txt | in progress | _work/A5-hq-app-2.md |  |
-| A5-server-database-3-2 | A5 | journeys: 10 features (31 feature x role pairs) of server / server/database-3; list in _work/items/A5-server-database-3-2.txt | done | _work/A5-server-database-3-2.md | 10 features (31 pairs): 140 full journeys and 232 type lines; 0 findings; seen in passing: complaints sent to Gym admin also reach the front desk against Only the owner reads complaints |
+| A5-hq-app-3 | A5 | journeys: 8 features (8 feature x role pairs) of hq / hq/app; list in _work/items/A5-hq-app-3.txt | in progress | _work/A5-hq-app-3.md |  |
 | A5-server-hq-gate-workers-1 | A5 | journeys: 9 features (14 feature x role pairs) of server / server/hq-gate-workers; list in _work/items/A5-server-hq-gate-workers-1.txt | done | _work/A5-server-hq-gate-workers-1.md | 9 features (14 pairs): 62 full journeys and 107 type lines; 2 findings (S3): the HQ Log records a status change even when the save is refused; a Tell my gym lead has no mobile and an empty call link |
 | A5-server-hq-gate-workers-2 | A5 | journeys: 8 features (15 feature x role pairs) of server / server/hq-gate-workers; list in _work/items/A5-server-hq-gate-workers-2.txt | done | _work/A5-server-hq-gate-workers-2.md | 8 features (15 pairs): 72 full journeys and 108 type lines; 1 finding (S2): deleting a gym leaves its web-page photos in storage while HQ says Pictures removed |
 | A5-server-hq-gate-workers-3 | A5 | journeys: 8 features (12 feature x role pairs) of server / server/hq-gate-workers; list in _work/items/A5-server-hq-gate-workers-3.txt | done | _work/A5-server-hq-gate-workers-3.md | 8 features (12 pairs): 52 full journeys and 92 type lines; 2 findings: S1 (needs him) HQ Open in an emergency opens member data without the gym's yes, against the only when you let them promise (repeat of database-1-3: merge in 3H); S3 an empty AI daily limit box switches the AI Assistant off |
@@ -59,7 +58,8 @@ Counts: 0 todo, 5 in progress, 209 done, 0 blocked. Full list: work-items.jsonl.
 | A5-server-panel-worker-2 | A5 | journeys: 8 features (23 feature x role pairs) of server / server/panel-worker; list in _work/items/A5-server-panel-worker-2.txt | done | _work/A5-server-panel-worker-2.md | 8 features (23 pairs): 99 full journeys and 184 type lines; 0 findings; seen in passing: a failed friend or self-join send still uses one of the day's allowance |
 | A5-server-panel-worker-3 | A5 | journeys: 8 features (21 feature x role pairs) of server / server/panel-worker; list in _work/items/A5-server-panel-worker-3.txt | done | _work/A5-server-panel-worker-3.md | 8 features (21 pairs): 81 full journeys and 171 type lines; 0 findings; seen in passing: a double tap on send saves a help question twice |
 | A5-server-database-3-1b | A5 | journeys: 1 feature (4 feature x role pairs), the rest of A5-server-database-3-1 of server / server/database-3; list in _work/items/A5-server-database-3-1b.txt | done | _work/A5-server-database-3-1b.md | 1 feature (4 pairs): 20 full journeys and 28 type lines; 0 findings; seen in passing: the bell shows at most 50 alerts from 3 days |
-(+ 201 older done items, not shown)
+| A5-web-pages-3 | A5 | journeys: 8 features (11 feature x role pairs) of web / web/pages; list in _work/items/A5-web-pages-3.txt | done | _work/A5-web-pages-3.md | 8 features (11 pairs): 47 full journeys and 87 type lines; 0 findings; seen in passing: an unanswered AI question still uses one of the gym's daily allowance |
+(+ 202 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).

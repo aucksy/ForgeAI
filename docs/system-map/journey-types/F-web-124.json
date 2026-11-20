@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-web-124-owner-10","feature":"F-web-124","role":"owner","type":10,"applies":"yes","why_not":"none","variants":["T10-midway"],"at_step":1,"entity":"E-gym-ai-questions","note":"Before supabase 0078 questions are not counted; after it they are","wi":"A5-web-pages-3"},
+{"kind":"jtype","id":"JT-F-web-124-owner-11","feature":"F-web-124","role":"owner","type":11,"applies":"yes","why_not":"none","variants":["T11-twopanels"],"at_step":1,"entity":"E-ai-usage","note":"Phone and laptop share one daily allowance","wi":"A5-web-pages-3"},
+{"kind":"jtype","id":"JT-F-web-124-owner-4","feature":"F-web-124","role":"owner","type":4,"applies":"yes","why_not":"none","variants":["T4-hinglish","T4-long"],"at_step":1,"entity":"E-gym-ai-questions","note":"Hindi and Hinglish requests; long sentences up to the body limit","wi":"A5-web-pages-3"},
+{"kind":"jtype","id":"JT-F-web-124-owner-5","feature":"F-web-124","role":"owner","type":5,"applies":"yes","why_not":"none","variants":["T5-midnight","T5-month1"],"at_step":1,"entity":"E-ai-usage","note":"Daily allowance by India day; trial money cap by India month","wi":"A5-web-pages-3"},
+{"kind":"jtype","id":"JT-F-web-124-owner-7","feature":"F-web-124","role":"owner","type":7,"applies":"yes","why_not":"none","variants":["T7-doubletap","T7-offline"],"at_step":1,"entity":"E-gym-ai-questions","note":"A second fast tap takes a second question","wi":"A5-web-pages-3"},
+{"kind":"jtype","id":"JT-F-web-124-owner-8","feature":"F-web-124","role":"owner","type":8,"applies":"yes","why_not":"none","variants":["T8-language","T8-permission"],"at_step":1,"entity":"none","note":"Message language and Hindi/English answer; microphone refused must leave typing","wi":"A5-web-pages-3"},
+{"kind":"jtype","id":"JT-F-web-124-owner-9","feature":"F-web-124","role":"owner","type":9,"applies":"yes","why_not":"none","variants":["T9-360","T9-hinglish"],"at_step":1,"entity":"none","note":"none","wi":"A5-web-pages-3"}
+]

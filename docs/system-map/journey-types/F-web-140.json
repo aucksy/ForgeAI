@@ -1,0 +1,9 @@
+[
+{"kind":"jtype","id":"JT-F-web-140-system-10","feature":"F-web-140","role":"system","type":10,"applies":"yes","why_not":"none","variants":["T10-olddata"],"at_step":1,"entity":"E-phone-codes","note":"Tables made by later migrations may be missing; each clean-up is caught on its own","wi":"A5-web-pages-3"},
+{"kind":"jtype","id":"JT-F-web-140-system-11","feature":"F-web-140","role":"system","type":11,"applies":"no","why_not":"a server job; no device shows its result","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-3"},
+{"kind":"jtype","id":"JT-F-web-140-system-4","feature":"F-web-140","role":"system","type":4,"applies":"no","why_not":"a DELETE by date: the number of rows changes nothing but how many go","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-3"},
+{"kind":"jtype","id":"JT-F-web-140-system-5","feature":"F-web-140","role":"system","type":5,"applies":"yes","why_not":"none","variants":["T5-midnight"],"at_step":1,"entity":"E-ai-usage","note":"Voice counts cut by India day; crash and code rows by exact time","wi":"A5-web-pages-3"},
+{"kind":"jtype","id":"JT-F-web-140-system-7","feature":"F-web-140","role":"system","type":7,"applies":"no","why_not":"no person is in the middle: a timed job; a failed run is done again the next night","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-3"},
+{"kind":"jtype","id":"JT-F-web-140-system-8","feature":"F-web-140","role":"system","type":8,"applies":"no","why_not":"no user setting; the keep times are fixed in code","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-3"},
+{"kind":"jtype","id":"JT-F-web-140-system-9","feature":"F-web-140","role":"system","type":9,"applies":"no","why_not":"no screen: a timed job","variants":[],"at_step":0,"entity":"none","note":"none","wi":"A5-web-pages-3"}
+]
