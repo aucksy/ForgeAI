@@ -42,19 +42,17 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A4b | 2 | 5.1 (204k tokens) |
 | A5 | 121 | 5.1 (202k tokens) |
 | L4 | 42 | 3.9 (157k tokens) |
-| L5 | 17 | 4.8 (192k tokens) |
+| L5 | 18 | 4.8 (190k tokens) |
 | L3 | 7 | 5.2 (207k tokens) |
 
 ## Work items
-Counts: 0 todo, 4 in progress, 284 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 3 in progress, 285 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | L3-server-database-2 | L3 | lens 3 (Security) x server / server/database-2: 11 items | in progress | _work/L3-server-database-2.md |  |
 | L5-phone-screens-1 | L5 | lens 5 (Money) x phone / phone/screens-1: 4 items | in progress | _work/L5-phone-screens-1.md |  |
-| L5-phone-screens-2 | L5 | lens 5 (Money) x phone / phone/screens-2: 4 items | in progress | _work/L5-phone-screens-2.md |  |
 | L5-web-pages | L5 | lens 5 (Money) x web / web/pages: 4 items | in progress | _work/L5-web-pages.md |  |
-| L5-panel-auth-data | L5 | lens 5 (Money) x panel / panel/auth-data: 4 items | done | _work/L5-panel-auth-data.md | L5 panel-auth-data: 4 items, 3 new (S2 offline receipt refused later vanishes, member owes again; S3 remove refused receipt leaves no record; S3 deleted offline member's payment still sent), 1 reused |
 | L3-panel-pay-machines | L3 | lens 3 (Security) x panel / panel/pay-machines: 11 items | done | _work/L3-panel-pay-machines.md | L3 panel-pay-machines: 11 items, 1 new S4 (no cross-business test on branch visits), 3 reused; side: pack-check function not live, Pro features all on |
 | L3-panel-screens-1 | L3 | lens 3 (Security) x panel / panel/screens-1: 11 items | done | _work/L3-panel-screens-1.md | L3 panel-screens-1: 11 items, 1 new S4 (5 owner features lack cross-gym tests), 1 reused; note: phone app uses spreadsheet lib 0.18.5 with 2 high alerts (for L3 phone items) |
 | L5-panel-ui-shell | L5 | lens 5 (Money) x panel / panel/ui-shell: 4 items | done | _work/L5-panel-ui-shell.md | L5 panel-ui-shell: 4 items, 2 new S3 (no paid/failed word after paying MettleUp, can pay twice; no-refund rule never shown, needs him), 9 reused |
@@ -62,7 +60,8 @@ Counts: 0 todo, 4 in progress, 284 done, 0 blocked. Full list: work-items.jsonl.
 | L3-panel-screens-2 | L3 | lens 3 (Security) x panel / panel/screens-2: 11 items | done | _work/L3-panel-screens-2.md | L3 panel-screens-2: 11 items, 1 new S3 (Disconnect the shop never retires the owner key), 1 reused |
 | L5-phone-shop-2 | L5 | lens 5 (Money) x phone / phone/shop-2: 4 items | done | _work/L5-phone-shop-2.md | L5 phone-shop-2: 4 items, 3 new (S3 asked fee vanishes when link expires; S3 Renew shows no price, needs him; S4 renewal words say pay at desk), 3 reused |
 | L3-server-database-1 | L3 | lens 3 (Security) x server / server/database-1: 11 items | done | _work/L3-server-database-1.md | L3 server-database-1: 11 items, 3 new S3 (join codes guessable, no try limit; demo owner key gives free photo hosting; demo and join limits blockable by one script), 5 reused |
-(+ 276 older done items, not shown)
+| L5-phone-screens-2 | L5 | lens 5 (Money) x phone / phone/screens-2: 4 items | done | _work/L5-phone-screens-2.md | L5 phone-screens-2: 4 items, 4 new on Plus (not live): S3 waiting payment no unlock; S3 no server check of purchases; S3 refunds page wrong once Plus on (needs him); S4 wrong plan named after restore; 2 reused |
+(+ 277 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
