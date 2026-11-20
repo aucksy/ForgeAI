@@ -1,5 +1,5 @@
 MODEL: OPUS (his switch after the 20 Nov Fable reset). Every helper = Opus 5.5 ("opus"), effort "medium". Only the weekly all-models stop line counts (90, or 95 in its last 24 hours).
-status: PAUSED (pacer-1120-0935 closed 20 Nov about 13:58 IST at F5 92, after 11 extra helpers (he allowed higher lines for this window only: "use it all"). Next window resets 20 Nov 14:30 IST)
+status: RUNNING (pacer-1120-1432 started 20 Nov 14:32 IST at F5 0, weekly all 16; window resets 20 Nov 19:29 IST; day rule: start nothing at F5 >= 75)
 phase/step: A2, A3, A4, A4b and A7 DONE. A5 (journeys): 85 of 120 items done (35 left, add files in _work/a5-add, not yet added to work-items) (live features only). Lens 4 pilot done; lenses 4, 3, 5 are ready to run beside A5. E1-E4 done; 3F draft done
 expected end: not before about 8 Dec 2026 at the present size. projection: about 3.1 weekly periods of 3 (A5 alone needs about 1.6 more: 87 items x 1.7 weekly points): OVER; HIS CHOICE of 19 Nov (live features first) is applied: full journeys only for features with status live; the rest is deferred and listed in the final report
 mode: ANALYSIS ONLY. No app code, tests, workflows, skills or settings change. "Apply" items in 3E/3F = proposals only.
@@ -42,10 +42,16 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L4 | 1 | 4.4 (177k tokens) |
 
 ## Work items
-Counts: 0 todo, 0 in progress, 182 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 6 in progress, 182 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
+| A5-phone-lib-core-2 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/lib-core; list in _work/items/A5-phone-lib-core-2.txt | in progress | _work/A5-phone-lib-core-2.md |  |
+| A5-phone-lib-core-3 | A5 | journeys: 8 features (8 feature x role pairs) of phone / phone/lib-core; list in _work/items/A5-phone-lib-core-3.txt | in progress | _work/A5-phone-lib-core-3.md |  |
+| A5-phone-native-1 | A5 | journeys: 9 features (10 feature x role pairs) of phone / phone/native; list in _work/items/A5-phone-native-1.txt | in progress | _work/A5-phone-native-1.md |  |
+| A5-phone-native-2 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/native; list in _work/items/A5-phone-native-2.txt | in progress | _work/A5-phone-native-2.md |  |
+| A5-phone-native-3 | A5 | journeys: 8 features (9 feature x role pairs) of phone / phone/native; list in _work/items/A5-phone-native-3.txt | in progress | _work/A5-phone-native-3.md |  |
+| A5-phone-native-4 | A5 | journeys: 8 features (9 feature x role pairs) of phone / phone/native; list in _work/items/A5-phone-native-4.txt | in progress | _work/A5-phone-native-4.md |  |
 | A5-phone-tracker-services-2-4 | A5 | journeys: 9 features (9 feature x role pairs) of phone / phone/tracker-services-2; list in _work/items/A5-phone-tracker-services-2-4.txt | done | _work/A5-phone-tracker-services-2-4.md | 9 features: 46 full journeys and 66 type lines; 0 findings; seen in passing: a What's new line says Save a backup includes photos, but workout photos are left out |
 | A5-phone-cloud-backup-ai-1 | A5 | journeys: 6 features (6 feature x role pairs) of phone / phone/cloud-backup-ai; list in _work/items/A5-phone-cloud-backup-ai-1.txt | done | _work/A5-phone-cloud-backup-ai-1.md | 6 features: 32 full journeys and 45 type lines; 1 finding (S3): Download my data says Saved even when the share sheet is closed without a place, so the member thinks a backup exists |
 | A5-phone-cloud-backup-ai-2 | A5 | journeys: 5 features (7 feature x role pairs) of phone / phone/cloud-backup-ai; list in _work/items/A5-phone-cloud-backup-ai-2.txt | done | _work/A5-phone-cloud-backup-ai-2.md | 5 features (7 pairs): 40 full journeys and 52 type lines; 2 findings (S3): the Drive sign-in-again message names buttons that do not exist; a refused item shows waiting for the internet while online and hides Last saved |
