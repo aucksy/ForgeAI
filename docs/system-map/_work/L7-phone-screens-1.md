@@ -1,0 +1,1 @@
+- 21 Nov 2026: L7.1-L7.5 done; 1 finding (FN-L7-phone-screens-1-01); output written.
