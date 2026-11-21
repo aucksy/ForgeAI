@@ -7,3 +7,4 @@
 - F-panel-504 done (6 rows). Next F-panel-507 Today. ~1700 lines read.
 - F-panel-507 done (11 rows). Next F-panel-524 trainers. ~1850 lines read.
 - F-panel-524 done (17 rows, finding 01). Next F-panel-525 workout plans. ~2000 lines read.
+- F-panel-525 done (21 rows; no screen test = existing FN-A8-panel-brand-shell-3-01). All 116 journeys written. Next: findings, then checks.
