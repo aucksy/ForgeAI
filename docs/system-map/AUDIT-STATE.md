@@ -52,7 +52,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | CAL | 0 | 5 (start value) |
 | A8r | 1 | 4.9 (197k tokens) |
 | A8 | 97 | 5.9 (235k tokens) |
-| L19 | 2 | 3.6 (143k tokens) |
+| L19 | 3 | 3.5 (140k tokens) |
 | L14 | 0 | 5 (start value) |
 | B-run | 0 | 5 (start value) |
 | B-truth | 0 | 5 (start value) |
@@ -68,7 +68,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 646 todo, 0 in progress, 436 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 645 todo, 0 in progress, 437 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
@@ -80,7 +80,6 @@ Counts: 646 todo, 0 in progress, 436 done, 0 blocked. Full list: work-items.json
 | CAL-score | coord | coordinator only: C4 score found/partly/missed per seed in calibration/RESULT.md; C5 rewrite a hunt and re-run a missed seed (at most 2 re-runs); then hunts may run on today's code | todo | - |  |
 | L19-panel-auth-data | L19 | lens 19 (Abuse and misuse) x panel / panel/auth-data: 2 items | todo | _work/L19-panel-auth-data.md |  |
 | L19-panel-brand-shell | L19 | lens 19 (Abuse and misuse) x panel / panel/brand-shell: 2 items | todo | _work/L19-panel-brand-shell.md |  |
-| L19-panel-forms | L19 | lens 19 (Abuse and misuse) x panel / panel/forms: 2 items | todo | _work/L19-panel-forms.md |  |
 | L19-panel-logic-1 | L19 | lens 19 (Abuse and misuse) x panel / panel/logic-1: 2 items | todo | _work/L19-panel-logic-1.md |  |
 | L19-panel-logic-2 | L19 | lens 19 (Abuse and misuse) x panel / panel/logic-2: 2 items | todo | _work/L19-panel-logic-2.md |  |
 | L19-panel-pay-machines | L19 | lens 19 (Abuse and misuse) x panel / panel/pay-machines: 2 items | todo | _work/L19-panel-pay-machines.md |  |
@@ -97,7 +96,7 @@ Counts: 646 todo, 0 in progress, 436 done, 0 blocked. Full list: work-items.json
 | L19-phone-screens-1 | L19 | lens 19 (Abuse and misuse) x phone / phone/screens-1: 2 items | todo | _work/L19-phone-screens-1.md |  |
 | L19-phone-screens-2 | L19 | lens 19 (Abuse and misuse) x phone / phone/screens-2: 2 items | todo | _work/L19-phone-screens-2.md |  |
 | L19-phone-shop-1 | L19 | lens 19 (Abuse and misuse) x phone / phone/shop-1: 2 items | todo | _work/L19-phone-shop-1.md |  |
-| A8-watch-app-1 | A8 | coverage: 55 Tier 1 journeys of 10 features, watch / watch-app; list in _work/items/A8-watch-app-1.txt | done | _work/A8-watch-app-1.md | A8 watch-app-1: 55 journeys, 3 full, 30 partial, 22 none; 7 findings (watch restart and phone-link untested) |
+| L19-phone-shop-2 | L19 | lens 19 (Abuse and misuse) x phone / phone/shop-2: 2 items | todo | _work/L19-phone-shop-2.md |  |
 | A8-watch-app-2 | A8 | coverage: 63 Tier 1 journeys of 11 features, watch / watch-app; list in _work/items/A8-watch-app-2.txt | done | _work/A8-watch-app-2.md | A8 watch-app-2: 63 journeys, 8 full, 42 partial, 13 none; 8 findings (6 S3) |
 | A8-web-pages-1 | A8 | coverage: 110 Tier 1 journeys of 8 features, web / web-pages; list in _work/items/A8-web-pages-1.txt | done | _work/A8-web-pages-1.md | A8 web-pages-1: 110 journeys, 16 full, 78 partial, 16 none; 9 findings (6 S3) |
 | A8-web-pages-2 | A8 | coverage: 82 Tier 1 journeys of 8 features, web / web-pages; list in _work/items/A8-web-pages-2.txt | done | _work/A8-web-pages-2.md | A8 web-pages-2: 82 journeys, 8 full, 66 partial, 8 none; 8 findings (join page keeps number) |
@@ -105,8 +104,9 @@ Counts: 646 todo, 0 in progress, 436 done, 0 blocked. Full list: work-items.json
 | A8-report | tools | script: _tools/coverage.mjs -> COVERAGE.md + _sources/orphan-tests.txt (after every A8 item is merged) | done | - | A8-report: COVERAGE.md written; 1309 Tier 1 journeys with no test; 277 of 1148 test files named by no journey |
 | L19-hq-app | L19 | lens 19 (Abuse and misuse) x hq / hq/app: 2 items | done | _work/L19-hq-app.md | L19 hq-app (pilot): 2 items, 1 finding S4 (no HQ alert on a gym's AI jump) |
 | L19-panel-assistant | L19 | lens 19 (Abuse and misuse) x panel / panel/assistant: 2 items | done | _work/L19-panel-assistant.md | L19 panel-assistant: 2 items, 3 findings S3 (member name steers AI; free AI plans; trial AI cap shared) |
-(+ 621 more todo items, not shown)
-(+ 428 older done items, not shown)
+| L19-panel-forms | L19 | lens 19 (Abuse and misuse) x panel / panel/forms: 2 items | done | _work/L19-panel-forms.md | L19 panel-forms: 2 items, 2 findings (S2 desk pass tick gives free training for ever) |
+(+ 620 more todo items, not shown)
+(+ 429 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
