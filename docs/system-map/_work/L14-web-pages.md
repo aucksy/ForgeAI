@@ -2,3 +2,5 @@
 - 2026-11-21 L14.1 done: setup/billing/offboarding words; new in-person setup finding; reused FN-L14-panel-auth-data-03, FN-L5-web-pages-01
 - 2026-11-21 L14.3 done: help page menu paths match; reused FN-L4-web-pages-02, FN-L14-panel-auth-data-03, FN-A3-notes-claude-2-03
 - 2026-11-21 L14.4 done: contact paths; reused FN-L14-server-database-3-01, FN-L14-hq-app-08, FN-L14-hq-app-07
+- 2026-11-21 L14.2 done: reused FN-L14-hq-app-08, FN-L14-server-database-3-01
+- 2026-11-21 L14.5 done: domains and contact one-person; reused FN-L14-panel-pay-machines-07, FN-L14-server-panel-worker-05; new FN-L14-web-pages-02
