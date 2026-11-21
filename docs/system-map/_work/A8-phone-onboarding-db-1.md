@@ -4,3 +4,5 @@
 - 48 journeys done (+1617, 1611); finding 01 written
 - 56 journeys done (+1601)
 - 70 journeys done (+1606, 1607); finding 02
+- 88 journeys done (+1604); findings 01-05
+- DONE: 88 journeys, 5 findings; a8-cover ok, merge --dry 93/93 passed
