@@ -1,0 +1,3 @@
+- L19.1 checked: board totals read every saved workout incl. imported/moved ones (reuse FN-L19-phone-screens-1-01); hevy link rebuilt to hevy.com only; routine file size-capped and parsed; trainer links youtube-only.
+- L19.2 checked: no AI call in area; share-as-text hands the member's own text to an AI chat the member picks; no gym credits used.
+- DONE
