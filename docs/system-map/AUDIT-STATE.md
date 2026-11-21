@@ -60,7 +60,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L7 | 0 | 5 (start value) |
 | L8 | 0 | 5 (start value) |
 | L9 | 0 | 5 (start value) |
-| L12 | 0 | 5 (start value) |
+| L12 | 1 | 3.1 (125k tokens) |
 | L16 | 0 | 5 (start value) |
 | H5 | 0 | 5 (start value) |
 | B-alerts | 0 | 5 (start value) |
@@ -69,7 +69,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 571 todo, 5 in progress, 506 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 570 todo, 5 in progress, 507 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
@@ -103,7 +103,6 @@ Counts: 571 todo, 5 in progress, 506 done, 0 blocked. Full list: work-items.json
 | B-run-panel-screens-1-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-1: 11 items | todo | _work/B-run-panel-screens-1-a.md |  |
 | B-run-panel-screens-1-b | B-run | B-run (Silent fallbacks) x panel / panel/screens-1: 6 items | todo | _work/B-run-panel-screens-1-b.md |  |
 | B-run-panel-screens-2-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-2: 11 items | todo | _work/B-run-panel-screens-2-a.md |  |
-| L14-phone-tracker-services-1 | L14 | lens 14 (Operations and support) x phone / phone/tracker-services-1: 5 items | done | _work/L14-phone-tracker-services-1.md | L14 phone-tracker-services-1: 5 items, 0 findings |
 | L14-phone-tracker-services-2 | L14 | lens 14 (Operations and support) x phone / phone/tracker-services-2: 5 items | done | _work/L14-phone-tracker-services-2.md | L14 phone-tracker-services-2: 5 items, 0 new findings (1 reused) |
 | L14-server-ci-workflows | L14 | lens 14 (Operations and support) x server / server/ci-workflows: 5 items | done | _work/L14-server-ci-workflows.md | L14 server-ci-workflows: 5 items, 3 findings S3 (one personal GitHub account holds every release path, NEEDS HIS DECISION) |
 | L14-server-database-1 | L14 | lens 14 (Operations and support) x server / server/database-1: 5 items | done | _work/L14-server-database-1.md | L14 server-database-1: 5 items, 4 findings (S3 gym delete also deletes its terms-acceptance proof) |
@@ -111,8 +110,9 @@ Counts: 571 todo, 5 in progress, 506 done, 0 blocked. Full list: work-items.json
 | L14-server-database-3 | L14 | lens 14 (Operations and support) x server / server/database-3: 5 items | done | _work/L14-server-database-3.md | L14 server-database-3: 5 items, 5 findings (S2 'Report this page' reports reach nobody) |
 | L14-server-hq-gate-workers | L14 | lens 14 (Operations and support) x server / server/hq-gate-workers: 5 items | done | _work/L14-server-hq-gate-workers.md | L14 server-hq-gate-workers: 5 items, 5 findings (S2 Pro-to-Starter switch never runs while online buying is off) |
 | L14-watch-app | L14 | lens 14 (Operations and support) x watch / watch/app: 5 items | done | _work/L14-watch-app.md | L14 watch-app: 5 items, 1 finding S3 (watch crashes never reach MettleUp) |
-(+ 546 more todo items, not shown)
-(+ 498 older done items, not shown)
+| L12-hq-app | L12 | lens 12 (Platform and store rules) x hq / hq/app: 3 items | done | _work/L12-hq-app.md | L12 hq-app: 3 items, 1 finding S4 (icon licence credit line missing) |
+(+ 545 more todo items, not shown)
+(+ 499 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
