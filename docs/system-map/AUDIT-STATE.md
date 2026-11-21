@@ -54,7 +54,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A8r | 1 | 4.9 (197k tokens) |
 | A8 | 97 | 5.9 (235k tokens) |
 | L19 | 37 | 3.6 (145k tokens) |
-| L14 | 9 | 3.8 (152k tokens) |
+| L14 | 10 | 3.8 (151k tokens) |
 | B-run | 0 | 5 (start value) |
 | B-truth | 0 | 5 (start value) |
 | L7 | 0 | 5 (start value) |
@@ -69,12 +69,11 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 597 todo, 5 in progress, 480 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 597 todo, 4 in progress, 481 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | L14-panel-pay-machines | L14 | lens 14 (Operations and support) x panel / panel/pay-machines: 5 items | in progress | _work/L14-panel-pay-machines.md |  |
-| L14-panel-screens-2 | L14 | lens 14 (Operations and support) x panel / panel/screens-2: 5 items | in progress | _work/L14-panel-screens-2.md |  |
 | L14-panel-ui-shell | L14 | lens 14 (Operations and support) x panel / panel/ui-shell: 5 items | in progress | _work/L14-panel-ui-shell.md |  |
 | L14-phone-cloud-backup-ai | L14 | lens 14 (Operations and support) x phone / phone/cloud-backup-ai: 5 items | in progress | _work/L14-phone-cloud-backup-ai.md |  |
 | L14-phone-components-1 | L14 | lens 14 (Operations and support) x phone / phone/components-1: 5 items | in progress | _work/L14-phone-components-1.md |  |
@@ -103,16 +102,16 @@ Counts: 597 todo, 5 in progress, 480 done, 0 blocked. Full list: work-items.json
 | L14-server-database-1 | L14 | lens 14 (Operations and support) x server / server/database-1: 5 items | todo | _work/L14-server-database-1.md |  |
 | L14-server-database-2 | L14 | lens 14 (Operations and support) x server / server/database-2: 5 items | todo | _work/L14-server-database-2.md |  |
 | L14-server-database-3 | L14 | lens 14 (Operations and support) x server / server/database-3: 5 items | todo | _work/L14-server-database-3.md |  |
-| L14-panel-assistant | L14 | lens 14 (Operations and support) x panel / panel/assistant: 5 items | done | _work/L14-panel-assistant.md | L14 panel-assistant: 5 items, 6 findings (S2 AI Assistant vanishes silently when its key is missing) |
 | L14-panel-auth-data | L14 | lens 14 (Operations and support) x panel / panel/auth-data: 5 items | done | _work/L14-panel-auth-data.md | L14 panel-auth-data: 5 items, 4 findings (S2 locked-out solo owner has only an untracked email) |
 | L14-panel-brand-shell | L14 | lens 14 (Operations and support) x panel / panel/brand-shell: 5 items | done | _work/L14-panel-brand-shell.md | L14 panel-brand-shell: 5 items, 6 findings (S3 errors say message us on WhatsApp but show no number) |
 | L14-panel-forms | L14 | lens 14 (Operations and support) x panel / panel/forms: 5 items | done | _work/L14-panel-forms.md | L14 panel-forms: 5 items, 3 findings (failed saves never reported) |
 | L14-panel-logic-1 | L14 | lens 14 (Operations and support) x panel / panel/logic-1: 5 items | done | _work/L14-panel-logic-1.md | L14 panel-logic-1: 5 items, 2 findings S3 (team replies reach one browser only; no plan-ends warning for UPI payers) |
 | L14-panel-logic-2 | L14 | lens 14 (Operations and support) x panel / panel/logic-2: 5 items | done | _work/L14-panel-logic-2.md | L14 panel-logic-2: 5 items, 3 findings (S3 'Message MettleUp' with no number anywhere; Needs you misses online joins) |
 | L14-panel-screens-1 | L14 | lens 14 (Operations and support) x panel / panel/screens-1: 5 items | done | _work/L14-panel-screens-1.md | L14 panel-screens-1: 5 items, 2 findings (S3 Help page has no email or number fallback) |
+| L14-panel-screens-2 | L14 | lens 14 (Operations and support) x panel / panel/screens-2: 5 items | done | _work/L14-panel-screens-2.md | L14 panel-screens-2: 5 items, 1 finding S3 (help still calls MettleUp payment not live) |
 | L14-panel-shop | L14 | lens 14 (Operations and support) x panel / panel/shop: 5 items | done | _work/L14-panel-shop.md | L14 panel-shop: 5 items, 2 findings S2 (orders after shop disconnect go unseen; browser-only shop key lost for good) |
 (+ 572 more todo items, not shown)
-(+ 472 older done items, not shown)
+(+ 473 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
