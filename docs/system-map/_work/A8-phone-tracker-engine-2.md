@@ -4,3 +4,5 @@
 - 2026-11-21: F-phone-920, 921, 922 (16 journeys) done; 31 rows written.
 - 2026-11-21: F-phone-923 (5) done; finding 01 (machine step in pounds).
 - 2026-11-21: F-phone-924, 925, 926, 927 (23 journeys) done; 59 rows in out file.
+- 2026-11-21: F-phone-928 to 932 (28 journeys) done; finding 02 (Quick workout screen test dropped). All 87 written.
+- 2026-11-21: a8-cover ok 87; merge --dry 89/89 passed.

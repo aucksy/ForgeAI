@@ -1,3 +1,4 @@
 # A8-phone-tracker-engine-1 checkpoint
 - 2026-11-21: features 900-903 done (19 journeys, rows in out/). Test lines read ~560. Existing findings reused: FN-A8-phone-screens-1-3-06, -1-3-07, -1-3-09, -2-2-02 (Ask an AI), FN-A8-phone-screens-1-4-05 (Badges page), FN-A8-phone-components-1-2-04 (Balance card).
 - features 904-909 done (44 journeys total). Test lines read ~1,350. Reused: FN-A8-phone-screens-1-2-06, FN-A8-phone-onboarding-db-1-05 (measures refusals), FN-A5-phone-tracker-engine-1-01, FN-A8-phone-components-1-2-05, FN-A8-phone-tracker-components-1-1-09 (body map), FN-A5-phone-tracker-engine-1-03 (treadmill box), FN-A8-phone-screens-2-1-03 (month picture), FN-A8-phone-tracker-components-1-1-07, FN-A8-phone-components-1-2-07, FN-A8-phone-lib-core-2-03 (charts).
+- features 910-916 done: all 78 journeys written (0 full, 70 partial, 8 none), 8 new findings FN-A8-phone-tracker-engine-1-01..08. Test lines read ~2,900. a8-cover ok, merge --dry 86/86 passed. DONE.
