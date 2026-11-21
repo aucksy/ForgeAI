@@ -1,5 +1,5 @@
 MODEL: OPUS (his switch after the 20 Nov Fable reset). Every helper = Opus 5.5 ("opus"), effort "medium". Only the weekly all-models stop line counts (90, or 95 in its last 24 hours).
-status: STOPPED (pacer-1121-0032 closed 21 Nov about 02:45 IST at F5 90; next window opens 05:30 IST 21 Nov)
+status: RUNNING (pacer-1121-0532 opened 05:32 IST 21 Nov at F5 0, weekly all 52; night rule to 09:00: start line 91, launch to 95)
 phase/step: A2, A3, A4, A4b, A5, A7, LENSES 4, 5 AND 3 DONE (lens 3 finished 21 Nov about 02:00 IST). Next: the items the prep helper makes (_work/NEXT-ITEMS.md). Next: the rest of lenses 3 and 5 (no more pilots needed); add with state.mjs add @docs/system-map/_work/lens-add/<id>.json; finish each with bash docs/system-map/_tools/lens-finish.sh <id> <tokens> "<line>" after node docs/system-map/_tools/clamp-evidence.js <id> (both hold this run's paths: fix the two paths at their top if the worktree moves).
 expected end: not before about 8 Dec 2026 at the present size. projection: about 3.1 weekly periods of 3 (A5 alone needs about 1.6 more: 87 items x 1.7 weekly points): OVER; HIS CHOICE of 19 Nov (live features first) is applied: full journeys only for features with status live; the rest is deferred and listed in the final report
 mode: ANALYSIS ONLY. No app code, tests, workflows, skills or settings change. "Apply" items in 3E/3F = proposals only.
@@ -51,22 +51,22 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A8 | 28 | 5.8 (233k tokens) |
 
 ## Work items
-Counts: 76 todo, 0 in progress, 364 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 70 todo, 6 in progress, 364 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
+| A8-panel-screens-2-3 | A8 | coverage: 70 Tier 1 journeys of 10 features, panel / panel-screens-2; list in _work/items/A8-panel-screens-2-3.txt | in progress | _work/A8-panel-screens-2-3.md |  |
+| A8-panel-screens-2-4 | A8 | coverage: 105 Tier 1 journeys of 9 features, panel / panel-screens-2; list in _work/items/A8-panel-screens-2-4.txt | in progress | _work/A8-panel-screens-2-4.md |  |
+| A8-panel-shop-1 | A8 | coverage: 70 Tier 1 journeys of 6 features, panel / panel-shop; list in _work/items/A8-panel-shop-1.txt | in progress | _work/A8-panel-shop-1.md |  |
+| A8-panel-shop-2 | A8 | coverage: 76 Tier 1 journeys of 12 features, panel / panel-shop; list in _work/items/A8-panel-shop-2.txt | in progress | _work/A8-panel-shop-2.md |  |
+| A8-panel-ui-shell-1 | A8 | coverage: 120 Tier 1 journeys of 10 features, panel / panel-ui-shell; list in _work/items/A8-panel-ui-shell-1.txt | in progress | _work/A8-panel-ui-shell-1.md |  |
+| A8-panel-ui-shell-2 | A8 | coverage: 79 Tier 1 journeys of 7 features, panel / panel-ui-shell; list in _work/items/A8-panel-ui-shell-2.txt | in progress | _work/A8-panel-ui-shell-2.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
 | CAL-2 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged | todo | _work/CAL-2.md |  |
 | CAL-3 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-3 ...); output is scored, never merged | todo | _work/CAL-3.md |  |
 | CAL-4 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-4 ...); output is scored, never merged | todo | _work/CAL-4.md |  |
 | CAL-score | coord | coordinator only: C4 score found/partly/missed per seed in calibration/RESULT.md; C5 rewrite a hunt and re-run a missed seed (at most 2 re-runs); then hunts may run on today's code | todo | - |  |
-| A8-panel-screens-2-3 | A8 | coverage: 70 Tier 1 journeys of 10 features, panel / panel-screens-2; list in _work/items/A8-panel-screens-2-3.txt | todo | _work/A8-panel-screens-2-3.md |  |
-| A8-panel-screens-2-4 | A8 | coverage: 105 Tier 1 journeys of 9 features, panel / panel-screens-2; list in _work/items/A8-panel-screens-2-4.txt | todo | _work/A8-panel-screens-2-4.md |  |
-| A8-panel-shop-1 | A8 | coverage: 70 Tier 1 journeys of 6 features, panel / panel-shop; list in _work/items/A8-panel-shop-1.txt | todo | _work/A8-panel-shop-1.md |  |
-| A8-panel-shop-2 | A8 | coverage: 76 Tier 1 journeys of 12 features, panel / panel-shop; list in _work/items/A8-panel-shop-2.txt | todo | _work/A8-panel-shop-2.md |  |
-| A8-panel-ui-shell-1 | A8 | coverage: 120 Tier 1 journeys of 10 features, panel / panel-ui-shell; list in _work/items/A8-panel-ui-shell-1.txt | todo | _work/A8-panel-ui-shell-1.md |  |
-| A8-panel-ui-shell-2 | A8 | coverage: 79 Tier 1 journeys of 7 features, panel / panel-ui-shell; list in _work/items/A8-panel-ui-shell-2.txt | todo | _work/A8-panel-ui-shell-2.md |  |
 | A8-panel-ui-shell-3 | A8 | coverage: 32 Tier 1 journeys of 3 features, panel / panel-ui-shell; list in _work/items/A8-panel-ui-shell-3.txt | todo | _work/A8-panel-ui-shell-3.md |  |
 | A8-panel-ui-shell-4 | A8 | coverage: 116 Tier 1 journeys of 10 features, panel / panel-ui-shell; list in _work/items/A8-panel-ui-shell-4.txt | todo | _work/A8-panel-ui-shell-4.md |  |
 | A8-phone-cloud-backup-ai-1 | A8 | coverage: 72 Tier 1 journeys of 11 features, phone / phone-cloud-backup-ai; list in _work/items/A8-phone-cloud-backup-ai-1.txt | todo | _work/A8-phone-cloud-backup-ai-1.md |  |
@@ -80,6 +80,12 @@ Counts: 76 todo, 0 in progress, 364 done, 0 blocked. Full list: work-items.jsonl
 | A8-phone-native-1 | A8 | coverage: 95 Tier 1 journeys of 17 features, phone / phone-native; list in _work/items/A8-phone-native-1.txt | todo | _work/A8-phone-native-1.md |  |
 | A8-phone-native-2 | A8 | coverage: 46 Tier 1 journeys of 8 features, phone / phone-native; list in _work/items/A8-phone-native-2.txt | todo | _work/A8-phone-native-2.md |  |
 | A8-phone-onboarding-db-1 | A8 | coverage: 88 Tier 1 journeys of 9 features, phone / phone-onboarding-db; list in _work/items/A8-phone-onboarding-db-1.txt | todo | _work/A8-phone-onboarding-db-1.md |  |
+| A8-phone-onboarding-db-2 | A8 | coverage: 85 Tier 1 journeys of 8 features, phone / phone-onboarding-db; list in _work/items/A8-phone-onboarding-db-2.txt | todo | _work/A8-phone-onboarding-db-2.md |  |
+| A8-phone-onboarding-db-3 | A8 | coverage: 69 Tier 1 journeys of 8 features, phone / phone-onboarding-db; list in _work/items/A8-phone-onboarding-db-3.txt | todo | _work/A8-phone-onboarding-db-3.md |  |
+| A8-phone-screens-1-1 | A8 | coverage: 57 Tier 1 journeys of 9 features, phone / phone-screens-1; list in _work/items/A8-phone-screens-1-1.txt | todo | _work/A8-phone-screens-1-1.md |  |
+| A8-phone-screens-1-2 | A8 | coverage: 52 Tier 1 journeys of 8 features, phone / phone-screens-1; list in _work/items/A8-phone-screens-1-2.txt | todo | _work/A8-phone-screens-1-2.md |  |
+| A8-phone-screens-1-3 | A8 | coverage: 54 Tier 1 journeys of 8 features, phone / phone-screens-1; list in _work/items/A8-phone-screens-1-3.txt | todo | _work/A8-phone-screens-1-3.md |  |
+| A8-phone-screens-1-4 | A8 | coverage: 110 Tier 1 journeys of 16 features, phone / phone-screens-1; list in _work/items/A8-phone-screens-1-4.txt | todo | _work/A8-phone-screens-1-4.md |  |
 | A8-panel-logic-2-3 | A8 | coverage: 67 Tier 1 journeys of 8 features, panel / panel-logic-2; list in _work/items/A8-panel-logic-2-3.txt | done | _work/A8-panel-logic-2-3.md | A8 panel-logic-2-3: 67 journeys, 1 full, 57 partial, 9 none; 8 findings (1 S2) |
 | A8-panel-logic-2-4 | A8 | coverage: 71 Tier 1 journeys of 8 features, panel / panel-logic-2; list in _work/items/A8-panel-logic-2-4.txt | done | _work/A8-panel-logic-2-4.md | A8 panel-logic-2-4: 71 journeys, 0 full, 70 partial, 1 none; 6 findings (3 S3) |
 | A8-panel-screens-1-1 | A8 | coverage: 101 Tier 1 journeys of 10 features, panel / panel-screens-1; list in _work/items/A8-panel-screens-1-1.txt | done | _work/A8-panel-screens-1-1.md | A8 panel-screens-1-1: 101 journeys, 2 full, 75 partial, 24 none; 4 findings; says FN-A8-panel-logic-1-1-01 is wrong (desk.spec opens Visits) |
@@ -88,7 +94,7 @@ Counts: 76 todo, 0 in progress, 364 done, 0 blocked. Full list: work-items.jsonl
 | A8-panel-screens-1-4 | A8 | coverage: 93 Tier 1 journeys of 10 features, panel / panel-screens-1; list in _work/items/A8-panel-screens-1-4.txt | done | _work/A8-panel-screens-1-4.md | A8 panel-screens-1-4: 93 journeys, 0 full, 80 partial, 13 none; 6 findings |
 | A8-panel-screens-2-1 | A8 | coverage: 90 Tier 1 journeys of 10 features, panel / panel-screens-2; list in _work/items/A8-panel-screens-2-1.txt | done | _work/A8-panel-screens-2-1.md | A8 panel-screens-2-1: 90 journeys, 2 full, 61 partial, 27 none; 7 findings (5 S3) |
 | A8-panel-screens-2-2 | A8 | coverage: 70 Tier 1 journeys of 10 features, panel / panel-screens-2; list in _work/items/A8-panel-screens-2-2.txt | done | _work/A8-panel-screens-2-2.md | A8 panel-screens-2-2: 70 journeys, 0 full, 48 partial, 22 none; 9 findings (1 S2) |
-(+ 51 more todo items, not shown)
+(+ 45 more todo items, not shown)
 (+ 356 older done items, not shown)
 
 ## Needs Aakash
