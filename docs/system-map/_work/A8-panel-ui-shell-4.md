@@ -1,3 +1,4 @@
 - 21 Nov: F-panel-510 done (12 rows). Next F-panel-520.
 - F-panel-520 done (13 rows). Next F-panel-513.
 - F-panel-513 done (12 rows). Next F-panel-534. ~900 test lines read.
+- F-panel-534 done (6 rows). Next F-panel-515 plans.
