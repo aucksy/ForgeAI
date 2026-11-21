@@ -59,7 +59,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-truth | 0 | 5 (start value) |
 | L7 | 1 | 3.7 (148k tokens) |
 | L8 | 1 | 3.3 (134k tokens) |
-| L9 | 0 | 5 (start value) |
+| L9 | 1 | 3.9 (157k tokens) |
 | L12 | 1 | 3.1 (125k tokens) |
 | L16 | 0 | 5 (start value) |
 | H5 | 0 | 5 (start value) |
@@ -69,14 +69,14 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 567 todo, 5 in progress, 510 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 566 todo, 5 in progress, 511 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | L14-web-pages | L14 | lens 14 (Operations and support) x web / web/pages: 5 items | in progress | _work/L14-web-pages.md |  |
 | L7-panel-assistant | L7 | lens 7 (Speed) x panel / panel/assistant: 5 items | in progress | _work/L7-panel-assistant.md |  |
 | L8-panel-assistant | L8 | lens 8 (Cost and limits) x panel / panel/assistant: 3 items | in progress | _work/L8-panel-assistant.md |  |
-| L9-hq-app | L9 | lens 9 (Accessibility) x hq / hq/app: 3 items | in progress | _work/L9-hq-app.md |  |
+| L9-panel-assistant | L9 | lens 9 (Accessibility) x panel / panel/assistant: 3 items | in progress | _work/L9-panel-assistant.md |  |
 | L16-hq-app | L16 | lens 16 (Code health) x hq / hq/app: 2 items | in progress | _work/L16-hq-app.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
@@ -103,16 +103,16 @@ Counts: 567 todo, 5 in progress, 510 done, 0 blocked. Full list: work-items.json
 | B-run-panel-screens-1-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-1: 11 items | todo | _work/B-run-panel-screens-1-a.md |  |
 | B-run-panel-screens-1-b | B-run | B-run (Silent fallbacks) x panel / panel/screens-1: 6 items | todo | _work/B-run-panel-screens-1-b.md |  |
 | B-run-panel-screens-2-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-2: 11 items | todo | _work/B-run-panel-screens-2-a.md |  |
-| L14-server-database-2 | L14 | lens 14 (Operations and support) x server / server/database-2: 5 items | done | _work/L14-server-database-2.md | L14 server-database-2: 5 items, 8 findings (4 S2: trial days lost on pay; backups skip photos and files) |
 | L14-server-database-3 | L14 | lens 14 (Operations and support) x server / server/database-3: 5 items | done | _work/L14-server-database-3.md | L14 server-database-3: 5 items, 5 findings (S2 'Report this page' reports reach nobody) |
 | L14-server-hq-gate-workers | L14 | lens 14 (Operations and support) x server / server/hq-gate-workers: 5 items | done | _work/L14-server-hq-gate-workers.md | L14 server-hq-gate-workers: 5 items, 5 findings (S2 Pro-to-Starter switch never runs while online buying is off) |
 | L14-server-panel-worker | L14 | lens 14 (Operations and support) x server / server/panel-worker: 5 items | done | _work/L14-server-panel-worker.md | L14 server-panel-worker: 5 items, 5 findings (S2 gym delete leaves payment keys and records behind) |
 | L14-watch-app | L14 | lens 14 (Operations and support) x watch / watch/app: 5 items | done | _work/L14-watch-app.md | L14 watch-app: 5 items, 1 finding S3 (watch crashes never reach MettleUp) |
 | L7-hq-app | L7 | lens 7 (Speed) x hq / hq/app: 5 items | done | _work/L7-hq-app.md | L7 hq-app: 5 items, 4 findings (S3 HQ rebuilds the gym list every minute and floods its log) |
 | L8-hq-app | L8 | lens 8 (Cost and limits) x hq / hq/app: 3 items | done | _work/L8-hq-app.md | L8 hq-app: 3 items, 4 findings (S2 AI cost shown too low; Cloudflare limit warning too late) |
+| L9-hq-app | L9 | lens 9 (Accessibility) x hq / hq/app: 3 items | done | _work/L9-hq-app.md | L9 hq-app: 3 items, 12 findings (S3 faint orange text in light mode; hint-only boxes) |
 | L12-hq-app | L12 | lens 12 (Platform and store rules) x hq / hq/app: 3 items | done | _work/L12-hq-app.md | L12 hq-app: 3 items, 1 finding S4 (icon licence credit line missing) |
-(+ 542 more todo items, not shown)
-(+ 502 older done items, not shown)
+(+ 541 more todo items, not shown)
+(+ 503 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
