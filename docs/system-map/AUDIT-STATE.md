@@ -54,7 +54,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A8r | 1 | 4.9 (197k tokens) |
 | A8 | 97 | 5.9 (235k tokens) |
 | L19 | 37 | 3.6 (145k tokens) |
-| L14 | 33 | 3.6 (144k tokens) |
+| L14 | 34 | 3.6 (145k tokens) |
 | B-run | 0 | 5 (start value) |
 | B-truth | 0 | 5 (start value) |
 | L7 | 0 | 5 (start value) |
@@ -69,15 +69,15 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 573 todo, 5 in progress, 504 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 572 todo, 5 in progress, 505 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L14-server-database-3 | L14 | lens 14 (Operations and support) x server / server/database-3: 5 items | in progress | _work/L14-server-database-3.md |  |
 | L14-server-hq-gate-workers | L14 | lens 14 (Operations and support) x server / server/hq-gate-workers: 5 items | in progress | _work/L14-server-hq-gate-workers.md |  |
 | L14-server-panel-worker | L14 | lens 14 (Operations and support) x server / server/panel-worker: 5 items | in progress | _work/L14-server-panel-worker.md |  |
 | L14-web-pages | L14 | lens 14 (Operations and support) x web / web/pages: 5 items | in progress | _work/L14-web-pages.md |  |
 | L7-hq-app | L7 | lens 7 (Speed) x hq / hq/app: 5 items | in progress | _work/L7-hq-app.md |  |
+| L8-hq-app | L8 | lens 8 (Cost and limits) x hq / hq/app: 3 items | in progress | _work/L8-hq-app.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
 | CAL-2 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged | todo | _work/CAL-2.md |  |
@@ -103,16 +103,16 @@ Counts: 573 todo, 5 in progress, 504 done, 0 blocked. Full list: work-items.json
 | B-run-panel-screens-1-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-1: 11 items | todo | _work/B-run-panel-screens-1-a.md |  |
 | B-run-panel-screens-1-b | B-run | B-run (Silent fallbacks) x panel / panel/screens-1: 6 items | todo | _work/B-run-panel-screens-1-b.md |  |
 | B-run-panel-screens-2-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-2: 11 items | todo | _work/B-run-panel-screens-2-a.md |  |
-| L14-phone-tracker-engine | L14 | lens 14 (Operations and support) x phone / phone/tracker-engine: 5 items | done | _work/L14-phone-tracker-engine.md | L14 phone-tracker-engine: 5 items, 1 finding S4 (demo films hosted on founder's personal GitHub) |
 | L14-phone-tracker-lib | L14 | lens 14 (Operations and support) x phone / phone/tracker-lib: 5 items | done | _work/L14-phone-tracker-lib.md | L14 phone-tracker-lib: 5 items, 0 new findings (2 reused) |
 | L14-phone-tracker-services-1 | L14 | lens 14 (Operations and support) x phone / phone/tracker-services-1: 5 items | done | _work/L14-phone-tracker-services-1.md | L14 phone-tracker-services-1: 5 items, 0 findings |
 | L14-phone-tracker-services-2 | L14 | lens 14 (Operations and support) x phone / phone/tracker-services-2: 5 items | done | _work/L14-phone-tracker-services-2.md | L14 phone-tracker-services-2: 5 items, 0 new findings (1 reused) |
 | L14-server-ci-workflows | L14 | lens 14 (Operations and support) x server / server/ci-workflows: 5 items | done | _work/L14-server-ci-workflows.md | L14 server-ci-workflows: 5 items, 3 findings S3 (one personal GitHub account holds every release path, NEEDS HIS DECISION) |
 | L14-server-database-1 | L14 | lens 14 (Operations and support) x server / server/database-1: 5 items | done | _work/L14-server-database-1.md | L14 server-database-1: 5 items, 4 findings (S3 gym delete also deletes its terms-acceptance proof) |
 | L14-server-database-2 | L14 | lens 14 (Operations and support) x server / server/database-2: 5 items | done | _work/L14-server-database-2.md | L14 server-database-2: 5 items, 8 findings (4 S2: trial days lost on pay; backups skip photos and files) |
+| L14-server-database-3 | L14 | lens 14 (Operations and support) x server / server/database-3: 5 items | done | _work/L14-server-database-3.md | L14 server-database-3: 5 items, 5 findings (S2 'Report this page' reports reach nobody) |
 | L14-watch-app | L14 | lens 14 (Operations and support) x watch / watch/app: 5 items | done | _work/L14-watch-app.md | L14 watch-app: 5 items, 1 finding S3 (watch crashes never reach MettleUp) |
-(+ 548 more todo items, not shown)
-(+ 496 older done items, not shown)
+(+ 547 more todo items, not shown)
+(+ 497 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
