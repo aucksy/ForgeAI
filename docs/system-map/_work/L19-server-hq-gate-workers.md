@@ -1,0 +1,3 @@
+- L19.1 checked: reused FN-L3-server-hq-gate-workers-01, FN-L19-panel-pay-machines-01, FN-L3-server-hq-gate-workers-03; billing webhooks, HQ sign-in, CSV export clean
+- L19.2 checked: English helper fenced, owner reviews; no finding
+- DONE
