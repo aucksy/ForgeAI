@@ -54,7 +54,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A8r | 1 | 4.9 (197k tokens) |
 | A8 | 97 | 5.9 (235k tokens) |
 | L19 | 37 | 3.6 (145k tokens) |
-| L14 | 4 | 3.9 (154k tokens) |
+| L14 | 5 | 3.8 (154k tokens) |
 | B-run | 0 | 5 (start value) |
 | B-truth | 0 | 5 (start value) |
 | L7 | 0 | 5 (start value) |
@@ -69,22 +69,21 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 602 todo, 5 in progress, 475 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 601 todo, 5 in progress, 476 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L14-panel-auth-data | L14 | lens 14 (Operations and support) x panel / panel/auth-data: 5 items | in progress | _work/L14-panel-auth-data.md |  |
 | L14-panel-brand-shell | L14 | lens 14 (Operations and support) x panel / panel/brand-shell: 5 items | in progress | _work/L14-panel-brand-shell.md |  |
 | L14-panel-logic-2 | L14 | lens 14 (Operations and support) x panel / panel/logic-2: 5 items | in progress | _work/L14-panel-logic-2.md |  |
 | L14-panel-pay-machines | L14 | lens 14 (Operations and support) x panel / panel/pay-machines: 5 items | in progress | _work/L14-panel-pay-machines.md |  |
 | L14-panel-screens-1 | L14 | lens 14 (Operations and support) x panel / panel/screens-1: 5 items | in progress | _work/L14-panel-screens-1.md |  |
+| L14-panel-screens-2 | L14 | lens 14 (Operations and support) x panel / panel/screens-2: 5 items | in progress | _work/L14-panel-screens-2.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
 | CAL-2 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged | todo | _work/CAL-2.md |  |
 | CAL-3 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-3 ...); output is scored, never merged | todo | _work/CAL-3.md |  |
 | CAL-4 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-4 ...); output is scored, never merged | todo | _work/CAL-4.md |  |
 | CAL-score | coord | coordinator only: C4 score found/partly/missed per seed in calibration/RESULT.md; C5 rewrite a hunt and re-run a missed seed (at most 2 re-runs); then hunts may run on today's code | todo | - |  |
-| L14-panel-screens-2 | L14 | lens 14 (Operations and support) x panel / panel/screens-2: 5 items | todo | _work/L14-panel-screens-2.md |  |
 | L14-panel-shop | L14 | lens 14 (Operations and support) x panel / panel/shop: 5 items | todo | _work/L14-panel-shop.md |  |
 | L14-panel-ui-shell | L14 | lens 14 (Operations and support) x panel / panel/ui-shell: 5 items | todo | _work/L14-panel-ui-shell.md |  |
 | L14-phone-cloud-backup-ai | L14 | lens 14 (Operations and support) x phone / phone/cloud-backup-ai: 5 items | todo | _work/L14-phone-cloud-backup-ai.md |  |
@@ -103,16 +102,17 @@ Counts: 602 todo, 5 in progress, 475 done, 0 blocked. Full list: work-items.json
 | L14-phone-tracker-engine | L14 | lens 14 (Operations and support) x phone / phone/tracker-engine: 5 items | todo | _work/L14-phone-tracker-engine.md |  |
 | L14-phone-tracker-lib | L14 | lens 14 (Operations and support) x phone / phone/tracker-lib: 5 items | todo | _work/L14-phone-tracker-lib.md |  |
 | L14-phone-tracker-services-1 | L14 | lens 14 (Operations and support) x phone / phone/tracker-services-1: 5 items | todo | _work/L14-phone-tracker-services-1.md |  |
-| L19-server-hq-gate-workers | L19 | lens 19 (Abuse and misuse) x server / server/hq-gate-workers: 2 items | done | _work/L19-server-hq-gate-workers.md | L19 server-hq-gate-workers: 2 items, 0 new findings (3 reused) |
+| L14-phone-tracker-services-2 | L14 | lens 14 (Operations and support) x phone / phone/tracker-services-2: 5 items | todo | _work/L14-phone-tracker-services-2.md |  |
 | L19-server-panel-worker | L19 | lens 19 (Abuse and misuse) x server / server/panel-worker: 2 items | done | _work/L19-server-panel-worker.md | L19 server-panel-worker: 2 items, 2 findings S3 (friend link takes strangers' numbers; crash reports can be flooded and steer AI sessions) |
 | L19-watch-app | L19 | lens 19 (Abuse and misuse) x watch / watch/app: 2 items | done | _work/L19-watch-app.md | L19 watch-app: 2 items, 0 findings |
 | L19-web-pages | L19 | lens 19 (Abuse and misuse) x web / web/pages: 2 items | done | _work/L19-web-pages.md | L19 web-pages: 2 items, 1 finding S3 (AI helper number box takes any mobile) |
 | L14-hq-app | L14 | lens 14 (Operations and support) x hq / hq/app: 5 items | done | _work/L14-hq-app.md | L14 hq-app: 5 items, 8 findings (S2 feedback questions can never be answered) |
 | L14-panel-assistant | L14 | lens 14 (Operations and support) x panel / panel/assistant: 5 items | done | _work/L14-panel-assistant.md | L14 panel-assistant: 5 items, 6 findings (S2 AI Assistant vanishes silently when its key is missing) |
+| L14-panel-auth-data | L14 | lens 14 (Operations and support) x panel / panel/auth-data: 5 items | done | _work/L14-panel-auth-data.md | L14 panel-auth-data: 5 items, 4 findings (S2 locked-out solo owner has only an untracked email) |
 | L14-panel-forms | L14 | lens 14 (Operations and support) x panel / panel/forms: 5 items | done | _work/L14-panel-forms.md | L14 panel-forms: 5 items, 3 findings (failed saves never reported) |
 | L14-panel-logic-1 | L14 | lens 14 (Operations and support) x panel / panel/logic-1: 5 items | done | _work/L14-panel-logic-1.md | L14 panel-logic-1: 5 items, 2 findings S3 (team replies reach one browser only; no plan-ends warning for UPI payers) |
-(+ 577 more todo items, not shown)
-(+ 467 older done items, not shown)
+(+ 576 more todo items, not shown)
+(+ 468 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
