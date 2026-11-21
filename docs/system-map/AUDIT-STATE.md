@@ -49,10 +49,10 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L3 | 37 | 4.4 (174k tokens) |
 | CAL | 0 | 5 (start value) |
 | A8r | 1 | 4.9 (197k tokens) |
-| A8 | 93 | 5.9 (236k tokens) |
+| A8 | 94 | 5.9 (236k tokens) |
 
 ## Work items
-Counts: 11 todo, 0 in progress, 429 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 10 todo, 0 in progress, 430 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
@@ -62,12 +62,10 @@ Counts: 11 todo, 0 in progress, 429 done, 0 blocked. Full list: work-items.jsonl
 | CAL-3 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-3 ...); output is scored, never merged | todo | _work/CAL-3.md |  |
 | CAL-4 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-4 ...); output is scored, never merged | todo | _work/CAL-4.md |  |
 | CAL-score | coord | coordinator only: C4 score found/partly/missed per seed in calibration/RESULT.md; C5 rewrite a hunt and re-run a missed seed (at most 2 re-runs); then hunts may run on today's code | todo | - |  |
-| A8-watch-app-2 | A8 | coverage: 63 Tier 1 journeys of 11 features, watch / watch-app; list in _work/items/A8-watch-app-2.txt | todo | _work/A8-watch-app-2.md |  |
 | A8-web-pages-1 | A8 | coverage: 110 Tier 1 journeys of 8 features, web / web-pages; list in _work/items/A8-web-pages-1.txt | todo | _work/A8-web-pages-1.md |  |
 | A8-web-pages-2 | A8 | coverage: 82 Tier 1 journeys of 8 features, web / web-pages; list in _work/items/A8-web-pages-2.txt | todo | _work/A8-web-pages-2.md |  |
 | A8-web-pages-3 | A8 | coverage: 47 Tier 1 journeys of 8 features, web / web-pages; list in _work/items/A8-web-pages-3.txt | todo | _work/A8-web-pages-3.md |  |
 | A8-report | tools | script: _tools/coverage.mjs -> COVERAGE.md + _sources/orphan-tests.txt (after every A8 item is merged) | todo | - |  |
-| A8-server-database-3-3 | A8 | coverage: 140 Tier 1 journeys of 10 features, server / server-database-3; list in _work/items/A8-server-database-3-3.txt | done | _work/A8-server-database-3-3.md | A8 server-database-3-3: 140 journeys, 63 full, 70 partial, 7 none; 6 findings |
 | A8-server-hq-gate-workers-1 | A8 | coverage: 62 Tier 1 journeys of 9 features, server / server-hq-gate-workers; list in _work/items/A8-server-hq-gate-workers-1.txt | done | _work/A8-server-hq-gate-workers-1.md | A8 server-hq-gate-workers-1: 62 journeys, 3 full, 56 partial, 3 none; 3 findings |
 | A8-server-hq-gate-workers-2 | A8 | coverage: 72 Tier 1 journeys of 8 features, server / server-hq-gate-workers; list in _work/items/A8-server-hq-gate-workers-2.txt | done | _work/A8-server-hq-gate-workers-2.md | A8 server-hq-gate-workers-2: 72 journeys, 1 full, 61 partial, 10 none; 8 findings (reply pop-up rule needs his pick; FN-A8-hq-app-1-01 wrong: 0034_signin_pin.sql:169-178 tests it) |
 | A8-server-hq-gate-workers-3 | A8 | coverage: 52 Tier 1 journeys of 8 features, server / server-hq-gate-workers; list in _work/items/A8-server-hq-gate-workers-3.txt | done | _work/A8-server-hq-gate-workers-3.md | A8 server-hq-gate-workers-3: 52 journeys, 14 full, 35 partial, 3 none; 5 findings (4 S3) |
@@ -75,7 +73,8 @@ Counts: 11 todo, 0 in progress, 429 done, 0 blocked. Full list: work-items.jsonl
 | A8-server-panel-worker-2 | A8 | coverage: 99 Tier 1 journeys of 8 features, server / server-panel-worker; list in _work/items/A8-server-panel-worker-2.txt | done | _work/A8-server-panel-worker-2.md | A8 server-panel-worker-2: 99 journeys, 26 full, 45 partial, 28 none; 10 findings (Play bundle address untested) |
 | A8-server-panel-worker-3 | A8 | coverage: 81 Tier 1 journeys of 8 features, server / server-panel-worker; list in _work/items/A8-server-panel-worker-3.txt | done | _work/A8-server-panel-worker-3.md | A8 server-panel-worker-3: 81 journeys, 18 full, 57 partial, 6 none; 7 findings |
 | A8-watch-app-1 | A8 | coverage: 55 Tier 1 journeys of 10 features, watch / watch-app; list in _work/items/A8-watch-app-1.txt | done | _work/A8-watch-app-1.md | A8 watch-app-1: 55 journeys, 3 full, 30 partial, 22 none; 7 findings (watch restart and phone-link untested) |
-(+ 421 older done items, not shown)
+| A8-watch-app-2 | A8 | coverage: 63 Tier 1 journeys of 11 features, watch / watch-app; list in _work/items/A8-watch-app-2.txt | done | _work/A8-watch-app-2.md | A8 watch-app-2: 63 journeys, 8 full, 42 partial, 13 none; 8 findings (6 S3) |
+(+ 422 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
