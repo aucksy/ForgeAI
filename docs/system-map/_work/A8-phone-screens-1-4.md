@@ -6,3 +6,4 @@
 - 82 journeys done (+235,238). Lines ~2150.
 - 95 journeys done (+236,237). Lines ~2400.
 - 110 journeys done (+200,201,202). Lines ~2650. Next: findings, then a8-cover + merge --dry.
+- DONE: 110 rows + 6 findings (FN-A8-phone-screens-1-4-01..06). a8-cover ok, merge --dry 116/116. Note for coordinator: FN-A8-phone-screens-2-3-04 says no phone test taps the widget or sees 'Start Push 1?', but uat-k1.yaml and uat-k4.yaml do both.
