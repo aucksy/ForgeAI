@@ -54,7 +54,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A8r | 1 | 4.9 (197k tokens) |
 | A8 | 97 | 5.9 (235k tokens) |
 | L19 | 37 | 3.6 (145k tokens) |
-| L14 | 22 | 3.7 (146k tokens) |
+| L14 | 23 | 3.6 (145k tokens) |
 | B-run | 0 | 5 (start value) |
 | B-truth | 0 | 5 (start value) |
 | L7 | 0 | 5 (start value) |
@@ -69,22 +69,21 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 584 todo, 5 in progress, 493 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 583 todo, 5 in progress, 494 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | L14-phone-screens-2 | L14 | lens 14 (Operations and support) x phone / phone/screens-2: 5 items | in progress | _work/L14-phone-screens-2.md |  |
 | L14-phone-tracker-components-2 | L14 | lens 14 (Operations and support) x phone / phone/tracker-components-2: 5 items | in progress | _work/L14-phone-tracker-components-2.md |  |
-| L14-phone-tracker-data | L14 | lens 14 (Operations and support) x phone / phone/tracker-data: 5 items | in progress | _work/L14-phone-tracker-data.md |  |
 | L14-phone-tracker-engine | L14 | lens 14 (Operations and support) x phone / phone/tracker-engine: 5 items | in progress | _work/L14-phone-tracker-engine.md |  |
 | L14-phone-tracker-lib | L14 | lens 14 (Operations and support) x phone / phone/tracker-lib: 5 items | in progress | _work/L14-phone-tracker-lib.md |  |
+| L14-phone-tracker-services-1 | L14 | lens 14 (Operations and support) x phone / phone/tracker-services-1: 5 items | in progress | _work/L14-phone-tracker-services-1.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
 | CAL-2 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged | todo | _work/CAL-2.md |  |
 | CAL-3 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-3 ...); output is scored, never merged | todo | _work/CAL-3.md |  |
 | CAL-4 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-4 ...); output is scored, never merged | todo | _work/CAL-4.md |  |
 | CAL-score | coord | coordinator only: C4 score found/partly/missed per seed in calibration/RESULT.md; C5 rewrite a hunt and re-run a missed seed (at most 2 re-runs); then hunts may run on today's code | todo | - |  |
-| L14-phone-tracker-services-1 | L14 | lens 14 (Operations and support) x phone / phone/tracker-services-1: 5 items | todo | _work/L14-phone-tracker-services-1.md |  |
 | L14-phone-tracker-services-2 | L14 | lens 14 (Operations and support) x phone / phone/tracker-services-2: 5 items | todo | _work/L14-phone-tracker-services-2.md |  |
 | L14-server-ci-workflows | L14 | lens 14 (Operations and support) x server / server/ci-workflows: 5 items | todo | _work/L14-server-ci-workflows.md |  |
 | L14-server-database-1 | L14 | lens 14 (Operations and support) x server / server/database-1: 5 items | todo | _work/L14-server-database-1.md |  |
@@ -103,7 +102,7 @@ Counts: 584 todo, 5 in progress, 493 done, 0 blocked. Full list: work-items.json
 | B-run-panel-brand-shell-a | B-run | B-run (Reliability + 1 more) x panel / panel/brand-shell: 11 items | todo | _work/B-run-panel-brand-shell-a.md |  |
 | B-run-panel-brand-shell-b | B-run | B-run (Silent fallbacks) x panel / panel/brand-shell: 6 items | todo | _work/B-run-panel-brand-shell-b.md |  |
 | B-run-panel-forms-a | B-run | B-run (Reliability + 1 more) x panel / panel/forms: 11 items | todo | _work/B-run-panel-forms-a.md |  |
-| L14-phone-components-2 | L14 | lens 14 (Operations and support) x phone / phone/components-2: 5 items | done | _work/L14-phone-components-2.md | L14 phone-components-2: 5 items, 2 findings (S2 team reply reaches only the asking phone for 30 days) |
+| B-run-panel-forms-b | B-run | B-run (Silent fallbacks) x panel / panel/forms: 6 items | todo | _work/B-run-panel-forms-b.md |  |
 | L14-phone-lib-core | L14 | lens 14 (Operations and support) x phone / phone/lib-core: 5 items | done | _work/L14-phone-lib-core.md | L14 phone-lib-core: 5 items, 5 findings S3 (caught failures never reach MettleUp) |
 | L14-phone-native | L14 | lens 14 (Operations and support) x phone / phone/native: 5 items | done | _work/L14-phone-native.md | L14 phone-native: 5 items, 4 findings (S3 GitHub phone copy can never talk to the Play watch app) |
 | L14-phone-onboarding-db | L14 | lens 14 (Operations and support) x phone / phone/onboarding-db: 5 items | done | _work/L14-phone-onboarding-db.md | L14 phone-onboarding-db: 5 items, 3 findings (S2 WhatsApp sign-in outage traps new members) |
@@ -111,8 +110,9 @@ Counts: 584 todo, 5 in progress, 493 done, 0 blocked. Full list: work-items.json
 | L14-phone-shop-1 | L14 | lens 14 (Operations and support) x phone / phone/shop-1: 5 items | done | _work/L14-phone-shop-1.md | L14 phone-shop-1: 5 items, 2 findings (S3 dead gym link leaves member with nobody to ask) |
 | L14-phone-shop-2 | L14 | lens 14 (Operations and support) x phone / phone/shop-2: 5 items | done | _work/L14-phone-shop-2.md | L14 phone-shop-2: 5 items, 2 findings (S3 member paying by UPI cannot tell the gym) |
 | L14-phone-tracker-components-1 | L14 | lens 14 (Operations and support) x phone / phone/tracker-components-1: 5 items | done | _work/L14-phone-tracker-components-1.md | L14 phone-tracker-components-1: 5 items, 1 finding S4 (Hevy link import breaks unnoticed) |
-(+ 559 more todo items, not shown)
-(+ 485 older done items, not shown)
+| L14-phone-tracker-data | L14 | lens 14 (Operations and support) x phone / phone/tracker-data: 5 items | done | _work/L14-phone-tracker-data.md | L14 phone-tracker-data: 5 items, 1 finding S3 (photos do not move to a new phone; help warns only about progress photos) |
+(+ 558 more todo items, not shown)
+(+ 486 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
