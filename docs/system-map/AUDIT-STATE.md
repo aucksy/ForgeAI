@@ -53,7 +53,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A8r | 1 | 4.9 (197k tokens) |
 | A8 | 97 | 5.9 (235k tokens) |
 | L19 | 5 | 3.7 (148k tokens) |
-| L14 | 0 | 5 (start value) |
+| L14 | 1 | 4.1 (165k tokens) |
 | B-run | 0 | 5 (start value) |
 | B-truth | 0 | 5 (start value) |
 | L7 | 0 | 5 (start value) |
@@ -68,7 +68,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 643 todo, 0 in progress, 439 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 642 todo, 0 in progress, 440 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
@@ -97,7 +97,6 @@ Counts: 643 todo, 0 in progress, 439 done, 0 blocked. Full list: work-items.json
 | L19-phone-shop-2 | L19 | lens 19 (Abuse and misuse) x phone / phone/shop-2: 2 items | todo | _work/L19-phone-shop-2.md |  |
 | L19-phone-tracker-components-1 | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-components-1: 2 items | todo | _work/L19-phone-tracker-components-1.md |  |
 | L19-phone-tracker-components-2 | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-components-2: 2 items | todo | _work/L19-phone-tracker-components-2.md |  |
-| A8-web-pages-2 | A8 | coverage: 82 Tier 1 journeys of 8 features, web / web-pages; list in _work/items/A8-web-pages-2.txt | done | _work/A8-web-pages-2.md | A8 web-pages-2: 82 journeys, 8 full, 66 partial, 8 none; 8 findings (join page keeps number) |
 | A8-web-pages-3 | A8 | coverage: 47 Tier 1 journeys of 8 features, web / web-pages; list in _work/items/A8-web-pages-3.txt | done | _work/A8-web-pages-3.md | A8 web-pages-3: 47 journeys, 5 full, 36 partial, 6 none; 5 findings (journey wording stale in places) |
 | A8-report | tools | script: _tools/coverage.mjs -> COVERAGE.md + _sources/orphan-tests.txt (after every A8 item is merged) | done | - | A8-report: COVERAGE.md written; 1309 Tier 1 journeys with no test; 277 of 1148 test files named by no journey |
 | L19-hq-app | L19 | lens 19 (Abuse and misuse) x hq / hq/app: 2 items | done | _work/L19-hq-app.md | L19 hq-app (pilot): 2 items, 1 finding S4 (no HQ alert on a gym's AI jump) |
@@ -105,8 +104,9 @@ Counts: 643 todo, 0 in progress, 439 done, 0 blocked. Full list: work-items.json
 | L19-panel-auth-data | L19 | lens 19 (Abuse and misuse) x panel / panel/auth-data: 2 items | done | _work/L19-panel-auth-data.md | L19 panel-auth-data: 2 items, 2 findings (S2 endless free trial with same mobile; S3 hand check-ins win challenges) |
 | L19-panel-brand-shell | L19 | lens 19 (Abuse and misuse) x panel / panel/brand-shell: 2 items | done | _work/L19-panel-brand-shell.md | L19 panel-brand-shell: 2 items, 1 new finding S4 (web page AI can promise things in words) |
 | L19-panel-forms | L19 | lens 19 (Abuse and misuse) x panel / panel/forms: 2 items | done | _work/L19-panel-forms.md | L19 panel-forms: 2 items, 2 findings (S2 desk pass tick gives free training for ever) |
-(+ 618 more todo items, not shown)
-(+ 431 older done items, not shown)
+| L14-hq-app | L14 | lens 14 (Operations and support) x hq / hq/app: 5 items | done | _work/L14-hq-app.md | L14 hq-app: 5 items, 8 findings (S2 feedback questions can never be answered) |
+(+ 617 more todo items, not shown)
+(+ 432 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
