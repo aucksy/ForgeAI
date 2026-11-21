@@ -3,3 +3,5 @@
 - 30 of 79 done (400, 406, 404). Finding ideas: order hourly cap untested on server; offline inbox words never asserted
 - 42 of 79 done (+411). Finding ideas: in-app poster scanner and Wrong QR never tested
 - 51 of 79 done (+409). Scanner gap = existing FN-A8-phone-shop-1-2-02
+- 79 of 79 journeys written. Next: findings, then a8-cover and merge --dry
+- findings 01-05 written; a8-cover ok; merge --dry clean. DONE
