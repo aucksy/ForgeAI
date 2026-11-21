@@ -1,0 +1,1 @@
+- 2026-11-21 L7.1-L7.5 done; 1 finding (S4 photo strip); rows in _work/out/L7-phone-tracker-components-1.jsonl
