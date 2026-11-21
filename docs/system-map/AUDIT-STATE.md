@@ -54,7 +54,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A8r | 1 | 4.9 (197k tokens) |
 | A8 | 97 | 5.9 (235k tokens) |
 | L19 | 37 | 3.6 (145k tokens) |
-| L14 | 13 | 3.8 (150k tokens) |
+| L14 | 14 | 3.7 (149k tokens) |
 | B-run | 0 | 5 (start value) |
 | B-truth | 0 | 5 (start value) |
 | L7 | 0 | 5 (start value) |
@@ -69,22 +69,21 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 593 todo, 5 in progress, 484 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 592 todo, 5 in progress, 485 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L14-phone-components-1 | L14 | lens 14 (Operations and support) x phone / phone/components-1: 5 items | in progress | _work/L14-phone-components-1.md |  |
 | L14-phone-components-2 | L14 | lens 14 (Operations and support) x phone / phone/components-2: 5 items | in progress | _work/L14-phone-components-2.md |  |
 | L14-phone-lib-core | L14 | lens 14 (Operations and support) x phone / phone/lib-core: 5 items | in progress | _work/L14-phone-lib-core.md |  |
 | L14-phone-native | L14 | lens 14 (Operations and support) x phone / phone/native: 5 items | in progress | _work/L14-phone-native.md |  |
 | L14-phone-onboarding-db | L14 | lens 14 (Operations and support) x phone / phone/onboarding-db: 5 items | in progress | _work/L14-phone-onboarding-db.md |  |
+| L14-phone-screens-1 | L14 | lens 14 (Operations and support) x phone / phone/screens-1: 5 items | in progress | _work/L14-phone-screens-1.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
 | CAL-2 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged | todo | _work/CAL-2.md |  |
 | CAL-3 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-3 ...); output is scored, never merged | todo | _work/CAL-3.md |  |
 | CAL-4 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-4 ...); output is scored, never merged | todo | _work/CAL-4.md |  |
 | CAL-score | coord | coordinator only: C4 score found/partly/missed per seed in calibration/RESULT.md; C5 rewrite a hunt and re-run a missed seed (at most 2 re-runs); then hunts may run on today's code | todo | - |  |
-| L14-phone-screens-1 | L14 | lens 14 (Operations and support) x phone / phone/screens-1: 5 items | todo | _work/L14-phone-screens-1.md |  |
 | L14-phone-screens-2 | L14 | lens 14 (Operations and support) x phone / phone/screens-2: 5 items | todo | _work/L14-phone-screens-2.md |  |
 | L14-phone-shop-1 | L14 | lens 14 (Operations and support) x phone / phone/shop-1: 5 items | todo | _work/L14-phone-shop-1.md |  |
 | L14-phone-shop-2 | L14 | lens 14 (Operations and support) x phone / phone/shop-2: 5 items | todo | _work/L14-phone-shop-2.md |  |
@@ -103,7 +102,7 @@ Counts: 593 todo, 5 in progress, 484 done, 0 blocked. Full list: work-items.json
 | L14-server-panel-worker | L14 | lens 14 (Operations and support) x server / server/panel-worker: 5 items | todo | _work/L14-server-panel-worker.md |  |
 | L14-watch-app | L14 | lens 14 (Operations and support) x watch / watch/app: 5 items | todo | _work/L14-watch-app.md |  |
 | L14-web-pages | L14 | lens 14 (Operations and support) x web / web/pages: 5 items | todo | _work/L14-web-pages.md |  |
-| L14-panel-logic-1 | L14 | lens 14 (Operations and support) x panel / panel/logic-1: 5 items | done | _work/L14-panel-logic-1.md | L14 panel-logic-1: 5 items, 2 findings S3 (team replies reach one browser only; no plan-ends warning for UPI payers) |
+| B-run-hq-app-a | B-run | B-run (Reliability + 1 more) x hq / hq/app: 11 items | todo | _work/B-run-hq-app-a.md |  |
 | L14-panel-logic-2 | L14 | lens 14 (Operations and support) x panel / panel/logic-2: 5 items | done | _work/L14-panel-logic-2.md | L14 panel-logic-2: 5 items, 3 findings (S3 'Message MettleUp' with no number anywhere; Needs you misses online joins) |
 | L14-panel-pay-machines | L14 | lens 14 (Operations and support) x panel / panel/pay-machines: 5 items | done | _work/L14-panel-pay-machines.md | L14 panel-pay-machines: 5 items, 8 findings (S2 one unbacked server key locks every gym's payment keys) |
 | L14-panel-screens-1 | L14 | lens 14 (Operations and support) x panel / panel/screens-1: 5 items | done | _work/L14-panel-screens-1.md | L14 panel-screens-1: 5 items, 2 findings (S3 Help page has no email or number fallback) |
@@ -111,8 +110,9 @@ Counts: 593 todo, 5 in progress, 484 done, 0 blocked. Full list: work-items.json
 | L14-panel-shop | L14 | lens 14 (Operations and support) x panel / panel/shop: 5 items | done | _work/L14-panel-shop.md | L14 panel-shop: 5 items, 2 findings S2 (orders after shop disconnect go unseen; browser-only shop key lost for good) |
 | L14-panel-ui-shell | L14 | lens 14 (Operations and support) x panel / panel/ui-shell: 5 items | done | _work/L14-panel-ui-shell.md | L14 panel-ui-shell: 5 items, 4 findings (S3 gym delete request is sent to the AI help service) |
 | L14-phone-cloud-backup-ai | L14 | lens 14 (Operations and support) x phone / phone/cloud-backup-ai: 5 items | done | _work/L14-phone-cloud-backup-ai.md | L14 phone-cloud-backup-ai: 5 items, 4 findings (S2 broken Google sign-in silently stops every backup) |
-(+ 568 more todo items, not shown)
-(+ 476 older done items, not shown)
+| L14-phone-components-1 | L14 | lens 14 (Operations and support) x phone / phone/components-1: 5 items | done | _work/L14-phone-components-1.md | L14 phone-components-1: 5 items, 2 findings (S3 member help misses update screens and new Charts parts) |
+(+ 567 more todo items, not shown)
+(+ 477 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
