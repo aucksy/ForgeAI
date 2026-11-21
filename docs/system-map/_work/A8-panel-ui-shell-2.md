@@ -6,3 +6,5 @@
 - F-panel-526 done (18 rows). ~1230 lines read. Gaps already listed: FN-A8-panel-brand-shell-2-02, FN-A8-panel-logic-1-2-03, FN-A8-panel-logic-1-1-08, FN-A8-panel-screens-1-4-06.
 - F-panel-517 done (13 rows). ~1450 lines read. Gaps already listed: FN-A8-panel-brand-shell-2-05, FN-A8-panel-logic-1-2-08, FN-A8-panel-screens-1-2-04/-05/-07, FN-A8-panel-forms-2-09.
 - F-panel-514 done (4 rows). ~1560 lines read.
+- F-panel-538 done (11 rows). All 79 journeys written; 3 new findings (01 offline add buttons, 02 habit tab, 03 staff empty challenges). ~1700 lines read.
+- DONE 2026-11-21: a8-cover ok (79), merge --dry 82/82 passed. Coverage: full 3, partial 63, none 13.
