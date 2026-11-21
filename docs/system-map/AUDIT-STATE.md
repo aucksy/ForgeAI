@@ -1,5 +1,5 @@
 MODEL: OPUS (his switch after the 20 Nov Fable reset). Every helper = Opus 5.5 ("opus"), effort "medium". Only the weekly all-models stop line counts (90, or 95 in its last 24 hours).
-status: RUNNING (pacer-1121-1532, window opened 15:32 IST 21 Nov; weekend rule 85/90/92)
+status: STOPPED (pacer-1121-1532 closed about 17:00 IST 21 Nov at 5-hour 85, the weekend start-nothing line; next window opens about 20:30 IST)
 phase/step: A2, A3, A4, A4b, A5, A7, LENSES 4, 5 AND 3 DONE (lens 3 finished 21 Nov about 02:00 IST). Next: the items the prep helper makes (_work/NEXT-ITEMS.md). Next: the rest of lenses 3 and 5 (no more pilots needed); add with state.mjs add @docs/system-map/_work/lens-add/<id>.json; finish each with bash docs/system-map/_tools/lens-finish.sh <id> <tokens> "<line>" after node docs/system-map/_tools/clamp-evidence.js <id> (both hold this run's paths: fix the two paths at their top if the worktree moves).
 expected end: not before about 8 Dec 2026 at the present size. projection: about 3.1 weekly periods of 3 (A5 alone needs about 1.6 more: 87 items x 1.7 weekly points): OVER; HIS CHOICE of 19 Nov (live features first) is applied: full journeys only for features with status live; the rest is deferred and listed in the final report
 mode: ANALYSIS ONLY. No app code, tests, workflows, skills or settings change. "Apply" items in 3E/3F = proposals only.
@@ -29,6 +29,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | 21 Nov 05:32 (reset 10:30) | 0 | 91 | 0 | 64 | A8 x38 (Opus medium), 0 failed | closed at 91: the night start-nothing line |
 | 21 Nov 10:32 (reset 15:30) | 0 | 72 | 0 | 74 | A8 x31 (the last ones) + A8-report (Opus medium), 0 failed | closed at 72: A8 finished; CAL-prep is coordinator work, batch 4 waits for his yes |
 | 21 Nov 12:20 (same window, his weekend rule) | 72 | 87 | 0 | 76 | L19 pilot + L19 x10 + L14 x2 (Opus medium), 0 failed | closed at 87: past the weekend start line 85 |
+| 21 Nov 15:32 (reset ~20:30) | 0 | 85 | 0 | 87 | L19 x26 + L14 x35 + L7 x32 + L8 x2 + L9 x2 + L12 x2 + L16 x1 (Opus medium), 0 failed | closed at 85: the weekend start-nothing line |
 
 ## Learned cost per helper type (5-hour %)
 | step | helpers so far | average cost |
@@ -200,3 +201,5 @@ Counts: 535 todo, 0 in progress, 547 done, 0 blocked. Full list: work-items.json
 - The start chat (run id start-run) still owns helpers W8 (E2) and A2-pilot and keeps the lock fresh until they report. Pacer: work in a clean worktree of origin/main, never D:\Apps\ForgeAI\Codebase's main checkout (stale).
 - E1 helper (test history) was started with the OLD brief style; its outputs: test-history.csv, test-history-summary.md, _sources/e1_history.py.
 - 18 Nov 2026: chat compacts at 20% now; after it, read these notes before saying we never discussed or he never approved something.
+
+- PACER RUN pacer-1121-1532 CLOSED (about 17:00 IST 21 Nov, F5 85, weekly all 87). 100 lens items merged this run, 0 failed; 0 running; 535 todo. Weekly all now 87: only about 3 points left before the 90 line (about 30 more lens helpers), so the next run will likely pause on the weekly line, then wait for the weekly reset (25 Nov ~16:29 IST). NEXT lens items in order: L7-server-database-3, L7-server-hq-gate-workers, L7-server-panel-worker, L7-watch-app, L7-web-pages, then the L8, L9, L12 and L16 items. Same launch prompt as the 16:20 note. CAL-prep is still todo (coordinator work); the B-run and B-truth pilots must each run alone first. Bookkeeping slip this run: two items (L14-web-pages, L7-phone-screens-2) were marked running with no helper launched; both were relaunched and merged. After each state start, launch the helper in the same turn. Notable new findings: S2 nightly backup builds the whole database as one answer and will fail past the size limit (L7-server-database-2); S3 All branches downloads every branch history (L7-panel-pay-machines); S3 shop order list capped at 300 (L7-panel-shop).
