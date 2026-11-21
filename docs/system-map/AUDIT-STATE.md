@@ -53,7 +53,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | CAL | 0 | 5 (start value) |
 | A8r | 1 | 4.9 (197k tokens) |
 | A8 | 97 | 5.9 (235k tokens) |
-| L19 | 26 | 3.6 (146k tokens) |
+| L19 | 27 | 3.6 (145k tokens) |
 | L14 | 2 | 4.1 (164k tokens) |
 | B-run | 0 | 5 (start value) |
 | B-truth | 0 | 5 (start value) |
@@ -69,11 +69,10 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 615 todo, 5 in progress, 462 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 615 todo, 4 in progress, 463 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L19-phone-tracker-lib | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-lib: 2 items | in progress | _work/L19-phone-tracker-lib.md |  |
 | L19-phone-tracker-services-1 | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-services-1: 2 items | in progress | _work/L19-phone-tracker-services-1.md |  |
 | L19-phone-tracker-services-2 | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-services-2: 2 items | in progress | _work/L19-phone-tracker-services-2.md |  |
 | L19-server-ci-workflows | L19 | lens 19 (Abuse and misuse) x server / server/ci-workflows: 2 items | in progress | _work/L19-server-ci-workflows.md |  |
@@ -103,16 +102,16 @@ Counts: 615 todo, 5 in progress, 462 done, 0 blocked. Full list: work-items.json
 | L14-phone-cloud-backup-ai | L14 | lens 14 (Operations and support) x phone / phone/cloud-backup-ai: 5 items | todo | _work/L14-phone-cloud-backup-ai.md |  |
 | L14-phone-components-1 | L14 | lens 14 (Operations and support) x phone / phone/components-1: 5 items | todo | _work/L14-phone-components-1.md |  |
 | L14-phone-components-2 | L14 | lens 14 (Operations and support) x phone / phone/components-2: 5 items | todo | _work/L14-phone-components-2.md |  |
-| L19-phone-shop-1 | L19 | lens 19 (Abuse and misuse) x phone / phone/shop-1: 2 items | done | _work/L19-phone-shop-1.md | L19 phone-shop-1: 2 items, 1 finding S2 (anyone can use up the day's demo requests) |
 | L19-phone-shop-2 | L19 | lens 19 (Abuse and misuse) x phone / phone/shop-2: 2 items | done | _work/L19-phone-shop-2.md | L19 phone-shop-2: 2 items, 1 finding S4 (phone date decides Plus grace) |
 | L19-phone-tracker-components-1 | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-components-1: 2 items | done | _work/L19-phone-tracker-components-1.md | L19 phone-tracker-components-1: 2 items, 1 finding S4 (chart first view skips the 3-month limit) |
 | L19-phone-tracker-components-2 | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-components-2: 2 items | done | _work/L19-phone-tracker-components-2.md | L19 phone-tracker-components-2: 2 items, 2 findings S4 (gym plans shareable to outsiders, needs his call) |
 | L19-phone-tracker-data | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-data: 2 items | done | _work/L19-phone-tracker-data.md | L19 phone-tracker-data: 2 items, 1 finding S3 (member bios shown to the gym cannot be reported or removed) |
 | L19-phone-tracker-engine | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-engine: 2 items | done | _work/L19-phone-tracker-engine.md | L19 phone-tracker-engine: 2 items, 2 findings (S3 made-up heavy sets lead the kg board) |
+| L19-phone-tracker-lib | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-lib: 2 items | done | _work/L19-phone-tracker-lib.md | L19 phone-tracker-lib: 2 items, 0 findings |
 | L14-hq-app | L14 | lens 14 (Operations and support) x hq / hq/app: 5 items | done | _work/L14-hq-app.md | L14 hq-app: 5 items, 8 findings (S2 feedback questions can never be answered) |
 | L14-panel-assistant | L14 | lens 14 (Operations and support) x panel / panel/assistant: 5 items | done | _work/L14-panel-assistant.md | L14 panel-assistant: 5 items, 6 findings (S2 AI Assistant vanishes silently when its key is missing) |
 (+ 590 more todo items, not shown)
-(+ 454 older done items, not shown)
+(+ 455 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
