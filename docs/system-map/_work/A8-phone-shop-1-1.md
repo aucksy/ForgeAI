@@ -4,3 +4,6 @@
 - 45 journeys written (327, 308, 318, 330); test lines read ~1500
 - 56 rows written (327,308,318,330,317); test lines ~1800
 - 72 rows written (+311, 315); test lines ~2050
+- 86 rows written (+320); test lines ~2400
+- 98 rows written (+323); test lines ~2650
+- 106 rows written (all); test lines ~2950. Next: findings, then tools
