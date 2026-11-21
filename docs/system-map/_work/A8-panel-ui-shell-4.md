@@ -5,3 +5,4 @@
 - F-panel-515 done (8 rows). Next F-panel-528 settings. ~1300 lines read.
 - F-panel-528 done (10 rows). Next F-panel-504 set up. ~1500 lines read.
 - F-panel-504 done (6 rows). Next F-panel-507 Today. ~1700 lines read.
+- F-panel-507 done (11 rows). Next F-panel-524 trainers. ~1850 lines read.
