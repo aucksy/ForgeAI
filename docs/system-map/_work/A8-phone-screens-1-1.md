@@ -6,3 +6,6 @@
 - F-phone-101 01-05 written (partial). Test lines read ~1260.
 - F-phone-101 done. F-phone-100 01-03 written (partial). Test lines read ~1350.
 - F-phone-100 done (all partial). F-phone-116-01 written. Test lines read ~1600.
+- F-phone-116 02-06 written. Test lines read ~1650.
+- F-phone-116 done (06 full). F-phone-106 01-04 written. Test lines read ~1850.
+- F-phone-106 done. F-phone-104 01-03 written. Test lines read ~1950.
