@@ -1,0 +1,3 @@
+# L19-server-database-1 checkpoint
+- L19.1 done: checked; app check-in uses the fixed join code (offer days from home = FN-L19-panel-logic-2-01), shop stock spam via fake joins (FN-L19-panel-shop-02), typed join number (FN-L19-panel-shop-01), desk check-ins (FN-L19-panel-auth-data-02), member cloud storage (FN-L19-phone-cloud-backup-ai-01), join code guessing (FN-L3-server-database-1-01). Dues edits by desk, undo import, branch look-ups, offer rejoin: guarded. Typed-number impersonation at check-in (0016/0020/0023) was closed by 0048 (outside range). No new finding.
+- L19.2 done: checked; no AI call in 0001-0033; member names stored unfiltered feed the panel AI (FN-L19-panel-assistant-01).

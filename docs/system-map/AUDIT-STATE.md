@@ -53,7 +53,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | CAL | 0 | 5 (start value) |
 | A8r | 1 | 4.9 (197k tokens) |
 | A8 | 97 | 5.9 (235k tokens) |
-| L19 | 30 | 3.6 (142k tokens) |
+| L19 | 31 | 3.5 (141k tokens) |
 | L14 | 2 | 4.1 (164k tokens) |
 | B-run | 0 | 5 (start value) |
 | B-truth | 0 | 5 (start value) |
@@ -69,7 +69,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 611 todo, 5 in progress, 466 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 610 todo, 5 in progress, 467 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
@@ -84,7 +84,6 @@ Counts: 611 todo, 5 in progress, 466 done, 0 blocked. Full list: work-items.json
 | CAL-3 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-3 ...); output is scored, never merged | todo | _work/CAL-3.md |  |
 | CAL-4 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-4 ...); output is scored, never merged | todo | _work/CAL-4.md |  |
 | CAL-score | coord | coordinator only: C4 score found/partly/missed per seed in calibration/RESULT.md; C5 rewrite a hunt and re-run a missed seed (at most 2 re-runs); then hunts may run on today's code | todo | - |  |
-| L19-watch-app | L19 | lens 19 (Abuse and misuse) x watch / watch/app: 2 items | todo | _work/L19-watch-app.md |  |
 | L19-web-pages | L19 | lens 19 (Abuse and misuse) x web / web/pages: 2 items | todo | _work/L19-web-pages.md |  |
 | L14-panel-auth-data | L14 | lens 14 (Operations and support) x panel / panel/auth-data: 5 items | todo | _work/L14-panel-auth-data.md |  |
 | L14-panel-brand-shell | L14 | lens 14 (Operations and support) x panel / panel/brand-shell: 5 items | todo | _work/L14-panel-brand-shell.md |  |
@@ -103,16 +102,17 @@ Counts: 611 todo, 5 in progress, 466 done, 0 blocked. Full list: work-items.json
 | L14-phone-native | L14 | lens 14 (Operations and support) x phone / phone/native: 5 items | todo | _work/L14-phone-native.md |  |
 | L14-phone-onboarding-db | L14 | lens 14 (Operations and support) x phone / phone/onboarding-db: 5 items | todo | _work/L14-phone-onboarding-db.md |  |
 | L14-phone-screens-1 | L14 | lens 14 (Operations and support) x phone / phone/screens-1: 5 items | todo | _work/L14-phone-screens-1.md |  |
-| L19-phone-tracker-data | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-data: 2 items | done | _work/L19-phone-tracker-data.md | L19 phone-tracker-data: 2 items, 1 finding S3 (member bios shown to the gym cannot be reported or removed) |
+| L14-phone-screens-2 | L14 | lens 14 (Operations and support) x phone / phone/screens-2: 5 items | todo | _work/L14-phone-screens-2.md |  |
 | L19-phone-tracker-engine | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-engine: 2 items | done | _work/L19-phone-tracker-engine.md | L19 phone-tracker-engine: 2 items, 2 findings (S3 made-up heavy sets lead the kg board) |
 | L19-phone-tracker-lib | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-lib: 2 items | done | _work/L19-phone-tracker-lib.md | L19 phone-tracker-lib: 2 items, 0 findings |
 | L19-phone-tracker-services-1 | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-services-1: 2 items | done | _work/L19-phone-tracker-services-1.md | L19 phone-tracker-services-1: 2 items, 1 finding S4 (shared exercise names can steer the AI) |
 | L19-phone-tracker-services-2 | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-services-2: 2 items | done | _work/L19-phone-tracker-services-2.md | L19 phone-tracker-services-2: 2 items, 0 new findings (1 reused) |
 | L19-server-ci-workflows | L19 | lens 19 (Abuse and misuse) x server / server/ci-workflows: 2 items | done | _work/L19-server-ci-workflows.md | L19 server-ci-workflows: 2 items, 2 findings S4 (typed run input pasted into commands; access pass not capped) |
+| L19-watch-app | L19 | lens 19 (Abuse and misuse) x watch / watch/app: 2 items | done | _work/L19-watch-app.md | L19 watch-app: 2 items, 0 findings |
 | L14-hq-app | L14 | lens 14 (Operations and support) x hq / hq/app: 5 items | done | _work/L14-hq-app.md | L14 hq-app: 5 items, 8 findings (S2 feedback questions can never be answered) |
 | L14-panel-assistant | L14 | lens 14 (Operations and support) x panel / panel/assistant: 5 items | done | _work/L14-panel-assistant.md | L14 panel-assistant: 5 items, 6 findings (S2 AI Assistant vanishes silently when its key is missing) |
-(+ 586 more todo items, not shown)
-(+ 458 older done items, not shown)
+(+ 585 more todo items, not shown)
+(+ 459 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).

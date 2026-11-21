@@ -1,0 +1,1 @@
+- 2026-11-21 L19.1 checked (no fault), L19.2 does-not-apply. Done.
