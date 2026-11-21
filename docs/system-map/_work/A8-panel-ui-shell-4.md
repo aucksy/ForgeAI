@@ -8,3 +8,5 @@
 - F-panel-507 done (11 rows). Next F-panel-524 trainers. ~1850 lines read.
 - F-panel-524 done (17 rows, finding 01). Next F-panel-525 workout plans. ~2000 lines read.
 - F-panel-525 done (21 rows; no screen test = existing FN-A8-panel-brand-shell-3-01). All 116 journeys written. Next: findings, then checks.
+- findings 02-06 added. Next: run a8-cover and merge --dry.
+- a8-cover ok, merge --dry ok (122 rows). DONE.
