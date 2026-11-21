@@ -3,3 +3,5 @@
 - 36 journeys done (134,136,129,135,130). Test lines read ~1250.
 - 50 journeys done (+139,105). Lines ~1600.
 - 64 journeys done (+125,234). Lines ~1850.
+- 82 journeys done (+235,238). Lines ~2150.
+- 95 journeys done (+236,237). Lines ~2400.
