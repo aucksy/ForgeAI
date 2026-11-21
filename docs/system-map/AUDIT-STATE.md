@@ -52,7 +52,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | CAL | 0 | 5 (start value) |
 | A8r | 1 | 4.9 (197k tokens) |
 | A8 | 97 | 5.9 (235k tokens) |
-| L19 | 8 | 3.8 (152k tokens) |
+| L19 | 9 | 3.8 (153k tokens) |
 | L14 | 2 | 4.1 (164k tokens) |
 | B-run | 0 | 5 (start value) |
 | B-truth | 0 | 5 (start value) |
@@ -68,7 +68,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 638 todo, 0 in progress, 444 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 637 todo, 0 in progress, 445 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
@@ -78,7 +78,6 @@ Counts: 638 todo, 0 in progress, 444 done, 0 blocked. Full list: work-items.json
 | CAL-3 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-3 ...); output is scored, never merged | todo | _work/CAL-3.md |  |
 | CAL-4 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-4 ...); output is scored, never merged | todo | _work/CAL-4.md |  |
 | CAL-score | coord | coordinator only: C4 score found/partly/missed per seed in calibration/RESULT.md; C5 rewrite a hunt and re-run a missed seed (at most 2 re-runs); then hunts may run on today's code | todo | - |  |
-| L19-panel-screens-1 | L19 | lens 19 (Abuse and misuse) x panel / panel/screens-1: 2 items | todo | _work/L19-panel-screens-1.md |  |
 | L19-panel-screens-2 | L19 | lens 19 (Abuse and misuse) x panel / panel/screens-2: 2 items | todo | _work/L19-panel-screens-2.md |  |
 | L19-panel-shop | L19 | lens 19 (Abuse and misuse) x panel / panel/shop: 2 items | todo | _work/L19-panel-shop.md |  |
 | L19-panel-ui-shell | L19 | lens 19 (Abuse and misuse) x panel / panel/ui-shell: 2 items | todo | _work/L19-panel-ui-shell.md |  |
@@ -97,16 +96,17 @@ Counts: 638 todo, 0 in progress, 444 done, 0 blocked. Full list: work-items.json
 | L19-phone-tracker-data | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-data: 2 items | todo | _work/L19-phone-tracker-data.md |  |
 | L19-phone-tracker-engine | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-engine: 2 items | todo | _work/L19-phone-tracker-engine.md |  |
 | L19-phone-tracker-lib | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-lib: 2 items | todo | _work/L19-phone-tracker-lib.md |  |
-| L19-panel-auth-data | L19 | lens 19 (Abuse and misuse) x panel / panel/auth-data: 2 items | done | _work/L19-panel-auth-data.md | L19 panel-auth-data: 2 items, 2 findings (S2 endless free trial with same mobile; S3 hand check-ins win challenges) |
+| L19-phone-tracker-services-1 | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-services-1: 2 items | todo | _work/L19-phone-tracker-services-1.md |  |
 | L19-panel-brand-shell | L19 | lens 19 (Abuse and misuse) x panel / panel/brand-shell: 2 items | done | _work/L19-panel-brand-shell.md | L19 panel-brand-shell: 2 items, 1 new finding S4 (web page AI can promise things in words) |
 | L19-panel-forms | L19 | lens 19 (Abuse and misuse) x panel / panel/forms: 2 items | done | _work/L19-panel-forms.md | L19 panel-forms: 2 items, 2 findings (S2 desk pass tick gives free training for ever) |
 | L19-panel-logic-1 | L19 | lens 19 (Abuse and misuse) x panel / panel/logic-1: 2 items | done | _work/L19-panel-logic-1.md | L19 panel-logic-1: 2 items, 2 findings (S2 made-up workouts win free days; S3 keyless help box burns shared AI cap) |
 | L19-panel-logic-2 | L19 | lens 19 (Abuse and misuse) x panel / panel/logic-2: 2 items | done | _work/L19-panel-logic-2.md | L19 panel-logic-2: 2 items, 1 finding S3 (poster code lets a member earn offer days from home) |
 | L19-panel-pay-machines | L19 | lens 19 (Abuse and misuse) x panel / panel/pay-machines: 2 items | done | _work/L19-panel-pay-machines.md | L19 panel-pay-machines: 2 items, 3 findings (S2 anyone can claim another gym's door machine) |
+| L19-panel-screens-1 | L19 | lens 19 (Abuse and misuse) x panel / panel/screens-1: 2 items | done | _work/L19-panel-screens-1.md | L19 panel-screens-1: 2 items, 2 findings (S3 one outsider can block the Help box for all gyms) |
 | L14-hq-app | L14 | lens 14 (Operations and support) x hq / hq/app: 5 items | done | _work/L14-hq-app.md | L14 hq-app: 5 items, 8 findings (S2 feedback questions can never be answered) |
 | L14-panel-assistant | L14 | lens 14 (Operations and support) x panel / panel/assistant: 5 items | done | _work/L14-panel-assistant.md | L14 panel-assistant: 5 items, 6 findings (S2 AI Assistant vanishes silently when its key is missing) |
-(+ 613 more todo items, not shown)
-(+ 436 older done items, not shown)
+(+ 612 more todo items, not shown)
+(+ 437 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
