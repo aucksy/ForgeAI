@@ -7,3 +7,4 @@
 - F-phone-217 done (10 rows, total 48). test lines ~2000. planned FN-03 ask-trainer offline/sent words untested (check dup)
 - F-phone-221 done (7 rows, total 55). test lines ~2350
 - F-phone-212 + F-phone-224 done (11 rows, total 66). test lines ~2800. next: findings, then a8-cover + merge --dry
+- DONE: 66 journey rows + 5 findings (FN-A8-phone-screens-2-2-01..05). a8-cover ok, merge --dry 71/71 passed.
