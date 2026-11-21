@@ -3,3 +3,5 @@
 - 18 done (800, 801); rows written; tests read ~700 lines
 - 41 done (+802, 803, 812); tests read ~1500 lines
 - 60 done (+807, 808, 809); tests read ~2200 lines
+- 77 done (+810, 815) and 9 findings written; tests read ~2700 lines; next: a8-cover and merge --dry
+- checks pass (a8-cover ok, merge --dry 86/86). DONE.
