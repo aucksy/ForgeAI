@@ -8,3 +8,4 @@
 - 432 done (10 rows): 03,04,08,09 none; rest partial. ~2300 lines read
 - 405 done (6 rows): all partial. ~2400 lines read
 - 414 done (14 rows): 05,06,12,13 none; rest partial. All 91 journeys written. ~2550 lines read. Next: findings
+- DONE 2026-11-21: 91 journeys (4 full, 75 partial, 12 none), 7 new findings FN-A8-phone-shop-2-3-01..07; existing faults reused: FN-A8-phone-screens-2-3-06, FN-A8-phone-shop-1-1-05, FN-A8-phone-shop-1-1-07, FN-A8-phone-lib-core-2-08. a8-cover ok, merge --dry 98/98 passed.
