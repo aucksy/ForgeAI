@@ -9,3 +9,5 @@
 - F-phone-116 02-06 written. Test lines read ~1650.
 - F-phone-116 done (06 full). F-phone-106 01-04 written. Test lines read ~1850.
 - F-phone-106 done. F-phone-104 01-03 written. Test lines read ~1950.
+- F-phone-104 done. F-phone-109 done (finding 03). All 57 written. Test lines read ~2200.
+- DONE: a8-cover ok 57, merge --dry 60/60 passed. full 1, partial 54, none 2; findings 3.
