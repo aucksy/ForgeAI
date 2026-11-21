@@ -7,3 +7,4 @@
 - 403 done (14 rows): 13/14 none, rest partial. ~2150 lines read
 - 432 done (10 rows): 03,04,08,09 none; rest partial. ~2300 lines read
 - 405 done (6 rows): all partial. ~2400 lines read
+- 414 done (14 rows): 05,06,12,13 none; rest partial. All 91 journeys written. ~2550 lines read. Next: findings
