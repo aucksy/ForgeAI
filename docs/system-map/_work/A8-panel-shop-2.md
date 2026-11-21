@@ -3,3 +3,4 @@
 - 18 of 76 done (803, 804 written)
 - 35 of 76 done (805, 806, 802 written)
 - 65 of 76 done (107, 103, 104, 105, 106 written); left: 3101, 125; fix 803-05 to partial (permissions.test)
+- 76 of 76 done; 18 findings; a8-cover ok, merge --dry 94/94 passed
