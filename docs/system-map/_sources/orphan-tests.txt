@@ -1,0 +1,278 @@
+# Test files no journey names in tests[] (made by _tools/coverage.mjs). path | kind | first title
+apps/dashboard/e2e/csp.spec.mjs | e2e | J29 security policy: sent with the page, and nothing on the main screens is blocked
+apps/dashboard/e2e/fonts.spec.mjs | e2e | J28 no web font (slow line or offline): every main screen still fits the phone
+apps/dashboard/e2e/shortcut-uat.spec.mjs | e2e | T74-a the owner case: a badge on a white square shows as a clean white circle (phone, then computer)
+apps/dashboard/e2e/zz-shots.spec.mjs | e2e | landing page pictures
+apps/dashboard/test/crm/aiImportSameKind.test.ts | unit | AI import: a money or date column our rules placed never moves to another field of its kind
+apps/dashboard/test/crm/auditC7Review.test.ts | unit | review 1: a PT plan is never swallowed by a gym plan on the same dates
+apps/dashboard/test/crm/billingMaths.test.ts | unit | upgrade from Starter to Pro
+apps/dashboard/test/crm/dates.test.ts | unit | isValidDateISO
+apps/dashboard/test/crm/dayFirstDates.test.ts | unit | every date box in the admin app shows the day first
+apps/dashboard/test/crm/grid.test.ts | unit | balancedColumns
+apps/dashboard/test/crm/gymPageAlert.test.ts | unit | web page question alert
+apps/dashboard/test/crm/gymState.test.ts | unit | gymStateFromRow
+apps/dashboard/test/crm/installSteps.test.ts | unit | install steps
+apps/dashboard/test/crm/machines/adms.test.ts | unit | reading uploads
+apps/dashboard/test/crm/machines/entryMachine.test.ts | unit | machine local time (IST, no zone on the machine)
+apps/dashboard/test/crm/machines/pretendMachine.test.ts | unit | a full day at the door
+apps/dashboard/test/crm/machines/supabaseStore.test.ts | unit | the gym-server store
+apps/dashboard/test/crm/move.test.ts | unit | when the old address moves a desk
+apps/dashboard/test/crm/navNames.test.ts | unit | admin app menu names
+apps/dashboard/test/crm/noRivalNames.test.ts | unit | no other gym software is named on any user-facing screen
+apps/dashboard/test/crm/phoneColumns.test.ts | unit | several phone columns: our own rules
+apps/dashboard/test/crm/phoneInbound.test.ts | unit | the mode
+apps/dashboard/test/crm/phoneLayout.test.ts | unit | U-A15: nothing on a phone is wider than the phone in a wider font
+apps/dashboard/test/crm/plural.test.ts | unit | countOf (U-A8: "1 members")
+apps/dashboard/test/crm/pricesOneSource.test.ts | unit | prices: one list, every place agrees
+apps/dashboard/test/crm/receiptContrast.test.ts | unit | receipt paper text contrast
+apps/dashboard/test/crm/retiredAiPack.test.ts | unit | nothing shown or sold still names the retired 'ai' pack
+apps/dashboard/test/crm/rosterIdFor.test.ts | unit | rosterIdFor
+apps/dashboard/test/crm/sheet.test.ts | unit | C7-15: a sheet always fits a 390 px phone
+apps/dashboard/test/crm/shortcutIcon.test.ts | unit | shortcut icon (T74, R-356)
+apps/dashboard/test/crm/words.test.ts | unit | the Indian scale, not the international one
+apps/mobile/modules/forge-phone/android/src/test/java/com/forgeai/phone/ShortcutArtTest.kt | native | badge_on_a_white_square_fills_the_icon_with_white_and_fits_the_badge_in_the_safe_circle
+apps/mobile/modules/forge-rest/android/src/test/java/com/forgeai/rest/WorkoutClockTest.kt | native | running counts from the base the app sent
+apps/mobile/qa/backup-m-after.yaml | maestro | Device QA, part M (after) — the app was uninstalled and the SAME APK installed again; Android
+apps/mobile/qa/backup-m-check.yaml | maestro | Device QA, part M (check, UAT work package 4 item 12) — after the uninstall, reinstall and Android's
+apps/mobile/qa/backup-m-photos-check.yaml | maestro | Device QA, part M (photos check, UAT WP4b, M-157) — after the uninstall, reinstall and Android's
+apps/mobile/qa/gate-anim.yaml | maestro | Audit v2 gate part ANIM (run-device-qa.sh): the phone's animation scales are 1 (as on the
+apps/mobile/qa/gate-demo.yaml | maestro | Sub-flow for the audit-v2 gate parts (DND, LONGREST, ANIM, MK in run-device-qa.sh): a fresh
+apps/mobile/qa/gate-rest-again.yaml | maestro | Audit v2 gate part LONGREST, second rest: the open workout (gate-rest.yaml started it; the
+apps/mobile/qa/p2-pause-a.yaml | maestro | Part P2a (15 Oct 2026): pause the workout timer, as Hevy (tap the duration -> Pause). Part H2 left
+apps/mobile/qa/phase1-b0.yaml | maestro | Phase 1 device QA, part B0 — after the phone slept through the rest (v0.37.1: split out of part B,
+apps/mobile/qa/scrollable-screens.yaml | maestro | Pages of the member app that SCROLL, and so can hide what a phone-test flow checks (trap 7).
+apps/mobile/qa/store-c.yaml | maestro | Store screens (R-126), step C: what the member sees of their progress, then the Gym tab before a
+apps/mobile/qa/store-d.yaml | maestro | Store screens (R-126), step D: the member joins a gym. run-store-shots.sh started a demo gym
+apps/mobile/qa/store-steps.yaml | maestro | Store screens (R-126) sub-flow: the same screen at several scroll positions, ~190 px apart, so the
+apps/mobile/qa/sub-after-join.yaml | maestro | Sub-flow (called with runFlow; not a part of its own). R-77 (22 Oct 2026): what comes after a
+apps/mobile/qa/sub-agree.yaml | maestro | Launch D5/D6 (21 Oct 2026): before joining a gym the member ticks "I'm 18 or older, and I agree
+apps/mobile/qa/sub-back-to-tabs.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): Android Back until the app's tab bar shows
+apps/mobile/qa/sub-exercise-pick.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): on the "New exercise" / "Edit exercise" form
+apps/mobile/qa/sub-find.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): bring FIND (a regex for a visible text)
+apps/mobile/qa/sub-inuse-close-launch.yaml | maestro | After the app is brought back (launchApp) with a set ticked from the notification while it was
+apps/mobile/qa/sub-inuse-close.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): right after a set's tick, close the "In use"
+apps/mobile/qa/sub-leave-gym.yaml | maestro | Sub-flow (called with runFlow; not a part of its own). Release A (A4, docs/ux/MEMBER-APP-MAP.md):
+apps/mobile/qa/sub-other-ways.yaml | maestro | Sub-flow (called with runFlow; not a part of its own). R-587 (owner, 15 Nov 2026): the welcome's fir
+apps/mobile/qa/sub-popup-gone.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): wait until a set's pop-up has gone (the
+apps/mobile/qa/sub-profile-tile.yaml | maestro | Sub-flow (called with runFlow; not a part of its own). Release A (A6): the Profile page keeps ONE
+apps/mobile/qa/sub-progress-row.yaml | maestro | Sub-flow (called with runFlow; not a part of its own). Release A (A5) put Charts, Exercises, Records
+apps/mobile/qa/sub-see.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): FIND (a regex for a visible text) must be on 
+apps/mobile/qa/sub-settings-open.yaml | maestro | Sub-flow (not a part of its own; called with runFlow from other flows). Release A (A7,
+apps/mobile/qa/sub-settings-page.yaml | maestro | Sub-flow (called with runFlow; not a part of its own). Opens Settings (sub-settings-open.yaml),
+apps/mobile/qa/sub-type.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): type VALUE into the box FIELD (a regex for it
+apps/mobile/qa/sub-uat-f194-resume.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): F194 UAT. From the tabs, the Workout tab's
+apps/mobile/qa/sub-uat-f194-set.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): F194 UAT. Close-Grip Lat Pulldown set N at
+apps/mobile/qa/sub-uat-r344-bench.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): R-344 UAT. An empty workout with ONE ticked s
+apps/mobile/qa/sub-uat-r358-set.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): R-358 UAT. Dumbbell Preacher Curl set N at
+apps/mobile/qa/sub-uat-r358-start.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): R-358 UAT. An empty workout with Dumbbell
+apps/mobile/qa/sub-uat-r366-set.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): R-366 UAT. Pull-Up set N at REPS, typed and
+apps/mobile/qa/sub-uat-r366-start.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): R-366 UAT. An empty workout with the Pull-Up
+apps/mobile/qa/sub-uat-r436-top.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): R-436 UAT. Bring the open workout's page back
+apps/mobile/qa/sub-uat-r439-add.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): R-439 / R-436 UAT. Add the exercise EX (found
+apps/mobile/qa/sub-uat-r439-addset.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): R-439 / R-436 UAT. "Add set" on the card EX,
+apps/mobile/qa/sub-uat-r439-clear.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): R-439 / R-436 UAT. After a tick, let any set
+apps/mobile/qa/sub-uat-r439-finish.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): R-439 / R-436 UAT. Finish the open workout (r
+apps/mobile/qa/sub-uat-r439-rpe.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): R-439 UAT. Open a set's RPE sheet by its butt
+apps/mobile/qa/sub-uat-r439-saved.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): R-439 UAT. The number a ticked box SAVED (a t
+apps/mobile/qa/sub-uat-r439-set.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): R-439 / R-436 UAT. Type and tick set N of the
+apps/mobile/qa/sub-uat-r454-hint.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): R-454 UAT. Tick the EMPTY set N of the card E
+apps/mobile/qa/sub-uat-r454-line.yaml | maestro | Sub-flow (runFlow only): read the Target line of exercise EX by its id ("target-line-<name>",
+apps/mobile/qa/sub-uat-r454-row.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): R-454 UAT. Make sure set N of the card EX exi
+apps/mobile/qa/sub-uat-rest-clear.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): after a tick, close the "In use" screen if it
+apps/mobile/qa/sub-uat-tick.yaml | maestro | Sub-flow (called with runFlow; not a part of its own): tick one set row by its spoken name, e.g.
+apps/mobile/qa/uat-a1.yaml | maestro | UAT WP4b, part UA (M-50 auto-pause + "Count it", M-56 forgotten Finish), step 1 of 2: a workout
+apps/mobile/qa/uat-a2.yaml | maestro | UAT WP4b, part UA, step 2 of 2. The phone's clock is now 75 minutes on from uat-a1.yaml's tick,
+apps/mobile/qa/uat-b1.yaml | maestro | UAT WP4b, part UB (M-07, step 1 of 4): a member with workouts. The demo is loaded on a fresh
+apps/mobile/qa/uat-f1.yaml | maestro | UAT WP4b, part UF (M-58: Finish fails, or the phone's storage is full), step 1 of 5: the demo on a
+apps/mobile/qa/uat-f2.yaml | maestro | UAT WP4b, part UF, step 2 of 5: Push Day A started, its first exercise's sets 1 (50 kg x 5) and
+apps/mobile/qa/uat-j3-resume.yaml | maestro | Part J3, restart (UAT work package 4, item 14): after the drag, run-device-qa.sh stops the app
+apps/mobile/qa/uat-k3.yaml | maestro | UAT WP4b, part UK (M-110), step 3 of 5: the app-icon shortcut "Start <routine>" (its own keyed
+apps/mobile/qa/uat-k5.yaml | maestro | UAT WP4b, part UK (M-110), step 5 of 5: the app-icon shortcut "Log body weight" (opened as the
+apps/mobile/qa/uat-rel-1-seed.yaml | maestro | Part UAT (opt-in: only=uat or extra=uat), flow 1 of 5: the release UAT of what waits for release
+apps/mobile/qa/uat-rel-2-settings.yaml | maestro | Part UAT, flow 2 of 5: the Settings choice behind the suggested weights.
+apps/mobile/qa/uat-rel-9-demo-first.yaml | maestro | Part UAT, flow 9 (last: it starts afresh): launch audit 3 Nov 2026 (#6). A member who loads the demo
+apps/mobile/qa/uat-rel-f198-b-big-text.yaml | maestro | Part UAT, F198 "follow the dots", flow 2 of 2: the same trail at the phone's largest text size
+apps/mobile/qa/uat-rel-f79-pay.yaml | maestro | Part UAT, flow F79 (gym, after flow F147): "Pay your gym" on the Gym tab's plan card (4 Nov 2026, R-
+apps/mobile/qa/uat-rel-look-welcome.yaml | maestro | Light mode: the first screens of a fresh install (intro, then the welcome start view) in the look th
+apps/mobile/qa/uat-rel-r336-b-offline.yaml | maestro | Part UAT, R-336 interruption (R-364): no internet. run-device-qa.sh turns airplane mode on before th
+apps/mobile/qa/uat-rel-r355-a-last-set.yaml | maestro | Part UAT, R-355 flow a (owner, 5 Nov 2026: "the watch app stopped showing the exercise name ... afte
+apps/mobile/qa/uat-rel-r355-b-final-set.yaml | maestro | Part UAT, R-355 flow b: goes on from flow a's rest (the app in the background). Back to the app, ski
+apps/mobile/qa/uat-rel-r358-a-history.yaml | maestro | Part UAT, R-358 flow a (owner, 5 Nov 2026). Dumbbell Preacher Curl: after he changed its Counting to
+apps/mobile/qa/uat-rel-r358-c-real.yaml | maestro | Part UAT, R-358 / R-362 / R-364 flow c (after flow b; run-device-qa.sh moves the phone's clock to 75
+apps/mobile/qa/uat-rel-r366-b-today.yaml | maestro | Part UAT, R-366 flow b: today's Pull-Up 7, 5, 5 after yesterday's 7, 5, 4 (flow a). Expect
+apps/mobile/qa/uat-rel-r366-reps.yaml | maestro | Part UAT, R-366 (owner, 5 Nov 2026). Pull-Up, reps only: last time 7, 5, 4 = 16 reps, today 7, 5, 5
+apps/mobile/qa/uat-rel-r402-profile-chart.yaml | maestro | R-402 (owner, 8 Nov 2026): "Why are we not able to Tap the dated figures on charts from profile sect
+apps/mobile/qa/uat-rel-r436-b-offline.yaml | maestro | Part UAT, R-436 flow b, interruption: no internet. run-device-qa.sh turns airplane mode on before th
+apps/mobile/qa/uat-rel-r438-c-look.yaml | maestro | R-438 flow c: the pop-up and "Check your watch" in the OTHER look (run-device-qa.sh part_u438 flips 
+apps/mobile/qa/uat-rel-r439-b-same-set.yaml | maestro | Part UAT, R-439 flow b: the day after flow a (the part moved the phone clock one day on), the routin
+apps/mobile/qa/uat-rel-r440-popup-bars.yaml | maestro | R-440 (10 Nov 2026): the status bar's clock and battery over the full-page pop-ups. On the light loo
+apps/mobile/qa/uat-rel-r444-empty-workout.yaml | maestro | R-436 + R-444 (10 Nov 2026): "Start empty workout" remembers the exercises of the last finished empt
+apps/mobile/qa/uat-rel-r454-b-incline-lateral.yaml | maestro | Part UAT, R-454 flow b: the day after flow a (the part moved the phone clock one day on), the routin
+apps/mobile/qa/uat-rel-r454-c-dip-first.yaml | maestro | Part UAT, R-454 flow c: the same workout as flow b, its last two cards.
+apps/mobile/qa/uat-rel-r456-inuse-kit.yaml | maestro | Part UAT (also alone: only=u456). Two owner requests on the In use screen, 12 Nov 2026:
+apps/mobile/qa/uat-rel-r458-staff-door.yaml | maestro | R-458 (owner, 12 Nov 2026): "if owner is logging in using their phone number, then automatically the
+apps/mobile/qa/uat-rel-r482-b-own-case.yaml | maestro | Part UAT, R-482 flow b: the owner's own case, the negative (13 Nov 2026: Up next on Pull 2 said "Eas
+apps/mobile/qa/uat-rel-r482-e-new-plan.yaml | maestro | Part UAT, R-482 flow e: a new plan is never judged (negative). A fresh install restores qa-r482-new.
+apps/mobile/qa/uat-rel-r482-g-shoulder.yaml | maestro | Part UAT, R-482 flow g (R-483, owner 13 Nov 2026: "Yes count only shoulder exercises"): the shoulder
+apps/mobile/qa/uat-rel-r484-a-no-start.yaml | maestro | Part UAT, R-484 (13 Nov 2026): an older backup whose followed plan has NO start day saved. Before th
+apps/mobile/qa/uat-rel-r501-workout.yaml | maestro | Part UAT R-501 (run-device-qa.sh part_u501, moment c; also alone: only=u501). Owner, 14 Nov 2026: hi
+apps/mobile/qa/uat-rel-r517-c-big-text.yaml | maestro | Part u517, flow c (R-517): the largest text size (run-device-qa.sh sets font scale 2.0 before this f
+apps/mobile/qa/uat-rel-r576-a-history.yaml | maestro | Part UAT, R-576 flow a (owner, 15 Nov 2026: the target box always beats the previous total, and "if 
+apps/mobile/qa/uat-rel-r576-c-break.yaml | maestro | Part UAT, R-576 flow c: 49 days after flow a (7 weeks; flow b's workout was discarded). The one case
+apps/mobile/qa/uat-rel-r586-gone-a.yaml | maestro | Part UAT, flow r586a (gym, after flow gt). R-586 NEGATIVE / INTERRUPTION: a trainer the member picke
+apps/mobile/qa/uat-rel-r586-gone-b.yaml | maestro | Part UAT, flow r586b (gym, right after flow r586a on the SAME open page; run-device-qa.sh has just u
+apps/mobile/qa/uat-rel-t74-b-new-logo.yaml | maestro | Part UAT, T74 flow b (R-356 + R-364 "state change"): the gym changes its logo AFTER the member put i
+apps/mobile/qa/uat-rel-usel-tap-selects.yaml | maestro | Part USEL (owner bug, 5 Nov 2026): every tap on a weight or reps box selects the whole number, so ty
+apps/mobile/qa/v0261-h.yaml | maestro | v0.26.1 device QA, part H1 — the rest card (what the watch shows). Runs after parts A–G.
+apps/mobile/qa/v0261-h1d.yaml | maestro | Phase 6 device QA, part H1D — "Done" on the rest card. Runs right after part H1, once the script
+apps/mobile/qa/v0261-h2.yaml | maestro | v0.26.1 device QA, part H2 — runs after H1 and H1D, once the script has STOPPED the app's
+apps/mobile/qa/v0371-h3a.yaml | maestro | v0.37.1 device QA, part H3A (audit C1: "Complete set" with ForgeAI closed). Runs after part H2,
+apps/mobile/qa/v0371-h3b.yaml | maestro | v0.37.1 device QA, part H3B (audit C1). The app's process has been STOPPED by the script (as
+apps/mobile/qa/v0371-h3c.yaml | maestro | v0.37.1 device QA, part H3C (audit C1). Set 4 was "Complete set" in the shade with the app's
+apps/mobile/qa/xc-1-new-check.yaml | maestro | Phone conditions (UAT WP7), condition 1, the NEW side: after `adb install -r` of this build over the
+apps/mobile/qa/xc-1-old-seed.yaml | maestro | Phone conditions (UAT WP7), condition 1 "upgrade over real data", the OLD side: on the released
+apps/mobile/qa/xc-2-join.yaml | maestro | Phone conditions (UAT WP7), condition 2 setup (online): join the run's own fresh gym by typing its
+apps/mobile/qa/xc-2a-order-online.yaml | maestro | Phone conditions (UAT WP7), condition 2a, back online (the script switched airplane mode off and
+apps/mobile/qa/xc-2b-checkin-online-done.yaml | maestro | Phone conditions (UAT WP7), condition 2b, after xc-2b-checkin-online.yaml and the desk's yes
+apps/mobile/qa/xc-2b-checkin-online.yaml | maestro | Phone conditions (UAT WP7), condition 2b, back online: the same screen's "Check in" again. The gym
+apps/mobile/qa/xc-2c-orders-closed.yaml | maestro | Phone conditions (UAT WP7), condition 2c (online): the owner marked every order collected (the
+apps/mobile/qa/xc-2d-workout-offline.yaml | maestro | Phone conditions (UAT WP7), condition 2d: the whole workout loop with NO INTERNET (airplane mode on,
+apps/mobile/qa/xc-3-outcome.yaml | maestro | Phone conditions (UAT WP7), condition 3b/3c: after the order request was cut, the words the
+apps/mobile/qa/xc-3-tap.yaml | maestro | Phone conditions (UAT WP7), condition 3: "Place order" tapped, and nothing waited for: the flow ends
+apps/mobile/qa/xc-3-to-bag.yaml | maestro | Phone conditions (UAT WP7), condition 3: the app opened afresh, PRODUCT into the bag, the bag open
+apps/mobile/qa/xc-3a-order-slow.yaml | maestro | Phone conditions (UAT WP7), condition 3a: a FLAKY network (the script set the emulator's link to
+apps/mobile/qa/xc-3b-order-retry.yaml | maestro | Phone conditions (UAT WP7), condition 3b, back online: if the bag was kept, the member taps "Place
+apps/mobile/qa/xc-4a-rest-check.yaml | maestro | Phone conditions (UAT WP7), condition 4a: the app process was killed mid-rest (Home, then `am kill`,
+apps/mobile/qa/xc-4b-finish-check.yaml | maestro | Phone conditions (UAT WP7), condition 4b: killed with the finish sheet open, opened again: the
+apps/mobile/qa/xc-4b-finish-sheet.yaml | maestro | Phone conditions (UAT WP7), condition 4b: the rest skipped, "Finish workout" tapped: the finish shee
+apps/mobile/qa/xc-4c-import-check.yaml | maestro | Phone conditions (UAT WP7), condition 4c: killed mid-import, opened again: the app starts normally
+apps/mobile/qa/xc-4c-import-start.yaml | maestro | Phone conditions (UAT WP7), condition 4c: Settings -> Export & import -> Import from Hevy with the
+apps/mobile/qa/xc-open-rest.yaml | maestro | Phone conditions (UAT WP7), conditions 4-6: the app opened (a normal start), a fresh bench workout
+apps/mobile/qa/xc-seed-demo.yaml | maestro | Phone conditions (UAT WP7): a fresh install's state (clearState) with the demo data loaded, the app
+apps/mobile/qa/xc-sub-back-to-tabs.yaml | maestro | Copied for the phone-conditions run (UAT WP7, run-conditions.sh) from sub-back-to-tabs.yaml, so a ch
+apps/mobile/qa/xc-sub-bench.yaml | maestro | Phone conditions (UAT WP7), sub-flow: a fresh workout ("Start empty workout", any open one thrown
+apps/mobile/qa/xc-sub-find.yaml | maestro | Copied for the phone-conditions run (UAT WP7, run-conditions.sh) from xj-sub-find.yaml, so a change 
+apps/mobile/qa/xc-sub-finish.yaml | maestro | Phone conditions (UAT WP7), sub-flow: finish the live workout (any rest skipped, untouched rows
+apps/mobile/qa/xc-sub-gym-none.yaml | maestro | Copied for the phone-conditions run (UAT WP7, run-conditions.sh) from sub-gym-none.yaml, so a change
+apps/mobile/qa/xc-sub-inuse-close.yaml | maestro | Copied for the phone-conditions run (run-conditions.sh) from sub-inuse-close.yaml, so a change to th
+apps/mobile/qa/xc-sub-leave-gym.yaml | maestro | Copied for the phone-conditions run (UAT WP7, run-conditions.sh) from sub-leave-gym.yaml, so a chang
+apps/mobile/qa/xc-sub-profile-tile.yaml | maestro | Copied for the phone-conditions run (UAT WP7, run-conditions.sh) from sub-profile-tile.yaml, so a ch
+apps/mobile/qa/xc-sub-progress-row.yaml | maestro | Copied for the phone-conditions run (UAT WP7, run-conditions.sh) from sub-progress-row.yaml, so a ch
+apps/mobile/qa/xc-sub-reopened.yaml | maestro | Phone conditions (UAT WP7), sub-flow: the app was just opened again by the script (after the
+apps/mobile/qa/xc-sub-rest-tick.yaml | maestro | Phone conditions (UAT WP7), sub-flow: on the live workout of xc-sub-bench.yaml, the bench's rest set
+apps/mobile/qa/xc-sub-settings-open.yaml | maestro | Copied for the phone-conditions run (UAT WP7, run-conditions.sh) from sub-settings-open.yaml, so a c
+apps/mobile/qa/xc-sub-settings-page.yaml | maestro | Phone conditions (UAT WP7), sub-flow: Settings, then the page whose row title is PAGE (a regex).
+apps/mobile/qa/xc-sub-shop.yaml | maestro | Phone conditions (UAT WP7), sub-flow: the app closed and opened again, then the gym's tab. Copied
+apps/mobile/qa/xc-sub-to-bag.yaml | maestro | Phone conditions (UAT WP7), sub-flow: in the gym's shop (the Shop tab open), one PRODUCT into the
+apps/mobile/qa/xc-sub-type.yaml | maestro | Copied for the phone-conditions run (UAT WP7, run-conditions.sh) from sub-type.yaml, so a change to 
+apps/mobile/qa/xc-sub-workout-fresh.yaml | maestro | Copied for the phone-conditions run (UAT WP7, run-conditions.sh) from sub-workout-fresh.yaml, so a c
+apps/mobile/qa/xj-2-order.yaml | maestro | Cross-role journey 2, member step 2: order 1 QA Towel again (stock back at 4). The owner cancels
+apps/mobile/qa/xj-5-checkin.yaml | maestro | Cross-role journey 5, member step 1 of 2: run-journeys.sh opened gym B's check-in poster link
+apps/mobile/qa/xj-5-switch.yaml | maestro | Cross-role journeys 5 and 6, member step: leave gym A (every order there is final by now), then
+apps/mobile/qa/xj-6-relaunch.yaml | maestro | Cross-role journey 6, member step: the app closed and opened again inside gym B. It starts in the
+apps/mobile/qa/xj-seed.yaml | maestro | Cross-role journeys (UAT WP6), seed: a fresh install's state (clearState) with the demo data
+apps/mobile/qa/xj-sub-find.yaml | maestro | Copied from sub-find.yaml for the cross-role journeys (UAT WP6), so a change to the phone test
+apps/mobile/qa/xj-sub-my-orders.yaml | maestro | Cross-role journeys (UAT WP6), sub-flow: the gym's shop (GYM, unbranded: its name is the title)
+apps/mobile/qa/xj-sub-order.yaml | maestro | Cross-role journeys (UAT WP6), sub-flow: in the gym's shop, order ONE of PRODUCT (its stock line
+apps/mobile/qa/xj-sub-shop.yaml | maestro | Cross-role journeys (UAT WP6), sub-flow: the app closed and opened again (so every step starts
+apps/mobile/test/ai/auditC3Coach.test.ts | unit | C3-10: the coach sees every routine the Routines screen shows
+apps/mobile/test/ai/grounding.test.ts | unit | checkGrounding
+apps/mobile/test/ai/unitsCoach.test.ts | unit | coach under lb, miles
+apps/mobile/test/backup/backupCoverage.test.ts | unit | every stored thing is in the backup or left out on purpose
+apps/mobile/test/backup/driveUpload.test.ts | unit | Drive: the backup file goes up and comes back as a file
+apps/mobile/test/backup/qaFixture.test.ts | unit | the phone test backup
+apps/mobile/test/brand/mettleUpMark.test.ts | unit | MettleUp mark: the Forged hex
+apps/mobile/test/cloud/emptyWorkoutOldApps.test.ts | unit | R-436: older apps leave the last empty workout alone
+apps/mobile/test/cloud/limits.test.ts | unit | monthsOfRange
+apps/mobile/test/cloud/restoreClockRepair.test.ts | unit | a pre-Phase-4 backup restored
+apps/mobile/test/components/ui/rnTextEntries.test.ts | unit | React Native still serves Text and TextInput the way the swap expects
+apps/mobile/test/components/ui/sheetClock.test.ts | unit | waitAfterSheet — wait only while a sheet may still be leaving
+apps/mobile/test/db/auditC4ImportReal.test.ts | unit | C4-4: Repeat a workout keeps its rows and their types
+apps/mobile/test/db/backupRoundTrip.test.ts | unit | the Drive backup round trip keeps every table and column of the real schema
+apps/mobile/test/db/migrations.test.ts | unit | fixtures are what the generator produces from git
+apps/mobile/test/db/phase2ReviewReal.test.ts | unit | #2 swap after a tick keeps every Target
+apps/mobile/test/db/r138KgToBeat.test.ts | unit | R-138: the kg to beat and PREVIOUS read the same last time
+apps/mobile/test/known-defects/L01-backup-rules.test.ts | unit | L-01 the workout database is in Android automatic backup
+apps/mobile/test/lib/features.test.ts | unit | feature switch (owner decision D4 = A)
+apps/mobile/test/lib/gwpAsanOff.test.ts | unit | GWP-ASan is off for ForgeAI
+apps/mobile/test/lib/keyboardCacheTrusted.test.ts | unit | keyboardCacheTrusted
+apps/mobile/test/lib/qaExpectedErrors.test.ts | unit | the injecting part\
+apps/mobile/test/onboarding/welcomeHero.test.ts | unit | the welcome buttons keep their old behaviour
+apps/mobile/test/shop/gymPaused.test.ts | unit | a paused gym
+apps/mobile/test/shop/machineBusy.test.ts | unit | the ready list of machines (shared with the admin app and the server)
+apps/mobile/test/shop/pushLoaderKept.test.ts | unit | the background loader for gym pushes survives R8
+apps/mobile/test/shop/r501GymPopup.test.ts | unit | the handler answer for a gym message with the app open
+apps/mobile/test/shop/shopStore.test.ts | unit | shop store
+apps/mobile/test/shop/staffDoor.test.ts | unit | R-458: what the owner types
+apps/mobile/test/shop/trainerJoinDay.test.ts | unit | which day sharing starts from (pure)
+apps/mobile/test/shop/trainerSince.test.ts | unit | only workouts since joining this gym
+apps/mobile/test/shop/ug4MissingServerFails.test.ts | unit | U-G4: a missing server function on a whole run fails it
+apps/mobile/test/theme/brandEngine.test.ts | unit | palette engine — RAM\
+apps/mobile/test/theme/brandParity.test.ts | unit | palette engine ↔ the phone tokens
+apps/mobile/test/theme/contrast.test.ts | unit | text contrast (WCAG AA 4.5:1), ${look} look
+apps/mobile/test/theme/fontGate.test.ts | unit | SH-02: fonts never hold the splash forever
+apps/mobile/test/theme/noModuleColours.test.ts | unit | no token colour is copied at load time (gym branding repaints the app)
+apps/mobile/test/theme/plans.test.ts | unit | the switch
+apps/mobile/test/theme/popupBars.test.ts | unit | pop-up status bar follows the look (R-440)
+apps/mobile/test/tracker/audit1013LiveWorkout.test.ts | unit | audit 13 Oct 2026: live workout screens
+apps/mobile/test/tracker/boxFontSize.test.ts | unit | a typed number fits its box (A1)
+apps/mobile/test/tracker/designPassProfile.test.ts | unit | exercise chart: one point per day
+apps/mobile/test/tracker/draftSets.test.ts | unit | isCommittable
+apps/mobile/test/tracker/dragGrip.test.ts | unit | drag grip on draggable cards
+apps/mobile/test/tracker/engine/reviewHistoryChart.test.ts | unit | a one-day bar names its day once
+apps/mobile/test/tracker/exerciseSearchSpeed.test.ts | unit | exercise search speed (phone budget)
+apps/mobile/test/tracker/frontScreen.test.ts | unit | frontScreen (the shortcut Resume self-check)
+apps/mobile/test/tracker/hevyCsvDates.test.ts | unit | a Hevy .csv export
+apps/mobile/test/tracker/hevyImport.test.ts | unit | parseHevyDate
+apps/mobile/test/tracker/hydrateFailure.test.ts | unit | restoring the saved workout
+apps/mobile/test/tracker/importWriteEquivalence.test.ts | unit | fast import path = old path, table by table (real SQLite)
+apps/mobile/test/tracker/muscleBalance.test.ts | unit | R-58: which group is close to zero
+apps/mobile/test/tracker/packetCTargets.test.ts | unit | TG-01 the ladder: weights the member has actually used
+apps/mobile/test/tracker/phase2ReviewFixes.test.ts | unit | #1 one workout screen, never two stacked
+apps/mobile/test/tracker/phase4ReviewStore.test.ts | unit | MED 6 — finishing an easy-week workout
+apps/mobile/test/tracker/phase4Stall.test.ts | unit | stalled lifts in the followed plan
+apps/mobile/test/tracker/phase5Review.test.ts | unit | pounds stored two ways are the same weight
+apps/mobile/test/tracker/phase8Batch.test.ts | unit | batched reads equal the per-lift reads (seed %i)
+apps/mobile/test/tracker/phase8Indexes.test.ts | unit | Phase 8 indexes
+apps/mobile/test/tracker/phoneLook.test.ts | unit | widgets wear the app look
+apps/mobile/test/tracker/planHintTypes.test.ts | unit | a routine plan fills the boxes on a first time, for every kind
+apps/mobile/test/tracker/plans/programTemplates.test.ts | unit | admin ready-made plans
+apps/mobile/test/tracker/previews.test.ts | unit | body map, male and female
+apps/mobile/test/tracker/previousRpeLayout.test.ts | unit | PREVIOUS with last time’s RPE
+apps/mobile/test/tracker/r143LighterSetMovesUp.test.ts | unit | R-143: a lighter set that reached the top of the range moves up
+apps/mobile/test/tracker/r146ReachedNotBeaten.test.ts | unit | R-146: exactly the plan, then more (one finished format, owner 12 Nov 2026)
+apps/mobile/test/tracker/r307PerSetGoals.test.ts | unit | R-350: the lateral raise (R-301) under the simple rule
+apps/mobile/test/tracker/r350OracleReplay.test.ts | unit | R-364 oracle replay: 500 workouts per lift, every rule checked after every workout
+apps/mobile/test/tracker/r350SimpleRule.test.ts | unit | R-350: the owner T-Bar Row
+apps/mobile/test/tracker/r366RepsLastTime.test.ts | unit | R-366: the owner Pull-Up
+apps/mobile/test/tracker/r397ChartBoxTap.test.ts | unit | R-397 the chart never takes a touch that started on the box
+apps/mobile/test/tracker/r403EveryChartOpens.test.ts | unit | the Body chart opens the picked day’s own entry
+apps/mobile/test/tracker/r454RepFloor.test.ts | unit | R-454: his Incline Dumbbell Press, 40 kg x 13, 12, 10, 8 in 8-12
+apps/mobile/test/tracker/r499KgWords.test.ts | unit | R-499: the kg to beat says previous, never today or last time
+apps/mobile/test/tracker/r499NextGoal.test.ts | unit | R-499 his report: +1,840 kg on 1,940 kg
+apps/mobile/test/tracker/r515GoalWords.test.ts | unit | R-515: his Dumbbell Curl, 20 kg x 18, 13, 11
+apps/mobile/test/tracker/r61WorkoutScreen.test.ts | unit | R-61: two dumbbells typed as one total
+apps/mobile/test/tracker/releaseReviewFixes.test.ts | unit | U-M7: the ✓ pop plays once, right after the tick
+apps/mobile/test/tracker/remindersHiccup.test.ts | unit | reminders: a passing database hiccup
+apps/mobile/test/tracker/shareMark.test.ts | unit | share pictures: ForgeAI's mark
+apps/mobile/test/tracker/statSessions.test.ts | unit | Statistics reads its workouts through the one volume rule
+apps/mobile/test/tracker/t76UnitRecords.test.ts | unit | T76: kg history, typed in lb as shown
+apps/mobile/test/tracker/t76UnitTotals.test.ts | unit | T76: the kg to beat after a switch to lb
+apps/mobile/test/tracker/warmupPrevious.test.ts | unit | prevForSet (the PREVIOUS column) with warm-ups
+apps/mobile/test/tracker/watchLogging.test.ts | unit | the next set\
+apps/mobile/test/tracker/widgetNative.test.ts | unit | home-screen widgets (native source)
+apps/mobile/test/tracker/workoutPhase1Review.test.ts | unit | Update routine? only counts added or removed set rows
+deploy/hq/billing.test.mjs | unit | billing is off until every setting exists, and a live key is refused
+deploy/hq/readLog.test.mjs | unit | a pgaudit line is read field by field, quotes and commas inside the query included
+deploy/hq/webpush.test.mjs | unit | RFC 8291 example: the same bytes, byte for byte
+deploy/panel/mobileRule.test.mjs | unit | R-580: the friend invite, the demo request, the gym page and the sign-in code all keep the same 10 d
+supabase/tests/0029_auto_reminders.sql | db | Automatic reminders test (0029). Runs in CI after every migration (scripts/ci/db_checks.sh: a
+supabase/tests/0046_gym_pack.sql | db | Which pack a gym is on, read by the apps (0046, T66). Runs in CI after every migration
+supabase/tests/0058_entry_machines.sql | db | Entry machines test (0058, F103 / T77 step 1). Runs in CI after every migration
+supabase/tests/0064_billing_checks.sql | db | Billing gaps test (0064). Runs in CI after every migration (scripts/ci/db_checks.sh); can also be pa
+supabase/tests/0072_retired_ai_pack_name.sql | db | F201: the retired 'ai' pack is named "Pro" (0072). Runs in CI after every migration (scripts/ci/db_c
+supabase/tests/0081_join_pay.sql | db | Join online and pay online test (0081, R-528). Runs in CI after every migration (scripts/ci/db_check
+supabase/tests/0082_gym_page_photos.sql | db | Gym page photos test (0082, F207, R-529). Runs in CI after every migration (scripts/ci/db_checks.sh)
+supabase/tests/0091_challenge_checkins.sql | db | Check-in challenges test (0091, R-561 item 6: ready-made challenges). Runs in CI after every migrati
+supabase/tests/0092_member_join_day.sql | db | The member's start date at their gym test (0092, F218). Runs in CI after every migration (scripts/ci
+supabase/tests/0097_direct_read_log.sql | db | R-595 direct-read record test (0097). Runs in CI after every migration (scripts/ci/db_checks.sh); ca
