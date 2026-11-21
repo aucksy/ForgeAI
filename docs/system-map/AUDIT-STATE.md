@@ -1,10 +1,11 @@
 MODEL: OPUS (his switch after the 20 Nov Fable reset). Every helper = Opus 5.5 ("opus"), effort "medium". Only the weekly all-models stop line counts (90, or 95 in its last 24 hours).
-status: STOPPED (pacer-1121-1032 closed 21 Nov about 12:00 IST at F5 72, weekly all 74: every A8 item and A8-report done; next window opens about 15:30 IST 21 Nov)
+status: RUNNING (pacer-1121-1032 reopened 21 Nov about 12:20 IST at F5 72 on his weekend rule (start nothing at 85, launch to 90). RUNNING: L19-hq-app pilot alone. Next after it: L14-hq-app pilot, then B-run-hq-app-a and B-truth-hq-app-a pilots, each alone; then the rest 6 at a time)
 phase/step: A2, A3, A4, A4b, A5, A7, LENSES 4, 5 AND 3 DONE (lens 3 finished 21 Nov about 02:00 IST). Next: the items the prep helper makes (_work/NEXT-ITEMS.md). Next: the rest of lenses 3 and 5 (no more pilots needed); add with state.mjs add @docs/system-map/_work/lens-add/<id>.json; finish each with bash docs/system-map/_tools/lens-finish.sh <id> <tokens> "<line>" after node docs/system-map/_tools/clamp-evidence.js <id> (both hold this run's paths: fix the two paths at their top if the worktree moves).
 expected end: not before about 8 Dec 2026 at the present size. projection: about 3.1 weekly periods of 3 (A5 alone needs about 1.6 more: 87 items x 1.7 weekly points): OVER; HIS CHOICE of 19 Nov (live features first) is applied: full journeys only for features with status live; the rest is deferred and listed in the final report
 mode: ANALYSIS ONLY. No app code, tests, workflows, skills or settings change. "Apply" items in 3E/3F = proposals only.
 model: every helper = Opus 5.5 ("opus"), effort "medium" (since 20 Nov 2026). Max 6 helpers at once.
 blind check: never put the held-out rows or hints into a helper brief (ids are in plan section 3G only).
+5-hour lines: weekdays 09:00-21:00 IST start nothing at 75, launch to 80; Saturday and Sunday 09:00-21:00 start nothing at 85, launch to 90, helpers save at 92 (his words, 21 Nov 2026: "you can go ahead and use the 5 hour limit till 85-90% on weekends (saturday and Sunday)"); every night 21:00-09:00 start nothing at 91, launch to 95, save at 97.
 weekly stop line: weekly all models only: 90 while its reset is more than 24 hours away, 95 in the last 24 hours; start no new helper when weekly all + 1 would pass it. (The weekly Fable line no longer applies: the audit runs on Opus.)
 
 ## Windows
