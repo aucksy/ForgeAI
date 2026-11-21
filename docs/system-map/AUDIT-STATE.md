@@ -53,7 +53,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | CAL | 0 | 5 (start value) |
 | A8r | 1 | 4.9 (197k tokens) |
 | A8 | 97 | 5.9 (235k tokens) |
-| L19 | 11 | 3.9 (157k tokens) |
+| L19 | 12 | 3.8 (154k tokens) |
 | L14 | 2 | 4.1 (164k tokens) |
 | B-run | 0 | 5 (start value) |
 | B-truth | 0 | 5 (start value) |
@@ -69,22 +69,21 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 635 todo, 0 in progress, 447 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 629 todo, 5 in progress, 448 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
+| L19-panel-ui-shell | L19 | lens 19 (Abuse and misuse) x panel / panel/ui-shell: 2 items | in progress | _work/L19-panel-ui-shell.md |  |
+| L19-phone-cloud-backup-ai | L19 | lens 19 (Abuse and misuse) x phone / phone/cloud-backup-ai: 2 items | in progress | _work/L19-phone-cloud-backup-ai.md |  |
+| L19-phone-components-2 | L19 | lens 19 (Abuse and misuse) x phone / phone/components-2: 2 items | in progress | _work/L19-phone-components-2.md |  |
+| L19-phone-lib-core | L19 | lens 19 (Abuse and misuse) x phone / phone/lib-core: 2 items | in progress | _work/L19-phone-lib-core.md |  |
+| L19-phone-native | L19 | lens 19 (Abuse and misuse) x phone / phone/native: 2 items | in progress | _work/L19-phone-native.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
 | CAL-2 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged | todo | _work/CAL-2.md |  |
 | CAL-3 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-3 ...); output is scored, never merged | todo | _work/CAL-3.md |  |
 | CAL-4 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-4 ...); output is scored, never merged | todo | _work/CAL-4.md |  |
 | CAL-score | coord | coordinator only: C4 score found/partly/missed per seed in calibration/RESULT.md; C5 rewrite a hunt and re-run a missed seed (at most 2 re-runs); then hunts may run on today's code | todo | - |  |
-| L19-panel-ui-shell | L19 | lens 19 (Abuse and misuse) x panel / panel/ui-shell: 2 items | todo | _work/L19-panel-ui-shell.md |  |
-| L19-phone-cloud-backup-ai | L19 | lens 19 (Abuse and misuse) x phone / phone/cloud-backup-ai: 2 items | todo | _work/L19-phone-cloud-backup-ai.md |  |
-| L19-phone-components-1 | L19 | lens 19 (Abuse and misuse) x phone / phone/components-1: 2 items | todo | _work/L19-phone-components-1.md |  |
-| L19-phone-components-2 | L19 | lens 19 (Abuse and misuse) x phone / phone/components-2: 2 items | todo | _work/L19-phone-components-2.md |  |
-| L19-phone-lib-core | L19 | lens 19 (Abuse and misuse) x phone / phone/lib-core: 2 items | todo | _work/L19-phone-lib-core.md |  |
-| L19-phone-native | L19 | lens 19 (Abuse and misuse) x phone / phone/native: 2 items | todo | _work/L19-phone-native.md |  |
 | L19-phone-onboarding-db | L19 | lens 19 (Abuse and misuse) x phone / phone/onboarding-db: 2 items | todo | _work/L19-phone-onboarding-db.md |  |
 | L19-phone-screens-1 | L19 | lens 19 (Abuse and misuse) x phone / phone/screens-1: 2 items | todo | _work/L19-phone-screens-1.md |  |
 | L19-phone-screens-2 | L19 | lens 19 (Abuse and misuse) x phone / phone/screens-2: 2 items | todo | _work/L19-phone-screens-2.md |  |
@@ -98,16 +97,22 @@ Counts: 635 todo, 0 in progress, 447 done, 0 blocked. Full list: work-items.json
 | L19-phone-tracker-services-1 | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-services-1: 2 items | todo | _work/L19-phone-tracker-services-1.md |  |
 | L19-phone-tracker-services-2 | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-services-2: 2 items | todo | _work/L19-phone-tracker-services-2.md |  |
 | L19-server-ci-workflows | L19 | lens 19 (Abuse and misuse) x server / server/ci-workflows: 2 items | todo | _work/L19-server-ci-workflows.md |  |
-| L19-panel-logic-1 | L19 | lens 19 (Abuse and misuse) x panel / panel/logic-1: 2 items | done | _work/L19-panel-logic-1.md | L19 panel-logic-1: 2 items, 2 findings (S2 made-up workouts win free days; S3 keyless help box burns shared AI cap) |
+| L19-server-database-1 | L19 | lens 19 (Abuse and misuse) x server / server/database-1: 2 items | todo | _work/L19-server-database-1.md |  |
+| L19-server-database-2 | L19 | lens 19 (Abuse and misuse) x server / server/database-2: 2 items | todo | _work/L19-server-database-2.md |  |
+| L19-server-database-3 | L19 | lens 19 (Abuse and misuse) x server / server/database-3: 2 items | todo | _work/L19-server-database-3.md |  |
+| L19-server-hq-gate-workers | L19 | lens 19 (Abuse and misuse) x server / server/hq-gate-workers: 2 items | todo | _work/L19-server-hq-gate-workers.md |  |
+| L19-server-panel-worker | L19 | lens 19 (Abuse and misuse) x server / server/panel-worker: 2 items | todo | _work/L19-server-panel-worker.md |  |
+| L19-watch-app | L19 | lens 19 (Abuse and misuse) x watch / watch/app: 2 items | todo | _work/L19-watch-app.md |  |
 | L19-panel-logic-2 | L19 | lens 19 (Abuse and misuse) x panel / panel/logic-2: 2 items | done | _work/L19-panel-logic-2.md | L19 panel-logic-2: 2 items, 1 finding S3 (poster code lets a member earn offer days from home) |
 | L19-panel-pay-machines | L19 | lens 19 (Abuse and misuse) x panel / panel/pay-machines: 2 items | done | _work/L19-panel-pay-machines.md | L19 panel-pay-machines: 2 items, 3 findings (S2 anyone can claim another gym's door machine) |
 | L19-panel-screens-1 | L19 | lens 19 (Abuse and misuse) x panel / panel/screens-1: 2 items | done | _work/L19-panel-screens-1.md | L19 panel-screens-1: 2 items, 2 findings (S3 one outsider can block the Help box for all gyms) |
 | L19-panel-screens-2 | L19 | lens 19 (Abuse and misuse) x panel / panel/screens-2: 2 items | done | _work/L19-panel-screens-2.md | L19 panel-screens-2: 2 items, 1 finding S3 (owner-typed amount; HQ confirm gives full plan; check vs L19-hq-app which says HQ warns below price) |
 | L19-panel-shop | L19 | lens 19 (Abuse and misuse) x panel / panel/shop: 2 items | done | _work/L19-panel-shop.md | L19 panel-shop: 2 items, 2 findings (S2 stranger can get a member's messages; S3 public code floods shop) |
+| L19-phone-components-1 | L19 | lens 19 (Abuse and misuse) x phone / phone/components-1: 2 items | done | _work/L19-phone-components-1.md | L19 phone-components-1: 2 items, 0 findings |
 | L14-hq-app | L14 | lens 14 (Operations and support) x hq / hq/app: 5 items | done | _work/L14-hq-app.md | L14 hq-app: 5 items, 8 findings (S2 feedback questions can never be answered) |
 | L14-panel-assistant | L14 | lens 14 (Operations and support) x panel / panel/assistant: 5 items | done | _work/L14-panel-assistant.md | L14 panel-assistant: 5 items, 6 findings (S2 AI Assistant vanishes silently when its key is missing) |
-(+ 610 more todo items, not shown)
-(+ 439 older done items, not shown)
+(+ 604 more todo items, not shown)
+(+ 440 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
