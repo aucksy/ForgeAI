@@ -49,10 +49,10 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L3 | 37 | 4.4 (174k tokens) |
 | CAL | 0 | 5 (start value) |
 | A8r | 1 | 4.9 (197k tokens) |
-| A8 | 77 | 5.9 (237k tokens) |
+| A8 | 78 | 5.9 (237k tokens) |
 
 ## Work items
-Counts: 27 todo, 0 in progress, 413 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 26 todo, 0 in progress, 414 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
@@ -64,7 +64,6 @@ Counts: 27 todo, 0 in progress, 413 done, 0 blocked. Full list: work-items.jsonl
 | CAL-score | coord | coordinator only: C4 score found/partly/missed per seed in calibration/RESULT.md; C5 rewrite a hunt and re-run a missed seed (at most 2 re-runs); then hunts may run on today's code | todo | - |  |
 | A8-server-database-1-2 | A8 | coverage: 81 Tier 1 journeys of 9 features, server / server-database-1; list in _work/items/A8-server-database-1-2.txt | todo | _work/A8-server-database-1-2.md |  |
 | A8-server-database-1-3 | A8 | coverage: 79 Tier 1 journeys of 9 features, server / server-database-1; list in _work/items/A8-server-database-1-3.txt | todo | _work/A8-server-database-1-3.md |  |
-| A8-server-database-1-4 | A8 | coverage: 57 Tier 1 journeys of 8 features, server / server-database-1; list in _work/items/A8-server-database-1-4.txt | todo | _work/A8-server-database-1-4.md |  |
 | A8-server-database-2-1 | A8 | coverage: 108 Tier 1 journeys of 9 features, server / server-database-2; list in _work/items/A8-server-database-2-1.txt | todo | _work/A8-server-database-2-1.md |  |
 | A8-server-database-2-2 | A8 | coverage: 87 Tier 1 journeys of 8 features, server / server-database-2; list in _work/items/A8-server-database-2-2.txt | todo | _work/A8-server-database-2-2.md |  |
 | A8-server-database-2-3 | A8 | coverage: 95 Tier 1 journeys of 8 features, server / server-database-2; list in _work/items/A8-server-database-2-3.txt | todo | _work/A8-server-database-2-3.md |  |
@@ -81,7 +80,7 @@ Counts: 27 todo, 0 in progress, 413 done, 0 blocked. Full list: work-items.jsonl
 | A8-watch-app-2 | A8 | coverage: 63 Tier 1 journeys of 11 features, watch / watch-app; list in _work/items/A8-watch-app-2.txt | todo | _work/A8-watch-app-2.md |  |
 | A8-web-pages-1 | A8 | coverage: 110 Tier 1 journeys of 8 features, web / web-pages; list in _work/items/A8-web-pages-1.txt | todo | _work/A8-web-pages-1.md |  |
 | A8-web-pages-2 | A8 | coverage: 82 Tier 1 journeys of 8 features, web / web-pages; list in _work/items/A8-web-pages-2.txt | todo | _work/A8-web-pages-2.md |  |
-| A8-phone-tracker-lib-1 | A8 | coverage: 92 Tier 1 journeys of 18 features, phone / phone-tracker-lib; list in _work/items/A8-phone-tracker-lib-1.txt | done | _work/A8-phone-tracker-lib-1.md | A8 phone-tracker-lib-1: 92 journeys, 1 full, 72 partial, 19 none; 5 findings (2 S3) |
+| A8-web-pages-3 | A8 | coverage: 47 Tier 1 journeys of 8 features, web / web-pages; list in _work/items/A8-web-pages-3.txt | todo | _work/A8-web-pages-3.md |  |
 | A8-phone-tracker-lib-2 | A8 | coverage: 87 Tier 1 journeys of 17 features, phone / phone-tracker-lib; list in _work/items/A8-phone-tracker-lib-2.txt | done | _work/A8-phone-tracker-lib-2.md | A8 phone-tracker-lib-2: 87 journeys, 0 full, 76 partial, 11 none; 4 findings (notes lose a line) |
 | A8-phone-tracker-services-1-1 | A8 | coverage: 104 Tier 1 journeys of 17 features, phone / phone-tracker-services-1; list in _work/items/A8-phone-tracker-services-1-1.txt | done | _work/A8-phone-tracker-services-1-1.md | A8 phone-tracker-services-1-1: 104 journeys, 1 full, 73 partial, 30 none; 9 findings (1 S3) |
 | A8-phone-tracker-services-1-2 | A8 | coverage: 90 Tier 1 journeys of 16 features, phone / phone-tracker-services-1; list in _work/items/A8-phone-tracker-services-1-2.txt | done | _work/A8-phone-tracker-services-1-2.md | A8 phone-tracker-services-1-2: 90 journeys, 2 full, 68 partial, 20 none; 8 findings (4 S3) |
@@ -89,8 +88,9 @@ Counts: 27 todo, 0 in progress, 413 done, 0 blocked. Full list: work-items.jsonl
 | A8-phone-tracker-services-2-2 | A8 | coverage: 97 Tier 1 journeys of 18 features, phone / phone-tracker-services-2; list in _work/items/A8-phone-tracker-services-2-2.txt | done | _work/A8-phone-tracker-services-2-2.md | A8 phone-tracker-services-2-2: 97 journeys, 0 full, 87 partial, 10 none; 8 findings |
 | A8-server-ci-workflows-1 | A8 | coverage: 91 Tier 1 journeys of 16 features, server / server-ci-workflows; list in _work/items/A8-server-ci-workflows-1.txt | done | _work/A8-server-ci-workflows-1.md | A8 server-ci-workflows-1: 91 journeys, 8 full, 30 partial, 53 none; 14 findings (release gates untested) |
 | A8-server-database-1-1 | A8 | coverage: 91 Tier 1 journeys of 9 features, server / server-database-1; list in _work/items/A8-server-database-1-1.txt | done | _work/A8-server-database-1-1.md | A8 server-database-1-1: 91 journeys, 23 full, 41 partial, 27 none; 7 findings (support code unlogged) |
-(+ 2 more todo items, not shown)
-(+ 405 older done items, not shown)
+| A8-server-database-1-4 | A8 | coverage: 57 Tier 1 journeys of 8 features, server / server-database-1; list in _work/items/A8-server-database-1-4.txt | done | _work/A8-server-database-1-4.md | A8 server-database-1-4: 57 journeys, 17 full, 38 partial, 2 none; 8 findings |
+(+ 1 more todo items, not shown)
+(+ 406 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
