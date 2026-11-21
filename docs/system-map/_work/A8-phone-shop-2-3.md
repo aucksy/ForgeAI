@@ -4,3 +4,6 @@
 - 424 done (16 rows): 03,08 full; 06,14 none ('not ready yet' untested); rest partial; refusal words never asserted literally. ~1100 lines read
 - 402 done (11 rows): all partial. Note: find-my-gym card only shows with MettleUp Plus on (off in store builds); WhatsApp leg never tested (stand-in). ~1500 lines read
 - 430 done (10 rows): 05/10 full, rest partial. brand-welcome pop-up check is optional (passes if pop-up never shows). ~1800 lines read
+- 403 done (14 rows): 13/14 none, rest partial. ~2150 lines read
+- 432 done (10 rows): 03,04,08,09 none; rest partial. ~2300 lines read
+- 405 done (6 rows): all partial. ~2400 lines read

@@ -7,3 +7,4 @@
 - 86 rows written (+320); test lines ~2400
 - 98 rows written (+323); test lines ~2650
 - 106 rows written (all); test lines ~2950. Next: findings, then tools
+- DONE: 106 journeys (2 full, 91 partial, 13 none) + 8 findings FN-A8-phone-shop-1-1-01..08; a8-cover ok, merge --dry 0 rejects. Test lines read ~3000
