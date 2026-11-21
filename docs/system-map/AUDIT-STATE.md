@@ -48,25 +48,24 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L3 | 37 | 4.4 (174k tokens) |
 | CAL | 0 | 5 (start value) |
 | A8r | 1 | 4.9 (197k tokens) |
-| A8 | 35 | 5.8 (231k tokens) |
+| A8 | 36 | 5.8 (230k tokens) |
 
 ## Work items
-Counts: 64 todo, 5 in progress, 371 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 63 todo, 5 in progress, 372 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | A8-panel-ui-shell-4 | A8 | coverage: 116 Tier 1 journeys of 10 features, panel / panel-ui-shell; list in _work/items/A8-panel-ui-shell-4.txt | in progress | _work/A8-panel-ui-shell-4.md |  |
-| A8-phone-cloud-backup-ai-1 | A8 | coverage: 72 Tier 1 journeys of 11 features, phone / phone-cloud-backup-ai; list in _work/items/A8-phone-cloud-backup-ai-1.txt | in progress | _work/A8-phone-cloud-backup-ai-1.md |  |
 | A8-phone-components-1-1 | A8 | coverage: 62 Tier 1 journeys of 7 features, phone / phone-components-1; list in _work/items/A8-phone-components-1-1.txt | in progress | _work/A8-phone-components-1-1.md |  |
 | A8-phone-components-1-2 | A8 | coverage: 116 Tier 1 journeys of 10 features, phone / phone-components-1; list in _work/items/A8-phone-components-1-2.txt | in progress | _work/A8-phone-components-1-2.md |  |
 | A8-phone-components-2-1 | A8 | coverage: 70 Tier 1 journeys of 7 features, phone / phone-components-2; list in _work/items/A8-phone-components-2-1.txt | in progress | _work/A8-phone-components-2-1.md |  |
+| A8-phone-components-2-2 | A8 | coverage: 70 Tier 1 journeys of 7 features, phone / phone-components-2; list in _work/items/A8-phone-components-2-2.txt | in progress | _work/A8-phone-components-2-2.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
 | CAL-2 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged | todo | _work/CAL-2.md |  |
 | CAL-3 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-3 ...); output is scored, never merged | todo | _work/CAL-3.md |  |
 | CAL-4 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-4 ...); output is scored, never merged | todo | _work/CAL-4.md |  |
 | CAL-score | coord | coordinator only: C4 score found/partly/missed per seed in calibration/RESULT.md; C5 rewrite a hunt and re-run a missed seed (at most 2 re-runs); then hunts may run on today's code | todo | - |  |
-| A8-phone-components-2-2 | A8 | coverage: 70 Tier 1 journeys of 7 features, phone / phone-components-2; list in _work/items/A8-phone-components-2-2.txt | todo | _work/A8-phone-components-2-2.md |  |
 | A8-phone-components-2-3 | A8 | coverage: 73 Tier 1 journeys of 7 features, phone / phone-components-2; list in _work/items/A8-phone-components-2-3.txt | todo | _work/A8-phone-components-2-3.md |  |
 | A8-phone-lib-core-1 | A8 | coverage: 86 Tier 1 journeys of 17 features, phone / phone-lib-core; list in _work/items/A8-phone-lib-core-1.txt | todo | _work/A8-phone-lib-core-1.md |  |
 | A8-phone-lib-core-2 | A8 | coverage: 87 Tier 1 journeys of 17 features, phone / phone-lib-core; list in _work/items/A8-phone-lib-core-2.txt | todo | _work/A8-phone-lib-core-2.md |  |
@@ -85,7 +84,7 @@ Counts: 64 todo, 5 in progress, 371 done, 0 blocked. Full list: work-items.jsonl
 | A8-phone-shop-1-1 | A8 | coverage: 106 Tier 1 journeys of 10 features, phone / phone-shop-1; list in _work/items/A8-phone-shop-1-1.txt | todo | _work/A8-phone-shop-1-1.md |  |
 | A8-phone-shop-1-2 | A8 | coverage: 72 Tier 1 journeys of 10 features, phone / phone-shop-1; list in _work/items/A8-phone-shop-1-2.txt | todo | _work/A8-phone-shop-1-2.md |  |
 | A8-phone-shop-2-1 | A8 | coverage: 79 Tier 1 journeys of 8 features, phone / phone-shop-2; list in _work/items/A8-phone-shop-2-1.txt | todo | _work/A8-phone-shop-2-1.md |  |
-| A8-panel-screens-2-2 | A8 | coverage: 70 Tier 1 journeys of 10 features, panel / panel-screens-2; list in _work/items/A8-panel-screens-2-2.txt | done | _work/A8-panel-screens-2-2.md | A8 panel-screens-2-2: 70 journeys, 0 full, 48 partial, 22 none; 9 findings (1 S2) |
+| A8-phone-shop-2-2 | A8 | coverage: 79 Tier 1 journeys of 8 features, phone / phone-shop-2; list in _work/items/A8-phone-shop-2-2.txt | todo | _work/A8-phone-shop-2-2.md |  |
 | A8-panel-screens-2-3 | A8 | coverage: 70 Tier 1 journeys of 10 features, panel / panel-screens-2; list in _work/items/A8-panel-screens-2-3.txt | done | _work/A8-panel-screens-2-3.md | A8 panel-screens-2-3: 70 journeys, 0 full, 41 partial, 29 none; 13 findings (1 S2) |
 | A8-panel-screens-2-4 | A8 | coverage: 105 Tier 1 journeys of 9 features, panel / panel-screens-2; list in _work/items/A8-panel-screens-2-4.txt | done | _work/A8-panel-screens-2-4.md | A8 panel-screens-2-4: 105 journeys, 0 full, 95 partial, 10 none; 7 findings (4 S3) |
 | A8-panel-shop-1 | A8 | coverage: 70 Tier 1 journeys of 6 features, panel / panel-shop; list in _work/items/A8-panel-shop-1.txt | done | _work/A8-panel-shop-1.md | A8 panel-shop-1: 70 journeys, 0 full, 46 partial, 24 none; 6 findings (desk reads Sent list S3; test vs journey on staff product list NEEDS DECISION) |
@@ -93,8 +92,9 @@ Counts: 64 todo, 5 in progress, 371 done, 0 blocked. Full list: work-items.jsonl
 | A8-panel-ui-shell-1 | A8 | coverage: 120 Tier 1 journeys of 10 features, panel / panel-ui-shell; list in _work/items/A8-panel-ui-shell-1.txt | done | _work/A8-panel-ui-shell-1.md | A8 panel-ui-shell-1: 120 journeys, 5 full, 71 partial, 44 none; 5 findings (1 S3) |
 | A8-panel-ui-shell-2 | A8 | coverage: 79 Tier 1 journeys of 7 features, panel / panel-ui-shell; list in _work/items/A8-panel-ui-shell-2.txt | done | _work/A8-panel-ui-shell-2.md | A8 panel-ui-shell-2: 79 journeys, 3 full, 63 partial, 13 none; 3 findings |
 | A8-panel-ui-shell-3 | A8 | coverage: 32 Tier 1 journeys of 3 features, panel / panel-ui-shell; list in _work/items/A8-panel-ui-shell-3.txt | done | _work/A8-panel-ui-shell-3.md | A8 panel-ui-shell-3: 32 journeys, 0 full, 31 partial, 1 none; 1 finding |
-(+ 39 more todo items, not shown)
-(+ 363 older done items, not shown)
+| A8-phone-cloud-backup-ai-1 | A8 | coverage: 72 Tier 1 journeys of 11 features, phone / phone-cloud-backup-ai; list in _work/items/A8-phone-cloud-backup-ai-1.txt | done | _work/A8-phone-cloud-backup-ai-1.md | A8 phone-cloud-backup-ai-1: 72 journeys, 6 full, 52 partial, 14 none; 10 findings |
+(+ 38 more todo items, not shown)
+(+ 364 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).

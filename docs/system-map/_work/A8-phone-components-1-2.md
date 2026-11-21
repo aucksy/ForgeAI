@@ -1,2 +1,3 @@
 # A8-phone-components-1-2 checkpoint
 - 2026-11-21 started; 0/116 journeys done
+- checkpoint: 58/116 rows written (1310,1311,1312,1313,1315); findings pending: Play update path, watch install card screen, balance card screen

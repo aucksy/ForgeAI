@@ -2,3 +2,6 @@
 - F-panel-520 done (13 rows). Next F-panel-513.
 - F-panel-513 done (12 rows). Next F-panel-534. ~900 test lines read.
 - F-panel-534 done (6 rows). Next F-panel-515 plans.
+- F-panel-515 done (8 rows). Next F-panel-528 settings. ~1300 lines read.
+- F-panel-528 done (10 rows). Next F-panel-504 set up. ~1500 lines read.
+- F-panel-504 done (6 rows). Next F-panel-507 Today. ~1700 lines read.
