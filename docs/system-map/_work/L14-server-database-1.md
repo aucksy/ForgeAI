@@ -1,0 +1,1 @@
+- 2026-11-21 L14.1-L14.5 done; 4 new findings, 3 reused; output written
