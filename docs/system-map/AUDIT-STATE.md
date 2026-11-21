@@ -53,7 +53,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | CAL | 0 | 5 (start value) |
 | A8r | 1 | 4.9 (197k tokens) |
 | A8 | 97 | 5.9 (235k tokens) |
-| L19 | 19 | 3.7 (147k tokens) |
+| L19 | 20 | 3.7 (147k tokens) |
 | L14 | 2 | 4.1 (164k tokens) |
 | B-run | 0 | 5 (start value) |
 | B-truth | 0 | 5 (start value) |
@@ -69,22 +69,21 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 622 todo, 5 in progress, 455 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 621 todo, 5 in progress, 456 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | L19-phone-screens-1 | L19 | lens 19 (Abuse and misuse) x phone / phone/screens-1: 2 items | in progress | _work/L19-phone-screens-1.md |  |
-| L19-phone-screens-2 | L19 | lens 19 (Abuse and misuse) x phone / phone/screens-2: 2 items | in progress | _work/L19-phone-screens-2.md |  |
 | L19-phone-shop-1 | L19 | lens 19 (Abuse and misuse) x phone / phone/shop-1: 2 items | in progress | _work/L19-phone-shop-1.md |  |
 | L19-phone-shop-2 | L19 | lens 19 (Abuse and misuse) x phone / phone/shop-2: 2 items | in progress | _work/L19-phone-shop-2.md |  |
 | L19-phone-tracker-components-2 | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-components-2: 2 items | in progress | _work/L19-phone-tracker-components-2.md |  |
+| L19-phone-tracker-data | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-data: 2 items | in progress | _work/L19-phone-tracker-data.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
 | CAL-2 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged | todo | _work/CAL-2.md |  |
 | CAL-3 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-3 ...); output is scored, never merged | todo | _work/CAL-3.md |  |
 | CAL-4 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-4 ...); output is scored, never merged | todo | _work/CAL-4.md |  |
 | CAL-score | coord | coordinator only: C4 score found/partly/missed per seed in calibration/RESULT.md; C5 rewrite a hunt and re-run a missed seed (at most 2 re-runs); then hunts may run on today's code | todo | - |  |
-| L19-phone-tracker-data | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-data: 2 items | todo | _work/L19-phone-tracker-data.md |  |
 | L19-phone-tracker-engine | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-engine: 2 items | todo | _work/L19-phone-tracker-engine.md |  |
 | L19-phone-tracker-lib | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-lib: 2 items | todo | _work/L19-phone-tracker-lib.md |  |
 | L19-phone-tracker-services-1 | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-services-1: 2 items | todo | _work/L19-phone-tracker-services-1.md |  |
@@ -103,16 +102,17 @@ Counts: 622 todo, 5 in progress, 455 done, 0 blocked. Full list: work-items.json
 | L14-panel-logic-1 | L14 | lens 14 (Operations and support) x panel / panel/logic-1: 5 items | todo | _work/L14-panel-logic-1.md |  |
 | L14-panel-logic-2 | L14 | lens 14 (Operations and support) x panel / panel/logic-2: 5 items | todo | _work/L14-panel-logic-2.md |  |
 | L14-panel-pay-machines | L14 | lens 14 (Operations and support) x panel / panel/pay-machines: 5 items | todo | _work/L14-panel-pay-machines.md |  |
-| L19-phone-components-1 | L19 | lens 19 (Abuse and misuse) x phone / phone/components-1: 2 items | done | _work/L19-phone-components-1.md | L19 phone-components-1: 2 items, 0 findings |
+| L14-panel-screens-1 | L14 | lens 14 (Operations and support) x panel / panel/screens-1: 5 items | todo | _work/L14-panel-screens-1.md |  |
 | L19-phone-components-2 | L19 | lens 19 (Abuse and misuse) x phone / phone/components-2: 2 items | done | _work/L19-phone-components-2.md | L19 phone-components-2: 2 items, 1 finding S3 (voice box limit dodged on IPv6) |
 | L19-phone-lib-core | L19 | lens 19 (Abuse and misuse) x phone / phone/lib-core: 2 items | done | _work/L19-phone-lib-core.md | L19 phone-lib-core: 2 items, 3 findings (S3 Plus never checked by a server) |
 | L19-phone-native | L19 | lens 19 (Abuse and misuse) x phone / phone/native: 2 items | done | _work/L19-phone-native.md | L19 phone-native: 2 items, 0 new findings (2 reused) |
 | L19-phone-onboarding-db | L19 | lens 19 (Abuse and misuse) x phone / phone/onboarding-db: 2 items | done | _work/L19-phone-onboarding-db.md | L19 phone-onboarding-db: 2 items, 1 finding S4 (staff list rotation gives friends free Plus) |
+| L19-phone-screens-2 | L19 | lens 19 (Abuse and misuse) x phone / phone/screens-2: 2 items | done | _work/L19-phone-screens-2.md | L19 phone-screens-2: 2 items, 0 new findings (8 reused) |
 | L19-phone-tracker-components-1 | L19 | lens 19 (Abuse and misuse) x phone / phone/tracker-components-1: 2 items | done | _work/L19-phone-tracker-components-1.md | L19 phone-tracker-components-1: 2 items, 1 finding S4 (chart first view skips the 3-month limit) |
 | L14-hq-app | L14 | lens 14 (Operations and support) x hq / hq/app: 5 items | done | _work/L14-hq-app.md | L14 hq-app: 5 items, 8 findings (S2 feedback questions can never be answered) |
 | L14-panel-assistant | L14 | lens 14 (Operations and support) x panel / panel/assistant: 5 items | done | _work/L14-panel-assistant.md | L14 panel-assistant: 5 items, 6 findings (S2 AI Assistant vanishes silently when its key is missing) |
-(+ 597 more todo items, not shown)
-(+ 447 older done items, not shown)
+(+ 596 more todo items, not shown)
+(+ 448 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).

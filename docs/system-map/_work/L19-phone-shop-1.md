@@ -1,0 +1,3 @@
+# Checkpoint L19-phone-shop-1
+- L19.1 checked: new FN-L19-phone-shop-1-01 (shared 300/day lead cap, app leads need no number); reused panel-logic-2-01 (fixed-code check-in from home), panel-logic-1-02 (leaderboard/challenge self-logged), panel-shop-02 (fake app members: orders, messages, friend enquiries), L3-server-database-1-01 (join code guessing), phone-onboarding-db-01 (staff Plus shared via PIN door), panel-ui-shell-02 (typed number at check-in). Pay status comes from the server, no "I paid" button.
+- L19.2 checked, no finding: no AI call in this area; member messages, trainer questions and requests go to people; panel assistant context does not read them.
