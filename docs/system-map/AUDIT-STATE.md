@@ -61,7 +61,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L7 | 37 | 3.2 (128k tokens) |
 | L8 | 37 | 1.3 (51k tokens) |
 | L9 | 31 | 1.4 (55k tokens) |
-| L12 | 12 | 1.3 (53k tokens) |
+| L12 | 13 | 1.3 (52k tokens) |
 | L16 | 1 | 3.4 (136k tokens) |
 | H5 | 0 | 5 (start value) |
 | B-alerts | 0 | 5 (start value) |
@@ -70,11 +70,10 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 454 todo, 2 in progress, 626 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 454 todo, 1 in progress, 627 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L12-phone-cloud-backup-ai | L12 | lens 12 (Platform and store rules) x phone / phone/cloud-backup-ai: 3 items | in progress | _work/L12-phone-cloud-backup-ai.md |  |
 | L12-phone-components-1 | L12 | lens 12 (Platform and store rules) x phone / phone/components-1: 3 items | in progress | _work/L12-phone-components-1.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
@@ -101,16 +100,16 @@ Counts: 454 todo, 2 in progress, 626 done, 0 blocked. Full list: work-items.json
 | B-run-panel-screens-1-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-1: 11 items | todo | _work/B-run-panel-screens-1-a.md |  |
 | B-run-panel-screens-1-b | B-run | B-run (Silent fallbacks) x panel / panel/screens-1: 6 items | todo | _work/B-run-panel-screens-1-b.md |  |
 | B-run-panel-screens-2-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-2: 11 items | todo | _work/B-run-panel-screens-2-a.md |  |
-| L12-panel-logic-1 | L12 | lens 12 (Platform and store rules) x panel / panel/logic-1: 3 items | done | _work/L12-panel-logic-1.md | 3/3 items, 0 new, 1 reused |
 | L12-panel-logic-2 | L12 | lens 12 (Platform and store rules) x panel / panel/logic-2: 3 items | done | _work/L12-panel-logic-2.md | 3/3 items, 0 new, 1 reused |
 | L12-panel-pay-machines | L12 | lens 12 (Platform and store rules) x panel / panel/pay-machines: 3 items | done | _work/L12-panel-pay-machines.md | 3/3 items, 0 findings |
 | L12-panel-screens-1 | L12 | lens 12 (Platform and store rules) x panel / panel/screens-1: 3 items | done | _work/L12-panel-screens-1.md | 3/3 items, 0 findings |
 | L12-panel-screens-2 | L12 | lens 12 (Platform and store rules) x panel / panel/screens-2: 3 items | done | _work/L12-panel-screens-2.md | 3/3 items, 1 new S4 (web page photos of members with no consent check), 1 reused |
 | L12-panel-shop | L12 | lens 12 (Platform and store rules) x panel / panel/shop: 3 items | done | _work/L12-panel-shop.md | 3/3 items, 1 new S4 (product photo upload has no rights note), 1 reused |
 | L12-panel-ui-shell | L12 | lens 12 (Platform and store rules) x panel / panel/ui-shell: 3 items | done | _work/L12-panel-ui-shell.md | 3/3 items, 0 new findings |
+| L12-phone-cloud-backup-ai | L12 | lens 12 (Platform and store rules) x phone / phone/cloud-backup-ai: 3 items | done | _work/L12-phone-cloud-backup-ai.md | 3/3 items, 1 new S3 (hidden AI coach has no health safety rules or report button) |
 | L16-hq-app | L16 | lens 16 (Code health) x hq / hq/app: 2 items | done | _work/L16-hq-app.md | L16 hq-app: 2 items, 1 finding S3 (Needs you says All clear when it cannot read) |
 (+ 429 more todo items, not shown)
-(+ 618 older done items, not shown)
+(+ 619 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
