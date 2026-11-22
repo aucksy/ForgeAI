@@ -61,7 +61,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L7 | 37 | 3.2 (128k tokens) |
 | L8 | 37 | 1.3 (51k tokens) |
 | L9 | 31 | 1.4 (55k tokens) |
-| L12 | 2 | 3.1 (125k tokens) |
+| L12 | 3 | 2.3 (93k tokens) |
 | L16 | 1 | 3.4 (136k tokens) |
 | H5 | 0 | 5 (start value) |
 | B-alerts | 0 | 5 (start value) |
@@ -70,10 +70,13 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 466 todo, 0 in progress, 616 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 462 todo, 3 in progress, 617 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
+| L12-panel-brand-shell | L12 | lens 12 (Platform and store rules) x panel / panel/brand-shell: 3 items | in progress | _work/L12-panel-brand-shell.md |  |
+| L12-panel-forms | L12 | lens 12 (Platform and store rules) x panel / panel/forms: 3 items | in progress | _work/L12-panel-forms.md |  |
+| L12-panel-logic-1 | L12 | lens 12 (Platform and store rules) x panel / panel/logic-1: 3 items | in progress | _work/L12-panel-logic-1.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
 | CAL-2 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged | todo | _work/CAL-2.md |  |
@@ -99,16 +102,16 @@ Counts: 466 todo, 0 in progress, 616 done, 0 blocked. Full list: work-items.json
 | B-run-panel-screens-1-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-1: 11 items | todo | _work/B-run-panel-screens-1-a.md |  |
 | B-run-panel-screens-1-b | B-run | B-run (Silent fallbacks) x panel / panel/screens-1: 6 items | todo | _work/B-run-panel-screens-1-b.md |  |
 | B-run-panel-screens-2-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-2: 11 items | todo | _work/B-run-panel-screens-2-a.md |  |
-| L9-phone-tracker-lib | L9 | lens 9 (Accessibility) x phone / phone/tracker-lib: 3 items | done | _work/L9-phone-tracker-lib.md | 3/3 items, 1 new S3 (share picture preview silent to screen reader), 1 reused |
 | L9-phone-tracker-services-1 | L9 | lens 9 (Accessibility) x phone / phone/tracker-services-1: 3 items | done | _work/L9-phone-tracker-services-1.md | 3/3 items, 0 findings (logic only) |
 | L9-phone-tracker-services-2 | L9 | lens 9 (Accessibility) x phone / phone/tracker-services-2: 3 items | done | _work/L9-phone-tracker-services-2.md | 3/3 items, 1 new S3 (closing 'Update routine?' loses the update for good), 1 reused |
 | L9-watch-app | L9 | lens 9 (Accessibility) x watch / watch/app: 3 items | done | _work/L9-watch-app.md | 3/3 items, 5 new (4 S3: Done/Go buttons unnamed; small tap targets; text size ignored; heart rate never offered again after Not now; 1 S4) |
 | L9-web-pages | L9 | lens 9 (Accessibility) x web / web/pages: 3 items | done | _work/L9-web-pages.md | 3/3 items, 4 new S4 (hidden quick bar still focusable; focus ring in gym colour; small dots; photo row hidden scroll) |
 | L12-hq-app | L12 | lens 12 (Platform and store rules) x hq / hq/app: 3 items | done | _work/L12-hq-app.md | L12 hq-app: 3 items, 1 finding S4 (icon licence credit line missing) |
 | L12-panel-assistant | L12 | lens 12 (Platform and store rules) x panel / panel/assistant: 3 items | done | _work/L12-panel-assistant.md | L12 panel-assistant: 3 items, 2 findings (S3 no way to stop WhatsApp offers to a member) |
+| L12-panel-auth-data | L12 | lens 12 (Platform and store rules) x panel / panel/auth-data: 3 items | done | _work/L12-panel-auth-data.md | 3/3 items, 0 findings |
 | L16-hq-app | L16 | lens 16 (Code health) x hq / hq/app: 2 items | done | _work/L16-hq-app.md | L16 hq-app: 2 items, 1 finding S3 (Needs you says All clear when it cannot read) |
-(+ 441 more todo items, not shown)
-(+ 608 older done items, not shown)
+(+ 437 more todo items, not shown)
+(+ 609 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
