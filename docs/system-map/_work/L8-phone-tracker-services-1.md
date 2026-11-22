@@ -1,0 +1,2 @@
+# L8-phone-tracker-services-1 checkpoint
+- 2026-11-22 L8.1 L8.2 L8.3 done (lens 8 grid row + 1 finding FN-L8-phone-tracker-services-1-01). Groq note uses the member's own key (no MettleUp spend, falls back quietly); gym syncs throttled 10 min, fail quietly; photo backup capped 15 MB/22 MB total; no warning when the workout data alone passes Android's 25 MB backup limit.

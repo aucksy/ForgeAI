@@ -59,7 +59,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-run | 0 | 5 (start value) |
 | B-truth | 0 | 5 (start value) |
 | L7 | 37 | 3.2 (128k tokens) |
-| L8 | 26 | 1.4 (54k tokens) |
+| L8 | 27 | 1.3 (54k tokens) |
 | L9 | 2 | 4.1 (163k tokens) |
 | L12 | 2 | 3.1 (125k tokens) |
 | L16 | 1 | 3.4 (136k tokens) |
@@ -70,10 +70,13 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 506 todo, 0 in progress, 576 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 502 todo, 3 in progress, 577 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
+| L8-phone-tracker-services-1 | L8 | lens 8 (Cost and limits) x phone / phone/tracker-services-1: 3 items | in progress | _work/L8-phone-tracker-services-1.md |  |
+| L8-phone-tracker-services-2 | L8 | lens 8 (Cost and limits) x phone / phone/tracker-services-2: 3 items | in progress | _work/L8-phone-tracker-services-2.md |  |
+| L8-server-ci-workflows | L8 | lens 8 (Cost and limits) x server / server/ci-workflows: 3 items | in progress | _work/L8-server-ci-workflows.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
 | CAL-2 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged | todo | _work/CAL-2.md |  |
@@ -99,16 +102,16 @@ Counts: 506 todo, 0 in progress, 576 done, 0 blocked. Full list: work-items.json
 | B-run-panel-screens-1-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-1: 11 items | todo | _work/B-run-panel-screens-1-a.md |  |
 | B-run-panel-screens-1-b | B-run | B-run (Silent fallbacks) x panel / panel/screens-1: 6 items | todo | _work/B-run-panel-screens-1-b.md |  |
 | B-run-panel-screens-2-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-2: 11 items | todo | _work/B-run-panel-screens-2-a.md |  |
-| L8-phone-tracker-components-2 | L8 | lens 8 (Cost and limits) x phone / phone/tracker-components-2: 3 items | done | _work/L8-phone-tracker-components-2.md | 3/3 items, 0 findings (no paid services in area) |
 | L8-phone-tracker-data | L8 | lens 8 (Cost and limits) x phone / phone/tracker-data: 3 items | done | _work/L8-phone-tracker-data.md | 3/3 items, 0 findings (area uses no paid services) |
 | L8-phone-tracker-engine | L8 | lens 8 (Cost and limits) x phone / phone/tracker-engine: 3 items | done | _work/L8-phone-tracker-engine.md | 3/3 items, 1 new S4 (exercise clips never cleared, could pass 200 MB), 1 reused |
+| L8-phone-tracker-lib | L8 | lens 8 (Cost and limits) x phone / phone/tracker-lib: 3 items | done | _work/L8-phone-tracker-lib.md | 3/3 items, 0 findings (no paid calls in area) |
 | L9-hq-app | L9 | lens 9 (Accessibility) x hq / hq/app: 3 items | done | _work/L9-hq-app.md | L9 hq-app: 3 items, 12 findings (S3 faint orange text in light mode; hint-only boxes) |
 | L9-panel-assistant | L9 | lens 9 (Accessibility) x panel / panel/assistant: 3 items | done | _work/L9-panel-assistant.md | L9 panel-assistant: 3 items, 10 findings (S3 side panel traps keyboard; answer arrival never announced) |
 | L12-hq-app | L12 | lens 12 (Platform and store rules) x hq / hq/app: 3 items | done | _work/L12-hq-app.md | L12 hq-app: 3 items, 1 finding S4 (icon licence credit line missing) |
 | L12-panel-assistant | L12 | lens 12 (Platform and store rules) x panel / panel/assistant: 3 items | done | _work/L12-panel-assistant.md | L12 panel-assistant: 3 items, 2 findings (S3 no way to stop WhatsApp offers to a member) |
 | L16-hq-app | L16 | lens 16 (Code health) x hq / hq/app: 2 items | done | _work/L16-hq-app.md | L16 hq-app: 2 items, 1 finding S3 (Needs you says All clear when it cannot read) |
-(+ 481 more todo items, not shown)
-(+ 568 older done items, not shown)
+(+ 477 more todo items, not shown)
+(+ 569 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
