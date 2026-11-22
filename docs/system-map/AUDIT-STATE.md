@@ -62,7 +62,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L8 | 37 | 1.3 (51k tokens) |
 | L9 | 31 | 1.4 (55k tokens) |
 | L12 | 37 | 1.2 (50k tokens) |
-| L16 | 9 | 1.6 (65k tokens) |
+| L16 | 10 | 1.5 (62k tokens) |
 | H5 | 0 | 5 (start value) |
 | B-alerts | 0 | 5 (start value) |
 | B-switch | 0 | 5 (start value) |
@@ -70,11 +70,10 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 422 todo, 1 in progress, 659 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 422 todo, 0 in progress, 660 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L16-panel-screens-2 | L16 | lens 16 (Code health) x panel / panel/screens-2: 2 items | in progress | _work/L16-panel-screens-2.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
 | CAL-2 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged | todo | _work/CAL-2.md |  |
@@ -100,7 +99,6 @@ Counts: 422 todo, 1 in progress, 659 done, 0 blocked. Full list: work-items.json
 | B-run-panel-screens-1-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-1: 11 items | todo | _work/B-run-panel-screens-1-a.md |  |
 | B-run-panel-screens-1-b | B-run | B-run (Silent fallbacks) x panel / panel/screens-1: 6 items | todo | _work/B-run-panel-screens-1-b.md |  |
 | B-run-panel-screens-2-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-2: 11 items | todo | _work/B-run-panel-screens-2-a.md |  |
-| L16-panel-assistant | L16 | lens 16 (Code health) x panel / panel/assistant: 2 items | done | _work/L16-panel-assistant.md | 2/2 items, 4 new S4 (Later send time uses device clock; date wording in 3 places; unused code) |
 | L16-panel-auth-data | L16 | lens 16 (Code health) x panel / panel/auth-data: 2 items | done | _work/L16-panel-auth-data.md | 2/2 items, 3 new (S2 a refused retry is not treated as final, so every later desk action fails until reload, untested; 2 S4) |
 | L16-panel-brand-shell | L16 | lens 16 (Code health) x panel / panel/brand-shell: 2 items | done | _work/L16-panel-brand-shell.md | 2/2 items, 3 new S4 (800 dead lines of old panel; 4 drifted picture readers; weak refresh test), 1 reused |
 | L16-panel-forms | L16 | lens 16 (Code health) x panel / panel/forms: 2 items | done | _work/L16-panel-forms.md | 2/2 items, 2 new (S3 sell sheet accepts mistyped year, plan saves already ended; S4 word-only tests), 3 reused |
@@ -108,8 +106,9 @@ Counts: 422 todo, 1 in progress, 659 done, 0 blocked. Full list: work-items.json
 | L16-panel-logic-2 | L16 | lens 16 (Code health) x panel / panel/logic-2: 2 items | done | _work/L16-panel-logic-2.md | 2/2 items, 5 new (S3 Pay MettleUp amount box reads 1499,50 as Rs 1,49,950; 4 S4) |
 | L16-panel-pay-machines | L16 | lens 16 (Code health) x panel / panel/pay-machines: 2 items | done | _work/L16-panel-pay-machines.md | 2/2 items, 3 new (S3 partly-read machine upload still acknowledged, check-ins can be lost; 2 S4) |
 | L16-panel-screens-1 | L16 | lens 16 (Code health) x panel / panel/screens-1: 2 items | done | _work/L16-panel-screens-1.md | 2/2 items, 3 new (S3 Bring a friend and Busy machines cards vanish silently on first failed check; 2 S4), 5 reused |
+| L16-panel-screens-2 | L16 | lens 16 (Code health) x panel / panel/screens-2: 2 items | done | _work/L16-panel-screens-2.md | 2/2 items, 3 new S4, 2 reused |
 (+ 397 more todo items, not shown)
-(+ 651 older done items, not shown)
+(+ 652 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
