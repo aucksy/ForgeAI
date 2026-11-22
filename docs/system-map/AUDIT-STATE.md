@@ -61,7 +61,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L7 | 37 | 3.2 (128k tokens) |
 | L8 | 37 | 1.3 (51k tokens) |
 | L9 | 31 | 1.4 (55k tokens) |
-| L12 | 22 | 1.3 (54k tokens) |
+| L12 | 23 | 1.4 (54k tokens) |
 | L16 | 1 | 3.4 (136k tokens) |
 | H5 | 0 | 5 (start value) |
 | B-alerts | 0 | 5 (start value) |
@@ -70,10 +70,13 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 446 todo, 0 in progress, 636 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 442 todo, 3 in progress, 637 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
+| L12-phone-tracker-components-2 | L12 | lens 12 (Platform and store rules) x phone / phone/tracker-components-2: 3 items | in progress | _work/L12-phone-tracker-components-2.md |  |
+| L12-phone-tracker-data | L12 | lens 12 (Platform and store rules) x phone / phone/tracker-data: 3 items | in progress | _work/L12-phone-tracker-data.md |  |
+| L12-phone-tracker-engine | L12 | lens 12 (Platform and store rules) x phone / phone/tracker-engine: 3 items | in progress | _work/L12-phone-tracker-engine.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
 | CAL-2 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged | todo | _work/CAL-2.md |  |
@@ -99,16 +102,16 @@ Counts: 446 todo, 0 in progress, 636 done, 0 blocked. Full list: work-items.json
 | B-run-panel-screens-1-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-1: 11 items | todo | _work/B-run-panel-screens-1-a.md |  |
 | B-run-panel-screens-1-b | B-run | B-run (Silent fallbacks) x panel / panel/screens-1: 6 items | todo | _work/B-run-panel-screens-1-b.md |  |
 | B-run-panel-screens-2-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-2: 11 items | todo | _work/B-run-panel-screens-2-a.md |  |
-| L12-phone-lib-core | L12 | lens 12 (Platform and store rules) x phone / phone/lib-core: 3 items | done | _work/L12-phone-lib-core.md | 3/3 items, 3 new (S3 iPhone Plus would tell members to pay via Google Play; 2 S4 licence notices and RepDB credit), 3 reused |
 | L12-phone-native | L12 | lens 12 (Platform and store rules) x phone / phone/native: 3 items | done | _work/L12-phone-native.md | 3/3 items, 3 new S4 (unused draw-over-apps permission; no licence notices; rest chime source unknown - needs owner) |
 | L12-phone-onboarding-db | L12 | lens 12 (Platform and store rules) x phone / phone/onboarding-db: 3 items | done | _work/L12-phone-onboarding-db.md | 3/3 items, 1 new S4 (no Sign in with Apple), 1 linked |
 | L12-phone-screens-1 | L12 | lens 12 (Platform and store rules) x phone / phone/screens-1: 3 items | done | _work/L12-phone-screens-1.md | 3/3 items, 3 new (S3 Hevy import scrapes Hevy page against its terms - needs owner; S3 EU trader status due 1 Feb 2027 - needs owner; S4 Android 15 bars), 5 reused |
 | L12-phone-screens-2 | L12 | lens 12 (Platform and store rules) x phone / phone/screens-2: 3 items | done | _work/L12-phone-screens-2.md | 3/3 items, 2 new (S2 Install on watch offered to all but watch app only on test tracks; S3 Plus page lacks renewal/cancel words), 5 reused |
 | L12-phone-shop-1 | L12 | lens 12 (Platform and store rules) x phone / phone/shop-1: 3 items | done | _work/L12-phone-shop-1.md | 3/3 items, 0 new, 6 reused |
 | L12-phone-shop-2 | L12 | lens 12 (Platform and store rules) x phone / phone/shop-2: 3 items | done | _work/L12-phone-shop-2.md | 3/3 items, 1 new S4 (gym messages switch shown on iPhone where it does nothing), 6 reused |
+| L12-phone-tracker-components-1 | L12 | lens 12 (Platform and store rules) x phone / phone/tracker-components-1: 3 items | done | _work/L12-phone-tracker-components-1.md | 3/3 items, 0 new, 4 reused |
 | L16-hq-app | L16 | lens 16 (Code health) x hq / hq/app: 2 items | done | _work/L16-hq-app.md | L16 hq-app: 2 items, 1 finding S3 (Needs you says All clear when it cannot read) |
-(+ 421 more todo items, not shown)
-(+ 628 older done items, not shown)
+(+ 417 more todo items, not shown)
+(+ 629 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
