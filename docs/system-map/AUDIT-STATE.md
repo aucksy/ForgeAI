@@ -60,7 +60,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-truth | 0 | 5 (start value) |
 | L7 | 37 | 3.2 (128k tokens) |
 | L8 | 37 | 1.3 (51k tokens) |
-| L9 | 18 | 1.6 (64k tokens) |
+| L9 | 19 | 1.6 (63k tokens) |
 | L12 | 2 | 3.1 (125k tokens) |
 | L16 | 1 | 3.4 (136k tokens) |
 | H5 | 0 | 5 (start value) |
@@ -70,11 +70,10 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 478 todo, 1 in progress, 603 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 478 todo, 0 in progress, 604 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L9-phone-screens-1 | L9 | lens 9 (Accessibility) x phone / phone/screens-1: 3 items | in progress | _work/L9-phone-screens-1.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
 | CAL-2 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged | todo | _work/CAL-2.md |  |
@@ -100,16 +99,16 @@ Counts: 478 todo, 1 in progress, 603 done, 0 blocked. Full list: work-items.json
 | B-run-panel-screens-1-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-1: 11 items | todo | _work/B-run-panel-screens-1-a.md |  |
 | B-run-panel-screens-1-b | B-run | B-run (Silent fallbacks) x panel / panel/screens-1: 6 items | todo | _work/B-run-panel-screens-1-b.md |  |
 | B-run-panel-screens-2-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-2: 11 items | todo | _work/B-run-panel-screens-2-a.md |  |
-| L9-phone-components-1 | L9 | lens 9 (Accessibility) x phone / phone/components-1: 3 items | done | _work/L9-phone-components-1.md | 3/3 items, 6 new S4 (coach mic hold-only; chat speakers unclear; colour-only best set; no phone a11y check) |
 | L9-phone-components-2 | L9 | lens 9 (Accessibility) x phone / phone/components-2: 3 items | done | _work/L9-phone-components-2.md | 3/3 items, 6 new (3 S3: Undo timer not read; sync sign-in boxes unnamed; failure messages not read; 3 S4) |
 | L9-phone-lib-core | L9 | lens 9 (Accessibility) x phone / phone/lib-core: 3 items | done | _work/L9-phone-lib-core.md | 3/3 items, 0 findings |
 | L9-phone-native | L9 | lens 9 (Accessibility) x phone / phone/native: 3 items | done | _work/L9-phone-native.md | 3/3 items, 2 new (S3 widget small words ~3:1 contrast in light mode; S4 Stop looks untappable) |
 | L9-phone-onboarding-db | L9 | lens 9 (Accessibility) x phone / phone/onboarding-db: 3 items | done | _work/L9-phone-onboarding-db.md | 3/3 items, 3 new (2 S3: WhatsApp check result and failed save not read out; 1 S4), 1 reused |
+| L9-phone-screens-1 | L9 | lens 9 (Accessibility) x phone / phone/screens-1: 3 items | done | _work/L9-phone-screens-1.md | 3/3 items, 4 new (1 S3 Body page own entries look like trainer's; 3 S4), 1 reused |
 | L12-hq-app | L12 | lens 12 (Platform and store rules) x hq / hq/app: 3 items | done | _work/L12-hq-app.md | L12 hq-app: 3 items, 1 finding S4 (icon licence credit line missing) |
 | L12-panel-assistant | L12 | lens 12 (Platform and store rules) x panel / panel/assistant: 3 items | done | _work/L12-panel-assistant.md | L12 panel-assistant: 3 items, 2 findings (S3 no way to stop WhatsApp offers to a member) |
 | L16-hq-app | L16 | lens 16 (Code health) x hq / hq/app: 2 items | done | _work/L16-hq-app.md | L16 hq-app: 2 items, 1 finding S3 (Needs you says All clear when it cannot read) |
 (+ 453 more todo items, not shown)
-(+ 595 older done items, not shown)
+(+ 596 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
