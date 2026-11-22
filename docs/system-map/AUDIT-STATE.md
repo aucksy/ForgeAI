@@ -60,7 +60,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-truth | 0 | 5 (start value) |
 | L7 | 37 | 3.2 (128k tokens) |
 | L8 | 37 | 1.3 (51k tokens) |
-| L9 | 7 | 2.0 (79k tokens) |
+| L9 | 8 | 1.9 (77k tokens) |
 | L12 | 2 | 3.1 (125k tokens) |
 | L16 | 1 | 3.4 (136k tokens) |
 | H5 | 0 | 5 (start value) |
@@ -70,10 +70,13 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 490 todo, 0 in progress, 592 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 486 todo, 3 in progress, 593 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
+| L9-panel-screens-1 | L9 | lens 9 (Accessibility) x panel / panel/screens-1: 3 items | in progress | _work/L9-panel-screens-1.md |  |
+| L9-panel-screens-2 | L9 | lens 9 (Accessibility) x panel / panel/screens-2: 3 items | in progress | _work/L9-panel-screens-2.md |  |
+| L9-panel-shop | L9 | lens 9 (Accessibility) x panel / panel/shop: 3 items | in progress | _work/L9-panel-shop.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
 | CAL-2 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged | todo | _work/CAL-2.md |  |
@@ -99,16 +102,16 @@ Counts: 490 todo, 0 in progress, 592 done, 0 blocked. Full list: work-items.json
 | B-run-panel-screens-1-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-1: 11 items | todo | _work/B-run-panel-screens-1-a.md |  |
 | B-run-panel-screens-1-b | B-run | B-run (Silent fallbacks) x panel / panel/screens-1: 6 items | todo | _work/B-run-panel-screens-1-b.md |  |
 | B-run-panel-screens-2-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-2: 11 items | todo | _work/B-run-panel-screens-2-a.md |  |
-| L9-panel-auth-data | L9 | lens 9 (Accessibility) x panel / panel/auth-data: 3 items | done | _work/L9-panel-auth-data.md | 3/3 items, 5 new (2 S3: staff buttons read with no name; grey tappable words; 3 S4) |
 | L9-panel-brand-shell | L9 | lens 9 (Accessibility) x panel / panel/brand-shell: 3 items | done | _work/L9-panel-brand-shell.md | 3/3 items, 5 new S4 accessibility faults on Branding, 1 reused |
 | L9-panel-forms | L9 | lens 9 (Accessibility) x panel / panel/forms: 3 items | done | _work/L9-panel-forms.md | 3/3 items, 6 new (3 S3: closing half-filled form discards it without asking; New batch hidden off-screen on phone; Add member errors out of sight; 3 S4), 2 reused |
 | L9-panel-logic-1 | L9 | lens 9 (Accessibility) x panel / panel/logic-1: 3 items | done | _work/L9-panel-logic-1.md | 1 checked + 2 n/a, 0 findings |
 | L9-panel-logic-2 | L9 | lens 9 (Accessibility) x panel / panel/logic-2: 3 items | done | _work/L9-panel-logic-2.md | 1 checked + 2 n/a, 0 findings |
+| L9-panel-pay-machines | L9 | lens 9 (Accessibility) x panel / panel/pay-machines: 3 items | done | _work/L9-panel-pay-machines.md | 3/3 items, 4 new (2 S3: failed payment link names buttons that are not there; branch picker arrow keys open branches; 2 S4), 3 reused |
 | L12-hq-app | L12 | lens 12 (Platform and store rules) x hq / hq/app: 3 items | done | _work/L12-hq-app.md | L12 hq-app: 3 items, 1 finding S4 (icon licence credit line missing) |
 | L12-panel-assistant | L12 | lens 12 (Platform and store rules) x panel / panel/assistant: 3 items | done | _work/L12-panel-assistant.md | L12 panel-assistant: 3 items, 2 findings (S3 no way to stop WhatsApp offers to a member) |
 | L16-hq-app | L16 | lens 16 (Code health) x hq / hq/app: 2 items | done | _work/L16-hq-app.md | L16 hq-app: 2 items, 1 finding S3 (Needs you says All clear when it cannot read) |
-(+ 465 more todo items, not shown)
-(+ 584 older done items, not shown)
+(+ 461 more todo items, not shown)
+(+ 585 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
