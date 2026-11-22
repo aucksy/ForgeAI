@@ -58,7 +58,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L14 | 37 | 3.7 (147k tokens) |
 | B-run | 0 | 5 (start value) |
 | B-truth | 0 | 5 (start value) |
-| L7 | 33 | 3.4 (136k tokens) |
+| L7 | 34 | 3.3 (134k tokens) |
 | L8 | 2 | 4.0 (159k tokens) |
 | L9 | 2 | 4.1 (163k tokens) |
 | L12 | 2 | 3.1 (125k tokens) |
@@ -70,10 +70,13 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 534 todo, 0 in progress, 548 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 530 todo, 3 in progress, 549 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
+| L7-server-panel-worker | L7 | lens 7 (Speed) x server / server/panel-worker: 5 items | in progress | _work/L7-server-panel-worker.md |  |
+| L7-watch-app | L7 | lens 7 (Speed) x watch / watch/app: 5 items | in progress | _work/L7-watch-app.md |  |
+| L7-web-pages | L7 | lens 7 (Speed) x web / web/pages: 5 items | in progress | _work/L7-web-pages.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
 | CAL-2 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged | todo | _work/CAL-2.md |  |
@@ -99,7 +102,7 @@ Counts: 534 todo, 0 in progress, 548 done, 0 blocked. Full list: work-items.json
 | B-run-panel-screens-1-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-1: 11 items | todo | _work/B-run-panel-screens-1-a.md |  |
 | B-run-panel-screens-1-b | B-run | B-run (Silent fallbacks) x panel / panel/screens-1: 6 items | todo | _work/B-run-panel-screens-1-b.md |  |
 | B-run-panel-screens-2-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-2: 11 items | todo | _work/B-run-panel-screens-2-a.md |  |
-| L7-server-database-3 | L7 | lens 7 (Speed) x server / server/database-3: 5 items | done | _work/L7-server-database-3.md | 2 S4 findings (7 links without an index; direct-read record search can't use its gym index), 5/5 items covered |
+| L7-server-hq-gate-workers | L7 | lens 7 (Speed) x server / server/hq-gate-workers: 5 items | done | _work/L7-server-hq-gate-workers.md | 5/5 items, 2 new S3 findings (gym pop-ups ~30 phones/min; online-payment alert reads every old paid request each minute), 4 reused |
 | L8-hq-app | L8 | lens 8 (Cost and limits) x hq / hq/app: 3 items | done | _work/L8-hq-app.md | L8 hq-app: 3 items, 4 findings (S2 AI cost shown too low; Cloudflare limit warning too late) |
 | L8-panel-assistant | L8 | lens 8 (Cost and limits) x panel / panel/assistant: 3 items | done | _work/L8-panel-assistant.md | L8 panel-assistant: 3 items, 4 findings (S3 shared trial AI pool runs dry with no warning) |
 | L9-hq-app | L9 | lens 9 (Accessibility) x hq / hq/app: 3 items | done | _work/L9-hq-app.md | L9 hq-app: 3 items, 12 findings (S3 faint orange text in light mode; hint-only boxes) |
@@ -107,8 +110,8 @@ Counts: 534 todo, 0 in progress, 548 done, 0 blocked. Full list: work-items.json
 | L12-hq-app | L12 | lens 12 (Platform and store rules) x hq / hq/app: 3 items | done | _work/L12-hq-app.md | L12 hq-app: 3 items, 1 finding S4 (icon licence credit line missing) |
 | L12-panel-assistant | L12 | lens 12 (Platform and store rules) x panel / panel/assistant: 3 items | done | _work/L12-panel-assistant.md | L12 panel-assistant: 3 items, 2 findings (S3 no way to stop WhatsApp offers to a member) |
 | L16-hq-app | L16 | lens 16 (Code health) x hq / hq/app: 2 items | done | _work/L16-hq-app.md | L16 hq-app: 2 items, 1 finding S3 (Needs you says All clear when it cannot read) |
-(+ 509 more todo items, not shown)
-(+ 540 older done items, not shown)
+(+ 505 more todo items, not shown)
+(+ 541 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
