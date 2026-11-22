@@ -59,7 +59,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-run | 0 | 5 (start value) |
 | B-truth | 0 | 5 (start value) |
 | L7 | 37 | 3.2 (128k tokens) |
-| L8 | 31 | 1.3 (51k tokens) |
+| L8 | 32 | 1.3 (51k tokens) |
 | L9 | 2 | 4.1 (163k tokens) |
 | L12 | 2 | 3.1 (125k tokens) |
 | L16 | 1 | 3.4 (136k tokens) |
@@ -70,11 +70,10 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 498 todo, 3 in progress, 581 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 498 todo, 2 in progress, 582 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L8-server-database-2 | L8 | lens 8 (Cost and limits) x server / server/database-2: 3 items | in progress | _work/L8-server-database-2.md |  |
 | L8-server-database-3 | L8 | lens 8 (Cost and limits) x server / server/database-3: 3 items | in progress | _work/L8-server-database-3.md |  |
 | L8-server-hq-gate-workers | L8 | lens 8 (Cost and limits) x server / server/hq-gate-workers: 3 items | in progress | _work/L8-server-hq-gate-workers.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
@@ -102,16 +101,16 @@ Counts: 498 todo, 3 in progress, 581 done, 0 blocked. Full list: work-items.json
 | B-run-panel-screens-1-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-1: 11 items | todo | _work/B-run-panel-screens-1-a.md |  |
 | B-run-panel-screens-1-b | B-run | B-run (Silent fallbacks) x panel / panel/screens-1: 6 items | todo | _work/B-run-panel-screens-1-b.md |  |
 | B-run-panel-screens-2-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-2: 11 items | todo | _work/B-run-panel-screens-2-a.md |  |
-| L8-phone-tracker-services-2 | L8 | lens 8 (Cost and limits) x phone / phone/tracker-services-2: 3 items | done | _work/L8-phone-tracker-services-2.md | 3/3 items, 0 findings |
 | L8-server-ci-workflows | L8 | lens 8 (Cost and limits) x server / server/ci-workflows: 3 items | done | _work/L8-server-ci-workflows.md | 3/3 items, 1 new S3 (CI stores ~401 GB of build files; free only while repo is public), 2 reused |
 | L8-server-database-1 | L8 | lens 8 (Cost and limits) x server / server/database-1: 3 items | done | _work/L8-server-database-1.md | 3/3 items, 2 new (S2 one gym's unlimited ~20 MB saves can fill shared 500 MB database; S3 receipt history never cleared), 7 reused |
+| L8-server-database-2 | L8 | lens 8 (Cost and limits) x server / server/database-2: 3 items | done | _work/L8-server-database-2.md | 3/3 items, 3 new (S2 7 nightly backups fill free 1 GB store at ~140 MB each, no warning; 2 S3), 6 reused |
 | L9-hq-app | L9 | lens 9 (Accessibility) x hq / hq/app: 3 items | done | _work/L9-hq-app.md | L9 hq-app: 3 items, 12 findings (S3 faint orange text in light mode; hint-only boxes) |
 | L9-panel-assistant | L9 | lens 9 (Accessibility) x panel / panel/assistant: 3 items | done | _work/L9-panel-assistant.md | L9 panel-assistant: 3 items, 10 findings (S3 side panel traps keyboard; answer arrival never announced) |
 | L12-hq-app | L12 | lens 12 (Platform and store rules) x hq / hq/app: 3 items | done | _work/L12-hq-app.md | L12 hq-app: 3 items, 1 finding S4 (icon licence credit line missing) |
 | L12-panel-assistant | L12 | lens 12 (Platform and store rules) x panel / panel/assistant: 3 items | done | _work/L12-panel-assistant.md | L12 panel-assistant: 3 items, 2 findings (S3 no way to stop WhatsApp offers to a member) |
 | L16-hq-app | L16 | lens 16 (Code health) x hq / hq/app: 2 items | done | _work/L16-hq-app.md | L16 hq-app: 2 items, 1 finding S3 (Needs you says All clear when it cannot read) |
 (+ 473 more todo items, not shown)
-(+ 573 older done items, not shown)
+(+ 574 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
