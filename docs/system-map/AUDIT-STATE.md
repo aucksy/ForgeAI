@@ -62,7 +62,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L8 | 37 | 1.3 (51k tokens) |
 | L9 | 31 | 1.4 (55k tokens) |
 | L12 | 37 | 1.2 (50k tokens) |
-| L16 | 16 | 1.5 (58k tokens) |
+| L16 | 17 | 1.5 (59k tokens) |
 | H5 | 0 | 5 (start value) |
 | B-alerts | 0 | 5 (start value) |
 | B-switch | 0 | 5 (start value) |
@@ -70,11 +70,10 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 414 todo, 2 in progress, 666 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 414 todo, 1 in progress, 667 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L16-phone-native | L16 | lens 16 (Code health) x phone / phone/native: 2 items | in progress | _work/L16-phone-native.md |  |
 | L16-phone-onboarding-db | L16 | lens 16 (Code health) x phone / phone/onboarding-db: 2 items | in progress | _work/L16-phone-onboarding-db.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
@@ -101,7 +100,6 @@ Counts: 414 todo, 2 in progress, 666 done, 0 blocked. Full list: work-items.json
 | B-run-panel-screens-1-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-1: 11 items | todo | _work/B-run-panel-screens-1-a.md |  |
 | B-run-panel-screens-1-b | B-run | B-run (Silent fallbacks) x panel / panel/screens-1: 6 items | todo | _work/B-run-panel-screens-1-b.md |  |
 | B-run-panel-screens-2-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-2: 11 items | todo | _work/B-run-panel-screens-2-a.md |  |
-| L16-panel-screens-1 | L16 | lens 16 (Code health) x panel / panel/screens-1: 2 items | done | _work/L16-panel-screens-1.md | 2/2 items, 3 new (S3 Bring a friend and Busy machines cards vanish silently on first failed check; 2 S4), 5 reused |
 | L16-panel-screens-2 | L16 | lens 16 (Code health) x panel / panel/screens-2: 2 items | done | _work/L16-panel-screens-2.md | 2/2 items, 3 new S4, 2 reused |
 | L16-panel-shop | L16 | lens 16 (Code health) x panel / panel/shop: 2 items | done | _work/L16-panel-shop.md | 2/2 items, 3 new (S3 MettleUp checkout, desk photos, alerts untested; 2 S4), 4 reused |
 | L16-panel-ui-shell | L16 | lens 16 (Code health) x panel / panel/ui-shell: 2 items | done | _work/L16-panel-ui-shell.md | 2/2 items, 3 new S4 (offline payments shown in device time zone; copied India-day rule; 43 of 51 shell files untested) |
@@ -109,8 +107,9 @@ Counts: 414 todo, 2 in progress, 666 done, 0 blocked. Full list: work-items.json
 | L16-phone-components-1 | L16 | lens 16 (Code health) x phone / phone/components-1: 2 items | done | _work/L16-phone-components-1.md | 2/2 items, 3 new (S3 headline-numbers test reads unused Charts loader; 2 S4 ~1,400 dead lines), 1 reused |
 | L16-phone-components-2 | L16 | lens 16 (Code health) x phone / phone/components-2: 2 items | done | _work/L16-phone-components-2.md | 2/2 items, 5 new (S2 restore treats phone as empty when it cannot count and replaces all without asking; 2 S3; 2 S4), 1 reused |
 | L16-phone-lib-core | L16 | lens 16 (Code health) x phone / phone/lib-core: 2 items | done | _work/L16-phone-lib-core.md | 2/2 items, 4 new (S3 old days-in-a-row streak still feeds coach and gym summary; S3 Plus start-up untested; 2 S4) |
+| L16-phone-native | L16 | lens 16 (Code health) x phone / phone/native: 2 items | done | _work/L16-phone-native.md | 2/2 items, 3 new (2 S3 closed-app set logging and most native parts untested; S4 unreadable saved sets silently replaced), 2 reused |
 (+ 389 more todo items, not shown)
-(+ 658 older done items, not shown)
+(+ 659 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
