@@ -60,7 +60,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-truth | 0 | 5 (start value) |
 | L7 | 37 | 3.2 (128k tokens) |
 | L8 | 37 | 1.3 (51k tokens) |
-| L9 | 25 | 1.5 (59k tokens) |
+| L9 | 26 | 1.4 (58k tokens) |
 | L12 | 2 | 3.1 (125k tokens) |
 | L16 | 1 | 3.4 (136k tokens) |
 | H5 | 0 | 5 (start value) |
@@ -70,11 +70,10 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-words | 0 | 5 (start value) |
 
 ## Work items
-Counts: 470 todo, 2 in progress, 610 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 470 todo, 1 in progress, 611 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L9-phone-tracker-engine | L9 | lens 9 (Accessibility) x phone / phone/tracker-engine: 3 items | in progress | _work/L9-phone-tracker-engine.md |  |
 | L9-phone-tracker-lib | L9 | lens 9 (Accessibility) x phone / phone/tracker-lib: 3 items | in progress | _work/L9-phone-tracker-lib.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
@@ -101,16 +100,16 @@ Counts: 470 todo, 2 in progress, 610 done, 0 blocked. Full list: work-items.json
 | B-run-panel-screens-1-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-1: 11 items | todo | _work/B-run-panel-screens-1-a.md |  |
 | B-run-panel-screens-1-b | B-run | B-run (Silent fallbacks) x panel / panel/screens-1: 6 items | todo | _work/B-run-panel-screens-1-b.md |  |
 | B-run-panel-screens-2-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-2: 11 items | todo | _work/B-run-panel-screens-2-a.md |  |
-| L9-phone-shop-1 | L9 | lens 9 (Accessibility) x phone / phone/shop-1: 3 items | done | _work/L9-phone-shop-1.md | 3/3 items, 3 new (1 S3 'Take back' faint and small; 2 S4), 1 reused |
 | L9-phone-shop-2 | L9 | lens 9 (Accessibility) x phone / phone/shop-2: 3 items | done | _work/L9-phone-shop-2.md | 3/3 items, 0 findings |
 | L9-phone-tracker-components-1 | L9 | lens 9 (Accessibility) x phone / phone/tracker-components-1: 3 items | done | _work/L9-phone-tracker-components-1.md | 3/3 items, 5 new (3 S3: chart points unreachable by screen reader; calendar colour only; 'Not now' hides for good; 2 S4), 2 reused |
 | L9-phone-tracker-components-2 | L9 | lens 9 (Accessibility) x phone / phone/tracker-components-2: 3 items | done | _work/L9-phone-tracker-components-2.md | 3/3 items, 5 new S4, 1 reused |
 | L9-phone-tracker-data | L9 | lens 9 (Accessibility) x phone / phone/tracker-data: 3 items | done | _work/L9-phone-tracker-data.md | 3/3 items n/a (no UI), 0 findings |
+| L9-phone-tracker-engine | L9 | lens 9 (Accessibility) x phone / phone/tracker-engine: 3 items | done | _work/L9-phone-tracker-engine.md | 3/3 items, 0 findings (rule code only) |
 | L12-hq-app | L12 | lens 12 (Platform and store rules) x hq / hq/app: 3 items | done | _work/L12-hq-app.md | L12 hq-app: 3 items, 1 finding S4 (icon licence credit line missing) |
 | L12-panel-assistant | L12 | lens 12 (Platform and store rules) x panel / panel/assistant: 3 items | done | _work/L12-panel-assistant.md | L12 panel-assistant: 3 items, 2 findings (S3 no way to stop WhatsApp offers to a member) |
 | L16-hq-app | L16 | lens 16 (Code health) x hq / hq/app: 2 items | done | _work/L16-hq-app.md | L16 hq-app: 2 items, 1 finding S3 (Needs you says All clear when it cannot read) |
 (+ 445 more todo items, not shown)
-(+ 602 older done items, not shown)
+(+ 603 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
