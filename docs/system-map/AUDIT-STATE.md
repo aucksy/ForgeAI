@@ -62,7 +62,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L8 | 37 | 1.3 (51k tokens) |
 | L9 | 31 | 1.4 (55k tokens) |
 | L12 | 37 | 1.2 (50k tokens) |
-| L16 | 28 | 2.3 (94k tokens) |
+| L16 | 29 | 2.4 (95k tokens) |
 | H5 | 0 | 5 (start value) |
 | B-alerts | 0 | 5 (start value) |
 | B-switch | 0 | 5 (start value) |
@@ -71,13 +71,13 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 439 todo, 3 in progress, 678 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 438 todo, 3 in progress, 679 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | L16-phone-tracker-services-1 | L16 | lens 16 (Code health) x phone / phone/tracker-services-1: 2 items | in progress | _work/L16-phone-tracker-services-1.md |  |
-| L16-server-ci-workflows | L16 | lens 16 (Code health) x server / server/ci-workflows: 2 items | in progress | _work/L16-server-ci-workflows.md |  |
 | L16-server-database-1 | L16 | lens 16 (Code health) x server / server/database-1: 2 items | in progress | _work/L16-server-database-1.md |  |
+| L16-server-database-2 | L16 | lens 16 (Code health) x server / server/database-2: 2 items | in progress | _work/L16-server-database-2.md |  |
 | CAL-prep | coord | coordinator only: calibration C1-C2 (seeds.json outside helper reach; one read-only copy per seed of the area folders at the parent commit into _work/calib/c01.. ; names never name the seed) | todo | - |  |
 | CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | todo | _work/CAL-1.md |  |
 | CAL-2 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged | todo | _work/CAL-2.md |  |
@@ -103,7 +103,6 @@ Counts: 439 todo, 3 in progress, 678 done, 0 blocked. Full list: work-items.json
 | B-run-panel-screens-1-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-1: 11 items | todo | _work/B-run-panel-screens-1-a.md |  |
 | B-run-panel-screens-1-b | B-run | B-run (Silent fallbacks) x panel / panel/screens-1: 6 items | todo | _work/B-run-panel-screens-1-b.md |  |
 | B-run-panel-screens-2-a | B-run | B-run (Reliability + 1 more) x panel / panel/screens-2: 11 items | todo | _work/B-run-panel-screens-2-a.md |  |
-| L16-phone-shop-1 | L16 | lens 16 (Code health) x phone / phone/shop-1: 2 items | done | _work/L16-phone-shop-1.md | 2/2 items, 6 new (2 S3: gym rules used only by tests; 26 gym tab screens never loaded by a test), 1 reused |
 | L16-phone-shop-2 | L16 | lens 16 (Code health) x phone / phone/shop-2: 2 items | done | _work/L16-phone-shop-2.md | 2/2 items, 3 new (S3 weak signal makes pay button say online pay is not set up; S3 11 gym helpers untested), 2 reused |
 | L16-phone-tracker-components-1 | L16 | lens 16 (Code health) x phone / phone/tracker-components-1: 2 items | done | _work/L16-phone-tracker-components-1.md | 2/2 items, 5 new (3 S3: swap and past-workout start fail with no log; alert warning vanishes; 39 parts never opened by a test) |
 | L16-phone-tracker-components-2 | L16 | lens 16 (Code health) x phone / phone/tracker-components-2: 2 items | done | _work/L16-phone-tracker-components-2.md | 2/2 items, 5 new (S3 33 workout-tab parts loaded by no test; set-letter rule in 4 places, recap and saved page differ), 1 reused |
@@ -111,8 +110,9 @@ Counts: 439 todo, 3 in progress, 678 done, 0 blocked. Full list: work-items.json
 | L16-phone-tracker-engine | L16 | lens 16 (Code health) x phone / phone/tracker-engine: 2 items | done | _work/L16-phone-tracker-engine.md | 2/2 items, 6 new S4 (history chart tests check retired bar rules; silent drop of damaged focus block; one weight-ladder test can time out) |
 | L16-phone-tracker-lib | L16 | lens 16 (Code health) x phone / phone/tracker-lib: 2 items | done | _work/L16-phone-tracker-lib.md | 2/2 items, 4 new S4 (helpers tested but unused; lighter-weight card never tested appearing; Save as routine folder read not logged), 1 reused |
 | L16-phone-tracker-services-2 | L16 | lens 16 (Code health) x phone / phone/tracker-services-2: 2 items | done | _work/L16-phone-tracker-services-2.md | 2/2 items, 4 new (S3 coach and Statistics read an older record list, so two different bests; S3 rest card failures not logged), 6 reused |
-(+ 414 more todo items, not shown)
-(+ 670 older done items, not shown)
+| L16-server-ci-workflows | L16 | lens 16 (Code health) x server / server/ci-workflows: 2 items | done | _work/L16-server-ci-workflows.md | 2/2 items, 7 new (S3 emulator download retry in only 2 of 8 phone runs, release can turn red; Node 20 past end of life), 2 reused |
+(+ 413 more todo items, not shown)
+(+ 671 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
