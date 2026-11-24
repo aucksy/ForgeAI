@@ -3,3 +3,4 @@
 - L6.6 done: finish/save-edit/plan/program/routine/photo failures keep no note (new finding 01).
 - L6.1, L6.2, L6.7 done (checked, no new fault; feedback double-send reused).
 - all items done; output written; running checks.
+- DONE 2026-11-24: lens-cover ok, merge --dry 3/3 passed.
