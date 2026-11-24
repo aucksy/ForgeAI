@@ -6,3 +6,4 @@
 - L6.5 checked: challenge rewards given on read, not by a timer (0047_challenge_rewards.sql:15-21); worker crons deploy/panel/wrangler.jsonc:59
 - L6.4 checked: backup covers every public table (docs/BACKUP-RESTORE.md:10), photos not (line 17); reuse FN-B-run-panel-forms-a-02, FN-L14-server-database-2-03
 - L6.7/L6.8 checked: only timer is EntryMachines 30s refresh (EntryMachines.tsx:48-55,95-98); import yields between batches (ImportMembers.tsx:122)
+- all 11 items written to out file; 4 findings (01-04)
