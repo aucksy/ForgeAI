@@ -2,3 +2,13 @@
 - L6.6 checked: setup save / demo load / home summary failures show try-again, log nothing (WelcomeScreen.tsx:497-500,515-518; dashboardStore.ts:61-63; writeQueue.ts:36-38) -> new finding 01
 - L6.2 checked: no double-save; setup save re-checks profile in its transaction (dataActions.ts:330-335), straight-in guard (phoneSignInApi.ts:121), body weight upsert (userRepo.ts:103-104). No finding.
 - L6.1 checked: local writes need no network; gym code kept offline (WelcomeGymCode.tsx:131-153). Phone check waiting: offline/server error answer = null, silent wait (findGymApi.ts:58-66; WelcomePhone.tsx:177-178) -> new finding 02
+- L6.3 checked: WhatsApp line outage -> FN-L14-phone-onboarding-db-03; server fault while waiting -> finding 02; AI -> FN-B-run-phone-cloud-backup-ai-a-05; Google -> FN-L14-phone-cloud-backup-ai-03; Play not in area
+- L6.4 checked: Android auto backup includes db (forgeai_data_extraction_rules.xml) but no restore test anywhere (no bmgr) -> finding 03; last Drive backup date kept but never shown (backupStore.ts:308, BackupCard none) -> finding 04
+- L6.4 CORRECTED: Android backup restore IS tested (qa/run-device-qa.sh:1374-1399, qa/backup-m-after.yaml:1-30); Drive back-up-now was stopped on purpose (BackupCard.tsx:79-85). Findings 03/04 dropped. Server side reuse FN-B-run-panel-forms-a-02.
+- L6.5 checked: no phone cron; start-up repairs silent -> FN-L16-phone-onboarding-db-03; server nightly -> FN-L14-server-hq-gate-workers-04
+- L6.7 checked: phone-check poll pauses in background, resumes on return (WelcomePhone.tsx:190-195); gym code reread on return (WelcomeGymCode.tsx:82-84); watch lookup time-limited (introSlides.ts:8-24). No finding.
+- L6.8 checked: code-read proofs for finding 02 and background poll.
+- L15.1 checked: setup save fail (01), WhatsApp line (FN-L14-phone-onboarding-db-03), start-up fail (FN-L14-phone-onboarding-db-02)
+- L15.2 checked: crash reports only uncaught -> FN-L14-phone-lib-core-03 (crashReport.ts:16-83)
+- L15.3 checked: only first_run_at kept locally (db/index.ts:10,55) -> FN-B-run-phone-lib-core-a-06
+- DONE: out file written, lens-cover ok, merge --dry 4/4 passed
