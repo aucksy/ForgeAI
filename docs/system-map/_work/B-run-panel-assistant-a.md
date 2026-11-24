@@ -1,0 +1,2 @@
+- 2026-11-24 lens 6 done (L6.1-L6.8): 1 new finding (-01), reused FN-A5-panel-assistant-1-02
+- 2026-11-24 lens 15 done (L15.1-L15.3): 2 new findings (-02, -03)
