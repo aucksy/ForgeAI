@@ -3,3 +3,4 @@
 - New so far: member pop-up sender fails silently (deploy/hq/push.js); pay server failure hides pay card with no log (memberPayApi.ts).
 - Items done: none written yet (L6.1-L6.6 evidence gathered).
 - 2026-11-24 all 11 items written to _work/out/B-run-phone-shop-2-a.jsonl (2 new findings). Running checks.
+- 2026-11-24 lens-cover ok, merge --dry 4/4 passed. DONE.
