@@ -7,6 +7,9 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-624. "push that to production right now": 0.79.0 sent to production review - 25 Nov 2026
+His words (25 Nov 2026 ~11:15 IST): "Whatever we have waiting, let's just push that to production right now ... I need this onboarding journey live in production today." Cause of his failed demo: production was 0.77.0; phone sign-in (F203) is only in 0.79.0 (switch on); server 0093 phone_sign_in_find is live. Done in Play (simpleapps108): production release 79000 (0.79.0), 100%, the same What's new as the test tracks, sent for review (Google says up to 7 days; managed publishing is ON, so after approval it must still be published by hand). Also published the 4 waiting 0.79.0 test-track changes (open + closed, phone + watch). RISK not checked: the sign-in code goes by WhatsApp, blocked by Meta 131042 as of 12 Nov (case 1629464038909679); the UAT used a stand-in. Test one real code before the next demo.
+
 ## R-623. Audit: 95% tonight, then Opus only after his next Fable reset - 19 Nov 2026 22:00 IST
 
 - His words, 21:50 IST: "feel free to use it to 95% and then keep going overnight as long as we have the [Fable] limit till 99%". The pacer has a TONIGHT ONLY paragraph until 20 Nov 07:00 IST: start line 91, launch while the total stays at or under 95, helpers save at 97. A new pacer run was started at about 21:50 IST.
