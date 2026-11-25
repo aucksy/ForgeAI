@@ -50,12 +50,15 @@ export function inviteMessage(gymName: string, joinCode: string, memberName?: st
 export const APP_LINK = `${INVITE_ORIGIN}/app`;
 
 /**
- * R-579 "Share app link" on a member's page: a short WhatsApp message with the smart link, the gym's code included when the
- * gym is online. A member already on the app gets words for a new phone or a reinstall; anyone else the invite. PURE.
+ * R-579 "Share app link" on a member's page, changed by the owner 25 Nov 2026: "we can now give the link of Google Play
+ * directly ... because now we have a WhatsApp verification, it will automatically be connected with the gym".
+ * The link is always the smart app link /app: Android goes straight to Google Play (one redirect, no page), an iPhone to
+ * the App Store once APP_STORE_URL is set (deploy/panel/appLink.js). The member then taps "Continue with your phone number"
+ * in the app: the WhatsApp check finds them in the gym's list and joins them by itself (R-587). The gym code stays as
+ * the last line, for when their number in the gym's list is not the one they use. PURE.
  */
 export function appLinkMessage(gymName: string, joinCode: string | null | undefined, memberName?: string | null, onApp = false): string {
-  const code = (joinCode ?? '').trim();
-  if (!onApp && code) return inviteMessage(gymName, code, memberName);
+  const code = (joinCode ?? '').trim().toUpperCase();
   const hi = firstName(memberName);
   const gym = gymName.trim();
   const lines = [
@@ -65,9 +68,16 @@ export function appLinkMessage(gymName: string, joinCode: string | null | undefi
       : `Get the free MettleUp app${gym ? ` from ${gym}` : ''} to track your workouts.`,
     '',
     'Tap to get the app:',
-    code ? inviteLink(code) : APP_LINK,
+    APP_LINK,
   ];
-  if (code) lines.push('', `Gym code: ${code.toUpperCase()}`);
+  if (code) {
+    lines.push(
+      '',
+      `Then open the app, tap "Continue with your phone number" and use this same number. The app connects you to ${gym || 'the gym'} by itself.`,
+      '',
+      `Gym code, only if the app asks for it: ${code}`,
+    );
+  }
   return lines.join('\n');
 }
 

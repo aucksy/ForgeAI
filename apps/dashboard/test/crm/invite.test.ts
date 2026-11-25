@@ -37,38 +37,41 @@ describe('the WhatsApp message', () => {
 });
 
 // R-579: the member page's "Share app link": the smart link, the gym code, words for a member already on the app.
-describe('Share app link message', () => {
-  it('a member not on the app gets the invite: the gym link (the smart link with a gym) and the code', () => {
-    const msg = appLinkMessage('Shakti Gym', 'qa0002', 'Ravi Kumar', false);
-    expect(msg).toBe(inviteMessage('Shakti Gym', 'qa0002', 'Ravi Kumar'));
-    expect(msg.split('\n')).toContain('https://app.mettleup.fit/j/QA0002');
-    expect(msg).toContain('Gym code: QA0002');
+describe('Share app link message (owner, 25 Nov 2026: the store link, then the phone number connects the gym)', () => {
+  it('a member not on the app gets the store link, the phone-number step and the code as a fallback', () => {
+    const lines = appLinkMessage('Shakti Gym', 'qa0002', 'Ravi Kumar', false).split('\n');
+    expect(lines[0]).toBe('Hi Ravi!');
+    expect(lines[1]).toBe('Get the free MettleUp app from Shakti Gym to track your workouts.');
+    expect(lines).toContain('https://app.mettleup.fit/app');
+    expect(lines).toContain('Then open the app, tap "Continue with your phone number" and use this same number. The app connects you to Shakti Gym by itself.');
+    expect(lines[lines.length - 1]).toBe('Gym code, only if the app asks for it: QA0002');
   });
 
-  it('a member already on the app gets words for a new phone or a reinstall, with the same link and code', () => {
+  it('never the old gym page link (it showed a web page before the store)', () => {
+    for (const onApp of [false, true]) expect(appLinkMessage('Shakti Gym', 'QA0002', 'Ravi', onApp)).not.toMatch(/\/j\//);
+  });
+
+  it('a member already on the app gets words for a new phone or a reinstall, with the same link and steps', () => {
     const lines = appLinkMessage('Shakti Gym', 'QA0002', 'Ravi Kumar', true).split('\n');
-    expect(lines[0]).toBe('Hi Ravi!');
     expect(lines[1]).toBe('Here is the MettleUp app link from Shakti Gym, in case you need to install the app again or use a new phone.');
-    expect(lines).toContain('https://app.mettleup.fit/j/QA0002');
-    expect(lines[lines.length - 1]).toBe('Gym code: QA0002');
+    expect(lines).toContain(APP_LINK);
+    expect(lines.join(' ')).toMatch(/Continue with your phone number/);
     expect(lines.join(' ')).not.toMatch(/Join Shakti Gym/);
   });
 
-  it('a gym that is not online yet shares the plain app link, with no code', () => {
+  it('a gym that is not online yet shares the plain app link, with no code and no phone step', () => {
     expect(APP_LINK).toBe('https://app.mettleup.fit/app');
     for (const onApp of [false, true]) {
       const msg = appLinkMessage('Shakti Gym', null, 'Ravi', onApp);
       expect(msg.split('\n')).toContain(APP_LINK);
-      expect(msg).not.toMatch(/Gym code|\/j\//);
+      expect(msg).not.toMatch(/Gym code|phone number|\/j\//);
     }
-    expect(appLinkMessage('Shakti Gym', '', null, false).split('\n')[1]).toBe('Get the free MettleUp app from Shakti Gym to track your workouts.');
   });
 
   it('carries no name or number in the link', () => {
     for (const onApp of [false, true]) {
       const msg = appLinkMessage('Shakti Gym', 'QA0002', 'Ravi Kumar', onApp);
-      const link = msg.split('\n').find((l) => l.startsWith('https://'));
-      expect(link).toBe('https://app.mettleup.fit/j/QA0002');
+      expect(msg.split('\n').find((l) => l.startsWith('https://'))).toBe(APP_LINK);
     }
   });
 });

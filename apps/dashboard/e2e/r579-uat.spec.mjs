@@ -81,7 +81,7 @@ test('R579-1 the member page: "Share app link" for every member, the smart link 
   const first = await nextWhatsApp(page, () => button.click());
   expect(first.to, 'WhatsApp opens on this member’s chat').toBe('919829011111');
   expect(first.text).toBe(
-    ['Hi Asha!', 'Join Shakti Gym in the MettleUp app: track your workouts and order from the gym shop.', '', 'Tap to join:', `https://app.mettleup.fit/j/${code}`, '', `Gym code: ${code}`].join('\n'),
+    ['Hi Asha!', 'Get the free MettleUp app from Shakti Gym to track your workouts.', '', 'Tap to get the app:', 'https://app.mettleup.fit/app', '', 'Then open the app, tap "Continue with your phone number" and use this same number. The app connects you to Shakti Gym by itself.', '', `Gym code, only if the app asks for it: ${code}`].join('\n'),
   );
   await button.scrollIntoViewIfNeeded();
   await shot(page, 'member-page-phone-dark');
@@ -94,7 +94,7 @@ test('R579-1 the member page: "Share app link" for every member, the smart link 
   const again = await nextWhatsApp(page, () => shareButton(page).click());
   expect(again.to).toBe('919829011111');
   expect(again.text).toBe(
-    ['Hi Asha!', 'Here is the MettleUp app link from Shakti Gym, in case you need to install the app again or use a new phone.', '', 'Tap to get the app:', `https://app.mettleup.fit/j/${code}`, '', `Gym code: ${code}`].join('\n'),
+    ['Hi Asha!', 'Here is the MettleUp app link from Shakti Gym, in case you need to install the app again or use a new phone.', '', 'Tap to get the app:', 'https://app.mettleup.fit/app', '', 'Then open the app, tap "Continue with your phone number" and use this same number. The app connects you to Shakti Gym by itself.', '', `Gym code, only if the app asks for it: ${code}`].join('\n'),
   );
   await shareButton(page).scrollIntoViewIfNeeded();
   await shot(page, 'member-page-on-app-phone-light');

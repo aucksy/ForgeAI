@@ -38,6 +38,15 @@ export interface AdminNewsEntry {
 /** Newest first. member-words: Gemini second opinion + facts checked against the commits (28 Oct 2026). */
 export const ADMIN_NEWS: readonly AdminNewsEntry[] = [
   {
+    // Admin panel deploy 25 Nov 2026: "Share app link" sends the store link and the phone-number step (owner, 25 Nov).
+    id: '2026-11-25',
+    lines: [
+      {
+        text: '“Share app link” on a member’s page now sends the Google Play link. The member then signs in with their phone number, and the app connects them to your gym by itself.',
+      },
+    ],
+  },
+  {
     // Admin panel deploy 17 Nov 2026 (R-607): R-604 bell to-do list, moved from ADMIN_NEWS_PENDING after migration
     // 0098 went live (16 Nov, owner "yes 0098"). Also R-603/R-605 alert icon and badge (not listed: small).
     id: '2026-11-17',
