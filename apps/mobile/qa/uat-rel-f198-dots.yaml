@@ -206,6 +206,23 @@ appId: com.mettleup.app
     env:
       FIND: 'Settings'
 - tapOn: "Settings"
+# F237 (0.80.0, 25 Nov) is newer and lit on these days, and only 3 features carry dots at once: open its page
+# first, so the older features this part checks get their places back.
+- scrollUntilVisible:
+    element: "^Backup and restore$"
+    centerElement: true
+    timeout: 30000
+- tapOn: "^Backup and restore$"
+- extendedWaitUntil:
+    visible: "Use Google instead|Continue with your phone number|Backed up with"
+    timeout: 15000
+    optional: true
+- back
+- scrollUntilVisible:
+    element: "^Health apps$"
+    direction: UP
+    centerElement: true
+    timeout: 30000
 - scrollUntilVisible:
     element: "^Health apps$"
     centerElement: true
@@ -238,6 +255,23 @@ appId: com.mettleup.app
     env:
       FIND: 'Settings'
 - tapOn: "Settings"
+# F237 (0.80.0, 25 Nov) is newer and lit on these days, and only 3 features carry dots at once: open its page
+# first, so the older features this part checks get their places back.
+- scrollUntilVisible:
+    element: "^Backup and restore$"
+    centerElement: true
+    timeout: 30000
+- tapOn: "^Backup and restore$"
+- extendedWaitUntil:
+    visible: "Use Google instead|Continue with your phone number|Backed up with"
+    timeout: 15000
+    optional: true
+- back
+- scrollUntilVisible:
+    element: "^Health apps$"
+    direction: UP
+    centerElement: true
+    timeout: 30000
 - scrollUntilVisible:
     element: "^Health apps$"
     centerElement: true
