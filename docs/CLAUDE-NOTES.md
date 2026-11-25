@@ -7,6 +7,16 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-628. "Share app link" sends the Play link + phone-number step; panel deploy tonight - 25 Nov 2026 ~23:00 IST
+His words: "we can now give the link of Google Play directly, or we can include iOS link when we have it ... because now
+we have a WhatsApp verification, it will automatically be connected with the gym. So do make this change." Then, asked
+A (deploy tonight) or B (after the audit): "I'm not available, so you take the best decisions here." -> Claude chose A.
+Built 556183eb + 89031a65 (/app smart link, "Continue with your phone number", code last as fallback; What's new
+2026-11-25 incl. the R-586 recipient lines, 0.79.0 is in production). RESUME: CI green on 89031a65 -> download its
+dashboard-dist artifact -> clean worktree at that sha + npm i @anthropic-ai/sdk@0.133.0 --no-save -> deploy/panel:
+npx wrangler deploy -> live check Share app link text. RELEASE 0.80.0: whole phone runs 45664787436 (default) +
+45664791326 (owner) on ecb17862; if both green, tag v0.80.0 on ecb17862, then Play production + send Data safety change.
+
 ## R-627. F237 phone number sign-in also backs up workouts - 25 Nov 2026 18:45 IST
 His words: "This has to go now, today. And plan it properly and build it and release it today." (= release yes for 0.80.0).
 Decisions: recycled number after 90 days unused reopens only if the first name matches; privacy line approved;
