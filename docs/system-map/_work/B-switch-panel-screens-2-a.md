@@ -10,3 +10,6 @@ member messages status; trainer questions status; plan requests; membership plan
 - 2026-11-26 PT bookings: only the admin app reads them; phone app and push notes never (0065 only file; push kinds 0073:36-38; Trainers.tsx:591-592,746) -> finding 01 (S3).
 - 2026-11-26 workout offer: Today reward count reads offers (Today.tsx:602-604). ok. Web page ai_helper/show_phone read by chat (pageChat.js:289, 0090:70). ok.
 - 2026-11-26 GST number: receipt reads it; collections export has no tax split (collections.ts:256-259; gst.ts:11-12) -> finding 02 (S3).
+- 2026-11-26 retired plans: phone renew list, web page, self-join all skip them (0044:149-150, 0080:148-149, 0077:119). ok.
+- 2026-11-26 download all data: misses tables outside records -> reuse FN-A5-panel-logic-1-3-01.
+- 2026-11-26 join free trial: web page and its AI helper never read it (pageChat.js:108-136, no trial in gymPage.js; 0088:7-15) -> finding 03 (S3).
