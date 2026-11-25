@@ -1,0 +1,8 @@
+# B-alerts-phone-cloud-backup-ai-a checkpoint
+## Items
+- L11.1 done: area sends no push, WhatsApp, email or SMS itself (grep of ai, backup, cloud). Member-facing words: Settings copy status line only (01); restore re-sets reminders with no permission ask and no word (02); MettleUp not told of stuck copies = FN-B-run-phone-cloud-backup-ai-a-04 reused. Sounds, rest sound, ring through Do Not Disturb, watch open travel in the backup; notice pop-up bookkeeping is not in the backup but a fresh phone seeds old notices silently (shop/noticeAlertsRun.ts:10), so no duplicates. Coach is switched off: sends nothing.
+- H2.1 done. Copy reaches the member's account only if: real Google key in the build (FN-L14-03), signed in, internet, server reachable (own address first), copy not full, sign-in not expired. Reminders after restore: switch on + days, notifications allowed, channel not off, phone maker battery rules, exact-alarm ask (not carried). Gym reminders/messages after restore: gym joined again (link not in backup).
+- H2.2 done: no owner-side view of who has a working copy (reuse run-a-04); member sees only Settings line.
+- H2.3 done: 01, 02.
+- H2.4 done: Crispy Curves app link 0 of 2 members (field-fill.csv), so restored gym reminder/message switches reach 0 of 2 until relinked. Cloud copy is per MettleUp account, not per gym row: not countable within the gym filter.
+- H2.5 done: needs a real-phone check: restore a backup with reminders on onto a fresh phone (Android 13+, notifications never allowed) on OPPO/Xiaomi/Samsung; wait for the reminder time with screen off and battery saver on; check whether it shows and sounds, and whether Profile says blocked.
