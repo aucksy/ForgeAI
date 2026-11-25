@@ -4,3 +4,4 @@
 - 4 HC write uses clientRecordId+version (Health.kt:303-360), calories formula recomputed ok (calories.ts:38-44).
 - 5 watch Done log carried through pending + queue (RestCard.kt:678-709, OfflineTick.kt:85,190). healthRead dedupe ok (healthRead.ts:98-174).
 - 6 sleepLink merges overlaps, real-time night (sleepLink.ts:60-127); billing uses Play's formatted prices (ForgeBillingModule.kt:155-158); accent paths (restCard.ts:207-247).
+- 7 output written: 2 findings, grids L2 + L17. Done pending tool checks.
