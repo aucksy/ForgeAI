@@ -68,18 +68,18 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-alerts | 10 | 2.3 (92k tokens) |
 | B-switch | 4 | 2.7 (109k tokens) |
 | B-time | 3 | 2.5 (98k tokens) |
-| B-words | 2 | 2.3 (93k tokens) |
+| B-words | 3 | 3.1 (125k tokens) |
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 250 todo, 5 in progress, 872 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 249 todo, 5 in progress, 873 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | H5-panel-logic-1 | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/logic-1: 4 items | in progress | _work/H5-panel-logic-1.md |  |
+| B-alerts-panel-logic-1-a | B-alerts | B-alerts (Notifications and messages + 1 more) x panel / panel/logic-1: 6 items | in progress | _work/B-alerts-panel-logic-1-a.md |  |
 | B-switch-panel-forms | B-switch | B-switch (Should-read matrix (missing links) + 1 more) x panel / panel/forms: 9 items | in progress | _work/B-switch-panel-forms.md |  |
 | B-time-panel-forms | B-time | B-time (Install, update, upgrade + 2 more) x panel / panel/forms: 7 items | in progress | _work/B-time-panel-forms.md |  |
-| B-words-panel-brand-shell | B-words | B-words (Language and words + 1 more) x panel / panel/brand-shell: 17 items | in progress | _work/B-words-panel-brand-shell.md |  |
 | B-words-panel-forms | B-words | B-words (Language and words + 1 more) x panel / panel/forms: 17 items | in progress | _work/B-words-panel-forms.md |  |
 | H5-panel-logic-2 | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/logic-2: 4 items | todo | _work/H5-panel-logic-2.md |  |
 | H5-panel-pay-machines | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/pay-machines: 4 items | todo | _work/H5-panel-pay-machines.md |  |
@@ -106,7 +106,7 @@ Counts: 250 todo, 5 in progress, 872 done, 0 blocked. Full list: work-items.json
 | H5-phone-tracker-services-2 | H5 | hunt 5 (Built vs live (deploy state)) x phone / phone/tracker-services-2: 4 items | todo | _work/H5-phone-tracker-services-2.md |  |
 | H5-server-ci-workflows | H5 | hunt 5 (Built vs live (deploy state)) x server / server/ci-workflows: 4 items | todo | _work/H5-server-ci-workflows.md |  |
 | H5-server-database-1 | H5 | hunt 5 (Built vs live (deploy state)) x server / server/database-1: 4 items | todo | _work/H5-server-database-1.md |  |
-| B-words-panel-assistant | B-words | B-words (Language and words + 1 more) x panel / panel/assistant: 17 items | done | _work/B-words-panel-assistant.md | 6 S3/S4: scheduled message says Sent at once; Hinglish gaps and wrong labels; History says Not sent for unsaved |
+| B-words-panel-brand-shell | B-words | B-words (Language and words + 1 more) x panel / panel/brand-shell: 17 items | done | _work/B-words-panel-brand-shell.md | 3 S4: Hinglish Branding page mostly English; Save greyed with no reason; old ForgeAI admin icons |
 | CAL-5 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-5 ...); output is scored, never merged | done | _work/CAL-5.md | c08, c09: 16 gaps listed (not merged; scored in CAL-score) |
 | CAL-6 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-6.md | re-run 1: c01, c05, c12: 10 gaps (not merged; scored in CAL-score) |
 | CAL-7 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-7.md | re-run 1: c03, c06, c07: 15 gaps (not merged; scored in CAL-score) |
@@ -114,8 +114,8 @@ Counts: 250 todo, 5 in progress, 872 done, 0 blocked. Full list: work-items.json
 | CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
-(+ 225 more todo items, not shown)
-(+ 864 older done items, not shown)
+(+ 224 more todo items, not shown)
+(+ 865 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
