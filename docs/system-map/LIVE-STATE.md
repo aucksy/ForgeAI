@@ -61,3 +61,40 @@ server and page; its exact build could not be compared with main (finding FN-H5-
 | F-hq-131 Your payment details | yes | yes | yes | n/a | hq_payment_details present |
 | F-hq-132 Log | yes | yes | yes | n/a | hq_audit_list present |
 | F-hq-133 Install HQ on the phone | yes | yes | n/a | n/a | offline page and install file match main byte for byte (except line endings) |
+
+## H5-panel-assistant (surface panel, area panel/assistant) — 18 features, written by H5-panel-assistant on 2026-11-25
+
+The AI Assistant is for gym owners in the web panel only, so the "Play app" column is n/a for every row.
+"Live panel" = the panel build at app.mettleup.fit, which matches the newest green build of main (machine
+live-state.csv, panel row; no panel page change since). The feature list marks all 18 "behind switch", but every
+part of that switch is live: the gym database holds all 11 functions the assistant calls (catalog read 2026-11-25:
+owner_ai_wallet, owner_ai_spend, owner_ai_refund, owner_ai_task_save, owner_ai_tasks, owner_ai_questions,
+owner_ai_member_rules, owner_save_ai_member_rules, owner_ai_status, ai_question_take, ai_question_back), the panel
+server answers "Sign in first" (not "switched off") on /api/assist, /assist/voice, /assist/plan and /assist/rewrite
+(public probe 2026-11-25, so its AI key is set: deploy/panel/assist.js:519-528), and aiCharge is on (/api/switches
+2026-11-25). So the assistant is live, as What's new told owners on 13 Nov (apps/dashboard/src/crm/logic/whatsNew.ts:237-253);
+the "behind switch" mark is stale (FN-H5-hq-app-02, same fault). One part stays **unknown**: each question also needs the
+small web database's usage tables (files 0003, 0004, 0015, first lines say "not applied"); if one is missing every ask is
+refused as "off" and the assistant hides itself (deploy/panel/assist.js:548-572; ui/useConversation.ts:43). That
+database cannot be read from here (FN-L14-server-panel-worker-02).
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-panel-900 Open the AI Assistant | yes | **yes** (listed "behind switch") | yes | n/a | shows once owner_ai_wallet answers (present) |
+| F-panel-901 Ask a question, get an answer card | yes | yes | yes | n/a | gym DB parts present; web usage table 0015: unknown |
+| F-panel-902 Send a message by asking | yes | yes | yes | n/a | owner_ai_spend / refund / task_save present; ask step needs 0015 (unknown) |
+| F-panel-903 Save a change by asking | yes | yes | yes | n/a | same as 902 |
+| F-panel-904 AI writes a workout plan | yes | yes | yes | n/a | in-code switch on (ui/AssistantHome.tsx:32); /api/assist/plan answers |
+| F-panel-905 Diet plan request answer | yes | yes | n/a | n/a | browser only |
+| F-panel-906 Speak a request | yes | yes | n/a | n/a | /api/assist/voice answers; the speech key (Sarvam or Groq) is a secret, not checked: unknown |
+| F-panel-907 AI credits sheet | yes | yes | yes | n/a | owner_ai_wallet, owner_ai_tasks present |
+| F-panel-908 AI answers for members switch and limit | yes | yes | yes | n/a | 0083 functions present; aiCharge on |
+| F-panel-909 AI questions this month | yes | yes | yes | n/a | owner_ai_questions (0078) present |
+| F-panel-910 Daily question allowance | yes | yes | unknown | n/a | count lives in the small web database (0003/0004/0015): cannot be read from here |
+| F-panel-911 Today for you ideas | yes | yes | n/a | n/a | worked out in the browser |
+| F-panel-912 AI Assistant card on Today | yes | yes | yes | n/a | shown with the wallet |
+| F-panel-913 History of past AI tasks | yes | yes | yes | n/a | owner_ai_tasks present |
+| F-panel-914 Try saying examples | yes | yes | n/a | n/a | browser only |
+| F-panel-915 Helper cards | yes | yes | n/a | n/a | browser only |
+| F-panel-916 Find the member named | yes | yes | n/a | n/a | browser only |
+| F-panel-917 Phone and email masked before the AI | yes | yes | n/a | n/a | browser only, before the server is asked |
