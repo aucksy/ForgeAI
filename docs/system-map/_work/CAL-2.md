@@ -1,0 +1,3 @@
+- c11 done: 4 rows (FN-CAL-2-01..04)
+- c06 done: rows FN-CAL-2-05..10 (08 and 09 cite the panel code in c02)
+- c02 done: rows FN-CAL-2-11..12 (plus 08, 09 from the c06 pass). All 3 folders done. ~1,700 code lines read. Not checked: hunt 6 and 2.4 counts (no database query allowed), hunt 5 live state (no catalog read), Kotlin watch module and most panel screens (size).

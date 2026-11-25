@@ -51,7 +51,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L4 | 42 | 3.9 (157k tokens) |
 | L5 | 33 | 4.1 (163k tokens) |
 | L3 | 37 | 4.4 (174k tokens) |
-| CAL | 0 | 5 (start value) |
+| CAL | 5 | 4.3 (174k tokens) |
 | A8r | 1 | 4.9 (197k tokens) |
 | A8 | 97 | 5.9 (235k tokens) |
 | L19 | 37 | 3.6 (145k tokens) |
@@ -71,16 +71,11 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 354 todo, 5 in progress, 762 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 353 todo, 1 in progress, 767 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| CAL-1 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-1 ...); output is scored, never merged | in progress | _work/CAL-1.md |  |
-| CAL-2 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-2 ...); output is scored, never merged | in progress | _work/CAL-2.md |  |
-| CAL-3 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-3 ...); output is scored, never merged | in progress | _work/CAL-3.md |  |
-| CAL-4 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-4 ...); output is scored, never merged | in progress | _work/CAL-4.md |  |
-| CAL-5 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-5 ...); output is scored, never merged | in progress | _work/CAL-5.md |  |
-| CAL-score | coord | coordinator only: C4 score found/partly/missed per seed in calibration/RESULT.md; C5 rewrite a hunt and re-run a missed seed (at most 2 re-runs); then hunts may run on today's code | todo | - |  |
+| CAL-score | coord | coordinator only: C4 score found/partly/missed per seed in calibration/RESULT.md; C5 rewrite a hunt and re-run a missed seed (at most 2 re-runs); then hunts may run on today's code | in progress | - |  |
 | B-run-hq-app-b | B-run | B-run (Silent fallbacks) x hq / hq/app: 6 items | todo | _work/B-run-hq-app-b.md |  |
 | B-run-panel-assistant-b | B-run | B-run (Silent fallbacks) x panel / panel/assistant: 6 items | todo | _work/B-run-panel-assistant-b.md |  |
 | B-run-panel-auth-data-b | B-run | B-run (Silent fallbacks) x panel / panel/auth-data: 6 items | todo | _work/B-run-panel-auth-data-b.md |  |
@@ -105,7 +100,7 @@ Counts: 354 todo, 5 in progress, 762 done, 0 blocked. Full list: work-items.json
 | B-run-phone-shop-2-b | B-run | B-run (Silent fallbacks) x phone / phone/shop-2: 6 items | todo | _work/B-run-phone-shop-2-b.md |  |
 | B-run-phone-tracker-components-1-b | B-run | B-run (Silent fallbacks) x phone / phone/tracker-components-1: 6 items | todo | _work/B-run-phone-tracker-components-1-b.md |  |
 | B-run-phone-tracker-components-2-b | B-run | B-run (Silent fallbacks) x phone / phone/tracker-components-2: 6 items | todo | _work/B-run-phone-tracker-components-2-b.md |  |
-| L16-server-ci-workflows | L16 | lens 16 (Code health) x server / server/ci-workflows: 2 items | done | _work/L16-server-ci-workflows.md | 2/2 items, 7 new (S3 emulator download retry in only 2 of 8 phone runs, release can turn red; Node 20 past end of life), 2 reused |
+| B-run-phone-tracker-data-b | B-run | B-run (Silent fallbacks) x phone / phone/tracker-data: 6 items | todo | _work/B-run-phone-tracker-data-b.md |  |
 | L16-server-database-1 | L16 | lens 16 (Code health) x server / server/database-1: 2 items | done | _work/L16-server-database-1.md | 2/2 items, 3 new S4 (unused member-rename function open to any member key; oldest account link untested; birthday reminders stop silently on a lookup error) |
 | L16-server-database-2 | L16 | lens 16 (Code health) x server / server/database-2: 2 items | done | _work/L16-server-database-2.md | 2/2 items, 3 new (S3 five live server changes still labelled not applied, map hides entry machines/Pay MettleUp/forgot PIN; S3 test database builds a never-live change, NEEDS HIS DECISION), 1 reused |
 | L16-server-database-3 | L16 | lens 16 (Code health) x server / server/database-3: 2 items | done | _work/L16-server-database-3.md | 2/2 items, 3 new (S3 about 25 alert error paths only write a log line HQ never reads; unused visitor-credit step reachable by the public key; UTC-day cap) |
@@ -113,8 +108,9 @@ Counts: 354 todo, 5 in progress, 762 done, 0 blocked. Full list: work-items.json
 | L16-server-panel-worker | L16 | lens 16 (Code health) x server / server/panel-worker: 2 items | done | _work/L16-server-panel-worker.md | 2/2 items, 7 new (S2 a database hiccup turns the owner's payments-off switches ON; 3 S3 silent payment failures), 1 reused |
 | L16-watch-app | L16 | lens 16 (Code health) x watch / watch/app: 2 items | done | _work/L16-watch-app.md | 2/2 items, 2 new (S3 older watch screen pictures saved but never compared; two rest-screen sets), 6 reused |
 | L16-web-pages | L16 | lens 16 (Code health) x web / web/pages: 2 items | done | _work/L16-web-pages.md | 2/2 items, 3 new S4 (member website never opened by a test; 7 unused pictures; hand-typed offline skip list misses a page), 2 reused |
-(+ 329 more todo items, not shown)
-(+ 754 older done items, not shown)
+| CAL-5 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-5 ...); output is scored, never merged | done | _work/CAL-5.md | c08, c09: 16 gaps listed (not merged; scored in CAL-score) |
+(+ 328 more todo items, not shown)
+(+ 759 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
