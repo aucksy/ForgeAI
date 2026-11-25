@@ -1,0 +1,1 @@
+- 2026-11-25 all 12 items done (L2.1-L2.9, L17.1-L17.3); 3 new findings, 2 reused; out/B-truth-server-database-1-a.jsonl written
