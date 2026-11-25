@@ -106,7 +106,7 @@ describe('the 15 Nov 2026 deploy (R-589)', () => {
   it('names what went live and nothing that is still off or waiting for the gym server', () => {
     const entry = ADMIN_NEWS.find((e) => e.id === '2026-11-15')!;
     // R-607 put the bell's 17 Nov entry on top: this one is third.
-    expect(ADMIN_NEWS[2]).toBe(entry);
+    expect(ADMIN_NEWS[3]).toBe(entry);
     const all = entry.lines.map((l) => l.text).join(' ');
     for (const fact of ['10-digit number', 'Share app link', 'day first', 'Let people join your gym online', 'Branding', 'Saved ✓', 'round button', 'Send a test alert']) {
       expect(all, fact).toContain(fact);
@@ -124,17 +124,18 @@ describe('the 15 Nov 2026 deploy (R-589)', () => {
 describe('the 16 Nov 2026 deploy (R-600)', () => {
   it('comes right after the 17 Nov bell update: the Today lines moved out of pending; the recipient lines wait, with the real words', () => {
     const entry = ADMIN_NEWS.find((e) => e.id === '2026-11-16')!;
-    expect(ADMIN_NEWS[1]).toBe(entry);
+    expect(ADMIN_NEWS[2]).toBe(entry);
     expect(entry.lines[0].text).toContain('Today now shows only what still needs you');
     const all = entry.lines.map((l) => l.text).join(' ');
     for (const fact of ['See who', 'small phones']) expect(all, fact).toContain(fact);
     // Still off (GYM_PAGES, the Plus lock) or not on Play yet (the recipient picker, 0.79.0): not a word here.
     expect(all).not.toMatch(/web page|join\.mettleup|Plus|lock|Gym admin|To: /i);
     // R-604: the bell's to-do list waits for 0098 and the deploy after it.
-    expect(ADMIN_NEWS_PENDING.map((e) => e.id)).toEqual(['pending-message-recipient', 'pending-gym-web-pages', 'pending-plus-lock']);
+    expect(ADMIN_NEWS_PENDING.map((e) => e.id)).toEqual(['pending-gym-web-pages', 'pending-plus-lock']);
     // The waiting recipient lines use the words the member app (shop/gymMessages.ts TO_WORDS) and the panel
     // (memberMessages.ts) show.
-    const waiting = ADMIN_NEWS_PENDING.find((e) => e.id === 'pending-message-recipient')!.lines.map((l) => l.text).join(' ');
+    // 25 Nov 2026: 0.79.0 reached production, so they went out with that day's deploy.
+    const waiting = ADMIN_NEWS.find((e) => e.id === '2026-11-25')!.lines.map((l) => l.text).join(' ');
     for (const fact of ['“Gym owner”', '“Gym admin”', 'a trainer by name', 'you and the front desk', '“Member messages”', '“To: Gym owner”']) {
       expect(waiting, fact).toContain(fact);
     }
@@ -203,5 +204,19 @@ describe('words and buttons', () => {
     expect(newsGo(line, 'owner')).toEqual(line.go);
     expect(newsGo(line, 'staff')).toBeNull();
     expect(newsGo({ text: 'no button' }, 'owner')).toBeNull();
+  });
+});
+
+describe('the 25 Nov 2026 deploy', () => {
+  it('is on top: the store link from "Share app link", and the message recipient lines', () => {
+    const entry = ADMIN_NEWS[0];
+    expect(entry.id).toBe('2026-11-25');
+    const all = entry.lines.map((l) => l.text).join(' ');
+    for (const fact of ['“Share app link”', 'Google Play', 'phone number', '“To: Gym owner”']) expect(all, fact).toContain(fact);
+    expect(all).not.toMatch(/web page|join\.mettleup|Plus|lock/i);
+    for (const l of entry.lines) {
+      expect(l.text, l.text).toMatch(/^["“A-Z]/);
+      expect(l.text, l.text).toMatch(/\.$/);
+    }
   });
 });
