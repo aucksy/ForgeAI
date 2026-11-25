@@ -5,3 +5,4 @@
 - L2.7-2.9: assistant page is a wrapper (logic in panel/assistant); import AI masks but shows names -> reuse FN-L4-panel-logic-1-01; help AI answers from help pages
 - L17.2: help history only in this browser -> new finding 02
 - L2.2 rounding: measurements 1 decimal both sides; money in paise; no fault
+- wrote out file: 2 new findings, 2 grid rows; running checks
