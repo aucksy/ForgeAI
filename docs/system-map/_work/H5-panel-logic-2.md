@@ -1,0 +1,1 @@
+- started H5-panel-logic-2; read rules, lessons, brief, items, live-state-facts, LIVE-STATE
