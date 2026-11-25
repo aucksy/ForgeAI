@@ -7,6 +7,14 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
+## R-627. F237 phone number sign-in also backs up workouts - 25 Nov 2026 18:45 IST
+His words: "This has to go now, today. And plan it properly and build it and release it today." (= release yes for 0.80.0).
+Decisions: recycled number after 90 days unused reopens only if the first name matches; privacy line approved;
+Supabase Email provider ON, Phone provider stays OFF (paid SMS, not needed); 3-day test skipped ("its urgent");
+delete-race fix + under-18 block included. Server live 25 Nov ~22:20 on "Yes, put it live": migration 0099 +
+Edge Function phone-account. Off switch: Edge secret PHONE_ACCOUNT_ON=off. Play Data safety: phone number now also
+"Account management" (saved, send for review with 0.80.0). Change card: ~/.claude/change-360/cards/ForgeAI/R-627.json.
+
 ## R-625. JOIN_PAY live on his words - 25 Nov 2026
 His words: "you can make it live because it's not a complex functionality ... later if the scheduled tests find any issue, then we can fix it". R-555 hold lifted. Set JOIN_PAY = live as a Cloudflare dashboard variable on forgeai-panel (no full panel deploy: other panel code on main waits for after the audit) and in wrangler.jsonc (9aef64af). Live /api/switches: joinPay true. Crispy Curves' join page app.mettleup.fit/m/3A9DE2 now says "Pay online or at the gym desk". PAY_LIVE stays off: only the gym's own UPI ID is offered. Audit note added: the B journeys must run joinpay-uat and selfjoin-uat.
 

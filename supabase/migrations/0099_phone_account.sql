@@ -1,4 +1,4 @@
--- NOT APPLIED LIVE YET (needs the owner's yes). Re-runnable. Apply after 0061 (_phone_proof, phone_code_settings)
+-- APPLIED LIVE 25 Nov 2026 (owner: "Yes, put it live"). Re-runnable. Apply after 0061 (_phone_proof, phone_code_settings)
 -- and 0032 (member_items). Additive: one new function, callable only by the server (service_role). No new table or
 -- column, no change to any existing function.
 -- Test: supabase/tests/0099_phone_account.sql (CI runs it after every migration; pasted into the SQL Editor it always
