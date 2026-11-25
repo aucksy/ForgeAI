@@ -473,7 +473,8 @@ test('R4-11 PhonePe, keys of another account, then the old request page runs out
   await desk(e, w, '/api/pay/member-check', { memberKey: MEMBER_KEY, id }, T0 + 180000);
   assert.equal(w.co.pp[`${id}-2`].client, 'PPCLIENT_B');
   const creds = await unseal(e, (await e.WEB.prepare("SELECT creds FROM pay_connections WHERE provider = 'phonepe'").first()).creds);
-  assert.ok(!creds.older[0].ids.includes(id), 'the request is off the old account list');
+  // The old account's keys may already be gone (its watch time is counted from the real clock in makeLink): off the list either way.
+  assert.ok(!(creds.older?.[0]?.ids ?? []).includes(id), 'the request is off the old account list');
   // They pay it: the desk's check finds it (asked with the new keys, never the old ones).
   w.co.pp[`${id}-2`].state = 'COMPLETED';
   const k = await desk(e, w, '/api/pay/check', { key: DESK_KEY, id }, T0 + 240000);

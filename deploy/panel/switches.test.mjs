@@ -109,7 +109,7 @@ test('wrangler.jsonc names every switch with its value today, and has no keep_va
   assert.doesNotMatch(raw, /"keep_vars"/);
   assert.match(raw, /SWITCHES CHANGE IN THIS FILE, NOT IN THE CLOUDFLARE DASHBOARD/);
   const vars = JSON.parse(/"vars": (\{[^}]*\})/.exec(raw)[1]);
-  assert.equal(vars.JOIN_PAY, 'off', 'join payments stay held until the owner says the payment sweep passed');
+  assert.equal(vars.JOIN_PAY, 'live', 'R-625 (25 Nov 2026): the owner made join payments live; PAY_LIVE stays off');
   assert.equal(vars.GYM_PAGES, 'off');
   assert.equal(vars.PAGE_AI, 'off', 'F208: the AI helper chat waits for the owner');
   assert.equal(vars.PAY_LIVE, 'off');
