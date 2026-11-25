@@ -65,14 +65,14 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L12 | 37 | 1.2 (50k tokens) |
 | L16 | 37 | 2.7 (109k tokens) |
 | H5 | 8 | 3.1 (123k tokens) |
-| B-alerts | 16 | 3.0 (120k tokens) |
+| B-alerts | 17 | 3.1 (122k tokens) |
 | B-switch | 9 | 3.6 (144k tokens) |
 | B-time | 6 | 3.5 (138k tokens) |
 | B-words | 5 | 3.8 (150k tokens) |
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 230 todo, 5 in progress, 892 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 229 todo, 5 in progress, 893 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
@@ -114,8 +114,8 @@ Counts: 230 todo, 5 in progress, 892 done, 0 blocked. Full list: work-items.json
 | CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
-(+ 205 more todo items, not shown)
-(+ 884 older done items, not shown)
+(+ 204 more todo items, not shown)
+(+ 885 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
