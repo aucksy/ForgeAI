@@ -1,1 +1,2 @@
 - 2026-11-25 started gap-8 on phone/native; read OfflineTick, RestActionReceiver, RestCard alarm/note
+- 2026-11-25 gap-8 done: 106 silent rows read, 134 filtered; 4 new findings (01-04), reused FN-A5-phone-native-4-01; lens-cover ok, merge dry ok
