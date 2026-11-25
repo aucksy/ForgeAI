@@ -1,0 +1,2 @@
+# B-run-server-database-2-b checkpoint
+- 2026-11-25 gap-8 H8.1-H8.6 done. silent.csv had 0 rows in this area; hand-read the 12 SQL "exception when others" blocks in 0034-0062 that do not re-raise. 1 finding (FN-B-run-server-database-2-b-01: pop-up queue failure only a DB warning). Others judged fine: 0053:300 seen-mark skip in paused gym (badge stays, documented), 0058:127 no-claims guard (grants decide), 0045:275 returns BAD_FILE to caller, 0056:122 unique retry.
