@@ -10,3 +10,4 @@
 - H4.3-H4.5 done: marks kept on this phone only and left out of the backup: trainer-reply seen (NEW 03, S3), new-feature dots (documented, not a waiting item), Drive-moved card (about this phone's Drive link).
 - H4.6-H4.8 done: lists here = "N changes waiting", "space full", "sign in again". Refused item waits for ever (reuse FN-A5-phone-cloud-backup-ai-2-02); full and sign-in flags clear themselves on the next good send / sign-in.
 - Code lines read: about 750 of 3,000.
+- Output written (3 findings, 2 grid rows). lens-cover ok; merge --dry 5 of 5 passed. Step done.
