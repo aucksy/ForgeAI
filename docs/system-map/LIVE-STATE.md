@@ -453,3 +453,91 @@ stale-mark fault as FN-H5-hq-app-02). The small web database parts (help questio
 | F-panel-532 Busy machines (listed "behind switch") | yes | yes; each gym's own on/off | yes | yes (0.70.0) | |
 | F-panel-537 AI Assistant (listed "behind switch") | yes | **yes** | yes | n/a | see H5-panel-assistant |
 | F-panel-538 Help and feedback | yes | yes | yes; help store unknown | n/a | |
+
+## H5-panel-screens-2 (surface panel, area panel/screens-2) — 66 features, written by H5-panel-screens-2 on 2026-11-26
+
+The owner and desk screens from Member messages to Workout plans (Members, Messages & offers, Money, More, Training
+progress, Set-up steps, Pass visits, Pay MettleUp, Plans, Plus lock, Questions, Receipts, Settings, Today, Trainers,
+Your web page, Workout of the day). "Live panel" = the build at app.mettleup.fit read on 2026-11-26 (scripts
+index--GfMsOId.js and index-BK-HUjiz.js): it holds this area's calls (owner_talk_list, owner_trainer_schedule,
+owner_save_gym_wod, owner_save_plus_lock, owner_answer_question, owner_save_gym_page, owner_pay_mettleup,
+self_join_preview, owner_member_progress, owner_undo_reward, owner_save_auto_reminders) but NOT owner_billing or
+owner_receipt: the MettleUp receipt page and "pay online" for MettleUp are compiled out (BILLING_ONLINE_ON false).
+"Live DB" = all 39 gym-database functions these screens call are in the live grant list (machine db-security.json
+routine_grants). Live switches (public /api/switches, 2026-11-26): gymPages false, pageAi false, joinPay true, aiCharge true.
+Code switches on main: PLAN_GATE_ON false (so "Your numbers" and the workout offer are open to every gym),
+MEMBER_PLAN_GATE_ON false (the Plus lock card is hidden), BILLING_ONLINE_ON false.
+Most "behind switch" marks here are a condition on a live database part, not a switch (FN-H5-hq-app-02). Two screen
+notes still say "not live" (Pay MettleUp, Trainers): FN-H5-panel-logic-2-01. Unknown: whether MettleUp's UPI ID and
+bank details are saved, so whether an owner sees the QR code on Pay MettleUp (the catalog count was refused by the
+database guard). "Play app" = the member-app part where one exists; Play production is 0.79.0 since 25 Nov (panel
+What's new note); versions named are when the phone part shipped.
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-panel-1100 Panel frame, menu, More | yes | yes | n/a (browser) | n/a | |
+| F-panel-1106 Your web page group (listed "behind switch") | yes | **off** (gymPages false) | yes (owner_gym_page, owner_save_gym_page, photo slot) | n/a | really off; correct mark. Page AI chat off and its database part (0094) absent |
+| F-panel-1107 Today home | yes | yes | yes (crm_pull) | n/a | |
+| F-panel-1112 Plans and memberships | yes | yes | yes (crm_push) | n/a | |
+| F-panel-1113 Money | yes | yes | yes (crm_push) | n/a | |
+| F-panel-1118 Set up your gym | yes | yes | n/a (browser) | n/a | |
+| F-panel-1120 Messages & offers group | yes | yes | yes (owner_send_message, owner_offers, owner_auto_reminders) | yes (0.55.0 offer, 0.59.0 pop-ups) | |
+| F-panel-1122 Member messages group (listed "behind switch") | yes | **yes** | yes (owner_talk_list, reply, done, count) | yes (0.78.0, recipient 0.79.0) | a condition, not a switch (FN-H5-hq-app-02) |
+| F-panel-1123 Trainers group (listed "behind switch") | yes | **yes** | yes (owner_trainer_schedule, owner_book_pt, owner_cancel_pt, owner_save_trainer_profile) | n/a | screen note says 0065 not applied: FN-H5-panel-logic-2-01 |
+| F-panel-1124 Training progress and Member questions (listed "behind switch") | yes | **yes** | yes (owner_member_progress, owner_questions, owner_answer_question) | yes (share with trainers 0.70.0) | FN-H5-hq-app-02 |
+| F-panel-1125 Workout plans group | yes | yes | yes (crm_push; owner_gym_wods) | yes (0.48.0 plans, 0.70.0 WOD and videos) | |
+| F-panel-1131 Settings group | yes | yes | yes | n/a | |
+| F-panel-1134 Paying MettleUp group (listed "behind switch") | yes | **partly**: Pay MettleUp by UPI/bank yes; pay online and MettleUp receipt **off** (BILLING_ONLINE_ON false) | yes (owner_pay_mettleup, owner_report_mettleup_payment, 0060; 0063 live) | n/a | saved MettleUp pay details unknown |
+| F-panel-300 Member messages page (listed "behind switch") | yes | **yes** | yes (four owner_talk_* functions) | yes (0.78.0) | FN-H5-hq-app-02 |
+| F-panel-301 Members list | yes | yes | yes (crm_pull) | n/a | |
+| F-panel-302 Joined in the app tab | yes | yes | yes (owner_app_members) | yes | |
+| F-panel-303 Messages & offers page | yes | yes | yes (owner_send_message, owner_messages, owner_withdraw_message) | yes (0.59.0) | |
+| F-panel-304 Workout offer (listed "behind switch") | yes | **yes** for every gym (PLAN_GATE_ON false) | yes (owner_offers, owner_save_offer, owner_stop_offer, owner_undo_reward) | yes (0.55.0) | a Pro-pack mark, not a switch that hides it today |
+| F-panel-305 Automatic reminders | yes | yes | yes (owner_auto_reminders, owner_save_auto_reminders) | n/a | |
+| F-panel-306 MettleUp receipt (listed "behind switch") | yes | **off**: route compiled out (BILLING_ONLINE_ON false) | yes (owner_receipt in grants) | n/a | correct mark; owner_receipt not in the live script |
+| F-panel-307 Money: Collections | yes | yes | yes (crm_push) | n/a | |
+| F-panel-308 Money: Dues | yes | yes | yes | n/a | |
+| F-panel-310 More menu on a phone | yes | yes | n/a | n/a | |
+| F-panel-311 Training progress (listed "behind switch") | yes | **yes** | yes (owner_member_progress) | yes (0.70.0; 12 months since joining with 0.79.0) | FN-H5-hq-app-02 |
+| F-panel-312 Find and join online step (listed "behind switch") | yes | **partly**: join link, QR poster and pay-at-desk yes; the web page part off (gymPages false); join pay row shows (joinPay true) | yes (self_join_preview; owner_save_gym_page) | n/a | pay wording: FN-B-truth-panel-screens-2-a-01 |
+| F-panel-313 Pass visits | yes | yes | yes (crm_pull) | n/a | |
+| F-panel-314 Pay MettleUp (listed "behind switch") | yes | **yes** (UPI/bank); pay online off | yes (0060) | n/a | screen note says 0060 not applied: FN-H5-panel-logic-2-01; pay details unknown |
+| F-panel-315 Membership plans | yes | yes | yes | n/a | |
+| F-panel-317 Plus lock switch (listed "behind switch") | yes | **off**: card hidden (MEMBER_PLAN_GATE_ON false) | yes (owner_plus_lock, owner_save_plus_lock) | n/a | correct mark |
+| F-panel-318 Member questions (listed "behind switch") | yes | **yes** | yes (owner_questions, owner_answer_question, owner_question_count) | unknown (version of "Ask a trainer" not found in phone notes) | FN-H5-hq-app-02 |
+| F-panel-319 Member receipt | yes | yes | yes (crm_push) | n/a | |
+| F-panel-320 Settings: Gym tab | yes | yes | yes | n/a | |
+| F-panel-321 Settings: Member app tab | yes | yes; plus lock card hidden | yes | yes | |
+| F-panel-322 Settings: Sign-in & data tab | yes | yes | yes | n/a | |
+| F-panel-324 Set up your gym page | yes | yes | n/a | n/a | |
+| F-panel-325 Today tiles and lists | yes | yes | yes (crm_pull) | n/a | |
+| F-panel-326 Today: Your numbers (listed "behind switch") | yes | **yes** for every gym (PLAN_GATE_ON false) | n/a (browser) | n/a | a Pro-pack mark, not a switch that hides it today |
+| F-panel-327 Today nudges | yes | yes | n/a | n/a | |
+| F-panel-328 Today: Message link | yes | yes | n/a (wa.me) | n/a | |
+| F-panel-330 Trainers page (listed "behind switch") | yes | **yes** | yes (owner_trainer_schedule) | n/a | FN-H5-hq-app-02 |
+| F-panel-331 Book a PT session (listed "behind switch") | yes | **yes** | yes (owner_book_pt) | n/a | FN-H5-hq-app-02 |
+| F-panel-332 See or cancel a PT booking (listed "behind switch") | yes | **yes** | yes (owner_cancel_pt) | n/a | FN-H5-hq-app-02 |
+| F-panel-333 Edit a trainer profile (listed "behind switch") | yes | **yes** | yes (owner_save_trainer_profile) | n/a | FN-H5-hq-app-02 |
+| F-panel-334 Your web page editor (listed "behind switch") | yes | **off** (gymPages false) | yes (owner_save_gym_page) | n/a | correct mark |
+| F-panel-335 See your page preview (listed "behind switch") | yes | **off** | n/a (browser) | n/a | correct mark |
+| F-panel-336 Share the web page (listed "behind switch") | yes | **off** | n/a | n/a | correct mark |
+| F-panel-337 Workout of the day (listed "behind switch") | yes | **yes** | yes (owner_gym_wods, owner_save_gym_wod, owner_clear_gym_wod; 0051) | yes (0.70.0) | a condition, not a switch (FN-H5-hq-app-02) |
+| F-panel-338 Workout plans list | yes | yes | yes (crm_push) | yes (0.48.0) | |
+| F-panel-339 Workout plan builder | yes | yes | yes | yes (0.48.0) | |
+| F-panel-340 New workout plan | yes | yes | n/a | n/a | |
+| F-panel-341 Send a plan to one member | yes | yes | yes | yes (0.48.0) | |
+| F-panel-342 Own video link on an exercise (listed "behind switch") | yes | **yes** (shows once owner_gym_wods answers) | yes (0051) | yes (0.70.0 "Watch your trainer") | FN-H5-hq-app-02 |
+| F-panel-504 Set up your gym and join online | yes | yes; web page part off | yes | n/a | |
+| F-panel-507 Today first screen | yes | yes | yes | n/a | |
+| F-panel-510 Members | yes | yes | yes | n/a | |
+| F-panel-513 Money | yes | yes | yes | n/a | |
+| F-panel-515 Plans price list | yes | yes | yes | n/a | |
+| F-panel-520 Messages and offers | yes | yes | yes | yes | |
+| F-panel-522 Member messages and Member questions | yes | yes | yes | yes (0.78.0) | |
+| F-panel-523 Training progress (listed "behind switch") | yes | **yes** | yes | yes (0.70.0) | FN-H5-hq-app-02 |
+| F-panel-524 Trainers | yes | yes | yes | n/a | |
+| F-panel-525 Workout plans and workout of the day | yes | yes | yes | yes (0.48.0, 0.70.0) | |
+| F-panel-528 Settings | yes | yes | yes | n/a | |
+| F-panel-530 Your web page (listed "behind switch") | yes | **off** (gymPages false) | yes | n/a | correct mark |
+| F-panel-533 Plus lock (listed "hidden") | yes | **off**: hidden | yes (0070) | n/a | correct mark |
+| F-panel-534 Pay MettleUp | yes | yes (UPI/bank); pay online off | yes (0060) | n/a | pay details unknown |
