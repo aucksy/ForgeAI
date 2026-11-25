@@ -1,0 +1,2 @@
+- 2026-11-25 lens 2 (L2.1-L2.9) done: 1 new finding (strength score name matching), reused FN-L16-phone-screens-2-03, FN-A5-phone-components-1-2-01, FN-A8-phone-components-1-1-01, FN-L4-phone-components-1-01.
+- 2026-11-25 lens 17 (L17.1-L17.3) done: reused FN-L16-phone-lib-core-01, FN-A5-phone-tracker-services-2-1-01. Rows in _work/out/B-truth-phone-components-1-a.jsonl.

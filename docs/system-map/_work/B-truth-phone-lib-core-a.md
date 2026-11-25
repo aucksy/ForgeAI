@@ -1,0 +1,2 @@
+- Started B-truth-phone-lib-core-a
+- L2.2 rounding: finding share picture 1dp vs 2dp (new 01)

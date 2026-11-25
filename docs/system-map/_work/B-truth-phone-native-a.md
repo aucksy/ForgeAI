@@ -1,0 +1,6 @@
+- 1 OfflineTick + RestActionReceiver read: offline double tap / watch late copy deduped (OfflineTick.kt:172-178, 218). L2.4 partial ok.
+- 2 widgets.ts read: week count = distinct days (widgets.ts:84-111, 313); Progress WeekCard counts sessions (progressTop.ts:187). New finding -01 (refs FN-A5-phone-tracker-lib-3-01).
+- 3 reminders.ts tz handled (reminders.ts:184-222); import/undo defers HC send until undo gone (app/import/index.tsx:189-212). no fault.
+- 4 HC write uses clientRecordId+version (Health.kt:303-360), calories formula recomputed ok (calories.ts:38-44).
+- 5 watch Done log carried through pending + queue (RestCard.kt:678-709, OfflineTick.kt:85,190). healthRead dedupe ok (healthRead.ts:98-174).
+- 6 sleepLink merges overlaps, real-time night (sleepLink.ts:60-127); billing uses Play's formatted prices (ForgeBillingModule.kt:155-158); accent paths (restCard.ts:207-247).
