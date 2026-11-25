@@ -65,23 +65,22 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L12 | 37 | 1.2 (50k tokens) |
 | L16 | 37 | 2.7 (109k tokens) |
 | H5 | 8 | 3.1 (123k tokens) |
-| B-alerts | 15 | 2.9 (117k tokens) |
+| B-alerts | 16 | 3.0 (120k tokens) |
 | B-switch | 9 | 3.6 (144k tokens) |
 | B-time | 6 | 3.5 (138k tokens) |
 | B-words | 5 | 3.8 (150k tokens) |
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 231 todo, 5 in progress, 891 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 230 todo, 5 in progress, 892 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| B-alerts-panel-pay-machines-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x panel / panel/pay-machines: 10 items | in progress | _work/B-alerts-panel-pay-machines-b.md |  |
+| H5-panel-screens-1 | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/screens-1: 4 items | in progress | _work/H5-panel-screens-1.md |  |
 | B-switch-panel-pay-machines | B-switch | B-switch (Should-read matrix (missing links) + 1 more) x panel / panel/pay-machines: 9 items | in progress | _work/B-switch-panel-pay-machines.md |  |
 | B-time-panel-pay-machines | B-time | B-time (Install, update, upgrade + 2 more) x panel / panel/pay-machines: 7 items | in progress | _work/B-time-panel-pay-machines.md |  |
 | B-words-panel-logic-2 | B-words | B-words (Language and words + 1 more) x panel / panel/logic-2: 17 items | in progress | _work/B-words-panel-logic-2.md |  |
 | B-words-panel-pay-machines | B-words | B-words (Language and words + 1 more) x panel / panel/pay-machines: 17 items | in progress | _work/B-words-panel-pay-machines.md |  |
-| H5-panel-screens-1 | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/screens-1: 4 items | todo | _work/H5-panel-screens-1.md |  |
 | H5-panel-screens-2 | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/screens-2: 4 items | todo | _work/H5-panel-screens-2.md |  |
 | H5-panel-shop | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/shop: 4 items | todo | _work/H5-panel-shop.md |  |
 | H5-panel-ui-shell | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/ui-shell: 4 items | todo | _work/H5-panel-ui-shell.md |  |
@@ -106,6 +105,7 @@ Counts: 231 todo, 5 in progress, 891 done, 0 blocked. Full list: work-items.json
 | H5-server-database-1 | H5 | hunt 5 (Built vs live (deploy state)) x server / server/database-1: 4 items | todo | _work/H5-server-database-1.md |  |
 | H5-server-database-2 | H5 | hunt 5 (Built vs live (deploy state)) x server / server/database-2: 4 items | todo | _work/H5-server-database-2.md |  |
 | H5-server-database-3 | H5 | hunt 5 (Built vs live (deploy state)) x server / server/database-3: 4 items | todo | _work/H5-server-database-3.md |  |
+| H5-server-hq-gate-workers | H5 | hunt 5 (Built vs live (deploy state)) x server / server/hq-gate-workers: 4 items | todo | _work/H5-server-hq-gate-workers.md |  |
 | B-words-panel-logic-1 | B-words | B-words (Language and words + 1 more) x panel / panel/logic-1: 17 items | done | _work/B-words-panel-logic-1.md | S3 panel says challenge winners get free days on their own but the owner must give each; 3 S4 |
 | CAL-5 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-5 ...); output is scored, never merged | done | _work/CAL-5.md | c08, c09: 16 gaps listed (not merged; scored in CAL-score) |
 | CAL-6 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-6.md | re-run 1: c01, c05, c12: 10 gaps (not merged; scored in CAL-score) |
@@ -114,8 +114,8 @@ Counts: 231 todo, 5 in progress, 891 done, 0 blocked. Full list: work-items.json
 | CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
-(+ 206 more todo items, not shown)
-(+ 883 older done items, not shown)
+(+ 205 more todo items, not shown)
+(+ 884 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
