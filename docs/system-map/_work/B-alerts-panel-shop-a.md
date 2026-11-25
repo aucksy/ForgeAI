@@ -7,3 +7,4 @@
 - H2.3 done: 01, 02, FN-B-alerts-panel-logic-1-a-01.
 - H2.4 done (field-fill.csv, Crispy Curves): roster 2 members; app link 0 of 2; check-in phone 1 of 2 app members; birthday 1 of 2. Birthday wish reaches at most 1 of 2; app link proven 0 of 2. Staff browsers with push and member push addresses: not in machine file, not countable.
 - H2.5 done: needs real-phone check: (a) staff alert on Android Chrome with admin app closed, screen off, OPPO/Xiaomi battery saver: does it ring; (b) iPhone: only after Add to Home Screen; (c) member 9:30 reminder and order-ready pop-up on OPPO/Xiaomi/Samsung with battery saver and app swiped away. No watch path here.
+- lens-cover ok; merge --dry 5 of 5 passed.
