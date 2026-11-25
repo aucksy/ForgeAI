@@ -1,0 +1,1 @@
+- 25 Nov: started. L2.1/L2.2/L2.3 looked (upgrade rounding = FN-L5-server-database-3-03; IST ok except FN-L16-server-database-3-03; Crispy AI wallet recomputed 20-1-1-1=17, slots 8 of 10 ok).
