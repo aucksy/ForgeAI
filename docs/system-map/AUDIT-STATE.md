@@ -57,7 +57,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L19 | 37 | 3.6 (145k tokens) |
 | L14 | 37 | 3.7 (147k tokens) |
 | B-run | 37 | 4.1 (164k tokens) |
-| B-truth | 6 | 4.2 (170k tokens) |
+| B-truth | 7 | 4.3 (171k tokens) |
 | L7 | 37 | 3.2 (128k tokens) |
 | L8 | 37 | 1.3 (51k tokens) |
 | L9 | 31 | 1.4 (55k tokens) |
@@ -71,7 +71,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 390 todo, 0 in progress, 730 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 389 todo, 0 in progress, 731 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
@@ -108,8 +108,8 @@ Counts: 390 todo, 0 in progress, 730 done, 0 blocked. Full list: work-items.json
 | L16-server-panel-worker | L16 | lens 16 (Code health) x server / server/panel-worker: 2 items | done | _work/L16-server-panel-worker.md | 2/2 items, 7 new (S2 a database hiccup turns the owner's payments-off switches ON; 3 S3 silent payment failures), 1 reused |
 | L16-watch-app | L16 | lens 16 (Code health) x watch / watch/app: 2 items | done | _work/L16-watch-app.md | 2/2 items, 2 new (S3 older watch screen pictures saved but never compared; two rest-screen sets), 6 reused |
 | L16-web-pages | L16 | lens 16 (Code health) x web / web/pages: 2 items | done | _work/L16-web-pages.md | 2/2 items, 3 new S4 (member website never opened by a test; 7 unused pictures; hand-typed offline skip list misses a page), 2 reused |
-(+ 365 more todo items, not shown)
-(+ 722 older done items, not shown)
+(+ 364 more todo items, not shown)
+(+ 723 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
