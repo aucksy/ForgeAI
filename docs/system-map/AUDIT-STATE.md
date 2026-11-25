@@ -51,7 +51,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L4 | 42 | 3.9 (157k tokens) |
 | L5 | 33 | 4.1 (163k tokens) |
 | L3 | 37 | 4.4 (174k tokens) |
-| CAL | 5 | 4.3 (174k tokens) |
+| CAL | 9 | 4.5 (182k tokens) |
 | A8r | 1 | 4.9 (197k tokens) |
 | A8 | 97 | 5.9 (235k tokens) |
 | L19 | 37 | 3.6 (145k tokens) |
@@ -71,15 +71,11 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 353 todo, 5 in progress, 767 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 353 todo, 1 in progress, 771 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | CAL-score | coord | coordinator only: C4 score found/partly/missed per seed in calibration/RESULT.md; C5 rewrite a hunt and re-run a missed seed (at most 2 re-runs); then hunts may run on today's code | in progress | - |  |
-| CAL-6 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | in progress | _work/CAL-6.md |  |
-| CAL-7 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | in progress | _work/CAL-7.md |  |
-| CAL-8 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | in progress | _work/CAL-8.md |  |
-| CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | in progress | _work/CAL-9.md |  |
 | B-run-hq-app-b | B-run | B-run (Silent fallbacks) x hq / hq/app: 6 items | todo | _work/B-run-hq-app-b.md |  |
 | B-run-panel-assistant-b | B-run | B-run (Silent fallbacks) x panel / panel/assistant: 6 items | todo | _work/B-run-panel-assistant-b.md |  |
 | B-run-panel-auth-data-b | B-run | B-run (Silent fallbacks) x panel / panel/auth-data: 6 items | todo | _work/B-run-panel-auth-data-b.md |  |
@@ -105,16 +101,16 @@ Counts: 353 todo, 5 in progress, 767 done, 0 blocked. Full list: work-items.json
 | B-run-phone-tracker-components-1-b | B-run | B-run (Silent fallbacks) x phone / phone/tracker-components-1: 6 items | todo | _work/B-run-phone-tracker-components-1-b.md |  |
 | B-run-phone-tracker-components-2-b | B-run | B-run (Silent fallbacks) x phone / phone/tracker-components-2: 6 items | todo | _work/B-run-phone-tracker-components-2-b.md |  |
 | B-run-phone-tracker-data-b | B-run | B-run (Silent fallbacks) x phone / phone/tracker-data: 6 items | todo | _work/B-run-phone-tracker-data-b.md |  |
-| L16-server-database-1 | L16 | lens 16 (Code health) x server / server/database-1: 2 items | done | _work/L16-server-database-1.md | 2/2 items, 3 new S4 (unused member-rename function open to any member key; oldest account link untested; birthday reminders stop silently on a lookup error) |
-| L16-server-database-2 | L16 | lens 16 (Code health) x server / server/database-2: 2 items | done | _work/L16-server-database-2.md | 2/2 items, 3 new (S3 five live server changes still labelled not applied, map hides entry machines/Pay MettleUp/forgot PIN; S3 test database builds a never-live change, NEEDS HIS DECISION), 1 reused |
-| L16-server-database-3 | L16 | lens 16 (Code health) x server / server/database-3: 2 items | done | _work/L16-server-database-3.md | 2/2 items, 3 new (S3 about 25 alert error paths only write a log line HQ never reads; unused visitor-credit step reachable by the public key; UTC-day cap) |
-| L16-server-hq-gate-workers | L16 | lens 16 (Code health) x server / server/hq-gate-workers: 2 items | done | _work/L16-server-hq-gate-workers.md | 2/2 items, 3 new (S3 nightly watch page says all fine when HQ cannot read its failure note; AI prices and India date rule copied), 1 reused |
 | L16-server-panel-worker | L16 | lens 16 (Code health) x server / server/panel-worker: 2 items | done | _work/L16-server-panel-worker.md | 2/2 items, 7 new (S2 a database hiccup turns the owner's payments-off switches ON; 3 S3 silent payment failures), 1 reused |
 | L16-watch-app | L16 | lens 16 (Code health) x watch / watch/app: 2 items | done | _work/L16-watch-app.md | 2/2 items, 2 new (S3 older watch screen pictures saved but never compared; two rest-screen sets), 6 reused |
 | L16-web-pages | L16 | lens 16 (Code health) x web / web/pages: 2 items | done | _work/L16-web-pages.md | 2/2 items, 3 new S4 (member website never opened by a test; 7 unused pictures; hand-typed offline skip list misses a page), 2 reused |
 | CAL-5 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-5 ...); output is scored, never merged | done | _work/CAL-5.md | c08, c09: 16 gaps listed (not merged; scored in CAL-score) |
+| CAL-6 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-6.md | re-run 1: c01, c05, c12: 10 gaps (not merged; scored in CAL-score) |
+| CAL-7 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-7.md | re-run 1: c03, c06, c07: 15 gaps (not merged; scored in CAL-score) |
+| CAL-8 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-8.md | re-run 1: c04, c08, c13: 14 gaps (not merged; scored in CAL-score) |
+| CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
 (+ 328 more todo items, not shown)
-(+ 759 older done items, not shown)
+(+ 763 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
