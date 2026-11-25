@@ -1,0 +1,2 @@
+# B-run-web-pages-b checkpoint
+- 2026-11-25 H8.1-H8.6 done: 21 silent catch rows + 1 fallback row read; 95 rows filtered by script. All silent paths either tell the visitor downstream (server refusal -> message), fall back harmlessly (cache put, private-window storage, share sheet closed) or log in their refused() helper. 1 finding: FN-B-run-web-pages-b-01 (parse error text with body snippet logged in 4 forms). Rows in out/B-run-web-pages-b.jsonl. DONE.
