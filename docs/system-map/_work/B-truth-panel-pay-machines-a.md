@@ -1,0 +1,1 @@
+- 2026-11-25 started; items file read; existing findings for area listed (many from L5/L6/L19/L16 reusable)

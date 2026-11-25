@@ -1,0 +1,1 @@
+- 2026-11-25 start: read brief+items; existing ui-shell findings reviewed (FN-L16-panel-ui-shell-01/02, FN-L19-panel-ui-shell-01, FN-B-truth-panel-forms-a-02, FN-A5-panel-ui-shell-1-01, FN-B-run-panel-ui-shell-a-01). Code lines read ~200.

@@ -1,0 +1,7 @@
+- 2026-11-25 started; items file read (62 features, 12 items L2.1-L2.9, L17.1-L17.3)
+- data: Crispy crm_records tiny (3 members, 2 payments, 0 voided, 0 expenses, 1 self-join, 0 measurements, 0 challenges): recount proves nothing
+- L2.4 double tap: member check-in/PT (one per day in data), measurements (unique per day), expenses (request id) guarded; no new fault
+- L2.5 undo-import: planUndo ignores app link/measurements/door number/workout plans -> new finding 01
+- L2.7-2.9: assistant page is a wrapper (logic in panel/assistant); import AI masks but shows names -> reuse FN-L4-panel-logic-1-01; help AI answers from help pages
+- L17.2: help history only in this browser -> new finding 02
+- L2.2 rounding: measurements 1 decimal both sides; money in paise; no fault
