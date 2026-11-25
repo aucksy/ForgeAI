@@ -1,2 +1,4 @@
 - 2026-11-25 started; catch execute.ts:283 read: not silent (failWords logs + shows words); refund-fail path = existing FN-A5-panel-assistant-1-02
 - voice.ts:149 read: closing the sound meter, harmless. execute 194/214/219 + plan 505/510/584 + Cards 571: app list fail -> new finding 01
+- plan.ts 271-418 read: fallbacks guarded by checkDraft (plan/money/membership), no new fault
+- planWriter 69-73, suggestions 72/162, festivals 95, jobs 14 read: display-only fallbacks, no promise
