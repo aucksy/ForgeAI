@@ -149,7 +149,7 @@ describe('the words (member-words)', () => {
   });
 
   it('are complete sentences with no banned word', () => {
-    const all = [...Object.values(PHONE_ACCOUNT_WORDS).filter((v): v is string => typeof v === 'string'), PHONE_ACCOUNT_WORDS.signedIn('67')];
+    const all = [...(Object.values(PHONE_ACCOUNT_WORDS) as unknown[]).filter((v): v is string => typeof v === 'string'), PHONE_ACCOUNT_WORDS.signedIn('67')];
     for (const s of all) {
       expect(usesBannedWord(s)).toBe(false);
       expect(s).not.toMatch(/\b(session|sync|volume|PR|e-?mail)\b/i);
