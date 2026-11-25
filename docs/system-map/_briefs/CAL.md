@@ -55,7 +55,7 @@ OUTPUT FILE
 {OUTPUT FILE}
 
 ROW FORMAT (one JSON object per line; MADE-UP example, copy the shape only)
-{"kind":"finding","id":"FN-{WORK ITEM ID}-01","date":"2026-11-21","lens":"gap-3","surface":"panel","area":"c01","refs":[],"severity":"S2","title":"An automatic send leaves no record","what":"Plain words.","expected":"Plain words.","evidence":["docs/system-map/_work/calib/c01/apps/x/y.ts:40-52"],"proof":"code-read","root_cause_key":"auto-send-no-record","who":"owners","how_often":"every time","fix_line":"Plain words","fix_size":"small","needs_him":false,"verified":"pending","status":"open"}
+{"kind":"finding","id":"FN-{WORK ITEM ID}-01","date":"2026-11-21","lens":"gap-3","surface":"panel","area":"c01","refs":[],"severity":"S2","title":"A total on one screen differs from another","what":"Plain words.","expected":"Plain words.","evidence":["docs/system-map/_work/calib/c01/apps/x/y.ts:40-52"],"proof":"code-read","root_cause_key":"total-differs","who":"owners","how_often":"every time","fix_line":"Plain words","fix_size":"small","needs_him":false,"verified":"pending","status":"open"}
 area = the folder name (c01, c02, ...). evidence: the path inside the folder, with lines. title, what, expected, who, how_often, fix_line in plain words, no file or function names. root_cause_key: 3 to 6 lower-case words joined by dashes. Severity: S1 money wrong, personal data against a promise or the law, data lost, locked out | S2 a task cannot be finished, wrong facts shown | S3 confusing | S4 polish.
 
 BEFORE YOU REPORT: every line of your output file parses as JSON (node -e one-liner, seconds). Report the count per hunt.
