@@ -58,7 +58,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L19 | 37 | 3.6 (145k tokens) |
 | L14 | 37 | 3.7 (147k tokens) |
 | B-run | 74 | 3.7 (147k tokens) |
-| B-truth | 71 | 4.2 (169k tokens) |
+| B-truth | 72 | 4.2 (169k tokens) |
 | L7 | 37 | 3.2 (128k tokens) |
 | L8 | 37 | 1.3 (51k tokens) |
 | L9 | 31 | 1.4 (55k tokens) |
@@ -72,14 +72,15 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 278 todo, 4 in progress, 845 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 276 todo, 5 in progress, 846 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| B-truth-server-panel-worker-b | B-truth | B-truth (Same fact, every place) x server / server/panel-worker: 9 items | in progress | _work/B-truth-server-panel-worker-b.md |  |
 | B-truth-watch-app-b | B-truth | B-truth (Same fact, every place) x watch / watch/app: 9 items | in progress | _work/B-truth-watch-app-b.md |  |
 | B-truth-web-pages-b | B-truth | B-truth (Same fact, every place) x web / web/pages: 9 items | in progress | _work/B-truth-web-pages-b.md |  |
 | H5-hq-app | H5 | hunt 5 (Built vs live (deploy state)) x hq / hq/app: 4 items | in progress | _work/H5-hq-app.md |  |
+| B-alerts-hq-app-a | B-alerts | B-alerts (Notifications and messages + 1 more) x hq / hq/app: 6 items | in progress | _work/B-alerts-hq-app-a.md |  |
+| B-switch-hq-app | B-switch | B-switch (Should-read matrix (missing links) + 1 more) x hq / hq/app: 9 items | in progress | _work/B-switch-hq-app.md |  |
 | H5-panel-assistant | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/assistant: 4 items | todo | _work/H5-panel-assistant.md |  |
 | H5-panel-auth-data | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/auth-data: 4 items | todo | _work/H5-panel-auth-data.md |  |
 | H5-panel-brand-shell | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/brand-shell: 4 items | todo | _work/H5-panel-brand-shell.md |  |
@@ -113,8 +114,8 @@ Counts: 278 todo, 4 in progress, 845 done, 0 blocked. Full list: work-items.json
 | CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
-(+ 253 more todo items, not shown)
-(+ 837 older done items, not shown)
+(+ 251 more todo items, not shown)
+(+ 838 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
