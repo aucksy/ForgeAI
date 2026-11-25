@@ -8,6 +8,8 @@ backlog. Newest on top. Entries 3-21 were moved here from docs/OWNER-INBOX.md wi
 Older entries are moved automatically (scripts/trim_notes.py, newest 40 kept here) to docs/CLAUDE-NOTES-ARCHIVE.md: grep it before saying something was never said.
 
 ## R-628. "Share app link" sends the Play link + phone-number step; panel deploy tonight - 25 Nov 2026 ~23:00 IST
+RESUME 26 Nov 05:25 IST: both whole qa-device runs green on 7589e39d; tag v0.80.0 pushed (owner release words quoted in the tag). Release run 45724632860 stopped at the phone gate: it also needs qa-journeys on the commit. qa-journeys 45724790211 dispatched on v0.80.0 (~1 h). When green: re-run 45724632860 (rerun all jobs), watch build + play-upload, then Play production + the Data safety change.
+
 DEPLOYED LIVE 26 Nov 2026 ~01:20 IST: CI 45684339097 green on ffefd9db; its dashboard-dist artifact + worker deployed with wrangler (version d5348cf6). Checked live: the new Share app link text is in the served bundle; /app on Android = 302 to Play. Switches unchanged (PAY_LIVE off). Worker deploy note: local wrangler lacks the Windows workerd binary, so use `npx -y wrangler deploy` from deploy/panel.
 
 His words: "we can now give the link of Google Play directly, or we can include iOS link when we have it ... because now
