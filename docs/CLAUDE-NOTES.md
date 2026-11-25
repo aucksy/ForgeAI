@@ -14,8 +14,9 @@ A (deploy tonight) or B (after the audit): "I'm not available, so you take the b
 Built 556183eb + 89031a65 (/app smart link, "Continue with your phone number", code last as fallback; What's new
 2026-11-25 incl. the R-586 recipient lines, 0.79.0 is in production). RESUME: CI green on 89031a65 -> download its
 dashboard-dist artifact -> clean worktree at that sha + npm i @anthropic-ai/sdk@0.133.0 --no-save -> deploy/panel:
-npx wrangler deploy -> live check Share app link text. RELEASE 0.80.0: whole phone runs 45664787436 (default) +
-45664791326 (owner) on ecb17862; if both green, tag v0.80.0 on ecb17862, then Play production + send Data safety change.
+npx wrangler deploy -> live check Share app link text. RELEASE 0.80.0: first whole runs failed only at F198 dots
+(the new backup dot took 1 of 3 places; test fixed 7589e39d). Re-run whole 45683192327 (default) + 45683197127 (owner)
+on 7589e39d; if both green, tag v0.80.0 on 7589e39d, then Play production + send the Data safety change.
 
 ## R-627. F237 phone number sign-in also backs up workouts - 25 Nov 2026 18:45 IST
 His words: "This has to go now, today. And plan it properly and build it and release it today." (= release yes for 0.80.0).
