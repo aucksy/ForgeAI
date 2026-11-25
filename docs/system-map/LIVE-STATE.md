@@ -666,3 +666,39 @@ limits off (packages/theme/src/memberPlan.ts:28).
 | F-phone-1530 Reach the server when Supabase is blocked | yes | n/a | yes (both addresses answer with the stamp) | yes | |
 | F-phone-1531 Gym logo and shop photos through our address | yes | n/a | yes (same addresses) | yes | |
 | F-phone-1532 MettleUp Plus limits | yes, switch **off** (MEMBER_PLAN_GATE_ON false) | n/a | yes (app_limits) | **off** | nothing is ever refused |
+
+## H5-phone-components-1 (surface phone, area phone/components-1) — 20 features, written by H5-phone-components-1 on 2026-11-26
+
+The member app's Workout tab notices, gym logo, crash screen, update pop-ups, What's new, Charts page cards, charts,
+coach chat parts and the exercise History tab. "Play app" = the public Google Play listing read on 2026-11-26:
+**version 0.79.0** (see the H5-phone-cloud-backup-ai section). Main is 0.80.0 (apps/mobile/app.json:5), not released
+anywhere yet: on 2026-11-26 the app's own news file https://app.mettleup.fit/app/whats-new.json answered version 0.79.0
+and the newest GitHub release is v0.79.0 (17 Nov). The newest dated change in this area's files is R-596 (16 Nov,
+WatchUpdatePrompt.tsx:19), before 0.79.0, so this area is believed the same on Play as on main (no git diff was run).
+"Live panel" is n/a: these are phone parts. Catalog read 2026-11-26: member_me, member_join and member_leave (the gym's
+name and look) are live. Switches on main: coach off (apps/mobile/src/lib/features.ts:6), plan gate off
+(packages/theme/src/plans.ts:40), so a gym's logo shows for EVERY gym that set a colour, tone or logo; features.json
+calls 1301 and 1302 "behind switch", but the only switch is the gym's own look.
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-phone-1300 "Backups now go to your MettleUp account" notice | yes | n/a | n/a | yes | only for a phone that had Google Drive backup |
+| F-phone-1301 Gym logo full-screen on launch | yes (plan gate off) | n/a | yes (member_me, member_join) | yes | shows for any branded gym |
+| F-phone-1302 Gym logo and name on Workout, Profile, Shop | yes (plan gate off) | n/a | yes (member_me) | yes | |
+| F-phone-1306 "New" dots | yes | n/a | n/a | yes | |
+| F-phone-1307 "Your workouts are only on this phone" notice | yes | n/a | n/a | yes | |
+| F-phone-1308 "Couldn't save" banner | yes | n/a | n/a | yes | |
+| F-phone-1309 Crash screen with Try again | yes | n/a | n/a | yes | |
+| F-phone-1310 Update the app pop-up and orange line | yes | n/a | n/a | yes | Play copy uses Play's own update; news text from app.mettleup.fit/app/whats-new.json (0.79.0 live) |
+| F-phone-1311 "MettleUp works on your watch too" notice | yes | n/a | n/a | yes, but the watch app is **not in Play production** | Install leads nowhere for a normal member: FN-L12-phone-screens-2-01 |
+| F-phone-1312 Watch app update pop-up | yes | n/a | n/a | yes (testers' watches only) | only a watch that has the test-track watch app |
+| F-phone-1313 What's new card | yes | n/a | n/a | yes | 0.80.0 lines wait for the 0.80.0 release |
+| F-phone-1314 Body map of muscles trained | yes | n/a | n/a | yes | |
+| F-phone-1315 Balance check card | yes | n/a | n/a | yes | |
+| F-phone-1316 Strength score trend | yes | n/a | n/a | yes | |
+| F-phone-1317 Reports card | yes | n/a | n/a | yes | |
+| F-phone-1321 Tap a bar or point on any chart | yes | n/a | n/a | yes | |
+| F-phone-1323 Coach chat bubbles and cards | yes, switch **off** (coach false) | n/a | n/a | **off** | coach tab sends to Workout (apps/mobile/src/app/(tabs)/coach.tsx:35) |
+| F-phone-1324 Coach chat food cards | yes, switch **off** | n/a | n/a | **off** | |
+| F-phone-1325 Coach chat voice (hold the mic) | yes, switch **off** | n/a | n/a | **off** | |
+| F-phone-1326 Exercise page History tab | yes | n/a | n/a | yes | |

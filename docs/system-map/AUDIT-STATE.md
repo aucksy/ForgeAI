@@ -64,7 +64,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L9 | 31 | 1.4 (55k tokens) |
 | L12 | 37 | 1.2 (50k tokens) |
 | L16 | 37 | 2.7 (109k tokens) |
-| H5 | 13 | 3.5 (139k tokens) |
+| H5 | 14 | 3.5 (139k tokens) |
 | B-alerts | 26 | 3.5 (139k tokens) |
 | B-switch | 16 | 4.0 (158k tokens) |
 | B-time | 11 | 3.8 (154k tokens) |
@@ -72,11 +72,10 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 198 todo, 4 in progress, 925 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 198 todo, 3 in progress, 926 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| H5-phone-components-1 | H5 | hunt 5 (Built vs live (deploy state)) x phone / phone/components-1: 4 items | in progress | _work/H5-phone-components-1.md |  |
 | B-switch-phone-cloud-backup-ai | B-switch | B-switch (Should-read matrix (missing links) + 1 more) x phone / phone/cloud-backup-ai: 9 items | in progress | _work/B-switch-phone-cloud-backup-ai.md |  |
 | B-time-phone-cloud-backup-ai | B-time | B-time (Install, update, upgrade + 2 more) x phone / phone/cloud-backup-ai: 7 items | in progress | _work/B-time-phone-cloud-backup-ai.md |  |
 | B-words-phone-cloud-backup-ai | B-words | B-words (Language and words + 1 more) x phone / phone/cloud-backup-ai: 17 items | in progress | _work/B-words-phone-cloud-backup-ai.md |  |
@@ -114,7 +113,7 @@ Counts: 198 todo, 4 in progress, 925 done, 0 blocked. Full list: work-items.json
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
 (+ 173 more todo items, not shown)
-(+ 917 older done items, not shown)
+(+ 918 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
