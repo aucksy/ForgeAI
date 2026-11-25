@@ -57,7 +57,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | A8 | 97 | 5.9 (235k tokens) |
 | L19 | 37 | 3.6 (145k tokens) |
 | L14 | 37 | 3.7 (147k tokens) |
-| B-run | 52 | 3.8 (154k tokens) |
+| B-run | 53 | 3.8 (153k tokens) |
 | B-truth | 37 | 4.3 (174k tokens) |
 | L7 | 37 | 3.2 (128k tokens) |
 | L8 | 37 | 1.3 (51k tokens) |
@@ -72,7 +72,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 332 todo, 6 in progress, 789 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 332 todo, 5 in progress, 790 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
@@ -81,7 +81,6 @@ Counts: 332 todo, 6 in progress, 789 done, 0 blocked. Full list: work-items.json
 | B-run-phone-onboarding-db-b | B-run | B-run (Silent fallbacks) x phone / phone/onboarding-db: 6 items | in progress | _work/B-run-phone-onboarding-db-b.md |  |
 | B-run-phone-screens-1-b | B-run | B-run (Silent fallbacks) x phone / phone/screens-1: 6 items | in progress | _work/B-run-phone-screens-1-b.md |  |
 | B-run-phone-screens-2-b | B-run | B-run (Silent fallbacks) x phone / phone/screens-2: 6 items | in progress | _work/B-run-phone-screens-2-b.md |  |
-| B-run-phone-shop-1-b | B-run | B-run (Silent fallbacks) x phone / phone/shop-1: 6 items | in progress | _work/B-run-phone-shop-1-b.md |  |
 | B-run-phone-shop-2-b | B-run | B-run (Silent fallbacks) x phone / phone/shop-2: 6 items | todo | _work/B-run-phone-shop-2-b.md |  |
 | B-run-phone-tracker-components-1-b | B-run | B-run (Silent fallbacks) x phone / phone/tracker-components-1: 6 items | todo | _work/B-run-phone-tracker-components-1-b.md |  |
 | B-run-phone-tracker-components-2-b | B-run | B-run (Silent fallbacks) x phone / phone/tracker-components-2: 6 items | todo | _work/B-run-phone-tracker-components-2-b.md |  |
@@ -116,7 +115,7 @@ Counts: 332 todo, 6 in progress, 789 done, 0 blocked. Full list: work-items.json
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
 (+ 307 more todo items, not shown)
-(+ 781 older done items, not shown)
+(+ 782 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).

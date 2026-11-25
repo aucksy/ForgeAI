@@ -1,0 +1,2 @@
+# B-run-phone-lib-core-b checkpoint
+- H8.1-H8.6 done (22 silent rows read, 117 filtered). Findings: FN-B-run-phone-lib-core-b-01 (restore says no Plus when no store), -02 (damaged help list overwritten). Others read and judged harmless: useLoad sets an error state (script miss); feedback/voice answers fall back to status words; haptics, button spot, QA-only flags, crash describe, popups line are cosmetic; pendingPick note loss = member just re-picks; voice.speak = text reply still shown; safekeep demo set = card may show early.

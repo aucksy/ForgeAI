@@ -1,0 +1,1 @@
+- 2026-11-25 started gap-8 on phone/native; read OfflineTick, RestActionReceiver, RestCard alarm/note
