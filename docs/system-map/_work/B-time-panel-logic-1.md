@@ -5,3 +5,4 @@
 - L20.1 checked (new 01 archived returner via import; new 02 set-up card per browser; reuse FN-L14-panel-logic-1-02, FN-A5-panel-logic-1-1-01, FN-A5-panel-logic-1-3-03)
 - H7.1-H7.5 checked (new 03 Aadhaar rule only for new imports; new 04 HQ messages before the gym existed count as new; 02 again)
 - next: write out file, run lens-cover and merge --dry
+- output written (7 rows: 4 findings, 3 grid); lens-cover ok; merge --dry run
