@@ -67,12 +67,12 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | H5 | 8 | 3.1 (123k tokens) |
 | B-alerts | 17 | 3.1 (122k tokens) |
 | B-switch | 9 | 3.6 (144k tokens) |
-| B-time | 6 | 3.5 (138k tokens) |
+| B-time | 7 | 3.7 (147k tokens) |
 | B-words | 6 | 3.9 (158k tokens) |
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 227 todo, 6 in progress, 894 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 227 todo, 5 in progress, 895 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
@@ -80,7 +80,6 @@ Counts: 227 todo, 6 in progress, 894 done, 0 blocked. Full list: work-items.json
 | B-alerts-panel-screens-1-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x panel / panel/screens-1: 10 items | in progress | _work/B-alerts-panel-screens-1-b.md |  |
 | B-switch-panel-pay-machines | B-switch | B-switch (Should-read matrix (missing links) + 1 more) x panel / panel/pay-machines: 9 items | in progress | _work/B-switch-panel-pay-machines.md |  |
 | B-switch-panel-screens-1-a | B-switch | B-switch (Should-read matrix (missing links)) x panel / panel/screens-1: 4 items | in progress | _work/B-switch-panel-screens-1-a.md |  |
-| B-time-panel-pay-machines | B-time | B-time (Install, update, upgrade + 2 more) x panel / panel/pay-machines: 7 items | in progress | _work/B-time-panel-pay-machines.md |  |
 | B-words-panel-pay-machines | B-words | B-words (Language and words + 1 more) x panel / panel/pay-machines: 17 items | in progress | _work/B-words-panel-pay-machines.md |  |
 | H5-panel-screens-2 | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/screens-2: 4 items | todo | _work/H5-panel-screens-2.md |  |
 | H5-panel-shop | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/shop: 4 items | todo | _work/H5-panel-shop.md |  |
@@ -116,7 +115,7 @@ Counts: 227 todo, 6 in progress, 894 done, 0 blocked. Full list: work-items.json
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
 (+ 202 more todo items, not shown)
-(+ 886 older done items, not shown)
+(+ 887 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).

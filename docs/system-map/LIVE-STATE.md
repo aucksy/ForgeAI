@@ -371,3 +371,85 @@ answer and its route is commented out, although Settings > Entry machines is ope
 | F-panel-1114 Online payments group | yes | **partly**: UPI QR yes; company links test mode only | unknown (small web database 0011/0016 not readable) | n/a | PAY_LIVE off on main |
 | F-panel-126 Connect a payment company | yes | yes, **test mode**; company sign-in off (PAY_OAUTH_* off) | unknown (small web database) | n/a | |
 | F-panel-127 Where members can pay online switches | yes | yes; the join switch now **shows** (JOIN_PAY live since 19-26 Nov) | unknown (small web database 0016) | n/a | join page takes UPI only until PAY_LIVE is on |
+
+## H5-panel-screens-1 (surface panel, area panel/screens-1) — 62 features, written by H5-panel-screens-1 on 2026-11-26
+
+The owner and desk screens from AI Assistant to Body measurements (Visits, Bring a friend, Busy machines, Challenges,
+Diet plans, Enquiries, Entry machines, Expenses, Help and feedback, Gym timings, Import members, the member page).
+"Live panel" = the build at app.mettleup.fit read on 2026-11-26 (script index--GfMsOId.js, which already holds the
+25 Nov What's new entry): every long on-screen sentence of the 14 screen files on main (79 of 79) is in it. "Live DB" =
+every gym-database function these screens call is in the live grant list (machine db-security.json routine_grants):
+crm_push, crm_pull, the six body and diet functions, the two timings, three photo, two busy-machine, six challenge,
+five entry-machine and three MettleUp-access functions, and owner_friend_summary. The web page chat functions (0094)
+are absent. Live switches (public /api/switches, 2026-11-26): gymPages false, pageAi false, joinPay true, aiCharge true.
+"Play app" = the member-app part, where one exists: busy-machine tips (0.70.0), invite a friend (0.72.0), leaderboard
+and challenge (0.58.0), diet plan, gym measurements and timings (0.57.0) are all older than the Play production build
+(0.77.0 read 21 Nov; the 25 Nov What's new note says 0.79.0 reached production that day), so "yes".
+Entry machines: the screen and its database part are live, but the door service is not (FN-H5-panel-pay-machines-01).
+Bring a friend and the member photo are marked "behind switch" but wait only for database parts that are live (same
+stale-mark fault as FN-H5-hq-app-02). The small web database parts (help questions 0008/0014) cannot be read from here.
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-panel-1110 Members group (list, member page, photo, card, share) | yes | yes | yes (crm_push/crm_pull, photo functions) | n/a | |
+| F-panel-1111 Import members group | yes | yes | yes (crm_push) | n/a | AI column guess: /api/ai/match-columns answers "Sign in first" (live) |
+| F-panel-1116 Enquiries group | yes | yes, except the web page chat (off) | yes | n/a | |
+| F-panel-1126 Diet plans and body measurements | yes | yes | yes (owner_diet_plans, owner_save_measurement and 4 more) | yes (0.57.0) | |
+| F-panel-1127 Challenges group | yes | yes | yes (six challenge and board functions) | yes (0.58.0) | |
+| F-panel-1128 Expenses | yes | yes | yes (crm_push) | n/a | |
+| F-panel-1130 AI Assistant group (listed "behind switch") | yes | **yes** | yes | n/a | see the H5-panel-assistant section: every part of the switch is live |
+| F-panel-1132 Member-app settings (timings, busy machines, plus lock) | yes | yes; the plus lock is **off** (MEMBER_PLAN_GATE_ON false) | yes | yes | plus lock: see H5-panel-logic-2 |
+| F-panel-1133 Entry machines group (listed "behind switch") | yes | **open**, but machines never come online | yes (five entry-machine functions) | n/a | door service not deployed: FN-H5-panel-pay-machines-01 |
+| F-panel-1135 Help and feedback group | yes | yes | yes (owner_hq_access/grant/end); help store unknown | n/a | small web database 0008/0014 not readable |
+| F-panel-200 AI Assistant page (listed "behind switch") | yes | **yes** | yes | n/a | aiCharge on |
+| F-panel-201 Visits register, check in, undo | yes | yes | yes (crm_push) | n/a | |
+| F-panel-202 Losing the habit list | yes | yes | yes (crm_pull) | n/a | worked out in the browser |
+| F-panel-203 Links to Check-in QR and Pass visits | yes | yes | yes | n/a | Pass visits shows once the gym has a pass member; 0055 applied live |
+| F-panel-204 Bring a friend Settings card (listed "behind switch") | yes | **yes** | yes (owner_friend_summary, 0056) | yes (0.72.0) | a condition, not a switch (FN-H5-hq-app-02) |
+| F-panel-205 Bring a friend thank-you | yes | yes | yes (crm_push) | n/a | |
+| F-panel-206 Busy machines setup (listed "behind switch") | yes | yes; each gym's own on/off | yes (owner_machine_setup, owner_save_machine_setup) | yes (0.70.0) | the switch is the owner's own setting |
+| F-panel-207 Create, cancel and confirm a challenge | yes | yes | yes | yes (0.58.0) | |
+| F-panel-208 Leaderboard, hide a member | yes | yes | yes (owner_board, owner_hide_on_board) | yes (0.58.0) | |
+| F-panel-209 Build and send diet plans | yes | yes | yes | yes (0.57.0) | |
+| F-panel-210 Diet plan on the member page | yes | yes | yes | yes (0.57.0) | |
+| F-panel-211 Enquiries list and follow-ups | yes | yes | yes (crm_push) | n/a | |
+| F-panel-212 Add an enquiry by hand | yes | yes | yes | n/a | |
+| F-panel-213 Make an enquiry a member | yes | yes | yes | n/a | |
+| F-panel-214 Web page question and AI chat on an enquiry (listed "behind switch") | yes | **off** (gymPages false, pageAi false) | **no** (page chat, 0094, absent) | n/a | really off; correct mark |
+| F-panel-215 Add or remove a door machine (listed "hidden") | yes | **open**, machines never come online | yes | n/a | FN-H5-panel-pay-machines-01 |
+| F-panel-216 Machine number on the member page (listed "hidden") | yes | shows once a machine is added | yes (owner_set_machine_numbers) | n/a | the number does nothing while the door service is off |
+| F-panel-217 Expenses month by month | yes | yes | yes (crm_push) | n/a | |
+| F-panel-218 Help: write, answer, rate, past questions | yes | yes | unknown (small web database 0008/0014) | n/a | 0009 marked applied live 9 Nov |
+| F-panel-219 MettleUp access card | yes | yes | yes (owner_hq_access, owner_hq_grant, owner_hq_end) | n/a | |
+| F-panel-220 Gym timings | yes | yes | yes (owner_gym_timings, owner_save_gym_timings) | yes (0.57.0) | |
+| F-panel-221 Import from Excel or CSV | yes | yes | yes (crm_push) | n/a | |
+| F-panel-222 Import: AI matches the columns | yes | yes | n/a (panel server) | n/a | /api/ai/match-columns live |
+| F-panel-223 Import into the right branch | yes | yes for gyms with 2+ branches | yes (0031 live) | n/a | |
+| F-panel-224 Undo a past import | yes | yes | yes (crm_push) | n/a | |
+| F-panel-225 Member page | yes | yes | yes (crm_pull) | n/a | |
+| F-panel-226 Check in from the member page | yes | yes | yes | n/a | |
+| F-panel-227 Archive or restore a member | yes | yes | yes | n/a | |
+| F-panel-228 Member card | yes | yes | n/a (browser) | n/a | |
+| F-panel-229 Share app link | yes | yes (25 Nov wording live) | n/a | yes | app.mettleup.fit/app is live and sends Android to Google Play |
+| F-panel-230 WhatsApp with the message typed | yes | yes | n/a (browser) | n/a | |
+| F-panel-231 Member photo (listed "behind switch") | yes | **yes** while online | yes (three photo functions) | n/a | a condition, not a switch (FN-H5-hq-app-02) |
+| F-panel-232 Sell, renew, collect | yes | yes | yes (crm_push) | n/a | |
+| F-panel-233 Cancel a membership and undo | yes | yes | yes | n/a | |
+| F-panel-234 Freeze, extra days, move start | yes | yes | yes | n/a | |
+| F-panel-235 Personal training sessions | yes | yes | yes | n/a | |
+| F-panel-236 Cancel a receipt | yes | yes | yes | n/a | |
+| F-panel-237 Check a workout code | yes | yes | yes | n/a | 0025 applied live |
+| F-panel-238 Send or build a workout plan | yes | yes | yes | n/a | |
+| F-panel-239 Body measurements at the desk | yes | yes | yes (owner_member_measurements and 2 more) | yes (0.57.0) | |
+| F-panel-514 Expenses and profit | yes | yes | yes | n/a | |
+| F-panel-516 Visits, stopped coming, pass visits | yes | yes | yes | n/a | |
+| F-panel-517 Enquiries | yes | yes | yes | n/a | |
+| F-panel-518 Bring a friend (listed "behind switch") | yes | **yes** | yes (0056) | yes (0.72.0) | FN-H5-hq-app-02 |
+| F-panel-519 Import members | yes | yes | yes | n/a | |
+| F-panel-526 Diet plans and body measurements | yes | yes | yes | yes (0.57.0) | |
+| F-panel-527 Challenges and leaderboard | yes | yes | yes | yes (0.58.0) | |
+| F-panel-529 Gym timings | yes | yes | yes | yes (0.57.0) | |
+| F-panel-531 Entry machines (listed "unknown") | yes | **open**, machines never come online | yes | n/a | door service not deployed: FN-H5-panel-pay-machines-01 |
+| F-panel-532 Busy machines (listed "behind switch") | yes | yes; each gym's own on/off | yes | yes (0.70.0) | |
+| F-panel-537 AI Assistant (listed "behind switch") | yes | **yes** | yes | n/a | see H5-panel-assistant |
+| F-panel-538 Help and feedback | yes | yes | yes; help store unknown | n/a | |
