@@ -3,3 +3,4 @@
 - Behind-switch marks: 703 member messages and 731 trainer pages are live (0069/0096 and 0065 live; "not ready" words show only when functions are missing) -> reuse FN-H5-hq-app-02. 714 page chat really off (PAGE_AI off + 0094 not live). 720 plus lock really off (MEMBER_PLAN_GATE_ON false). 717 partly (UPI/bank yes, online buy off).
 - New finding FN-H5-panel-logic-2-01 (S4): code notes say 0069, 0096, 0065, 0088 not live (they are).
 - H5.3: What's new lines of this area honest; pending entries held back. No new H5.3 finding.
+- 2026-11-26 H5.4 written (LIVE-STATE.md lines 271-326); grid row + 1 finding written; lens-cover ok; merge --dry 2 passed 0 rejected. Code lines read ~200. Temp files deleted. DONE
