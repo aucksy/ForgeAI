@@ -1,3 +1,4 @@
 - Started B-truth-phone-lib-core-a
 - L2.2 rounding: finding share picture 1dp vs 2dp (new 01)
 - All 12 items written (3 new findings: 01 share rounding, 02 partial week, 03 strength by name). Checks run.
+- DONE: lens-cover ok, merge dry 5/5 passed.
