@@ -98,3 +98,54 @@ database cannot be read from here (FN-L14-server-panel-worker-02).
 | F-panel-915 Helper cards | yes | yes | n/a | n/a | browser only |
 | F-panel-916 Find the member named | yes | yes | n/a | n/a | browser only |
 | F-panel-917 Phone and email masked before the AI | yes | yes | n/a | n/a | browser only, before the server is asked |
+
+## H5-panel-auth-data (surface panel, area panel/auth-data) — 30 features, written by H5-panel-auth-data on 2026-11-25
+
+Sign-in, staff, terms, support access and the gym's records store, all in the web panel, so the "Play app" column is
+n/a for every row. "Live panel" = the build at app.mettleup.fit: its script and style names (index-fj5xgbKr.js,
+index-Bnm1IIYj.css) were read again on 2026-11-25 and still match the newest green build of main, and nothing under
+apps/dashboard/src changed on main since (machine live-state.csv, panel row). "Live DB" = every gym-database function
+the feature calls is in the live grant list (machine db-security.json routine_grants, read 2026-11-20): all 25 that
+this area calls are there (crm_pull, crm_push, staff_sign_in, staff_me, staff_sign_out, staff_key_status,
+staff_pin_status, staff_set_pin, staff_reset_pin_with_proof, gym_create_online with its PIN, terms and WhatsApp-proof
+inputs, owner_go_online, owner_retire_key, owner_people, owner_add_person, owner_set_person_job, owner_remove_person,
+owner_make_signin_code, owner_sign_out_person, owner_terms, owner_accept_terms, owner_hq_access, owner_hq_grant,
+owner_hq_end, _phone_sig_ok). WhatsApp checks: public /api/phone-code/status answered available, mode "inbound" on
+2026-11-25, so "Verify with WhatsApp" is on; the older "we send you a code" way is not offered while it is
+(deploy/panel/phoneCode.js:244-245). The two features listed "behind switch" (1002, 1003) are therefore live; the
+mark is stale (same fault as FN-H5-hq-app-02). Side note for the whole-system table: /api/switches answered
+joinPay **true** on 2026-11-25 (main now sets JOIN_PAY "live": deploy/panel/wrangler.jsonc:92), so the "joinPay off"
+line above dates from 19 Nov.
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-panel-1000 Sign in (mobile + PIN or code) | yes | yes | yes | n/a | staff_sign_in present |
+| F-panel-1001 Set up a new gym online | yes | yes | yes | n/a | gym_create_online takes PIN, terms and WhatsApp proof live |
+| F-panel-1002 Verify mobile with WhatsApp | yes | **yes** (listed "behind switch") | yes | n/a | status = inbound on 25 Nov; the "type a code we send" way is off while inbound is on |
+| F-panel-1003 Forgot PIN by WhatsApp | yes | **yes** (listed "behind switch") | yes | n/a | staff_reset_pin_with_proof present; inbound on |
+| F-panel-1004 Other ways back in | yes | yes | yes | n/a | owner_make_signin_code present; "email MettleUp" is a plain mail link |
+| F-panel-1005 Set or change my PIN | yes | yes | yes | n/a | staff_pin_status, staff_set_pin present |
+| F-panel-1006 One-time set-your-PIN prompt | yes | yes | yes | n/a | browser side, uses staff_pin_status |
+| F-panel-1007 Staff & sign-in screen | yes | yes | yes | n/a | owner_people present |
+| F-panel-1008 Add a person | yes | yes | yes | n/a | owner_add_person present |
+| F-panel-1009 Name a staff member's job | yes | yes | yes | n/a | owner_set_person_job (0079) present, so jobs save on the server; the "kept on this browser" fallback no longer runs live |
+| F-panel-1010 Make a sign-in code | yes | yes | yes | n/a | owner_make_signin_code present |
+| F-panel-1011 Sign a person out everywhere | yes | yes | yes | n/a | owner_sign_out_person present |
+| F-panel-1012 Remove a person | yes | yes | yes | n/a | owner_remove_person present |
+| F-panel-1013 Sign out of this device | yes | yes | yes | n/a | staff_sign_out present; the rest is browser side |
+| F-panel-1014 Told why you were signed out | yes | yes | yes | n/a | staff_key_status (0022) present |
+| F-panel-1015 Put your records online | yes | yes | yes | n/a | owner_go_online, owner_retire_key, crm_push present |
+| F-panel-1016 Agree to terms | yes | yes | yes | n/a | owner_terms, owner_accept_terms, _terms_versions present; which version is live not read (no SQL allowed in this run) |
+| F-panel-1017 MettleUp access | yes | yes | yes | n/a | owner_hq_access, owner_hq_grant, owner_hq_end present |
+| F-panel-1018 Staff limits | yes | yes | yes | n/a | screen side in the panel; server refusals ride on crm_push |
+| F-panel-1019 Gym's records online | yes | yes | yes | n/a | crm_pull, crm_push present |
+| F-panel-1020 Gym kept in this browser only | yes | yes | n/a | n/a | browser only |
+| F-panel-1021 Demo copy of the gym | yes | yes | n/a | n/a | page memory only |
+| F-panel-1022 Offline front desk (saved copy) | yes | yes | n/a | n/a | copy kept on the device |
+| F-panel-1023 Offline waiting list | yes | yes | yes | n/a | sends through crm_push; 0041 (offline receipts) first line says applied live 30 Oct |
+| F-panel-1024 Import preview | yes | yes | n/a | n/a | worked out in the browser |
+| F-panel-1025 Mark a person as trainer | yes | yes | yes | n/a | owner_trainer_setup and owner_set_trainer (0050) present |
+| F-panel-1101 Sign-in group (all of the above) | yes | yes | yes | n/a | |
+| F-panel-1102 Staff & sign-in group | yes | yes | yes | n/a | |
+| F-panel-1103 Gym records store group | yes | yes | yes | n/a | |
+| F-panel-1136 Demo gym at /demo | yes | yes | n/a | n/a | page memory, no network |
