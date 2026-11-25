@@ -267,3 +267,60 @@ member app's What's new; Play production is 0.77.0.
 | F-panel-634 Workout of the day | yes | yes | yes | yes (Workout tab) | owner_save_gym_wod present |
 | F-panel-635 Home tiles | yes | yes | yes | n/a | crm_pull |
 | F-panel-636 Messages from HQ in the bell | yes | yes | yes (small web database 0006 proved by the public answer) | n/a | live list holds a leftover test message |
+
+## H5-panel-logic-2 (surface panel, area panel/logic-2) — 39 features, written by H5-panel-logic-2 on 2026-11-26
+
+The web panel's rules for members, memberships, receipts, joining online, member messages, trainers, alerts, offers and
+What's new. "Live panel" = the build at app.mettleup.fit read on 2026-11-26 (script index--GfMsOId.js): 436 of the 440
+on-screen sentences in these 39 files on main are in it. The 4 misses: the two What's new entries kept back until their
+switch goes on (gym web pages; MettleUp Plus lock) and one unused word the build drops. "Live DB" = every one of the 94
+gym-database functions the panel calls is in the live grant list (machine db-security.json, read 2026-11-20), and each
+change file these features stand on is present, except 0094 (web page chat: none of its 8 functions or its table is
+live). Switches on 2026-11-26 (public /api/switches): gymPages off, joinPay on, aiCharge on, pageAi off. The members'
+paid-plan switch is off on main (packages/theme/src/memberPlan.ts:28), so the Plus lock card stays hidden.
+Two "behind switch" marks are stale: Member messages (0069, 0087, 0096 live) and Trainer pages (0065 live); their
+"not switched on" words show only when the database lacks the functions. Same fault as FN-H5-hq-app-02.
+"Play app" = the member-app side. Play production was 0.77.0 when last read (21 Nov); the panel's 25 Nov note says
+0.79.0 reached production on 25 Nov (apps/dashboard/src/crm/logic/whatsNew.ts:41-42), not re-read here. Main is 0.80.0.
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-panel-3100 Mobile boxes keep 10 digits | yes | yes | n/a | n/a | worked out in the browser; the join pages too |
+| F-panel-700 Import from another software | yes | yes | yes | n/a | saves through crm_push; undo import 0017 |
+| F-panel-701 Joined online (make member, approve paid, free trial) | yes | yes | yes | n/a | 0077 and 0088 live; joinPay on live |
+| F-panel-702 Member ID card | yes | yes | n/a | n/a | made in the browser |
+| F-panel-703 Member messages | yes | **yes** (listed "behind switch") | yes | yes; "pick who reads it" needs 0.79.0 | 0069, 0087, 0096 functions live |
+| F-panel-704 Member photo at the desk | yes | yes | yes | n/a | 0043 live |
+| F-panel-705 Training progress for gym and trainers | yes | yes | yes | yes (12 months needs a newer app) | 0053, 0084 live |
+| F-panel-706 Add and edit members | yes | yes | yes | n/a | crm_push |
+| F-panel-707 Sell, renew, extend a membership | yes | yes | yes | n/a | crm_push |
+| F-panel-709 Receipts | yes | yes | yes | n/a | receipt rules 0021 |
+| F-panel-710 Side menu in five groups | yes | yes | n/a | n/a | browser only |
+| F-panel-711 Needs you on Today | yes | yes | yes | n/a | counts from live functions |
+| F-panel-712 New gym ready card | yes | yes | yes | n/a | shown after Create my gym |
+| F-panel-713 Owner numbers on Today | yes | yes | yes | n/a | worked out from crm_pull records |
+| F-panel-714 Web page chat in Enquiries | yes | **off** (pageAi off) | **no** (0094 not live) | n/a | needs both the switch and 0094 |
+| F-panel-715 Refresh from the top bar | yes | yes | n/a | n/a | browser only |
+| F-panel-716 Pass members | yes | yes | yes | n/a | 0055 live |
+| F-panel-717 Pay MettleUp for a plan | yes | **partly**: UPI/bank page yes; online buy off | yes | n/a | 0060, 0063 live; HQ has no BILLING setting |
+| F-panel-718 Numbers to confirm | yes | yes | yes | n/a | owner_phone_links, owner_decide_phone_link live |
+| F-panel-719 Pause and renew requests | yes | yes | yes | yes | 0044 live |
+| F-panel-720 MettleUp Plus lock switch | yes | **off** (card hidden) | yes (0070 live) | off | members' paid-plan switch off on main |
+| F-panel-721 Personal training packs | yes | yes | yes | n/a | crm_push |
+| F-panel-722 Quick action buttons | yes | yes | n/a | n/a | browser only |
+| F-panel-723 Ready-made challenges | yes | yes | yes | yes | 0047 live |
+| F-panel-724 Bring a friend reward | yes | yes | yes | yes | 0056, 0085 live |
+| F-panel-725 WhatsApp message to one member | yes | yes | n/a | n/a | opens WhatsApp from the browser |
+| F-panel-726 Messages & offers | yes | yes | yes | yes | owner_send_message live |
+| F-panel-727 One line under each setting | yes | yes | n/a | n/a | words only |
+| F-panel-728 Settings tabs with new dots | yes | yes | n/a | n/a | browser only |
+| F-panel-729 Set-up cards on Today | yes | yes | n/a | n/a | browser only |
+| F-panel-730 Add a person with a job | yes | yes | yes | n/a | 0079 live |
+| F-panel-731 Trainer profiles and bookings | yes | **yes** (listed "behind switch") | yes | unknown | 0065 functions live |
+| F-panel-732 Gym's own form videos | yes | yes | yes | yes | 0051 live |
+| F-panel-733 Free-trial banner | yes | yes | yes | n/a | reads the gym's plan state |
+| F-panel-734 Alerts with the app closed | yes | yes | yes | n/a | 0076, 0095 live; HQ server sends them |
+| F-panel-735 Monday summary | yes | yes | n/a | n/a | worked out in the browser |
+| F-panel-736 Workout offer | yes | yes | yes | yes | 0025 live |
+| F-panel-737 Workout plans | yes | yes | yes | yes | 0024 live |
+| F-panel-738 What's new in the admin app | yes | yes (newest entry 2026-11-25) | n/a | n/a | two pending entries held back, as they should be |
