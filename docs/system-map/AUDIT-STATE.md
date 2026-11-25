@@ -68,17 +68,16 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-alerts | 26 | 3.5 (139k tokens) |
 | B-switch | 16 | 4.0 (158k tokens) |
 | B-time | 11 | 3.8 (154k tokens) |
-| B-words | 11 | 4.7 (187k tokens) |
+| B-words | 12 | 4.6 (186k tokens) |
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 198 todo, 3 in progress, 926 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 198 todo, 2 in progress, 927 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | B-switch-phone-cloud-backup-ai | B-switch | B-switch (Should-read matrix (missing links) + 1 more) x phone / phone/cloud-backup-ai: 9 items | in progress | _work/B-switch-phone-cloud-backup-ai.md |  |
 | B-time-phone-cloud-backup-ai | B-time | B-time (Install, update, upgrade + 2 more) x phone / phone/cloud-backup-ai: 7 items | in progress | _work/B-time-phone-cloud-backup-ai.md |  |
-| B-words-phone-cloud-backup-ai | B-words | B-words (Language and words + 1 more) x phone / phone/cloud-backup-ai: 17 items | in progress | _work/B-words-phone-cloud-backup-ai.md |  |
 | H5-phone-components-2 | H5 | hunt 5 (Built vs live (deploy state)) x phone / phone/components-2: 4 items | todo | _work/H5-phone-components-2.md |  |
 | H5-phone-lib-core | H5 | hunt 5 (Built vs live (deploy state)) x phone / phone/lib-core: 4 items | todo | _work/H5-phone-lib-core.md |  |
 | H5-phone-native | H5 | hunt 5 (Built vs live (deploy state)) x phone / phone/native: 4 items | todo | _work/H5-phone-native.md |  |
@@ -104,7 +103,7 @@ Counts: 198 todo, 3 in progress, 926 done, 0 blocked. Full list: work-items.json
 | H5-web-pages | H5 | hunt 5 (Built vs live (deploy state)) x web / web/pages: 4 items | todo | _work/H5-web-pages.md |  |
 | B-alerts-phone-components-1-a | B-alerts | B-alerts (Notifications and messages + 1 more) x phone / phone/components-1: 6 items | todo | _work/B-alerts-phone-components-1-a.md |  |
 | B-alerts-phone-components-1-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x phone / phone/components-1: 10 items | todo | _work/B-alerts-phone-components-1-b.md |  |
-| B-words-panel-ui-shell | B-words | B-words (Language and words + 1 more) x panel / panel/ui-shell: 17 items | done | _work/B-words-panel-ui-shell.md | 1 S3: member card says show it at the desk but the desk cannot scan it; 3 S4 |
+| B-words-phone-cloud-backup-ai | B-words | B-words (Language and words + 1 more) x phone / phone/cloud-backup-ai: 17 items | done | _work/B-words-phone-cloud-backup-ai.md | 2 S3: sign-in card says less than the privacy notice; Tap Restore again names a missing button; 1 S4 |
 | CAL-5 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-5 ...); output is scored, never merged | done | _work/CAL-5.md | c08, c09: 16 gaps listed (not merged; scored in CAL-score) |
 | CAL-6 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-6.md | re-run 1: c01, c05, c12: 10 gaps (not merged; scored in CAL-score) |
 | CAL-7 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-7.md | re-run 1: c03, c06, c07: 15 gaps (not merged; scored in CAL-score) |
@@ -113,7 +112,7 @@ Counts: 198 todo, 3 in progress, 926 done, 0 blocked. Full list: work-items.json
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
 (+ 173 more todo items, not shown)
-(+ 918 older done items, not shown)
+(+ 919 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
