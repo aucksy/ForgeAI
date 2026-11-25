@@ -45,7 +45,7 @@ describe('R-580: the 10-digit rule in the member app', () => {
 });
 
 describe('R-580: every phone box uses the rule and has no length limit', () => {
-  const INDIA_ONLY = ['onboarding/components/WelcomePhone.tsx', 'app/find-gym.tsx', 'shop/CheckInScreen.tsx', 'shop/StaffDoorCard.tsx'];
+  const INDIA_ONLY = ['onboarding/components/WelcomePhone.tsx', 'app/find-gym.tsx', 'shop/CheckInScreen.tsx', 'shop/StaffDoorCard.tsx', 'components/settings/PhoneBackup.tsx'];
   const ANY_COUNTRY = ['onboarding/components/WelcomeScreen.tsx', 'components/settings/ProfileCard.tsx'];
 
   /** The text of each phone box: from its keyboardType back to the TextInput that holds it. */

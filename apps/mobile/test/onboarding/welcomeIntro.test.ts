@@ -213,7 +213,7 @@ describe('a member found by the number goes straight into the gym', () => {
   it('[source-text check] joined first, then the app is set up; no gym join screen is queued; the 18+ box comes first', () => {
     const api = read('onboarding/phoneSignInApi.ts');
     const join = api.indexOf('await joinGym(m.joinCode, firstName)');
-    const done = api.indexOf('await useOnboarding.getState().complete(v.value)');
+    const done = api.indexOf('await useOnboarding.getState().complete(input)');
     expect(join).toBeGreaterThan(0);
     expect(done).toBeGreaterThan(join);
     expect(api.indexOf('notePicked(m, proof);')).toBeLessThan(join);
@@ -321,7 +321,7 @@ describe('fresh-eyes review fixes (R-587, 15 Nov 2026)', () => {
     expect(usesBannedWord(STRAIGHT_IN_NOTE.body)).toBe(false);
     const api = read('onboarding/phoneSignInApi.ts');
     // Marked just before the setup is saved; cleared when the member answers the questions after all.
-    expect(api.indexOf("await markStraightInNote('due');")).toBeLessThan(api.indexOf('await useOnboarding.getState().complete(v.value)'));
+    expect(api.indexOf("await markStraightInNote('due');")).toBeLessThan(api.indexOf('await useOnboarding.getState().complete(input)'));
     expect(api).toContain("markStraightInNote('done')");
     expect(read('app/(tabs)/workout.tsx')).toContain("<StraightInNoteCard hidden={notice !== 'setupGuess'}");
   });

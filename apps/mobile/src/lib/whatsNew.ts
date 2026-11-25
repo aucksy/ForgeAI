@@ -78,7 +78,7 @@ export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
     date: '25 Nov',
     lines: [
       {
-        text: 'Signing in with your phone number now also keeps your workouts safe. On a new phone, sign in with the same number and they come back.',
+        text: 'Signing in with your phone number now also keeps your workouts safe. On a new phone, sign in again to get them back.',
         go: { label: 'Open Backup and restore', href: '/settings/backup' },
         feature: true,
       },

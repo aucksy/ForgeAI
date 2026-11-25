@@ -99,8 +99,10 @@ describe('D7: the 18+ / terms tick at Google sign-in', () => {
     const cardCheck = card.indexOf('await agreement.check()');
     expect(cardCheck).toBeGreaterThan(0);
     expect(card.indexOf('await useAccount.getState().signIn()')).toBeGreaterThan(cardCheck);
-    // Both places the card offers "Continue with Google" (signed out, and "Sign in again") carry the box.
-    expect(card.match(/\{tickBox\}\s*<PrimaryButton label=\{ACCOUNT_WORDS\.signIn\}/g)?.length).toBe(2);
+    // F237: every sign-in place (phone first, Google second; signed out, and "Sign in again") has the box above it.
+    expect(card.match(/\{tickBox\}/g)?.length).toBe(3);
+    expect(card.match(/<PhoneBackup before=\{agreedForPhone\} \/>/g)?.length).toBe(2);
+    expect(card.match(/\{tickBox\}\s*<PrimaryButton label=\{ACCOUNT_WORDS\.signIn\}/g)?.length).toBe(1);
 
     // A gym join records the same tick, so a later sign-in does not ask again.
     const invite = read('shop/InviteScreen.tsx');
