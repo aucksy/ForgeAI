@@ -30,11 +30,16 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^Sign in with Google to keep your workouts safe\. MettleUp then saves your workouts, routines and body weight to your account by itself\..*'
+      FIND: '^Confirm your phone number with one WhatsApp message to keep your workouts safe\. MettleUp then saves your workouts, routines and body weight by itself\..*'
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^Continue with Google$'
+      FIND: '^Continue with your phone number$'
+# F237 (25 Nov 2026): the phone number first, Google second.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Use Google instead$'
 - assertNotVisible: ".*Google Drive backup on.*|^Link Google Drive$|^Back up now$"
 - assertNotVisible: "Android backs this up.*"
 - assertNotVisible: "Include photos in my backup"

@@ -1,7 +1,7 @@
 # Part UAT, flow 6: launch polish (launch audit 3 Nov 2026, member app), after flow 5 (10 workouts on the
 # phone: 9 from Hevy + the one just finished; no account, Google Drive never linked).
 #  - #3 "Your workouts are only on this phone. ..." on the Workout tab (from the 3rd workout):
-#    R-320: "Sign in to keep them safe" opens Backup and restore (the MettleUp account); "Hide for 30
+#    R-320: "Turn on backup" opens Backup and restore (the MettleUp account); "Hide for 30
 #    days" hides it, also after a restart.
 #  - #4 the floating feedback button: ON by default on every copy, Google Play included (owner, 4 Nov
 #    2026: early days, to get feedback; unit test test/lib/feedbackButton.test.ts).
@@ -27,11 +27,11 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-find.yaml
     env:
-      FIND: '^Your workouts are only on this phone\. Sign in with Google and MettleUp keeps them safe in your account\.$'
+      FIND: '^Your workouts are only on this phone\. Confirm your phone number once, and MettleUp keeps them safe in your account\.$'
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^Sign in to keep them safe$'
+      FIND: '^Turn on backup$'
 - runFlow:
     file: sub-see.yaml
     env:
@@ -40,8 +40,8 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^Sign in to keep them safe$'
-- tapOn: "^Sign in to keep them safe$"
+      FIND: '^Turn on backup$'
+- tapOn: "^Turn on backup$"
 - extendedWaitUntil:
     visible: "^Backup and restore$"
     timeout: 15000
@@ -53,7 +53,7 @@ appId: com.mettleup.app
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '^Continue with Google$'
+      FIND: '^Continue with your phone number$'
 - takeScreenshot: rel-61-backup-page-from-card
 - back
 - runFlow:
