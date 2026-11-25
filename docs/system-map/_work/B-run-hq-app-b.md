@@ -1,0 +1,1 @@
+- 2026-11-25 H8.1-H8.6 done: 5 catch rows + 18 fallback rows read; 1 new (FN-B-run-hq-app-b-01), reused FN-A5-hq-app-3-01, FN-L16-hq-app-01, FN-L14-hq-app-06. Output written.
