@@ -1,0 +1,1 @@
+- 2026-11-25 H8.1-H8.6 done: 0 script rows; 36 SQL catches hand-read; fault = FN-L16-server-database-3-01 (reused), no new finding.
