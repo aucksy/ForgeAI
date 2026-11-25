@@ -96,7 +96,7 @@ describe('its place among the Workout tab notices', () => {
 
 describe('the words (member-words)', () => {
   it('are the agreed lines, complete sentences, with no banned word', () => {
-    expect(SAFEKEEP_WORDS.body).toBe('Your workouts are only on this phone. Sign in with Google and MettleUp keeps them safe in your account.');
+    expect(SAFEKEEP_WORDS.body).toBe('Your workouts are only on this phone. Confirm your phone number once, and MettleUp keeps them safe in your account.');
     expect(SAFEKEEP_WORDS.body).not.toMatch(/Drive/);
     for (const w of [...Object.values(SAFEKEEP_WORDS), ...Object.values(BACKUP_MOVED_WORDS)]) {
       expect(usesBannedWord(w)).toBe(false);

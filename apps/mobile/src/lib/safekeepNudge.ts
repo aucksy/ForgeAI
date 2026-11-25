@@ -27,8 +27,9 @@ const DAY_MS = 24 * 60 * 60 * 1000;
 
 // member-words (3 Nov 2026; R-320, 4 Nov): a first-time reader, what it is about, what the button does.
 export const SAFEKEEP_WORDS = {
-  body: 'Your workouts are only on this phone. Sign in with Google and MettleUp keeps them safe in your account.',
-  button: 'Sign in to keep them safe',
+  // F237 (25 Nov 2026): the phone number is the main sign-in, so the card asks for it (Google stays in Settings).
+  body: 'Your workouts are only on this phone. Confirm your phone number once, and MettleUp keeps them safe in your account.',
+  button: 'Turn on backup',
   hide: 'Hide for 30 days',
 } as const;
 

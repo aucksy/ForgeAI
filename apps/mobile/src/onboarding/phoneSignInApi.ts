@@ -14,9 +14,10 @@ import { rememberFound } from '@/shop/findGymApi';
 import { joinGym } from '@/shop/gymActions';
 import { apiPhoneSignIn } from '@/shop/gymApi';
 import { useGymShop } from '@/shop/gymStore';
+import { useAccount } from '@/store/accountStore';
 import { useSettings } from '@/store/settingsStore';
 
-import { validateOnboarding } from './form';
+import { validateOnboarding, type OnboardingInput } from './form';
 import { foundGymOf, hasPhoneSignInStandIn, isGymPerson, phoneSignInShown, qaSignInFromUrl, straightInDraft, type QaSignIn, type SignInMatch } from './phoneSignIn';
 import { useOnboarding } from './store/onboardingStore';
 import { markStraightInNote } from './straightInNote';
@@ -124,16 +125,25 @@ export async function goStraightIn(m: SignInMatch, firstName: string, proof: str
     notePicked(m, proof);
     const words = await joinGym(m.joinCode, firstName);
     if (words) return { words };
-    // No number: the phone form promised it is not kept (G5).
-    const v = validateOnboarding(straightInDraft(firstName, m.gymName), 'metric');
-    if (!v.ok) {
-      console.warn('[phone sign-in] the setup answers were refused; asking the 3 questions', v.field);
-      return askSteps(firstName, m.gymName);
+    // F237: a profile saved on MettleUp (the phone sign-in brought it back) is used as it was, in this gym.
+    const saved = useAccount.getState().welcomeProfile;
+    let input: OnboardingInput;
+    if (saved) {
+      input = { ...saved, gymName: m.gymName };
+    } else {
+      // No number: the phone form promised it is not kept (G5).
+      const v = validateOnboarding(straightInDraft(firstName, m.gymName), 'metric');
+      if (!v.ok) {
+        console.warn('[phone sign-in] the setup answers were refused; asking the 3 questions', v.field);
+        return askSteps(firstName, m.gymName);
+      }
+      useSettings.getState().setUnitSystem('metric');
+      input = v.value;
     }
-    useSettings.getState().setUnitSystem('metric');
     // Before the save: the Workout tab may open before a later write lands (the note says what was picked).
     await markStraightInNote('due');
-    await useOnboarding.getState().complete(v.value);
+    await useOnboarding.getState().complete(input);
+    useAccount.setState({ welcomeProfile: null });
     void saveWelcomeResume(null);
     console.log('[phone sign-in] a found member went straight into the gym');
     return 'in';

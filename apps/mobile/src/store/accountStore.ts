@@ -32,12 +32,25 @@ interface AccountState {
   busy: boolean;
   /** The last result to show under the card (a plain line), or null. */
   note: string | null;
+  /**
+   * F237: a phone sign-in on the welcome found a saved profile, and this phone has none yet. The welcome's own
+   * paths (straight into the gym, "Set up the app") use it instead of new answers. Memory only.
+   */
+  welcomeProfile: OnboardingInput | null;
   init: () => Promise<void>;
   refreshStatus: () => Promise<void>;
-  signIn: (opts?: { fromWelcome?: boolean }) => Promise<SignInOutcome>;
+  /** Google, or (F237) the number just proved on WhatsApp: `phone`. */
+  signIn: (opts?: { fromWelcome?: boolean; phone?: PhoneSignIn }) => Promise<SignInOutcome>;
   bringBack: () => Promise<string>;
   signOut: () => Promise<void>;
   deleteAccount: () => Promise<string>;
+}
+
+/** F237: the WhatsApp proof, the first name typed and the 10 digits (only the last 2 are kept). */
+export interface PhoneSignIn {
+  proof: string;
+  firstName: string;
+  mobile10: string;
 }
 
 const GOALS: readonly Goal[] = ['muscle', 'fat_loss', 'strength', 'general'];
@@ -80,6 +93,7 @@ export const useAccount = create<AccountState>()((set, get) => ({
   status: null,
   busy: false,
   note: null,
+  welcomeProfile: null,
 
   init: async () => {
     const { isAccountConfigured } = await import('@/cloud/account');
@@ -104,8 +118,17 @@ export const useAccount = create<AccountState>()((set, get) => ({
     setCopyPaused(true);
     let copyAfter = false;
     try {
-      const { signInWithGoogle } = await import('@/cloud/account');
-      const account = await signInWithGoogle();
+      // Audit FN-L4-phone-cloud-backup-ai-02: nothing of a member under 18 goes to MettleUp's server.
+      const { profileUnder18 } = await import('@/cloud/copySync');
+      if (await profileUnder18()) {
+        const { PHONE_ACCOUNT_WORDS } = await import('@/cloud/phoneAccount');
+        set({ note: PHONE_ACCOUNT_WORDS.under18 });
+        return { kind: 'error', words: PHONE_ACCOUNT_WORDS.under18 };
+      }
+      const { signInWithGoogle, signInWithPhoneProof } = await import('@/cloud/account');
+      const account = opts.phone
+        ? await signInWithPhoneProof(opts.phone.proof, opts.phone.firstName, opts.phone.mobile10)
+        : await signInWithGoogle();
       if (!account) return { kind: 'cancelled' };
       set({ account });
       watchCloudCopy();
@@ -138,6 +161,11 @@ export const useAccount = create<AccountState>()((set, get) => ({
         } else if (!profile) {
           setUp = !(await hasMemberProfile());
         }
+      } else if (opts.phone) {
+        // F237: the welcome goes on to the gym; it uses the saved profile when it sets the app up.
+        const { hasMemberProfile } = await import('@/onboarding/db/dataActions');
+        const profile = profileIn(pulled.data);
+        if (profile && !(await hasMemberProfile())) set({ welcomeProfile: onboardingFromProfile(profile) });
       }
       // The server copy is in: from now on the phone's newer edits may go up.
       await setMeta(MERGE_PENDING_KEY, '');

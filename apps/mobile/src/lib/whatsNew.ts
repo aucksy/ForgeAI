@@ -70,6 +70,21 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // Owner's release, 25 Nov 2026 ~18:45 IST ("This has to go now, today. And plan it properly and build it and release
+    // it today", R-627 / F237): 0.79.0 plus the phone number backup. member-words rules, no Gemini pass. Left out (no
+    // member sees them): "Delete my account" waits for a running save first (audit S1), and members under 18 save
+    // nothing on MettleUp's server (audit FN-L4-02).
+    version: '0.80.0',
+    date: '25 Nov',
+    lines: [
+      {
+        text: 'Signing in with your phone number now also keeps your workouts safe. On a new phone, sign in with the same number and they come back.',
+        go: { label: 'Open Backup and restore', href: '/settings/backup' },
+        feature: true,
+      },
+    ],
+  },
+  {
     // Owner's release, 15 Nov 2026 ~22:20 IST ("release", R-592) and 16 Nov ("Take best decisions yourself to release
     // whatever is pending"): everything since 0.78.0. member-words rules, no Gemini pass (only when he asks); with Play's
     // "• " each line, 493 of 500 characters. Left out (fewer, clearer lines): the new welcome and phone-number sign-in

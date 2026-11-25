@@ -80,10 +80,53 @@ export async function signInWithGoogle(): Promise<StoredAccount | null> {
     const notReady = /provider|audience|not enabled/i.test(msg);
     throw new AccountError(notReady ? copyFailureWords('not-ready') : ACCOUNT_WORDS.couldNotSignIn, `supabase signInWithIdToken: ${msg}`);
   }
+  return adoptSignIn({ userId: data.user.id, email: data.user.email ?? g.email, name: g.name, since: Date.now() }, ACCOUNT_WORDS.otherPerson);
+}
+
+/**
+ * F237 (owner, 25 Nov 2026, R-627): sign in with the number the member just proved on WhatsApp. The Edge Function
+ * "phone-account" checks the proof and answers with a one-time sign-in token for this number's account (made on its
+ * first use; see supabase/migrations/0099). The proof is only looked at, so the same proof still joins the gym.
+ * Then the same rules as Google: whose copy is on this phone, bring the server copy back first.
+ * Throws an AccountError with words to show; never shows the made-up e-mail.
+ */
+export async function signInWithPhoneProof(proof: string, firstName: string, mobile10: string): Promise<StoredAccount> {
+  if (!isAccountConfigured()) throw new AccountError(ACCOUNT_WORDS.notInThisVersion, 'no Supabase config in this build');
+  const { phoneAccountAnswerFrom, phoneAccountProblemWords, phoneEnd, PHONE_ACCOUNT_WORDS } = await import('./phoneAccount');
+  let raw: unknown = null;
+  try {
+    const { data, error } = await getSupabase().functions.invoke('phone-account', { body: { proof, name: firstName } });
+    if (error) {
+      // A non-2xx answer still carries the reason in its body.
+      const ctx = (error as { context?: { json?: () => Promise<unknown> } }).context;
+      raw = ctx?.json ? await ctx.json().catch(() => null) : null;
+      if (!raw) throw new AccountError(phoneAccountProblemWords('offline'), `phone-account: ${error.message}`);
+    } else {
+      raw = data;
+    }
+  } catch (e) {
+    if (e instanceof AccountError) throw e;
+    throw new AccountError(phoneAccountProblemWords('offline'), `phone-account call failed: ${e instanceof Error ? e.message : String(e)}`);
+  }
+  const a = phoneAccountAnswerFrom(raw);
+  if (!a.ok) throw new AccountError(phoneAccountProblemWords(a.problem), `phone-account refused: ${a.problem}`);
+  const { data, error } = await getSupabase().auth.verifyOtp({ token_hash: a.tokenHash, type: 'magiclink' });
+  if (error || !data.user) {
+    throw new AccountError(phoneAccountProblemWords('server'), `verifyOtp: ${error?.message ?? 'no user'}`);
+  }
+  console.log(`[account] signed in with the phone number${a.fresh ? ' (new account)' : ''}`);
+  return adoptSignIn(
+    { userId: data.user.id, email: null, name: firstName || null, since: Date.now(), phoneEnd: phoneEnd(mobile10) },
+    PHONE_ACCOUNT_WORDS.otherPerson,
+  );
+}
+
+/** After the server sign-in: whose copy records are on this phone, then keep the account. Refused = signed out. */
+async function adoptSignIn(account: StoredAccount, otherPersonWords: string): Promise<StoredAccount> {
   // Whose copy records are on this phone (kept across a sign-out; gone with an erase)?
   const last = (await getMeta(LAST_USER_KEY)) || null;
   const workouts = await getDb().getFirstAsync<{ n: number }>('SELECT COUNT(*) AS n FROM workout_sessions');
-  const decision = ownerDecision(last, data.user.id, (workouts?.n ?? 0) > 0);
+  const decision = ownerDecision(last, account.userId, (workouts?.n ?? 0) > 0);
   if (decision === 'refuse') {
     // Another person's workouts are on this phone: never merge them into, or send them to, this account.
     try {
@@ -91,13 +134,12 @@ export async function signInWithGoogle(): Promise<StoredAccount | null> {
     } catch (e) {
       console.warn('[account] could not forget the refused sign-in', e);
     }
-    throw new AccountError(ACCOUNT_WORDS.otherPerson, 'a different account than the one whose workouts are on this phone');
+    throw new AccountError(otherPersonWords, 'a different account than the one whose workouts are on this phone');
   }
   if (decision === 'clear') await clearCopyTables();
-  const account: StoredAccount = { userId: data.user.id, email: data.user.email ?? g.email, name: g.name, since: Date.now() };
   // Bring the server copy back before anything on the phone is sent (cleared only by a bring-back that works).
   await setMeta(MERGE_PENDING_KEY, '1');
-  await setMeta(LAST_USER_KEY, data.user.id);
+  await setMeta(LAST_USER_KEY, account.userId);
   await setStoredAccount(account);
   await setMeta(NEEDS_SIGN_IN_KEY, '');
   return account;
@@ -148,12 +190,36 @@ export async function signOutAccount(): Promise<void> {
  */
 export async function deleteAccount(): Promise<'deleted' | 'kept'> {
   const { apiAccountDelete } = await import('./copyApi');
-  const r = await apiAccountDelete();
-  if (!r.ok) throw new AccountError(copyFailureWords(r.failure), `member_account_delete: ${r.failure}`);
+  const { haltCopyAndWait, setCopyPaused, stopWatchingCloudCopy, watchCloudCopy } = await import('./copySync');
+  // Not deleted: the copy carries on as before.
+  const resume = (): void => {
+    setCopyPaused(false);
+    watchCloudCopy();
+  };
+  // Audit S1 (FN-B-run-phone-cloud-backup-ai-a-01): no copy may still be sending when the server deletes, or its
+  // last batches would be saved again after the delete.
+  stopWatchingCloudCopy();
+  if (!(await haltCopyAndWait())) {
+    resume();
+    throw new AccountError(copyFailureWords('offline'), 'delete: a running copy did not finish in time');
+  }
+  let r: Awaited<ReturnType<typeof apiAccountDelete>>;
+  try {
+    r = await apiAccountDelete();
+  } catch (e) {
+    resume();
+    throw e;
+  }
+  if (!r.ok) {
+    resume();
+    throw new AccountError(copyFailureWords(r.failure), `member_account_delete: ${r.failure}`);
+  }
   // The copy is gone on the server: this phone's record of it means nothing now.
   await clearCopyTables();
   await setMeta(LAST_USER_KEY, '');
   await setMeta(MERGE_PENDING_KEY, '');
   await signOutAccount();
+  // Signed out now: a copy finds nobody signed in and sends nothing.
+  setCopyPaused(false);
   return r.data;
 }

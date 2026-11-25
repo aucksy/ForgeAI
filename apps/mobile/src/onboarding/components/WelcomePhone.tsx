@@ -13,6 +13,10 @@
  * WhatsApp" until it was ticked once on this phone (the same saved tick as Continue with Google).
  * QA builds with the 'phoneSignIn' stand-in answer at once with the made-up result a qa-signin link set (said on
  * screen). Shared code: Android and iPhone alike (WhatsApp opens the same way on both).
+ * F237 (owner, 25 Nov 2026, R-627): the proven number also signs in to the member's MettleUp account, so their
+ * workouts are saved on MettleUp ("Saving your workouts to your number…"); on a new phone they come back, and a
+ * saved profile sets the app up without the 3 questions. This step never blocks the gym: a failure shows one line
+ * ("Your backup is not on yet…") and the gym search goes on. Skipped when already signed in, and in QA stand-ins.
  */
 import { Image } from 'expo-image';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -23,12 +27,14 @@ import { pictureUrl } from '@/cloud/picture';
 import { Card, GhostButton, PrimaryButton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { tinyDateWithYear, todayISO } from '@/lib/date';
+import { PHONE_ACCOUNT_WORDS } from '@/cloud/phoneAccount';
 import { useMemberAccess } from '@/plan/memberPlanStore';
 import { firstNameOf, mobile10, showWaNumber, stateWords, whatsAppLink, type CheckStart } from '@/shop/findGym';
 import { checkStatus, startCheck } from '@/shop/findGymApi';
 import { gymInitial } from '@/shop/gym';
 import { JoinAgreement } from '@/shop/JoinAgreement';
 import { useTermsAgreement } from '@/shop/useTermsAgreement';
+import { useAccount } from '@/store/accountStore';
 import { color, radius, space, type } from '@/theme/tokens';
 
 import {
@@ -46,10 +52,12 @@ import {
   type SignInMatch,
 } from '../phoneSignIn';
 import { findMe, goStraightIn, notePicked, qaSignInAnswer } from '../phoneSignInApi';
+import { useOnboarding } from '../store/onboardingStore';
 
 type Step =
   | { kind: 'form' }
   | { kind: 'waiting'; start: CheckStart }
+  | { kind: 'saving' }
   | { kind: 'checking' }
   | { kind: 'found'; matches: SignInMatch[]; proof: string | null }
   | { kind: 'entering'; gymName: string }
@@ -92,12 +100,46 @@ export function WelcomePhone({
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [qa, setQa] = useState(false);
+  /** F237: one line about the backup (brought back, or not on yet). Never blocks the gym. */
+  const [backupLine, setBackupLine] = useState<string | null>(null);
   const asking = useRef(false);
   const plusOn = useMemberAccess().why !== 'off';
   const agreement = useTermsAgreement();
   // Read when the gym answers (a change of the boxes while waiting is fine).
   const typed = useRef({ name: '' });
   typed.current = { name };
+  const typedPhone = useRef('');
+  typedPhone.current = phone;
+
+  /** F237: the proven number signs in to the member's MettleUp account (their backup). Never throws, never blocks. */
+  const backUp = useCallback(async (proof: string, first: string): Promise<void> => {
+    const acc = useAccount.getState();
+    if (!acc.configured || acc.account) return;
+    const mobile = mobile10(typedPhone.current);
+    if (!mobile) return;
+    setStep({ kind: 'saving' });
+    try {
+      const r = await acc.signIn({ phone: { proof, firstName: first, mobile10: mobile } });
+      if (r.kind === 'signed-in') setBackupLine(r.broughtBack > 0 ? r.note : PHONE_ACCOUNT_WORDS.savingOk);
+      else if (r.kind === 'error') setBackupLine(`${r.words} ${PHONE_ACCOUNT_WORDS.backupOff}`);
+    } catch (e) {
+      console.warn('[phone sign-in] the backup step failed', e);
+      setBackupLine(PHONE_ACCOUNT_WORDS.backupOff);
+    }
+  }, []);
+
+  /** "Set up the app": a profile saved on MettleUp opens the app as theirs; otherwise the 3 questions. */
+  const setUp = async (): Promise<void> => {
+    const saved = useAccount.getState().welcomeProfile;
+    if (!saved) return onSetUp();
+    try {
+      await useOnboarding.getState().complete(saved);
+      useAccount.setState({ welcomeProfile: null });
+    } catch (e) {
+      console.warn('[phone sign-in] the saved profile could not set the app up; asking the questions', e);
+      onSetUp();
+    }
+  };
 
   /** R-587: a found member goes straight into the gym. Not joined: the card again, with why. */
   const enter = useCallback(
@@ -178,6 +220,7 @@ export function WelcomePhone({
         if (!live || !s) return;
         if (s.state === 'verified' && s.proof) {
           live = false;
+          await backUp(s.proof, firstNameOf(name));
           await search(s.proof, firstNameOf(name));
           return;
         }
@@ -200,7 +243,7 @@ export function WelcomePhone({
     };
     // `name` is read when the proof arrives; a change while waiting is fine.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [waiting, search]);
+  }, [waiting, search, backUp]);
 
   const pick = (m: SignInMatch, proof: string | null): void => {
     // R-587: a member's tap joins at once; the gym's own people go on to the setup and the gym's join screen.
@@ -293,6 +336,19 @@ export function WelcomePhone({
         </Card>
       ) : null}
 
+      {step.kind === 'saving' ? (
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: space.md }} accessibilityLiveRegion="polite">
+          <ActivityIndicator color={color.accent} />
+          <Text style={{ ...body, color: color.ink }}>{PHONE_ACCOUNT_WORDS.saving}</Text>
+        </View>
+      ) : null}
+
+      {backupLine && step.kind !== 'saving' ? (
+        <Text accessibilityLiveRegion="polite" testID="welcome-phone-backup" style={{ ...body, color: color.ink }}>
+          {backupLine}
+        </Text>
+      ) : null}
+
       {step.kind === 'checking' ? <Text style={body}>{SIGN_IN.checking}</Text> : null}
 
       {step.kind === 'entering' ? (
@@ -334,7 +390,7 @@ export function WelcomePhone({
             {SIGN_IN.notFoundTitle}
           </Text>
           <Text style={body}>{SIGN_IN.notFoundBody}</Text>
-          <PrimaryButton label={SIGN_IN.setUp} onPress={onSetUp} />
+          <PrimaryButton label={SIGN_IN.setUp} onPress={() => void setUp()} />
           <GhostButton label={SIGN_IN.tryAgain} onPress={restart} />
         </Card>
       ) : null}

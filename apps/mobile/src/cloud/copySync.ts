@@ -121,6 +121,21 @@ export async function scanCopy(now: () => number = Date.now): Promise<ScanPlan |
   return plan;
 }
 
+/**
+ * Audit FN-L4-phone-cloud-backup-ai-02 (F237, 25 Nov 2026): a profile under 18 saves nothing on MettleUp's server
+ * (the privacy notice and terms say MettleUp is for people 18 and older). No profile, or no age: not blocked.
+ */
+export async function profileUnder18(): Promise<boolean> {
+  try {
+    const { backupAllowedForAge } = await import('./phoneAccount');
+    const row = await getDb().getFirstAsync<{ age: number | null }>('SELECT age FROM user_profile LIMIT 1');
+    return !backupAllowedForAge(row?.age ?? null);
+  } catch (e) {
+    console.warn('[cloud copy] could not read the age', e);
+    return false;
+  }
+}
+
 // ------------------------------------------------------------------ drain
 
 export interface DrainResult {
@@ -143,6 +158,7 @@ async function drainOnce(now: () => number): Promise<DrainResult> {
   await initCloudCopySchema();
   const result: DrainResult = { sent: 0, failure: null, left: 0 };
   if (!(await getStoredAccount())) return result;
+  if (await profileUnder18()) return result;
   const api = await copyApi();
   for (let round = 0; round < MAX_ROUNDS; round++) {
     const due = await dueOps(now(), SEND_BATCH);
@@ -268,6 +284,27 @@ export function setCopyPaused(p: boolean): void {
 }
 
 /**
+ * Audit FN-B-run-phone-cloud-backup-ai-a-01 (S1): before "Delete my account", stop the copy and WAIT for a copy
+ * that is already sending, so no batch lands on the server after the delete. The copy stays paused until
+ * `setCopyPaused(false)` (after the delete, when nobody is signed in, it sends nothing anyway).
+ */
+export async function haltCopyAndWait(maxMs = 60_000): Promise<boolean> {
+  paused = true;
+  if (timer) {
+    clearTimeout(timer);
+    timer = null;
+  }
+  const until = Date.now() + maxMs;
+  while ((running || draining) && Date.now() < until) {
+    if (draining) await draining.catch(() => undefined);
+    else await new Promise((r) => setTimeout(r, 50));
+  }
+  if (!running && !draining) return true;
+  console.warn('[cloud copy] a copy was still running when the wait ended');
+  return false;
+}
+
+/**
  * Bring back first when one is pending, then scan (when anything changed since the last scan, or
  * `force`) and send. Never throws. Never during a workout.
  */
@@ -276,6 +313,8 @@ export async function copyNow(why: string, opts: { force?: boolean } = {}): Prom
   running = true;
   try {
     if (!(await getStoredAccount())) return;
+    // Audit FN-L4-phone-cloud-backup-ai-02: nothing of a member under 18 is saved on MettleUp's server.
+    if (await profileUnder18()) return;
     // Never during a workout: a scan reads the whole history inside the write queue, and the
     // workout's own saves must not wait behind it. The finish screen copies right after.
     const { useActiveWorkout } = await import('@/tracker/store/activeWorkoutStore');

@@ -34,6 +34,8 @@ export interface StoredAccount {
   name: string | null;
   /** When this phone signed in (ms). */
   since: number;
+  /** F237: signed in with the phone number; its last 2 digits for Settings (the account's e-mail is made up). */
+  phoneEnd?: string | null;
 }
 
 /** The account in a `meta` value, or null when there is none or it is unreadable. PURE. */
@@ -47,6 +49,7 @@ export function parseStoredAccount(raw: string | null | undefined): StoredAccoun
       email: typeof v.email === 'string' ? v.email : null,
       name: typeof v.name === 'string' ? v.name : null,
       since: typeof v.since === 'number' ? v.since : 0,
+      ...(typeof v.phoneEnd === 'string' && /^[0-9]{2}$/.test(v.phoneEnd) ? { phoneEnd: v.phoneEnd } : {}),
     };
   } catch {
     // quiet: a damaged value reads as "not signed in"; signing in again writes a good one
