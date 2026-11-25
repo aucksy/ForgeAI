@@ -71,11 +71,10 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 353 todo, 1 in progress, 773 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 353 todo, 0 in progress, 774 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| CAL-score | coord | coordinator only: C4 score found/partly/missed per seed in calibration/RESULT.md; C5 rewrite a hunt and re-run a missed seed (at most 2 re-runs); then hunts may run on today's code | in progress | - |  |
 | B-run-hq-app-b | B-run | B-run (Silent fallbacks) x hq / hq/app: 6 items | todo | _work/B-run-hq-app-b.md |  |
 | B-run-panel-assistant-b | B-run | B-run (Silent fallbacks) x panel / panel/assistant: 6 items | todo | _work/B-run-panel-assistant-b.md |  |
 | B-run-panel-auth-data-b | B-run | B-run (Silent fallbacks) x panel / panel/auth-data: 6 items | todo | _work/B-run-panel-auth-data-b.md |  |
@@ -110,7 +109,7 @@ Counts: 353 todo, 1 in progress, 773 done, 0 blocked. Full list: work-items.json
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
 (+ 328 more todo items, not shown)
-(+ 765 older done items, not shown)
+(+ 766 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).

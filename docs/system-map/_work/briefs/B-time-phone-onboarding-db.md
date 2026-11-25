@@ -61,6 +61,8 @@ Hunt 7, Old users, new rules: write "lens":"gap-7".
 H7.1 Every new flow that fixes something only for NEW installs or NEW members (e.g. the phone sign-in shows only on new installs): what happens to existing users?
 H7.2 Is there a path for them?
 H7.3 None = finding
+H7.4 And the reverse: every "new since your last version" mark (dots, What's new, update notices, tips): what does a brand-new install or a brand-new member see?
+H7.5 New marks on things that are not new to them = finding
 Your lists (28 features): docs/system-map/_work/items/B-time-phone-onboarding-db.txt. 
 
 INPUT FILES

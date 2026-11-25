@@ -1,10 +1,12 @@
-# B-time-phone-screens-1: 13 + 20 + gap-7 x phone / phone/screens-1. Made by _work/lens-items-make.mjs. One row per line.
+# B-time-phone-screens-1: 13 + 20 + gap-7 x phone / phone/screens-1. Made by _work/lens-items-make.mjs (re-made for the current items, same id). One row per line.
 ## ITEMS (id | lens | text)
 L13.1 | 13 | Fresh install, update over every older version still in use, data migration on update, sideload vs Play package, watch and phone on different versions, panel cache after deploy (old page still open)
 L20.1 | 20 | Trial end, plan end, gym pauses or closes, member leaves and returns, staff leaves (access removed), owner changes phone, year end, leap day, app not opened for 6 months
 H7.1 | gap-7 | Every new flow that fixes something only for NEW installs or NEW members (e.g. the phone sign-in shows only on new installs): what happens to existing users?
 H7.2 | gap-7 | Is there a path for them?
 H7.3 | gap-7 | None = finding
+H7.4 | gap-7 | And the reverse: every "new since your last version" mark (dots, What's new, update notices, tips): what does a brand-new install or a brand-new member see?
+H7.5 | gap-7 | New marks on things that are not new to them = finding
 ## FEATURES OF THIS AREA (id | status | name | first entry)
 F-phone-100 | live | App start-up and frame: open the database, welcome or error screen instead of the app, gym look, keep a gym link for aft | apps/mobile/src/app/_layout.tsx:98
 F-phone-101 | live | Old, retired or broken links land on the page that replaced them (Progress, Analytics, Body weight, Home, Library, Measu | apps/mobile/src/app/+not-found.tsx:9

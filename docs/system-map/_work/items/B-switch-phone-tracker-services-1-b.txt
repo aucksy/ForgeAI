@@ -1,8 +1,10 @@
-# B-switch-phone-tracker-services-1-b: gap-6 x phone / phone/tracker-services-1. Made by _work/lens-items-make.mjs. One row per line.
+# B-switch-phone-tracker-services-1-b: gap-6 x phone / phone/tracker-services-1. Made by _work/lens-items-make.mjs (re-made for the current items, same id). One row per line.
 ## ITEMS (id | lens | text)
 H6.1 | gap-6 | For every field a feature depends on (birthday, phone, check-in phone, app link, plan dates, trainer, batch): how many Crispy Curves rows have it filled?
 H6.2 | gap-6 | Is there a screen that asks for it at the right moment?
 H6.3 | gap-6 | A feature that depends on a field most rows lack = finding
+H6.4 | gap-6 | For every input box (mobile number, name, date): feed it what a phone keyboard autofill or a paste really puts in (country code, spaces, dashes, digits in other scripts) and check that the length limit and the cleaning step together keep a valid value
+H6.5 | gap-6 | a box that cuts or refuses a real autofill = finding
 ## FEATURES OF THIS AREA (id | status | name | first entry)
 F-phone-500 | live | Ask your own AI: copy a text of my last 4 weeks of training (no name, phone or body weight in it) | apps/mobile/src/tracker/services/aiSummaryService.ts:22
 F-phone-501 | live | Badge shelf (badges earned from workouts, lifts, body weight and records) | apps/mobile/src/tracker/services/badgesService.ts:19

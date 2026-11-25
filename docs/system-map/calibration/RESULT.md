@@ -1,10 +1,15 @@
-# Calibration result, round 1 (plan steps C4-C6), 25 Nov 2026
+# Calibration result, FINAL after 3 rounds (plan steps C4-C6), 25 Nov 2026
 
 Question: given only the old code (the commit before each fix) and the 10 gap hunts, did a fresh helper re-find
-the bugs he already found? Helper rows: `_work/out/CAL-1.jsonl` .. `CAL-5.jsonl`. Scored by the coordinator
+the bugs he already found? Helper rows: `_work/out/CAL-1.jsonl` .. `CAL-11.jsonl`. Scored by the coordinator
 against each fix commit's real change.
 
-**Score, best of rounds 1 and 2: 8 found, 1 partly, 6 missed, of 15.** Only 1 of the 8 was found without the
+**FINAL score, best of three rounds: 11 found, 2 partly, 2 missed, of 15.** 10 of the 11 were found only because
+the hunt text (an example or a calibration rewrite) names that kind of bug; 1 was found unaided. Written off (no more
+re-runs): 2 whole bugs and 2 halves, all to the cloud screenshot check; none to his phone. Detail: "Round 3 (final)"
+and "What this means for the audit" at the end.
+
+Earlier headline, best of rounds 1 and 2: 8 found, 1 partly, 6 missed, of 15. Only 1 of the 8 was found without the
 hunt text naming that kind (7 rode on an example or a round-1 rewrite that names the kind). Both phone/watch-only
 bugs now pass (their code paths were flagged for a real-phone check in round 2). Round 2 detail: see "Round 2" below.
 
@@ -127,3 +132,64 @@ Seeds came only from the 15-25 Nov notes. A quick count of the older notes (git 
 archive for 26 Oct-4 Nov) finds about 35 more bugs he reported (about 20 in 5-14 Nov, about 15 in 26 Oct-4 Nov).
 It matters: that is more than twice the scored seeds, and many are kinds this round missed (suggested weights,
 pop-ups that never arrive, layout overlap). No seeds were added in this step.
+
+## Round 3 (re-run 2 of 2, the last), 25 Nov 2026
+
+Fresh helpers, round-2 rewrites: CAL-10 (c01, c03, c05), CAL-11 (c09, c10, c12). Rows: `_work/out/CAL-10.jsonl`,
+`CAL-11.jsonl`. Both stayed under the read cap (about 1,750 and 2,000 lines).
+
+| Folder | Kind of bug (neutral) | R1 | R2 | R3 | Best | Matching row | Why |
+|---|---|---|---|---|---|---|---|
+| c01 | Server summary push counted alerts already handled | missed | missed | found (hunt example named it) | found | FN-CAL-10-05 | Exact: "handled" is worked out only in the browser; the server's summary counts every alert not yet pushed. H4.6-H4.8 named this case. |
+| c03 | Today kept handled items; joined-today counted as "not seen" | missed | missed | partly | partly | FN-CAL-10-13 | Joined-today half exact (the "not seen for 10+ days" count takes a plan with no visit, even one started today); H9.3 names that edge. Handled-items half still missed: the helper never opened Today's member-updates list (its rows on "done" marks are about the WhatsApp list and the AI ideas). |
+| c05 | Tapping a reply notification opened nothing | missed | missed | found, other folder (hunt example named it) | found | FN-CAL-11-11 | Exact bug, file and lines, but found by the c12 helper: c12's copy is 35 minutes older than the fix and holds the same tap handler. The c05 helper itself missed it again. Generous; counted found. |
+| c09 | Save button looked broken (no reason); phone top bar crowded | missed | partly | partly | partly | FN-CAL-11-03 | Save half exact (the timings page's grey Save with no words; H10.14 named it). Top-bar half written off (layout, below). |
+| c10 | Legal promise that every look is recorded; a direct database read left no record | missed | missed | found (hunt example named it) | found | FN-CAL-11-05 | Exact: searched every migration for a database-level record, none. H10.15-H10.16 named it. |
+| c12 | Target lower than last time after a long gap, no reason; box and rows used different maths | missed | missed | missed | missed | none | Third miss. H9.7-H9.9 sent the hunt to the number files, but this helper's c12 reading went to the open-workout restore, the tap handler and rest alerts; no row on the target maths. |
+
+### Final per bug (best of three)
+
+found 11: c01, c02 (both), c04, c05, c06, c07, c08, c10, c11, c13. partly 2: c03 (handled-items/joined-today),
+c09. missed 2: c03 card width, c12. Found unaided by the hunt text: c11 only.
+
+### Written off: "this audit cannot find this kind of bug"
+
+- **c03 card wider than the phone (missed) and c09 crowded top bar (half): this audit cannot find this kind of bug:**
+  whether a label pushes past the screen depends on the real text length per language, the font and the browser's
+  layout; code shows only the rules. Goes to the **cloud screenshot check** (every screen at 320-412 px, both
+  languages, light and dark, "nothing past the screen edge").
+- **c12 target lower than last time with no reason, box and rows on different maths (missed): this audit cannot
+  find this kind of bug:** the wrong number shows only for one member history (a long gap) and comes out of
+  several functions in different files; a reader with a fixed reading budget picks other files three times out of
+  three. Goes to the **cloud screenshot check**: the phone app run in the cloud emulator on a seeded history with
+  a 4-week gap, photographing the target box next to its rows, with a test that the box equals the rows and a drop
+  shows its reason.
+- **c03 Today keeping handled items (half): this audit cannot find this kind of bug:** the fault is a missing link
+  (nothing tells a list line its thing was handled), so there is no wrong line to read, only an absent one, and the
+  helper has to choose to open that one screen. The sibling bug in the server push was found, so the hunt can see
+  the kind when it reads the right file. Goes to the **cloud screenshot check** as a journey: handle a message,
+  answer a question, settle a request, then photograph Today and check each line is gone.
+- Real phone: nothing new written off. The two device-only bugs (gym pop-up sound on his OPPO; watch update notice
+  with the watch paired) passed under C6 and stay on his real-phone list.
+
+### What this means for the audit
+
+The hunts now catch most kinds of bug he has already reported, but mostly because the calibration taught them
+those exact kinds: of 11 found, only 1 was found by a hunt that had not been told about that kind. Expect the real
+hunts to be good at the kinds now written into them (things marked "done" in one place but not another, reminders
+nobody can see reached a member, grey buttons with no reason, notification taps, promises in the legal pages,
+autofilled numbers, "new" dots on a first install) and weak at kinds nobody has described yet. They still miss
+three kinds: things that do not fit on a phone screen, a wrong number that appears only for one member's history,
+and a list that never learns its item was dealt with elsewhere. Those go to cloud screenshot runs, not code
+reading. Phone- and watch-only problems are flagged for his real-phone checks, not proven. Finally, the test used
+only the 15 bugs he reported on 15-25 Nov; about 35 older reports (26 Oct-14 Nov) were never used, so this score
+says little about kinds that appear only there.
+
+### Hunt briefs re-made for today's code (C5 follow-through)
+
+Every todo hunt item (B-run, B-truth, B-alerts, B-switch, B-time, B-words, H5: 315 items) had its items file,
+brief and add file re-made from the current `lens-items.json`, keeping its id and lens groups (the maker's own
+split would have renamed items, so a remake script used the existing rows). 222 todo rows in `work-items.jsonl`
+gained the new hunt item ids (1,184 ids: H2.5, H4.3-H4.8, H6.4-H6.5, H7.4-H7.5, H9.3-H9.9, H10.3-H10.16); no done
+row was touched. 172 of the 315 briefs are now over the 1,200-word limit (most 1,230-1,330; B-words 10+hunt 10
+at 1,409-1,428). The calibration copies in `_work/calib/` were deleted (plan C2).

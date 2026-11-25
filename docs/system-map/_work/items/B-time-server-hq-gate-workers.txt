@@ -1,10 +1,12 @@
-# B-time-server-hq-gate-workers: 13 + 20 + gap-7 x server / server/hq-gate-workers. Made by _work/lens-items-make.mjs. One row per line.
+# B-time-server-hq-gate-workers: 13 + 20 + gap-7 x server / server/hq-gate-workers. Made by _work/lens-items-make.mjs (re-made for the current items, same id). One row per line.
 ## ITEMS (id | lens | text)
 L13.1 | 13 | Fresh install, update over every older version still in use, data migration on update, sideload vs Play package, watch and phone on different versions, panel cache after deploy (old page still open)
 L20.1 | 20 | Trial end, plan end, gym pauses or closes, member leaves and returns, staff leaves (access removed), owner changes phone, year end, leap day, app not opened for 6 months
 H7.1 | gap-7 | Every new flow that fixes something only for NEW installs or NEW members (e.g. the phone sign-in shows only on new installs): what happens to existing users?
 H7.2 | gap-7 | Is there a path for them?
 H7.3 | gap-7 | None = finding
+H7.4 | gap-7 | And the reverse: every "new since your last version" mark (dots, What's new, update notices, tips): what does a brand-new install or a brand-new member see?
+H7.5 | gap-7 | New marks on things that are not new to them = finding
 ## FEATURES OF THIS AREA (id | status | name | first entry)
 F-server-200 | live | Sign in to HQ with the owner's Google account (or Cloudflare Access), and sign out | deploy/hq/worker.js:134
 F-server-201 | live | Install HQ on a phone and see "You're offline" (install files served without sign-in) | deploy/hq/worker.js:67

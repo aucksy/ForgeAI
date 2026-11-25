@@ -1,8 +1,10 @@
-# B-switch-panel-screens-2-b: gap-6 x panel / panel/screens-2. Made by _work/lens-items-make.mjs. One row per line.
+# B-switch-panel-screens-2-b: gap-6 x panel / panel/screens-2. Made by _work/lens-items-make.mjs (re-made for the current items, same id). One row per line.
 ## ITEMS (id | lens | text)
 H6.1 | gap-6 | For every field a feature depends on (birthday, phone, check-in phone, app link, plan dates, trainer, batch): how many Crispy Curves rows have it filled?
 H6.2 | gap-6 | Is there a screen that asks for it at the right moment?
 H6.3 | gap-6 | A feature that depends on a field most rows lack = finding
+H6.4 | gap-6 | For every input box (mobile number, name, date): feed it what a phone keyboard autofill or a paste really puts in (country code, spaces, dashes, digits in other scripts) and check that the length limit and the cleaning step together keep a valid value
+H6.5 | gap-6 | a box that cuts or refuses a real autofill = finding
 ## FEATURES OF THIS AREA (id | status | name | first entry)
 F-panel-1100 | live | Panel frame: side menu, phone bottom bar and More, page routing, owner-only page block, 'needs internet' card, dark/ligh | apps/dashboard/src/crm/ui/screens/More.tsx:45
 F-panel-1106 | behind switch | Your web page: edit and publish the gym's free web page, photos, preview, share links, visitor AI chat shown on enquirie | apps/dashboard/src/crm/ui/screens/WebPage.tsx:66

@@ -1,4 +1,4 @@
-# H5-web-pages: gap-5 x web / web/pages. Made by _work/lens-items-make.mjs. One row per line.
+# H5-web-pages: gap-5 x web / web/pages. Made by _work/lens-items-make.mjs (re-made for the current items, same id). One row per line.
 ## ITEMS (id | lens | text)
 H5.1 | gap-5 | For every feature in features.json: is it on main, deployed, behind a switch, or waiting for a migration?
 H5.2 | gap-5 | Compare code on main with what the live panel, HQ, website, phone app (Play version) and database really run (check the live version labels, list_migrations/catalog, switches)

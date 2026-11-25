@@ -59,6 +59,12 @@ H3.2 An automatic action with no record and no "why not" = finding (S2 when the 
 Hunt 4, Two features, one job (overlap and conflict): write "lens":"gap-4".
 H4.1 Find every pair of features that act on the same people or the same event (manual message vs automatic reminder; AI idea vs Today nudge; bell vs Today vs push; desk link vs phone proof)
 H4.2 Check they agree: no double message, no suggestion to do what the system already did, the same count in both places, "done" in one is "done" in the other
+H4.3 For every "done", "read" or "seen" mark: find where it is kept (this browser only, this phone only, or the server)
+H4.4 Every other place that counts or sends the same items (a server push or daily summary, another device, another staff member, Today, the bell) must read that same mark
+H4.5 a mark kept in one place while another place still counts the same item as waiting = finding
+H4.6 Also the case where no mark exists at all: every list or count of items that point at a thing to act on (alerts, to-dos, a daily summary)
+H4.7 When that thing is handled in its own page (reply sent, request settled, enquiry closed), does the item leave the list and the count in every place, server sends included, without anyone touching the item itself?
+H4.8 An item that cannot learn its thing was handled = finding
 Your lists (8 features): docs/system-map/_work/items/B-alerts-web-pages-b.txt. 
 
 INPUT FILES

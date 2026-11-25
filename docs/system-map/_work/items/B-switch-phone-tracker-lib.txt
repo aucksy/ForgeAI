@@ -1,4 +1,4 @@
-# B-switch-phone-tracker-lib: gap-1 + gap-6 x phone / phone/tracker-lib. Made by _work/lens-items-make.mjs. One row per line.
+# B-switch-phone-tracker-lib: gap-1 + gap-6 x phone / phone/tracker-lib. Made by _work/lens-items-make.mjs (re-made for the current items, same id). One row per line.
 ## ITEMS (id | lens | text)
 H1.1 | gap-1 | List every setting, switch, plan gate, status and automation (from features.json + entities.json)
 H1.2 | gap-1 | For EACH one, list every other feature whose result it SHOULD change (the AI ideas, Today, counts, badges, reminders, messages, help, exports, the phone app)
@@ -7,6 +7,8 @@ H1.4 | gap-1 | A should-read with no read = finding
 H6.1 | gap-6 | For every field a feature depends on (birthday, phone, check-in phone, app link, plan dates, trainer, batch): how many Crispy Curves rows have it filled?
 H6.2 | gap-6 | Is there a screen that asks for it at the right moment?
 H6.3 | gap-6 | A feature that depends on a field most rows lack = finding
+H6.4 | gap-6 | For every input box (mobile number, name, date): feed it what a phone keyboard autofill or a paste really puts in (country code, spaces, dashes, digits in other scripts) and check that the length limit and the cleaning step together keep a valid value
+H6.5 | gap-6 | a box that cuts or refuses a real autofill = finding
 ## FEATURES OF THIS AREA (id | status | name | first entry)
 F-phone-1100 | live | Built-in exercise library (names, other names incl. Hindi, muscles, gear, how each is logged) | apps/mobile/src/tracker/catalog/exerciseCatalog.ts:19
 F-phone-1101 | live | Exercise library update on app launch (and after demo data or a restore): links old rows, adds new exercises, renames ol | apps/mobile/src/tracker/catalog/catalogSync.ts:251

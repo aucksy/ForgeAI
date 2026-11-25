@@ -60,6 +60,7 @@ H2.1 For every automatic or "on" feature: write ALL conditions for it to reach o
 H2.2 Then check: can the owner SEE, per member, who will get it and who will not, and why?
 H2.3 If the switch says "on" but some people silently get nothing = finding
 H2.4 Count real reach on Crispy Curves (e.g. "birthday wish: on, reaches 1 of 40 members")
+H2.5 Where reaching the person depends on the phone or the watch itself (phone maker sound, banner and battery rules that can change what the app asked for, a paired watch the phone must detect, a version check between phone and watch): mark that path "cannot be proven in the cloud, needs a real-phone check" and name what to look at on the device
 Your lists (21 features): docs/system-map/_work/items/B-alerts-phone-cloud-backup-ai-a.txt.  H2: Crispy Curves reach counts come from field-fill.csv; never count another gym.
 
 INPUT FILES

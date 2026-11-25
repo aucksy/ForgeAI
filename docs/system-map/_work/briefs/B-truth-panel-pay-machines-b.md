@@ -56,6 +56,13 @@ Surface: panel. Area: panel/pay-machines (write exactly these two in every row).
 Hunt 9, Same fact, every place: write "lens":"gap-9".
 H9.1 For each fact a user sees (count of alerts, dues, plan end, birthdays today, members using the app): list every place it shows (panel, Today, AI, bell, push, phone app, HQ, export) and compare the values on the Crispy Curves data and the ugly data pack
 H9.2 Any difference = finding
+H9.3 For every number worked out from dates (not seen for N days, ends in N days, new this week, after a long gap): test the edges (day 0, someone who joined today, a plan that starts later, no visit yet, a gap of weeks)
+H9.4 A number wrong at an edge = finding
+H9.5 For every summary number shown with its own rows (a total, a target, a score): check it is worked out from those same rows, and when it is lower than last time the screen says why
+H9.6 A summary that differs from its rows, or a drop with no reason shown = finding
+H9.7 Open the files that work numbers out (engine, logic, lib, store), not only the screens that draw them
+H9.8 For each number a screen shows above or beside its rows, find the function that makes the number and the function that makes each row
+H9.9 if they are two different functions, compare them on a long-gap case
 Your lists (31 features): docs/system-map/_work/items/B-truth-panel-pay-machines-b.txt. 
 
 INPUT FILES

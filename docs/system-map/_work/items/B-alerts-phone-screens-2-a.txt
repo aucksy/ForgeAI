@@ -1,10 +1,11 @@
-# B-alerts-phone-screens-2-a: 11 + gap-2 x phone / phone/screens-2. Made by _work/lens-items-make.mjs. One row per line.
+# B-alerts-phone-screens-2-a: 11 + gap-2 x phone / phone/screens-2. Made by _work/lens-items-make.mjs (re-made for the current items, same id). One row per line.
 ## ITEMS (id | lens | text)
 L11.1 | 11 | Every alert, push, WhatsApp, email: when it fires, to whom, on/off switch, sound on each phone maker (OPPO etc.), screen off, quiet hours, duplicates, "done means gone", watch bridging
 H2.1 | gap-2 | For every automatic or "on" feature: write ALL conditions for it to reach one person (app installed, app linked by proven number, notifications allowed, phone maker rules, plan running, data filled in like birthday/phone, feature switch, version)
 H2.2 | gap-2 | Then check: can the owner SEE, per member, who will get it and who will not, and why?
 H2.3 | gap-2 | If the switch says "on" but some people silently get nothing = finding
 H2.4 | gap-2 | Count real reach on Crispy Curves (e.g. "birthday wish: on, reaches 1 of 40 members")
+H2.5 | gap-2 | Where reaching the person depends on the phone or the watch itself (phone maker sound, banner and battery rules that can change what the app asked for, a paired watch the phone must detect, a version check between phone and watch): mark that path "cannot be proven in the cloud, needs a real-phone check" and name what to look at on the device
 ## FEATURES OF THIS AREA (id | status | name | first entry)
 F-phone-105 | live | Statistics: last 7 days, sets per muscle, muscle distribution, main exercises, strength score | apps/mobile/src/app/stats.tsx:71
 F-phone-107 | live | Records list by month, and pick any exercise to see its trend | apps/mobile/src/app/records.tsx:23

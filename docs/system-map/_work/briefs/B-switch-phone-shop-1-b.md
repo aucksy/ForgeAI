@@ -57,6 +57,8 @@ Hunt 6, Data a feature needs but nobody fills: write "lens":"gap-6".
 H6.1 For every field a feature depends on (birthday, phone, check-in phone, app link, plan dates, trainer, batch): how many Crispy Curves rows have it filled?
 H6.2 Is there a screen that asks for it at the right moment?
 H6.3 A feature that depends on a field most rows lack = finding
+H6.4 For every input box (mobile number, name, date): feed it what a phone keyboard autofill or a paste really puts in (country code, spaces, dashes, digits in other scripts) and check that the length limit and the cleaning step together keep a valid value
+H6.5 a box that cuts or refuses a real autofill = finding
 Your lists (36 features): docs/system-map/_work/items/B-switch-phone-shop-1-b.txt. H6: fill counts come from field-fill.csv (Crispy Curves only); never count another gym.
 
 INPUT FILES

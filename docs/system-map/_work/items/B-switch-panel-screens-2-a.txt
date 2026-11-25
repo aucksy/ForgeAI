@@ -1,4 +1,4 @@
-# B-switch-panel-screens-2-a: gap-1 x panel / panel/screens-2. Made by _work/lens-items-make.mjs. One row per line.
+# B-switch-panel-screens-2-a: gap-1 x panel / panel/screens-2. Made by _work/lens-items-make.mjs (re-made for the current items, same id). One row per line.
 ## ITEMS (id | lens | text)
 H1.1 | gap-1 | List every setting, switch, plan gate, status and automation (from features.json + entities.json)
 H1.2 | gap-1 | For EACH one, list every other feature whose result it SHOULD change (the AI ideas, Today, counts, badges, reminders, messages, help, exports, the phone app)

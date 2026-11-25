@@ -1,8 +1,10 @@
-# B-switch-phone-components-1-b: gap-6 x phone / phone/components-1. Made by _work/lens-items-make.mjs. One row per line.
+# B-switch-phone-components-1-b: gap-6 x phone / phone/components-1. Made by _work/lens-items-make.mjs (re-made for the current items, same id). One row per line.
 ## ITEMS (id | lens | text)
 H6.1 | gap-6 | For every field a feature depends on (birthday, phone, check-in phone, app link, plan dates, trainer, batch): how many Crispy Curves rows have it filled?
 H6.2 | gap-6 | Is there a screen that asks for it at the right moment?
 H6.3 | gap-6 | A feature that depends on a field most rows lack = finding
+H6.4 | gap-6 | For every input box (mobile number, name, date): feed it what a phone keyboard autofill or a paste really puts in (country code, spaces, dashes, digits in other scripts) and check that the length limit and the cleaning step together keep a valid value
+H6.5 | gap-6 | a box that cuts or refuses a real autofill = finding
 ## FEATURES OF THIS AREA (id | status | name | first entry)
 F-phone-1300 | live | Workout tab notice: "Backups now go to your MettleUp account" (Sign in / Got it) for a phone that had Google Drive backu | apps/mobile/src/components/BackupMovedCard.tsx:19
 F-phone-1301 | behind switch | Gym's logo full-screen for about a second on launch and after joining a branded gym (tap to skip) | apps/mobile/src/components/BrandOpening.tsx:31

@@ -58,6 +58,20 @@ L10.1 Every user string in English and Hinglish: plain, true, consistent names f
 Hunt 10, Words promise more than the code: write "lens":"gap-10".
 H10.1 Every switch label, help article, What's new line and button that says what happens ("Members get a birthday wish", "Done items leave the bell"): read the code path end to end and confirm it happens for EVERY member the words cover
 H10.2 Words wider than reality = finding (tie to the promise register)
+H10.3 Include legal and privacy pages (data agreement, privacy notice, consent and sign-in screens), and check every way into the data, staff and direct database logins included
+H10.4 Every notification, link and button: follow a tap to where it lands
+H10.5 a tap that opens nothing, or a general page instead of the thing it names = finding
+H10.6 Every button that can be greyed out or do nothing: the screen says why, next to it
+H10.7 a disabled or silent button with no reason in view = finding
+H10.8 Every label in every language the app offers (Hinglish runs longer): check in code it can wrap or shrink at 320 to 390 px wide (no fixed no-wrap, no min-width that cannot shrink, no crowded top bar)
+H10.9 text cut off or pushed past the screen edge = finding
+H10.10 Every picture the code points at (app and notification icons, badges, manifest and share images): is it the current brand and in the form the platform needs (size, one colour where the system draws only an outline)?
+H10.11 An old-brand or wrong-form picture = finding
+H10.12 To follow taps, find the one place that handles a tapped notification and list the pages it knows
+H10.13 then list every kind of notification the code posts (on the phone and from the server) and check each kind is in that list
+H10.14 A save button greyed out because nothing changed yet counts too: the screen must say it is already saved
+H10.15 A promise that every look or change is recorded: routes that skip the app's code (the database's own login, its table editor, admin tools) leave no code to read, so look for a record the database itself writes (an audit setting, a job that pulls its logs)
+H10.16 none = finding
 Your lists (30 features): docs/system-map/_work/items/B-words-phone-components-2.txt. 
 
 INPUT FILES

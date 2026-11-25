@@ -1,4 +1,4 @@
-# B-run-server-ci-workflows-b: gap-8 x server / server/ci-workflows. Made by _work/lens-items-make.mjs. One row per line.
+# B-run-server-ci-workflows-b: gap-8 x server / server/ci-workflows. Made by _work/lens-items-make.mjs (re-made for the current items, same id). One row per line.
 ## ITEMS (id | lens | text)
 H8.1 | gap-8 | By script first: docs/system-map/_tools/silent.mjs lists every catch block with file:line and three flags: logs? (calls a log, report or crash function inside), tells_user? (sets an error state, toast or alert inside), rethrows?
 H8.2 | gap-8 | Output _sources/silent.csv

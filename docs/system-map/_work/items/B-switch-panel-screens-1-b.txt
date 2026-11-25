@@ -1,8 +1,10 @@
-# B-switch-panel-screens-1-b: gap-6 x panel / panel/screens-1. Made by _work/lens-items-make.mjs. One row per line.
+# B-switch-panel-screens-1-b: gap-6 x panel / panel/screens-1. Made by _work/lens-items-make.mjs (re-made for the current items, same id). One row per line.
 ## ITEMS (id | lens | text)
 H6.1 | gap-6 | For every field a feature depends on (birthday, phone, check-in phone, app link, plan dates, trainer, batch): how many Crispy Curves rows have it filled?
 H6.2 | gap-6 | Is there a screen that asks for it at the right moment?
 H6.3 | gap-6 | A feature that depends on a field most rows lack = finding
+H6.4 | gap-6 | For every input box (mobile number, name, date): feed it what a phone keyboard autofill or a paste really puts in (country code, spaces, dashes, digits in other scripts) and check that the length limit and the cleaning step together keep a valid value
+H6.5 | gap-6 | a box that cuts or refuses a real autofill = finding
 ## FEATURES OF THIS AREA (id | status | name | first entry)
 F-panel-1110 | live | Members: list and filters, add or edit a member, member page, photo by desk camera, ID card print and share, members who | apps/dashboard/src/crm/ui/screens/MemberDetail.tsx:112
 F-panel-1111 | live | Import members from Excel or CSV (with AI column guess), preview, branches, undo an import | apps/dashboard/src/crm/ui/screens/ImportMembers.tsx:125
