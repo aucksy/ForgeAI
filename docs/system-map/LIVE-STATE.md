@@ -167,3 +167,46 @@ production 0.77.0 has it.
 |---|---|---|---|---|---|
 | F-panel-1105 Branding: logo, colours, logo upload, remove logo background, phone and shortcut preview | yes | yes | yes | yes (member app shows the look since 0.54.0) | Pro switch off, so open to every gym (FN-A3-website-1-07); server plan switch value unknown |
 | F-panel-3101 Branding: suggest a gym colour from the logo | yes | yes | n/a | n/a | worked out in the browser; line found in the live script |
+
+## H5-panel-forms (surface panel, area panel/forms) — 25 features, written by H5-panel-forms on 2026-11-26
+
+The member, sale, payment, freeze, start-date and cancel-receipt sheets of the web panel, so "Play app" is n/a for
+every row. "Live panel" = the build at app.mettleup.fit read on 2026-11-26 (script index--GfMsOId.js): every long
+on-screen sentence of the six sheets on main (32 of 32) is in that live script, so the live panel runs these sheets as
+they are on main. "Live DB" = the sheets save through crm_push / crm_pull, and the desk photo through
+owner_member_photos, owner_save_member_photo and owner_remove_member_photo; all are in the live grant list (machine
+db-security.json routine_grants, read 2026-11-20). The every-branch tick needs 0031 (live by dependency) and pass
+members need 0055 (first line: applied live). Two of the three "behind switch" marks are conditions, not switches:
+the desk camera shows whenever the gym is online and the photo function answers (it is live), and "train at every
+branch" shows whenever a gym has 2 or more branches (same stale-mark fault as FN-H5-hq-app-02). Online payment:
+the UPI QR needs only the gym's UPI ID; payment links run in test mode only (PAY_LIVE "off" on main; the live value
+is not on any public page), and What's new says so honestly. Online-payment storage (small web database files 0011,
+0016) is marked applied live but cannot be read from here.
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-panel-400 Change a future start date | yes | yes | yes | n/a | saves through crm_push |
+| F-panel-401 Collect a payment against dues | yes | yes | yes | n/a | crm_push |
+| F-panel-402 Take the money online (UPI QR, payment link) | yes | **partly**: UPI QR yes; links test mode only | unknown (small web database 0011/0016 not readable) | n/a | PAY_LIVE off on main; no real money moves |
+| F-panel-403 Close open online links before the desk takes the money | yes | yes | unknown (small web database) | n/a | runs only for gyms with a link open |
+| F-panel-404 Freeze or add extra days | yes | yes | yes | n/a | crm_push |
+| F-panel-405 Gift reward days from the workout offer | yes | yes | yes | n/a | 0025 workout offer: first line applied live |
+| F-panel-406 Add a member | yes | yes | yes | n/a | crm_push |
+| F-panel-407 Edit a member | yes | yes | yes | n/a | crm_push |
+| F-panel-408 Add from an enquiry or join page, filled in | yes | yes | yes | n/a | join page itself is off (GYM_PAGES off); enquiry route live |
+| F-panel-409 Desk camera photo while adding | yes | **yes** (listed "behind switch") | yes | n/a | photo functions present; shows only on Add, online |
+| F-panel-410 Put a member in a batch | yes | yes | yes | n/a | crm_push |
+| F-panel-411 Comes with a pass | yes | yes | yes | n/a | 0055 applied live |
+| F-panel-412 Train at every branch | yes | **yes** for gyms with 2+ branches (listed "behind switch") | yes | n/a | 0031 live by dependency |
+| F-panel-413 Mobile already used: who has it | yes | yes | yes | n/a | crm_push duplicate answer |
+| F-panel-414 Sell a membership | yes | yes | yes | n/a | crm_push |
+| F-panel-415 Renew a membership | yes | yes | yes | n/a | crm_push |
+| F-panel-416 Sell or renew a PT pack | yes | yes | yes | n/a | crm_push |
+| F-panel-417 Part payment, rest as dues | yes | yes | yes | n/a | crm_push |
+| F-panel-418 Ask once on an unusual price or date | yes | yes | n/a | n/a | worked out in the browser |
+| F-panel-419 Front desk money limits | yes | yes | yes | n/a | server rules 0019/0021 (base files, no applied line) |
+| F-panel-420 Receipt records who took the money | yes | yes | yes | n/a | 0019 taker |
+| F-panel-421 Keep taking payments offline | yes | yes | yes | n/a | 0041 first line applied live 30 Oct |
+| F-panel-422 No plans yet: what to do | yes | yes | n/a | n/a | browser only |
+| F-panel-423 Cancel a receipt with a reason | yes | yes | yes | n/a | crm_push |
+| F-panel-512 Sell/renew/freeze/change start/cancel group | yes | yes | yes | n/a | |

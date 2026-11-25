@@ -1,1 +1,3 @@
 - started H5-panel-forms; read brief, lessons, items
+- 2026-11-26 H5.1/H5.2/H5.3 evidence: live script index--GfMsOId.js holds all 32 long UI strings of the 6 form sheets; owner_member_photos/save/remove, crm_push/pull, owner_branches in grants; 409/412 'behind switch' are conditions not switches (reuse FN-H5-hq-app-02); 402 links test mode (PAY_LIVE off), UPI QR no switch; What's new + website honest. No new finding.
+- 2026-11-26 H5.4 written (LIVE-STATE.md lines 171-212); grid row written; lens-cover ok; merge --dry 1 passed 0 rejected. Code lines read ~200. DONE
