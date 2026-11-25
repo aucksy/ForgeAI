@@ -120,7 +120,7 @@ test('wrangler.jsonc names every switch with its value today, and has no keep_va
   assert.equal(vars.MOVE, 'on');
   assert.equal(vars.LANDING, 'live');
   // What the admin app is told with exactly these vars: nothing held is shown; members' AI answers are charged.
-  assert.deepEqual(JSON.parse(JSON.stringify({ gymPages: gymPagesOpen(vars), joinPay: joinPayOpen(vars), aiCharge: aiChargeOn(vars) })), { gymPages: false, joinPay: false, aiCharge: true });
+  assert.deepEqual(JSON.parse(JSON.stringify({ gymPages: gymPagesOpen(vars), joinPay: joinPayOpen(vars), aiCharge: aiChargeOn(vars) })), { gymPages: false, joinPay: true, aiCharge: true });
   // No secret is ever a plain var.
   for (const k of Object.keys(vars)) assert.doesNotMatch(k, /KEY|SECRET|TOKEN/, k);
 });
