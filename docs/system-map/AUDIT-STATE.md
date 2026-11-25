@@ -1,5 +1,5 @@
 MODEL: OPUS (his switch after the 20 Nov Fable reset). Every helper = Opus 5.5 ("opus"), effort "medium". Only the weekly all-models stop line counts (90, or 95 in its last 24 hours).
-status: WAITING (pacer-1125-1632 closed about 18:45 IST 25 Nov at F5 77, the day start line 75; weekly all 11; nothing running; 338 todo; next run starts the rest of B-run -b)
+status: RUNNING (pacer-1125-2207 opened 22:07 IST 25 Nov at F5 9, weekly all 12; night rule: start nothing at 91, launch to 95, save at 97; window resets 01:40 IST)
 phase/step: A2, A3, A4, A4b, A5, A7, LENSES 4, 5 AND 3 DONE (lens 3 finished 21 Nov about 02:00 IST). Next: the items the prep helper makes (_work/NEXT-ITEMS.md). Next: the rest of lenses 3 and 5 (no more pilots needed); add with state.mjs add @docs/system-map/_work/lens-add/<id>.json; finish each with bash docs/system-map/_tools/lens-finish.sh <id> <tokens> "<line>" after node docs/system-map/_tools/clamp-evidence.js <id> (both hold this run's paths: fix the two paths at their top if the worktree moves).
 expected end: not before about 8 Dec 2026 at the present size. projection: about 3.1 weekly periods of 3 (A5 alone needs about 1.6 more: 87 items x 1.7 weekly points): OVER; HIS CHOICE of 19 Nov (live features first) is applied: full journeys only for features with status live; the rest is deferred and listed in the final report
 mode: ANALYSIS ONLY. No app code, tests, workflows, skills or settings change. "Apply" items in 3E/3F = proposals only.
@@ -72,16 +72,16 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 338 todo, 0 in progress, 789 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 332 todo, 6 in progress, 789 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| B-run-phone-lib-core-b | B-run | B-run (Silent fallbacks) x phone / phone/lib-core: 6 items | todo | _work/B-run-phone-lib-core-b.md |  |
-| B-run-phone-native-b | B-run | B-run (Silent fallbacks) x phone / phone/native: 6 items | todo | _work/B-run-phone-native-b.md |  |
-| B-run-phone-onboarding-db-b | B-run | B-run (Silent fallbacks) x phone / phone/onboarding-db: 6 items | todo | _work/B-run-phone-onboarding-db-b.md |  |
-| B-run-phone-screens-1-b | B-run | B-run (Silent fallbacks) x phone / phone/screens-1: 6 items | todo | _work/B-run-phone-screens-1-b.md |  |
-| B-run-phone-screens-2-b | B-run | B-run (Silent fallbacks) x phone / phone/screens-2: 6 items | todo | _work/B-run-phone-screens-2-b.md |  |
-| B-run-phone-shop-1-b | B-run | B-run (Silent fallbacks) x phone / phone/shop-1: 6 items | todo | _work/B-run-phone-shop-1-b.md |  |
+| B-run-phone-lib-core-b | B-run | B-run (Silent fallbacks) x phone / phone/lib-core: 6 items | in progress | _work/B-run-phone-lib-core-b.md |  |
+| B-run-phone-native-b | B-run | B-run (Silent fallbacks) x phone / phone/native: 6 items | in progress | _work/B-run-phone-native-b.md |  |
+| B-run-phone-onboarding-db-b | B-run | B-run (Silent fallbacks) x phone / phone/onboarding-db: 6 items | in progress | _work/B-run-phone-onboarding-db-b.md |  |
+| B-run-phone-screens-1-b | B-run | B-run (Silent fallbacks) x phone / phone/screens-1: 6 items | in progress | _work/B-run-phone-screens-1-b.md |  |
+| B-run-phone-screens-2-b | B-run | B-run (Silent fallbacks) x phone / phone/screens-2: 6 items | in progress | _work/B-run-phone-screens-2-b.md |  |
+| B-run-phone-shop-1-b | B-run | B-run (Silent fallbacks) x phone / phone/shop-1: 6 items | in progress | _work/B-run-phone-shop-1-b.md |  |
 | B-run-phone-shop-2-b | B-run | B-run (Silent fallbacks) x phone / phone/shop-2: 6 items | todo | _work/B-run-phone-shop-2-b.md |  |
 | B-run-phone-tracker-components-1-b | B-run | B-run (Silent fallbacks) x phone / phone/tracker-components-1: 6 items | todo | _work/B-run-phone-tracker-components-1-b.md |  |
 | B-run-phone-tracker-components-2-b | B-run | B-run (Silent fallbacks) x phone / phone/tracker-components-2: 6 items | todo | _work/B-run-phone-tracker-components-2-b.md |  |
@@ -101,6 +101,12 @@ Counts: 338 todo, 0 in progress, 789 done, 0 blocked. Full list: work-items.json
 | B-truth-hq-app-b | B-truth | B-truth (Same fact, every place) x hq / hq/app: 9 items | todo | _work/B-truth-hq-app-b.md |  |
 | B-truth-panel-assistant-b | B-truth | B-truth (Same fact, every place) x panel / panel/assistant: 9 items | todo | _work/B-truth-panel-assistant-b.md |  |
 | B-truth-panel-auth-data-b | B-truth | B-truth (Same fact, every place) x panel / panel/auth-data: 9 items | todo | _work/B-truth-panel-auth-data-b.md |  |
+| B-truth-panel-brand-shell-b | B-truth | B-truth (Same fact, every place) x panel / panel/brand-shell: 9 items | todo | _work/B-truth-panel-brand-shell-b.md |  |
+| B-truth-panel-forms-b | B-truth | B-truth (Same fact, every place) x panel / panel/forms: 9 items | todo | _work/B-truth-panel-forms-b.md |  |
+| B-truth-panel-logic-1-b | B-truth | B-truth (Same fact, every place) x panel / panel/logic-1: 9 items | todo | _work/B-truth-panel-logic-1-b.md |  |
+| B-truth-panel-logic-2-b | B-truth | B-truth (Same fact, every place) x panel / panel/logic-2: 9 items | todo | _work/B-truth-panel-logic-2-b.md |  |
+| B-truth-panel-pay-machines-b | B-truth | B-truth (Same fact, every place) x panel / panel/pay-machines: 9 items | todo | _work/B-truth-panel-pay-machines-b.md |  |
+| B-truth-panel-screens-1-b | B-truth | B-truth (Same fact, every place) x panel / panel/screens-1: 9 items | todo | _work/B-truth-panel-screens-1-b.md |  |
 | L16-web-pages | L16 | lens 16 (Code health) x web / web/pages: 2 items | done | _work/L16-web-pages.md | 2/2 items, 3 new S4 (member website never opened by a test; 7 unused pictures; hand-typed offline skip list misses a page), 2 reused |
 | CAL-5 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-5 ...); output is scored, never merged | done | _work/CAL-5.md | c08, c09: 16 gaps listed (not merged; scored in CAL-score) |
 | CAL-6 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-6.md | re-run 1: c01, c05, c12: 10 gaps (not merged; scored in CAL-score) |
@@ -109,13 +115,14 @@ Counts: 338 todo, 0 in progress, 789 done, 0 blocked. Full list: work-items.json
 | CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
-(+ 313 more todo items, not shown)
+(+ 307 more todo items, not shown)
 (+ 781 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
 
 ## Resume notes
+- PACER RUN pacer-1125-2207 (22:07 IST 25 Nov, F5 9, weekly all 12, Opus medium, night rule 91/95/97). RUNNING: B-run-phone-lib-core-b, -phone-native-b, -phone-onboarding-db-b, -phone-screens-1-b, -phone-screens-2-b, -phone-shop-1-b. If this run dies: each has its checkpoint _work/<id>.md; else state.mjs reset pacer-1125-2207. NEXT: the rest of B-run -b (state.mjs next), then B-truth -b, B-alerts, B-switch, B-time, B-words, H5. Launch prompt: brief path + the rules line used in this run (analysis only, no commit, no plan, Crispy only, temp outside repo, nothing heavy, row rules, lens-cover + merge --dry before reporting).
 - PACER RUN pacer-1125-1632 (window opened 16:32 IST 25 Nov, F5 0, weekly all 0; resets 20:10 IST). UPDATE about 17:55 IST at F5 67, weekly all 9: ALL 31 B-truth -a merged. CALIBRATION DONE (calibration/RESULT.md, 3 rounds, CAL-1..11, scored by coordinator helpers): best of three 11 found (10 only because the hunt text names that kind), 2 partly, 2 missed of 15; misses go to a cloud screenshot check; the 2 device-only bugs passed and stay on his real-phone list; about 35 older bug reports (26 Oct-14 Nov) never used as seeds (say so in the report). Hunts 2, 4, 6, 7, 9, 10 rewritten in _work/lens-source.txt; lens-items.json regenerated; 315 todo hunt briefs re-made (1,184 new hunt line ids on 222 rows; 172 briefs a bit over 1,200 words: accepted); calib copies deleted. UPDATE about 18:28 IST at F5 71, weekly all 10: merged B-run-hq-app-b, -panel-brand-shell-b, -panel-auth-data-b (S3 owner key switch-off), -panel-assistant-b (S2 add-member card keeps first plan joining fee; S3 group message sends with app list failed), -panel-forms-b, -panel-logic-1-b (0 new). UPDATE about 18:35 IST at F5 74: merged -panel-logic-2-b, -panel-pay-machines-b, -panel-screens-1-b, -panel-screens-2-b, -panel-shop-b (0 new; reused UPI-message and door-upload faults). CLOSED about 18:45 IST at F5 77 (day start line 75), weekly all 11, nothing running. Last merged: B-run-panel-ui-shell-b (S2 self-join Approve saves payment as paid when the refund check fails), -phone-cloud-backup-ai-b, -phone-components-1-b, -phone-components-2-b. 338 todo. NEXT pacer run: next todo is the rest of B-run -b (state.mjs next), then B-truth -b, B-alerts, B-switch, B-time, B-words, H5; same launch prompt.
 - MAIN CHAT RUN main-1125 (his words 25 Nov ~12:30 IST: "use the remaining 2% of my weekly limit for audit ... start it one by one for this session and use it to 100%"): one helper at a time. Merged: B-run-watch-app-a, B-run-web-pages-a, B-truth-hq-app-a (B-truth pilot; lessons in its checkpoint _work/B-truth-hq-app-a.md, give them to every B-truth helper), B-truth-panel-assistant-a, -panel-auth-data-a, -panel-brand-shell-a, -panel-forms-a. B-truth-panel-logic-1-a and B-truth-panel-logic-2-a merged too: 9 items in all, 0 failed, 0 running. CLOSED at weekly 100% about 13:47 IST. NEXT: B-truth-panel-pay-machines-a and the other B-truth items (give each the hq-app-a lessons). Chat compacts at 20% now; after it, read these notes before saying we never discussed or he never approved something.
 - JOIN PAY LIVE (his words 25 Nov 2026: "you can make it live ... later if the scheduled tests find any issue, then we can fix it ... add one of these tests in the already planned tests"). JOIN_PAY set to live (R-555 hold lifted by him). The B-run / B-truth journeys for the self-join link (app.mettleup.fit/m/<CODE>: form, plan choice, gym UPI pay, desk Approve on Today) MUST include a pay-online step; run apps/dashboard/e2e/joinpay-uat.spec.mjs and selfjoin-uat.spec.mjs in the cloud as part of them and file any failure as a finding.
