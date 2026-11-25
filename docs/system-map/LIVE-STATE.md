@@ -210,3 +210,60 @@ is not on any public page), and What's new says so honestly. Online-payment stor
 | F-panel-422 No plans yet: what to do | yes | yes | n/a | n/a | browser only |
 | F-panel-423 Cancel a receipt with a reason | yes | yes | yes | n/a | crm_push |
 | F-panel-512 Sell/renew/freeze/change start/cancel group | yes | yes | yes | n/a | |
+
+## H5-panel-logic-1 (surface panel, area panel/logic-1) — 36 features, written by H5-panel-logic-1 on 2026-11-26
+
+The web panel's own rules for import, the bell, Today, members, money, plans for members and settings. "Live panel" =
+the build at app.mettleup.fit read on 2026-11-26 (script index--GfMsOId.js, unchanged since the H5-panel-forms read):
+the long on-screen sentences of these 36 files on main are in that live script (the only misses are code and comment
+fragments), with one exception: the "your MettleUp plan has ended" banner's words are not in it at all, because the
+plan switch is off on main (packages/theme/src/plans.ts:40) and the build drops the banner. "Live DB" = every
+gym-database function these screens call is in the live grant list (machine db-security.json routine_grants, read
+2026-11-20). Public probes on 2026-11-26: POST /api/ai/match-columns with no sign-in answered 401 "Sign in first",
+not 503 "not switched on", so the AI key and the small web database link are set (deploy/panel/aiMatch.js:722-731);
+/api/switches answered joinPay true, aiCharge true; /api/hq-news answered with one message, a leftover test
+("Test HQ to Admin Message", 31 Oct) that every gym's bell shows (finding FN-H5-panel-logic-1-01).
+Three "behind switch" marks are stale: AI import (key live), Ask a trainer (its functions are live; the "not switched
+on" words show only when they are missing) and Busy machines (an owner's own setting, not a launch switch). Same fault
+as FN-H5-hq-app-02. Paying MettleUp online stays off: HQ has no BILLING setting (live-state-facts.md), and the
+database switch value (app_config billing_checkout) is not readable here. "Play app" = member-app side, from the
+member app's What's new; Play production is 0.77.0.
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-panel-600 Import members from Excel/CSV | yes | yes | yes | n/a | saves through crm_push |
+| F-panel-601 AI column matching for import | yes | **yes** (listed "behind switch") | yes | n/a | probe 401 = key and link set; daily count in small web database not readable |
+| F-panel-602 Import into several branches | yes | yes | yes | n/a | 0031 live by dependency |
+| F-panel-603 Aadhaar/PAN left out of import | yes | yes | n/a | n/a | worked out in the browser |
+| F-panel-604 Notification bell to-do list | yes | yes | yes | n/a | owner_alerts, owner_alert_list, owner_alerts_read, owner_alert_remove present; 0098 on the live list |
+| F-panel-605 Latest from your members (handled drop off) | yes | yes | yes | n/a | owner_alert_opened present |
+| F-panel-606 Ask a trainer: read and reply | yes | **yes** (listed "behind switch") | yes | unknown | owner_questions, owner_answer_question present; member side member_ask_trainer present; no member What's new line names the version |
+| F-panel-607 Attendance and Away list | yes | yes | yes | n/a | crm_pull records |
+| F-panel-608 Choose who gets a message | yes | yes | yes | yes | owner_send_message present |
+| F-panel-609 Automatic reminders | yes | yes | yes | n/a | owner_auto_reminders, owner_save_auto_reminders present |
+| F-panel-610 Automatic birthday wish | yes | yes | yes | yes | owner_app_members present |
+| F-panel-611 Batches | yes | yes | yes | n/a | crm_push |
+| F-panel-612 Pay MettleUp online | yes | **partly**: UPI/bank page yes; online buy and plan-end reminder off | yes | n/a | owner_billing, owner_receipt, owner_pay_mettleup present; HQ BILLING not set; switch row unreadable |
+| F-panel-613 Body measurements | yes | yes | yes | yes (Progress → Body) | owner_save_measurement present |
+| F-panel-614 Your growth | yes | yes | yes | n/a | worked out from crm_pull records |
+| F-panel-615 Busy machines setup | yes | **yes** (listed "behind switch") | yes | yes (Gym tab) | owner_machine_setup present; switched on per gym by the owner |
+| F-panel-616 Came in today: ended, no plan, owing | yes | yes | yes | n/a | crm_pull |
+| F-panel-617 Challenges and leaderboard | yes | yes | yes | yes | owner_save_challenge, owner_board present |
+| F-panel-618 Check workout code | yes | yes | yes | unknown | matched in the browser; member-app version not read |
+| F-panel-619 Collections and dues | yes | yes | yes | n/a | crm_pull |
+| F-panel-620 Excel-safe CSV | yes | yes | n/a | n/a | browser only |
+| F-panel-622 Diet plans | yes | yes | yes | yes | owner_save_diet_plan present |
+| F-panel-623 Enquiries | yes | yes | yes | n/a | crm_push |
+| F-panel-624 Workout plan exercise list | yes | yes | n/a | n/a | list inside the app |
+| F-panel-625 Expenses | yes | yes | yes | n/a | crm_push |
+| F-panel-626 Help and feedback | yes | yes | unknown | n/a | small web database (0001, 0005, 0008, 0009, 0014) not readable; /api/help/replies route answers |
+| F-panel-627 Updated 20 s ago | yes | yes | n/a | n/a | browser only |
+| F-panel-628 Get started card | yes | yes | yes | n/a | reads the gym's records |
+| F-panel-629 GST on receipts | yes | yes | yes | n/a | crm_push |
+| F-panel-630 Download all your gym's data | yes | yes | yes | n/a | crm_pull |
+| F-panel-631 Request a workout report | yes | yes | yes | yes | owner_request_report, owner_report_file present |
+| F-panel-632 Plan or trial ended banner | yes | **off** (words not in the live script) | yes | n/a | PLAN_GATE_ON false on main; owner_gym_state, _plan_gate_on present |
+| F-panel-633 Gym timings | yes | yes | yes | yes | owner_save_gym_timings present |
+| F-panel-634 Workout of the day | yes | yes | yes | yes (Workout tab) | owner_save_gym_wod present |
+| F-panel-635 Home tiles | yes | yes | yes | n/a | crm_pull |
+| F-panel-636 Messages from HQ in the bell | yes | yes | yes (small web database 0006 proved by the public answer) | n/a | live list holds a leftover test message |
