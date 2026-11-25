@@ -1,0 +1,2 @@
+# B-run-phone-tracker-components-1-b checkpoint
+- 2026-11-25 H8.1-H8.6 done: 14 silent catch rows read; all faults already recorded (FN-L16-phone-tracker-components-1-01 swap/past-start errors unlogged, -02 rest-alert row and quiet reads hidden). Rest (picker hidden/recents, past-workout routine list, swap context defaults) are harmless fallbacks. 59 rows filtered, 0 fallback rows. Grid row written. No new findings.
