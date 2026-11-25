@@ -1,3 +1,5 @@
 - started 2026-11-25; items L2.1-L2.9, L17.1-L17.3
 - L2.4 checked: order/join ids, trainer/plan/checkin server guards; talk dup reuse FN-B-run-phone-shop-1-a-01
 - L2.1 new finding: kept membership days-left frozen offline (membership.ts:152)
+- L2.x, L17.x grids written; findings 01 kept-plan, 02 board-vs-trainer kg
+- DONE: checkers pass (4 rows, 0 rejected)
