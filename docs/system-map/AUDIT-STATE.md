@@ -68,19 +68,19 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-alerts | 3 | 1.5 (60k tokens) |
 | B-switch | 1 | 2.1 (85k tokens) |
 | B-time | 1 | 1.5 (60k tokens) |
-| B-words | 0 | 5 (start value) |
+| B-words | 1 | 2.3 (90k tokens) |
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 268 todo, 4 in progress, 855 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 266 todo, 5 in progress, 856 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
+| H5-panel-auth-data | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/auth-data: 4 items | in progress | _work/H5-panel-auth-data.md |  |
 | B-alerts-panel-assistant-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x panel / panel/assistant: 10 items | in progress | _work/B-alerts-panel-assistant-b.md |  |
 | B-alerts-panel-auth-data-a | B-alerts | B-alerts (Notifications and messages + 1 more) x panel / panel/auth-data: 6 items | in progress | _work/B-alerts-panel-auth-data-a.md |  |
+| B-switch-panel-assistant | B-switch | B-switch (Should-read matrix (missing links) + 1 more) x panel / panel/assistant: 9 items | in progress | _work/B-switch-panel-assistant.md |  |
 | B-time-panel-assistant | B-time | B-time (Install, update, upgrade + 2 more) x panel / panel/assistant: 7 items | in progress | _work/B-time-panel-assistant.md |  |
-| B-words-hq-app | B-words | B-words (Language and words + 1 more) x hq / hq/app: 17 items | in progress | _work/B-words-hq-app.md |  |
-| H5-panel-auth-data | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/auth-data: 4 items | todo | _work/H5-panel-auth-data.md |  |
 | H5-panel-brand-shell | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/brand-shell: 4 items | todo | _work/H5-panel-brand-shell.md |  |
 | H5-panel-forms | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/forms: 4 items | todo | _work/H5-panel-forms.md |  |
 | H5-panel-logic-1 | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/logic-1: 4 items | todo | _work/H5-panel-logic-1.md |  |
@@ -105,7 +105,8 @@ Counts: 268 todo, 4 in progress, 855 done, 0 blocked. Full list: work-items.json
 | H5-phone-tracker-data | H5 | hunt 5 (Built vs live (deploy state)) x phone / phone/tracker-data: 4 items | todo | _work/H5-phone-tracker-data.md |  |
 | H5-phone-tracker-engine | H5 | hunt 5 (Built vs live (deploy state)) x phone / phone/tracker-engine: 4 items | todo | _work/H5-phone-tracker-engine.md |  |
 | H5-phone-tracker-lib | H5 | hunt 5 (Built vs live (deploy state)) x phone / phone/tracker-lib: 4 items | todo | _work/H5-phone-tracker-lib.md |  |
-| B-time-hq-app | B-time | B-time (Install, update, upgrade + 2 more) x hq / hq/app: 7 items | done | _work/B-time-hq-app.md | 1 S4: open HQ tab keeps old version after update, no reload prompt |
+| H5-phone-tracker-services-1 | H5 | hunt 5 (Built vs live (deploy state)) x phone / phone/tracker-services-1: 4 items | todo | _work/H5-phone-tracker-services-1.md |  |
+| B-words-hq-app | B-words | B-words (Language and words + 1 more) x hq / hq/app: 17 items | done | _work/B-words-hq-app.md | 9 S3/S4: delete-request buttons overflow on phone; pause warning says members keep app; message timing claim wrong |
 | CAL-5 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-5 ...); output is scored, never merged | done | _work/CAL-5.md | c08, c09: 16 gaps listed (not merged; scored in CAL-score) |
 | CAL-6 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-6.md | re-run 1: c01, c05, c12: 10 gaps (not merged; scored in CAL-score) |
 | CAL-7 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-7.md | re-run 1: c03, c06, c07: 15 gaps (not merged; scored in CAL-score) |
@@ -113,8 +114,8 @@ Counts: 268 todo, 4 in progress, 855 done, 0 blocked. Full list: work-items.json
 | CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
-(+ 243 more todo items, not shown)
-(+ 847 older done items, not shown)
+(+ 241 more todo items, not shown)
+(+ 848 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
