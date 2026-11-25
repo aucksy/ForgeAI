@@ -58,7 +58,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L19 | 37 | 3.6 (145k tokens) |
 | L14 | 37 | 3.7 (147k tokens) |
 | B-run | 74 | 3.7 (147k tokens) |
-| B-truth | 46 | 4.3 (171k tokens) |
+| B-truth | 48 | 4.3 (172k tokens) |
 | L7 | 37 | 3.2 (128k tokens) |
 | L8 | 37 | 1.3 (51k tokens) |
 | L9 | 31 | 1.4 (55k tokens) |
@@ -72,17 +72,15 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 302 todo, 5 in progress, 820 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 300 todo, 5 in progress, 822 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| B-truth-panel-screens-1-b | B-truth | B-truth (Same fact, every place) x panel / panel/screens-1: 9 items | in progress | _work/B-truth-panel-screens-1-b.md |  |
 | B-truth-panel-screens-2-b | B-truth | B-truth (Same fact, every place) x panel / panel/screens-2: 9 items | in progress | _work/B-truth-panel-screens-2-b.md |  |
-| B-truth-panel-ui-shell-b | B-truth | B-truth (Same fact, every place) x panel / panel/ui-shell: 9 items | in progress | _work/B-truth-panel-ui-shell-b.md |  |
 | B-truth-phone-cloud-backup-ai-b | B-truth | B-truth (Same fact, every place) x phone / phone/cloud-backup-ai: 9 items | in progress | _work/B-truth-phone-cloud-backup-ai-b.md |  |
 | B-truth-phone-components-1-b | B-truth | B-truth (Same fact, every place) x phone / phone/components-1: 9 items | in progress | _work/B-truth-phone-components-1-b.md |  |
-| B-truth-phone-components-2-b | B-truth | B-truth (Same fact, every place) x phone / phone/components-2: 9 items | todo | _work/B-truth-phone-components-2-b.md |  |
-| B-truth-phone-lib-core-b | B-truth | B-truth (Same fact, every place) x phone / phone/lib-core: 9 items | todo | _work/B-truth-phone-lib-core-b.md |  |
+| B-truth-phone-components-2-b | B-truth | B-truth (Same fact, every place) x phone / phone/components-2: 9 items | in progress | _work/B-truth-phone-components-2-b.md |  |
+| B-truth-phone-lib-core-b | B-truth | B-truth (Same fact, every place) x phone / phone/lib-core: 9 items | in progress | _work/B-truth-phone-lib-core-b.md |  |
 | B-truth-phone-native-b | B-truth | B-truth (Same fact, every place) x phone / phone/native: 9 items | todo | _work/B-truth-phone-native-b.md |  |
 | B-truth-phone-onboarding-db-b | B-truth | B-truth (Same fact, every place) x phone / phone/onboarding-db: 9 items | todo | _work/B-truth-phone-onboarding-db-b.md |  |
 | B-truth-phone-screens-1-b | B-truth | B-truth (Same fact, every place) x phone / phone/screens-1: 9 items | todo | _work/B-truth-phone-screens-1-b.md |  |
@@ -106,6 +104,8 @@ Counts: 302 todo, 5 in progress, 820 done, 0 blocked. Full list: work-items.json
 | B-truth-web-pages-b | B-truth | B-truth (Same fact, every place) x web / web/pages: 9 items | todo | _work/B-truth-web-pages-b.md |  |
 | H5-hq-app | H5 | hunt 5 (Built vs live (deploy state)) x hq / hq/app: 4 items | todo | _work/H5-hq-app.md |  |
 | H5-panel-assistant | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/assistant: 4 items | todo | _work/H5-panel-assistant.md |  |
+| H5-panel-auth-data | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/auth-data: 4 items | todo | _work/H5-panel-auth-data.md |  |
+| H5-panel-brand-shell | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/brand-shell: 4 items | todo | _work/H5-panel-brand-shell.md |  |
 | L16-web-pages | L16 | lens 16 (Code health) x web / web/pages: 2 items | done | _work/L16-web-pages.md | 2/2 items, 3 new S4 (member website never opened by a test; 7 unused pictures; hand-typed offline skip list misses a page), 2 reused |
 | CAL-5 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-5 ...); output is scored, never merged | done | _work/CAL-5.md | c08, c09: 16 gaps listed (not merged; scored in CAL-score) |
 | CAL-6 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-6.md | re-run 1: c01, c05, c12: 10 gaps (not merged; scored in CAL-score) |
@@ -114,8 +114,8 @@ Counts: 302 todo, 5 in progress, 820 done, 0 blocked. Full list: work-items.json
 | CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
-(+ 277 more todo items, not shown)
-(+ 812 older done items, not shown)
+(+ 275 more todo items, not shown)
+(+ 814 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
