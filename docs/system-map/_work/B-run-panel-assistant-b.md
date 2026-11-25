@@ -4,3 +4,4 @@
 - planWriter 69-73, suggestions 72/162, festivals 95, jobs 14 read: display-only fallbacks, no promise
 - Cards 160/735/931/994/1017/1038 read harmless; Cards 1004 plan switch keeps old joining fee -> new finding 02
 - output written: 2 new findings, 1 reused (FN-A5-panel-assistant-1-02), grid H8.1-H8.6
+- DONE 2026-11-25: checks pass (lens-cover ok, merge dry 3/3)
