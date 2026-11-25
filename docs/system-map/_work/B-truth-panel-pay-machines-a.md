@@ -1,1 +1,2 @@
 - 2026-11-25 started; items file read; existing findings for area listed (many from L5/L6/L19/L16 reusable)
+- L2.1-L2.9, L17.1-L17.3 done; 4 new findings (01-04), rows written to out file
