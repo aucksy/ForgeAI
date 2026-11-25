@@ -13,3 +13,5 @@ member messages status; trainer questions status; plan requests; membership plan
 - 2026-11-26 retired plans: phone renew list, web page, self-join all skip them (0044:149-150, 0080:148-149, 0077:119). ok.
 - 2026-11-26 download all data: misses tables outside records -> reuse FN-A5-panel-logic-1-3-01.
 - 2026-11-26 join free trial: web page and its AI helper never read it (pageChat.js:108-136, no trial in gymPage.js; 0088:7-15) -> finding 03 (S3).
+- 2026-11-26 out file written (3 findings + 1 grid); lens-cover ok; merge --dry 4/4 passed. ITEM DONE.
+- Lesson: machine: evidence must be a file in _sources/machine (readers.json is not); cite code lines instead.

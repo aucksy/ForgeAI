@@ -541,3 +541,61 @@ What's new note); versions named are when the phone part shipped.
 | F-panel-530 Your web page (listed "behind switch") | yes | **off** (gymPages false) | yes | n/a | correct mark |
 | F-panel-533 Plus lock (listed "hidden") | yes | **off**: hidden | yes (0070) | n/a | correct mark |
 | F-panel-534 Pay MettleUp | yes | yes (UPI/bank); pay online off | yes (0060) | n/a | pay details unknown |
+
+## H5-panel-shop (surface panel, area panel/shop) — 42 features, written by H5-panel-shop on 2026-11-26
+
+The gym panel's member-app side (shop, invite and join online, alerts, check-in poster, and the calls behind the
+member-app tools), so "Play app" is n/a for every row. "Live panel" = the build at app.mettleup.fit read on 2026-11-26
+(script index--GfMsOId.js, newest What's new day 2026-11-25, the same as main): every one of the 94 gym-server calls this
+folder makes is in that script, except owner_billing and owner_receipt, which the build leaves out because online plan
+buying is switched off (BILLING_ONLINE_ON false, packages/theme/src/plans.ts:231). "Live DB" = catalog read 2026-11-26:
+all 94 functions are present. So every "until 00xx is on the server" guard in this folder now passes, and the features
+the list marks "behind switch" only because of that guard are really live (same stale-mark fault as FN-H5-hq-app-02;
+stale code notes: FN-H5-panel-logic-2-01). Live switches (public answers, 2026-11-26): joinPay true, gymPages false;
+/api/links gives join = app.mettleup.fit (join.mettleup.fit has no DNS answer yet); /api/push/web-key answers;
+the join page /m/<code> is served ("Become a member of your gym").
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-panel-1108 Alerts group | yes | yes | yes (owner_alerts, owner_alert_list, owner_alerts_read) | n/a | web key live |
+| F-panel-1115 Visits group | yes | yes | yes | n/a | |
+| F-panel-1117 Invite and join online (listed "behind switch") | yes | **yes** for open gyms with a plan | yes (self_join_preview) | n/a | readiness check, not a switch; gym web pages part off (gymPages false) |
+| F-panel-1119 Shop group | yes | yes | yes (owner_products, owner_orders) | n/a | |
+| F-panel-800 Shop orders | yes | yes | yes (owner_orders, owner_set_order_status) | n/a | |
+| F-panel-801 Shop products | yes | yes | yes (owner_save_product, owner_add_stock, owner_delete_product) | n/a | |
+| F-panel-802 Product photo upload | yes | yes | yes (owner_photo_ticket, owner_set_product_photo) | n/a | photo store bucket not readable (guard): unknown |
+| F-panel-803 Shop card on Today | yes | yes | yes | n/a | |
+| F-panel-804 Start demo gym / turn on member app | yes | yes | yes (demo_start_gym) | n/a | |
+| F-panel-805 Gym look in member app | yes | yes | yes (owner_set_brand) | n/a | |
+| F-panel-806 Rename the gym | yes | yes | yes (owner_rename_gym) | n/a | |
+| F-panel-807 App members list | yes | yes | yes (owner_app_members) | n/a | |
+| F-panel-808 Messages & offers | yes | yes | yes (owner_send_message, owner_withdraw_message) | n/a | |
+| F-panel-809 Workout offer (listed "behind switch") | yes | **yes** | yes (owner_offers, owner_save_offer, staff_give_reward, owner_undo_reward) | n/a | stale mark |
+| F-panel-810 Automatic reminders (listed "behind switch") | yes | **yes**; each reminder is the owner's own switch | yes (owner_auto_reminders, owner_save_auto_reminders) | n/a | stale mark |
+| F-panel-811 Invite members | yes | yes | yes | n/a | |
+| F-panel-812 Join online link (listed "behind switch") | yes | **yes** for open gyms with a plan | yes (self_join_preview) | n/a | message drops "pay at the desk" since joinPay is on |
+| F-panel-813 Free trial on joining (listed "behind switch") | yes | **yes** when the join page works | yes (0088 key; Crispy check refused by guard) | n/a | stale mark |
+| F-panel-814 Check-in QR poster | yes | yes | n/a (made in the browser) | n/a | |
+| F-panel-815 Gym alerts list (listed "behind switch") | yes | **yes** | yes (owner_alert_opened, owner_alert_remove) | n/a | 0075/0098 live |
+| F-panel-816 MettleUp billing online | yes, switch **off** (BILLING_ONLINE_ON false) | **off**: calls cut out of the build; checkout answers "not switched on yet" | yes (owner_billing, owner_receipt) | n/a | HQ BILLING also off |
+| F-panel-817 Body measurements (listed "behind switch") | yes | **yes** | yes (owner_member_measurements, owner_save_measurement) | n/a | stale mark |
+| F-panel-818 Diet plans (listed "behind switch") | yes | **yes** | yes (owner_diet_plans, owner_save_diet_plan) | n/a | stale mark |
+| F-panel-819 Challenges and leaderboard (listed "behind switch") | yes | **yes** | yes (owner_challenges, owner_board) | n/a | stale mark |
+| F-panel-820 Entry machines (listed "behind switch") | yes | **open, but the door service is not live** | yes (owner_entry_machines, owner_add_entry_machine) | n/a | FN-H5-panel-pay-machines-01 |
+| F-panel-821 Bring a friend count (listed "behind switch") | yes | **yes** | yes (owner_friend_summary) | n/a | stale mark |
+| F-panel-822 Workout reports (listed "behind switch") | yes | **yes** | yes (owner_request_report, owner_report_file) | n/a | stale mark |
+| F-panel-823 Busy machines (listed "behind switch") | yes | **yes**; owner switch | yes (owner_machine_setup) | n/a | stale mark |
+| F-panel-824 Member messages (listed "behind switch") | yes | **yes** | yes (owner_talk_*) | n/a | stale mark |
+| F-panel-825 Member photo at the desk (listed "behind switch") | yes | **yes** | yes (owner_member_photos, owner_save_member_photo) | n/a | stale mark |
+| F-panel-826 Pay MettleUp (listed "behind switch") | yes | **yes** (UPI or bank, report a payment) | yes (owner_pay_mettleup, owner_report_mettleup_payment) | n/a | stale mark |
+| F-panel-827 Numbers to confirm (listed "behind switch") | yes | **yes** | yes (owner_phone_links, owner_decide_phone_link) | n/a | stale mark |
+| F-panel-828 Pause / renew requests (listed "behind switch") | yes | **yes** | yes (owner_plan_requests, owner_decide_plan_request) | n/a | stale mark |
+| F-panel-829 MettleUp Plus lock | yes, card **hidden** (MEMBER_PLAN_GATE_ON false) | **off**: hidden | yes (owner_plus_lock) | n/a | correct mark; What's new line waits in pending |
+| F-panel-830 Ask a trainer (listed "behind switch") | yes | **yes** | yes (owner_questions, owner_answer_question) | n/a | stale mark |
+| F-panel-831 Live Progress card (listed "behind switch") | yes | **yes** | yes (owner_member_progress) | n/a | stale mark |
+| F-panel-832 Gym opening hours (listed "behind switch") | yes | **yes** | yes (owner_gym_timings, owner_save_gym_timings) | n/a | stale mark |
+| F-panel-833 Trainers see progress (listed "behind switch") | yes | **yes** | yes (owner_set_trainer, owner_assign_trainer) | n/a | stale mark |
+| F-panel-834 Trainer pages and PT bookings (listed "behind switch") | yes | **yes** | yes (owner_trainer_schedule, owner_book_pt) | n/a | stale mark |
+| F-panel-835 Alert settings (listed "behind switch") | yes | **yes** | yes (owner_alert_settings) | n/a | stale mark |
+| F-panel-836 Web push on/off and test alert (listed "behind switch") | yes | **yes** (web key answers) | yes (owner_save_web_push, owner_send_test_alert) | n/a | stale mark |
+| F-panel-837 Workout of the day (listed "behind switch") | yes | **yes** | yes (owner_gym_wods, owner_save_gym_wod) | n/a | stale mark |
