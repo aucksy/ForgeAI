@@ -1,0 +1,1 @@
+- 2026-11-25 H8.1-H8.6 done: 14 catch + 55 fallback rows read; 1 new finding (old owner key retire swallowed), reused FN-L16-panel-auth-data-01; output written.

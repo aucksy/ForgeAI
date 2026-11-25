@@ -1,0 +1,1 @@
+- 2026-11-25 H8.1-H8.6 done: 2 silent catches + 6 fallbacks read, 121 filtered, 0 findings. Grid row written.
