@@ -1,0 +1,1 @@
+- 2026-11-25 all 12 items done (L2.1-L2.9, L17.1-L17.3); 1 new finding, 5 reused; rows in out/B-truth-phone-tracker-lib-a.jsonl
