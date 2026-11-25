@@ -89,7 +89,7 @@
     "WHATSAPP_HOOK_VERIFY": "mettleup-wa-hook-7nov",
     "GYM_PAGES": "off",
     "PAGE_AI": "off",
-    "JOIN_PAY": "off",
+    "JOIN_PAY": "live",
     "PAY_LIVE": "off",
     "PAY_OAUTH_RAZORPAY": "off",
     "PAY_OAUTH_CASHFREE": "off",
