@@ -64,7 +64,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L9 | 31 | 1.4 (55k tokens) |
 | L12 | 37 | 1.2 (50k tokens) |
 | L16 | 37 | 2.7 (109k tokens) |
-| H5 | 3 | 1.6 (65k tokens) |
+| H5 | 4 | 2.1 (84k tokens) |
 | B-alerts | 7 | 1.6 (66k tokens) |
 | B-switch | 3 | 2.4 (96k tokens) |
 | B-time | 2 | 1.6 (65k tokens) |
@@ -72,14 +72,15 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 258 todo, 4 in progress, 865 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 256 todo, 5 in progress, 866 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| H5-panel-brand-shell | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/brand-shell: 4 items | in progress | _work/H5-panel-brand-shell.md |  |
 | B-alerts-panel-brand-shell-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x panel / panel/brand-shell: 10 items | in progress | _work/B-alerts-panel-brand-shell-b.md |  |
+| B-alerts-panel-forms-a | B-alerts | B-alerts (Notifications and messages + 1 more) x panel / panel/forms: 6 items | in progress | _work/B-alerts-panel-forms-a.md |  |
 | B-switch-panel-brand-shell-a | B-switch | B-switch (Should-read matrix (missing links)) x panel / panel/brand-shell: 4 items | in progress | _work/B-switch-panel-brand-shell-a.md |  |
 | B-time-panel-brand-shell | B-time | B-time (Install, update, upgrade + 2 more) x panel / panel/brand-shell: 7 items | in progress | _work/B-time-panel-brand-shell.md |  |
+| B-words-panel-brand-shell | B-words | B-words (Language and words + 1 more) x panel / panel/brand-shell: 17 items | in progress | _work/B-words-panel-brand-shell.md |  |
 | H5-panel-forms | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/forms: 4 items | todo | _work/H5-panel-forms.md |  |
 | H5-panel-logic-1 | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/logic-1: 4 items | todo | _work/H5-panel-logic-1.md |  |
 | H5-panel-logic-2 | H5 | hunt 5 (Built vs live (deploy state)) x panel / panel/logic-2: 4 items | todo | _work/H5-panel-logic-2.md |  |
@@ -113,8 +114,8 @@ Counts: 258 todo, 4 in progress, 865 done, 0 blocked. Full list: work-items.json
 | CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
-(+ 233 more todo items, not shown)
-(+ 857 older done items, not shown)
+(+ 231 more todo items, not shown)
+(+ 858 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).

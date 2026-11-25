@@ -149,3 +149,21 @@ line above dates from 19 Nov.
 | F-panel-1102 Staff & sign-in group | yes | yes | yes | n/a | |
 | F-panel-1103 Gym records store group | yes | yes | yes | n/a | |
 | F-panel-1136 Demo gym at /demo | yes | yes | n/a | n/a | page memory, no network |
+
+## H5-panel-brand-shell (surface panel, area panel/brand-shell) — 2 features, written by H5-panel-brand-shell on 2026-11-26
+
+"Live panel" = the build at app.mettleup.fit read on 2026-11-26: its script is now index--GfMsOId.js (the style
+index-Bnm1IIYj.css is unchanged), so the panel was deployed again after the 25 Nov reading. That live script holds both
+branding What's new lines ("takes the box off", "suggests a gym colour from your logo") and the gym-logos upload
+folder, so both features are in the live panel. "Live DB" = owner_gym, owner_set_brand and owner_photo_ticket are in the
+live grant list, and the gym-logos folder's upload rule is live (machine db-security.json, read 2026-11-20).
+Branding is meant to be Pro only, but the plan switch is off in the panel (packages/theme/src/plans.ts:40), so every
+gym, Starter too, gets it (already finding FN-A3-website-1-07). The server's own plan switch (0062, live) could not be
+read here; if it were on while the panel's stays off, a Starter gym's Save would be refused. Unknown.
+The member app shows the gym's name and colours since 0.54.0 (apps/mobile/src/lib/whatsNew.ts:528-532), so Play
+production 0.77.0 has it.
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-panel-1105 Branding: logo, colours, logo upload, remove logo background, phone and shortcut preview | yes | yes | yes | yes (member app shows the look since 0.54.0) | Pro switch off, so open to every gym (FN-A3-website-1-07); server plan switch value unknown |
+| F-panel-3101 Branding: suggest a gym colour from the logo | yes | yes | n/a | n/a | worked out in the browser; line found in the live script |
