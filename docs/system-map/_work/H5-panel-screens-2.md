@@ -1,2 +1,7 @@
 # H5-panel-screens-2 checkpoint
 - 2026-11-26 started; read lens rules, pilot lessons, brief, items, sibling screens-1
+- 2026-11-26 live /api/switches: gymPages false, joinPay true, aiCharge true, pageAi false. Live script index--GfMsOId.js (+ index-BK-HUjiz.js): area calls present (owner_talk_list, owner_trainer_schedule, owner_save_gym_wod, owner_save_plus_lock, owner_answer_question, owner_save_gym_page, owner_pay_mettleup, self_join_preview, owner_member_progress, owner_undo_reward, owner_save_auto_reminders); owner_receipt/owner_billing ABSENT (BILLING_ONLINE_ON false compiles MettleUp receipt route out)
+- 2026-11-26 grant check (db-security.json): all 39 owner_*/self_* functions the area calls present; page_chat_ask absent
+- 2026-11-26 catalog row count of platform_payment_details refused by Supabase guard: whether MettleUp UPI/bank details are saved = unknown
+- 2026-11-26 code switches: PLAN_GATE_ON false (Your numbers, Workout offer open to all), MEMBER_PLAN_GATE_ON false (plus lock hidden), BILLING_ONLINE_ON false. Stale "NOT LIVE" notes: PayMettleUp.tsx:8, Trainers.tsx:11 -> reuse FN-H5-panel-logic-2-01. Stale "behind switch" marks -> FN-H5-hq-app-02. Join pay wording -> FN-B-truth-panel-screens-2-a-01
+- 2026-11-26 H5.3: What's new lines for area all live (Pay MettleUp 6/7 Nov depends on saved pay details: unknown). No new finding. Next: LIVE-STATE section + grid row
