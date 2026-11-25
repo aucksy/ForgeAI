@@ -1,0 +1,31 @@
+# One free-form WhatsApp reply to the owner's own phone (secret WA_TEST_TO), to learn whether Meta's 131042 tax
+# block also stops FREE replies inside the 24-hour window after a person messages us (25 Nov 2026, owner's "Yes,
+# test it"). Run it only right after he has sent a WhatsApp message to MettleUp's number. Prints only the message id
+# and any error; the number never appears (it is a secret, and the reply's contacts block is not printed).
+name: WhatsApp test reply
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    env:
+      GRAPH: v27.0
+      PHONE_ID: '1410811765454726'
+      WHATSAPP_TOKEN: ${{ secrets.WHATSAPP_TOKEN }}
+      TO: ${{ secrets.WA_TEST_TO }}
+    steps:
+      - name: Send one text reply
+        run: |
+          if [ -z "$TO" ] || [ -z "$WHATSAPP_TOKEN" ]; then echo "::error::WA_TEST_TO or WHATSAPP_TOKEN is missing"; exit 1; fi
+          body=$(jq -n --arg to "$TO" '{messaging_product:"whatsapp", to:$to, type:"text", text:{body:"MettleUp test: if you can read this, our WhatsApp replies work. You can ignore this message."}}')
+          code=$(curl -sS -o reply.json -w '%{http_code}' -X POST "https://graph.facebook.com/$GRAPH/$PHONE_ID/messages" \
+            -H "Authorization: Bearer $WHATSAPP_TOKEN" -H 'Content-Type: application/json' -d "$body")
+          echo "HTTP $code"
+          jq '{message_id: .messages[0].id, status: .messages[0].message_status, error: (.error | if . then {code, message, details: .error_data.details} else null end)}' reply.json
+          rm -f reply.json
