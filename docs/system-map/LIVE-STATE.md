@@ -324,3 +324,50 @@ Two "behind switch" marks are stale: Member messages (0069, 0087, 0096 live) and
 | F-panel-736 Workout offer | yes | yes | yes | yes | 0025 live |
 | F-panel-737 Workout plans | yes | yes | yes | yes | 0024 live |
 | F-panel-738 What's new in the admin app | yes | yes (newest entry 2026-11-25) | n/a | n/a | two pending entries held back, as they should be |
+
+## H5-panel-pay-machines (surface panel, area panel/pay-machines) — 31 features, written by H5-panel-pay-machines on 2026-11-26
+
+Branches, the demo gym, the entry-machine (door) server parts, online-payment settings and the Pro pack gate of the web
+panel, so "Play app" is n/a for every row. "Live panel" = the build at app.mettleup.fit read on 2026-11-26 (script
+index--GfMsOId.js): it holds this area's words and calls (payments screen lines, "Part of the Pro pack", the entry
+machine address, owner_rename_group, branch_undo_visitor, the demo gym's sample products and questions). "Live DB" =
+catalog read 2026-11-26: owner_branches, owner_add_branch, owner_open_branch, owner_rename_group, branch_find_visitor,
+branch_check_in_visitor, branch_visitors, branch_undo_visitor, all eight gate_* functions and self_join_pay_gym are
+present; owner_gym_pack (0046) is ABSENT. Live switches (public /api/switches, 2026-11-26): joinPay **true** (it was
+false on 19 Nov; main now has JOIN_PAY "live"), gymPages false. PAY_LIVE is "off" on main (test mode; the live value is
+not on any public page). The door service (gate Worker) is **not deployed**: its address gate.mettleup.fit has no DNS
+answer and its route is commented out, although Settings > Entry machines is open live (finding FN-H5-panel-pay-machines-01).
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-panel-100 Entry machine reports in | yes | **no**: door service not deployed | yes (gate_machine, gate_seen, gate_stranger) | n/a | database part live; header still says 0058 not applied |
+| F-panel-101 Machine punch becomes a visit | yes | **no**: door service not deployed | yes (gate_member_nos, gate_recent_punches, gate_save_punches) | n/a | |
+| F-panel-102 Machine picks up queued jobs | yes | **no**: door service not deployed | yes (gate_take_commands, gate_command_results) | n/a | the panel already queues jobs for added machines |
+| F-panel-103 See branches, switch branch | yes | yes | yes (owner_branches, owner_open_branch) | n/a | 0031 live |
+| F-panel-104 Add a branch | yes | yes | yes (owner_add_branch) | n/a | |
+| F-panel-105 Rename the business | yes | yes | yes (owner_rename_group) | n/a | |
+| F-panel-106 Visitor from another branch | yes | yes | yes (branch_* four) | n/a | |
+| F-panel-107 All branches page | yes | yes for gyms with 2+ branches | yes | n/a | |
+| F-panel-1104 Branches group (listed "behind switch") | yes | **yes** for gyms with 2+ branches | yes | n/a | a condition, not a switch (same stale-mark fault as FN-H5-hq-app-02) |
+| F-panel-108 Demo gym opens as sample gym | yes | yes | n/a (in the browser) | n/a | demo strings in the live script |
+| F-panel-109 Demo gym: Staff and PIN status | yes | yes | n/a (in the browser) | n/a | pretend server only |
+| F-panel-110 Demo gym: Training progress and trainer setup | yes | yes | n/a (in the browser) | n/a | pretend server only |
+| F-panel-111 Demo gym: Member questions | yes | yes | n/a (in the browser) | n/a | pretend server only |
+| F-panel-112 Demo gym: Member messages | yes | yes | n/a (in the browser) | n/a | pretend server only |
+| F-panel-113 Demo gym: Messages and offers | yes | yes | n/a (in the browser) | n/a | pretend server only |
+| F-panel-114 Demo gym: Automatic reminders | yes | yes | n/a (in the browser) | n/a | pretend server only |
+| F-panel-115 Demo gym: Workout offer | yes | yes | n/a (in the browser) | n/a | pretend server only |
+| F-panel-116 Demo gym: Shop products and orders | yes | yes | n/a (in the browser) | n/a | pretend server only |
+| F-panel-117 Demo gym: Body measurements | yes | yes | n/a (in the browser) | n/a | pretend server only |
+| F-panel-118 Demo gym: Diet plans | yes | yes | n/a (in the browser) | n/a | pretend server only |
+| F-panel-119 Demo gym: Trainer schedule and PT classes | yes | yes | n/a (in the browser) | n/a | pretend server only |
+| F-panel-120 Demo gym: Challenges and leaderboard | yes | yes | n/a (in the browser) | n/a | pretend server only |
+| F-panel-121 Demo gym: Gym timings | yes | yes | n/a (in the browser) | n/a | pretend server only |
+| F-panel-122 Demo gym: Bring a friend | yes | yes | n/a (in the browser) | n/a | pretend server only |
+| F-panel-123 Demo gym: Renew/pause requests | yes | yes | n/a (in the browser) | n/a | pretend server only |
+| F-panel-1137 Demo gym: Demo copy of server-backed features | yes | yes | n/a (in the browser) | n/a | pretend server only |
+| F-panel-124 Pro pack gate | yes, switch **off** (PLAN_GATE_ON false) | **off**: every gym gets every feature | **no**: owner_gym_pack (0046) absent | n/a | switching it on today would still lock nothing (finding FN-H5-panel-pay-machines-02) |
+| F-panel-125 UPI QR status | yes | yes | n/a (browser, gym's UPI ID) | n/a | |
+| F-panel-1114 Online payments group | yes | **partly**: UPI QR yes; company links test mode only | unknown (small web database 0011/0016 not readable) | n/a | PAY_LIVE off on main |
+| F-panel-126 Connect a payment company | yes | yes, **test mode**; company sign-in off (PAY_OAUTH_* off) | unknown (small web database) | n/a | |
+| F-panel-127 Where members can pay online switches | yes | yes; the join switch now **shows** (JOIN_PAY live since 19-26 Nov) | unknown (small web database 0016) | n/a | join page takes UPI only until PAY_LIVE is on |
