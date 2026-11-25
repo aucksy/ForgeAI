@@ -599,3 +599,32 @@ the join page /m/<code> is served ("Become a member of your gym").
 | F-panel-835 Alert settings (listed "behind switch") | yes | **yes** | yes (owner_alert_settings) | n/a | stale mark |
 | F-panel-836 Web push on/off and test alert (listed "behind switch") | yes | **yes** (web key answers) | yes (owner_save_web_push, owner_send_test_alert) | n/a | stale mark |
 | F-panel-837 Workout of the day (listed "behind switch") | yes | **yes** | yes (owner_gym_wods, owner_save_gym_wod) | n/a | stale mark |
+
+## H5-panel-ui-shell (surface panel, area panel/ui-shell) — 15 features, written by H5-panel-ui-shell on 2026-11-26
+
+The admin app's shared screen parts (menu, bell, Today's cards, welcome, What's new, numbers, member card, Pay MettleUp
+online, stopped-paying line). "Live panel" = the build at app.mettleup.fit read on 2026-11-26 (script index--GfMsOId.js,
+newest What's new day 2026-11-25, the same as main): the visible words of every entry file are in that script; the offline
+helper (sw.js) and the home-screen manifest are byte-identical to main. These parts call the gym server only through the
+shop and pay folders, whose calls are all on the live database (see the H5-panel-shop and H5-panel-pay-machines sections).
+Two plan switches are off in the code on main and so in the live build: PLAN_GATE_ON (no plan limits, no stopped-paying
+line; its words and its server call are cut out of the live script) and BILLING_ONLINE_ON (no online buying, no receipts).
+Live switches (public answer, 2026-11-26): joinPay true, gymPages false. "Play app" is n/a: these are web-panel screens.
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-panel-500 Move around the admin app | yes | yes | n/a | n/a | |
+| F-panel-501 Dark/Light, English/Hinglish, home-screen install | yes | yes (manifest matches main) | n/a | n/a | in What's new 2026-11-15 and iPhone steps line |
+| F-panel-502 Offline front desk | yes | yes (sw.js matches main) | n/a | n/a | |
+| F-panel-503 Welcome screen and "your gym is ready" | yes | yes | yes (demo_start_gym) | n/a | join link = app.mettleup.fit (/api/links) |
+| F-panel-505 Gym alerts: bell, Needs you, alerts with app closed | yes | yes (web key answers) | yes (owner_alerts, owner_alert_list) | n/a | |
+| F-panel-506 What's new and new-feature dots | yes | yes | n/a | n/a | live newest day 2026-11-25 = main |
+| F-panel-1109 What's new page, HQ news in the bell, dots | yes | yes | n/a (HQ news from the panel server) | n/a | |
+| F-panel-508 Today's to-do cards (pause/renew, numbers, joined online) | yes | yes; joined-online card needs joinPay, which is on | yes (owner_plan_requests, owner_phone_links) | n/a | |
+| F-panel-509 Your numbers and Your growth | yes | yes, open to every gym (PLAN_GATE_ON off) | yes | n/a | listed Pro; no limit while the switch is off |
+| F-panel-1129 Number tiles, growth, print report | yes | yes, open to every gym | yes | n/a | same parts as F-panel-509 |
+| F-panel-511 Member ID card | yes | yes | yes | n/a | |
+| F-panel-521 Check a member's workout code | yes | yes, open to every gym | yes (owner_offers) | n/a | |
+| F-panel-1121 Workout offer: give or undo a reward, check a code | yes | yes | yes (staff_give_reward, owner_undo_reward) | n/a | |
+| F-panel-535 Pay MettleUp online and MettleUp receipts | yes, switch **off** (BILLING_ONLINE_ON false) | **off**: asks the server nothing; receipt page not routed | yes (0063 live) | n/a | list says "0063 marked not applied": stale (FN-H5-hq-app-02) |
+| F-panel-536 Stopped-paying line on Today | yes, switch **off** (PLAN_GATE_ON false) | **off**: never shown, cut from the build | yes (owner_gym_state, 0062 live) | n/a | code note says 0062 may not be on the server: stale (FN-H5-panel-logic-2-01) |
