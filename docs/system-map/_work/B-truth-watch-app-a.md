@@ -1,0 +1,2 @@
+- 2026-11-25 lens 2 (L2.1-L2.9) done: 2 new findings (01 S2 effort-window sends next set, 02 S4 pounds drift); AI items do-not-apply.
+- 2026-11-25 lens 17 (L17.1-L17.3) done: 2 new findings (03 S3 empty-weight Done, 04 S4 no 9.5 effort); reused FN-L4-watch-app-01. Output written.
