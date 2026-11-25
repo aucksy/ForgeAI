@@ -20,6 +20,9 @@ H4.2 Check they agree: no double message, no suggestion to do what the system al
 H4.3 For every "done", "read" or "seen" mark: find where it is kept (this browser only, this phone only, or the server)
 H4.4 Every other place that counts or sends the same items (a server push or daily summary, another device, another staff member, Today, the bell) must read that same mark
 H4.5 a mark kept in one place while another place still counts the same item as waiting = finding
+H4.6 Also the case where no mark exists at all: every list or count of items that point at a thing to act on (alerts, to-dos, a daily summary)
+H4.7 When that thing is handled in its own page (reply sent, request settled, enquiry closed), does the item leave the list and the count in every place, server sends included, without anyone touching the item itself?
+H4.8 An item that cannot learn its thing was handled = finding
 Hunt 5, Built vs live (deploy state):
 H5.1 For every feature in features.json: is it on main, deployed, behind a switch, or waiting for a migration?
 H5.2 Compare code on main with what the live panel, HQ, website, phone app (Play version) and database really run (check the live version labels, list_migrations/catalog, switches)
@@ -51,6 +54,9 @@ H9.3 For every number worked out from dates (not seen for N days, ends in N days
 H9.4 A number wrong at an edge = finding
 H9.5 For every summary number shown with its own rows (a total, a target, a score): check it is worked out from those same rows, and when it is lower than last time the screen says why
 H9.6 A summary that differs from its rows, or a drop with no reason shown = finding
+H9.7 Open the files that work numbers out (engine, logic, lib, store), not only the screens that draw them
+H9.8 For each number a screen shows above or beside its rows, find the function that makes the number and the function that makes each row
+H9.9 if they are two different functions, compare them on a long-gap case
 Hunt 10, Words promise more than the code:
 H10.1 Every switch label, help article, What's new line and button that says what happens ("Members get a birthday wish", "Done items leave the bell"): read the code path end to end and confirm it happens for EVERY member the words cover
 H10.2 Words wider than reality = finding (tie to the promise register)
@@ -63,3 +69,8 @@ H10.8 Every label in every language the app offers (Hinglish runs longer): check
 H10.9 text cut off or pushed past the screen edge = finding
 H10.10 Every picture the code points at (app and notification icons, badges, manifest and share images): is it the current brand and in the form the platform needs (size, one colour where the system draws only an outline)?
 H10.11 An old-brand or wrong-form picture = finding
+H10.12 To follow taps, find the one place that handles a tapped notification and list the pages it knows
+H10.13 then list every kind of notification the code posts (on the phone and from the server) and check each kind is in that list
+H10.14 A save button greyed out because nothing changed yet counts too: the screen must say it is already saved
+H10.15 A promise that every look or change is recorded: routes that skip the app's code (the database's own login, its table editor, admin tools) leave no code to read, so look for a record the database itself writes (an audit setting, a job that pulls its logs)
+H10.16 none = finding

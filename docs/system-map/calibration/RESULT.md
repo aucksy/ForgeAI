@@ -4,8 +4,12 @@ Question: given only the old code (the commit before each fix) and the 10 gap hu
 the bugs he already found? Helper rows: `_work/out/CAL-1.jsonl` .. `CAL-5.jsonl`. Scored by the coordinator
 against each fix commit's real change.
 
-**Score: 3 found (2 of them only because the hunt text names that kind), 1 partly, 11 missed, of 15.**
-The two phone/watch-only bugs both failed: neither helper flagged their code path as needing a real-phone check.
+**Score, best of rounds 1 and 2: 8 found, 1 partly, 6 missed, of 15.** Only 1 of the 8 was found without the
+hunt text naming that kind (7 rode on an example or a round-1 rewrite that names the kind). Both phone/watch-only
+bugs now pass (their code paths were flagged for a real-phone check in round 2). Round 2 detail: see "Round 2" below.
+
+Round 1 alone: 3 found (2 of them only because the hunt text names that kind), 1 partly, 11 missed, of 15.
+The two phone/watch-only bugs both failed in round 1: neither helper flagged their code path as needing a real-phone check.
 
 Caveat: the hunt text (`_work/cal-hunts.txt`) gives examples that name some of these bug kinds (automatic
 birthday wish vs AI ideas, reach of a reminder, "done in one is done in the other"). A "found" on such a row is
@@ -63,6 +67,59 @@ regenerated (new items only; no id changed), and `_work/cal-hunts.txt` regenerat
 c01, c03, c04, c05, c06, c07, c08, c09, c10, c12, c13 (11 folders; c13 is a partly, re-run for the autofill half).
 c10 must be re-copied with the public legal pages added (the data-agreement page lives in the panel's public
 folder); without it no hunt can find that bug.
+
+## Round 2 (re-run 1 of 2), 25 Nov 2026
+
+Fresh helpers, rewritten hunts, only the round-1 misses and the partly: CAL-6 (c01, c05, c12), CAL-7 (c03, c06,
+c07), CAL-8 (c04, c08, c13), CAL-9 (c09, c10; c10 now also held the panel's legal pages). Rows:
+`_work/out/CAL-6.jsonl` .. `CAL-9.jsonl`. Every helper stayed under the 3,000-line read cap (about 1,800-2,000
+lines each), so no miss below is caused by the cap.
+
+| Folder | Kind of bug (neutral) | Round 1 | Round 2 | Best | Matching row | Why |
+|---|---|---|---|---|---|---|
+| c01 | Server summary push counted alerts already handled | missed | missed | missed | none | Rows on reach and records of automatic reminders; the summary push was not followed. The round-1 rewrite asked where a "done" mark is kept, but here no mark existed: the alerts never learned their thing was handled. |
+| c03 | Today kept handled items; joined-today counted as "not seen" | missed | missed | missed | none (FN-CAL-7-08 is a different date edge: never visited, in reminders) | Same reason as c01 for the first half. The joined-today half: the hunt names that edge, but the helper never opened Today's list. |
+| c03 | Card wider than a phone in the longer language | missed | missed | missed | none | See "Cannot be found by reading code" below. |
+| c04 | Old-brand alert icon; badge drew as a white square | missed | found (hunt example named it) | found | FN-CAL-8-04 | Exact: full-colour picture used as the one-colour badge, from a different folder than the current app icons. |
+| c05 | Tapping a reply notification opened nothing | missed | missed | missed | none | The tap handler was never opened; the helper spent its reading on rest-alert warnings. The hunt said "follow a tap" but gave no way in. |
+| c06 | Gym messages silent on one phone brand (device-only) | missed | pass (C6) | found | FN-CAL-7-11 (also FN-CAL-9-05 in c10) | The gym pop-up path is flagged "cannot be proven in the cloud, needs a real-phone check" on that brand. It names battery rules, not the stripped sound, which is fine for a C6 pass. |
+| c07 | Watch update notice never showed (device-only) | missed | pass (C6, generous) | found | FN-CAL-7-14 | The update decision and the watch's version report are flagged for a real-phone check. The real cause (the watch's "I have the app" signal stripped in release builds) is not named. |
+| c08 | "New" dots lit for everything on a first install | missed | found (hunt example named it) | found | FN-CAL-8-06 | Exact, with the lines. |
+| c09 | Save button looked broken (no reason); phone top bar crowded | missed | partly | partly | FN-CAL-9-08, FN-CAL-9-09 | Found the kind (grey buttons with no reason) in the same screen file, but not the save button greyed because nothing changed. Top bar: not found. |
+| c10 | Legal promise that every look is recorded; a direct database read left no record | missed | missed | missed | none | The legal pages were in the copy this time (other promise gaps were found: FN-CAL-9-03). Nobody tested the promise against routes that skip the app's code, which leave no code to read. |
+| c12 | Target lower than last time after a long gap, no reason; box and rows used different maths | missed | missed | missed | none | The helper read only screen components (rest-alert hints); the maths lives in engine, lib and store files it never opened. |
+| c13 | Autofilled mobile number cut by a length limit | partly | found (hunt example named it) | found | FN-CAL-8-13 | Same bug on the phone sign-in box (16 characters cuts a spaced, bracketed number). The same fix commit removed every such limit, this box included. |
+
+Not re-run (found in round 1): c02 (both), c11.
+
+### Hunt rewrites for re-run 2 (C5)
+
+Applied to `_work/lens-source.txt`; `lens-items.json` regenerated (new items only, no id changed);
+`_work/cal-hunts.txt` regenerated from it in the same format.
+
+| For | Hunt | Concrete reason the text missed it | New items |
+|---|---|---|---|
+| c01, c03 | 4 | H4.3-H4.5 assume a "done" mark exists somewhere; here none did, so "where is the mark kept" had no answer. | H4.6-H4.8: a list or count of items pointing at a thing to act on must drop the item when that thing is handled in its own page, in every place, server sends included. |
+| c12 | 9 | H9.5-H9.6 said what to check but helpers read only screens; the numbers are made elsewhere. | H9.7-H9.9: open the files that work numbers out; find the function behind a shown number and the one behind each row; compare on a long-gap case. |
+| c05 | 10 | H10.4 gave an outcome with no way in. | H10.12-H10.13: find the one tapped-notification handler, list the pages it knows, then every kind of notification posted, and check each is known. |
+| c09 | 10 | "Greyed because nothing changed" reads as normal, so it was skipped next to buttons that were flagged. | H10.14: a save button greyed because nothing changed must say it is already saved. |
+| c10 | 10 | H10.3 said "check every way in", but a route with no code is invisible to a code reader. | H10.15-H10.16: for an "always recorded" promise, look for a record the database itself writes; none = finding. |
+
+### Re-run 2 needed
+
+**c01, c03 (handled-items and joined-today half), c05, c09 (save-button half), c10, c12.** Six folders, last allowed
+re-run. A seed still missed after it is written into the final report as "this audit cannot find this kind of bug".
+
+### Cannot be found by reading code (C5)
+
+- **c03 card width and c09 crowded top bar: this audit cannot find this kind of bug: whether a label pushes past the
+  screen depends on the real text length in each language, the font and how the browser lays out nested boxes; the
+  code shows only the rules, not the result.** Two rounds missed both, the second with a hunt item that named the
+  exact code patterns. They go to a picture check, not a code read: every screen photographed at 320-412 px in both
+  languages, light and dark, with a "nothing past the screen edge" test (the fix for c03 added exactly this). That
+  check runs in the cloud, so it does not need his phone.
+- No device-only seed is written off: both now pass under C6, and stay on his real-phone list as the helpers asked
+  (gym pop-up sound and banner on his OPPO; watch update notice with the watch paired).
 
 ## Gap in the seed list
 
