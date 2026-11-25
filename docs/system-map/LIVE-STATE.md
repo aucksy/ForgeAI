@@ -628,3 +628,41 @@ Live switches (public answer, 2026-11-26): joinPay true, gymPages false. "Play a
 | F-panel-1121 Workout offer: give or undo a reward, check a code | yes | yes | yes (staff_give_reward, owner_undo_reward) | n/a | |
 | F-panel-535 Pay MettleUp online and MettleUp receipts | yes, switch **off** (BILLING_ONLINE_ON false) | **off**: asks the server nothing; receipt page not routed | yes (0063 live) | n/a | list says "0063 marked not applied": stale (FN-H5-hq-app-02) |
 | F-panel-536 Stopped-paying line on Today | yes, switch **off** (PLAN_GATE_ON false) | **off**: never shown, cut from the build | yes (owner_gym_state, 0062 live) | n/a | code note says 0062 may not be on the server: stale (FN-H5-panel-logic-2-01) |
+
+## H5-phone-cloud-backup-ai (surface phone, area phone/cloud-backup-ai) — 21 features, written by H5-phone-cloud-backup-ai on 2026-11-26
+
+The member app's AI coach, backup file, MettleUp account and workout copy, Google Drive restore, old gym link, server
+addresses and Plus limits. "Play app" = the public Google Play listing read on 2026-11-26: **version 0.79.0, updated
+25 Nov 2026**. Main is 0.80.0 (apps/mobile/app.json:5), so main is ONE version ahead of what members get; 0.80.0 holds two
+open privacy fixes (Delete my account waits for a running copy; nothing saved for a profile under 18) that are not in
+members' hands yet (FN-H5-phone-cloud-backup-ai-01). "Live panel" is n/a: these are phone parts; the gym server parts
+are in the "Live DB" column. Catalog read 2026-11-26: member_copy_put, member_copy_get, member_copy_count,
+member_account_delete, app_limits, join_gym_by_code, delete_my_cloud_data and the tables member_summary and app_config are
+all live. File 0032 (the copy) says "NOT APPLIED" on line 1 but is live (FN-L16-server-database-2-01). Both own server
+addresses (app.mettleup.fit/sb and forgeai.aakashpahuja.in/sb) answered with the gym server's stamp on 2026-11-26.
+Switches in the code on main (and so in every build): coach off, gymSync off (apps/mobile/src/lib/features.ts:6), Plus
+limits off (packages/theme/src/memberPlan.ts:28).
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-phone-1500 Chat with the coach | yes, switch **off** (coach false) | n/a | n/a (own AI key or offline) | **off** | |
+| F-phone-1501 Own AI key for the coach | yes, switch **off** | n/a | n/a | **off** | key goes straight to Claude, OpenAI or Groq |
+| F-phone-1502 Offline coach (English, Hindi, Hinglish) | yes, switch **off** | n/a | n/a | **off** | |
+| F-phone-1503 Coach reads and changes data by chat | yes, switch **off** | n/a | n/a | **off** | |
+| F-phone-1505 Meal photo calories | yes, switch **off** (coach and nutrition false) | n/a | n/a | **off** | |
+| F-phone-1510 Save a backup file | yes | n/a | n/a (phone only) | yes (0.79.0) | in What's new since the backup file release |
+| F-phone-1511 Restore from a backup file | yes | n/a | n/a | yes | |
+| F-phone-1512 Undo a restore | yes | n/a | n/a | yes | |
+| F-phone-1520 MettleUp account: Google sign-in, sign out | yes | n/a | yes (Supabase sign-in through our address) | yes | build holds a real Google web client id (apps/mobile/app.json:143); not on iPhone |
+| F-phone-1521 Copy every saved change to the server | yes | n/a | yes (member_copy_put) | yes, **without** the under-18 stop | under-18 stop only in 0.80.0: FN-H5-phone-cloud-backup-ai-01 |
+| F-phone-1522 Bring back my workouts on a new phone | yes | n/a | yes (member_copy_get, member_copy_count) | yes | |
+| F-phone-1523 Delete my account and the copy | yes | n/a | yes (member_account_delete) | yes, **without** the wait-for-copy fix | fix only in 0.80.0: FN-H5-phone-cloud-backup-ai-01 |
+| F-phone-1524 Backup status line in Settings | yes | n/a | yes | yes | |
+| F-phone-1525 Restore an older Google Drive backup | yes | n/a | n/a (Google Drive) | yes | Drive permission on the Google side not checked |
+| F-phone-1526 Back up to Google Drive | yes, **hidden** (no screen calls the upload) | n/a | n/a | **off** | |
+| F-phone-1527 Old gym link: email sign-in, join by code | yes, switch **off** (gymSync false) | n/a | yes (join_gym_by_code) | **off** | |
+| F-phone-1528 Old gym sync: one summary row | yes, switch **off** | n/a | yes (member_summary) | **off** | |
+| F-phone-1529 Old gym link: delete cloud data, disconnect | yes, switch **off** | n/a | yes (delete_my_cloud_data) | **off** | |
+| F-phone-1530 Reach the server when Supabase is blocked | yes | n/a | yes (both addresses answer with the stamp) | yes | |
+| F-phone-1531 Gym logo and shop photos through our address | yes | n/a | yes (same addresses) | yes | |
+| F-phone-1532 MettleUp Plus limits | yes, switch **off** (MEMBER_PLAN_GATE_ON false) | n/a | yes (app_limits) | **off** | nothing is ever refused |
