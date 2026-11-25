@@ -1,0 +1,3 @@
+- L2.1-L2.9 done (finding 01)
+- L17.1-L17.3 done (findings 02, 03)
+- all items done 2026-11-25
