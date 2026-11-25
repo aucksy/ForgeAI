@@ -1,2 +1,4 @@
 # H5-panel-ui-shell checkpoint
 - 2026-11-26 started; read brief, lens rules, pilot lessons, items (15 features)
+- 2026-11-26 H5.1/H5.2 evidence: live script index--GfMsOId.js (newest What's new day 2026-11-25 = main whatsNew.ts:43) holds visible text of every entry file (0 misses on ~80 strings); sw.js + manifest byte-match main; /api/switches joinPay true gymPages false. Server calls go through shop/* and pay/* (covered by H5-panel-shop/pay-machines catalog reads); owner_gym_state in db-security.json. PLAN_GATE_ON and BILLING_ONLINE_ON false: lapse words and owner_gym_state cut from the live script.
+- 2026-11-26 H5.3: What's new lines for this area (115, 348, 406-408, 426-429, 520) all match live; nothing announces online buying or the stopped-paying line. Stale notes: LapseBanner/BillingOnline say 0062/0063 not on server (reuse FN-H5-panel-logic-2-01); features.json F-panel-535 says 0063 not applied (reuse FN-H5-hq-app-02). No new finding.
