@@ -1,0 +1,7 @@
+# B-alerts-panel-assistant-a checkpoint
+- Only sender in the area: F-panel-902 group message (in-app send + WhatsApp one-by-one list). Nothing else fires a pop-up, sound, bell, title or push; one 5-min wallet refresh timer (no alert). Week summary "Send this to my WhatsApp" = existing FN-L14-panel-assistant-02. Birthday auto-wish = existing FN-A3-notes-claude-1-02. App list fail = FN-B-run-panel-assistant-b-01.
+- L11.1 done: when = owner taps Send (or a chosen time); to = group's app members by number match, others to WhatsApp list; no switch beyond assistant on; duplicates guarded by one send per request; no quiet hours / watch in this area.
+- H2.1-H2.5 done. Conditions to reach one member in app: member in group, member record mobile matches app account mobile (link alone is not enough -> FN-01), member joined gym in app, phone has "Messages from my gym" on, notifications allowed, background check (~15 min) not stopped by phone maker. WhatsApp path: member not matched + owner taps each one.
+- H2.4 reach, Crispy Curves (field-fill.csv): 2 members, 2 with phone; 2 app members, 1 with a phone on file; 0 records linked; 1 of 2 with a birthday. Group message: at most 1 of 2 members can be reached in the app; "everyone": both app members. Birthday idea: at most 1 of 2.
+- H2.5 real-phone check: gym message pop-up on OPPO/Xiaomi etc. (background check killed by battery saver), "Messages from my gym" switch, Android notification permission. No watch path.
+- New: FN-B-alerts-panel-assistant-a-01 (S2), -02 (S4).
