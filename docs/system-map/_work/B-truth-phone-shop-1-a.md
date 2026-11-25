@@ -1,1 +1,2 @@
 - started 2026-11-25; items L2.1-L2.9, L17.1-L17.3 pending
+- L2.1-L2.9, L17.1-L17.3 done; 0 new findings, 6 reused; out written
