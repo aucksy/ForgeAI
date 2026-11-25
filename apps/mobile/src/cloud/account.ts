@@ -99,7 +99,12 @@ export async function signInWithPhoneProof(proof: string, firstName: string, mob
     if (error) {
       // A non-2xx answer still carries the reason in its body.
       const ctx = (error as { context?: { json?: () => Promise<unknown> } }).context;
-      raw = ctx?.json ? await ctx.json().catch(() => null) : null;
+      raw = ctx?.json
+        ? await ctx.json().catch((e2: unknown) => {
+            console.warn('[account] the phone-account answer could not be read', e2);
+            return null;
+          })
+        : null;
       if (!raw) throw new AccountError(phoneAccountProblemWords('offline'), `phone-account: ${error.message}`);
     } else {
       raw = data;

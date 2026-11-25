@@ -296,7 +296,7 @@ export async function haltCopyAndWait(maxMs = 60_000): Promise<boolean> {
   }
   const until = Date.now() + maxMs;
   while ((running || draining) && Date.now() < until) {
-    if (draining) await draining.catch(() => undefined);
+    if (draining) await draining.catch((e: unknown) => console.warn('[cloud copy] the running copy failed while waiting for it', e));
     else await new Promise((r) => setTimeout(r, 50));
   }
   if (!running && !draining) return true;

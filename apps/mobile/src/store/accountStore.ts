@@ -107,7 +107,7 @@ export const useAccount = create<AccountState>()((set, get) => ({
       if (!again.ok) await setMeta(MERGE_PENDING_KEY, '1');
     } catch (e) {
       console.warn('[account] the saved profile could not be applied; tried again before the next copy', e);
-      await setMeta(MERGE_PENDING_KEY, '1').catch(() => undefined);
+      await setMeta(MERGE_PENDING_KEY, '1').catch((e2: unknown) => console.warn('[account] could not mark the bring-back as pending', e2));
     } finally {
       setCopyPaused(false);
     }
