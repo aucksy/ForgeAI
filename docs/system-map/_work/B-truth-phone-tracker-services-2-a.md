@@ -1,1 +1,2 @@
 - started 2026-11-25; items L2.1-L2.9, L17.1-L17.3 pending
+- 2026-11-25 all 12 items done; 2 new findings (01 AI delete, 02 record repair); reused FN-B-truth-phone-tracker-components-2-a-01
