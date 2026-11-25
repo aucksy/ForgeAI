@@ -214,12 +214,15 @@ export async function deleteAccount(): Promise<'deleted' | 'kept'> {
     resume();
     throw new AccountError(copyFailureWords(r.failure), `member_account_delete: ${r.failure}`);
   }
-  // The copy is gone on the server: this phone's record of it means nothing now.
-  await clearCopyTables();
-  await setMeta(LAST_USER_KEY, '');
-  await setMeta(MERGE_PENDING_KEY, '');
-  await signOutAccount();
-  // Signed out now: a copy finds nobody signed in and sends nothing.
-  setCopyPaused(false);
+  try {
+    // The copy is gone on the server: this phone's record of it means nothing now.
+    await clearCopyTables();
+    await setMeta(LAST_USER_KEY, '');
+    await setMeta(MERGE_PENDING_KEY, '');
+    await signOutAccount();
+  } finally {
+    // Signed out now: a copy finds nobody signed in and sends nothing.
+    setCopyPaused(false);
+  }
   return r.data;
 }

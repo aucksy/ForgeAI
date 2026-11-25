@@ -143,7 +143,7 @@ export async function goStraightIn(m: SignInMatch, firstName: string, proof: str
     // Before the save: the Workout tab may open before a later write lands (the note says what was picked).
     await markStraightInNote('due');
     await useOnboarding.getState().complete(input);
-    useAccount.setState({ welcomeProfile: null });
+    if (saved) await useAccount.getState().takeSavedProfile();
     void saveWelcomeResume(null);
     console.log('[phone sign-in] a found member went straight into the gym');
     return 'in';

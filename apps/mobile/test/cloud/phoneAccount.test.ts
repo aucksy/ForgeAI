@@ -114,9 +114,11 @@ describe('the welcome (must happen / must NOT happen)', () => {
   });
 
   it('a backup failure never stops the gym sign-in (no return, no throw on the error path)', () => {
-    const fn = w.slice(w.indexOf('const backUp = useCallback'), w.indexOf('"Set up the app"'));
+    const fn = w.slice(w.indexOf('const backUp = useCallback'), w.indexOf('"Set up the app": a profile'));
     expect(fn).toMatch(/else if \(r\.kind === 'error'\) setBackupLine/);
-    expect(fn).toMatch(/catch \(e\) \{\n\s+console\.warn\('\[phone sign-in\] the backup step failed', e\);/);
+    expect(fn).toMatch(/\.catch\(\(e: unknown\) => \{\n\s+console\.warn\('\[phone sign-in\] the backup step failed', e\);/);
+    // A slow network: the gym search goes on after 20 s.
+    expect(fn).toMatch(/await Promise\.race\(\[done, new Promise<void>\(\(r\) => setTimeout\(r, BACKUP_WAIT_MS\)\)\]\);/);
   });
 
   it('is skipped when already signed in, and with the QA stand-in (no proof)', () => {

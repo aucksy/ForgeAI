@@ -37,6 +37,8 @@ interface AccountState {
    * paths (straight into the gym, "Set up the app") use it instead of new answers. Memory only.
    */
   welcomeProfile: OnboardingInput | null;
+  /** F237: after the welcome set the app up from `welcomeProfile`, the saved profile in full (as Google's path). */
+  takeSavedProfile: () => Promise<void>;
   init: () => Promise<void>;
   refreshStatus: () => Promise<void>;
   /** Google, or (F237) the number just proved on WhatsApp: `phone`. */
@@ -94,6 +96,22 @@ export const useAccount = create<AccountState>()((set, get) => ({
   busy: false,
   note: null,
   welcomeProfile: null,
+
+  takeSavedProfile: async () => {
+    set({ welcomeProfile: null });
+    setCopyPaused(true);
+    try {
+      // The profile was skipped by the first bring-back (none on the phone yet); now it is applied in full, so the
+      // next copy never sends the shorter one over it (review, 25 Nov 2026).
+      const again = await bringBackCopy();
+      if (!again.ok) await setMeta(MERGE_PENDING_KEY, '1');
+    } catch (e) {
+      console.warn('[account] the saved profile could not be applied; tried again before the next copy', e);
+      await setMeta(MERGE_PENDING_KEY, '1').catch(() => undefined);
+    } finally {
+      setCopyPaused(false);
+    }
+  },
 
   init: async () => {
     const { isAccountConfigured } = await import('@/cloud/account');
@@ -236,6 +254,8 @@ export const useAccount = create<AccountState>()((set, get) => ({
   },
 
   deleteAccount: async () => {
+    // Review (25 Nov): never while a sign-in is running (its end starts a copy).
+    if (get().busy) return '';
     set({ busy: true, note: null });
     try {
       const { deleteAccount } = await import('@/cloud/account');

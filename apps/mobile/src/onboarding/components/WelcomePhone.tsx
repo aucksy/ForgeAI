@@ -27,6 +27,7 @@ import { pictureUrl } from '@/cloud/picture';
 import { Card, GhostButton, PrimaryButton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { tinyDateWithYear, todayISO } from '@/lib/date';
+import { ACCOUNT_WORDS } from '@/cloud/accountWords';
 import { PHONE_ACCOUNT_WORDS } from '@/cloud/phoneAccount';
 import { useMemberAccess } from '@/plan/memberPlanStore';
 import { firstNameOf, mobile10, showWaNumber, stateWords, whatsAppLink, type CheckStart } from '@/shop/findGym';
@@ -64,6 +65,8 @@ type Step =
   | { kind: 'none' };
 
 const POLL_MS = 3000;
+/** F237: the longest the gym search waits for the backup step. */
+const BACKUP_WAIT_MS = 20_000;
 
 /** Read when drawn: gym branding repaints the tokens. */
 const inputStyle = () =>
@@ -118,14 +121,22 @@ export function WelcomePhone({
     const mobile = mobile10(typedPhone.current);
     if (!mobile) return;
     setStep({ kind: 'saving' });
-    try {
-      const r = await acc.signIn({ phone: { proof, firstName: first, mobile10: mobile } });
-      if (r.kind === 'signed-in') setBackupLine(r.broughtBack > 0 ? r.note : PHONE_ACCOUNT_WORDS.savingOk);
-      else if (r.kind === 'error') setBackupLine(`${r.words} ${PHONE_ACCOUNT_WORDS.backupOff}`);
-    } catch (e) {
-      console.warn('[phone sign-in] the backup step failed', e);
-      setBackupLine(PHONE_ACCOUNT_WORDS.backupOff);
-    }
+    const done = acc
+      .signIn({ phone: { proof, firstName: first, mobile10: mobile } })
+      .then((r) => {
+        if (r.kind === 'signed-in') {
+          // Brought back: how many. Nothing to bring back: saved from now on. The copy could not be read: why.
+          const ok = r.broughtBack > 0 || r.note == null || r.note === ACCOUNT_WORDS.broughtBack(0) || r.note === ACCOUNT_WORDS.welcomeNothing;
+          setBackupLine(r.broughtBack > 0 ? r.note : ok ? PHONE_ACCOUNT_WORDS.savingOk : r.note);
+        } else if (r.kind === 'error') setBackupLine(`${r.words} ${PHONE_ACCOUNT_WORDS.backupOff}`);
+      })
+      .catch((e: unknown) => {
+        console.warn('[phone sign-in] the backup step failed', e);
+        setBackupLine(PHONE_ACCOUNT_WORDS.backupOff);
+      });
+    // Review (25 Nov): a slow network must never hold the gym back. After 20 s the gym search goes on; the backup
+    // carries on by itself and its line shows when it ends.
+    await Promise.race([done, new Promise<void>((r) => setTimeout(r, BACKUP_WAIT_MS))]);
   }, []);
 
   /** "Set up the app": a profile saved on MettleUp opens the app as theirs; otherwise the 3 questions. */
@@ -134,7 +145,7 @@ export function WelcomePhone({
     if (!saved) return onSetUp();
     try {
       await useOnboarding.getState().complete(saved);
-      useAccount.setState({ welcomeProfile: null });
+      await useAccount.getState().takeSavedProfile();
     } catch (e) {
       console.warn('[phone sign-in] the saved profile could not set the app up; asking the questions', e);
       onSetUp();
