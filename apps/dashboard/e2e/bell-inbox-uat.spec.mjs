@@ -256,7 +256,7 @@ test('Desk at 360 and a trainer: each their own bell; the X never marks done; th
   await expect(bellOf(desk)).toHaveAttribute('aria-label', 'Notifications, 2 waiting for you', { timeout: 15_000 });
   await bellOf(desk).tap();
   await expect(cardsOf(desk)).toHaveCount(2);
-  await expect(panelOf(desk)).not.toContainText('complaint');
+  await expect(panelOf(desk)).not.toContainText('Mohit'); // the complaint's line (What's new may name complaints in general)
   await expect(panelOf(desk)).not.toContainText('Ravi');
   await expectFitsPhone(desk, 'the desk’s bell at 360');
   await shot(desk, 'bell-7-desk-360');
@@ -281,7 +281,7 @@ test('Desk at 360 and a trainer: each their own bell; the X never marks done; th
   await expect(bellOf(trainer)).toHaveAttribute('aria-label', 'Notifications, 3 waiting for you', { timeout: 15_000 });
   await bellOf(trainer).tap();
   await expect(cardsOf(trainer)).toHaveCount(3);
-  await expect(panelOf(trainer)).not.toContainText('complaint');
+  await expect(panelOf(trainer)).not.toContainText('Mohit'); // the complaint's line (What's new may name complaints in general)
   await shot(trainer, 'bell-9-trainer-open');
   // A tap opens Member questions; the trainer answers for real.
   await cardsOf(trainer).filter({ hasText: 'Ravi' }).locator('button.tap-row').tap();
