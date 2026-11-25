@@ -1,2 +1,3 @@
 - started H8 (gap-8), reading 92 silent rows
 - H8.1-H8.6 done; findings b-01 (delete skips records), b-02 (photo file delete silent); reused a-01, a-02, L16-02, L14-comp-1-01; 92 silent rows read, 265 filtered
+- lens-cover ok, merge --dry 3/3 passed; item complete
