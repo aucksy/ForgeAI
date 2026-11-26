@@ -70,19 +70,18 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L16 | 37 | 2.7 (109k tokens) |
 | H5 | 37 | 3.7 (146k tokens) |
 | B-alerts | 65 | 3.8 (150k tokens) |
-| B-switch | 48 | 4.1 (165k tokens) |
+| B-switch | 49 | 4.1 (164k tokens) |
 | B-time | 26 | 4.2 (167k tokens) |
 | B-words | 26 | 4.8 (192k tokens) |
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 73 todo, 4 in progress, 1050 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 73 todo, 3 in progress, 1051 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | B-alerts-server-database-3-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x server / server/database-3: 10 items | in progress | _work/B-alerts-server-database-3-b.md |  |
 | B-switch-server-database-2-a | B-switch | B-switch (Should-read matrix (missing links)) x server / server/database-2: 4 items | in progress | _work/B-switch-server-database-2-a.md |  |
-| B-switch-server-database-2-b | B-switch | B-switch (Data a feature needs but nobody fills) x server / server/database-2: 5 items | in progress | _work/B-switch-server-database-2-b.md |  |
 | B-switch-server-database-3-a | B-switch | B-switch (Should-read matrix (missing links)) x server / server/database-3: 4 items | in progress | _work/B-switch-server-database-3-a.md |  |
 | B-alerts-server-hq-gate-workers-a | B-alerts | B-alerts (Notifications and messages + 1 more) x server / server/hq-gate-workers: 6 items | todo | _work/B-alerts-server-hq-gate-workers-a.md |  |
 | B-alerts-server-hq-gate-workers-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x server / server/hq-gate-workers: 10 items | todo | _work/B-alerts-server-hq-gate-workers-b.md |  |
@@ -118,7 +117,7 @@ Counts: 73 todo, 4 in progress, 1050 done, 0 blocked. Full list: work-items.json
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
 (+ 48 more todo items, not shown)
-(+ 1042 older done items, not shown)
+(+ 1043 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
