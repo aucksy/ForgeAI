@@ -74,19 +74,18 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-switch | 56 | 4.2 (169k tokens) |
 | B-time | 37 | 4.3 (170k tokens) |
 | B-words | 37 | 4.9 (196k tokens) |
-| L18 | 11 | 3.6 (146k tokens) |
+| L18 | 12 | 3.7 (148k tokens) |
 
 ## Work items
-Counts: 21 todo, 5 in progress, 1101 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 20 todo, 5 in progress, 1102 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L18-panel-screens-1 | L18 | lens 18 (Opportunities) x panel / panel/screens-1: 2 items | in progress | _work/L18-panel-screens-1.md |  |
 | L18-panel-ui-shell | L18 | lens 18 (Opportunities) x panel / panel/ui-shell: 2 items | in progress | _work/L18-panel-ui-shell.md |  |
 | L18-phone-components-1 | L18 | lens 18 (Opportunities) x phone / phone/components-1: 2 items | in progress | _work/L18-phone-components-1.md |  |
 | L18-phone-components-2 | L18 | lens 18 (Opportunities) x phone / phone/components-2: 2 items | in progress | _work/L18-phone-components-2.md |  |
 | L18-phone-lib-core | L18 | lens 18 (Opportunities) x phone / phone/lib-core: 2 items | in progress | _work/L18-phone-lib-core.md |  |
-| L18-phone-native | L18 | lens 18 (Opportunities) x phone / phone/native: 2 items | todo | _work/L18-phone-native.md |  |
+| L18-phone-native | L18 | lens 18 (Opportunities) x phone / phone/native: 2 items | in progress | _work/L18-phone-native.md |  |
 | L18-phone-onboarding-db | L18 | lens 18 (Opportunities) x phone / phone/onboarding-db: 2 items | todo | _work/L18-phone-onboarding-db.md |  |
 | L18-phone-screens-1 | L18 | lens 18 (Opportunities) x phone / phone/screens-1: 2 items | todo | _work/L18-phone-screens-1.md |  |
 | L18-phone-screens-2 | L18 | lens 18 (Opportunities) x phone / phone/screens-2: 2 items | todo | _work/L18-phone-screens-2.md |  |
@@ -115,7 +114,7 @@ Counts: 21 todo, 5 in progress, 1101 done, 0 blocked. Full list: work-items.json
 | CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
-(+ 1093 older done items, not shown)
+(+ 1094 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
