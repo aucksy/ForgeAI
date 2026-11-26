@@ -1794,3 +1794,48 @@ public answer; the small web database (D1) cannot be read from here. "Play app" 
 | F-server-139 Feature switches /api/switches | yes | **yes** | n/a | n/a | gymPages false, joinPay true, aiCharge true, pageAi false; listed with "JOIN_PAY (off)" (FN-H5-server-database-3-01) |
 | F-server-140 Free demo request form | yes | yes | unknown (D1 0002, 0007) | n/a | gyms.mettleup.fit page matches main (machine live-state.csv); form not sent |
 | F-server-141 Gym's own web page join.mettleup.fit | yes | **off** | yes | n/a | GYM_PAGES off on main and live; join.mettleup.fit has no DNS on 26 Nov; gym_page_public present |
+
+## H5-watch-app (surface watch, area watch/app) — 24 features, written by H5-watch-app on 2026-11-26
+
+The MettleUp Wear OS watch app. It talks only to the member's phone over the watch link (paths /forge/...); it makes no
+call to our server or database (searched http, URL, supabase in the watch folder: only the Play Store link,
+WatchLayout.kt:114), so "Live panel" and "Live DB" are n/a for every row.
+**Play app, watch (Play Console read 21 Nov, play-report.md:15-18):** internal testing 0.79.0; closed testing (Watch)
+still serves **0.78.0** (0.79.0 approved 17 Nov, "Ready to publish", not live); open testing 0.79.0 ready to publish;
+**production: none**. So no member outside the test groups can install the watch app, and "yes" below means "on the
+internal track; closed testers get 0.78.0". Main's watch code is the 0.79.0 watch code: its newest dated note is
+15 Nov (R-575, R-577), before the 17 Nov 0.79.0 tag, and 0.80.0 / 0.81.0 add no watch line (whatsNew.ts:75-92).
+Switches: the logging screens follow "logFlow", which every current phone app sends as on (forge-rest WearSync.kt:213)
+and sends off only when the MettleUp Plus lock is on (WearSync.kt:177-181, 244); that lock is off on main
+(MEMBER_PLAN_GATE_ON false, packages/theme/src/memberPlan.ts:28), so F-watch-108 and F-watch-109 are on for everyone
+who has the watch app: not a hidden switch. F-watch-113 follows the phone setting "Open MettleUp on my watch",
+on by default (restAlertPrefsStore.ts:40). F-watch-107 follows the member's Track RPE choice per exercise (WearWire.kt:93).
+What's new: phone lines that announce the watch app went to every production member (whatsNew.ts:154-155, 232, 309,
+318, 650) though the watch app is not in production: FN-H5-watch-app-01 (same cause as FN-L12-phone-screens-2-01).
+
+| Feature | Main | Live panel | Live DB | Play app (watch) | Notes |
+|---|---|---|---|---|---|
+| F-watch-100 Open the watch app: one screen from the workout's state | yes | n/a | n/a | testers only (internal 0.79.0; closed 0.78.0) | no production |
+| F-watch-101 Rest timer on the watch screen | yes | n/a | n/a | testers only | big numbers at largest text (R-577) only in 0.79.0 |
+| F-watch-102 Rest countdown card with Done / +15 s / Skip | yes | n/a | n/a | testers only |  |
+| F-watch-103 Rest is over: buzz, screen and card | yes | n/a | n/a | testers only |  |
+| F-watch-104 Running rest survives restart, update, Alarms switch | yes | n/a | n/a | testers only |  |
+| F-watch-105 Next set at a glance | yes | n/a | n/a | testers only | R-577 fix only in 0.79.0 |
+| F-watch-106 Log a set from the watch | yes | n/a | n/a | testers only | on with every current phone app (logFlow) |
+| F-watch-107 Rate the effort (RPE) (listed "behind switch") | yes | n/a | n/a | testers only | member's Track RPE choice; correct mark |
+| F-watch-108 Exercise done screen (listed "behind switch") | yes | n/a | n/a | testers only | **on** wherever watch logging is (logFlow, Plus lock off) |
+| F-watch-109 "Not saved" screen (listed "behind switch") | yes | n/a | n/a | testers only | **on** wherever watch logging is |
+| F-watch-110 Live heart rate | yes | n/a | n/a | testers only | watch's own sensor |
+| F-watch-111 First-launch permission screens | yes | n/a | n/a | testers only |  |
+| F-watch-112 "Workout in progress" notice | yes | n/a | n/a | testers only |  |
+| F-watch-113 Watch opens when a workout starts (listed "behind switch") | yes | n/a | n/a | testers only | phone setting, **on** by default |
+| F-watch-114 Screen dims instead of going black | yes | n/a | n/a | testers only |  |
+| F-watch-115 Watch screen diary for support | yes | n/a | n/a | testers only | sent with the phone's Help and feedback |
+| F-watch-116 Watch follows the phone's workout | yes | n/a | n/a | testers only |  |
+| F-watch-117 Watch in the gym's colour | yes | n/a | n/a | testers only |  |
+| F-watch-118 Watch tells the phone it is installed and its version | yes | n/a | n/a | internal 0.79.0 only; **broken on closed 0.78.0** | 0.76.0 to 0.78.0 shipped it empty (R-575): FN-H5-watch-app-02 |
+| F-watch-119 One buzz, not two | yes | n/a | n/a | testers only |  |
+| F-watch-120 "Start a workout on your phone" screen | yes | n/a | n/a | testers only |  |
+| F-watch-121 "Workout saved" for about 4 s | yes | n/a | n/a | testers only |  |
+| F-watch-122 Get MettleUp on your phone (Play Store page) | yes | n/a | n/a | testers only |  |
+| F-watch-123 "Phone not connected" screen | yes | n/a | n/a | testers only |  |
