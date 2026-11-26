@@ -1444,3 +1444,64 @@ diff run). The What's new lines for the gym's workout of the day, trainer measur
 | F-phone-537 Save a photo to the gallery | yes | n/a | n/a | yes |  |
 | F-phone-538 Followed plan weeks and easy weeks | yes | n/a | n/a | yes |  |
 | F-phone-539 Get a routine folder from a program or file | yes | n/a | n/a | yes |  |
+
+## H5-phone-tracker-services-2 (surface phone, area phone/tracker-services-2) — 38 features, written by H5-phone-tracker-services-2 on 2026-11-26
+
+The member app's workout services from plateMath to workoutStart: plate maths, profile and progress, records, reports,
+rest timer and alerts, routines (offer, save, import, share), set entry and tick, Today / Up next, starting a workout,
+the watch (open, install, update pop-up) and workout photos. None of these files calls our server (searched rpc, fetch,
+supabase, /api: no hit); the only web address used is hevy.com for a pasted Hevy share link (routineLink.ts:44), read on
+the phone. So "Live panel" and "Live DB" are n/a, except trainer videos, which ride the gym plans and workout-of-the-day
+syncs (gymPlansSync.ts:89,106; member_gym_plans and member_gym_wod are live, see tracker-services-1).
+Switches: trainer videos sit behind the Pro-pack mark trainerPlans, but PLAN_GATE_ON is false
+(packages/theme/src/plans.ts:40), so they are on for every gym (a Pro-pack mark, not a finding). The watch install row
+is on (WATCH_APP_ON_PLAY true, watchInstall.ts:161). The rest are member or phone settings.
+Switched off: "Muscles ready today" (F-phone-606) and Quick workout (F-phone-605) were switched off on 5 Nov (R-372):
+nothing on the Workout tab opens them ((tabs)/workout.tsx:488-489). Quick workout is marked hidden; F-phone-606 is still
+marked live in the feature list (already FN-A3-whats-new-phone-02).
+"Play app" = 0.79.0 (17 Nov); main is 0.80.0, whose only What's new line (phone-number backup) is not in this area
+(FN-H5-phone-components-2-01). The newest change tags in these files are R-596 and R-598 (16 Nov, switcher.ts:23), before
+the 0.79.0 release, so every feature here is on Play as on main (code-read; no git diff run).
+What's new: the 0.79.0 line "Rest is over made no sound. Now they do." (whatsNew.ts:104) was never proven on the phone
+that had the problem (whatsNew.ts:92-93); already FN-A3-whats-new-phone-01.
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-phone-600 Plate and warm-up calculator | yes | n/a | n/a | yes |  |
+| F-phone-601 Profile photo | yes | n/a | n/a | yes | phone only |
+| F-phone-602 Profile tab | yes | n/a | n/a | yes |  |
+| F-phone-603 Progress photos | yes | n/a | n/a | yes | photos-in-backup is a member setting |
+| F-phone-604 Progress page top | yes | n/a | n/a | yes |  |
+| F-phone-605 Quick workout | yes, switched **off** (R-372) | n/a | n/a | **off**, same | marked hidden: correct |
+| F-phone-606 Muscles ready today | yes, switched **off** (R-372) | n/a | n/a | **off**, same | list says live: FN-A3-whats-new-phone-02 |
+| F-phone-607 Personal records | yes | n/a | n/a | yes |  |
+| F-phone-609 Monthly report and year in review | yes | n/a | n/a | yes |  |
+| F-phone-610 Statistics screen | yes | n/a | n/a | yes |  |
+| F-phone-611 Kg lifted the same everywhere | yes | n/a | n/a | yes |  |
+| F-phone-612 Strength level | yes | n/a | n/a | yes | table kept in the app |
+| F-phone-613 Rest timer | yes | n/a | n/a | yes |  |
+| F-phone-614 "Rest is over" alert | yes | n/a | n/a | yes | sound fix unproven: FN-A3-whats-new-phone-01 |
+| F-phone-615 Rest card (Done, +15 s, Skip) | yes | n/a | n/a | yes |  |
+| F-phone-616 Workout sounds | yes, member setting | n/a | n/a | yes |  |
+| F-phone-617 Workout in progress card | yes | n/a | n/a | yes |  |
+| F-phone-618 Update routine? | yes | n/a | n/a | yes |  |
+| F-phone-619 Save as routine | yes | n/a | n/a | yes |  |
+| F-phone-620 Routines from a Hevy or Strong export | yes | n/a | n/a | yes | file read on the phone |
+| F-phone-621 Routines from a Hevy share link | yes | n/a | n/a | yes | reads hevy.com on the phone |
+| F-phone-622 Share and import routine files | yes | n/a | n/a | yes |  |
+| F-phone-623 Strong history import and welcome shortcut | yes | n/a | n/a | yes | R-598, 16 Nov |
+| F-phone-624 Move a saved workout | yes | n/a | n/a | yes |  |
+| F-phone-625 Entry bar above the keyboard | yes | n/a | n/a | yes |  |
+| F-phone-626 Tick a set | yes | n/a | n/a | yes |  |
+| F-phone-627 Share as text | yes | n/a | n/a | yes |  |
+| F-phone-628 Weight jumps and Rep range | yes | n/a | n/a | yes |  |
+| F-phone-629 Today / Up next | yes | n/a | n/a | yes |  |
+| F-phone-630 Start a workout | yes | n/a | n/a | yes |  |
+| F-phone-631 Watch app opens at workout start | yes, member setting | n/a | n/a | yes |  |
+| F-phone-632 Install the watch app | yes (WATCH_APP_ON_PLAY true) | n/a | n/a | yes |  |
+| F-phone-633 Watch update pop-up | yes | n/a | n/a | yes | R-575 / R-596 (15-16 Nov) |
+| F-phone-635 Delete a saved workout | yes | n/a | n/a | yes |  |
+| F-phone-636 Saved workout page | yes | n/a | n/a | yes |  |
+| F-phone-637 Folders and routines list | yes | n/a | n/a | yes |  |
+| F-phone-638 Reorder, supersets, swap, pause | yes | n/a | n/a | yes |  |
+| F-phone-639 Workout photos and trainer videos | yes | n/a | yes (member_gym_plans, member_gym_wod) | yes | videos **on** for every gym (PLAN_GATE_ON false); Pro-pack mark |
