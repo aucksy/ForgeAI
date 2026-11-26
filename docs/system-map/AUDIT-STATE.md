@@ -69,15 +69,14 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-alerts | 47 | 3.7 (146k tokens) |
 | B-switch | 35 | 4.0 (161k tokens) |
 | B-time | 22 | 4.2 (167k tokens) |
-| B-words | 21 | 4.8 (191k tokens) |
+| B-words | 22 | 4.8 (191k tokens) |
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 124 todo, 1 in progress, 1002 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 124 todo, 0 in progress, 1003 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| B-words-phone-tracker-components-1 | B-words | B-words (Language and words + 1 more) x phone / phone/tracker-components-1: 17 items | in progress | _work/B-words-phone-tracker-components-1.md |  |
 | H5-server-ci-workflows | H5 | hunt 5 (Built vs live (deploy state)) x server / server/ci-workflows: 4 items | todo | _work/H5-server-ci-workflows.md |  |
 | H5-server-database-1 | H5 | hunt 5 (Built vs live (deploy state)) x server / server/database-1: 4 items | todo | _work/H5-server-database-1.md |  |
 | H5-server-database-2 | H5 | hunt 5 (Built vs live (deploy state)) x server / server/database-2: 4 items | todo | _work/H5-server-database-2.md |  |
@@ -103,7 +102,7 @@ Counts: 124 todo, 1 in progress, 1002 done, 0 blocked. Full list: work-items.jso
 | B-alerts-server-database-1-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x server / server/database-1: 10 items | todo | _work/B-alerts-server-database-1-b.md |  |
 | B-alerts-server-database-2-a | B-alerts | B-alerts (Notifications and messages + 1 more) x server / server/database-2: 6 items | todo | _work/B-alerts-server-database-2-a.md |  |
 | B-alerts-server-database-2-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x server / server/database-2: 10 items | todo | _work/B-alerts-server-database-2-b.md |  |
-| B-words-phone-shop-2 | B-words | B-words (Language and words + 1 more) x phone / phone/shop-2: 17 items | done | _work/B-words-phone-shop-2.md | 17 items; 3 new (S3 send-report pop-up under-states what staff get; S4 ask-trainer promises contact with no alert; S4 Gym admin vs front desk), several reused |
+| B-words-phone-tracker-components-1 | B-words | B-words (Language and words + 1 more) x phone / phone/tracker-components-1: 17 items | done | _work/B-words-phone-tracker-components-1.md | 17 items; 2 new (S3 Allow-it opens general page, no Battery>Unrestricted hint; S4 read failure called not in library), 11 reused |
 | CAL-5 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-5 ...); output is scored, never merged | done | _work/CAL-5.md | c08, c09: 16 gaps listed (not merged; scored in CAL-score) |
 | CAL-6 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-6.md | re-run 1: c01, c05, c12: 10 gaps (not merged; scored in CAL-score) |
 | CAL-7 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-7.md | re-run 1: c03, c06, c07: 15 gaps (not merged; scored in CAL-score) |
@@ -112,7 +111,7 @@ Counts: 124 todo, 1 in progress, 1002 done, 0 blocked. Full list: work-items.jso
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
 (+ 99 more todo items, not shown)
-(+ 994 older done items, not shown)
+(+ 995 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
