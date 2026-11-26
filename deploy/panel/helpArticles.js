@@ -1010,6 +1010,7 @@ export const NO_HELP_SCREENS = {
   'apps/mobile/src/app/qa-look.tsx': 'Redirect: a test-build link for the gym colour pictures on the light and dark looks; goes straight back.',
   'apps/mobile/src/app/qa-dots.tsx': 'Redirect: a test-build link for the new-feature dot pictures (F198); goes straight back.',
   'apps/mobile/src/app/qa-plan.tsx': 'Redirect: a test-build link that switches MettleUp Plus on for one phone test (R-461); goes straight back.',
+  'apps/mobile/src/app/qa-gymadded.tsx': 'Redirect: a test-build link that gives "A gym added you" a made-up answer for one phone test (F239); goes straight back.',
   'apps/mobile/src/app/qa-signin.tsx': 'Redirect: a test-build link that switches "Continue with your phone number" on for one phone test (F203); goes straight back.',
   'apps/mobile/src/app/qa-help.tsx': 'Redirect: a test-build link that adds a made-up answered question for the reply pictures (R-452); goes straight back.',
   'apps/mobile/src/app/qa-push.tsx': 'Redirect: a test-build link that makes the gym message channels for the cloud pop-up check (R-501); goes straight back.',

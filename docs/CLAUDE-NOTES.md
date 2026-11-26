@@ -709,3 +709,5 @@ Follow-up (he said): every watch pop-up, card and notification must show only wi
   (5 = DEFAULT). A helper owns the fix (R-590); rule: never blame his phone settings.
 - His change to welcome screen 3 (15 Nov 2026): words first ("Does your gym use MettleUp?", headline, subtext), then the
   phone row, the arrow and the gym card; "Checked" -> "Verified". Canvas v7; sent to the R-587 helper.
+
+RESUME 26 Nov ~14:00 IST, R-629 / F239 "A gym added you" (owner: "Yes, build it"): built on main (b61072b7, 8c349995, f40f7761 + help fix). Server 0100 NOT applied live (needs his yes). Card answers: R-629-answers.md in ~/.claude/change-360/cards/ForgeAI. No number leaves the phone: 0100 _phone_for_code matches the account's HMAC code against numbers the gyms hold. Lapsed rule (15 days) also changes the first-screen sign-in (0093 replaced in 0100). AT RELEASE: add one sentence about the card to the help article 'join-your-gym' (deploy/panel/helpArticles.js) and set the What's new 0.81.0 draft version/date. Next: CI green, fresh-eyes fixes, qa-device uat (part u239) on a helper tag, then ask his yes for 0100 live.
