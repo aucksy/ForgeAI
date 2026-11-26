@@ -7,4 +7,4 @@
 - H2.3 done: reused FN-B-alerts-panel-logic-1-a-01, 04, FN-B-alerts-phone-native-a-03.
 - H2.4 done (field-fill.csv, Crispy Curves): 2 roster members, 2 app members; proven check-in number 1 of 2; birthday filled 1 of 2; app link 0 of 2; 1 membership with plan end. So birthday wish, welcome, anniversary, plan reminders reach at most 1 of 2 app members (birthday only if the same member has both); a message to everyone reaches 2 of 2 app members only when they open the app.
 - H2.5 done: needs a real-phone check: plan-ending and birthday reminders set by the phone itself, on OPPO/Xiaomi/Samsung with battery saver on and screen off: does it ring and show; after the owner switches a reminder off, does a phone that has not opened the app still fire it.
-- Tools: see report.
+- lens-cover ok (6 of 6); merge --dry 6 of 6 passed (blind warning expected).

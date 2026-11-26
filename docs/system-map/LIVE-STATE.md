@@ -1740,3 +1740,57 @@ exact build cannot be compared with main (FN-H5-hq-app-01). D1 = the small web d
 | F-server-233 Gym alerts in staff browsers | yes | **yes** (listed "behind switch") | yes | n/a | HQ /push/web-key answered with a key on 26 Nov, so its secret is set; hq_panel_push_instant, hq_panel_digest_* present (FN-H5-server-hq-gate-workers-01) |
 | F-server-234 Direct-read record | yes | **yes** (listed "behind switch") | yes | n/a | /readlog/status on 26 Nov: on, not failing, key ends 2027-11-14; hq_db_reads_ingest, hq_db_reads_cursor present (FN-H5-server-hq-gate-workers-01) |
 | F-server-235 Entry machines gate | yes | **no** (not deployed) | yes | n/a | gate.mettleup.fit does not exist (no DNS, 26 Nov); all 8 gate_* functions are live; the panel already offers machines (FN-H5-panel-pay-machines-01) |
+
+## H5-server-panel-worker (surface server, area server/panel-worker) — 36 features, written by H5-server-panel-worker on 2026-11-26
+
+The web server behind app.mettleup.fit, mettleup.fit and gyms.mettleup.fit: links, join pages, feedback, help, AI,
+payments, WhatsApp checks and switches. Proof read on 26 Nov (all GET, no login): /api/switches (gymPages false,
+joinPay **true**, aiCharge true, pageAi false), /api/phone-code/status (available, mode inbound), /api/links, /api/moved
+(move on), /api/push/web-key (answers a key), /api/hq-news (answers HQ's message, so small-database file 0006 is live),
+/api/pay/desk (answers "method not allowed", which the code gives only when the payment tables of small-database file
+0011 exist, deploy/panel/pay.js:748-751), /app/whats-new.json (version **0.80.0**), /app (Android sent to Google Play;
+iPhone and computer get the "coming soon" page), DNS for join.mettleup.fit (does not exist). One catalog read: every gym
+server function this server calls is present except page_chat_* (file 0094, not live; web page chat is not in this
+list). Crispy Curves' AI credit record shows AI Assistant saves on 14 Nov and a members' AI question block on 15 Nov.
+Main sets JOIN_PAY "live", PAY_LIVE off (test money only), GYM_PAGES off, PAGE_AI off (deploy/panel/wrangler.jsonc:90-96).
+Secrets (Claude, Gemini, Groq, Sarvam, WhatsApp, payment master key) and the live PAY_LIVE value cannot be read from a
+public answer; the small web database (D1) cannot be read from here. "Play app" = n/a unless the phone app calls it.
+
+| Feature | Main | Live server | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-server-101 Move a desk from the old address | yes | yes | n/a | n/a | /api/moved answered move true on 26 Nov |
+| F-server-102 Block-proof gym server address (/sb) | yes | yes | yes | yes | both apps use it; panel build matches main (machine live-state.csv) |
+| F-server-103 Phone pop-ups at once after a send | yes | yes | yes | yes | HQ link works (web-key answered); owner_send_message, owner_save_offer, owner_answer_question present |
+| F-server-104 Gym invite page /j/CODE | yes | yes | yes | yes | gym_preview present; iPhone store link empty, so iPhone gets "coming soon" |
+| F-server-105 Check-in poster page /c/CODE | yes | yes | yes | yes | same page code as /j/ |
+| F-server-106 Bring a friend page /f/CODE | yes | yes | yes | yes | friend_invite_preview, friend_invite_send present |
+| F-server-107 Join online page /m/CODE | yes | yes | yes | n/a | self_join_preview, self_join_send present |
+| F-server-108 Pay online on the join page | yes | **on** (listed "behind switch, off"; test money only) | yes | n/a | joinPay true on 26 Nov; self_join_pay_gym present; D1 0011 tables present (FN-H5-server-database-3-01) |
+| F-server-109 Smart app link /app | yes | yes | n/a | n/a | Android 302 to Google Play; iPhone "coming soon" (APP_STORE_URL empty) |
+| F-server-110 What's new lines for the update screen | yes | yes | n/a | **mismatch** | answers 0.80.0 (newest GitHub release) while Play members are offered 0.79.0; a Play phone shows 0.80.0's lines (FN-H5-server-panel-worker-02) |
+| F-server-111 Release file pass-through /dl/ | yes | yes | n/a | n/a | route answers (405 to a header-only ask); file not fetched |
+| F-server-112 Send feedback | yes | yes | unknown | yes | D1 0001 and 0005 have no applied line; D1 not readable |
+| F-server-113 Help with an AI answer | yes | probably | unknown | yes | needs CLAUDE_HELP_KEY and D1 0008, whose first line says "not applied"; if it is not, no AI answer ever comes (FN-L14-server-panel-worker-02) |
+| F-server-114 Spoken feedback | yes | unknown | unknown | yes | needs GROQ_API_KEY (secret) and the D1 voice counts; no public answer shows either |
+| F-server-115 Crash reports | yes | yes | unknown | yes | D1 crash rows; not readable |
+| F-server-116 Daily clean-up 03:00 India | yes | yes (scheduled) | unknown | n/a | wrangler.jsonc:59 cron 21:30 UTC; its own log not readable |
+| F-server-117 News from HQ for the bell | yes | **yes** | yes (D1 0006) | n/a | /api/hq-news answered HQ's message on 26 Nov |
+| F-server-118 AI column matching in import | yes | unknown | n/a | n/a | needs GEMINI or ANTHROPIC key (secret); What's new calls it live; not provable without a signed-in import |
+| F-server-119 Owner's AI Assistant | yes | **yes** (listed "unknown") | yes | n/a | owner_ai_status present; Crispy Curves saved Assistant tasks on 14 Nov (credit record); What's new announced it 13 Nov (FN-H5-server-panel-worker-01) |
+| F-server-122 AI workout plan writer | yes | probably (listed "unknown") | yes | n/a | same key and credits as the Assistant (FN-H5-server-panel-worker-01) |
+| F-server-123 AI question credits | yes | **yes** | yes | yes | aiCharge true; ai_question_take, ai_question_back present; Crispy Curves question block 15 Nov |
+| F-server-124 Connect payment company by keys | yes | yes, test mode on main | yes (D1 0011) | n/a | PAY_LIVE off on main; live value not readable; master key secret not readable |
+| F-server-125 Connect by signing in (Razorpay/Cashfree) | yes | **off** | n/a | n/a | PAY_OAUTH_RAZORPAY and PAY_OAUTH_CASHFREE off (wrangler.jsonc:94-95) |
+| F-server-126 Collect a payment online at the desk | yes | yes, company links test mode | yes (D1 0011) | n/a | plain UPI requests are real; company links test only while PAY_LIVE is off |
+| F-server-128 Member pays in the app | yes | yes, test mode | yes | yes | member_pay_me, member_orders present (FN-L5-server-panel-worker-01: test payment looks paid) |
+| F-server-130 Payment company webhook | yes | yes, test mode | yes (D1 0011) | n/a | needs PAY_LIVE on for real money |
+| F-server-131 10-minute payment check | yes | yes, test mode | yes (D1 0011) | n/a | runs when the tables and master key exist (pay.js:1524-1528); master key not readable |
+| F-server-132 Owner's two payment switches | yes | **both shown** (listed "behind switch") | yes (D1 0016) | n/a | with joinPay true the join switch and join list show (FN-H5-server-database-3-01) |
+| F-server-133 Sign-in code sent by WhatsApp | yes | **hidden** | unknown (D1 0012 "not applied") | n/a | status answers mode inbound, so this way is not offered |
+| F-server-134 Verify with WhatsApp | yes | **yes** | yes (D1 0013) | yes | status answers available, inbound on 26 Nov |
+| F-server-135 WhatsApp delivery news | yes | unknown | n/a | n/a | needs the WhatsApp app secret; Meta's calls not visible from here |
+| F-server-136 Pay online for a MettleUp plan | yes | **off** | yes | n/a | HQ answered NOT_SET_UP to a billing call on 26 Nov (H5-server-hq-gate-workers section) |
+| F-server-137 Public key for browser alerts | yes | **yes** | n/a | n/a | /api/push/web-key answered a key on 26 Nov |
+| F-server-139 Feature switches /api/switches | yes | **yes** | n/a | n/a | gymPages false, joinPay true, aiCharge true, pageAi false; listed with "JOIN_PAY (off)" (FN-H5-server-database-3-01) |
+| F-server-140 Free demo request form | yes | yes | unknown (D1 0002, 0007) | n/a | gyms.mettleup.fit page matches main (machine live-state.csv); form not sent |
+| F-server-141 Gym's own web page join.mettleup.fit | yes | **off** | yes | n/a | GYM_PAGES off on main and live; join.mettleup.fit has no DNS on 26 Nov; gym_page_public present |
