@@ -1692,3 +1692,51 @@ Table row counts were also refused, so whether the nightly jobs and the direct-r
 | F-server-533 Web page AI helper chat | yes | **off** (pageAi false) | **no** | n/a | 0094 not live: page_chat_ask and gym_page_chats absent; waits for both the migration and the switch |
 | F-server-534 Record of direct database reads | yes | unknown (HQ needs its logs token; not readable) | yes | n/a | db_direct_reads, hq_db_reads_ingest, owner_hq_access present; listed hidden from a stale first line (FN-A3-notes-claude-1-05) |
 | F-server-535 Bell knows done and read | yes | yes (the panel calls owner_alert_list) | yes | n/a | gym_alert_reads, owner_alert_list, owner_alerts_read present; listed hidden from a stale first line (FN-A3-notes-claude-1-05) |
+
+## H5-server-hq-gate-workers (surface server, area server/hq-gate-workers) — 36 features, written by H5-server-hq-gate-workers on 2026-11-26
+
+The HQ server and the entry-machine gate. Proof read on 26 Nov: HQ public answers /backup/status, /readlog/status,
+/push/web-key and a billing call (NOT_SET_UP), the panel /api/switches (joinPay true, aiCharge true, gymPages false,
+pageAi false), one catalog read (every database function these servers call is present, including all 8 gate_* ones),
+and a DNS look-up for gate.mettleup.fit (does not exist). Secrets (Gemini, Firebase, Cloudflare token) cannot be read,
+so features that wait only for one stay "unknown" unless a public answer proves them. "Live HQ" = the HQ server; its
+exact build cannot be compared with main (FN-H5-hq-app-01). D1 = the small web database, not readable from here.
+
+| Feature | Main | Live HQ / gate | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-server-200 Sign in to HQ (Google) and sign out | yes | yes | n/a | n/a | hq.mettleup.fit sends visitors to Google sign-in (live-state-facts.md:83); build not comparable with main (FN-H5-hq-app-01) |
+| F-server-201 Install HQ, "You're offline" page | yes | yes | n/a | n/a | offline.html answered 200 without sign-in on 26 Nov; matches main except line endings |
+| F-server-202 All gyms list | yes | yes | yes | n/a | hq_gyms, hq_groups present; AI use columns come from the small web database (D1): unknown |
+| F-server-203 One gym's HQ page | yes | yes | yes | n/a | hq_gym, hq_ai_wallet, hq_web_page present; AI use part in D1: unknown |
+| F-server-204 System page | yes | yes | yes | n/a | hq_system present; Cloudflare figures need a secret token, not checked |
+| F-server-205 Feedback and help questions | yes | yes | unknown | n/a | D1 file 0001 (no applied line); D1 not readable from here |
+| F-server-206 Reply to a help question | yes | yes | unknown | unknown | D1 0009 marked live 9 Nov; the phone pop-up needs the FCM secret (see F-server-230) |
+| F-server-207 English helper (Gemini) | yes | unknown | n/a | n/a | needs the secret HQ_GEMINI_KEY, which no public answer shows |
+| F-server-208 Needs you counts | yes | yes | yes | n/a | hq_mettleup_payments_waiting, hq_billing_checks_waiting present |
+| F-server-209 Confirm or reject owner payments | yes | yes (listed "live") | yes | n/a | hq_confirm_mettleup_payment, hq_reject_mettleup_payment present (0060 live) |
+| F-server-210 Payments to check | yes | **off** | yes | n/a | HQ answered NOT_SET_UP to a billing call on 26 Nov (BILLING not set); 0064 functions present |
+| F-server-211 MettleUp's payment details | yes | yes | yes | n/a | hq_payment_details, hq_set_payment_details present |
+| F-server-212 Leads | yes | yes | unknown | n/a | D1 0002 (no applied line) |
+| F-server-213 Messages to every gym | yes | yes | unknown | n/a | D1 0006 (no applied line) |
+| F-server-214 HQ audit log | yes | yes | yes | n/a | hq_log, hq_audit_list present |
+| F-server-215 Export gyms as CSV | yes | yes | yes | n/a | hq_gyms present |
+| F-server-216 Delete requests and delete a gym | yes | yes | yes | n/a | hq_delete_requests, hq_delete_request_add, hq_delete_request_step, hq_delete_gym present |
+| F-server-217 Support access to one gym | yes | yes | yes | n/a | hq_open_emergency, hq_end_access, hq_gym_records, hq_access_log present |
+| F-server-218 Suspend or reactivate a gym | yes | yes | yes | n/a | hq_set_gym_status present |
+| F-server-219 Trial end and plan by hand | yes | yes | yes | n/a | hq_set_trial, hq_set_plan present (FN-H5-hq-app-02) |
+| F-server-220 Create a gym from HQ | yes | yes | yes | n/a | hq_create_gym present; lead move is in D1: unknown |
+| F-server-221 New owner code, sign a gym out | yes | yes | yes | n/a | hq_reset_owner_signin, hq_sign_out_gym present |
+| F-server-222 Add or take back AI credits | yes | yes | yes | n/a | hq_ai_grant present (0071 live) |
+| F-server-223 One gym's web page switch | yes | yes (HQ) | yes | n/a | hq_set_web_page present; changes nothing visible while gym web pages are off for everyone (gymPages false, 26 Nov) |
+| F-server-224 One gym's daily AI limits | yes | yes | unknown | n/a | D1 0004 and 0015 (first lines "not applied") |
+| F-server-225 Buy a MettleUp plan online | yes | **off** | yes | n/a | HQ answered NOT_SET_UP on 26 Nov; hq_billing_checkout_start, hq_billing_paid present |
+| F-server-226 Nightly billing jobs | yes | **off** | yes | n/a | same BILLING setting; hq_billing_daily, hq_billing_open_links present; reminder message is a stub |
+| F-server-227 Nightly backup and its health answer | yes | **yes** | n/a | n/a | /backup/status on 26 Nov: set up, last run ok, last good copy 25 Nov 21:30 UTC, fresh |
+| F-server-228 Nightly clean-up | yes | probably | yes | n/a | hq_nightly_cleanup, hq_purge_qa_gyms, hq_ai_purge_old present; runs right after the backup, which ran 25 Nov; its own result was not readable |
+| F-server-229 Weekly Cloudflare free-limit check | yes | unknown | n/a | n/a | needs the secret CF_ANALYTICS_TOKEN, which no public answer shows |
+| F-server-230 Pop-ups on members' phones | yes | unknown | yes | yes (needs 0.59.0+; production is 0.77.0) | hq_push_next, hq_push_direct_next, hq_push_drop present; the FCM secret is not readable; What's new 0.59.0 calls it live |
+| F-server-231 Desk's "please pay" reaches the phone | yes | yes | yes | yes | hq_fee_request_notes present; the note needs no secret, the pop-up needs F-server-230's |
+| F-server-232 "Asha paid online" alert | yes | **on** (test money only) | yes | n/a | hq_paid_alerts present; joinPay true on 26 Nov; PAY_LIVE off on main, so only test payments can raise it |
+| F-server-233 Gym alerts in staff browsers | yes | **yes** (listed "behind switch") | yes | n/a | HQ /push/web-key answered with a key on 26 Nov, so its secret is set; hq_panel_push_instant, hq_panel_digest_* present (FN-H5-server-hq-gate-workers-01) |
+| F-server-234 Direct-read record | yes | **yes** (listed "behind switch") | yes | n/a | /readlog/status on 26 Nov: on, not failing, key ends 2027-11-14; hq_db_reads_ingest, hq_db_reads_cursor present (FN-H5-server-hq-gate-workers-01) |
+| F-server-235 Entry machines gate | yes | **no** (not deployed) | yes | n/a | gate.mettleup.fit does not exist (no DNS, 26 Nov); all 8 gate_* functions are live; the panel already offers machines (FN-H5-panel-pay-machines-01) |
