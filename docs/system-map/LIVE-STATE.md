@@ -1124,5 +1124,5 @@ gym messages on, gym reminders on, machine use on, mates sharing off, trainer sh
 | F-phone-429 Leave the gym | yes | n/a | yes (member_leave) | yes | |
 | F-phone-430 Gym logo on the home screen | yes | n/a | n/a | yes | |
 | F-phone-431 Pay the gym from the app | yes, per gym | **partly**: UPI yes; online test mode only | unknown (small web database) | yes | PAY_LIVE off |
-| F-phone-432 Recommend MettleUp to your gym | yes | yes (/api/lead) | n/a | unknown which screen shows it with the Find my gym card off | |
+| F-phone-432 Recommend MettleUp to your gym | yes (no-gym screen, always shown: ShopScreen.tsx:113) | n/a (a share link) | n/a | yes | |
 | F-phone-433 Plus lock 7 days after plan ends | yes, **off** (paid-plan gate) | n/a | yes (member_plus_lock) | **off** | FN-H5-phone-shop-2-01 |
