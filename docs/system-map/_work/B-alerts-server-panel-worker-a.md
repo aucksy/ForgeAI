@@ -7,4 +7,4 @@
 - H2.3 done: reused 2 findings + new 01.
 - H2.4 done: Crispy Curves (field-fill.csv): app link 0 of 2 members, so gym message / offer / answer pop-ups reach 0 of 2. Phone filled 2 of 2 (irrelevant to pop-ups). Help reply and WhatsApp code reach not countable (D1, not gym rows; staff numbers not in field-fill).
 - H2.5 done: needs a real-phone check: member pop-up on OPPO / Xiaomi / Samsung with screen off and battery saver on, on the "Messages from your gym" channel (sound, banner); team-reply pop-up; admin app browser push with the app closed on an Android phone; WhatsApp code arriving on the phone.
-- lens-cover ok; merge --dry 3 of 3 passed
+- lens-cover ok; merge --dry 3 of 3 passed. FINISHED.
