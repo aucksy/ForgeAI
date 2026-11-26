@@ -1328,3 +1328,57 @@ opens /ready or /quick, yet the feature list marks both "live, switch none" (FN-
 | F-phone-930 Share and import a routine file | yes | n/a | n/a | yes |  |
 | F-phone-931 Routine sets (warm-up, drop, failure) | yes | n/a | n/a | yes |  |
 | F-phone-932 Today's routine | yes | n/a | n/a | yes |  |
+
+## H5-phone-tracker-lib (surface phone, area phone/tracker-lib) — 35 features, written by H5-phone-tracker-lib on 2026-11-26
+
+The member app's built-in exercise library and pictures, and the pure rules behind the workout screens (calendar, charts,
+reports, Workout tab, Up next, targets, step back, measures, photos, RPE, supersets, saved-workout actions) and the share
+pictures. No file in apps/mobile/src/tracker/catalog, tracker/lib or tracker/share calls our server or the gym database
+(searched for rpc, fetch, supabase, /api and from(: no hit), so "Live panel" is n/a and nothing here waits for a migration.
+Two features use gym data fetched elsewhere in the app: the gym's plans as folders (member_gym_plans, made in
+supabase/migrations/0024_workout_plans.sql, cited at shop/gymPlans.ts:3) and the gym on share pictures (logo and name from
+member_me); a catalog read on 26 Nov found both functions live. No paid-plan or code switch is read in this area (no FEATURES
+or member plan lock used); every one of the 35 entry files is imported by a screen or component outside its tests.
+"Play app" = 0.79.0; main is 0.80.0 (apps/mobile/app.json:5), whose only What's new line (phone-number backup) is not in this
+area (FN-H5-phone-components-2-01). The newest change tag in these files is R-576 (15 Nov, kgTarget.ts:4), named in 0.79.0's
+What's new (whatsNew.ts:95-104, line 2); the newest date in these files is 15 Nov, before the 17 Nov 0.79.0 tag. So every
+feature here is on Play as on main (code-read; no git diff run). No What's new line calls a feature of this area live that
+is not.
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-phone-1100 Built-in exercise library | yes | n/a | n/a | yes | inside the app |
+| F-phone-1101 Exercise library update on launch | yes | n/a | n/a | yes | phone storage only |
+| F-phone-1102 Exercise pictures | yes | n/a | n/a | yes | bundled pictures; demo clips see tracker-engine |
+| F-phone-1103 Muscles trained body map | yes | n/a | n/a | yes |  |
+| F-phone-1104 Month calendar date picker | yes | n/a | n/a | yes |  |
+| F-phone-1105 Calendar page | yes | n/a | n/a | yes |  |
+| F-phone-1106 Charts spaced by real date | yes | n/a | n/a | yes |  |
+| F-phone-1107 Tap a chart point for its workouts | yes | n/a | n/a | yes |  |
+| F-phone-1108 Monthly report and year in review rows | yes | n/a | n/a | yes |  |
+| F-phone-1109 Reorder routines by drag | yes | n/a | n/a | yes |  |
+| F-phone-1110 Exercises list and picker order | yes | n/a | n/a | yes |  |
+| F-phone-1111 First routine guide | yes | n/a | n/a | yes | opened from routines/first and the Workout tab card |
+| F-phone-1112 Workout tab routines and folders | yes | n/a | n/a | yes |  |
+| F-phone-1113 Up next card | yes | n/a | n/a | yes |  |
+| F-phone-1114 The gym's plans as folders | yes | n/a | yes (member_gym_plans) | yes | catalog read 26 Nov |
+| F-phone-1115 Machine "In use" screen | yes, member choice per exercise | n/a | n/a | yes, same |  |
+| F-phone-1116 Exercise card target box | yes (R-576) | n/a | n/a | yes (0.79.0 line 2) |  |
+| F-phone-1117 "Previous" line and grey hint | yes | n/a | n/a | yes |  |
+| F-phone-1118 Step back when a lift is stuck | yes | n/a | n/a | yes |  |
+| F-phone-1119 Measures page and add form | yes | n/a | n/a | yes |  |
+| F-phone-1120 Tab bar mini workout bar | yes | n/a | n/a | yes |  |
+| F-phone-1121 Progress photos grid and compare | yes | n/a | n/a | yes |  |
+| F-phone-1122 Resume opens on the exercise in progress | yes | n/a | n/a | yes |  |
+| F-phone-1123 RPE | yes, member setting | n/a | n/a | yes, same |  |
+| F-phone-1124 Tap selects the whole number | yes | n/a | n/a | yes |  |
+| F-phone-1125 Supersets | yes | n/a | n/a | yes |  |
+| F-phone-1126 Profile "Next" line | yes | n/a | n/a | yes |  |
+| F-phone-1127 Saved workout actions | yes | n/a | n/a | yes |  |
+| F-phone-1128 Finish screen up or down | yes | n/a | n/a | yes |  |
+| F-phone-1129 Workout name and notes text | yes | n/a | n/a | yes |  |
+| F-phone-1130 Share a workout as a picture | yes | n/a | n/a | yes |  |
+| F-phone-1131 Share picture size and background | yes | n/a | n/a | yes |  |
+| F-phone-1132 The gym on every share picture | yes | n/a | yes (member_me) | yes | name only for a Starter gym (gymBrand.ts:6-7) |
+| F-phone-1133 Share monthly report or year in review | yes | n/a | n/a | yes |  |
+| F-phone-1134 Before/after picture | yes | n/a | n/a | yes | no body number on it |

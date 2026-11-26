@@ -68,19 +68,19 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | H5 | 26 | 3.6 (142k tokens) |
 | B-alerts | 45 | 3.7 (146k tokens) |
 | B-switch | 33 | 4.0 (162k tokens) |
-| B-time | 20 | 4.1 (166k tokens) |
+| B-time | 21 | 4.2 (167k tokens) |
 | B-words | 20 | 4.7 (189k tokens) |
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 130 todo, 5 in progress, 992 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 129 todo, 5 in progress, 993 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | H5-phone-tracker-lib | H5 | hunt 5 (Built vs live (deploy state)) x phone / phone/tracker-lib: 4 items | in progress | _work/H5-phone-tracker-lib.md |  |
 | B-alerts-phone-tracker-components-1-a | B-alerts | B-alerts (Notifications and messages + 1 more) x phone / phone/tracker-components-1: 6 items | in progress | _work/B-alerts-phone-tracker-components-1-a.md |  |
 | B-switch-phone-tracker-components-1-a | B-switch | B-switch (Should-read matrix (missing links)) x phone / phone/tracker-components-1: 4 items | in progress | _work/B-switch-phone-tracker-components-1-a.md |  |
-| B-time-phone-shop-2 | B-time | B-time (Install, update, upgrade + 2 more) x phone / phone/shop-2: 7 items | in progress | _work/B-time-phone-shop-2.md |  |
+| B-switch-phone-tracker-components-1-b | B-switch | B-switch (Data a feature needs but nobody fills) x phone / phone/tracker-components-1: 5 items | in progress | _work/B-switch-phone-tracker-components-1-b.md |  |
 | B-words-phone-shop-2 | B-words | B-words (Language and words + 1 more) x phone / phone/shop-2: 17 items | in progress | _work/B-words-phone-shop-2.md |  |
 | H5-phone-tracker-services-1 | H5 | hunt 5 (Built vs live (deploy state)) x phone / phone/tracker-services-1: 4 items | todo | _work/H5-phone-tracker-services-1.md |  |
 | H5-phone-tracker-services-2 | H5 | hunt 5 (Built vs live (deploy state)) x phone / phone/tracker-services-2: 4 items | todo | _work/H5-phone-tracker-services-2.md |  |
@@ -115,8 +115,8 @@ Counts: 130 todo, 5 in progress, 992 done, 0 blocked. Full list: work-items.json
 | CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
-(+ 105 more todo items, not shown)
-(+ 984 older done items, not shown)
+(+ 104 more todo items, not shown)
+(+ 985 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
