@@ -1537,3 +1537,54 @@ Play production was 0.77.0 at the last Play Console read (21 Nov, machine live-s
 | F-server-619 Watch demo video (by hand) | yes | yes | n/a | n/a | 2 runs, 4 Nov (run 41763141918) |
 | F-server-620 Watch build and checks | yes | yes | n/a | n/a | newest 17 Nov for 0.79.0 (run 44011860511); none since, no watch change needed it is not proved |
 | F-server-621 WhatsApp probe (by hand) | yes | yes | n/a | n/a | newest 12 Nov passed (run 43239958964) |
+
+## H5-server-database-1 (surface server, area server/database-1) — 37 features, written by H5-server-database-1 on 2026-11-26
+
+These are the gym database changes 0001 to 0033 (the base of the gym database). "Live DB" comes from one catalog read
+on 2026-11-26: all 112 functions these files make (every call the panel, HQ and phone use, plus the key helpers) and all
+35 tables they make are on the live database. Files 0031, 0032 and 0033 still open with "NOT APPLIED", but their
+functions and tables are live, and the live terms check holds both terms versions (2026-10-24 and 2026-11-10), so those
+first lines are stale (FN-L16-server-database-2-01, FN-A3-inbox-4-05). "Live panel" = the panel build matches main
+(machine live-state.csv, panel row). "Play app" = the member-phone part; production is 0.77.0 (21 Nov read) and main is
+0.80.0; the phone side was not compared feature by feature, so it reads "unknown" where a phone part exists.
+Only the free-plan limits switch was read as a value: off live (app_config free_limits on=false), and nothing reads it now.
+
+| Feature | Main | Live panel / HQ | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-server-300 Old sign-in link, workout summary, erase my cloud data | yes | n/a | yes | unknown | auth_gym_id, create_gym, join_gym_by_code, delete_my_cloud_data, member_summary present |
+| F-server-301 Demo "Start my gym" | yes | yes | yes | n/a | demo_start_gym present |
+| F-server-302 Shop: add, edit, hide, delete products, add stock | yes | yes | yes | n/a | owner_save_product, owner_add_stock, owner_set_product_active, owner_delete_product present |
+| F-server-303 Shop: product photo | yes | yes | yes | n/a | owner_photo_ticket, owner_set_product_photo, photo_tickets present |
+| F-server-304 Shop: member orders, ready / collected / cancelled | yes | yes | yes | n/a | owner_orders, owner_set_order_status present |
+| F-server-305 Member shop: products, order, my orders, cancel | yes | n/a | yes | unknown | member_products, member_place_order, member_orders, member_cancel_order present |
+| F-server-306 Join a gym with its code, name, load, leave | yes | yes | yes | unknown | member_join, member_set_name, member_me, member_leave, owner_app_members present |
+| F-server-307 Gym branding in the member app | yes | yes | yes | unknown | owner_set_brand present |
+| F-server-308 Load the gym and rename it | yes | yes | yes | n/a | owner_gym, owner_rename_gym present |
+| F-server-309 Invite link and desk QR preview | yes | yes | yes | unknown | gym_preview present |
+| F-server-310 Gym messages, seen by, take back, member inbox | yes | yes | yes | unknown | owner_messages, owner_send_message, owner_withdraw_message, member_messages, member_saw_messages present |
+| F-server-311 Panel sign-in with mobile and 6-digit code | yes | yes | yes | n/a | staff_sign_in, staff_sign_out, staff_me, staff_key_status, owner_make_signin_code present |
+| F-server-312 Add or remove a staff person | yes | yes | yes | n/a | owner_add_person, owner_remove_person, owner_people present |
+| F-server-313 Put the gym online | yes | yes | yes | n/a | owner_go_online present |
+| F-server-314 Gym records kept online and synced | yes | yes | yes | n/a | crm_push, crm_pull, crm_records present |
+| F-server-315 Front-desk limits on the server | yes | yes | yes | n/a | inside crm_push (present); not driven here |
+| F-server-316 Receipt rules and change history | yes | yes | yes | n/a | owner_receipt_history, _receipt_history_log, receipt_history present |
+| F-server-317 Undo this import | yes | yes | yes | n/a | inside crm_push (present) |
+| F-server-318 QR check-in from the member app | yes | n/a | yes | unknown | member_check_in, _checkin_roster_member present |
+| F-server-319 My membership in the member app | yes | n/a | yes | unknown | member_membership, _first_name_key present |
+| F-server-320 Workout plans in the member app | yes | yes | yes | unknown | member_gym_plans present |
+| F-server-321 Workout offer, gym side | yes | yes | yes | n/a | owner_offers, owner_save_offer, owner_stop_offer, staff_give_reward, owner_undo_reward present |
+| F-server-322 Workout offer, member side | yes | n/a | yes | unknown | member_offers, member_join_offer, member_offer_days, member_leave_offer present |
+| F-server-323 HQ Look and its audit log | yes | yes (HQ) | yes | n/a | hq_gyms, hq_gym, hq_system, hq_audit_list, hq_log present |
+| F-server-324 HQ pauses a gym | yes | yes (HQ) | yes | n/a | hq_set_gym_status, _gym_not_suspended present |
+| F-server-325 HQ makes a gym, signs a gym out | yes | yes (HQ) | yes | n/a | hq_create_gym, hq_sign_out_gym present |
+| F-server-326 HQ delete requests | yes | yes (HQ) | yes | n/a | hq_delete_request_add, hq_delete_request_step, hq_delete_requests, hq_delete_gym present |
+| F-server-327 Support access (break-glass) | yes | yes | yes | n/a | owner_hq_grant, owner_hq_end, owner_hq_access, hq_open_emergency, hq_end_access, hq_gym_records present |
+| F-server-328 Admin app access log in HQ | yes | yes (HQ) | yes | n/a | hq_access_log, gym_access_log present |
+| F-server-329 Nightly clean-up | yes | unknown | yes | n/a | hq_nightly_cleanup present; the HQ server calls it on a timer (deploy/hq/worker.js:195), but whether it ran live was not read (would need log rows of all gyms) |
+| F-server-330 Automatic reminders (owner switches per case) | yes | yes | yes | unknown | owner_auto_reminders, owner_save_auto_reminders, member_auto_reminders present; Crispy Curves has no saved choices, so the app defaults apply |
+| F-server-331 Free trial and plan, set by HQ | yes | yes (HQ) | yes | n/a | hq_set_trial, hq_set_plan, _trial_cap (6 months) present |
+| F-server-332 Branches: list, add, open, rename business | yes | yes | yes | n/a | owner_branches, owner_add_branch, owner_open_branch, owner_rename_group, hq_groups present; first line of 0031 says NOT APPLIED (stale) |
+| F-server-333 Branches: visitors from another branch | yes | yes | yes | n/a | branch_find_visitor, branch_check_in_visitor, branch_visitors, branch_undo_visitor present; feature name repeats the stale "NOT APPLIED" |
+| F-server-334 Member cloud copy | yes | n/a | yes | unknown | member_copy_put, member_copy_get, member_copy_count, member_account_delete, member_items present; first line of 0032 says NOT APPLIED (stale) |
+| F-server-335 Free plan limits switch | yes (retired) | n/a | **off** | n/a | app_config free_limits on=false live; nothing in the apps reads it since 12 Nov (FN-H5-server-database-1-01) |
+| F-server-336 Accept the terms online | yes | yes | yes | n/a | owner_accept_terms, owner_terms, gym_terms_acceptance present; live terms versions 2026-10-24 and 2026-11-10 (What's new terms line is true) |
