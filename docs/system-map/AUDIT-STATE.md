@@ -65,7 +65,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L9 | 31 | 1.4 (55k tokens) |
 | L12 | 37 | 1.2 (50k tokens) |
 | L16 | 37 | 2.7 (109k tokens) |
-| H5 | 16 | 3.5 (142k tokens) |
+| H5 | 17 | 3.5 (142k tokens) |
 | B-alerts | 32 | 3.5 (141k tokens) |
 | B-switch | 21 | 4.0 (159k tokens) |
 | B-time | 14 | 4.0 (158k tokens) |
@@ -73,12 +73,12 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 177 todo, 5 in progress, 945 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 176 todo, 5 in progress, 946 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| H5-phone-native | H5 | hunt 5 (Built vs live (deploy state)) x phone / phone/native: 4 items | in progress | _work/H5-phone-native.md |  |
 | B-alerts-phone-native-a | B-alerts | B-alerts (Notifications and messages + 1 more) x phone / phone/native: 6 items | in progress | _work/B-alerts-phone-native-a.md |  |
+| B-alerts-phone-native-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x phone / phone/native: 10 items | in progress | _work/B-alerts-phone-native-b.md |  |
 | B-switch-phone-lib-core | B-switch | B-switch (Should-read matrix (missing links) + 1 more) x phone / phone/lib-core: 9 items | in progress | _work/B-switch-phone-lib-core.md |  |
 | B-time-phone-lib-core | B-time | B-time (Install, update, upgrade + 2 more) x phone / phone/lib-core: 7 items | in progress | _work/B-time-phone-lib-core.md |  |
 | B-words-phone-lib-core | B-words | B-words (Language and words + 1 more) x phone / phone/lib-core: 17 items | in progress | _work/B-words-phone-lib-core.md |  |
@@ -102,11 +102,11 @@ Counts: 177 todo, 5 in progress, 945 done, 0 blocked. Full list: work-items.json
 | H5-server-panel-worker | H5 | hunt 5 (Built vs live (deploy state)) x server / server/panel-worker: 4 items | todo | _work/H5-server-panel-worker.md |  |
 | H5-watch-app | H5 | hunt 5 (Built vs live (deploy state)) x watch / watch/app: 4 items | todo | _work/H5-watch-app.md |  |
 | H5-web-pages | H5 | hunt 5 (Built vs live (deploy state)) x web / web/pages: 4 items | todo | _work/H5-web-pages.md |  |
-| B-alerts-phone-native-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x phone / phone/native: 10 items | todo | _work/B-alerts-phone-native-b.md |  |
 | B-alerts-phone-onboarding-db-a | B-alerts | B-alerts (Notifications and messages + 1 more) x phone / phone/onboarding-db: 6 items | todo | _work/B-alerts-phone-onboarding-db-a.md |  |
 | B-alerts-phone-onboarding-db-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x phone / phone/onboarding-db: 10 items | todo | _work/B-alerts-phone-onboarding-db-b.md |  |
 | B-alerts-phone-screens-1-a | B-alerts | B-alerts (Notifications and messages + 1 more) x phone / phone/screens-1: 6 items | todo | _work/B-alerts-phone-screens-1-a.md |  |
 | B-alerts-phone-screens-1-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x phone / phone/screens-1: 10 items | todo | _work/B-alerts-phone-screens-1-b.md |  |
+| B-alerts-phone-screens-2-a | B-alerts | B-alerts (Notifications and messages + 1 more) x phone / phone/screens-2: 6 items | todo | _work/B-alerts-phone-screens-2-a.md |  |
 | B-words-phone-components-2 | B-words | B-words (Language and words + 1 more) x phone / phone/components-2: 17 items | done | _work/B-words-phone-components-2.md | 17 items; 4 new (S3 help box promises instant answer, S4 cut titles, S4 Bring back vs Restore, S4 old logo), ~20 reused |
 | CAL-5 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-5 ...); output is scored, never merged | done | _work/CAL-5.md | c08, c09: 16 gaps listed (not merged; scored in CAL-score) |
 | CAL-6 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-6.md | re-run 1: c01, c05, c12: 10 gaps (not merged; scored in CAL-score) |
@@ -115,8 +115,8 @@ Counts: 177 todo, 5 in progress, 945 done, 0 blocked. Full list: work-items.json
 | CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
-(+ 152 more todo items, not shown)
-(+ 937 older done items, not shown)
+(+ 151 more todo items, not shown)
+(+ 938 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
