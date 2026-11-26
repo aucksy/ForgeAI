@@ -862,3 +862,48 @@ phone it was made for (FN-A3-whats-new-phone-01). Whether Play Console holds the
 | F-phone-1233 Gym-branded start-up screen | yes | n/a | n/a | yes | Android 13 and newer |
 | F-phone-1234 Erase all data also clears the phone side | yes | n/a | n/a | yes | |
 | F-phone-1235 Member's gym choices kept on the phone | yes | n/a | n/a | yes | kept on the phone only |
+
+## H5-phone-onboarding-db (surface phone, area phone/onboarding-db) — 28 features, written by H5-phone-onboarding-db on 2026-11-26
+
+The member app's first screens and setup, phone-number and Google ways in, Join my gym, demo data, erase, start-up error
+screen, the on-phone database (workouts, records, profile, plan, home summary), settings and the app's look. "Play app" =
+the public Google Play listing read on 2026-11-26: **version 0.79.0** (see the H5-phone-cloud-backup-ai section). Main is
+0.80.0 (apps/mobile/app.json:5); its only member line here ("Signing in with your phone number now also keeps your workouts
+safe", apps/mobile/src/lib/whatsNew.ts:77-84) waits for the 0.80.0 release. The phone-number sign-in switch is ON on main
+(apps/mobile/src/onboarding/phoneSignIn.ts:32) and was already in 0.79.0 (its notes say the new welcome was left out of the
+list, whatsNew.ts:90-92), although the same file's header still says "OFF in every store" (phoneSignIn.ts:16;
+FN-A3-inbox-1-17). "Live panel" = the panel's WhatsApp check, live and in inbound mode on 2026-11-19
+(live-state-facts.md:90-91). Catalog read 2026-11-26: phone_sign_in_find, _phone_proof, gym_preview, member_join,
+member_claim_phone, member_find_gyms, member_me, member_leave, staff_sign_in, member_account_delete all live (0093 says
+"APPLIED LIVE" and is). Switches on main: coach off, nutrition off, gymSync off (apps/mobile/src/lib/features.ts:6).
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-phone-1600 First welcome screen | yes | n/a | n/a | yes | phone number first; others under "Try another way" |
+| F-phone-1601 Intro screens before the welcome | yes | n/a | n/a | yes | |
+| F-phone-1602 Set up in 3 steps | yes | n/a | n/a | yes | |
+| F-phone-1603 Setup answers survive closing | yes | n/a | n/a | yes | |
+| F-phone-1604 Continue with your phone number | yes, switch **on** | yes (WhatsApp check, inbound) | yes (phone_sign_in_find, _phone_proof) | yes | stuck if the check line stops: FN-L14-phone-onboarding-db-03 |
+| F-phone-1605 Known member goes straight into the gym | yes | yes | yes (member_join, member_claim_phone) | yes | |
+| F-phone-1606 Continue with Google, restore Drive backup | yes | n/a | yes (Supabase sign-in) | yes | Drive upload itself is off (F-phone-1526), so only older backups are found |
+| F-phone-1607 Join my gym by poster or code | yes | n/a | yes (gym_preview, member_join) | yes | |
+| F-phone-1608 Load demo data | yes | n/a | n/a | yes | demo also fills hidden meals and coach chat |
+| F-phone-1609 Remove demo data | yes | n/a | n/a | yes | |
+| F-phone-1610 Erase all data (phone, or phone and account) | yes | n/a | yes (member_account_delete) | yes | account delete wait fix only in 0.80.0: FN-H5-phone-cloud-backup-ai-01 |
+| F-phone-1611 Start-up error screen | yes | n/a | n/a | yes | |
+| F-phone-1612 App start routing | yes | n/a | n/a | yes | |
+| F-phone-1613 Import safety and Undo import | yes | n/a | n/a | yes | |
+| F-phone-1614 Bundled exercise library | yes | n/a | n/a | yes | |
+| F-phone-1615 Workouts saved on the phone | yes | n/a | n/a | yes | |
+| F-phone-1616 Personal records | yes | n/a | n/a | yes | |
+| F-phone-1617 Profile and body weight | yes | n/a | n/a | yes | |
+| F-phone-1618 Food log | yes, switch **off** (nutrition false) | n/a | n/a | **off** | screen sends to Workout (apps/mobile/src/app/nutrition.tsx:62) |
+| F-phone-1619 AI coach chat | yes, switch **off** (coach false) | n/a | n/a | **off** | apps/mobile/src/app/(tabs)/coach.tsx:35 |
+| F-phone-1620 Active workout plan | yes | n/a | n/a | yes | |
+| F-phone-1621 Home summary | yes | n/a | n/a | yes | |
+| F-phone-1622 Old gym sync | yes, switch **off** (gymSync false) | n/a | yes (join_gym_by_code, delete_my_cloud_data) | **off** | apps/mobile/src/app/_layout.tsx:125 |
+| F-phone-1623 MettleUp account | yes | n/a | yes (member_copy_put, member_copy_get) | yes | under-18 stop only in 0.80.0: FN-H5-phone-cloud-backup-ai-01 |
+| F-phone-1624 Google Drive backup and restore | yes, restore only | n/a | n/a (Google Drive) | restore yes, upload **off** | see F-phone-1526 |
+| F-phone-1625 Light or dark look | yes | n/a | n/a | yes | in What's new 0.77.0 |
+| F-phone-1626 Gym colours and logo | yes (plan gate off) | n/a | yes (member_me) | yes | shows for every branded gym |
+| F-phone-1627 App settings on the phone | yes | n/a | n/a | yes | AI provider and voice parts hidden with the coach |
