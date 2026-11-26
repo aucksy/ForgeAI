@@ -34,6 +34,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | 26 Nov 01:42 (reset ~06:40) | 0 | 93 | 0 | 24→36 | H5/B-* panel areas + phone-cloud-backup-ai + part of phone-components-1 (Opus medium), 71 merged, 0 failed | closed at 93: night start line 91 |
 | 26 Nov 06:42 (reset ~11:40) | 0 | 86 | 0 | 36→48 | phone shop-1/-2, screens, onboarding-db, native, lib-core B-*, tracker-components-1 B-*, H5 tracker-engine/lib/services-1/-2 (Opus medium), 67 merged, 0 failed | closed at 86: past the 85 usage-guard start line |
 | 26 Nov 19:47 (reset ~21:40) | 2 | 24 | 0 | 51->54 | tracker-components-2/data/engine B-*, H5 ci-workflows, database-1/-2 (Opus medium), 20 merged, 0 failed | closed at 24: his 20:05 IST stop, quiet hours only |
+| 26 Nov 21:42 (reset ~02:40) | 0 | 0 | 0 | 54 | BUSY TEST start 21:42 IST: F5 0, WA 54 (one-time busy-hour test, his 20:50 IST ask); tracker-lib B-*, H5-server-database-3 (Opus medium) | running |
 
 ## Learned cost per helper type (5-hour %)
 | step | helpers so far | average cost |
@@ -75,17 +76,20 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 106 todo, 0 in progress, 1021 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 100 todo, 6 in progress, 1021 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| H5-server-database-3 | H5 | hunt 5 (Built vs live (deploy state)) x server / server/database-3: 4 items | todo | _work/H5-server-database-3.md |  |
+| H5-server-database-3 | H5 | hunt 5 (Built vs live (deploy state)) x server / server/database-3: 4 items | in progress | _work/H5-server-database-3.md |  |
+| B-alerts-phone-tracker-lib-a | B-alerts | B-alerts (Notifications and messages + 1 more) x phone / phone/tracker-lib: 6 items | in progress | _work/B-alerts-phone-tracker-lib-a.md |  |
+| B-alerts-phone-tracker-lib-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x phone / phone/tracker-lib: 10 items | in progress | _work/B-alerts-phone-tracker-lib-b.md |  |
+| B-switch-phone-tracker-lib | B-switch | B-switch (Should-read matrix (missing links) + 1 more) x phone / phone/tracker-lib: 9 items | in progress | _work/B-switch-phone-tracker-lib.md |  |
+| B-time-phone-tracker-lib | B-time | B-time (Install, update, upgrade + 2 more) x phone / phone/tracker-lib: 7 items | in progress | _work/B-time-phone-tracker-lib.md |  |
+| B-words-phone-tracker-lib | B-words | B-words (Language and words + 1 more) x phone / phone/tracker-lib: 17 items | in progress | _work/B-words-phone-tracker-lib.md |  |
 | H5-server-hq-gate-workers | H5 | hunt 5 (Built vs live (deploy state)) x server / server/hq-gate-workers: 4 items | todo | _work/H5-server-hq-gate-workers.md |  |
 | H5-server-panel-worker | H5 | hunt 5 (Built vs live (deploy state)) x server / server/panel-worker: 4 items | todo | _work/H5-server-panel-worker.md |  |
 | H5-watch-app | H5 | hunt 5 (Built vs live (deploy state)) x watch / watch/app: 4 items | todo | _work/H5-watch-app.md |  |
 | H5-web-pages | H5 | hunt 5 (Built vs live (deploy state)) x web / web/pages: 4 items | todo | _work/H5-web-pages.md |  |
-| B-alerts-phone-tracker-lib-a | B-alerts | B-alerts (Notifications and messages + 1 more) x phone / phone/tracker-lib: 6 items | todo | _work/B-alerts-phone-tracker-lib-a.md |  |
-| B-alerts-phone-tracker-lib-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x phone / phone/tracker-lib: 10 items | todo | _work/B-alerts-phone-tracker-lib-b.md |  |
 | B-alerts-phone-tracker-services-1-a | B-alerts | B-alerts (Notifications and messages + 1 more) x phone / phone/tracker-services-1: 6 items | todo | _work/B-alerts-phone-tracker-services-1-a.md |  |
 | B-alerts-phone-tracker-services-1-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x phone / phone/tracker-services-1: 10 items | todo | _work/B-alerts-phone-tracker-services-1-b.md |  |
 | B-alerts-phone-tracker-services-2-a | B-alerts | B-alerts (Notifications and messages + 1 more) x phone / phone/tracker-services-2: 6 items | todo | _work/B-alerts-phone-tracker-services-2-a.md |  |
@@ -104,6 +108,9 @@ Counts: 106 todo, 0 in progress, 1021 done, 0 blocked. Full list: work-items.jso
 | B-alerts-server-panel-worker-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x server / server/panel-worker: 10 items | todo | _work/B-alerts-server-panel-worker-b.md |  |
 | B-alerts-watch-app-a | B-alerts | B-alerts (Notifications and messages + 1 more) x watch / watch/app: 6 items | todo | _work/B-alerts-watch-app-a.md |  |
 | B-alerts-watch-app-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x watch / watch/app: 10 items | todo | _work/B-alerts-watch-app-b.md |  |
+| B-alerts-web-pages-a | B-alerts | B-alerts (Notifications and messages + 1 more) x web / web/pages: 6 items | todo | _work/B-alerts-web-pages-a.md |  |
+| B-alerts-web-pages-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x web / web/pages: 10 items | todo | _work/B-alerts-web-pages-b.md |  |
+| B-switch-panel-auth-data | B-switch | B-switch (Should-read matrix (missing links) + 1 more) x panel / panel/auth-data: 9 items | todo | _work/B-switch-panel-auth-data.md |  |
 | B-words-phone-tracker-engine | B-words | B-words (Language and words + 1 more) x phone / phone/tracker-engine: 17 items | done | _work/B-words-phone-tracker-engine.md | 6 new (S3 muscle-tip sheet points to wrong Settings path; S4 badge rules, home program kit, strength score lifts, mixed words, old ForgeAI name in shared file), 2 grid rows, 5 reused |
 | CAL-5 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-5 ...); output is scored, never merged | done | _work/CAL-5.md | c08, c09: 16 gaps listed (not merged; scored in CAL-score) |
 | CAL-6 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-6.md | re-run 1: c01, c05, c12: 10 gaps (not merged; scored in CAL-score) |
@@ -112,7 +119,7 @@ Counts: 106 todo, 0 in progress, 1021 done, 0 blocked. Full list: work-items.jso
 | CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
-(+ 81 more todo items, not shown)
+(+ 75 more todo items, not shown)
 (+ 1013 older done items, not shown)
 
 ## Needs Aakash
