@@ -949,3 +949,79 @@ Not compared: whether main's screens in this area differ from the v0.79.0 tag (n
 | F-phone-236 Exercise library pages | yes | n/a | n/a | yes | |
 | F-phone-237 Body measures page with photos | yes | n/a | yes (member_measurements) | yes | |
 | F-phone-238 Gym tab, invite link, QR check-in, scanner | yes | n/a | yes (see F-phone-137, 115, 116) | yes | |
+
+## H5-phone-screens-2 (surface phone, area phone/screens-2) — 53 features, written by H5-phone-screens-2 on 2026-11-26
+
+The member app's second-level screens: stats, records, reports, progress photos, plans and programs, routines, the live
+workout and its summary, a saved workout, the widget start link, every Settings page, Plus, and the gym pages (shop, bag,
+orders, diet plan, inbox, message, timings, a gym mate's page). "Play app" = 0.79.0 (see the H5-phone-components-2
+section); main is 0.80.0 (apps/mobile/app.json:5). Its only What's new line points at Backup and restore in this area
+(apps/mobile/src/lib/whatsNew.ts:77-85); that app half is not on Play yet = FN-H5-phone-components-2-01.
+Server functions these screens reach, one catalog read on 2026-11-26: member_products, member_place_order, member_orders,
+member_cancel_order, member_diet_plans, member_messages, member_saw_messages, member_talk_list/send/send_to/reply/choices/
+unread, member_ask_trainer, member_ask_choices, member_questions, member_withdraw_question, member_trainer_share/status/
+stop/help, member_gym_timings, member_mate_profile/share/stop, member_board_push, member_leave, member_plus_lock,
+member_save_push_token, member_clear_push_token, member_auto_reminders: **all 31 present**.
+Switches on main: coach off (apps/mobile/src/lib/features.ts:6; the Coach settings page sends you to Settings,
+apps/mobile/src/app/settings/coach.tsx:34); Plus gate and member payments off (packages/theme/src/memberPlan.ts:28,34);
+gym plan gate off (packages/theme/src/plans.ts:40), so every gym "has" shop, trainer plans and the challenge
+(packages/theme/src/plans.ts:88-93): the shop shows once a gym lists a product, the diet page once a trainer sends a
+plan (apps/mobile/src/shop/ShopScreen.tsx:165-166). Paying for a shop order online goes through the panel's /api/pay
+(apps/mobile/src/shop/memberPay.ts:17), which runs in test mode only (PAY_LIVE off). Muscles ready / quick workout:
+nothing opens them (ReadyCard is used by no screen). Not compared: main vs the v0.79.0 tag for this area (no git here).
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-phone-105 Statistics page | yes | n/a | n/a | yes | |
+| F-phone-107 Records by month, lift trend | yes | n/a | n/a | yes | |
+| F-phone-108 Monthly report, year in review, share picture | yes | n/a | n/a | yes | |
+| F-phone-112 Progress photos | yes | n/a | n/a | yes | |
+| F-phone-118 MettleUp Plus page | yes, **off** (Plus gate false) | n/a | yes (member_plus_lock) | **off** | QA builds only |
+| F-phone-122 Find a plan | yes | n/a | n/a | yes | |
+| F-phone-123 Build a plan from answers | yes | n/a | n/a | yes | |
+| F-phone-124 Routines: first, edit, add, preview | yes | n/a | n/a | yes | |
+| F-phone-125 Today's workout, widget start link | yes | n/a | n/a | yes | |
+| F-phone-126 Log a live workout, finish summary | yes | n/a | n/a | yes | |
+| F-phone-127 A saved workout's page | yes | n/a | n/a | yes | |
+| F-phone-128 Muscles ready, quick workout | yes, **hidden** (no screen opens them) | n/a | n/a | **hidden** | switched off 5 Nov |
+| F-phone-129 Settings home, More workout choices | yes | n/a | n/a | yes | |
+| F-phone-130 Workout settings | yes | n/a | n/a | yes | |
+| F-phone-131 Your data: backup, download, spreadsheet, Drive | yes | n/a | yes (backup: see H5-phone-cloud-backup-ai) | yes, **except** phone-number backup (0.80.0 only) | FN-H5-phone-components-2-01 |
+| F-phone-132 Ask an AI about your workouts | yes | n/a | n/a | yes | |
+| F-phone-133 Help and feedback, What's new, About | yes | unknown (help runs on the panel worker and D1) | n/a | yes | D1 not readable (FN-L16-server-panel-worker-06) |
+| F-phone-134 Your gym in Settings | yes | n/a | yes (member_leave, member_mate_share/stop, member_trainer_share/status/stop) | yes | |
+| F-phone-135 App preferences, reminders | yes | n/a | yes (member_auto_reminders, push token functions) | yes | |
+| F-phone-136 Phone and watch, widgets | yes | n/a | n/a | yes | |
+| F-phone-138 Gym shop: product, bag, orders | yes, per gym (shows when the gym lists a product) | yes | yes (member_products, member_place_order, member_orders, member_cancel_order) | yes | pay at desk; online pay test mode only |
+| F-phone-139 Message your gym, ask a trainer, inbox, diet | yes | n/a | yes (member_talk_*, member_ask_*, member_messages, member_diet_plans) | yes | "pick who reads it" in What's new 0.79.0 |
+| F-phone-200 Progress photos (detail) | yes | n/a | n/a | yes | same as F-phone-112 |
+| F-phone-201 Build a plan (detail) | yes | n/a | n/a | yes | same as F-phone-123 |
+| F-phone-202 Find a plan (detail) | yes | n/a | n/a | yes | same as F-phone-122 |
+| F-phone-203 Pick any exercise's lift trend | yes | n/a | n/a | yes | |
+| F-phone-204 Monthly report (detail) | yes | n/a | n/a | yes | same as F-phone-108 |
+| F-phone-205 Edit a routine | yes | n/a | n/a | yes | |
+| F-phone-206 Guided first routine | yes | n/a | n/a | yes | |
+| F-phone-207 Routine preview | yes | n/a | n/a | yes | |
+| F-phone-208 Log a live workout (detail) | yes | n/a | n/a | yes | |
+| F-phone-209 Workout summary after Finish | yes | n/a | n/a | yes | |
+| F-phone-210 A saved workout's page (detail) | yes | n/a | n/a | yes | |
+| F-phone-211 Start or resume from the Today widget | yes | n/a | n/a | yes | |
+| F-phone-212 Settings home (six groups) | yes | n/a | n/a | yes | |
+| F-phone-213 Workout settings (detail) | yes | n/a | n/a | yes | |
+| F-phone-214 Units, light or dark | yes | n/a | n/a | yes | |
+| F-phone-215 Reminders, gym reminders on or off | yes | n/a | yes (member_auto_reminders, member_save_push_token, member_clear_push_token) | yes | |
+| F-phone-216 AI coach settings | yes, **off** (coach false: page sends to Settings) | n/a | n/a | **off** | |
+| F-phone-217 Your gym settings, What my gym can see | yes | n/a | yes (member_mate_share/stop, member_board_push, member_leave) | yes | |
+| F-phone-218 Phone and watch (detail) | yes | n/a | n/a | yes | |
+| F-phone-219 Backup and restore | yes | n/a | yes (see H5-phone-cloud-backup-ai) | yes, **except** phone-number backup (0.80.0 only) | FN-H5-phone-components-2-01 |
+| F-phone-220 Take my data out | yes | n/a | n/a | yes | |
+| F-phone-221 Bring in from Hevy or Strong | yes | n/a | n/a | yes | |
+| F-phone-222 Erase or start over | yes | n/a | n/a | yes | |
+| F-phone-223 Help and feedback (detail) | yes | unknown (panel worker, D1) | n/a | yes | FN-L16-server-panel-worker-06 |
+| F-phone-224 What's new, About | yes (0.80.0 entry on top) | n/a | n/a | yes (0.79.0 entry on top) | |
+| F-phone-226 Gym shop (detail) | yes, per gym | yes | yes (see F-phone-138) | yes | |
+| F-phone-227 Gym messages, Message your gym, ask a trainer | yes | n/a | yes (member_messages, member_saw_messages, member_talk_*, member_ask_*) | yes | trainer side needs a paid gym plan |
+| F-phone-228 Diet plan from the trainer | yes, per gym (shows once a plan is sent) | n/a | yes (member_diet_plans) | yes | |
+| F-phone-229 Gym timings | yes | n/a | yes (member_gym_timings) | yes | |
+| F-phone-230 A gym mate's shared workouts | yes, per member (the mate must share) | n/a | yes (member_mate_profile) | yes | |
+| F-phone-239 MettleUp Plus and Find my gym | yes, **off** (Plus gate false) | n/a | yes (member_plus_lock; Find my gym: see H5-phone-screens-1) | **off** | QA builds only |
