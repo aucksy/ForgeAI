@@ -1,0 +1,10 @@
+# B-alerts-phone-screens-1-a checkpoint
+
+## Items
+- L11.1 done: alert paths in this area = (a) root start-up starts the gym-notice background check and the gym push address (Android only), following the gym link and "Messages from my gym"; off/leave unregisters and forgets (done means gone ok); (b) under the tabs: Update MettleUp, watch update, free month pop-ups; (c) Workout tab notice cards, one at a time, closing one rests the rest for a day except link/What's new/plan ends; (d) Find my gym: member sends a WhatsApp themselves, app polls only while in front. No sound, quiet hours or watch code here. Finding 01 (new); reused FN-A5-phone-native-1-01, FN-B-alerts-phone-components-2-a-01, FN-B-alerts-phone-components-1-a-01.
+- H2.1 done. Gym message pop-up reaches one member only if: Android phone (iPhone starts neither the check nor the push address; no iPhone build with members, the Reminders page is hidden on iPhone, so no finding), app installed and joined to the gym, "Messages from my gym" on (default on), notifications allowed, channel not muted, phone maker battery rules let the 15-min check or the push through. Free month pop-ups: plan switch on, not during a workout, once per free month.
+- H2.2 done: owner cannot see per member who gets gym message pop-ups (reused FN-B-alerts-panel-assistant-a-02, FN-B-alerts-phone-native-a-03).
+- H2.3 done: switch on but channel off/OPPO silent (reused FN-B-alerts-phone-components-2-a-01, FN-A5-phone-native-1-01).
+- H2.4 done: Crispy Curves (field-fill.csv): app link 0 of 2 member records, so anything aimed at a desk member record reaches 0 of 2 in the app; joined app phones 2 (1 with a phone number); how many have a push address or Android is not in field-fill, not countable.
+- H2.5 done: needs a real-phone check: on OPPO/Xiaomi/Samsung with battery saver on and screen off, send a gym notice and see whether the pop-up shows within about 15 minutes and makes a sound; with the app swiped away, check the push still arrives.
+- lens-cover ok; merge --dry 3 of 3 passed.
