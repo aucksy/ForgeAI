@@ -77,22 +77,20 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L18 | 37 | 3.8 (153k tokens) |
 | H2 | 34 | 3.9 (157k tokens) |
 | H3 | 1 | 3.7 (149k tokens) |
-| 4B | 1 | 3.3 (130k tokens) |
+| 4B | 2 | 3.2 (129k tokens) |
 
 ## Work items
-Counts: 6 todo, 2 in progress, 1165 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 6 todo, 1 in progress, 1166 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | R-cards-02 | 4B | 4B report cards batch 02 (_work/report/cards-02.txt) | in progress | _work/R-cards-02.md |  |
-| R-cards-03 | 4B | 4B report cards batch 03 (_work/report/cards-03.txt) | in progress | _work/R-cards-03.md |  |
 | R-cards-04 | 4B | 4B report cards batch 04 (_work/report/cards-04.txt) | todo | _work/R-cards-04.md |  |
 | R-cards-05 | 4B | 4B report cards batch 05 (_work/report/cards-05.txt) | todo | _work/R-cards-05.md |  |
 | R-cards-06 | 4B | 4B report cards batch 06 (_work/report/cards-06.txt) | todo | _work/R-cards-06.md |  |
 | R-cards-07 | 4B | 4B report cards batch 07 (_work/report/cards-07.txt) | todo | _work/R-cards-07.md |  |
 | R-cards-08 | 4B | 4B report cards batch 08 (_work/report/cards-08.txt) | todo | _work/R-cards-08.md |  |
 | R-cards-09 | 4B | 4B report cards batch 09 (_work/report/cards-09.txt) | todo | _work/R-cards-09.md |  |
-| H2-verify-30 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-30.txt) | done | _work/H2-verify-30.md | 15 true (S3 sample); 2 S3->S4 |
 | H2-verify-31 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-31.txt) | done | _work/H2-verify-31.md | 14 true, 1 false (G-1330) (S3 sample) |
 | H2-verify-32 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-32.txt) | done | _work/H2-verify-32.md | 15 true (S3 sample); 1 S3->S4 |
 | H2-verify-33 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-33.txt) | done | _work/H2-verify-33.md | 15 true (S3 sample); no changes |
@@ -100,7 +98,8 @@ Counts: 6 todo, 2 in progress, 1165 done, 0 blocked. Full list: work-items.jsonl
 | 3F-F2F3 | 3F | 3F F2-F3: change-360 catch check + triage check (_work/briefs/3F-F2F3.md) | done | _work/3F-F2F3.md | F2 141: 69 strong/70 weak/2 none; cal 6/9/0; F3 30% ask; 10 new questions |
 | H3-full | H3 | 3H H3: full verify of A3-inbox-1 and A3-inbox-3 findings | done | _work/H3-full.md | 27 findings: 11 true, 16 false; 8 severity changes |
 | R-cards-01 | 4B | 4B report cards batch 01 (_work/report/cards-01.txt) | done | _work/R-cards-01.md | 20 cards; 13 need his decision |
-(+ 1157 older done items, not shown)
+| R-cards-03 | 4B | 4B report cards batch 03 (_work/report/cards-03.txt) | done | _work/R-cards-03.md | 20 cards; 7 need his decision |
+(+ 1158 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
