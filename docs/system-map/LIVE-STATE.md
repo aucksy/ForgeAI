@@ -1588,3 +1588,53 @@ Only the free-plan limits switch was read as a value: off live (app_config free_
 | F-server-334 Member cloud copy | yes | n/a | yes | unknown | member_copy_put, member_copy_get, member_copy_count, member_account_delete, member_items present; first line of 0032 says NOT APPLIED (stale) |
 | F-server-335 Free plan limits switch | yes (retired) | n/a | **off** | n/a | app_config free_limits on=false live; nothing in the apps reads it since 12 Nov (FN-H5-server-database-1-01) |
 | F-server-336 Accept the terms online | yes | yes | yes | n/a | owner_accept_terms, owner_terms, gym_terms_acceptance present; live terms versions 2026-10-24 and 2026-11-10 (What's new terms line is true) |
+
+## H5-server-database-2 (surface server, area server/database-2) — 34 features, written by H5-server-database-2 on 2026-11-26
+
+These are the gym database changes 0034 to 0062. "Live DB" comes from catalog reads on 2026-11-26: of the 105 functions
+these files make that the apps call (plus the key helpers), 103 are on the live database, and all 41 tables they make are
+there. The two missing are member_gym_pack and owner_gym_pack: file 0046 never went live (FN-L16-server-database-2-02).
+Files 0058 to 0062 still open with "NOT APPLIED", but every function and table they make is live, and the live
+gym_create_online is 0061's version (it uses the phone proof and the one-trial-per-number list), so those first lines
+are stale (FN-L16-server-database-2-01). Two switches could not be read as values: the plan-limits switch (app_config
+plan_gate) and the "WhatsApp check on Create my gym" switch (phone_code_settings); the read guard refuses those tables.
+On main the panel half of the plan limits is off (PLAN_GATE_ON = false), so the plan limits are off in practice whatever
+the server switch says. "Live panel" = the panel build matches main (machine live-state.csv). "Play app" = the
+member-phone part; production 0.77.0 (21 Nov read), main 0.80.0; not compared feature by feature, so "unknown".
+
+| Feature | Main | Live panel / HQ | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-server-400 Lasting 6-digit PIN sign-in | yes | yes | yes | n/a | staff_set_pin, staff_pin_status, staff_sign_in, gym_staff_pins present |
+| F-server-401 Sign a person out everywhere, HQ owner reset | yes | yes | yes | n/a | owner_sign_out_person, hq_reset_owner_signin present |
+| F-server-402 Body measurements | yes | yes | yes | unknown | owner_save_measurement, member_measurements, gym_body_measurements present |
+| F-server-403 Diet plans | yes | yes | yes | unknown | owner_save_diet_plan, owner_withdraw_diet_plan, member_diet_plans, gym_diet_plans present |
+| F-server-404 Gym opening hours | yes | yes | yes | unknown | owner_save_gym_timings, member_gym_timings, gym_timings present |
+| F-server-405 Leaderboard | yes | yes | yes | unknown | owner_board, owner_hide_on_board, member_board, gym_member_board present |
+| F-server-406 Monthly challenge and rewards | yes | yes | yes | unknown | owner_save_challenge, owner_cancel_challenge, owner_confirm_challenge_reward, _challenge_rewards present |
+| F-server-407 Phone pop-ups for messages and offers | yes | yes (HQ sender) | yes | unknown | member_save_push_token, hq_push_next, hq_push_drop, push_jobs present |
+| F-server-408 How busy the gym is | yes | n/a | yes | unknown | member_gym_busy present |
+| F-server-409 Gym mate profile | yes | n/a | yes | unknown | member_mate_profile, member_mate_share, member_mate_board, gym_mate_profiles present |
+| F-server-410 Offline desk receipt accepted when overpaid | yes | yes | yes | n/a | _receipt_ok present (body not compared) |
+| F-server-411 At most 10 messages a day, quiet from the 3rd | yes | yes | yes | n/a | owner_send_message, _message_quiet present |
+| F-server-412 Member photo at the desk | yes | yes | yes | n/a | owner_save_member_photo, owner_remove_member_photo, gym_member_photos present |
+| F-server-413 Pause or renew requests | yes | yes | yes | unknown | member_ask_plan_change, owner_decide_plan_request, gym_plan_requests present |
+| F-server-414 Workout report requests | yes | yes | yes | unknown | owner_request_report, member_answer_report_request, owner_report_file present |
+| F-server-415 Apps read the gym's pack | yes | n/a | **no** | unknown | member_gym_pack and owner_gym_pack absent: waiting for a migration, not "behind a switch" (FN-L16-server-database-2-02) |
+| F-server-416 QR check-in, typed number waits for the desk | yes | yes | yes | unknown | member_check_in, owner_phone_links, owner_decide_phone_link, gym_phone_links present |
+| F-server-417 Busy machines by day and hour | yes | yes | yes | unknown | owner_save_machine_setup, member_machine_busy present; per-gym switch (gym_machine_setup.enabled), Crispy Curves value not read |
+| F-server-418 Trainers see members' progress | yes | yes | yes | unknown | owner_set_trainer, owner_assign_trainer, member_trainer_share present |
+| F-server-419 Trainer form videos | yes | yes | yes | unknown | _video_url_ok present |
+| F-server-420 Workout of the day | yes | yes | yes | unknown | owner_save_gym_wod, member_gym_wod, gym_wods present |
+| F-server-421 Nightly backup for HQ | yes | unknown | yes | n/a | hq_backup_snapshot present; whether the nightly run happened was not read |
+| F-server-422 Ask a trainer | yes | yes | yes | unknown | member_ask_trainer, owner_answer_question, trainer_questions present |
+| F-server-423 Pop-ups for the gym's answers | yes | yes (HQ sender) | yes | unknown | _push_note, hq_push_direct_next, member_push_notes present |
+| F-server-424 Pass members | yes | yes | yes | unknown | _pass_company, member_membership present |
+| F-server-425 Bring a friend | yes | yes | yes | unknown | member_friend_invite, friend_invite_send, owner_friend_summary present |
+| F-server-426 Online payment requests reach the member | yes | off (joinPay off) | yes | unknown | member_pay_me present; panel joinPay switch off (whole-system facts) |
+| F-server-427 Entry machines, machine side | yes | unknown | yes | n/a | gate_* functions and 5 entry_machine tables present; feature list says hidden from a stale first line (FN-L16-server-database-2-01) |
+| F-server-428 Entry machines, admin side | yes | yes | yes | n/a | owner_add_entry_machine, owner_set_machine_numbers, owner_queue_machine_commands present; same stale line |
+| F-server-429 Pay MettleUp (owner) | yes | yes | yes | n/a | owner_pay_mettleup, owner_report_mettleup_payment, mettleup_payments present; What's new line is true |
+| F-server-430 HQ checks MettleUp payments | yes | yes (HQ) | yes | n/a | hq_mettleup_payments, hq_confirm_mettleup_payment, hq_set_payment_details present |
+| F-server-431 Forgot PIN by WhatsApp code | yes | yes | yes | n/a | staff_reset_pin_with_proof, phone_code_has_account present; whether the code secret is set could not be read |
+| F-server-432 Create my gym online, one trial per number | yes | yes | yes (0061 version) | n/a | live gym_create_online uses the phone proof and trial_phones; signup check switch value not readable |
+| F-server-433 Plan limits on the server | yes | **off** (PLAN_GATE_ON false) | yes | n/a | gym_has_feature, gym_state, owner_gym_state, plan_features present; server switch plan_gate value not readable |
