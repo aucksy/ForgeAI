@@ -1126,3 +1126,52 @@ gym messages on, gym reminders on, machine use on, mates sharing off, trainer sh
 | F-phone-431 Pay the gym from the app | yes, per gym | **partly**: UPI yes; online test mode only | unknown (small web database) | yes | PAY_LIVE off |
 | F-phone-432 Recommend MettleUp to your gym | yes (no-gym screen, always shown: ShopScreen.tsx:113) | n/a (a share link) | n/a | yes | |
 | F-phone-433 Plus lock 7 days after plan ends | yes, **off** (paid-plan gate) | n/a | yes (member_plus_lock) | **off** | FN-H5-phone-shop-2-01 |
+
+## H5-phone-tracker-components-1 (surface phone, area phone/tracker-components-1) — 36 features, written by H5-phone-tracker-components-1 on 2026-11-26
+
+The member app's workout parts, files BeforeAfterShare to RestAlertsStatusRow. "Play app" = 0.79.0 (Play listing read
+26 Nov by H5-phone-components-2); main is 0.80.0, whose only What's new line (phone-number backup) is not in this area
+(FN-H5-phone-components-2-01). The newest change tag in these files is R-576 ("Today's target"), which is in 0.79.0
+(apps/mobile/src/lib/whatsNew.ts:95-104), so every feature here is on Play as on main (code-read; no git diff run).
+All of it runs on the phone; the only server call is the gym's workout of the day (member_gym_wod, proved present by
+the shop-2 catalog read, LIVE-STATE.md:1083-1108). Switch on main: member paid-plan gate off
+(packages/theme/src/memberPlan.ts:28), so suggested weight, plate calculator and all chart ranges are open to everyone.
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-phone-700 Share a before-and-after photo picture | yes | n/a | n/a | yes |  |
+| F-phone-701 Fix or delete a weigh-in or measurement | yes | n/a | n/a | yes |  |
+| F-phone-702 Pick a past day from a month calendar | yes | n/a | n/a | yes |  |
+| F-phone-703 Body map, muscles shaded | yes | n/a | n/a | yes |  |
+| F-phone-704 Muscles still resting card | yes | n/a | n/a | yes |  |
+| F-phone-705 Workout complete: kg lifted vs last time | yes | n/a | n/a | yes |  |
+| F-phone-706 New record pop-up, better-than-last-time line | yes | n/a | n/a | yes |  |
+| F-phone-707 Exercise progress charts | yes; 3-month free limit **off** (plan gate off) | n/a | n/a | yes, all ranges open | limit only bites if the Plus gate is turned on |
+| F-phone-708 Exercise records | yes | n/a | n/a | yes |  |
+| F-phone-710 Reorder by press, hold and drag | yes | n/a | n/a | yes |  |
+| F-phone-711 How to do an exercise (pictures, demo, steps) | yes | n/a | n/a | yes | pictures ship inside the app |
+| F-phone-712 Easy week note | yes | n/a | n/a | yes |  |
+| F-phone-713 Correct a saved workout's day, start, length | yes | n/a | n/a | yes |  |
+| F-phone-714 Workout clock with pause and resume | yes | n/a | n/a | yes |  |
+| F-phone-715 Plus/minus steps and Copy to sets below | yes | n/a | n/a | yes |  |
+| F-phone-716 Start screen target and kg or reps to beat | yes (R-576 reasons) | n/a | n/a | yes (0.79.0 line 2) |  |
+| F-phone-717 Log an exercise in a live workout | yes | n/a | n/a | yes |  |
+| F-phone-718 Suggested weight; locked line for free members | yes, gate **off**: suggestion open to all, locked line never shows | n/a | n/a (app_limits only matters with the gate on) | yes, open to all | features.json says behind switch: the switch is MEMBER_PLAN_GATE_ON, false |
+| F-phone-719 Plate calculator | yes, gate **off**: open to all | n/a | n/a | yes, open to all | same switch as F-phone-718 |
+| F-phone-720 Plates and bars your gym has | yes | n/a | n/a | yes |  |
+| F-phone-721 Machine and cable weight steps | yes | n/a | n/a | yes |  |
+| F-phone-722 Choose a workout setting from a list | yes | n/a | n/a | yes |  |
+| F-phone-723 Find an exercise | yes | n/a | n/a | yes |  |
+| F-phone-724 Finish a workout sheet | yes | n/a | n/a | yes |  |
+| F-phone-725 First routine card | yes | n/a | n/a | yes |  |
+| F-phone-726 Folder picker for a routine | yes | n/a | n/a | yes |  |
+| F-phone-727 Name or rename a routine folder | yes | n/a | n/a | yes |  |
+| F-phone-728 Today at your gym (gym's workout of the day) | yes, per gym | n/a (panel side: owner sets the workout) | yes (member_gym_wod, 0051) | yes | shows only when the gym set one today and is not on Starter |
+| F-phone-729 Stopwatch and countdown for a timed set | yes | n/a | n/a | yes |  |
+| F-phone-730 Bring in from Hevy or Strong | yes | n/a | n/a | yes | Hevy link read in an in-app page; Hevy's site not checked |
+| F-phone-732 Log a past workout | yes | n/a | n/a | yes |  |
+| F-phone-733 Cardio machine details on a set | yes | n/a | n/a | yes |  |
+| F-phone-734 Machine IN USE sign with rest countdown | yes | n/a | n/a | yes |  |
+| F-phone-735 Month report calendar | yes | n/a | n/a | yes |  |
+| F-phone-736 Muscle tips suggestion | yes | n/a | n/a | yes |  |
+| F-phone-737 Rest alerts status row | yes | n/a | n/a | yes |  |
