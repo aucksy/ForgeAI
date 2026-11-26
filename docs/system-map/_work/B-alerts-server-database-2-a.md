@@ -16,3 +16,4 @@
 - H2.3 done: 02, 03; reused FN-B-alerts-phone-shop-2-a-01.
 - H2.4 done (field-fill.csv): Crispy Curves 2 list members, 2 app members, check-in number on 1 of 2, app link 0 of 2. Report request pop-up reaches at most 1 of 2 members; "your gym asked you to pay" at most 1 of 2; gym messages at most 2 of 2 app members but push addresses are not in field-fill: real pop-up reach not countable.
 - H2.5 done: needs a real-phone check: gym message + trainer reply + order ready pop-up on OPPO/Xiaomi/Samsung with battery saver on and screen off; does a quiet (3rd) message stay silent on an app older than 0.60.0 (it will pop up: 0042 says so).
+- lens-cover ok; merge --dry 6 of 6 passed. Code lines read: about 900.
