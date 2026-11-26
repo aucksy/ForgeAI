@@ -1,0 +1,1 @@
+- 2026-11-27 started; read brief, items, pilot lessons.
