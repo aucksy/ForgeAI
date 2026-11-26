@@ -6,3 +6,4 @@
 - H2.3 done: 01, 03, 04; reused FN-B-alerts-phone-components-2-a-01.
 - H2.4 done: Crispy Curves (field-fill.csv): app link 0 of 2 members, so gym-message ring and gym reminders reach 0 of 2. Rest alert and workout reminders are phone-only choices, no gym rows: not countable.
 - H2.5 done: needs a real-phone check: (a) OPPO/OnePlus, screen off: Rest is over and Time to train, sound + banner; (b) DND with alarms blocked + Ring through on; (c) Pixel Watch paired: one buzz at rest end, countdown on watch, an old watch app (0.78.0 or older) recognised; (d) exact alarms off + Doze: how late Rest is over comes.
+- lens-cover ok; merge --dry 6 of 6 passed. ITEM DONE.
