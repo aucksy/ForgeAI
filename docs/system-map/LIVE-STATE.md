@@ -1230,3 +1230,48 @@ coach off (apps/mobile/src/lib/features.ts:6), so the "AI coach notes" row never
 | F-phone-836 Badges row on the Profile | yes | n/a | n/a | yes |  |
 | F-phone-837 Profile workouts feed | yes | n/a | n/a | yes |  |
 | F-phone-838 Profile history chart and Today goal card | yes | n/a | n/a | yes |  |
+
+## H5-phone-tracker-data (surface phone, area phone/tracker-data) — 26 features, written by H5-phone-tracker-data on 2026-11-26
+
+The member app's workout data: the on-phone database files and the stores that hold a live workout, rest timer, targets,
+muscle tips, plates, workout settings and the Progress pick. Everything here runs on the phone only: no file in
+apps/mobile/src/tracker/db or apps/mobile/src/tracker/store calls our server or the gym database (searched for rpc, fetch,
+supabase and /api: no hit), so "Live panel" and "Live DB" are n/a for every row and nothing waits for a migration.
+"Play app" = 0.79.0 (Play listing read 26 Nov by H5-phone-components-2); main is 0.80.0 (apps/mobile/app.json:5), whose
+only What's new line (phone-number backup) is not in this area (FN-H5-phone-components-2-01). The newest change tag in
+these files is R-576 (15 Nov, "Today's target" tops up open rows, activeWorkoutStore.ts:1377), named in 0.79.0's What's
+new (whatsNew.ts:95-104); the newest date in these files is 15 Nov, before the 17 Nov 0.79.0 tag. So every feature here
+is on Play as on main (code-read; no git diff run). Switches: the member paid-plan switch is off on main
+(packages/theme/src/memberPlan.ts:28), so the Plus check on Targets always says yes and every member gets suggested
+weights free (targetStore.ts:141); the feature list still calls Targets "behind switch" and "Pro" (FN-H5-phone-shop-2-01,
+same cause). Muscle tips follow the member's own setting, on by default (muscleTipsStore.ts:52). The demo body trend
+shows only after the member taps Load demo data.
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-phone-1000 Fix a body-weight or measurement entry | yes | n/a | n/a | yes |  |
+| F-phone-1001 Log body measurements | yes | n/a | n/a | yes |  |
+| F-phone-1002 Demo body measurement trend | yes, only after Load demo data | n/a | n/a | yes, same | a member action, not a code switch |
+| F-phone-1003 Create and edit my own exercise | yes | n/a | n/a | yes | photo or video stays on the phone |
+| F-phone-1004 Merge or hide exercises | yes | n/a | n/a | yes |  |
+| F-phone-1005 Log a live workout, pick it up after the app closes | yes (R-576) | n/a | n/a | yes (0.79.0 line 2) |  |
+| F-phone-1006 Previous values in a live workout | yes | n/a | n/a | yes |  |
+| F-phone-1007 Targets: suggested weight and reps | yes, **open to all** (Plus switch off) | n/a | n/a | yes, open to all | listed "behind switch" and "Pro"; nothing is locked today |
+| F-phone-1008 Per-exercise rest, carried note, bests for record alerts | yes | n/a | n/a | yes |  |
+| F-phone-1009 Rest timer between sets | yes | n/a | n/a | yes | "Rest is over" sound fix in 0.79.0 |
+| F-phone-1010 Start records fresh for one exercise | yes | n/a | n/a | yes |  |
+| F-phone-1011 Routine folders | yes | n/a | n/a | yes |  |
+| F-phone-1012 Routine editor | yes | n/a | n/a | yes |  |
+| F-phone-1013 Plan builder | yes | n/a | n/a | yes |  |
+| F-phone-1014 Import from Hevy or Strong | yes | n/a | n/a | yes | reads a file the member picks; no server |
+| F-phone-1015 Edit a logged workout | yes | n/a | n/a | yes |  |
+| F-phone-1016 Rename a workout | yes | n/a | n/a | yes |  |
+| F-phone-1017 Photos on a workout | yes | n/a | n/a | yes | not in the Drive backup |
+| F-phone-1018 Browse workout history | yes | n/a | n/a | yes |  |
+| F-phone-1019 Recent exercises band | yes | n/a | n/a | yes |  |
+| F-phone-1020 Profile photo, bio and link | yes | n/a | n/a | yes | kept on the phone |
+| F-phone-1021 How an exercise is logged and counted | yes | n/a | n/a | yes |  |
+| F-phone-1022 Muscle tips | yes, member setting on by default | n/a | n/a | yes, same | the switch is the member's own setting |
+| F-phone-1023 Plates and bars | yes | n/a | n/a | yes |  |
+| F-phone-1024 Workout settings kept on the phone | yes; AI coach note **off** (coach false) | n/a | n/a | yes; coach note **off** | apps/mobile/src/lib/features.ts:6 |
+| F-phone-1025 Progress: pick any exercise to chart | yes | n/a | n/a | yes | forgotten after a restart, by design |
