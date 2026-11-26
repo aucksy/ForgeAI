@@ -75,16 +75,14 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-time | 37 | 4.3 (170k tokens) |
 | B-words | 37 | 4.9 (196k tokens) |
 | L18 | 37 | 3.8 (153k tokens) |
-| H2 | 32 | 3.9 (157k tokens) |
+| H2 | 33 | 3.9 (157k tokens) |
 
 ## Work items
-Counts: 0 todo, 2 in progress, 1160 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 0 todo, 1 in progress, 1161 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| H2-verify-33 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-33.txt) | in progress | _work/H2-verify-33.md |  |
 | H2-verify-34 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-34.txt) | in progress | _work/H2-verify-34.md |  |
-| H2-verify-25 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-25.txt) | done | _work/H2-verify-25.md | 15 true (S3 sample); no changes |
 | H2-verify-26 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-26.txt) | done | _work/H2-verify-26.md | 14 true, 1 false (G-0920) (S3 sample) |
 | H2-verify-27 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-27.txt) | done | _work/H2-verify-27.md | 15 true (S3 sample); no changes |
 | H2-verify-28 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-28.txt) | done | _work/H2-verify-28.md | 15 true (S3 sample); 2 S3->S4 |
@@ -92,7 +90,8 @@ Counts: 0 todo, 2 in progress, 1160 done, 0 blocked. Full list: work-items.jsonl
 | H2-verify-30 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-30.txt) | done | _work/H2-verify-30.md | 15 true (S3 sample); 2 S3->S4 |
 | H2-verify-31 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-31.txt) | done | _work/H2-verify-31.md | 14 true, 1 false (G-1330) (S3 sample) |
 | H2-verify-32 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-32.txt) | done | _work/H2-verify-32.md | 15 true (S3 sample); 1 S3->S4 |
-(+ 1152 older done items, not shown)
+| H2-verify-33 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-33.txt) | done | _work/H2-verify-33.md | 15 true (S3 sample); no changes |
+(+ 1153 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
