@@ -1,0 +1,70 @@
+# Part UAT u239, F239 / R-629 "A gym added you", flow a: the happy join. A member with no gym sees "QA UAT Gym added
+# you as a member." on the Workout tab, taps "Join QA UAT Gym", and the gym's own join screen opens (the live
+# gym_preview of the fresh test gym; nothing joins by itself). Name, the 18+ tick, "Join this gym": the Gym tab shows
+# the gym, and the card is gone (the gym they are in is never shown). Starts with no gym. Pictures rel-f239-a-*.png.
+appId: com.mettleup.app
+---
+- openLink: "mettleup://qa-gymadded?found=member&reset=1&gym=QA%20UAT%20Gym&code=${CODE}"
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^QA UAT Gym added you as a member\\.$"
+- takeScreenshot: rel-f239-a-1-card
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Join QA UAT Gym$"
+- tapOn: "^Join QA UAT Gym$"
+- extendedWaitUntil:
+    visible: "Gym code ${CODE}"
+    timeout: 60000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Join this gym$"
+- takeScreenshot: rel-f239-a-2-join-screen
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "Your name"
+- tapOn: "Your name"
+- eraseText: 70
+- inputText: "Gia"
+- runFlow:
+    when:
+      notVisible: "^Gia$"
+    commands:
+      - tapOn: "Your name"
+      - eraseText: 70
+      - inputText: "Gia"
+- hideKeyboard
+- runFlow: sub-agree.yaml
+- scrollUntilVisible:
+    element: "^Join this gym$"
+    centerElement: true
+    timeout: 15000
+- tapOn: "^Join this gym$"
+- extendedWaitUntil:
+    notVisible: "Your name"
+    timeout: 45000
+- runFlow: sub-after-join.yaml
+- tapOn:
+    text: "^Gym$"
+    index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^QA UAT Gym$"
+- takeScreenshot: rel-f239-a-3-joined
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "Up next: .*|Done: .*|Workout in progress|Start empty workout"
+- assertNotVisible: "^QA UAT Gym added you as a member\\.$"
+- takeScreenshot: rel-f239-a-4-card-gone

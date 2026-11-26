@@ -32,6 +32,7 @@ import { checkInCodeFromUrl } from '@/shop/checkIn';
 import { startGymShortcutSync } from '@/shop/gymShortcut';
 import { startNoticeTaskSync } from '@/shop/noticeTaskSync';
 import { startPlanSync } from '@/plan/planSync';
+import { startGymAddedYou } from '@/shop/gymAddedYouApi';
 import { inviteCodeFromUrl, restorePendingLinks, setPendingCheckIn, setPendingInvite, takePendingCheckIn, takePendingInvite } from '@/shop/pendingInvite';
 
 /** The link the app was started with is read once per run: an erase later must not bring it back. */
@@ -134,6 +135,10 @@ export default function RootLayout() {
   }, [ready, status]);
   // Forgotten Finish: a workout with no sets for an hour pauses its own timer.
   useIdlePause(ready);
+  // F239 (R-629): "A gym added you", checked in the background after the first screen draws (never slows the start).
+  useEffect(() => {
+    if (ready && status === 'ready') startGymAddedYou();
+  }, [ready, status]);
 
   useEffect(() => {
     if (!ready) return;

@@ -207,7 +207,7 @@ OLD_PARTS="a b c d e f g h h3 p1 p2 i link i2 j j2 j3 k l n p9 r br inv invf p7 
 # R-123: ubk = a fresh install restores a backup FILE from the welcome screen (routines in order,
 # settings, profile), then saves a new one from Settings -> Back up and restore (qa/uat-bk.yaml).
 UAT_PARTS="uh ur un ud ue ubk ub uf ua uv ug uk"
-GATE_PARTS="w dnd longrest anim mk clip uat uatc u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u501 u456 u458 u454 u576 u461 u482 u484 u517 u203 utour"
+GATE_PARTS="w dnd longrest anim mk clip uat uatc u355 u344 u358 u366 usel ugym u15 u76 u198 u194 u401 u199 u404 u438 u444 ulook uage u439 u436 u336 u61 upic u452 u501 u456 u458 u454 u576 u461 u482 u484 u517 u203 u239 utour"
 qa_list() { echo "$1" | tr ',;' '  ' | tr '[:upper:]' '[:lower:]' | xargs; }
 QA_ONLY_LIST=$(qa_list "${QA_ONLY:-}")
 QA_EXTRA_LIST=$(qa_list "${QA_EXTRA:-}")
@@ -2097,6 +2097,7 @@ part_uat() {
   part_u484
   part_u517
   part_u203
+  part_u239
   part_ulook
   uat_gather
 }
@@ -2655,6 +2656,50 @@ part_u203() {
   [ "$rc" = 0 ] || status=1
   return $rc
 }
+# F239 / R-629 "A gym added you" (owner, 26 Nov 2026): a gym adds a signed-in member's number; the Workout tab says so
+# with Join (or Switch) and Not now. The QA build's 'gymAddedYou' stand-in answers mettleup://qa-gymadded without the
+# gym server (0100 is tested by supabase/tests/0100). Two FRESH test gyms (qa/uat_gym.py slots G and H, never FORGE1 /
+# RAMS01): "QA UAT Gym" to join and "QA Second Gym" to be offered as a switch. Starts from the demo (no gym). Flows:
+# e none found = no card; c lapsed + trainer words (Workout and Gym tab); b Not now twice (14 days, then for good);
+# a the happy join; d in a gym, the switch screen opens and Back keeps the old gym. Also runs alone with only=u239.
+# Pictures rel-f239-*.png.
+part_u239() {
+  local setup code code2 day rc=0
+  export XJ_STATE_DIR="${XJ_STATE_DIR:-${RUNNER_TEMP:-/tmp}/xj-state}"
+  mkdir -p "$XJ_STATE_DIR"
+  chmod 700 "$XJ_STATE_DIR" 2>/dev/null || true
+  gate_flow u239_seed gate-demo.yaml || { status=1; return 1; }
+  day=$(adb shell date +%Y-%m-%d | tr -d '\r')
+  setup=$(python3 "$QA_DIR/uat_gym.py" setup G "$day" 30 "Gia Added" 9000000239 2>&1)
+  echo "$setup" | grep '^::add-mask::' || true
+  echo "$setup" | grep -vE '^(CODE=|ENDS=|::add-mask::)' | sed 's/^/[u239 gym] /' | tee -a "$OUT/timeline.txt"
+  code=$(echo "$setup" | sed -n 's/^CODE=//p' | tail -1)
+  setup=$(python3 "$QA_DIR/uat_gym.py" setup H "$day" 30 "Gia Added" 9000000240 "QA Second Gym" 2>&1)
+  echo "$setup" | grep '^::add-mask::' || true
+  echo "$setup" | grep -vE '^(CODE=|ENDS=|::add-mask::)' | sed 's/^/[u239 gym 2] /' | tee -a "$OUT/timeline.txt"
+  code2=$(echo "$setup" | sed -n 's/^CODE=//p' | tail -1)
+  if [ -z "$code" ] || [ -z "$code2" ]; then
+    log "PART U239 FAILED: the test gyms could not be made (uat_gym.py setup G / H)"
+    python3 "$QA_DIR/uat_gym.py" sign-out G >/dev/null 2>&1 || true
+    python3 "$QA_DIR/uat_gym.py" sign-out H >/dev/null 2>&1 || true
+    status=1
+    return 1
+  fi
+  uat_flow uatf239e uat-rel-f239-e-none.yaml || rc=1
+  uat_flow uatf239c uat-rel-f239-c-words.yaml -e "CODE=$code" || rc=1
+  uat_flow uatf239b uat-rel-f239-b-not-now.yaml -e "CODE=$code" || rc=1
+  if uat_flow uatf239a uat-rel-f239-a-join.yaml -e "CODE=$code"; then
+    uat_flow uatf239d uat-rel-f239-d-switch.yaml -e "CODE2=$code2" || rc=1
+  else
+    rc=1
+  fi
+  python3 "$QA_DIR/uat_gym.py" sign-out G 2>&1 | sed 's/^/[u239 gym] /' | tee -a "$OUT/timeline.txt"
+  python3 "$QA_DIR/uat_gym.py" sign-out H 2>&1 | sed 's/^/[u239 gym 2] /' | tee -a "$OUT/timeline.txt"
+  mkdir -p "$OUT/uat-release"
+  { find "$OUT" -path "$OUT/uat-release" -prune -o -name "rel-f239-*.png" -print 2>/dev/null; find "$PWD" -maxdepth 1 -name "rel-f239-*.png" 2>/dev/null; } | while read -r f; do cp "$f" "$OUT/uat-release/" 2>/dev/null; done
+  [ "$rc" = 0 ] || status=1
+  return $rc
+}
 # F56 MettleUp Plus (owner R-461, 12 Nov 2026): the free and paid parts, switched on for this phone only through
 # the QA build's 'memberPlan' stand-in (mettleup://qa-plan): switched off first (no row, charts open), the free
 # month's "5 days left" and "has ended" pop-ups (once each, also after the app is killed), the locked charts, a
@@ -2883,6 +2928,7 @@ qa_runs u482 && ! qa_runs uat && { log "gate part U482 begins"; part_u482; }
 qa_runs u484 && ! qa_runs uat && { log "gate part U484 begins"; part_u484; }
 qa_runs u517 && ! qa_runs uat && { log "gate part U517 begins"; part_u517; }
 qa_runs u203 && ! qa_runs uat && { log "gate part U203 begins"; part_u203; }
+qa_runs u239 && ! qa_runs uat && { log "gate part U239 begins"; part_u239; }
 # Picture tour (owner, 14 Nov 2026): every first-launch screen of a fresh install, photographed in order (intro,
 # welcome, Join my gym, Bring workouts, Google without the 18+ tick, the 3 setup questions). Not a test; only=utour.
 qa_runs utour && { log "gate part UTOUR begins"; uat_flow utour tour-first-run.yaml || status=1; }

@@ -102,85 +102,84 @@ begin
 
   -- 1. Owner: Vik finds Iron as owner (any first name: staff rows need none).
   perform pg_temp.t100_as(u_vik);
-  r := public.phone_account_gyms(vik_ph, 'Vik');
+  r := public.phone_account_gyms('Vik');
   checks := checks + 1; fails := fails || pg_temp.t100_is('1ok', r->>'ok', 'true');
   checks := checks + 1; fails := fails || pg_temp.t100_is('1n', jsonb_array_length(r->'matches')::text, '1');
   checks := checks + 1; fails := fails || pg_temp.t100_is('1role', r->'matches'->0->>'role', 'owner');
   checks := checks + 1; fails := fails || pg_temp.t100_is('1code', r->'matches'->0->>'joinCode', 'T100AA');
   checks := checks + 1; fails := fails || pg_temp.t100_is('1brand', r->'matches'->0->'brand'->>'accent', '#E11D48');
-  -- Number typed with +91 and spaces is the same number.
-  r := public.phone_account_gyms('+91 ' || substr(vik_ph, 1, 5) || ' ' || substr(vik_ph, 6), 'Vik');
-  checks := checks + 1; fails := fails || pg_temp.t100_is('1fmt', jsonb_array_length(r->'matches')::text, '1');
 
   -- 2. Trainer: Tara at Beta; the suspended gym never shows.
   perform pg_temp.t100_as(u_tara);
-  r := public.phone_account_gyms(tara_ph, 'Tara');
+  r := public.phone_account_gyms('Tara');
   checks := checks + 1; fails := fails || pg_temp.t100_is('2n', jsonb_array_length(r->'matches')::text, '1');
   checks := checks + 1; fails := fails || pg_temp.t100_is('2role', r->'matches'->0->>'role', 'trainer');
 
   -- 3. Member with a running plan; wrong first name finds nothing; no data of other members.
   perform pg_temp.t100_as(u_mona);
-  r := public.phone_account_gyms(mona_ph, 'Mona');
+  r := public.phone_account_gyms('Mona');
   checks := checks + 1; fails := fails || pg_temp.t100_is('3role', r->'matches'->0->>'role', 'member');
   checks := checks + 1; fails := fails || pg_temp.t100_is('3lapsed', r->'matches'->0->>'lapsed', 'false');
   checks := checks + 1; fails := fails || pg_temp.t100_is('3ends', r->'matches'->0->>'endsOn', later);
   checks := checks + 1; fails := fails || pg_temp.t100_is('3noprice', (strpos(r::text, 'price') = 0)::text, 'true');
-  r := public.phone_account_gyms(mona_ph, 'Priya');
+  r := public.phone_account_gyms('Priya');
   checks := checks + 1; fails := fails || pg_temp.t100_is('3name', jsonb_array_length(r->'matches')::text, '0');
 
   -- 4. Lapsed: ended 5 days ago -> found, lapsed; ended 20 days ago -> not; starts in 3 days -> not yet.
   perform pg_temp.t100_as(u_lap);
-  r := public.phone_account_gyms(lap_ph, 'Lata');
+  r := public.phone_account_gyms('Lata');
   checks := checks + 1; fails := fails || pg_temp.t100_is('4n', jsonb_array_length(r->'matches')::text, '1');
   checks := checks + 1; fails := fails || pg_temp.t100_is('4gym', r->'matches'->0->>'gymName', 'T100 Delta');
   checks := checks + 1; fails := fails || pg_temp.t100_is('4lapsed', r->'matches'->0->>'lapsed', 'true');
   checks := checks + 1; fails := fails || pg_temp.t100_is('4ends', r->'matches'->0->>'endsOn', ended5);
 
-  -- 5. Somebody else's number: refused (the caller's account is not that number's).
+  -- 5. Only the caller's OWN number counts: Vik typing Mona's name still gets only his own gym (never Mona's Delta),
+  -- and no answer ever carries a number.
   perform pg_temp.t100_as(u_vik);
-  r := public.phone_account_gyms(mona_ph, 'Mona');
-  checks := checks + 1; fails := fails || pg_temp.t100_is('5other', r->>'error', 'NOT_YOUR_NUMBER');
-  checks := checks + 1; fails := fails || pg_temp.t100_is('5nomatch', r->>'matches', null);
-  r := public.phone_account_gyms('12', 'Vik');
-  checks := checks + 1; fails := fails || pg_temp.t100_is('5junk', r->>'error', 'NOT_YOUR_NUMBER');
+  r := public.phone_account_gyms('Mona');
+  checks := checks + 1; fails := fails || pg_temp.t100_is('5own', (r->'matches'->0->>'gymName') || '/' || jsonb_array_length(r->'matches'), 'T100 Iron/1');
+  checks := checks + 1; fails := fails || pg_temp.t100_is('5nonumber', (r::text ~ '90001000')::text, 'false');
+  perform pg_temp.t100_as(u_mona);
+  r := public.phone_account_gyms('Mona');
+  checks := checks + 1; fails := fails || pg_temp.t100_is('5nonumber2', (r::text ~ '90001000')::text, 'false');
 
   -- 6. Recycled number: the old holder's (older) account learns nothing; the new holder's finds Delta.
   perform pg_temp.t100_as(u_old0);
-  r := public.phone_account_gyms(old_ph, 'Ravi');
+  r := public.phone_account_gyms('Ravi');
   checks := checks + 1; fails := fails || pg_temp.t100_is('6old', r->>'error', 'NOT_YOUR_NUMBER');
   perform pg_temp.t100_as(u_old1);
-  r := public.phone_account_gyms(old_ph, 'Ravi');
+  r := public.phone_account_gyms('Ravi');
   checks := checks + 1; fails := fails || pg_temp.t100_is('6new', r->'matches'->0->>'gymName', 'T100 Delta');
 
   -- 7. A Google account or no sign-in: refused.
   perform pg_temp.t100_as(u_goog);
-  r := public.phone_account_gyms(goog_ph, 'Ann');
+  r := public.phone_account_gyms('Ann');
   checks := checks + 1; fails := fails || pg_temp.t100_is('7google', r->>'error', 'NOT_PHONE_ACCOUNT');
   perform pg_temp.t100_as(null);
-  r := public.phone_account_gyms(vik_ph, 'Vik');
+  r := public.phone_account_gyms('Vik');
   checks := checks + 1; fails := fails || pg_temp.t100_is('7anon', r->>'error', 'NOT_PHONE_ACCOUNT');
 
   -- 8. Deleted from the list, or on no list: nothing.
   perform pg_temp.t100_as(u_gone);
-  r := public.phone_account_gyms(gone_ph, 'Gopal');
+  r := public.phone_account_gyms('Gopal');
   checks := checks + 1; fails := fails || pg_temp.t100_is('8gone', jsonb_array_length(r->'matches')::text, '0');
   perform pg_temp.t100_as(u_nobody);
-  r := public.phone_account_gyms(nobody_ph, 'Nobody');
+  r := public.phone_account_gyms('Nobody');
   checks := checks + 1; fails := fails || pg_temp.t100_is('8none', jsonb_array_length(r->'matches')::text, '0');
   -- Each check keeps one log row: the account and the count, never the number.
   checks := checks + 1; fails := fails || pg_temp.t100_is('8log',
     (select count(*) from public.phone_gym_checks where user_id = u_nobody and found = 0)::text, '1');
 
   -- 9. Limit: 6 checks per account per 24 h (Nobody has 1 already).
-  for i in 1..5 loop r := public.phone_account_gyms(nobody_ph, 'Nobody'); end loop;
+  for i in 1..5 loop r := public.phone_account_gyms('Nobody'); end loop;
   checks := checks + 1; fails := fails || pg_temp.t100_is('9sixth', r->>'ok', 'true');
-  r := public.phone_account_gyms(nobody_ph, 'Nobody');
+  r := public.phone_account_gyms('Nobody');
   checks := checks + 1; fails := fails || pg_temp.t100_is('9seventh', r->>'error', 'TOO_MANY');
 
   -- 10. Switch off: answers off, nothing found, no log row.
   update public.phone_gym_check_settings set "on" = false;
   perform pg_temp.t100_as(u_mona);
-  r := public.phone_account_gyms(mona_ph, 'Mona');
+  r := public.phone_account_gyms('Mona');
   checks := checks + 1; fails := fails || pg_temp.t100_is('10off', r->>'off', 'true');
   checks := checks + 1; fails := fails || pg_temp.t100_is('10none', jsonb_array_length(r->'matches')::text, '0');
   update public.phone_gym_check_settings set "on" = true;
@@ -196,25 +195,27 @@ begin
   -- 12. Claim after the join: Mona joins Delta in the app, then the account links the gym's list row.
   insert into public.gym_members(gym_id, name, key_hash) values (gd, 'Mona', public._hash_key(mkey)) returning member_id into mid;
   perform pg_temp.t100_as(u_vik);
-  r := public.phone_account_claim(mkey, mona_ph);
-  checks := checks + 1; fails := fails || pg_temp.t100_is('12other', r->>'error', 'NOT_YOUR_NUMBER');
+  r := public.phone_account_claim(mkey);
+  checks := checks + 1; fails := fails || pg_temp.t100_is('12other', r->>'error', 'NOT_ON_ROSTER');
   perform pg_temp.t100_as(u_mona);
-  r := public.phone_account_claim(mkey, mona_ph);
+  r := public.phone_account_claim(mkey);
   checks := checks + 1; fails := fails || pg_temp.t100_is('12ok', r->>'ok', 'true');
   checks := checks + 1; fails := fails || pg_temp.t100_is('12phone',
     (select checkin_phone from public.gym_members where member_id = mid), '+91' || mona_ph);
 
   -- 13. Who may call: the app's signed-in role only; never anon; the helpers never.
   checks := checks + 1; fails := fails || pg_temp.t100_is('13anon',
-    has_function_privilege('anon', 'public.phone_account_gyms(text, text)', 'execute')::text, 'false');
+    has_function_privilege('anon', 'public.phone_account_gyms(text)', 'execute')::text, 'false');
   checks := checks + 1; fails := fails || pg_temp.t100_is('13auth',
-    has_function_privilege('authenticated', 'public.phone_account_gyms(text, text)', 'execute')::text, 'true');
+    has_function_privilege('authenticated', 'public.phone_account_gyms(text)', 'execute')::text, 'true');
   checks := checks + 1; fails := fails || pg_temp.t100_is('13claimanon',
-    has_function_privilege('anon', 'public.phone_account_claim(text, text)', 'execute')::text, 'false');
+    has_function_privilege('anon', 'public.phone_account_claim(text)', 'execute')::text, 'false');
   checks := checks + 1; fails := fails || pg_temp.t100_is('13find',
     has_function_privilege('authenticated', 'public._phone_gym_find(text, text)', 'execute')::text, 'false');
   checks := checks + 1; fails := fails || pg_temp.t100_is('13num',
-    has_function_privilege('authenticated', 'public._phone_account_number(text)', 'execute')::text, 'false');
+    has_function_privilege('authenticated', 'public._phone_for_code(text, text, uuid)', 'execute')::text, 'false');
+  checks := checks + 1; fails := fails || pg_temp.t100_is('13code',
+    has_function_privilege('authenticated', 'public._phone_account_code()', 'execute')::text, 'false');
 
   if fails = '' then raise exception 'RESULT PASS (% checks)', checks;
   else raise exception 'RESULT FAIL:%', fails; end if;

@@ -1,0 +1,56 @@
+# Part UAT u239, F239 / R-629 "A gym added you", flow c: the words for a lapsed member (the day the plan ended) and
+# for a trainer, on the Workout tab and on the Gym tab with no gym. The answers are the QA stand-in's (said on the
+# card). Starts with no gym (after flow e). Pictures rel-f239-c-*.png.
+appId: com.mettleup.app
+---
+# ---------------------------------------------------------------- 1. a lapsed member: the day the plan ended
+- openLink: "mettleup://qa-gymadded?found=lapsed&reset=1&gym=QA%20UAT%20Gym&code=${CODE}"
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^QA UAT Gym added you as a member\\.$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Your plan ended on \\d{1,2} [A-Z][a-z]{2}\\. Join to see your gym and renew\\.$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Join QA UAT Gym$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Not now$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Test build: this answer is made up\\.$"
+- assertNotVisible: "^Switch to .*"
+- takeScreenshot: rel-f239-c-1-lapsed
+# The Gym tab with no gym shows the same card above the code box.
+- tapOn:
+    text: "^Gym$"
+    index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^QA UAT Gym added you as a member\\.$"
+- takeScreenshot: rel-f239-c-2-lapsed-gym-tab
+# ---------------------------------------------------------------- 2. a trainer
+- openLink: "mettleup://qa-gymadded?found=trainer&reset=1&gym=QA%20UAT%20Gym&code=${CODE}"
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^QA UAT Gym added you as a trainer\\.$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Join to open your gym in the app\\.$"
+- assertNotVisible: "^QA UAT Gym added you as a member\\.$"
+- takeScreenshot: rel-f239-c-3-trainer

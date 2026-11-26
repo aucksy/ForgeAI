@@ -33,6 +33,7 @@ import { friendInviteFrom, type FriendInvite } from './bringFriend';
 import { staffDoorFromRow, type StaffDoorAnswer } from './staffDoor';
 import { claimAnswerFrom, findAnswerFrom, type ClaimAnswer, type FindAnswer } from './findGym';
 import { matchesFromFoundGyms, signInAnswerFrom, type SignInAnswer } from '@/onboarding/phoneSignIn';
+import { addedAnswerFrom, addedClaimFrom, missingFunction, type AddedAnswer, type ClaimAnswer as AddedClaimAnswer } from './gymAddedYou';
 import { gymJoinDayFrom, type RecentWorkout } from './trainerRecent';
 import type { GymLink, GymOrder, Product } from './types';
 
@@ -708,6 +709,27 @@ export async function apiPhoneSignIn(proof: string, firstName: string): Promise<
   }
   console.warn('[gym] phone sign-in failed', r.error.kind);
   return r.error.kind === 'offline' || r.error.kind === 'timeout' ? { ok: false, problem: 'OFFLINE' } : { ok: false, problem: 'OTHER' };
+}
+
+/**
+ * F239 "A gym added you" (0100 phone_account_gyms): which MettleUp gyms list this signed-in PHONE account's number,
+ * and as whom. A background check: `timeoutMs` is short (8 s). 'MISSING' = a server without 0100 (logged, nothing
+ * shown); 'OFFLINE' = no answer in time. Never throws.
+ */
+export async function apiPhoneAccountGyms(firstName: string, timeoutMs: number): Promise<AddedAnswer | { ok: false; problem: 'OFFLINE' | 'MISSING' }> {
+  const r = await call('phone_account_gyms', { p_name: firstName }, timeoutMs);
+  if (r.ok) return addedAnswerFrom(r.data);
+  if (missingFunction(r)) return { ok: false, problem: 'MISSING' };
+  console.warn('[gym added you] the check failed', r.error.kind, r.message ?? '');
+  return r.error.kind === 'offline' || r.error.kind === 'timeout' ? { ok: false, problem: 'OFFLINE' } : { ok: false, problem: 'OTHER' };
+}
+
+/** F239: after joining a gym from "A gym added you", this phone account's number links the gym's list member (0100). */
+export async function apiPhoneAccountClaim(key: string): Promise<AddedClaimAnswer | { ok: false; problem: 'OFFLINE' | 'MISSING' }> {
+  const r = await call('phone_account_claim', { p_key: key }, WRITE_MS);
+  if (r.ok) return addedClaimFrom(r.data);
+  if (missingFunction(r)) return { ok: false, problem: 'MISSING' };
+  return r.error.kind === 'offline' || r.error.kind === 'timeout' ? { ok: false, problem: 'OFFLINE' } : { ok: false, problem: r.error.kind };
 }
 
 /** After joining a found gym: the same proof links the gym's list member to this app member (0068). */

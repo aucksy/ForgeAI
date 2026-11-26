@@ -17,6 +17,8 @@ import { ActivityIndicator, Pressable, RefreshControl, ScrollView, Share, Text, 
 import { JoinGymCard } from '@/components/settings/JoinGymCard';
 import { StaffDoorCard } from '@/shop/StaffDoorCard';
 import { STAFF_DOOR_ON } from '@/shop/staffDoor';
+import { GymAddedYouCard } from '@/shop/GymAddedYouCard';
+import { runGymAddedCheck } from '@/shop/gymAddedYouApi';
 import { LinkRow } from '@/components/stats/parts';
 import { Card, Chip, GhostButton, Icon, Screen, type IconName } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
@@ -88,10 +90,18 @@ function JoinGymDoor() {
   // Why this phone is in no gym, when the gym let it go (gymActions.ts → unlink(UNLINKED_TEXT)).
   const notice = useGymShop((s) => s.notice);
   const access = useMemberAccess();
+  // F239 (R-629): the Gym tab with no gym asks again whether a gym added this number (at most once an hour).
+  useFocusEffect(
+    useCallback(() => {
+      void runGymAddedCheck('gymTab');
+    }, []),
+  );
   return (
     <Screen title="Gym" right={<BrandCorner />}>
       <View style={{ gap: space.lg, paddingBottom: space.xl }}>
         {notice ? <DemoNote text={notice} /> : null}
+        {/* F239 (R-629): "Iron Gym added you as a member." Join and Not now, above the code box. */}
+        <GymAddedYouCard />
         <JoinGymCard scan />
         {/* R-458 + F56 (R-461): the member proves their number with WhatsApp and the app finds their gym. Part of
             MettleUp Plus, so it shows only while the plan switch is on (0.78.0 review: with nothing locked, "unlock

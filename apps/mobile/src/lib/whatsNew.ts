@@ -70,6 +70,13 @@ export interface WhatsNewEntry {
 /** Newest first. */
 export const WHATS_NEW_LOG: readonly WhatsNewEntry[] = [
   {
+    // DRAFT for the next release (not released; app.json is still 0.80.0, so no build shows it yet). The releaser sets
+    // the version and date when the owner says "release". F239 / R-629 "A gym added you" (owner, 26 Nov 2026).
+    version: '0.81.0',
+    date: '26 Nov',
+    lines: [{ text: 'If your gym adds your number after you sign up, the Workout tab now tells you and helps you join.' }],
+  },
+  {
     // Owner's release, 25 Nov 2026 ~18:45 IST ("This has to go now, today. And plan it properly and build it and release
     // it today", R-627 / F237): 0.79.0 plus the phone number backup. member-words rules, no Gemini pass. Left out (no
     // member sees them): "Delete my account" waits for a running save first (audit S1), and members under 18 save

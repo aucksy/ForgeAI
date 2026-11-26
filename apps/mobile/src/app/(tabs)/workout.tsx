@@ -26,6 +26,7 @@ import { WhatsNewCard } from '@/components/WhatsNewCard';
 import { BackupMovedCard } from '@/components/BackupMovedCard';
 import { SafekeepNudgeCard } from '@/components/SafekeepNudgeCard';
 import { PlanEndsCard } from '@/shop/PlanEndsCard';
+import { GymAddedYouCard } from '@/shop/GymAddedYouCard';
 import { WatchInstallCard } from '@/components/WatchInstallCard';
 import { StraightInNoteCard } from '@/onboarding/components/StraightInNoteCard';
 import { Card, GhostButton, Screen, UndoBar, askConfirm } from '@/components/ui';
@@ -408,6 +409,8 @@ export default function WorkoutScreen() {
           <StraightInNoteCard hidden={notice !== 'setupGuess'} onWant={want('setupGuess')} onDone={noticeClosed} />
           {/* Once per new version: what changed, in plain words (lib/whatsNew.ts). */}
           <WhatsNewCard hidden={notice !== 'whatsNew'} onWant={want('whatsNew')} onDone={noticeClosed} />
+          {/* F239 (R-629): a gym added this member's number: Join (or Switch) and Not now (shop/gymAddedYou.ts). */}
+          <GymAddedYouCard hidden={notice !== 'gymAdded'} onWant={want('gymAdded')} onDone={noticeClosed} />
           {/* F67: after the first finished workout, a watch without MettleUp: "Install on watch", once. */}
           <WatchInstallCard
             hidden={notice !== 'watch'}

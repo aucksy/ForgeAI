@@ -1,0 +1,56 @@
+# Part UAT u239, F239 / R-629 "A gym added you", flow d: already in another gym. In "QA UAT Gym" (flow a), the QA
+# answer says "QA Second Gym" (a second fresh test gym) added the member: the card says joining moves them out of
+# QA UAT Gym, and its button is "Switch to QA Second Gym". The tap opens the gym's own join screen ("Switch to this
+# gym", which asks before anything changes); Back keeps the old gym (negative: never a switch by itself).
+# Pictures rel-f239-d-*.png. Leaves the app on the tabs, in QA UAT Gym.
+appId: com.mettleup.app
+---
+- openLink: "mettleup://qa-gymadded?found=other-gym&reset=1&gym=QA%20Second%20Gym&code=${CODE2}"
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^QA Second Gym added you as a member\\.$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: ".*Joining moves you out of QA UAT Gym\\.$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Switch to QA Second Gym$"
+- assertNotVisible: "^Join QA Second Gym$"
+- takeScreenshot: rel-f239-d-1-switch-card
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Switch to QA Second Gym$"
+- tapOn: "^Switch to QA Second Gym$"
+- extendedWaitUntil:
+    visible: "Gym code ${CODE2}"
+    timeout: 60000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Switch to this gym$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "You.re in QA UAT Gym now\\..*"
+- takeScreenshot: rel-f239-d-2-switch-screen
+# Cancel: Back, nothing tapped. The old gym stays.
+- back
+- extendedWaitUntil:
+    notVisible: "Gym code ${CODE2}"
+    timeout: 10000
+- tapOn:
+    text: "^Gym$"
+    index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^QA UAT Gym$"
+- assertNotVisible: "^QA Second Gym$"
+- takeScreenshot: rel-f239-d-3-still-old-gym

@@ -56,6 +56,7 @@ export const META_LEFT_OUT: Readonly<Record<string, string>> = {
   intro_seen: 'the intro screens before the welcome were seen on this phone (R-248)',
   auto_backup_owed: 'a Drive backup this phone still owed after a workout (R-282; retired by R-320, no longer written; may linger on old phones)',
   straight_in_note: 'one-off Workout tab note after a found member went straight in (R-587; about the setup on this phone)',
+  gym_added_you: '"A gym added you" card: the last check, its gyms and the "Not now" of each gym (F239; asked again on each phone)',
   backup_moved_seen: 'the one-off "Backups now go to your MettleUp account" card was closed (R-320; about the Drive link of this phone)',
   activeWorkoutDraft: 'a workout in progress (a restore waits until it is finished)',
   phoneReminderSchedule: 'notification schedule of this phone (rebuilt from the reminder settings)',

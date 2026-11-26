@@ -1,0 +1,67 @@
+# Part UAT u239, F239 / R-629 "A gym added you", flow b: "Not now" twice. The first hides the gym's card for 14 days
+# (the same answer the same day: still hidden), it comes back after 14 days (the QA link's days=15 moves the card's
+# clock), and the second "Not now" hides it for good (days=400: still hidden). Starts with no gym. Pictures
+# rel-f239-b-*.png.
+appId: com.mettleup.app
+---
+- openLink: "mettleup://qa-gymadded?found=member&reset=1&gym=QA%20UAT%20Gym&code=${CODE}"
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^QA UAT Gym added you as a member\\.$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^Join to check in with your phone and see your plan\\.$"
+- takeScreenshot: rel-f239-b-1-card
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Not now$"
+- tapOn: "^Not now$"
+- extendedWaitUntil:
+    notVisible: "^QA UAT Gym added you as a member\\.$"
+    timeout: 10000
+- takeScreenshot: rel-f239-b-2-first-not-now
+# The same answer again the same day: still hidden (negative).
+- openLink: "mettleup://qa-gymadded?found=member&gym=QA%20UAT%20Gym&code=${CODE}"
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "Up next: .*|Done: .*|Workout in progress|Start empty workout"
+- assertNotVisible: "^QA UAT Gym added you as a member\\.$"
+# 15 days later: back.
+- openLink: "mettleup://qa-gymadded?found=member&days=15&gym=QA%20UAT%20Gym&code=${CODE}"
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^QA UAT Gym added you as a member\\.$"
+- takeScreenshot: rel-f239-b-3-back-after-14-days
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Not now$"
+- tapOn: "^Not now$"
+- extendedWaitUntil:
+    notVisible: "^QA UAT Gym added you as a member\\.$"
+    timeout: 10000
+# The second "Not now": gone for good, even 400 days later.
+- openLink: "mettleup://qa-gymadded?found=member&days=400&gym=QA%20UAT%20Gym&code=${CODE}"
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "Up next: .*|Done: .*|Workout in progress|Start empty workout"
+- assertNotVisible: "^QA UAT Gym added you as a member\\.$"
+- takeScreenshot: rel-f239-b-4-gone-for-good

@@ -4,8 +4,8 @@ phone's check-in and "Your plan ends on ..." checks. Built on the cross-role jou
 (xj_server.py: gym_create_online, the state file, the owner's own functions; xc_server.py: the desk's
 yes to a typed number), the way qa-journeys and qa-conditions make their own gyms every run.
 
-  setup <slot> <phone-today YYYY-MM-DD> <days-left> <full name> <mobile>
-        a fresh gym "QA UAT Gym", and on its desk list <full name> with <mobile> and a plan that
+  setup <slot> <phone-today YYYY-MM-DD> <days-left> <full name> <mobile> [<gym name>]
+        a fresh gym "QA UAT Gym" (F239: or <gym name>, e.g. "QA Second Gym" for a switch), and on its desk list <full name> with <mobile> and a plan that
         started 20 days ago (India) and ends <days-left> days after the PHONE's today. Prints
         CODE=<join code> and ENDS=<the day as the app words it: "Friday, 6 Nov">.
   confirm <slot> <+91mobile>   the desk's yes to that typed check-in number (0048), if one waits
@@ -189,7 +189,7 @@ def main(argv):
     cmd, slot = argv[0], argv[1]
     if cmd == "setup":
         phone_today, left, full_name, mobile = argv[2], int(argv[3]), argv[4], argv[5]
-        rc = xj.main(["new-gym", slot, GYM_NAME])
+        rc = xj.main(["new-gym", slot, argv[6] if len(argv) > 6 and argv[6].startswith("QA ") else GYM_NAME])
         if rc:
             return rc
         st = xj.load(slot)
