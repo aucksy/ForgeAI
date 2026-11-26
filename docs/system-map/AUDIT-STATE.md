@@ -74,14 +74,13 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-switch | 56 | 4.2 (169k tokens) |
 | B-time | 37 | 4.3 (170k tokens) |
 | B-words | 37 | 4.9 (196k tokens) |
-| L18 | 34 | 3.8 (152k tokens) |
+| L18 | 35 | 3.8 (152k tokens) |
 
 ## Work items
-Counts: 1 todo, 3 in progress, 1124 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 1 todo, 2 in progress, 1125 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L18-server-hq-gate-workers | L18 | lens 18 (Opportunities) x server / server/hq-gate-workers: 2 items | in progress | _work/L18-server-hq-gate-workers.md |  |
 | L18-server-panel-worker | L18 | lens 18 (Opportunities) x server / server/panel-worker: 2 items | in progress | _work/L18-server-panel-worker.md |  |
 | L18-web-pages | L18 | lens 18 (Opportunities) x web / web/pages: 2 items | in progress | _work/L18-web-pages.md |  |
 | H1-dedupe | tools | 3H H1: write and run _tools/dedupe.mjs -> finding-groups.jsonl + _work/verify-queue.json | todo | _work/H1-dedupe.md |  |
@@ -93,7 +92,7 @@ Counts: 1 todo, 3 in progress, 1124 done, 0 blocked. Full list: work-items.jsonl
 | CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
-(+ 1116 older done items, not shown)
+(+ 1117 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
