@@ -11,3 +11,10 @@
 - G-0068 true (S2->S3: test gap, server still refuses)
 - G-0069 true (S2->S3: words-only test gap, logic tested)
 - G-0070 true (S2 kept: breaks privacy.html:143 promise)
+- G-0071 true (S2 kept)
+- G-0072 true (S2 kept)
+- G-0073 FALSE (offline3 J34c tests exactly this)
+- G-0074 true (S2 kept)
+- G-0075 true (core claim; demo walk opens the page once)
+
+DONE: 15/15. true 14, false 1 (G-0073), unsure 0.
