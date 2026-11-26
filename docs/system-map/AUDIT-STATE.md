@@ -66,21 +66,21 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L12 | 37 | 1.2 (50k tokens) |
 | L16 | 37 | 2.7 (109k tokens) |
 | H5 | 16 | 3.5 (142k tokens) |
-| B-alerts | 30 | 3.5 (141k tokens) |
+| B-alerts | 31 | 3.5 (141k tokens) |
 | B-switch | 21 | 4.0 (159k tokens) |
 | B-time | 14 | 4.0 (158k tokens) |
 | B-words | 13 | 4.6 (186k tokens) |
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 180 todo, 5 in progress, 942 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 179 todo, 5 in progress, 943 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | H5-phone-native | H5 | hunt 5 (Built vs live (deploy state)) x phone / phone/native: 4 items | in progress | _work/H5-phone-native.md |  |
 | B-alerts-phone-lib-core-a | B-alerts | B-alerts (Notifications and messages + 1 more) x phone / phone/lib-core: 6 items | in progress | _work/B-alerts-phone-lib-core-a.md |  |
-| B-alerts-phone-lib-core-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x phone / phone/lib-core: 10 items | in progress | _work/B-alerts-phone-lib-core-b.md |  |
 | B-switch-phone-lib-core | B-switch | B-switch (Should-read matrix (missing links) + 1 more) x phone / phone/lib-core: 9 items | in progress | _work/B-switch-phone-lib-core.md |  |
+| B-time-phone-lib-core | B-time | B-time (Install, update, upgrade + 2 more) x phone / phone/lib-core: 7 items | in progress | _work/B-time-phone-lib-core.md |  |
 | B-words-phone-components-2 | B-words | B-words (Language and words + 1 more) x phone / phone/components-2: 17 items | in progress | _work/B-words-phone-components-2.md |  |
 | H5-phone-onboarding-db | H5 | hunt 5 (Built vs live (deploy state)) x phone / phone/onboarding-db: 4 items | todo | _work/H5-phone-onboarding-db.md |  |
 | H5-phone-screens-1 | H5 | hunt 5 (Built vs live (deploy state)) x phone / phone/screens-1: 4 items | todo | _work/H5-phone-screens-1.md |  |
@@ -115,8 +115,8 @@ Counts: 180 todo, 5 in progress, 942 done, 0 blocked. Full list: work-items.json
 | CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
-(+ 155 more todo items, not shown)
-(+ 934 older done items, not shown)
+(+ 154 more todo items, not shown)
+(+ 935 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
