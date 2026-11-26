@@ -1,0 +1,2726 @@
+[
+ {
+  "group": "G-0013",
+  "sev": "S1",
+  "word": "Serious",
+  "reach": 10,
+  "verified": "unsure",
+  "surface": "phone",
+  "area": "phone/cloud-backup-ai",
+  "title": "Two privacy fixes are only in the next app version; the app members get from Google Play still has both faults",
+  "fix_size": "small",
+  "top": "FN-H5-phone-cloud-backup-ai-01",
+  "members": [
+   "FN-H5-phone-cloud-backup-ai-01"
+  ]
+ },
+ {
+  "group": "G-0010",
+  "sev": "S1",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/cloud-backup-ai",
+  "title": "A member under 18 who was already saving keeps everything on MettleUp's server after the under-18 fix",
+  "fix_size": "small",
+  "top": "FN-B-time-phone-cloud-backup-ai-02",
+  "members": [
+   "FN-B-time-phone-cloud-backup-ai-02"
+  ]
+ },
+ {
+  "group": "G-0015",
+  "sev": "S1",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/panel-worker",
+  "title": "A gym owner's spoken AI Assistant request can go to Sarvam, a company the privacy notice never names",
+  "fix_size": "small",
+  "top": "FN-L4-server-panel-worker-01",
+  "members": [
+   "FN-L4-server-panel-worker-01"
+  ]
+ },
+ {
+  "group": "G-0006",
+  "sev": "S1",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-3",
+  "title": "A real gym named \"QA ...\" is deleted overnight",
+  "fix_size": "medium",
+  "top": "FN-A5-server-database-3-1-01",
+  "members": [
+   "FN-A5-server-database-3-1-01"
+  ]
+ },
+ {
+  "group": "G-0011",
+  "sev": "S1",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-2",
+  "title": "After an owner gives up a mobile number, whoever later gets that number can set a new PIN and run the gym",
+  "fix_size": "medium",
+  "top": "FN-B-time-server-database-2-03",
+  "members": [
+   "FN-B-time-server-database-2-03"
+  ]
+ },
+ {
+  "group": "G-0019",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 11,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/tracker-data",
+  "title": "A workout in progress can be lost if the phone cannot read it back when the app opens",
+  "fix_size": "small",
+  "top": "FN-B-run-phone-tracker-data-a-01",
+  "members": [
+   "FN-B-run-phone-tracker-data-a-01",
+   "FN-L16-phone-tracker-data-01"
+  ]
+ },
+ {
+  "group": "G-0002",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/screens-2",
+  "title": "Privacy notice says progress photos never leave the phone, but a setting sends them to Google backup",
+  "fix_size": "small",
+  "top": "FN-A5-phone-screens-2-1b-01",
+  "members": [
+   "FN-A5-phone-screens-2-1b-01"
+  ]
+ },
+ {
+  "group": "G-0004",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 10,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-1",
+  "title": "Leaving the gym keeps the mobile number a member typed at check-in",
+  "fix_size": "small",
+  "top": "FN-A5-server-database-1-2-01",
+  "members": [
+   "FN-A5-server-database-1-2-01"
+  ]
+ },
+ {
+  "group": "G-0007",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 10,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/hq-gate-workers",
+  "title": "MettleUp can open a gym's records without the gym saying yes, while the app promises it never does",
+  "fix_size": "small",
+  "top": "FN-A5-server-hq-gate-workers-3-01",
+  "members": [
+   "FN-A5-server-hq-gate-workers-3-01"
+  ]
+ },
+ {
+  "group": "G-0009",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/cloud-backup-ai",
+  "title": "A member back after 3 months who types their first name a little differently loses their saved workouts for good",
+  "fix_size": "medium",
+  "top": "FN-B-switch-phone-cloud-backup-ai-02",
+  "members": [
+   "FN-B-switch-phone-cloud-backup-ai-02"
+  ]
+ },
+ {
+  "group": "G-0021",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/cloud-backup-ai",
+  "title": "Undo a restore does not stick for a member signed in to MettleUp: the backup's workouts come back seconds later",
+  "fix_size": "medium",
+  "top": "FN-B-truth-phone-cloud-backup-ai-a-01",
+  "members": [
+   "FN-B-truth-phone-cloud-backup-ai-a-01",
+   "FN-B-truth-phone-screens-1-a-01"
+  ]
+ },
+ {
+  "group": "G-0031",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "unknown",
+  "title": "The complaints contact was promised in both apps, but the member app shows no way to reach it after joining",
+  "fix_size": "small",
+  "top": "FN-A3-inbox-4-06",
+  "members": [
+   "FN-A3-inbox-4-06"
+  ]
+ },
+ {
+  "group": "G-0042",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 10,
+  "verified": "true",
+  "surface": "web",
+  "area": "unknown",
+  "title": "Member website promises backup to your own Google Drive, but the app stopped Drive backup",
+  "fix_size": "small",
+  "top": "FN-A3-website-2-01",
+  "members": [
+   "FN-A3-website-2-01"
+  ]
+ },
+ {
+  "group": "G-0061",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/onboarding-db",
+  "title": "The start-up error screen tells members to send their whole data file to their gym",
+  "fix_size": "small",
+  "top": "FN-A5-phone-onboarding-db-1-01",
+  "members": [
+   "FN-A5-phone-onboarding-db-1-01"
+  ]
+ },
+ {
+  "group": "G-0065",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 10,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-2",
+  "title": "A member's progress summary is stored again after they leave the gym",
+  "fix_size": "small",
+  "top": "FN-A5-server-database-2-2-01",
+  "members": [
+   "FN-A5-server-database-2-2-01"
+  ]
+ },
+ {
+  "group": "G-0097",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 10,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/forms",
+  "title": "'Send to their app' says 'Sent' even when the member will never get it",
+  "fix_size": "small",
+  "top": "FN-B-alerts-panel-forms-a-01",
+  "members": [
+   "FN-B-alerts-panel-forms-a-01"
+  ]
+ },
+ {
+  "group": "G-0102",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/cloud-backup-ai",
+  "title": "When the workout copy stops saving, the member is told only inside Settings",
+  "fix_size": "small",
+  "top": "FN-B-alerts-phone-cloud-backup-ai-a-01",
+  "members": [
+   "FN-B-alerts-phone-cloud-backup-ai-a-01"
+  ]
+ },
+ {
+  "group": "G-0111",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 10,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/assistant",
+  "title": "Changing the plan on the assistant's add-member card keeps the old joining fee, or none",
+  "fix_size": "small",
+  "top": "FN-B-run-panel-assistant-b-02",
+  "members": [
+   "FN-B-run-panel-assistant-b-02"
+  ]
+ },
+ {
+  "group": "G-0147",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 10,
+  "verified": "true",
+  "surface": "web",
+  "area": "web/pages",
+  "title": "The gym-owner site and the members' notice say member data is kept in India, but a full nightly copy sits with Cloudflare outside that promise",
+  "fix_size": "small",
+  "top": "FN-B-words-web-pages-01",
+  "members": [
+   "FN-B-words-web-pages-01"
+  ]
+ },
+ {
+  "group": "G-0149",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 10,
+  "verified": "unsure",
+  "surface": "phone",
+  "area": "phone/components-2",
+  "title": "The phone-number backup is recorded as released on 25 Nov, but no app with it has gone out",
+  "fix_size": "small",
+  "top": "FN-H5-phone-components-2-01",
+  "members": [
+   "FN-H5-phone-components-2-01"
+  ]
+ },
+ {
+  "group": "G-0150",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 10,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/ci-workflows",
+  "title": "The outage alarm checks about every 6 hours, not every 10 minutes",
+  "fix_size": "medium",
+  "top": "FN-H5-server-ci-workflows-01",
+  "members": [
+   "FN-H5-server-ci-workflows-01"
+  ]
+ },
+ {
+  "group": "G-0190",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 10,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/forms",
+  "title": "The desk can add a child as a member, with photo, birthday and address, while the privacy notice says MettleUp holds no data of anyone under 18",
+  "fix_size": "medium",
+  "top": "FN-L4-panel-forms-01",
+  "members": [
+   "FN-L4-panel-forms-01"
+  ]
+ },
+ {
+  "group": "G-0193",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 10,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/screens-2",
+  "title": "A gym that turns its shop off, or starts its demo over, leaves its members' names and shop orders on our server for ever",
+  "fix_size": "medium",
+  "top": "FN-L4-panel-screens-2-01",
+  "members": [
+   "FN-L4-panel-screens-2-01"
+  ]
+ },
+ {
+  "group": "G-0237",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 10,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/logic-2",
+  "title": "Each admin panel on screen asks the server every minute, so under a hundred busy gyms can use up the free daily request limit for everyone",
+  "fix_size": "medium",
+  "top": "FN-L8-panel-logic-2-01",
+  "members": [
+   "FN-L8-panel-logic-2-01"
+  ]
+ },
+ {
+  "group": "G-0005",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 9,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-1",
+  "title": "The admin app says support looks only when the owner lets them, but MettleUp can open the gym's records alone",
+  "fix_size": "small",
+  "top": "FN-A5-server-database-1-3-01",
+  "members": [
+   "FN-A5-server-database-1-3-01"
+  ]
+ },
+ {
+  "group": "G-0020",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 9,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/logic-1",
+  "title": "The AI's 'no visit in 10 days' counts a member who renewed today after a long break, and its See all opens a list with a different rule",
+  "fix_size": "small",
+  "top": "FN-B-truth-panel-logic-1-b-01",
+  "members": [
+   "FN-B-truth-panel-logic-1-b-01",
+   "FN-B-truth-panel-assistant-b-02"
+  ]
+ },
+ {
+  "group": "G-0029",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 9,
+  "verified": "true",
+  "surface": "web",
+  "area": "unknown",
+  "title": "Website says our staff cannot open a member list unless the gym lets them in, but HQ can open it in an emergency",
+  "fix_size": "small",
+  "top": "FN-A3-inbox-3-06",
+  "members": [
+   "FN-A3-inbox-3-06"
+  ]
+ },
+ {
+  "group": "G-0052",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 9,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/logic-1",
+  "title": "'Your questions' in Help shows one person's questions to the next person on the same computer",
+  "fix_size": "small",
+  "top": "FN-A5-panel-logic-1-3-03",
+  "members": [
+   "FN-A5-panel-logic-1-3-03"
+  ]
+ },
+ {
+  "group": "G-0148",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 9,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/pay-machines",
+  "title": "Owners can add a door machine today, but the address it is told to call does not exist, so it never comes online",
+  "fix_size": "small",
+  "top": "FN-H5-panel-pay-machines-01",
+  "members": [
+   "FN-H5-panel-pay-machines-01"
+  ]
+ },
+ {
+  "group": "G-0219",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 9,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/screens-2",
+  "title": "An owner who paid MettleUp by UPI or bank transfer can never open the receipt for it",
+  "fix_size": "small",
+  "top": "FN-L5-panel-screens-2-01",
+  "members": [
+   "FN-L5-panel-screens-2-01"
+  ]
+ },
+ {
+  "group": "G-0087",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 8,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/lib-core",
+  "title": "No test proves the microphone and the voice clip stay private",
+  "fix_size": "medium",
+  "top": "FN-A8-phone-lib-core-1-01",
+  "members": [
+   "FN-A8-phone-lib-core-1-01"
+  ]
+ },
+ {
+  "group": "G-0090",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 8,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/native",
+  "title": "No test proves weight, steps or sleep from Health Connect stay on the phone",
+  "fix_size": "small",
+  "top": "FN-A8-phone-native-2-01",
+  "members": [
+   "FN-A8-phone-native-2-01"
+  ]
+ },
+ {
+  "group": "G-0001",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/onboarding-db",
+  "title": "Loading the demo from the welcome screen can delete a member's own routines and body records without saying so",
+  "fix_size": "small",
+  "top": "FN-A5-phone-onboarding-db-2-01",
+  "members": [
+   "FN-A5-phone-onboarding-db-2-01"
+  ]
+ },
+ {
+  "group": "G-0003",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/tracker-lib",
+  "title": "The workout picture's 'more than previous' line can count body weight",
+  "fix_size": "small",
+  "top": "FN-A5-phone-tracker-lib-4-02",
+  "members": [
+   "FN-A5-phone-tracker-lib-4-02"
+  ]
+ },
+ {
+  "group": "G-0014",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "hq",
+  "area": "hq/app",
+  "title": "The reply helper in HQ sends a person's help question to Google, but the privacy notice says only Anthropic reads help messages",
+  "fix_size": "small",
+  "top": "FN-L4-hq-app-01",
+  "members": [
+   "FN-L4-hq-app-01"
+  ]
+ },
+ {
+  "group": "G-0023",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "server",
+  "area": "unknown",
+  "title": "Help says member messages are deleted after 180 days, but they are only deleted when someone next opens the list",
+  "fix_size": "small",
+  "top": "FN-A3-help-02",
+  "members": [
+   "FN-A3-help-02"
+  ]
+ },
+ {
+  "group": "G-0033",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "unknown",
+  "title": "The admin app says a member gets the automatic birthday wish when the member's phone may never show it",
+  "fix_size": "medium",
+  "top": "FN-A3-notes-claude-1-02",
+  "members": [
+   "FN-A3-notes-claude-1-02"
+  ]
+ },
+ {
+  "group": "G-0054",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/logic-2",
+  "title": "Past pass visits change when a pass member is edited",
+  "fix_size": "medium",
+  "top": "FN-A5-panel-logic-2-2-01",
+  "members": [
+   "FN-A5-panel-logic-2-2-01"
+  ]
+ },
+ {
+  "group": "G-0060",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/native",
+  "title": "Erase can leave reminders and Health Connect on",
+  "fix_size": "small",
+  "top": "FN-A5-phone-native-4-01",
+  "members": [
+   "FN-A5-phone-native-4-01"
+  ]
+ },
+ {
+  "group": "G-0062",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/screens-1",
+  "title": "Join screen says workouts stay on the phone, then says the gym sees them",
+  "fix_size": "small",
+  "top": "FN-A5-phone-screens-1-2-01",
+  "members": [
+   "FN-A5-phone-screens-1-2-01"
+  ]
+ },
+ {
+  "group": "G-0070",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/assistant",
+  "title": "Tapping the birthday idea sends members' full names to the AI though the owner never typed them",
+  "fix_size": "medium",
+  "top": "FN-A8-panel-assistant-1-12",
+  "members": [
+   "FN-A8-panel-assistant-1-12"
+  ]
+ },
+ {
+  "group": "G-0071",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/sign-in",
+  "title": "No test checks that a sign-in code works only once and dies after 30 minutes",
+  "fix_size": "small",
+  "top": "FN-A8-panel-auth-data-1-01",
+  "members": [
+   "FN-A8-panel-auth-data-1-01"
+  ]
+ },
+ {
+  "group": "G-0074",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/auth",
+  "title": "No test proves the gym records leave the device after sign-out or removal",
+  "fix_size": "small",
+  "top": "FN-A8-panel-auth-data-2-03",
+  "members": [
+   "FN-A8-panel-auth-data-2-03"
+  ]
+ },
+ {
+  "group": "G-0075",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/workouts",
+  "title": "The Workout plans page has no screen test at all",
+  "fix_size": "medium",
+  "top": "FN-A8-panel-brand-shell-3-01",
+  "members": [
+   "FN-A8-panel-brand-shell-3-01"
+  ]
+ },
+ {
+  "group": "G-0077",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/forms",
+  "title": "No screen test shows the desk being stopped from taking cash for a link the member just paid",
+  "fix_size": "small",
+  "top": "FN-A8-panel-forms-1-04",
+  "members": [
+   "FN-A8-panel-forms-1-04"
+  ]
+ },
+ {
+  "group": "G-0081",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/logic-2",
+  "title": "The 'Joined online' card is never tested as the front desk, and its error lines never at all",
+  "fix_size": "medium",
+  "top": "FN-A8-panel-logic-2-3-03",
+  "members": [
+   "FN-A8-panel-logic-2-3-03"
+  ]
+ },
+ {
+  "group": "G-0083",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/screens",
+  "title": "Adding, editing and retiring a plan is never tested beyond one simple save",
+  "fix_size": "medium",
+  "top": "FN-A8-panel-screens-2-2-02",
+  "members": [
+   "FN-A8-panel-screens-2-2-02"
+  ]
+ },
+ {
+  "group": "G-0084",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/screens",
+  "title": "The risky paths of the gym's records card are never tested: unsent money on clear, a failed backup, Cancel on erase",
+  "fix_size": "medium",
+  "top": "FN-A8-panel-screens-2-3-02",
+  "members": [
+   "FN-A8-panel-screens-2-3-02"
+  ]
+ },
+ {
+  "group": "G-0092",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/onboarding-db",
+  "title": "Bringing back a Google Drive backup from the welcome screen is never tested beyond two lines of words",
+  "fix_size": "medium",
+  "top": "FN-A8-phone-onboarding-db-1-02",
+  "members": [
+   "FN-A8-phone-onboarding-db-1-02"
+  ]
+ },
+ {
+  "group": "G-0093",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/onboarding-db",
+  "title": "The phone sign-in privacy promises are tested in the wrong place, so the tests pass while the promises are broken",
+  "fix_size": "small",
+  "top": "FN-A8-phone-onboarding-db-1-03",
+  "members": [
+   "FN-A8-phone-onboarding-db-1-03"
+  ]
+ },
+ {
+  "group": "G-0096",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/assistant",
+  "title": "A member linked to the app whose number no longer matches gets neither the app message nor a WhatsApp",
+  "fix_size": "small",
+  "top": "FN-B-alerts-panel-assistant-a-01",
+  "members": [
+   "FN-B-alerts-panel-assistant-a-01"
+  ]
+ },
+ {
+  "group": "G-0100",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/logic-2",
+  "title": "A renew request stays waiting after the desk renews the member another way, and Approve then sells a second plan as a due",
+  "fix_size": "small",
+  "top": "FN-B-alerts-panel-logic-2-b-02",
+  "members": [
+   "FN-B-alerts-panel-logic-2-b-02"
+  ]
+ },
+ {
+  "group": "G-0103",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/cloud-backup-ai",
+  "title": "A member backed up with Google gets a second, empty backup on a new phone through the WhatsApp check, and cannot switch back once they log a workout",
+  "fix_size": "medium",
+  "top": "FN-B-alerts-phone-cloud-backup-ai-b-01",
+  "members": [
+   "FN-B-alerts-phone-cloud-backup-ai-b-01"
+  ]
+ },
+ {
+  "group": "G-0104",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/cloud-backup-ai",
+  "title": "When bringing the saved copy back keeps failing, nothing new is saved and Settings still says the workouts are saved automatically",
+  "fix_size": "small",
+  "top": "FN-B-alerts-phone-cloud-backup-ai-b-02",
+  "members": [
+   "FN-B-alerts-phone-cloud-backup-ai-b-02"
+  ]
+ },
+ {
+  "group": "G-0108",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/panel-worker",
+  "title": "When a member pays the same request twice online, nobody at the gym is told",
+  "fix_size": "medium",
+  "top": "FN-B-alerts-server-panel-worker-b-01",
+  "members": [
+   "FN-B-alerts-server-panel-worker-b-01"
+  ]
+ },
+ {
+  "group": "G-0117",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/cloud-backup-ai",
+  "title": "MettleUp is never told when members' workout copies stop saving",
+  "fix_size": "medium",
+  "top": "FN-B-run-phone-cloud-backup-ai-a-04",
+  "members": [
+   "FN-B-run-phone-cloud-backup-ai-a-04"
+  ]
+ },
+ {
+  "group": "G-0119",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/ci-workflows",
+  "title": "The outage alarm never checks WhatsApp sign-in codes or the AI service",
+  "fix_size": "medium",
+  "top": "FN-B-run-server-ci-workflows-a-02",
+  "members": [
+   "FN-B-run-server-ci-workflows-a-02"
+  ]
+ },
+ {
+  "group": "G-0127",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/logic-1",
+  "title": "A member who left and comes back through an Excel import gets his new plan but stays hidden as archived",
+  "fix_size": "small",
+  "top": "FN-B-time-panel-logic-1-01",
+  "members": [
+   "FN-B-time-panel-logic-1-01"
+  ]
+ },
+ {
+  "group": "G-0135",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/forms",
+  "title": "A member with a personal training pack sees the pack's last day in their app as their plan's last day",
+  "fix_size": "medium",
+  "top": "FN-B-truth-panel-forms-b-01",
+  "members": [
+   "FN-B-truth-panel-forms-b-01"
+  ]
+ },
+ {
+  "group": "G-0136",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/logic-1",
+  "title": "A personal training pack changes the member's plan end on the phone but not in the admin app",
+  "fix_size": "small",
+  "top": "FN-B-truth-panel-logic-1-b-02",
+  "members": [
+   "FN-B-truth-panel-logic-1-b-02"
+  ]
+ },
+ {
+  "group": "G-0142",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/shop-1",
+  "title": "A member who renewed or came in at the desk can still get 'your plan ends' or 'we haven't seen you' reminders",
+  "fix_size": "medium",
+  "top": "FN-B-truth-phone-shop-1-b-01",
+  "members": [
+   "FN-B-truth-phone-shop-1-b-01"
+  ]
+ },
+ {
+  "group": "G-0143",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-1",
+  "title": "The member app can show a personal training pack as the member's gym plan",
+  "fix_size": "small",
+  "top": "FN-B-truth-server-database-1-b-01",
+  "members": [
+   "FN-B-truth-server-database-1-b-01"
+  ]
+ },
+ {
+  "group": "G-0145",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/forms",
+  "title": "Add member says only the gym's staff can see a member's photo, but the photo goes into MettleUp's nightly copy too",
+  "fix_size": "small",
+  "top": "FN-B-words-panel-forms-01",
+  "members": [
+   "FN-B-words-panel-forms-01"
+  ]
+ },
+ {
+  "group": "G-0153",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/screens-2",
+  "title": "Every member is offered 'Install on watch', but the watch app is only on Google Play's test tracks",
+  "fix_size": "small",
+  "top": "FN-L12-phone-screens-2-01",
+  "members": [
+   "FN-L12-phone-screens-2-01"
+  ]
+ },
+ {
+  "group": "G-0154",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "web",
+  "area": "web/pages",
+  "title": "Both websites offer the free watch app, but the watch app is not out on Google Play for the public",
+  "fix_size": "small",
+  "top": "FN-L12-web-pages-02",
+  "members": [
+   "FN-L12-web-pages-02"
+  ]
+ },
+ {
+  "group": "G-0159",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/shop",
+  "title": "After a gym disconnects its shop, members can still place orders that nobody will ever see",
+  "fix_size": "medium",
+  "top": "FN-L14-panel-shop-01",
+  "members": [
+   "FN-L14-panel-shop-01"
+  ]
+ },
+ {
+  "group": "G-0166",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-2",
+  "title": "The nightly backup never copies member photos, workout report files or gym logos",
+  "fix_size": "medium",
+  "top": "FN-L14-server-database-2-03",
+  "members": [
+   "FN-L14-server-database-2-03"
+  ]
+ },
+ {
+  "group": "G-0175",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/auth-data",
+  "title": "Anyone can get another 3-month free trial by making a new gym with the same mobile",
+  "fix_size": "small",
+  "top": "FN-L19-panel-auth-data-01",
+  "members": [
+   "FN-L19-panel-auth-data-01"
+  ]
+ },
+ {
+  "group": "G-0179",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/shop",
+  "title": "A stranger who types a member's mobile number when joining the app gets the gym's messages meant for that member",
+  "fix_size": "small",
+  "top": "FN-L19-panel-shop-01",
+  "members": [
+   "FN-L19-panel-shop-01"
+  ]
+ },
+ {
+  "group": "G-0184",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "hq",
+  "area": "hq/app",
+  "title": "HQ cannot erase one member: the step says to do it through support access, which can only read",
+  "fix_size": "medium",
+  "top": "FN-L4-hq-app-02",
+  "members": [
+   "FN-L4-hq-app-02"
+  ]
+ },
+ {
+  "group": "G-0186",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/auth-data",
+  "title": "A gym cannot erase a member's details, though the data agreement says the gym handles erase requests",
+  "fix_size": "medium",
+  "top": "FN-L4-panel-auth-data-01",
+  "members": [
+   "FN-L4-panel-auth-data-01"
+  ]
+ },
+ {
+  "group": "G-0187",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/auth-data",
+  "title": "A deleted record keeps all its details on the server for ever",
+  "fix_size": "small",
+  "top": "FN-L4-panel-auth-data-02",
+  "members": [
+   "FN-L4-panel-auth-data-02"
+  ]
+ },
+ {
+  "group": "G-0188",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/auth-data",
+  "title": "After a gym goes online, its old browser copy of every member stays on that computer for ever, even after sign out",
+  "fix_size": "small",
+  "top": "FN-L4-panel-auth-data-03",
+  "members": [
+   "FN-L4-panel-auth-data-03"
+  ]
+ },
+ {
+  "group": "G-0191",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/logic-1",
+  "title": "The member-list import shows Google's AI real names from some columns, while the privacy notice says names are hidden",
+  "fix_size": "small",
+  "top": "FN-L4-panel-logic-1-01",
+  "members": [
+   "FN-L4-panel-logic-1-01"
+  ]
+ },
+ {
+  "group": "G-0196",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/cloud-backup-ai",
+  "title": "Delete my account says everything on MettleUp's server is deleted, but a gym member's workouts shared with the gym stay",
+  "fix_size": "small",
+  "top": "FN-L4-phone-cloud-backup-ai-01",
+  "members": [
+   "FN-L4-phone-cloud-backup-ai-01"
+  ]
+ },
+ {
+  "group": "G-0198",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/components-2",
+  "title": "A member who turned on photo backup can no longer find the switch to turn it off",
+  "fix_size": "small",
+  "top": "FN-L4-phone-components-2-01",
+  "members": [
+   "FN-L4-phone-components-2-01"
+  ]
+ },
+ {
+  "group": "G-0199",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/onboarding-db",
+  "title": "Phone sign-in says the number is not kept, but after joining the gym it is saved on the member's gym link",
+  "fix_size": "small",
+  "top": "FN-L4-phone-onboarding-db-01",
+  "members": [
+   "FN-L4-phone-onboarding-db-01"
+  ]
+ },
+ {
+  "group": "G-0201",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/shop-2",
+  "title": "The privacy notice says the trainer summary holds 3 months of workouts, but the app now sends up to a year",
+  "fix_size": "small",
+  "top": "FN-L4-phone-shop-2-01",
+  "members": [
+   "FN-L4-phone-shop-2-01"
+  ]
+ },
+ {
+  "group": "G-0203",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/shop-2",
+  "title": "Sharing that starts on its own at joining rests on legitimate interest, a reason India's data law does not have",
+  "fix_size": "medium",
+  "top": "FN-L4-phone-shop-2-03",
+  "members": [
+   "FN-L4-phone-shop-2-03"
+  ]
+ },
+ {
+  "group": "G-0204",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-1",
+  "title": "A gym cannot erase a member from the server, so a member's request to the gym to erase their details cannot be done",
+  "fix_size": "medium",
+  "top": "FN-L4-server-database-1-01",
+  "members": [
+   "FN-L4-server-database-1-01"
+  ]
+ },
+ {
+  "group": "G-0205",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-1",
+  "title": "Workout offer dates and the list of who joined are only deleted when the owner opens the offers page",
+  "fix_size": "small",
+  "top": "FN-L4-server-database-1-02",
+  "members": [
+   "FN-L4-server-database-1-02"
+  ]
+ },
+ {
+  "group": "G-0206",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-1",
+  "title": "When a member joins a gym, the server keeps no record that they agreed to the notice or said they are 18 or over",
+  "fix_size": "medium",
+  "top": "FN-L4-server-database-1-03",
+  "members": [
+   "FN-L4-server-database-1-03"
+  ]
+ },
+ {
+  "group": "G-0207",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-2",
+  "title": "The time limits the privacy notice gives for gym-shared data only run when someone opens that screen",
+  "fix_size": "small",
+  "top": "FN-L4-server-database-2-01",
+  "members": [
+   "FN-L4-server-database-2-01"
+  ]
+ },
+ {
+  "group": "G-0208",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-2",
+  "title": "Deleting a member from the gym's list leaves their photo and body measurements behind, out of sight",
+  "fix_size": "small",
+  "top": "FN-L4-server-database-2-03",
+  "members": [
+   "FN-L4-server-database-2-03"
+  ]
+ },
+ {
+  "group": "G-0209",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-3",
+  "title": "Trainers now get a year of a member's workouts, but the privacy notice still says 30 workouts from 3 months",
+  "fix_size": "small",
+  "top": "FN-L4-server-database-3-01",
+  "members": [
+   "FN-L4-server-database-3-01"
+  ]
+ },
+ {
+  "group": "G-0211",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "web",
+  "area": "web/pages",
+  "title": "The delete-account page says nothing is on our server unless you used Continue with Google, but joining a gym or signing in with a phone number puts data there",
+  "fix_size": "small",
+  "top": "FN-L4-web-pages-02",
+  "members": [
+   "FN-L4-web-pages-02"
+  ]
+ },
+ {
+  "group": "G-0214",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/auth-data",
+  "title": "Cash taken offline that the server later refused disappears from the member's dues and the money counts",
+  "fix_size": "medium",
+  "top": "FN-L5-panel-auth-data-01",
+  "members": [
+   "FN-L5-panel-auth-data-01"
+  ]
+ },
+ {
+  "group": "G-0215",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/forms",
+  "title": "When the app cannot close a member's open payment link, the desk payment is saved anyway and the link can still be paid",
+  "fix_size": "small",
+  "top": "FN-L5-panel-forms-01",
+  "members": [
+   "FN-L5-panel-forms-01"
+  ]
+ },
+ {
+  "group": "G-0217",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/pay-machines",
+  "title": "A member who paid twice shows as more than due, with an I saved it button and no word about a refund",
+  "fix_size": "small",
+  "top": "FN-L5-panel-pay-machines-05",
+  "members": [
+   "FN-L5-panel-pay-machines-05"
+  ]
+ },
+ {
+  "group": "G-0218",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/screens-1",
+  "title": "A person who paid online when joining still shows \"Not paid yet\" on Enquiries, and Add as member there lets the desk charge them again",
+  "fix_size": "medium",
+  "top": "FN-L5-panel-screens-1-01",
+  "members": [
+   "FN-L5-panel-screens-1-01"
+  ]
+ },
+ {
+  "group": "G-0220",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/shop",
+  "title": "A shop order the member already paid online looks unpaid on the Shop page, and Collected says the money was just taken",
+  "fix_size": "small",
+  "top": "FN-L5-panel-shop-01",
+  "members": [
+   "FN-L5-panel-shop-01"
+  ]
+ },
+ {
+  "group": "G-0221",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/shop",
+  "title": "A shop order paid online can be cancelled, by the gym or the member, and nobody is told to give the money back",
+  "fix_size": "medium",
+  "top": "FN-L5-panel-shop-02",
+  "members": [
+   "FN-L5-panel-shop-02"
+  ]
+ },
+ {
+  "group": "G-0223",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/lib-core",
+  "title": "A member who already paid for MettleUp Plus can be shown the buy buttons again and charged a second time",
+  "fix_size": "small",
+  "top": "FN-L5-phone-lib-core-01",
+  "members": [
+   "FN-L5-phone-lib-core-01"
+  ]
+ },
+ {
+  "group": "G-0224",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/shop-1",
+  "title": "After the owner changes the gym's UPI ID, members are still shown the old one to pay",
+  "fix_size": "small",
+  "top": "FN-L5-phone-shop-1-01",
+  "members": [
+   "FN-L5-phone-shop-1-01"
+  ]
+ },
+ {
+  "group": "G-0227",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-3",
+  "title": "Test-mode payments are announced to members and gyms as real",
+  "fix_size": "small",
+  "top": "FN-L5-server-database-3-04",
+  "members": [
+   "FN-L5-server-database-3-04"
+  ]
+ },
+ {
+  "group": "G-0228",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/panel-worker",
+  "title": "While payments are in test mode, the member app shows a test payment as paid, but the gym records nothing",
+  "fix_size": "small",
+  "top": "FN-L5-server-panel-worker-01",
+  "members": [
+   "FN-L5-server-panel-worker-01"
+  ]
+ },
+ {
+  "group": "G-0230",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "hq",
+  "area": "hq/app",
+  "title": "The Cloudflare free-limit warning comes once a week, after the busy day has passed",
+  "fix_size": "small",
+  "top": "FN-L8-hq-app-01",
+  "members": [
+   "FN-L8-hq-app-01"
+  ]
+ },
+ {
+  "group": "G-0240",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/cloud-backup-ai",
+  "title": "One member account may store about twice the whole free database in its workout copy",
+  "fix_size": "small",
+  "top": "FN-L8-phone-cloud-backup-ai-01",
+  "members": [
+   "FN-L8-phone-cloud-backup-ai-01"
+  ]
+ },
+ {
+  "group": "G-0241",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/cloud-backup-ai",
+  "title": "A very long workout is silently left out of the saved copy while Settings says everything is saved",
+  "fix_size": "small",
+  "top": "FN-L8-phone-cloud-backup-ai-02",
+  "members": [
+   "FN-L8-phone-cloud-backup-ai-02"
+  ]
+ },
+ {
+  "group": "G-0242",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/components-2",
+  "title": "Once 1,000 help messages arrive in a day, every member's message is refused and nobody at MettleUp is warned",
+  "fix_size": "medium",
+  "top": "FN-L8-phone-components-2-03",
+  "members": [
+   "FN-L8-phone-components-2-03"
+  ]
+ },
+ {
+  "group": "G-0505",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 7,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/logic-1",
+  "title": "Some ways an Aadhaar number could slip into an import are never tested",
+  "fix_size": "small",
+  "top": "FN-A8-panel-logic-1-4-07",
+  "members": [
+   "FN-A8-panel-logic-1-4-07"
+  ]
+ },
+ {
+  "group": "G-0012",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/panel-worker",
+  "title": "A person who paid online when joining shows as not paid on Today once the request is over 45 days old",
+  "fix_size": "small",
+  "top": "FN-B-truth-server-panel-worker-b-02",
+  "members": [
+   "FN-B-truth-server-panel-worker-b-02"
+  ]
+ },
+ {
+  "group": "G-0016",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/pay-machines",
+  "title": "A new branch gets the first branch's paid plan, paid-until date and founding Pro for life free",
+  "fix_size": "medium",
+  "top": "FN-L5-panel-pay-machines-01",
+  "members": [
+   "FN-L5-panel-pay-machines-01"
+  ]
+ },
+ {
+  "group": "G-0017",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/pay-machines",
+  "title": "An extra branch is charged full price, but the website promises half price",
+  "fix_size": "medium",
+  "top": "FN-L5-panel-pay-machines-02",
+  "members": [
+   "FN-L5-panel-pay-machines-02"
+  ]
+ },
+ {
+  "group": "G-0032",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "panel",
+  "area": "unknown",
+  "title": "The data agreement says every look at a gym's records is recorded and shown in the admin app, but direct database looks are not shown and may not be recorded",
+  "fix_size": "medium",
+  "top": "FN-A3-notes-claude-1-01",
+  "members": [
+   "FN-A3-notes-claude-1-01"
+  ]
+ },
+ {
+  "group": "G-0037",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "hq",
+  "area": "unknown",
+  "title": "Website says MettleUp staff cannot open a gym's member list unless the owner lets them in, but HQ has an emergency button that opens it without the owner",
+  "fix_size": "small",
+  "top": "FN-A3-website-1-01",
+  "members": [
+   "FN-A3-website-1-01"
+  ]
+ },
+ {
+  "group": "G-0038",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "web",
+  "area": "unknown",
+  "title": "Website says the AI sees columns only and never sees member details, but the AI is also shown up to 5 example rows from the gym's file",
+  "fix_size": "small",
+  "top": "FN-A3-website-1-02",
+  "members": [
+   "FN-A3-website-1-02"
+  ]
+ },
+ {
+  "group": "G-0039",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "web",
+  "area": "unknown",
+  "title": "Website says an AI credit is used only when the AI Assistant sends or saves something, but members' AI answers also use the gym's credits",
+  "fix_size": "small",
+  "top": "FN-A3-website-1-03",
+  "members": [
+   "FN-A3-website-1-03"
+  ]
+ },
+ {
+  "group": "G-0072",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/sign-out",
+  "title": "Signing out with a payment the server refused is never tested",
+  "fix_size": "medium",
+  "top": "FN-A8-panel-auth-data-1-06",
+  "members": [
+   "FN-A8-panel-auth-data-1-06"
+  ]
+ },
+ {
+  "group": "G-0078",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/forms",
+  "title": "Selling or renewing a PT pack is never done on screen in a test",
+  "fix_size": "medium",
+  "top": "FN-A8-panel-forms-3-02",
+  "members": [
+   "FN-A8-panel-forms-3-02"
+  ]
+ },
+ {
+  "group": "G-0112",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/auth-data",
+  "title": "When a desk computer cannot send cash or a new member, only that computer knows",
+  "fix_size": "medium",
+  "top": "FN-B-run-panel-auth-data-a-01",
+  "members": [
+   "FN-B-run-panel-auth-data-a-01"
+  ]
+ },
+ {
+  "group": "G-0114",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/logic-1",
+  "title": "After a slow connection, 'Try again' on a member import can drop those members' plans and payments",
+  "fix_size": "small",
+  "top": "FN-B-run-panel-logic-1-a-01",
+  "members": [
+   "FN-B-run-panel-logic-1-a-01"
+  ]
+ },
+ {
+  "group": "G-0122",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/panel-worker",
+  "title": "If WhatsApp number checks stop working, owners cannot reset a PIN or start a gym and MettleUp hears only from the gyms",
+  "fix_size": "medium",
+  "top": "FN-B-run-server-panel-worker-a-04",
+  "members": [
+   "FN-B-run-server-panel-worker-a-04"
+  ]
+ },
+ {
+  "group": "G-0124",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/screens-1",
+  "title": "The AI Assistant gives a lower profit for the month than the Expenses page, because it leaves out shop sales",
+  "fix_size": "small",
+  "top": "FN-B-switch-panel-screens-1-a-02",
+  "members": [
+   "FN-B-switch-panel-screens-1-a-02"
+  ]
+ },
+ {
+  "group": "G-0126",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/auth-data",
+  "title": "When a staff member leaves, cash he took without internet and never sent stays on his phone, and nobody is told",
+  "fix_size": "medium",
+  "top": "FN-B-time-panel-auth-data-01",
+  "members": [
+   "FN-B-time-panel-auth-data-01"
+  ]
+ },
+ {
+  "group": "G-0128",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/logic-2",
+  "title": "Approving an app pause can hand free days to a member whose plan ends before the pause starts, or has already ended",
+  "fix_size": "small",
+  "top": "FN-B-time-panel-logic-2-01",
+  "members": [
+   "FN-B-time-panel-logic-2-01"
+  ]
+ },
+ {
+  "group": "G-0131",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-2",
+  "title": "When the plan lock is switched on, a gym whose free trial ended long ago goes straight to read-only with no warning days",
+  "fix_size": "small",
+  "top": "FN-B-time-server-database-2-01",
+  "members": [
+   "FN-B-time-server-database-2-01"
+  ]
+ },
+ {
+  "group": "G-0134",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/auth-data",
+  "title": "Undoing a second import file leaves a member owing money they never owed",
+  "fix_size": "medium",
+  "top": "FN-B-truth-panel-auth-data-a-01",
+  "members": [
+   "FN-B-truth-panel-auth-data-a-01"
+  ]
+ },
+ {
+  "group": "G-0138",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/pay-machines",
+  "title": "A person who paid when joining online and is then marked lost is reported as a member who may have paid twice",
+  "fix_size": "small",
+  "top": "FN-B-truth-panel-pay-machines-a-02",
+  "members": [
+   "FN-B-truth-panel-pay-machines-a-02"
+  ]
+ },
+ {
+  "group": "G-0140",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/screens-1",
+  "title": "Undo import removes members who already joined the member app or were measured at the desk",
+  "fix_size": "medium",
+  "top": "FN-B-truth-panel-screens-1-a-01",
+  "members": [
+   "FN-B-truth-panel-screens-1-a-01"
+  ]
+ },
+ {
+  "group": "G-0156",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/assistant",
+  "title": "If the AI key goes missing, or one usage table cannot be read, the AI Assistant quietly disappears for every owner",
+  "fix_size": "medium",
+  "top": "FN-L14-panel-assistant-04",
+  "members": [
+   "FN-L14-panel-assistant-04"
+  ]
+ },
+ {
+  "group": "G-0168",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-3",
+  "title": "Reports from 'Report this page' are saved where nobody can read them, and HQ has no button to take a page down",
+  "fix_size": "medium",
+  "top": "FN-L14-server-database-3-01",
+  "members": [
+   "FN-L14-server-database-3-01"
+  ]
+ },
+ {
+  "group": "G-0169",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/hq-gate-workers",
+  "title": "A gym that pays for Starter while on Pro never moves to Starter while online buying is off",
+  "fix_size": "small",
+  "top": "FN-L14-server-hq-gate-workers-01",
+  "members": [
+   "FN-L14-server-hq-gate-workers-01"
+  ]
+ },
+ {
+  "group": "G-0170",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/panel-worker",
+  "title": "Deleting a gym leaves its payment company keys and payment records on our web server",
+  "fix_size": "medium",
+  "top": "FN-L14-server-panel-worker-01",
+  "members": [
+   "FN-L14-server-panel-worker-01"
+  ]
+ },
+ {
+  "group": "G-0176",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/forms",
+  "title": "A front-desk login can let any member train free for ever by ticking \"Comes with a pass\"",
+  "fix_size": "small",
+  "top": "FN-L19-panel-forms-01",
+  "members": [
+   "FN-L19-panel-forms-01"
+  ]
+ },
+ {
+  "group": "G-0183",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/panel-worker",
+  "title": "Through our own server address every person looks like the same sender, so sign-in and new-gym limits hit everyone at once",
+  "fix_size": "medium",
+  "top": "FN-L3-server-panel-worker-01",
+  "members": [
+   "FN-L3-server-panel-worker-01"
+  ]
+ },
+ {
+  "group": "G-0192",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/screens-1",
+  "title": "A person who only asked about joining can never be removed from the gym's enquiry list",
+  "fix_size": "medium",
+  "top": "FN-L4-panel-screens-1-01",
+  "members": [
+   "FN-L4-panel-screens-1-01"
+  ]
+ },
+ {
+  "group": "G-0212",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "hq",
+  "area": "hq/app",
+  "title": "A plan HQ sets by hand can be switched back to Starter overnight by an older Starter payment",
+  "fix_size": "small",
+  "top": "FN-L5-hq-app-01",
+  "members": [
+   "FN-L5-hq-app-01"
+  ]
+ },
+ {
+  "group": "G-0216",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/pay-machines",
+  "title": "After live payments start, an old test connection still shows Connected and payment links quietly fail",
+  "fix_size": "small",
+  "top": "FN-L5-panel-pay-machines-03",
+  "members": [
+   "FN-L5-panel-pay-machines-03"
+  ]
+ },
+ {
+  "group": "G-0226",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-3",
+  "title": "An owner whose payment could not become a plan is told nothing",
+  "fix_size": "small",
+  "top": "FN-L5-server-database-3-02",
+  "members": [
+   "FN-L5-server-database-3-02"
+  ]
+ },
+ {
+  "group": "G-0235",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/auth-data",
+  "title": "Payments waiting to be sent can be wiped by the browser when the device runs low on space",
+  "fix_size": "small",
+  "top": "FN-L8-panel-auth-data-03",
+  "members": [
+   "FN-L8-panel-auth-data-03"
+  ]
+ },
+ {
+  "group": "G-0236",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 6,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/forms",
+  "title": "Member photos are kept inside the main gym database with no cap per gym, so they eat the free 500 MB limit that every gym shares",
+  "fix_size": "medium",
+  "top": "FN-L8-panel-forms-01",
+  "members": [
+   "FN-L8-panel-forms-01"
+  ]
+ },
+ {
+  "group": "G-0040",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 4,
+  "verified": "true",
+  "surface": "phone",
+  "area": "unknown",
+  "title": "Play listing draft says 'Back up to Google Drive', but the app no longer offers a Google Drive backup",
+  "fix_size": "small",
+  "top": "FN-A3-website-1-04",
+  "members": [
+   "FN-A3-website-1-04"
+  ]
+ },
+ {
+  "group": "G-0053",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 4,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/logic-2",
+  "title": "An imported plan named like '3 days a week' becomes a 3-day plan",
+  "fix_size": "small",
+  "top": "FN-A5-panel-logic-2-1-01",
+  "members": [
+   "FN-A5-panel-logic-2-1-01"
+  ]
+ },
+ {
+  "group": "G-0137",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 4,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/logic-2",
+  "title": "An imported plan with its price in the name becomes a plan hundreds of months long",
+  "fix_size": "small",
+  "top": "FN-B-truth-panel-logic-2-a-01",
+  "members": [
+   "FN-B-truth-panel-logic-2-a-01"
+  ]
+ },
+ {
+  "group": "G-0180",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 4,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/cloud-backup-ai",
+  "title": "Anyone with a free Google account can park about 1 GB on our server through the workout copy",
+  "fix_size": "small",
+  "top": "FN-L19-phone-cloud-backup-ai-01",
+  "members": [
+   "FN-L19-phone-cloud-backup-ai-01"
+  ]
+ },
+ {
+  "group": "G-0210",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 4,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-3",
+  "title": "The privacy notice says nothing about the join-online form or the gym's web page, which collect names, numbers and questions",
+  "fix_size": "small",
+  "top": "FN-L4-server-database-3-02",
+  "members": [
+   "FN-L4-server-database-3-02"
+  ]
+ },
+ {
+  "group": "G-0225",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 4,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-3",
+  "title": "In test mode, a real gym owner who pays with a test card gets a real paid plan and a real receipt",
+  "fix_size": "medium",
+  "top": "FN-L5-server-database-3-01",
+  "members": [
+   "FN-L5-server-database-3-01"
+  ]
+ },
+ {
+  "group": "G-0229",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 4,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-2",
+  "title": "The nightly backup builds the whole database as one answer, so it will stop working once the data gets big",
+  "fix_size": "medium",
+  "top": "FN-L7-server-database-2-03",
+  "members": [
+   "FN-L7-server-database-2-03"
+  ]
+ },
+ {
+  "group": "G-0239",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 4,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/shop",
+  "title": "Anyone can start demo gyms and upload photos with no total limit",
+  "fix_size": "medium",
+  "top": "FN-L8-panel-shop-02",
+  "members": [
+   "FN-L8-panel-shop-02"
+  ]
+ },
+ {
+  "group": "G-0243",
+  "sev": "S2",
+  "word": "Serious",
+  "reach": 4,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database-1",
+  "title": "One gym can fill the shared database through record saving, with no total limit or speed limit",
+  "fix_size": "medium",
+  "top": "FN-L8-server-database-1-01",
+  "members": [
+   "FN-L8-server-database-1-01"
+  ]
+ },
+ {
+  "group": "G-0018",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 13,
+  "verified": "true",
+  "surface": "watch+web",
+  "area": "unknown",
+  "title": "Member website says an Apple Watch app is coming soon, but nothing for Apple Watch exists",
+  "fix_size": "small",
+  "top": "FN-A3-website-2-02",
+  "members": [
+   "FN-A3-website-2-02",
+   "FN-A3-website-2-03"
+  ]
+ },
+ {
+  "group": "G-0265",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 13,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/lib-core",
+  "title": "Once MettleUp Plus limits are on, the Up next screen still shows a free member the suggested weight and reps",
+  "fix_size": "small",
+  "top": "FN-B-switch-phone-lib-core-01",
+  "members": [
+   "FN-B-switch-phone-lib-core-01",
+   "FN-B-switch-phone-native-01"
+  ]
+ },
+ {
+  "group": "G-0024",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "unknown",
+  "title": "Backlog says \"Steps and water each day\" is live, but only steps exist",
+  "fix_size": "small",
+  "top": "FN-A3-inbox-1-14",
+  "members": [
+   "FN-A3-inbox-1-14"
+  ]
+ },
+ {
+  "group": "G-0025",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "unknown",
+  "title": "Backlog says Google Drive backup and automatic Drive backup are live, but both were stopped",
+  "fix_size": "small",
+  "top": "FN-A3-inbox-1-15",
+  "members": [
+   "FN-A3-inbox-1-15"
+  ]
+ },
+ {
+  "group": "G-0026",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "server",
+  "area": "unknown",
+  "title": "Backlog says trainers' charts keep long-time members' history is live, but the server part is not switched on",
+  "fix_size": "small",
+  "top": "FN-A3-inbox-1-16",
+  "members": [
+   "FN-A3-inbox-1-16"
+  ]
+ },
+ {
+  "group": "G-0028",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "unknown",
+  "title": "The busy machines tip was promised with a one-tap move, but it only has Not now",
+  "fix_size": "medium",
+  "top": "FN-A3-inbox-2-04",
+  "members": [
+   "FN-A3-inbox-2-04"
+  ]
+ },
+ {
+  "group": "G-0043",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "web",
+  "area": "unknown",
+  "title": "Join page tells an existing member to renew in the app, but the app can only ask the desk",
+  "fix_size": "small",
+  "top": "FN-A3-website-2-07",
+  "members": [
+   "FN-A3-website-2-07"
+  ]
+ },
+ {
+  "group": "G-0047",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/help",
+  "title": "Help tells members to tap a Muscles ready today card that was switched off on 5 Nov",
+  "fix_size": "small",
+  "top": "FN-A4b-2-01",
+  "members": [
+   "FN-A4b-2-01"
+  ]
+ },
+ {
+  "group": "G-0063",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/tracker-engine",
+  "title": "Long-rest marks are lost when workouts come back from the cloud copy",
+  "fix_size": "small",
+  "top": "FN-A5-phone-tracker-engine-3-01",
+  "members": [
+   "FN-A5-phone-tracker-engine-3-01"
+  ]
+ },
+ {
+  "group": "G-0125",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/screens-2",
+  "title": "The page with the machine and trainer sharing switches can only be opened while the gym's leaderboard answers",
+  "fix_size": "small",
+  "top": "FN-B-switch-phone-screens-2-a-03",
+  "members": [
+   "FN-B-switch-phone-screens-2-a-03"
+  ]
+ },
+ {
+  "group": "G-0130",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/cloud-backup-ai",
+  "title": "A second phone on an older app version quietly wipes newer workout details from the saved copy",
+  "fix_size": "medium",
+  "top": "FN-B-time-phone-cloud-backup-ai-01",
+  "members": [
+   "FN-B-time-phone-cloud-backup-ai-01"
+  ]
+ },
+ {
+  "group": "G-0141",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/cloud-backup-ai",
+  "title": "A signed-in member who sets an age under 18 is still told their workouts are saved automatically",
+  "fix_size": "small",
+  "top": "FN-B-truth-phone-cloud-backup-ai-b-01",
+  "members": [
+   "FN-B-truth-phone-cloud-backup-ai-b-01"
+  ]
+ },
+ {
+  "group": "G-0255",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database",
+  "title": "Cancelling a delete request is never tested",
+  "fix_size": "small",
+  "top": "FN-A8-server-database-1-3-09",
+  "members": [
+   "FN-A8-server-database-1-3-09",
+   "FN-A8-server-hq-gate-workers-2-05"
+  ]
+ },
+ {
+  "group": "G-0270",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/components-1",
+  "title": "Member help says nothing about the update screen, save problems, the crash screen or the Charts page's newer parts",
+  "fix_size": "small",
+  "top": "FN-L14-phone-components-1-02",
+  "members": [
+   "FN-L14-phone-components-1-02",
+   "FN-L14-phone-tracker-components-2-02"
+  ]
+ },
+ {
+  "group": "G-0385",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/tracker-components-2",
+  "title": "Routine rest picker names the wrong default",
+  "fix_size": "small",
+  "top": "FN-A5-phone-tracker-components-2-1-01",
+  "members": [
+   "FN-A5-phone-tracker-components-2-1-01"
+  ]
+ },
+ {
+  "group": "G-0620",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/native",
+  "title": "What the workout notifications show on a locked phone is never tested",
+  "fix_size": "small",
+  "top": "FN-A8-phone-native-1-03",
+  "members": [
+   "FN-A8-phone-native-1-03"
+  ]
+ },
+ {
+  "group": "G-0720",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/tracker-components-2",
+  "title": "No test checks the widget and reminder while a workout is open",
+  "fix_size": "small",
+  "top": "FN-A8-phone-tracker-components-2-3-02",
+  "members": [
+   "FN-A8-phone-tracker-components-2-3-02"
+  ]
+ },
+ {
+  "group": "G-0735",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/finish screen",
+  "title": "Back after Finish, the summary shown twice and first-workout records are never tested",
+  "fix_size": "small",
+  "top": "FN-A8-phone-tracker-services-1-2-06",
+  "members": [
+   "FN-A8-phone-tracker-services-1-2-06"
+  ]
+ },
+ {
+  "group": "G-0905",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/tracker-components-1",
+  "title": "The gym's workout of the day still says Start after the member already did it",
+  "fix_size": "small",
+  "top": "FN-B-alerts-phone-tracker-components-1-b-01",
+  "members": [
+   "FN-B-alerts-phone-tracker-components-1-b-01"
+  ]
+ },
+ {
+  "group": "G-1050",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/shop-1",
+  "title": "After asking to renew in the app, the member is still told to renew at the front desk",
+  "fix_size": "small",
+  "top": "FN-B-switch-phone-shop-1-a-03",
+  "members": [
+   "FN-B-switch-phone-shop-1-a-03"
+  ]
+ },
+ {
+  "group": "G-1080",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/screens-1",
+  "title": "A member who left and comes back is renewed from his page but stays hidden as archived",
+  "fix_size": "small",
+  "top": "FN-B-time-panel-screens-1-01",
+  "members": [
+   "FN-B-time-panel-screens-1-01"
+  ]
+ },
+ {
+  "group": "G-1120",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/brand-shell",
+  "title": "Branding shows the owner only the dark look, but members with a light phone see a different colour and no background tone",
+  "fix_size": "medium",
+  "top": "FN-B-truth-panel-brand-shell-b-01",
+  "members": [
+   "FN-B-truth-panel-brand-shell-b-01"
+  ]
+ },
+ {
+  "group": "G-1165",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/tracker-engine",
+  "title": "The Statistics sets headline is much lower than its own bars added up",
+  "fix_size": "small",
+  "top": "FN-B-truth-phone-tracker-engine-b-02",
+  "members": [
+   "FN-B-truth-phone-tracker-engine-b-02"
+  ]
+ },
+ {
+  "group": "G-1195",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/pay-machines",
+  "title": "'Send to their app' says the member will see the payment, even when the member does not use the app",
+  "fix_size": "small",
+  "top": "FN-B-words-panel-pay-machines-01",
+  "members": [
+   "FN-B-words-panel-pay-machines-01"
+  ]
+ },
+ {
+  "group": "G-1565",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 10,
+  "verified": "true",
+  "surface": "phone",
+  "area": "phone/shop-1",
+  "title": "'Take back' on a waiting pause or renew request is small faint grey text that does not look like a button",
+  "fix_size": "small",
+  "top": "FN-L9-phone-shop-1-01",
+  "members": [
+   "FN-L9-phone-shop-1-01"
+  ]
+ },
+ {
+  "group": "G-0022",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 9,
+  "verified": "true",
+  "surface": "panel",
+  "area": "unknown",
+  "title": "Help tells owners a payment link puts money in their account, but payment links are in test mode for every gym",
+  "fix_size": "small",
+  "top": "FN-A3-help-01",
+  "members": [
+   "FN-A3-help-01"
+  ]
+ },
+ {
+  "group": "G-0027",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 9,
+  "verified": "true",
+  "surface": "panel",
+  "area": "unknown",
+  "title": "The note says the small trial fee is built, but a trial can only be free",
+  "fix_size": "small",
+  "top": "FN-A3-inbox-2-03",
+  "members": [
+   "FN-A3-inbox-2-03"
+  ]
+ },
+ {
+  "group": "G-0030",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 9,
+  "verified": "true",
+  "surface": "panel",
+  "area": "unknown",
+  "title": "Desk still has Check workout code, but the member app no longer shows a code",
+  "fix_size": "small",
+  "top": "FN-A3-inbox-3-07",
+  "members": [
+   "FN-A3-inbox-3-07"
+  ]
+ },
+ {
+  "group": "G-0036",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 9,
+  "verified": "true",
+  "surface": "web",
+  "area": "web/pages",
+  "title": "The Hindi half of the privacy notice does not mention the AI Assistant",
+  "fix_size": "small",
+  "top": "FN-A3-notes-claude-2-01",
+  "members": [
+   "FN-A3-notes-claude-2-01"
+  ]
+ },
+ {
+  "group": "G-0045",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 9,
+  "verified": "true",
+  "surface": "server",
+  "area": "server/database",
+  "title": "Four things are announced as live while their database change files still say not applied",
+  "fix_size": "small",
+  "top": "FN-A3-whats-new-panel-02",
+  "members": [
+   "FN-A3-whats-new-panel-02"
+  ]
+ },
+ {
+  "group": "G-0048",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 9,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/assistant",
+  "title": "With six or more members of one first name, the \"Which one?\" card offers only five and gives a wrong count",
+  "fix_size": "small",
+  "top": "FN-A5-panel-assistant-1-01",
+  "members": [
+   "FN-A5-panel-assistant-1-01"
+  ]
+ },
+ {
+  "group": "G-0080",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 9,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/logic-1",
+  "title": "Today tiles are never tested for a gym with two branches",
+  "fix_size": "small",
+  "top": "FN-A8-panel-logic-1-4-04",
+  "members": [
+   "FN-A8-panel-logic-1-4-04"
+  ]
+ },
+ {
+  "group": "G-0085",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 9,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/shop",
+  "title": "No test checks that the front desk never sees the day's shop takings",
+  "fix_size": "small",
+  "top": "FN-A8-panel-shop-2-01",
+  "members": [
+   "FN-A8-panel-shop-2-01"
+  ]
+ },
+ {
+  "group": "G-0098",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 9,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/logic-1",
+  "title": "The owner can never see which members got an automatic reminder, or who could not",
+  "fix_size": "large",
+  "top": "FN-B-alerts-panel-logic-1-b-02",
+  "members": [
+   "FN-B-alerts-panel-logic-1-b-02"
+  ]
+ },
+ {
+  "group": "G-0133",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 9,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/assistant",
+  "title": "'Not seen for 10+ days' on Today and 'stopped coming' everywhere else are two different lists, and the assistant's own button messages the other one",
+  "fix_size": "small",
+  "top": "FN-B-truth-panel-assistant-b-01",
+  "members": [
+   "FN-B-truth-panel-assistant-b-01"
+  ]
+ },
+ {
+  "group": "G-0250",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 9,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/forms",
+  "title": "The owner is told \"The owner gives the extra days.\" when the member has no plan to add days to",
+  "fix_size": "small",
+  "top": "FN-A5-panel-forms-1-03",
+  "members": [
+   "FN-A5-panel-forms-1-03",
+   "FN-A5-panel-screens-1-4-01"
+  ]
+ },
+ {
+  "group": "G-0260",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 9,
+  "verified": "true",
+  "surface": "panel+phone",
+  "area": "panel/screens-2",
+  "title": "Saving a plan, gym details or a workout plan can fail with no note kept of why",
+  "fix_size": "small",
+  "top": "FN-B-run-panel-screens-2-a-01",
+  "members": [
+   "FN-B-run-panel-screens-2-a-01",
+   "FN-B-run-phone-screens-2-a-01"
+  ]
+ },
+ {
+  "group": "G-0320",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 9,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/whats-new",
+  "title": "Update note describes the workout report alert the wrong way round",
+  "fix_size": "small",
+  "top": "FN-A3-whats-new-panel-03",
+  "members": [
+   "FN-A3-whats-new-panel-03"
+  ]
+ },
+ {
+  "group": "G-0350",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 9,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/screens-2",
+  "title": "A MettleUp receipt that fails to load says \"Receipt not found\"",
+  "fix_size": "small",
+  "top": "FN-A5-panel-screens-2-1-01",
+  "members": [
+   "FN-A5-panel-screens-2-1-01"
+  ]
+ },
+ {
+  "group": "G-0355",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 9,
+  "verified": "true",
+  "surface": "panel",
+  "area": "panel/shop",
+  "title": "Join link cards say people pay at the desk even when paying online is on",
+  "fix_size": "small",
+  "top": "FN-A5-panel-shop-1-02",
+  "members": [
+   "FN-A5-panel-shop-1-02"
+  ]
+ }
+]
