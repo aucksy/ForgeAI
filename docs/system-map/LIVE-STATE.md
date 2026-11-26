@@ -751,3 +751,57 @@ its comment at line 16 still says off).
 | F-phone-1427 Undo bar after a delete | yes | n/a | n/a | yes | |
 | F-phone-1428 "Couldn't load" state, error line | yes | n/a | n/a | yes | |
 | F-phone-1429 Font size, touch areas, screen reader, less motion | yes | n/a | n/a | yes | |
+
+## H5-phone-lib-core (surface phone, area phone/lib-core) — 33 features, written by H5-phone-lib-core on 2026-11-26
+
+The member app's shared core: MettleUp Plus and Google Play buying, own AI keys and coach voice, the update checks,
+What's new, new-feature dots, Workout notices, feedback, help replies, crash reports, workout maths (targets, 1-rep max,
+streak, charts), units, tabs, links, credits, pictures and the loading states. "Play app" = the public Google Play
+listing, **version 0.79.0** (see the H5-phone-cloud-backup-ai section). Main is 0.80.0 (apps/mobile/app.json:5). Read
+2026-11-26 with no login: GitHub's newest release answers (api.github.com .../releases/latest = 200, the repo's releases
+are public, so the GitHub-copy update check works); the app's news file https://app.mettleup.fit/app/whats-new.json
+answers 0.79.0 with the 0.79.0 lines; /api/crash is routed (GET answers 405, it takes POST only). The only change in this
+area dated after 0.79.0 (17 Nov) is F237's words: the 0.80.0 What's new entry (apps/mobile/src/lib/whatsNew.ts:72-87)
+and the "only on this phone" card now asking for the phone number (apps/mobile/src/lib/safekeepNudge.ts:30-31); both
+wait for a 0.80.0 release that has not happened (FN-H5-phone-components-2-01). Feedback, help, voice feedback and crash
+reports are stored in the panel's small web database (D1), which cannot be read from the laptop: **unknown**
+(FN-L16-server-panel-worker-06). Switches on main: coach, nutrition, gymSync off (apps/mobile/src/lib/features.ts:6);
+Plus off (MEMBER_PLAN_GATE_ON false) and payments off (MEMBER_PAYMENTS_LIVE false), so no Play purchase can start
+(packages/theme/src/memberPlan.ts:28,34; apps/mobile/src/plan/playBilling.ts:40-44,99). Whether the Plus products exist
+in Play Console was not read.
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-phone-1700 Plus and Find my gym pages from a link | yes, switch **off** (pages leave at once) | n/a | n/a | **off** | QA builds only keep them open (PlusPageGate.tsx:15-26) |
+| F-phone-1701 MettleUp Plus free month and "needs Plus" pop-up | yes, switch **off** | n/a | n/a (plan kept on the phone) | **off** | nothing is ever locked |
+| F-phone-1702 Free month pop-ups (5 days left, ended) | yes, switch **off** | n/a | n/a | **off** | |
+| F-phone-1703 Buy or restore Plus through Google Play | yes, payments **off** (answers "not live") | n/a | n/a | **off** | Play products not checked |
+| F-phone-1704 Own OpenAI, Anthropic or Groq key | yes, **hidden** (coach false) | n/a | n/a | **off** | |
+| F-phone-1705 Talk to the coach by voice | yes, **hidden** (coach false) | n/a | n/a | **off** | |
+| F-phone-1706 "A new version is ready" for GitHub copies | yes | n/a | n/a | yes (GitHub copies only) | GitHub newest release answered 200 without login |
+| F-phone-1707 Full-screen "A new MettleUp is here" | yes | n/a | n/a | yes | news text from app.mettleup.fit/app/whats-new.json (0.79.0) |
+| F-phone-1708 What's new card and Settings > What's new | yes (holds the 0.80.0 entry) | n/a | n/a | yes, up to 0.79.0 | 0.80.0 entry says released 25 Nov; not on Play: FN-H5-phone-components-2-01 |
+| F-phone-1709 New-feature dots | yes | n/a | n/a | yes | |
+| F-phone-1710 "Backups now go to your MettleUp account" card | yes | n/a | n/a | yes | only for a phone that had Google Drive linked |
+| F-phone-1711 "Your workouts are only on this phone" card | yes, asks for the **phone number** (F237) | n/a | yes (member_copy_put) | yes, older words (Google account) | new words wait for 0.80.0: FN-H5-phone-components-2-01 |
+| F-phone-1712 One notice card at a time | yes | n/a | n/a | yes | |
+| F-phone-1713 Send feedback or ask for help | yes | yes (/api/feedback, /api/help routed) | unknown (D1) | yes | |
+| F-phone-1714 Floating feedback button | yes | yes (/api/help/replies for the red dot) | unknown (D1) | yes | |
+| F-phone-1715 Speak your feedback | yes | yes (/api/feedback/voice routed) | unknown (D1, Groq key) | yes | |
+| F-phone-1716 Your questions and answers | yes | yes (/api/help/replies, /api/help/rate) | unknown (D1 0008, 0014) | yes | |
+| F-phone-1717 "The MettleUp team answered" notification | yes | yes (/api/help/replies) | unknown (D1) | yes (Android) | |
+| F-phone-1718 Add my watch's screen log | yes | n/a | n/a | yes | |
+| F-phone-1719 Crash reports | yes | yes (/api/crash, POST only) | unknown (D1 feedback table) | yes | |
+| F-phone-1720 Suggested weight and reps | yes | n/a | n/a | yes | |
+| F-phone-1721 Estimated 1-rep max and record rule | yes | n/a | n/a | yes | |
+| F-phone-1722 Home summary numbers | yes, **hidden** | n/a | n/a | hidden | |
+| F-phone-1723 Charts and per-exercise stats | yes | n/a | n/a | yes | |
+| F-phone-1724 Week streak | yes | n/a | n/a | yes | |
+| F-phone-1725 Units kg/km or lb/miles | yes | n/a | n/a | yes | |
+| F-phone-1726 Three tabs and the back arrow | yes | n/a | n/a | yes | |
+| F-phone-1727 Links, shortcuts and notifications land right | yes | n/a | n/a | yes | |
+| F-phone-1728 One-time "it moved" hints | yes | n/a | n/a | yes | |
+| F-phone-1729 Credits page | yes | n/a | n/a | yes | |
+| F-phone-1730 Take or pick a picture | yes | n/a | n/a | yes | |
+| F-phone-1731 iPhone: "not built yet" lines | yes (iPhone build only) | n/a | n/a | n/a (Android) | no live iPhone app checked |
+| F-phone-1732 Loading, "Couldn't load", Try again | yes | n/a | n/a | yes | |
