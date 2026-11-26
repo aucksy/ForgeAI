@@ -41,14 +41,19 @@ do $$
 declare
   vik_ph text := '9000100001'; mona_ph text := '9000100002'; lap_ph text := '9000100003'; old_ph text := '9000100004';
   gone_ph text := '9000100005'; nobody_ph text := '9000100006'; tara_ph text := '9000100007'; goog_ph text := '9000100008';
+  lena_ph text := '9000100009'; pia_ph text := '9000100010'; dev_ph text := '9000100011'; sam_ph text := '9000100012';
+  fake_ph text := '9000100013';
   ga uuid; gb uuid; gd uuid; ge uuid; tara_staff uuid;
   u_vik uuid; u_mona uuid; u_lap uuid; u_old0 uuid; u_old1 uuid; u_gone uuid; u_nobody uuid; u_tara uuid; u_goog uuid;
+  u_lena uuid; u_pia uuid; u_dev uuid; u_sam uuid; u_fake uuid; nlog int;
   today date := (now() at time zone 'Asia/Kolkata')::date;
   past text := to_char(today - 60, 'YYYY-MM-DD');
   later text := to_char(today + 25, 'YYYY-MM-DD');
   ended5 text := to_char(today - 5, 'YYYY-MM-DD');
   ended20 text := to_char(today - 20, 'YYYY-MM-DD');
   starts text := to_char(today + 3, 'YYYY-MM-DD');
+  ended15 text := to_char(today - 15, 'YYYY-MM-DD');
+  ended16 text := to_char(today - 16, 'YYYY-MM-DD');
   mkey text := 't100-member-key-0123456789'; mid uuid;
   r jsonb; fails text := ''; checks int := 0; i int;
 begin
@@ -65,6 +70,10 @@ begin
   insert into public.gym_staff(gym_id, name, phone, role) values (gb, 'Tara Iyer', tara_ph, 'staff') returning staff_id into tara_staff;
   insert into public.gym_trainers(staff_id, gym_id) values (tara_staff, gb);
   insert into public.gym_staff(gym_id, name, phone, role) values (ge, 'Tara Iyer', tara_ph, 'staff');
+  -- Dev: desk staff at Delta (no Trainer tick).
+  insert into public.gym_staff(gym_id, name, phone, role) values (gd, 'Dev Rao', dev_ph, 'staff');
+  -- Sam's old number now belongs to Kiran, whom Beta took on as staff; Kiran has not signed in to the app yet.
+  insert into public.gym_staff(gym_id, name, phone, role) values (gb, 'Kiran Pal', sam_ph, 'staff');
 
   insert into public.crm_records(gym_id, kind, id, data, version) values
     -- Mona: plan running at Delta.
@@ -83,7 +92,17 @@ begin
     (gd, 'membership', 't100-ravi-m', jsonb_build_object('memberId', 't100-ravi', 'startsOn', past, 'endsOn', later, 'cancelled', false), 1),
     -- Gone: deleted from Delta's list.
     (gd, 'member', 't100-gone', jsonb_build_object('fullName', 'Gopal', 'phone', gone_ph), 1),
-    (gd, 'membership', 't100-gone-m', jsonb_build_object('memberId', 't100-gone', 'startsOn', past, 'endsOn', later, 'cancelled', false), 1);
+    (gd, 'membership', 't100-gone-m', jsonb_build_object('memberId', 't100-gone', 'startsOn', past, 'endsOn', later, 'cancelled', false), 1),
+    -- Vik is ALSO a member at his own gym: one line, the strongest role (owner).
+    (ga, 'member', 't100-vik-a', jsonb_build_object('fullName', 'Vik Shah', 'phone', vik_ph), 1),
+    (ga, 'membership', 't100-vik-am', jsonb_build_object('memberId', 't100-vik-a', 'startsOn', past, 'endsOn', later, 'cancelled', false), 1),
+    -- Lena: plan ended exactly 15 days ago at Beta (found) and 16 days ago at Iron (not found).
+    (gb, 'member', 't100-lena-b', jsonb_build_object('fullName', 'Lena', 'phone', lena_ph), 1),
+    (gb, 'membership', 't100-lena-bm', jsonb_build_object('memberId', 't100-lena-b', 'startsOn', past, 'endsOn', ended15, 'cancelled', false), 1),
+    (ga, 'member', 't100-lena-a', jsonb_build_object('fullName', 'Lena', 'phone', lena_ph), 1),
+    (ga, 'membership', 't100-lena-am', jsonb_build_object('memberId', 't100-lena-a', 'startsOn', past, 'endsOn', ended16, 'cancelled', false), 1),
+    -- Pia: a pass member at Iron (no plan of the gym's own).
+    (ga, 'member', 't100-pia', jsonb_build_object('fullName', 'Pia', 'phone', pia_ph, 'passCompany', 'FITPASS'), 1);
   update public.crm_records set deleted = true where gym_id = gd and id = 't100-gone';
 
   perform set_config('forgeai.hq', 'on', true);
@@ -99,8 +118,15 @@ begin
   u_nobody := pg_temp.t100_user(pg_temp.t100_email(nobody_ph, 0), 1);
   u_tara := pg_temp.t100_user(pg_temp.t100_email(tara_ph, 0), 1);
   u_goog := pg_temp.t100_user('someone.t100@example.com', 1);
+  u_lena := pg_temp.t100_user(pg_temp.t100_email(lena_ph, 0), 1);
+  u_pia := pg_temp.t100_user(pg_temp.t100_email(pia_ph, 0), 1);
+  u_dev := pg_temp.t100_user(pg_temp.t100_email(dev_ph, 0), 1);
+  u_sam := pg_temp.t100_user(pg_temp.t100_email(sam_ph, 0), 5);
+  -- An account with a phone-account e-mail that the Edge Function did NOT make (via is not 'phone').
+  u_fake := pg_temp.t100_user(pg_temp.t100_email(fake_ph, 0), 1);
+  update auth.users set raw_app_meta_data = jsonb_build_object('via', 'google') where id = u_fake;
 
-  -- 1. Owner: Vik finds Iron as owner (any first name: staff rows need none).
+  -- 1. Owner: Vik finds Iron as owner (also a member there: one line, the strongest role).
   perform pg_temp.t100_as(u_vik);
   r := public.phone_account_gyms('Vik');
   checks := checks + 1; fails := fails || pg_temp.t100_is('1ok', r->>'ok', 'true');
@@ -133,11 +159,11 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t100_is('4lapsed', r->'matches'->0->>'lapsed', 'true');
   checks := checks + 1; fails := fails || pg_temp.t100_is('4ends', r->'matches'->0->>'endsOn', ended5);
 
-  -- 5. Only the caller's OWN number counts: Vik typing Mona's name still gets only his own gym (never Mona's Delta),
+  -- 5. Only the caller's OWN number counts: Vik typing Mona's name gets nothing (never Mona's Delta),
   -- and no answer ever carries a number.
   perform pg_temp.t100_as(u_vik);
   r := public.phone_account_gyms('Mona');
-  checks := checks + 1; fails := fails || pg_temp.t100_is('5own', (r->'matches'->0->>'gymName') || '/' || jsonb_array_length(r->'matches'), 'T100 Iron/1');
+  checks := checks + 1; fails := fails || pg_temp.t100_is('5own', jsonb_array_length(r->'matches')::text, '0');
   checks := checks + 1; fails := fails || pg_temp.t100_is('5nonumber', (r::text ~ '90001000')::text, 'false');
   perform pg_temp.t100_as(u_mona);
   r := public.phone_account_gyms('Mona');
@@ -179,18 +205,21 @@ begin
   -- 10. Switch off: answers off, nothing found, no log row.
   update public.phone_gym_check_settings set "on" = false;
   perform pg_temp.t100_as(u_mona);
+  select count(*) into nlog from public.phone_gym_checks where user_id = u_mona;
   r := public.phone_account_gyms('Mona');
   checks := checks + 1; fails := fails || pg_temp.t100_is('10off', r->>'off', 'true');
   checks := checks + 1; fails := fails || pg_temp.t100_is('10none', jsonb_array_length(r->'matches')::text, '0');
+  checks := checks + 1; fails := fails || pg_temp.t100_is('10nolog',
+    (select count(*) from public.phone_gym_checks where user_id = u_mona)::text, nlog::text);
   update public.phone_gym_check_settings set "on" = true;
 
-  -- 11. The first-screen sign-in (0093) uses the same member rule: the lapsed member is found there too.
+  -- 11. The first-screen sign-in (0093) is NOT changed: the 0.80.0 screen would call a past end date "runs until".
   r := public.phone_sign_in_find(
          (select b || '.' || encode(extensions.hmac(b, 'test-secret-0123456789abcdef0123456789abcdef', 'sha256'), 'hex')
             from (select 'v1.member.' || lap_ph || '.' || (extract(epoch from now())::bigint + 900) || '.' || repeat('9', 32) as b) x),
          'Lata');
-  checks := checks + 1; fails := fails || pg_temp.t100_is('11signin', r->'matches'->0->>'gymName', 'T100 Delta');
-  checks := checks + 1; fails := fails || pg_temp.t100_is('11lapsed', r->'matches'->0->>'lapsed', 'true');
+  checks := checks + 1; fails := fails || pg_temp.t100_is('11signin', r->>'ok', 'true');
+  checks := checks + 1; fails := fails || pg_temp.t100_is('11nolapsed', jsonb_array_length(r->'matches')::text, '0');
 
   -- 12. Claim after the join: Mona joins Delta in the app, then the account links the gym's list row.
   insert into public.gym_members(gym_id, name, key_hash) values (gd, 'Mona', public._hash_key(mkey)) returning member_id into mid;
@@ -202,6 +231,34 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t100_is('12ok', r->>'ok', 'true');
   checks := checks + 1; fails := fails || pg_temp.t100_is('12phone',
     (select checkin_phone from public.gym_members where member_id = mid), '+91' || mona_ph);
+
+  -- 14. Exactly 15 days after the end: found; 16 days: not.
+  perform pg_temp.t100_as(u_lena);
+  r := public.phone_account_gyms('Lena');
+  checks := checks + 1; fails := fails || pg_temp.t100_is('14edge',
+    jsonb_array_length(r->'matches') || '/' || (r->'matches'->0->>'gymName') || '/' || (r->'matches'->0->>'lapsed'), '1/T100 Beta/true');
+
+  -- 15. A pass member is found (pass, not lapsed).
+  perform pg_temp.t100_as(u_pia);
+  r := public.phone_account_gyms('Pia');
+  checks := checks + 1; fails := fails || pg_temp.t100_is('15pass',
+    (r->'matches'->0->>'gymName') || '/' || (r->'matches'->0->>'pass') || '/' || (r->'matches'->0->>'lapsed'), 'T100 Iron/true/false');
+
+  -- 16. Desk staff (no Trainer tick).
+  perform pg_temp.t100_as(u_dev);
+  r := public.phone_account_gyms('Dev');
+  checks := checks + 1; fails := fails || pg_temp.t100_is('16desk', (r->'matches'->0->>'gymName') || '/' || (r->'matches'->0->>'role'), 'T100 Delta/desk');
+
+  -- 17. Recycled number, new holder not signed in yet: the old holder (still the newest account) types his own name
+  -- and learns nothing about the new holder's staff job.
+  perform pg_temp.t100_as(u_sam);
+  r := public.phone_account_gyms('Sam');
+  checks := checks + 1; fails := fails || pg_temp.t100_is('17recycled', jsonb_array_length(r->'matches')::text, '0');
+
+  -- 18. A phone-account e-mail on an account the Edge Function did not make: refused.
+  perform pg_temp.t100_as(u_fake);
+  r := public.phone_account_gyms('Ann');
+  checks := checks + 1; fails := fails || pg_temp.t100_is('18via', r->>'error', 'NOT_PHONE_ACCOUNT');
 
   -- 13. Who may call: the app's signed-in role only; never anon; the helpers never.
   checks := checks + 1; fails := fails || pg_temp.t100_is('13anon',

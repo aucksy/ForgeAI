@@ -39,6 +39,7 @@ import {
   shouldCheck,
   type AddedMatch,
   type AddedState,
+  type CheckResult,
 } from '@/shop/gymAddedYou';
 
 const NOW = Date.UTC(2026, 10, 26, 6, 30);
@@ -170,18 +171,30 @@ describe('one check and what is shown after it', () => {
   });
   it("'off', a refusal, or a server without 0100: nothing shown (an older answer is dropped too), and logged", () => {
     const before = { ...fresh(), matches: [match()] };
-    for (const res of [
+    const results: CheckResult[] = [
       { kind: 'answer', answer: { ok: true, off: true, matches: [] } },
       { kind: 'answer', answer: { ok: false, problem: 'NOT_YOUR_NUMBER' } },
       { kind: 'missing' },
-    ] as const) {
+    ];
+    for (const res of results) {
       const r = afterCheck(before, res, NOW);
       expect(shown(r.state)).toEqual([]);
       expect(r.state.lastCheckAt).toBe(NOW);
       expect(r.log.length).toBeGreaterThan(10);
     }
     expect(afterCheck(before, { kind: 'missing' }, NOW).log).toMatch(/0100/);
-    expect(afterCheck(before, { kind: 'answer', answer: { ok: false, problem: 'TOO_MANY' } }, NOW).log).toMatch(/TOO_MANY/);
+  });
+  it('the daily limit, no secret or anything odd: the last answer stays, and the next open asks again (logged)', () => {
+    const before = { ...fresh(), lastCheckAt: NOW - 2 * DAY, matches: [match()] };
+    for (const problem of ['TOO_MANY', 'NO_SECRET', 'OTHER'] as const) {
+      const r = afterCheck(before, { kind: 'answer', answer: { ok: false, problem } }, NOW);
+      expect(r.state).toEqual(before);
+      expect(r.log).toMatch(new RegExp(problem));
+    }
+  });
+  it('a "Not now" tapped while the server answers is kept (the check builds on what is kept after the answer)', () => {
+    const api = read('shop/gymAddedYouApi.ts');
+    expect(api).toMatch(/state = await readState\(\);\s*const r = afterCheck\(state, result/);
   });
   it('offline or slow: the last answer stays and the next open asks again', () => {
     const before = { ...fresh(), lastCheckAt: NOW - 2 * DAY, matches: [match()] };

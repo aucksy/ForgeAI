@@ -191,6 +191,8 @@ async function checkNow(trigger: CheckTrigger): Promise<void> {
     return null;
   })) ?? account?.name ?? '');
   const result = resultOf(await apiPhoneAccountGyms(firstName, CHECK_TIMEOUT_MS));
+  // A "Not now" tapped while the server was answering must win: build on what is kept NOW, not on the copy read above.
+  state = await readState();
   const r = afterCheck(state, result, nowMs());
   console.log(TAG, r.log);
   state = r.state;

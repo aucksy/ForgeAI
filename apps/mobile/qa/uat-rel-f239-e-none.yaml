@@ -1,18 +1,25 @@
 # Part UAT u239, F239 / R-629 "A gym added you" (owner, 26 Nov 2026), flow e: nothing found shows nothing.
 # The QA build's 'gymAddedYou' stand-in answers mettleup://qa-gymadded?found=none without the gym server.
-# Negative: no card on the Workout tab and none on the Gym tab (no gym joined). Starts from gate-demo (no gym).
+# Negative: a card shown first goes away when the answer is "none"; none on the Gym tab either. Starts with no gym.
 # Pictures rel-f239-e-*.png.
 appId: com.mettleup.app
 ---
-- openLink: "mettleup://qa-gymadded?found=none&reset=1"
+# First a card, so the "nothing" below is a real change the screen must make (not a check before it redraws).
+- openLink: "mettleup://qa-gymadded?found=member&reset=1&gym=QA%20UAT%20Gym"
 - tapOn:
     text: "^Workout$"
     index: 0
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: "Up next: .*|Done: .*|Workout in progress|Start empty workout"
-- assertNotVisible: ".* added you as .*"
+      FIND: "^QA UAT Gym added you as a member\\.$"
+- openLink: "mettleup://qa-gymadded?found=none"
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- extendedWaitUntil:
+    notVisible: ".* added you as .*"
+    timeout: 10000
 - assertNotVisible: ".*gyms added you on MettleUp.*"
 - takeScreenshot: rel-f239-e-1-none-workout
 - tapOn:

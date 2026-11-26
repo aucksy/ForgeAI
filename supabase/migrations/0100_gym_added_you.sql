@@ -1,12 +1,13 @@
 -- NOT YET APPLIED LIVE: waits for the owner's yes. Re-runnable. Apply after 0099 (phone accounts), 0093
 -- (phone_sign_in_find), 0068 (member_find_tries, member_claim_phone, the phone index), 0061 (phone_code_settings),
--- 0055 (_pass_company), 0050 (gym_trainers) and 0005 (_brand_json).
+-- 0055 (_pass_company), 0050 (gym_trainers), 0023 (_first_name_key) and 0005 (_brand_json).
 -- Test: supabase/tests/0100_gym_added_you.sql (CI runs it after every migration; pasted into the SQL Editor it always
 -- ends in an error and so changes nothing).
 -- Undo: drop function public.phone_account_gyms(text); drop function public.phone_account_claim(text);
 --       drop function public._phone_account_code(); drop function public._phone_for_code(text, text, uuid);
 --       drop function public._phone_gym_find(text, text); drop table public.phone_gym_checks;
---       drop table public.phone_gym_check_settings; then re-run 0093 (puts back its own member rule).
+--       drop table public.phone_gym_check_settings; drop index public.crm_records_member_first_name;
+--       drop index public.gym_staff_first_name.
 --
 -- 0100: F239 "A gym added you" (owner, 26 Nov 2026, R-629): "if the user installed the app first and then their name
 -- was added to a gym as a member, as a trainer, as a staff, will the app detect it and let the user know".
@@ -19,14 +20,20 @@
 -- sent, stored or returned. Only the NEWEST account of a number counts (a recycled number's old holder, still signed
 -- in on an old phone, learns nothing).
 --
---   phone_account_gyms(first name) -> {ok, matches: [...as 0093, plus lapsed...]} | {ok, off: true}
+--   phone_account_gyms(first name) -> {ok, matches: [{gymId, gymName, joinCode, role, endsOn, pass, lapsed, brand}]}
+--                                     | {ok, off: true}
 --                                     | {error: NOT_PHONE_ACCOUNT | NOT_YOUR_NUMBER | TOO_MANY | NO_SECRET}
 --   phone_account_claim(member key) -> as 0068 member_claim_phone, the account in place of the proof
 --
 -- MEMBER RULE (owner, 26 Nov 2026: "a lapsed member should be found because gym owner could use the app to kind of
 -- encourage user to renew"; 15 days is Claude's pick, his words "you can decide the best"): a member is found while a
--- plan runs today, OR a plan ended in the last 15 days (India date), OR they hold a pass. The first-screen sign-in
--- (0093 phone_sign_in_find) gets the SAME rule here, so both ways in agree. 'lapsed' = true when no plan runs today.
+-- plan runs today, OR a plan ended in the last 15 days (India date), OR they hold a pass. 'lapsed' = true when no plan
+-- runs today. The first-screen sign-in (0093) is NOT changed: the 0.80.0 screen reads endsOn as "your plan runs
+-- until", so a past date would mislead. A lapsed member who signs in there is found by this check right after.
+--
+-- FIRST NAME FOR EVERYONE: here gym people (owner, trainer, desk) must ALSO have the typed first name (0093 does not
+-- ask it of them). A recycled number's old holder whose account is still the newest (the new holder has not signed
+-- in yet) must not learn that a gym took the new holder on as staff.
 --
 -- SWITCH: phone_gym_check_settings.on = false makes phone_account_gyms answer {ok, off: true} (the app shows nothing),
 -- with no app release.
@@ -53,7 +60,13 @@ create index if not exists phone_gym_checks_user on public.phone_gym_checks(user
 alter table public.phone_gym_checks enable row level security;
 revoke all on public.phone_gym_checks from public, anon, authenticated;
 
--- ------------------------------------------------------------------ the shared lookup (0093's, new member rule)
+-- Finding the number by first name must not read every gym's whole list (one HMAC per candidate row).
+create index if not exists crm_records_member_first_name on public.crm_records ((public._first_name_key(data->>'fullName')))
+  where kind = 'member' and not deleted;
+create index if not exists gym_staff_first_name on public.gym_staff ((public._first_name_key(name)))
+  where removed_at is null;
+
+-- ------------------------------------------------------------------ the lookup (0093's, the owner's member rule)
 create or replace function public._phone_gym_find(p_phone text, p_name text) returns jsonb
   language plpgsql stable security definer set search_path = public as $$
 declare
@@ -72,7 +85,8 @@ begin
                 else 'desk' end as role,
            null::text as ends_on, false as pass, false as lapsed
       from public.gym_staff s
-     where s.phone = ph and s.removed_at is null
+     where fk is not null and s.phone = ph and s.removed_at is null
+       and public._first_name_key(s.name) = fk
   ), roster as (
     select r.gym_id, r.id, public._pass_company(r.data) is not null as pass,
            (select max(m.data->>'endsOn') from public.crm_records m
@@ -115,35 +129,15 @@ begin
 end $$;
 revoke all on function public._phone_gym_find(text, text) from public, anon, authenticated;
 
--- ------------------------------------------------------------------ 0093's sign-in, same answer, new member rule
--- Changed from 0093: the lookup moved into _phone_gym_find (members: plan today OR ended in the last 15 days OR a
--- pass; each line also says 'lapsed'). Proof, limit and answer shape are unchanged.
-create or replace function public.phone_sign_in_find(p_proof text, p_name text)
-  returns jsonb language plpgsql volatile security definer set search_path = public as $$
-declare
-  ph text;
-  v_nonce text := split_part(coalesce(p_proof, ''), '.', 5);
-  n int;
-begin
-  ph := public._phone_proof(p_proof, 'member', false);
-  if ph is null then return jsonb_build_object('error', 'BAD_PROOF'); end if;
-  perform pg_advisory_xact_lock(hashtext('member-find:' || v_nonce));
-  delete from public.member_find_tries t where t.at < now() - interval '1 day';
-  select count(*) into n from public.member_find_tries t where t.nonce = v_nonce;
-  if n >= 5 then return jsonb_build_object('error', 'TOO_MANY'); end if;
-  insert into public.member_find_tries(nonce) values (v_nonce);
-  return jsonb_build_object('ok', true, 'matches', public._phone_gym_find(ph, p_name));
-end $$;
-revoke all on function public.phone_sign_in_find(text, text) from public;
-grant execute on function public.phone_sign_in_find(text, text) to anon, authenticated;
-
 -- ------------------------------------------------------------------ the caller's own phone account code
 -- An earlier draft of this file took the number from the phone; those signatures never went live.
 drop function if exists public.phone_account_gyms(text, text);
 drop function if exists public.phone_account_claim(text, text);
 drop function if exists public._phone_account_number(text);
 
--- The 40-hex code of the caller's phone account (0099), or an error word. Only the NEWEST account of a number
+-- The 40-hex code of the caller's phone account (0099; only accounts the phone-account Edge Function made, which
+-- set app_metadata.via = 'phone': a user cannot set app_metadata, so changing an e-mail is not enough), or an error word.
+-- Only the NEWEST account of a number
 -- (0099 makes a new one when the number passed to a new person): an old holder's account gets NOT_YOUR_NUMBER.
 create or replace function public._phone_account_code() returns text
   language plpgsql stable security definer set search_path = public as $$
@@ -152,12 +146,13 @@ declare
   my_email text; code text; newest text;
 begin
   if me is null then return 'NOT_PHONE_ACCOUNT'; end if;
-  select au.email into my_email from auth.users au where au.id = me;
+  select au.email into my_email from auth.users au where au.id = me and au.raw_app_meta_data->>'via' = 'phone';
   if my_email is null or my_email !~ '^m-[0-9a-f]{40}(-[0-9]+)?@phone\.mettleup\.fit$' then return 'NOT_PHONE_ACCOUNT'; end if;
   code := substr(my_email, 3, 40);
   select au.email into newest from auth.users au
-   where au.email = 'm-' || code || '@phone.mettleup.fit'
-      or au.email ~ ('^m-' || code || '-[0-9]+@phone\.mettleup\.fit$')
+   where au.raw_app_meta_data->>'via' = 'phone'
+     and (au.email = 'm-' || code || '@phone.mettleup.fit'
+          or au.email ~ ('^m-' || code || '-[0-9]+@phone\.mettleup\.fit$'))
    order by au.created_at desc
    limit 1;
   if newest is distinct from my_email then return 'NOT_YOUR_NUMBER'; end if;
@@ -166,8 +161,8 @@ end $$;
 revoke all on function public._phone_account_code() from public, anon, authenticated;
 
 -- The number behind an account code, found among the numbers the gyms ALREADY hold: live gym people, and live list
--- members whose first name is p_name's (or only one gym's list: p_gym). The phone never sends the number (the phone
--- sign-in does not keep it on the phone). One HMAC per candidate: gym people, plus list members of that first name.
+-- members, both with p_name's first name (or only one gym's list: p_gym). The phone never sends the number (the phone
+-- sign-in does not keep it on the phone). One HMAC per candidate row of that first name (indexed above).
 -- null = no gym holds this number (or no secret).
 create or replace function public._phone_for_code(p_code text, p_name text, p_gym uuid default null) returns text
   language plpgsql stable security definer set search_path = public, extensions as $$
@@ -178,7 +173,8 @@ begin
   if k is null or coalesce(p_code, '') !~ '^[0-9a-f]{40}$' then return null; end if;
   select c.ph into ph
     from (select s.phone as ph from public.gym_staff s
-           where s.removed_at is null and p_gym is null
+           where fk is not null and s.removed_at is null and p_gym is null
+             and public._first_name_key(s.name) = fk
           union
           select public._norm_phone(r.data->>'phone') from public.crm_records r
            where fk is not null and r.kind = 'member' and not r.deleted

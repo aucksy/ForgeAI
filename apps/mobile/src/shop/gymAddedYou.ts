@@ -202,6 +202,11 @@ export function afterCheck(s: AddedState, r: CheckResult, now: number): { state:
   if (r.kind === 'offline') return { state: s, log: 'no answer from the gym server (offline or slow); asked again next time' };
   if (r.kind === 'missing') return { state: { ...s, lastCheckAt: now, matches: [] }, log: 'the gym server has no phone_account_gyms (0100 not applied); nothing shown' };
   const a = r.answer;
+  // Busy or broken for a while (the daily limit, no secret, anything odd): the last answer stays and the next open asks
+  // again. Only "this is not a phone account / not your number" clears the card.
+  if (!a.ok && (a.problem === 'TOO_MANY' || a.problem === 'NO_SECRET' || a.problem === 'OTHER')) {
+    return { state: s, log: `the gym server could not answer now: ${a.problem}; the last answer stays` };
+  }
   if (!a.ok) return { state: { ...s, lastCheckAt: now, matches: [] }, log: `the gym server refused the check: ${a.problem}; nothing shown` };
   if (a.off) return { state: { ...s, lastCheckAt: now, matches: [] }, log: 'the gym server switch is off; nothing shown' };
   return { state: { ...s, lastCheckAt: now, matches: a.matches }, log: `the gym server found ${a.matches.length} gym(s)` };

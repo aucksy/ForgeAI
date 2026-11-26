@@ -1,7 +1,8 @@
-# Part UAT u239, F239 / R-629 "A gym added you", flow b: "Not now" twice. The first hides the gym's card for 14 days
-# (the same answer the same day: still hidden), it comes back after 14 days (the QA link's days=15 moves the card's
-# clock), and the second "Not now" hides it for good (days=400: still hidden). Starts with no gym. Pictures
-# rel-f239-b-*.png.
+# Part UAT u239, F239 / R-629 "A gym added you", flow b: "Not now" twice, and the card for several gyms.
+# QA UAT Gym (id 1) is hidden by the first "Not now" for 14 days; every "still hidden" check first WAITS for another
+# gym's card from the same answer (QA Second Gym, id 2), so it can never pass before the card redraws. After 14 days
+# (days=15) both gyms show on one card ("2 gyms added you on MettleUp."); the second "Not now" hides QA UAT Gym for
+# good (days=400: Second Gym is back, QA UAT Gym never). Starts with no gym. Pictures rel-f239-b-*.png.
 appId: com.mettleup.app
 ---
 - openLink: "mettleup://qa-gymadded?found=member&reset=1&gym=QA%20UAT%20Gym&code=${CODE}"
@@ -26,42 +27,53 @@ appId: com.mettleup.app
     notVisible: "^QA UAT Gym added you as a member\\.$"
     timeout: 10000
 - takeScreenshot: rel-f239-b-2-first-not-now
-# The same answer again the same day: still hidden (negative).
-- openLink: "mettleup://qa-gymadded?found=member&gym=QA%20UAT%20Gym&code=${CODE}"
+# The same day, an answer with QA UAT Gym (now as trainer) AND QA Second Gym: only Second Gym shows (negative).
+- openLink: "mettleup://qa-gymadded?found=two&gym=QA%20UAT%20Gym&code=${CODE}"
 - tapOn:
     text: "^Workout$"
     index: 0
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: "Up next: .*|Done: .*|Workout in progress|Start empty workout"
-- assertNotVisible: "^QA UAT Gym added you as a member\\.$"
-# 15 days later: back.
-- openLink: "mettleup://qa-gymadded?found=member&days=15&gym=QA%20UAT%20Gym&code=${CODE}"
+      FIND: "^QA Second Gym added you as a member\\.$"
+- assertNotVisible: "^QA UAT Gym added you as a trainer\\.$"
+- assertNotVisible: ".*gyms added you on MettleUp.*"
+- takeScreenshot: rel-f239-b-3-hidden-gym-stays-hidden
+# 15 days later: QA UAT Gym is back, so both gyms show on one card.
+- openLink: "mettleup://qa-gymadded?found=two&days=15&gym=QA%20UAT%20Gym&code=${CODE}"
 - tapOn:
     text: "^Workout$"
     index: 0
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: "^QA UAT Gym added you as a member\\.$"
-- takeScreenshot: rel-f239-b-3-back-after-14-days
+      FIND: "^2 gyms added you on MettleUp\\.$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^QA UAT Gym added you as a trainer\\.$"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: "^QA Second Gym added you as a member\\.$"
+- takeScreenshot: rel-f239-b-4-two-gyms-after-14-days
 - runFlow:
     file: sub-find.yaml
     env:
       FIND: "^Not now$"
 - tapOn: "^Not now$"
 - extendedWaitUntil:
-    notVisible: "^QA UAT Gym added you as a member\\.$"
+    notVisible: "^2 gyms added you on MettleUp\\.$"
     timeout: 10000
-# The second "Not now": gone for good, even 400 days later.
-- openLink: "mettleup://qa-gymadded?found=member&days=400&gym=QA%20UAT%20Gym&code=${CODE}"
+# 400 days later: Second Gym (one "Not now") is back; QA UAT Gym (two) never comes back.
+- openLink: "mettleup://qa-gymadded?found=two&days=400&gym=QA%20UAT%20Gym&code=${CODE}"
 - tapOn:
     text: "^Workout$"
     index: 0
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: "Up next: .*|Done: .*|Workout in progress|Start empty workout"
-- assertNotVisible: "^QA UAT Gym added you as a member\\.$"
-- takeScreenshot: rel-f239-b-4-gone-for-good
+      FIND: "^QA Second Gym added you as a member\\.$"
+- assertNotVisible: "^QA UAT Gym added you as a trainer\\.$"
+- assertNotVisible: ".*gyms added you on MettleUp.*"
+- takeScreenshot: rel-f239-b-5-gone-for-good
