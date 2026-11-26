@@ -1,2 +1,2 @@
-2479 problems found, 480 confirmed, 4 could not be confirmed (1995 small ones were not re-checked one by one; 26 more were checked and turned out wrong, so they are left out).
-{"S2":136,"S1":5,"S3":1401,"S4":937}
+2463 problems found, 479 confirmed, 4 could not be confirmed (1980 small ones were not re-checked one by one; 42 more findings were checked and turned out wrong, so they are left out).
+{"S2":135,"S1":5,"S3":1379,"S4":944}

@@ -393,21 +393,6 @@
   ]
  },
  {
-  "group": "G-0029",
-  "sev": "S2",
-  "word": "Serious",
-  "reach": 9,
-  "verified": "true",
-  "surface": "web",
-  "area": "unknown",
-  "title": "Website says our staff cannot open a member list unless the gym lets them in, but HQ can open it in an emergency",
-  "fix_size": "small",
-  "top": "FN-A3-inbox-3-06",
-  "members": [
-   "FN-A3-inbox-3-06"
-  ]
- },
- {
   "group": "G-0052",
   "sev": "S2",
   "word": "Serious",
@@ -2150,21 +2135,6 @@
   ]
  },
  {
-  "group": "G-0024",
-  "sev": "S3",
-  "word": "Medium",
-  "reach": 10,
-  "verified": "true",
-  "surface": "phone",
-  "area": "unknown",
-  "title": "Backlog says \"Steps and water each day\" is live, but only steps exist",
-  "fix_size": "small",
-  "top": "FN-A3-inbox-1-14",
-  "members": [
-   "FN-A3-inbox-1-14"
-  ]
- },
- {
   "group": "G-0025",
   "sev": "S3",
   "word": "Medium",
@@ -2524,6 +2494,21 @@
   "top": "FN-A3-inbox-2-03",
   "members": [
    "FN-A3-inbox-2-03"
+  ]
+ },
+ {
+  "group": "G-0029",
+  "sev": "S3",
+  "word": "Medium",
+  "reach": 9,
+  "verified": "true",
+  "surface": "web",
+  "area": "unknown",
+  "title": "Website says our staff cannot open a member list unless the gym lets them in, but HQ can open it in an emergency",
+  "fix_size": "small",
+  "top": "FN-A3-inbox-3-06",
+  "members": [
+   "FN-A3-inbox-3-06"
   ]
  },
  {

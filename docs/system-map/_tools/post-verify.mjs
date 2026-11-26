@@ -47,13 +47,13 @@ for (const gid of s3Sampled) {
 }
 const h3 = Object.entries(per).filter(([, v]) => v.sampled >= 2 && v.false / v.sampled > 0.25).map(([wi, v]) => ({ wi, ...v, findings: kept.filter((f) => f.wi === wi).length }));
 // 4. count line (groups = problems; a group is one problem)
-const liveG = groups.filter((g) => !(vByG.get(g.group)?.verified === 'false'));
+const liveG = groups.filter((g) => !(vByG.get(g.group)?.verified === 'false') && g.members.some((m) => byId.has(m) && !rejIds.has(m)));
 const conf = liveG.filter((g) => vByG.get(g.group)?.verified === 'true').length;
 const uns = liveG.filter((g) => vByG.get(g.group)?.verified === 'unsure').length;
 const notChecked = liveG.length - conf - uns;
 const worstNow = (g) => { const order = ['S1', 'S2', 'S3', 'S4']; let w = 'S4'; for (const m of g.members) { const s = byId.get(m)?.severity; if (sevOk.has(s) && order.indexOf(s) < order.indexOf(w)) w = s; } return w; };
 const bySev = {}; for (const g of liveG) { const s = worstNow(g); bySev[s] = (bySev[s] || 0) + 1; }
-const line = `${liveG.length} problems found, ${conf} confirmed, ${uns} could not be confirmed (${notChecked} small ones were not re-checked one by one; ${falseG.length} more were checked and turned out wrong, so they are left out).`;
+const line = `${liveG.length} problems found, ${conf} confirmed, ${uns} could not be confirmed (${notChecked} small ones were not re-checked one by one; ${readL('findings-rejected.jsonl').length + (write ? rejected.length : 0)} more findings were checked and turned out wrong, so they are left out).`;
 console.log({ verifyRows: vByG.size, sevChanged, falseGroups: falseG.length, rejectedFindings: rejected.length, keptFindings: kept.length, bySev });
 console.log('H3 items needing a full verify:', h3.length ? h3 : 'none');
 console.log(line);
