@@ -1275,3 +1275,56 @@ shows only after the member taps Load demo data.
 | F-phone-1023 Plates and bars | yes | n/a | n/a | yes |  |
 | F-phone-1024 Workout settings kept on the phone | yes; AI coach note **off** (coach false) | n/a | n/a | yes; coach note **off** | apps/mobile/src/lib/features.ts:6 |
 | F-phone-1025 Progress: pick any exercise to chart | yes | n/a | n/a | yes | forgotten after a restart, by design |
+
+## H5-phone-tracker-engine (surface phone, area phone/tracker-engine) — 32 features, written by H5-phone-tracker-engine on 2026-11-26
+
+The member app's workout rules: exercise demo clips, the counting and records rules, charts, reports, badges, the Target
+line, and the plan builder, ready programs, easy weeks and routine files. Every file here is pure rules or phone storage:
+no file in apps/mobile/src/tracker/engine or apps/mobile/src/tracker/plans calls our server or the gym database (searched
+for rpc, fetch, supabase and /api: no hit), so "Live panel" and "Live DB" are n/a and nothing waits for a migration. The one
+outside link is the demo clips: they download from the public GitHub release "exercise-clips" (clipManifest.ts:24); all four
+files of the two approved clips answered 200 on 26 Nov (incline dumbbell press v6 and lateral raise v6, clip and poster).
+"Play app" = 0.79.0 (Play listing read 26 Nov by H5-phone-components-2); main is 0.80.0 (apps/mobile/app.json:5), whose only
+What's new line (phone-number backup) is not in this area (FN-H5-phone-components-2-01). The newest change tag in these files
+is R-576 (15 Nov, "Today's target" always beats last time, progression.ts:669), named in 0.79.0's What's new
+(whatsNew.ts:95-104, line 2); the newest date in these files is 15 Nov, before the 17 Nov 0.79.0 tag. So every feature here
+is on Play as on main (code-read; no git diff run). No paid-plan or code switch is read in this area (FEATURES and the member
+plan switch are not used here). **Two features are switched off by removing their card, not by a switch:** "Muscles ready
+today" and Quick workout lost their only opener on the Workout tab on 5 Nov (R-372, (tabs)/workout.tsx:487-489); nothing else
+opens /ready or /quick, yet the feature list marks both "live, switch none" (FN-A3-inbox-1-18). What's new says so honestly
+(whatsNew.ts:198, 203).
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-phone-900 Exercise demo clips | yes (2 clips) | n/a | n/a | yes | files live on the public release, checked 26 Nov |
+| F-phone-901 Ask your own AI (text to share) | yes | n/a | n/a | yes | Settings line "Ask an AI about your workouts"; no AI call by us |
+| F-phone-902 Badge shelf | yes | n/a | n/a | yes |  |
+| F-phone-903 Balance check and focus block | yes | n/a | n/a | yes | after 4 weeks of logs |
+| F-phone-904 Body weight typo question | yes | n/a | n/a | yes |  |
+| F-phone-906 Body map | yes | n/a | n/a | yes |  |
+| F-phone-907 Treadmill and cycle details | yes | n/a | n/a | yes |  |
+| F-phone-908 Headline numbers that match | yes | n/a | n/a | yes |  |
+| F-phone-909 Profile history chart | yes ("Last 3 months", R-500) | n/a | n/a | yes |  |
+| F-phone-910 Exercise log types | yes | n/a | n/a | yes |  |
+| F-phone-911 Body measurements | yes | n/a | n/a | yes |  |
+| F-phone-912 Missing-muscle tip | yes, member setting | n/a | n/a | yes, same | groups can be muted or snoozed by the member |
+| F-phone-913 Progress leads with the answer | yes | n/a | n/a | yes |  |
+| F-phone-914 Target line on each exercise | yes (R-576) | n/a | n/a | yes (0.79.0 line 2) | free; the Plus switch is off (see tracker-data) |
+| F-phone-915 Which muscles are ready today | **off**: code kept, no opener since 5 Nov | n/a | n/a | **off**, same | listed "live, switch none" (FN-A3-inbox-1-18) |
+| F-phone-916 Personal records | yes | n/a | n/a | yes |  |
+| F-phone-917 Rep range | yes | n/a | n/a | yes |  |
+| F-phone-918 Monthly report and year in review | yes | n/a | n/a | yes | coach note by fixed rules, no AI |
+| F-phone-919 Real rest taken, long-rest mark | yes | n/a | n/a | yes |  |
+| F-phone-920 Statistics screen | yes | n/a | n/a | yes |  |
+| F-phone-921 Strength level | yes | n/a | n/a | yes |  |
+| F-phone-922 Kg lifted and sets per muscle rule | yes | n/a | n/a | yes |  |
+| F-phone-923 Own weight ladder | yes | n/a | n/a | yes |  |
+| F-phone-924 Plan builder | yes | n/a | n/a | yes | rules, no AI |
+| F-phone-925 Swap an exercise | yes | n/a | n/a | yes |  |
+| F-phone-926 Easy weeks | yes, member setting on by default | n/a | n/a | yes, same | per plan |
+| F-phone-927 Effort per plan week, early easy-week offer | yes; effort shown only with the member's RPE logging | n/a | n/a | yes, same | feature list says switch "unknown": it is the member's own RPE choice (effort.ts:4-9) |
+| F-phone-928 Ready programs | yes | n/a | n/a | yes |  |
+| F-phone-929 Quick workout | **off**: code kept, no opener since 5 Nov | n/a | n/a | **off**, same | listed "live, switch none" (FN-A3-inbox-1-18) |
+| F-phone-930 Share and import a routine file | yes | n/a | n/a | yes |  |
+| F-phone-931 Routine sets (warm-up, drop, failure) | yes | n/a | n/a | yes |  |
+| F-phone-932 Today's routine | yes | n/a | n/a | yes |  |
