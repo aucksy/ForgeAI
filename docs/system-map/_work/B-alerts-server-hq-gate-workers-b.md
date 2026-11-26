@@ -1,0 +1,4 @@
+# B-alerts-server-hq-gate-workers-b checkpoint
+- gap-3 H3.1-H3.2 done: automatic jobs = backup (status in store + HQ log row), clean-up (HQ log row; QA gym purge own row), AI 400-day purge (no row: 03), billing downgrades (no record: 01), plan-end reminders (stub, notes nobody reads: 02), weekly free-limit check (failure not stored: 04), member pop-ups / staff alerts / fee feed (outcome only in Worker log: reused database-2-b-01, panel-logic-2-b-01, hq-app-b-01), read-record (has status). Gate not deployed.
+- gap-4 H4.1-H4.8 done: all done marks server-side; catalog check shows 0098 columns live (gym_alerts.handled_at, gym_alert_reads), so the summary skips done/read alerts. Reused database-3-b-03, truth-b-01, panel-logic-1-b-06, hq-app-b-04. No new gap-4 finding.
+- Output: docs/system-map/_work/out/B-alerts-server-hq-gate-workers-b.jsonl (4 findings, 2 grid rows).
