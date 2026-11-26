@@ -74,19 +74,18 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-switch | 56 | 4.2 (169k tokens) |
 | B-time | 37 | 4.3 (170k tokens) |
 | B-words | 37 | 4.9 (196k tokens) |
-| L18 | 7 | 3.6 (144k tokens) |
+| L18 | 8 | 3.7 (147k tokens) |
 
 ## Work items
-Counts: 25 todo, 5 in progress, 1097 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 24 todo, 5 in progress, 1098 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L18-panel-pay-machines | L18 | lens 18 (Opportunities) x panel / panel/pay-machines: 2 items | in progress | _work/L18-panel-pay-machines.md |  |
 | L18-panel-screens-1 | L18 | lens 18 (Opportunities) x panel / panel/screens-1: 2 items | in progress | _work/L18-panel-screens-1.md |  |
 | L18-panel-screens-2 | L18 | lens 18 (Opportunities) x panel / panel/screens-2: 2 items | in progress | _work/L18-panel-screens-2.md |  |
 | L18-panel-shop | L18 | lens 18 (Opportunities) x panel / panel/shop: 2 items | in progress | _work/L18-panel-shop.md |  |
 | L18-panel-ui-shell | L18 | lens 18 (Opportunities) x panel / panel/ui-shell: 2 items | in progress | _work/L18-panel-ui-shell.md |  |
-| L18-phone-cloud-backup-ai | L18 | lens 18 (Opportunities) x phone / phone/cloud-backup-ai: 2 items | todo | _work/L18-phone-cloud-backup-ai.md |  |
+| L18-phone-cloud-backup-ai | L18 | lens 18 (Opportunities) x phone / phone/cloud-backup-ai: 2 items | in progress | _work/L18-phone-cloud-backup-ai.md |  |
 | L18-phone-components-1 | L18 | lens 18 (Opportunities) x phone / phone/components-1: 2 items | todo | _work/L18-phone-components-1.md |  |
 | L18-phone-components-2 | L18 | lens 18 (Opportunities) x phone / phone/components-2: 2 items | todo | _work/L18-phone-components-2.md |  |
 | L18-phone-lib-core | L18 | lens 18 (Opportunities) x phone / phone/lib-core: 2 items | todo | _work/L18-phone-lib-core.md |  |
@@ -111,7 +110,7 @@ Counts: 25 todo, 5 in progress, 1097 done, 0 blocked. Full list: work-items.json
 | L18-server-panel-worker | L18 | lens 18 (Opportunities) x server / server/panel-worker: 2 items | todo | _work/L18-server-panel-worker.md |  |
 | L18-watch-app | L18 | lens 18 (Opportunities) x watch / watch/app: 2 items | todo | _work/L18-watch-app.md |  |
 | L18-web-pages | L18 | lens 18 (Opportunities) x web / web/pages: 2 items | todo | _work/L18-web-pages.md |  |
-| L18-panel-logic-2 | L18 | lens 18 (Opportunities) x panel / panel/logic-2: 2 items | done | _work/L18-panel-logic-2.md | 11 ideas (3 high: app link in welcome, ended-trial follow-up, trial banner) |
+| L18-panel-pay-machines | L18 | lens 18 (Opportunities) x panel / panel/pay-machines: 2 items | done | _work/L18-panel-pay-machines.md | 11 ideas (5 high: call buttons in branch list, demo Start-my-gym, UPI WhatsApp) |
 | CAL-5 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-5 ...); output is scored, never merged | done | _work/CAL-5.md | c08, c09: 16 gaps listed (not merged; scored in CAL-score) |
 | CAL-6 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-6.md | re-run 1: c01, c05, c12: 10 gaps (not merged; scored in CAL-score) |
 | CAL-7 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-7.md | re-run 1: c03, c06, c07: 15 gaps (not merged; scored in CAL-score) |
@@ -119,7 +118,7 @@ Counts: 25 todo, 5 in progress, 1097 done, 0 blocked. Full list: work-items.json
 | CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
-(+ 1089 older done items, not shown)
+(+ 1090 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
