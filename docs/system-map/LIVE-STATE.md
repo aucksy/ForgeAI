@@ -805,3 +805,60 @@ in Play Console was not read.
 | F-phone-1730 Take or pick a picture | yes | n/a | n/a | yes | |
 | F-phone-1731 iPhone: "not built yet" lines | yes (iPhone build only) | n/a | n/a | n/a (Android) | no live iPhone app checked |
 | F-phone-1732 Loading, "Couldn't load", Try again | yes | n/a | n/a | yes | |
+
+## H5-phone-native (surface phone, area phone/native) — 36 features, written by H5-phone-native on 2026-11-26
+
+The member app's Android parts: the rest timer and live workout notification cards, the "Rest is over" alert and its
+sound choices, the alert check-up, the phone-to-watch link (live workout, watch buttons, gym colour, watch lock, watch
+app status and log), workout reminders, home-screen widgets and app-icon shortcuts, the gym logo shortcut, Health
+Connect (send workouts, weight, steps, sleep, privacy page, stop access), the Hevy / Strong share import, the in-app
+Play update, Google Play buying and the gym-branded start screen. "Play app" = the public Google Play listing,
+**version 0.79.0** (read 2026-11-26 by H5-phone-components-2). Main is 0.80.0 (apps/mobile/app.json:5), and its only
+new entry is the phone-number backup (apps/mobile/src/lib/whatsNew.ts:72-87), which is outside this area. No code
+comment in this area is dated after 17 Nov (searched for 18 to 26 Nov), so main and Play hold the same native code.
+Switches on main: the watch lock is sent only when MettleUp Plus is on, and Plus is off (MEMBER_PLAN_GATE_ON false,
+packages/theme/src/memberPlan.ts:28; apps/mobile/src/plan/planSync.ts:66-74); Google Play buying is off
+(MEMBER_PAYMENTS_LIVE false, packages/theme/src/memberPlan.ts:34). Server functions this area leans on are all live
+(catalog read 2026-11-26: member_gym_busy, member_plus_lock, member_me, app_limits present). The Health Connect privacy
+page https://mettleup.fit/privacy.html answers (redirect to /privacy, 200, read 2026-11-26). The 0.79.0 line "gym
+messages and Rest is over made no sound, now they do" is live but its own note says it was not proven on the OPPO
+phone it was made for (FN-A3-whats-new-phone-01). Whether Play Console holds the Plus products was not read.
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-phone-1200 Rest timer card in the notification shade | yes | n/a | n/a | yes | |
+| F-phone-1201 "Rest is over" alert | yes | n/a | n/a | yes | |
+| F-phone-1202 Phone rings itself when the maker silenced the app | yes | n/a | n/a | yes (0.79.0) | not proven on the OPPO it was made for: FN-A3-whats-new-phone-01 |
+| F-phone-1203 Choose the rest-over sound | yes | n/a | n/a | yes | |
+| F-phone-1204 Ring through Do Not Disturb | yes | n/a | n/a | yes | |
+| F-phone-1205 Workout sounds off: only vibrates | yes | n/a | n/a | yes | |
+| F-phone-1206 Tick a set from the notification | yes | n/a | n/a | yes | |
+| F-phone-1207 "Open MettleUp to save ..." note | yes | n/a | n/a | yes | |
+| F-phone-1208 Live workout card in notifications | yes | n/a | n/a | yes | |
+| F-phone-1209 Cards come back after restart or update | yes | n/a | n/a | yes | |
+| F-phone-1210 Alert check-up | yes | n/a | n/a | yes | |
+| F-phone-1211 Gym's colour on the notification cards | yes | n/a | yes (member_me) | yes | |
+| F-phone-1212 Watch shows the live workout and rest countdown | yes | n/a | n/a | yes | needs the watch app on the watch; the watch's Play version was not read again |
+| F-phone-1213 Watch buttons log on the phone | yes | n/a | n/a | yes | |
+| F-phone-1214 Gym's colour on the watch app | yes | n/a | yes (member_me) | yes | |
+| F-phone-1215 Watch lock ("free part" words on the watch) | yes, switch **off** (Plus off) | n/a | yes (member_plus_lock) | **off** | |
+| F-phone-1216 Find, install, update the watch app | yes | n/a | n/a | yes | |
+| F-phone-1217 Watch trouble log on the phone | yes | n/a | n/a | yes | |
+| F-phone-1218 Workout reminders | yes | n/a | n/a | yes | |
+| F-phone-1219 Widgets "Today" and "This week" | yes | n/a | n/a | yes | |
+| F-phone-1220 Widget "Gym right now" | yes | n/a | yes (member_gym_busy) | yes | only for a member who joined a gym |
+| F-phone-1221 Start or resume from the widget (one-time key) | yes | n/a | n/a | yes | |
+| F-phone-1222 Long-press app-icon shortcuts | yes | n/a | n/a | yes | |
+| F-phone-1223 "Add <gym> to your home screen" | yes | n/a | yes (member_me) | yes, where the phone takes shortcuts | |
+| F-phone-1224 Health Connect: send workouts and calories | yes | n/a | n/a | yes | |
+| F-phone-1225 Privacy page from Health Connect | yes | n/a | n/a | yes | page answers 200 at mettleup.fit/privacy |
+| F-phone-1226 Weight from Health Connect | yes | n/a | n/a | yes | |
+| F-phone-1227 Steps today from Health Connect | yes | n/a | n/a | yes | steps only; the "steps and water" note: FN-A3-inbox-1-14 |
+| F-phone-1228 "Sleep and workouts" line | yes | n/a | n/a | yes | |
+| F-phone-1229 Stop Health Connect access | yes | n/a | n/a | yes | |
+| F-phone-1230 Share a Hevy / Strong file to the app | yes | n/a | n/a | yes | |
+| F-phone-1231 Update from Google Play inside the app | yes | n/a | n/a | yes | |
+| F-phone-1232 Buy MettleUp Plus with Google Play | yes, payments **off** | n/a | yes (app_limits) | **off** | Play products not checked |
+| F-phone-1233 Gym-branded start-up screen | yes | n/a | n/a | yes | Android 13 and newer |
+| F-phone-1234 Erase all data also clears the phone side | yes | n/a | n/a | yes | |
+| F-phone-1235 Member's gym choices kept on the phone | yes | n/a | n/a | yes | kept on the phone only |
