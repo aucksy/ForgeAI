@@ -72,16 +72,15 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-alerts | 74 | 3.9 (155k tokens) |
 | B-switch | 56 | 4.2 (169k tokens) |
 | B-time | 37 | 4.3 (170k tokens) |
-| B-words | 30 | 4.8 (193k tokens) |
+| B-words | 31 | 4.8 (193k tokens) |
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 42 todo, 3 in progress, 1082 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 42 todo, 2 in progress, 1083 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | B-words-panel-auth-data | B-words | B-words (Language and words + 1 more) x panel / panel/auth-data: 17 items | in progress | _work/B-words-panel-auth-data.md |  |
-| B-words-server-database-1 | B-words | B-words (Language and words + 1 more) x server / server/database-1: 17 items | in progress | _work/B-words-server-database-1.md |  |
 | B-words-server-database-3 | B-words | B-words (Language and words + 1 more) x server / server/database-3: 17 items | in progress | _work/B-words-server-database-3.md |  |
 | B-words-server-hq-gate-workers | B-words | B-words (Language and words + 1 more) x server / server/hq-gate-workers: 17 items | todo | _work/B-words-server-hq-gate-workers.md |  |
 | B-words-server-panel-worker | B-words | B-words (Language and words + 1 more) x server / server/panel-worker: 17 items | todo | _work/B-words-server-panel-worker.md |  |
@@ -117,7 +116,7 @@ Counts: 42 todo, 3 in progress, 1082 done, 0 blocked. Full list: work-items.json
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
 (+ 17 more todo items, not shown)
-(+ 1074 older done items, not shown)
+(+ 1075 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
