@@ -15,3 +15,6 @@
 - G-0042 true (S2->S2)
 - G-0043 true (S2->S3)
 - G-0044 false (S2->S3)
+- G-0045 true (S2->S3)
+
+DONE: 15/15. true 13, false 1 (G-0044), unsure 1 (G-0035).
