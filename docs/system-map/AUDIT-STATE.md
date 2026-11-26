@@ -74,19 +74,18 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-switch | 56 | 4.2 (169k tokens) |
 | B-time | 37 | 4.3 (170k tokens) |
 | B-words | 37 | 4.9 (196k tokens) |
-| L18 | 1 | 3.3 (134k tokens) |
+| L18 | 2 | 3.4 (136k tokens) |
 
 ## Work items
-Counts: 36 todo, 0 in progress, 1091 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 30 todo, 5 in progress, 1092 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| L18-panel-assistant | L18 | lens 18 (Opportunities) x panel / panel/assistant: 2 items | todo | _work/L18-panel-assistant.md |  |
-| L18-panel-auth-data | L18 | lens 18 (Opportunities) x panel / panel/auth-data: 2 items | todo | _work/L18-panel-auth-data.md |  |
-| L18-panel-brand-shell | L18 | lens 18 (Opportunities) x panel / panel/brand-shell: 2 items | todo | _work/L18-panel-brand-shell.md |  |
-| L18-panel-forms | L18 | lens 18 (Opportunities) x panel / panel/forms: 2 items | todo | _work/L18-panel-forms.md |  |
-| L18-panel-logic-1 | L18 | lens 18 (Opportunities) x panel / panel/logic-1: 2 items | todo | _work/L18-panel-logic-1.md |  |
-| L18-panel-logic-2 | L18 | lens 18 (Opportunities) x panel / panel/logic-2: 2 items | todo | _work/L18-panel-logic-2.md |  |
+| L18-panel-assistant | L18 | lens 18 (Opportunities) x panel / panel/assistant: 2 items | in progress | _work/L18-panel-assistant.md |  |
+| L18-panel-brand-shell | L18 | lens 18 (Opportunities) x panel / panel/brand-shell: 2 items | in progress | _work/L18-panel-brand-shell.md |  |
+| L18-panel-forms | L18 | lens 18 (Opportunities) x panel / panel/forms: 2 items | in progress | _work/L18-panel-forms.md |  |
+| L18-panel-logic-1 | L18 | lens 18 (Opportunities) x panel / panel/logic-1: 2 items | in progress | _work/L18-panel-logic-1.md |  |
+| L18-panel-logic-2 | L18 | lens 18 (Opportunities) x panel / panel/logic-2: 2 items | in progress | _work/L18-panel-logic-2.md |  |
 | L18-panel-pay-machines | L18 | lens 18 (Opportunities) x panel / panel/pay-machines: 2 items | todo | _work/L18-panel-pay-machines.md |  |
 | L18-panel-screens-1 | L18 | lens 18 (Opportunities) x panel / panel/screens-1: 2 items | todo | _work/L18-panel-screens-1.md |  |
 | L18-panel-screens-2 | L18 | lens 18 (Opportunities) x panel / panel/screens-2: 2 items | todo | _work/L18-panel-screens-2.md |  |
@@ -106,7 +105,13 @@ Counts: 36 todo, 0 in progress, 1091 done, 0 blocked. Full list: work-items.json
 | L18-phone-tracker-components-2 | L18 | lens 18 (Opportunities) x phone / phone/tracker-components-2: 2 items | todo | _work/L18-phone-tracker-components-2.md |  |
 | L18-phone-tracker-data | L18 | lens 18 (Opportunities) x phone / phone/tracker-data: 2 items | todo | _work/L18-phone-tracker-data.md |  |
 | L18-phone-tracker-engine | L18 | lens 18 (Opportunities) x phone / phone/tracker-engine: 2 items | todo | _work/L18-phone-tracker-engine.md |  |
-| L18-hq-app | L18 | lens 18 (Opportunities) x hq / hq/app: 2 items | done | _work/L18-hq-app.md | pilot: 10 ideas (4 high), 0 new findings; LESSONS written |
+| L18-phone-tracker-lib | L18 | lens 18 (Opportunities) x phone / phone/tracker-lib: 2 items | todo | _work/L18-phone-tracker-lib.md |  |
+| L18-phone-tracker-services-1 | L18 | lens 18 (Opportunities) x phone / phone/tracker-services-1: 2 items | todo | _work/L18-phone-tracker-services-1.md |  |
+| L18-phone-tracker-services-2 | L18 | lens 18 (Opportunities) x phone / phone/tracker-services-2: 2 items | todo | _work/L18-phone-tracker-services-2.md |  |
+| L18-server-ci-workflows | L18 | lens 18 (Opportunities) x server / server/ci-workflows: 2 items | todo | _work/L18-server-ci-workflows.md |  |
+| L18-server-database-1 | L18 | lens 18 (Opportunities) x server / server/database-1: 2 items | todo | _work/L18-server-database-1.md |  |
+| L18-server-database-2 | L18 | lens 18 (Opportunities) x server / server/database-2: 2 items | todo | _work/L18-server-database-2.md |  |
+| L18-panel-auth-data | L18 | lens 18 (Opportunities) x panel / panel/auth-data: 2 items | done | _work/L18-panel-auth-data.md | 8 ideas (1 high: one-step invite) |
 | CAL-5 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-5 ...); output is scored, never merged | done | _work/CAL-5.md | c08, c09: 16 gaps listed (not merged; scored in CAL-score) |
 | CAL-6 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-6.md | re-run 1: c01, c05, c12: 10 gaps (not merged; scored in CAL-score) |
 | CAL-7 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-7.md | re-run 1: c03, c06, c07: 15 gaps (not merged; scored in CAL-score) |
@@ -114,8 +119,8 @@ Counts: 36 todo, 0 in progress, 1091 done, 0 blocked. Full list: work-items.json
 | CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
-(+ 11 more todo items, not shown)
-(+ 1083 older done items, not shown)
+(+ 5 more todo items, not shown)
+(+ 1084 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
