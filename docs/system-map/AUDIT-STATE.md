@@ -70,18 +70,17 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L16 | 37 | 2.7 (109k tokens) |
 | H5 | 37 | 3.7 (146k tokens) |
 | B-alerts | 73 | 3.9 (154k tokens) |
-| B-switch | 53 | 4.2 (167k tokens) |
+| B-switch | 54 | 4.2 (168k tokens) |
 | B-time | 26 | 4.2 (167k tokens) |
 | B-words | 26 | 4.8 (192k tokens) |
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 59 todo, 5 in progress, 1063 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 59 todo, 4 in progress, 1064 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | B-alerts-web-pages-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x web / web/pages: 10 items | in progress | _work/B-alerts-web-pages-b.md |  |
-| B-switch-server-panel-worker | B-switch | B-switch (Should-read matrix (missing links) + 1 more) x server / server/panel-worker: 9 items | in progress | _work/B-switch-server-panel-worker.md |  |
 | B-switch-watch-app | B-switch | B-switch (Should-read matrix (missing links) + 1 more) x watch / watch/app: 9 items | in progress | _work/B-switch-watch-app.md |  |
 | B-switch-web-pages | B-switch | B-switch (Should-read matrix (missing links) + 1 more) x web / web/pages: 9 items | in progress | _work/B-switch-web-pages.md |  |
 | B-time-panel-auth-data | B-time | B-time (Install, update, upgrade + 2 more) x panel / panel/auth-data: 7 items | in progress | _work/B-time-panel-auth-data.md |  |
@@ -119,7 +118,7 @@ Counts: 59 todo, 5 in progress, 1063 done, 0 blocked. Full list: work-items.json
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
 (+ 34 more todo items, not shown)
-(+ 1055 older done items, not shown)
+(+ 1056 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
