@@ -1025,3 +1025,57 @@ nothing opens them (ReadyCard is used by no screen). Not compared: main vs the v
 | F-phone-229 Gym timings | yes | n/a | yes (member_gym_timings) | yes | |
 | F-phone-230 A gym mate's shared workouts | yes, per member (the mate must share) | n/a | yes (member_mate_profile) | yes | |
 | F-phone-239 MettleUp Plus and Find my gym | yes, **off** (Plus gate false) | n/a | yes (member_plus_lock; Find my gym: see H5-phone-screens-1) | **off** | QA builds only |
+
+## H5-phone-shop-1 (surface phone, area phone/shop-1) — 36 features, written by H5-phone-shop-1 on 2026-11-26
+
+The member app's Gym tab, first half of the shop folder: join and invite, check-in and the poster scanner, the shop,
+bag, orders and paying, membership, plan and report requests, timings and busy levels, Message your gym and Ask a
+trainer, inbox and alert sound, diet plan, workout offer, bring a friend, leaderboard and mates, the gym's logo and
+home-screen icon, Find my gym, the staff door and automatic reminders. "Play app" = 0.79.0 (see H5-phone-components-2);
+main is 0.80.0 (apps/mobile/app.json:5), whose only What's new line is not in this area (FN-H5-phone-components-2-01).
+One catalog read on 2026-11-26 checked the 62 gym-database functions the shop folder calls (apps/mobile/src/shop/gymApi.ts:57):
+**all present** except member_gym_pack (0046) and member_join_day (0092), already known (FN-A3-inbox-1-16).
+Switches on main: plan gate off (packages/theme/src/plans.ts:40, so every Pro feature passes: plans.ts:88-89); member
+Plus gate off (packages/theme/src/memberPlan.ts:28, closes Find my gym: apps/mobile/src/shop/findGym.ts:157-158); staff
+door off (apps/mobile/src/shop/staffDoor.ts:61). "Per gym" = the gym owner's own setting or data decides; it was not
+read for any gym. Paying online goes through the panel's /api/pay (apps/mobile/src/shop/memberPay.ts:17), test mode only
+(PAY_LIVE off, deploy/panel/wrangler.jsonc:93). Not compared: main's files against the v0.79.0 tag (no git in this step).
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-phone-300 Gym tab home for a joined gym | yes | n/a | yes (member_me, member_membership) | yes | |
+| F-phone-301 Join your gym screen | yes | n/a | yes (gym_preview, member_join) | yes | |
+| F-phone-302 Browse the gym's shop | yes, per gym (shows once the gym lists a product) | yes (owner adds products) | yes (member_products) | yes | plan gate off, so every gym passes |
+| F-phone-303 Bag and place an order | yes, per gym (as F-phone-302) | n/a | yes (member_place_order) | yes | pay at the desk |
+| F-phone-304 My orders | yes | n/a | yes (member_orders, member_cancel_order) | yes | |
+| F-phone-305 Pay for a shop order | yes, per gym | **partly**: UPI yes; online links test mode only | unknown (small web database 0011) | yes | PAY_LIVE off |
+| F-phone-306 Pay your gym for the membership | yes, per gym | **partly**: as F-phone-305 | unknown (small web database 0011) | yes | PAY_LIVE off |
+| F-phone-307 Demo copy of the gym shop | hidden (no way in) | n/a | n/a | hidden | |
+| F-phone-308 Check in by QR | yes | n/a | yes (member_check_in) | yes | |
+| F-phone-309 Scan the gym poster | yes | n/a | n/a | yes | |
+| F-phone-310 Join from invite link or switch gym | yes | n/a | yes (gym_preview, member_join, member_leave) | yes | |
+| F-phone-311 We couldn't find this gym page | yes | n/a | yes (gym_preview) | yes | |
+| F-phone-312 Leave the gym | yes | n/a | yes (member_leave) | yes | |
+| F-phone-313 My membership | yes | n/a | yes (member_membership) | yes | |
+| F-phone-314 Ask the desk to pause or renew | yes | n/a | yes (member_ask_plan_change, member_plan_requests, member_cancel_plan_request, member_gym_plans) | yes | |
+| F-phone-315 Send my workout report to the gym | yes | n/a | yes (member_report_requests, member_answer_report_request, member_attach_report) | yes | |
+| F-phone-316 Plan ends card on Workout tab | yes | n/a | yes (member_membership) | yes | |
+| F-phone-317 Gym timings | yes | n/a | yes (member_gym_timings) | yes | |
+| F-phone-318 How busy the gym is | yes | n/a | yes (member_gym_busy) | yes | |
+| F-phone-319 Busy times by exercise tip | yes, per gym (owner's switch) | n/a | yes (member_machine_busy, member_machine_push: 0049 live) | yes | |
+| F-phone-320 Message your gym | yes | n/a | yes (member_talk_send, member_talk_send_to, member_talk_choices: 0096 live) | yes | pick who reads it = What's new 0.79.0 |
+| F-phone-321 Ask a trainer about your workout | yes, but **replaced** | n/a | yes (member_ask_trainer, member_ask_choices) | **not offered** while the gym's trainer list loads | 0096 live means the separate trainer side is hidden: FN-H5-phone-shop-1-01 |
+| F-phone-322 Trainer reply alert | yes | n/a | yes (member_questions, member_trainer_status) | yes | |
+| F-phone-323 Gym messages inbox | yes | n/a | yes (member_messages, member_saw_messages) | yes | |
+| F-phone-324 Gym message sound on OPPO / OnePlus | yes | n/a | n/a | yes | not proven on a real OPPO: FN-A3-whats-new-phone-01 |
+| F-phone-325 Diet plan from the trainer | yes, per gym (a plan must come) | n/a | yes (member_diet_plans) | yes | plan gate off |
+| F-phone-326 The gym's workout offer | yes, per gym (owner makes an offer) | n/a | yes (member_offers, member_join_offer, member_leave_offer, member_offer_days) | yes | |
+| F-phone-327 Bring a friend | yes | yes (/api/links) | yes (member_friend_invite) | yes | |
+| F-phone-328 Gym leaderboard | yes, per gym (owner turns it on) | n/a | yes (member_board, member_board_push) | yes | |
+| F-phone-329 A gym mate's profile | yes, per member (mate must share) | n/a | yes (member_mate_board, member_mate_profile, member_mate_share, member_mate_stop) | yes | |
+| F-phone-330 The gym's logo and name on top | yes | n/a | yes (member_me) | yes | |
+| F-phone-331 Add the gym's icon to the home screen | yes (plan gate off, offered once per gym) | n/a | n/a | yes | |
+| F-phone-332 Find my gym with my number | yes, **off** (member Plus gate false) | yes (WhatsApp proof live) | yes (member_find_gyms, member_claim_phone) | **off** | QA builds only |
+| F-phone-333 Tell my gym about MettleUp | yes, **off** (inside Find my gym) | yes (/api/lead) | n/a | **off** | |
+| F-phone-334 Staff door sign-in | yes, **off** (STAFF_DOOR_ON false) | n/a | n/a | **off** | |
+| F-phone-335 Automatic reminders from the gym | yes, per gym (owner's switches) and per member | n/a | yes (member_auto_reminders) | yes | |
