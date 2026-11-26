@@ -1,0 +1,4 @@
+# B-alerts-phone-screens-1-b checkpoint
+- gap-3 (H3.1-H3.2) done 2026-11-26: automatic actions in area = photo restore at start, account copy, forgotten-finish pause (shown, "Count it"), reminder redraw on look change (quiet, low stakes), Find my gym lead (fire and forget). Reused FN-L14-phone-screens-1-02, FN-B-run-phone-screens-1-a-03. No new finding.
+- gap-4 (H4.1-H4.8) done 2026-11-26: Gym tab badge = gym talk (server mark, consistent) + trainer replies (phone-only mark). New: -01 server seen set by background count; -02 reply pop-up not cleared on read. Reused FN-B-alerts-phone-cloud-backup-ai-b-03. Plan-ends card leaves after desk renewal (re-reads gym). Workout tab, widgets, reminders read one Today answer.
+- Noted, out of area (server): push job with no push address is recorded as "sent" (0053:514-515); not filed here.
