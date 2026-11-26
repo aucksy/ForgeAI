@@ -1,0 +1,233 @@
+-- NOT YET APPLIED LIVE: waits for the owner's yes. Re-runnable. Apply after 0099 (phone accounts), 0093
+-- (phone_sign_in_find), 0068 (member_find_tries, member_claim_phone, the phone index), 0061 (phone_code_settings),
+-- 0055 (_pass_company), 0050 (gym_trainers) and 0005 (_brand_json).
+-- Test: supabase/tests/0100_gym_added_you.sql (CI runs it after every migration; pasted into the SQL Editor it always
+-- ends in an error and so changes nothing).
+-- Undo: drop function public.phone_account_gyms(text, text); drop function public.phone_account_claim(text, text);
+--       drop function public._phone_gym_find(text, text); drop table public.phone_gym_checks;
+--       drop table public.phone_gym_check_settings; then re-run 0093 (puts back its own member rule).
+--
+-- 0100: F239 "A gym added you" (owner, 26 Nov 2026, R-629): "if the user installed the app first and then their name
+-- was added to a gym as a member, as a trainer, as a staff, will the app detect it and let the user know".
+-- Until now the gym is looked for once, on the first screen (0093). A person a gym adds later is never told.
+--
+-- Since 0.80.0 (0099) a phone sign-in IS a MettleUp account: its e-mail is m-<HMAC(number)>[-n]@phone.mettleup.fit.
+-- So a signed-in phone account proves its number with no new WhatsApp message: the app sends the number it keeps,
+-- and the server accepts it only when HMAC(number) is the caller's own account code, AND the caller is the NEWEST
+-- account of that number (a recycled number's old holder, still signed in on an old phone, learns nothing).
+--
+--   phone_account_gyms(number, first name) -> {ok, matches: [...as 0093...]} | {ok, off: true}
+--                                             | {error: NOT_PHONE_ACCOUNT | NOT_YOUR_NUMBER | TOO_MANY | NO_SECRET}
+--   phone_account_claim(member key, number) -> as 0068 member_claim_phone, the account in place of the proof
+--
+-- MEMBER RULE (owner, 26 Nov 2026: "a lapsed member should be found because gym owner could use the app to kind of
+-- encourage user to renew"; 15 days is Claude's pick, his words "you can decide the best"): a member is found while a
+-- plan runs today, OR a plan ended in the last 15 days (India date), OR they hold a pass. The first-screen sign-in
+-- (0093 phone_sign_in_find) gets the SAME rule here, so both ways in agree. 'lapsed' = true when no plan runs today.
+--
+-- SWITCH: phone_gym_check_settings.on = false makes phone_account_gyms answer {ok, off: true} (the app shows nothing),
+-- with no app release.
+-- LIMIT: 6 checks per account per rolling 24 h (the app asks at most once a day, plus the Gym tab).
+-- LOG: each check keeps one row (account, time, found count): no number, no gym. Read weekly to see if it works.
+
+set lock_timeout = '3s';
+
+create table if not exists public.phone_gym_check_settings (
+  id boolean primary key default true check (id),
+  "on" boolean not null default true
+);
+insert into public.phone_gym_check_settings(id, "on") values (true, true) on conflict (id) do nothing;
+alter table public.phone_gym_check_settings enable row level security;
+revoke all on public.phone_gym_check_settings from public, anon, authenticated;
+
+create table if not exists public.phone_gym_checks (
+  user_id uuid not null,
+  at      timestamptz not null default now(),
+  found   int not null default 0,
+  claimed boolean not null default false
+);
+create index if not exists phone_gym_checks_user on public.phone_gym_checks(user_id, at);
+alter table public.phone_gym_checks enable row level security;
+revoke all on public.phone_gym_checks from public, anon, authenticated;
+
+-- ------------------------------------------------------------------ the shared lookup (0093's, new member rule)
+create or replace function public._phone_gym_find(p_phone text, p_name text) returns jsonb
+  language plpgsql stable security definer set search_path = public as $$
+declare
+  ph text := public._norm_phone(p_phone);
+  fk text := public._first_name_key(p_name);
+  today date := (now() at time zone 'Asia/Kolkata')::date;
+  day text := to_char(today, 'YYYY-MM-DD');
+  grace text := to_char(today - 15, 'YYYY-MM-DD');
+  found_rows jsonb;
+begin
+  if ph is null then return '[]'::jsonb; end if;
+  with people as (
+    select s.gym_id,
+           case when s.role = 'owner' then 'owner'
+                when exists (select 1 from public.gym_trainers t where t.staff_id = s.staff_id and t.gym_id = s.gym_id) then 'trainer'
+                else 'desk' end as role,
+           null::text as ends_on, false as pass, false as lapsed
+      from public.gym_staff s
+     where s.phone = ph and s.removed_at is null
+  ), roster as (
+    select r.gym_id, r.id, public._pass_company(r.data) is not null as pass,
+           (select max(m.data->>'endsOn') from public.crm_records m
+             where m.gym_id = r.gym_id and m.kind = 'membership' and not m.deleted
+               and m.data->>'memberId' = r.id and coalesce(m.data->>'cancelled', 'false') <> 'true'
+               and m.data->>'startsOn' <= day and m.data->>'endsOn' >= grace) as ends_on
+      from public.crm_records r
+     where fk is not null and r.kind = 'member' and not r.deleted
+       and public._norm_phone(r.data->>'phone') = ph
+       and coalesce(r.data->>'archived', 'false') <> 'true'
+       and public._first_name_key(r.data->>'fullName') = fk
+  ), members as (
+    select x.gym_id, 'member'::text as role, x.ends_on, x.pass,
+           (not x.pass and x.ends_on < day) as lapsed
+      from roster x
+     where x.pass or x.ends_on is not null
+  ), every_role as (
+    select y.*, case y.role when 'owner' then 1 when 'trainer' then 2 when 'desk' then 3 else 4 end as rank
+      from (select * from people union all select * from members) y
+  ), best as (
+    select distinct on (e.gym_id) e.gym_id, e.role, e.rank, e.ends_on, e.pass, e.lapsed
+      from every_role e
+     order by e.gym_id, e.rank, e.ends_on desc nulls last
+  )
+  select coalesce(jsonb_agg(jsonb_build_object(
+           'gymId', z.gym_id::text, 'gymName', z.gym_name, 'joinCode', z.join_code, 'role', z.role,
+           'endsOn', z.ends_on, 'pass', z.pass, 'lapsed', z.lapsed, 'brand', z.brand)
+         order by z.rank, z.gym_name), '[]'::jsonb)
+    into found_rows
+    from (
+      select b.gym_id, g.name as gym_name, g.join_code, b.role, b.rank, b.ends_on, b.pass, b.lapsed,
+             public._brand_json(g) as brand
+        from best b
+        join public.gyms g on g.gym_id = b.gym_id
+       where coalesce(g.status, 'trial') <> 'suspended'
+       order by b.rank, g.name
+       limit 5
+    ) z;
+  return found_rows;
+end $$;
+revoke all on function public._phone_gym_find(text, text) from public, anon, authenticated;
+
+-- ------------------------------------------------------------------ 0093's sign-in, same answer, new member rule
+-- Changed from 0093: the lookup moved into _phone_gym_find (members: plan today OR ended in the last 15 days OR a
+-- pass; each line also says 'lapsed'). Proof, limit and answer shape are unchanged.
+create or replace function public.phone_sign_in_find(p_proof text, p_name text)
+  returns jsonb language plpgsql volatile security definer set search_path = public as $$
+declare
+  ph text;
+  v_nonce text := split_part(coalesce(p_proof, ''), '.', 5);
+  n int;
+begin
+  ph := public._phone_proof(p_proof, 'member', false);
+  if ph is null then return jsonb_build_object('error', 'BAD_PROOF'); end if;
+  perform pg_advisory_xact_lock(hashtext('member-find:' || v_nonce));
+  delete from public.member_find_tries t where t.at < now() - interval '1 day';
+  select count(*) into n from public.member_find_tries t where t.nonce = v_nonce;
+  if n >= 5 then return jsonb_build_object('error', 'TOO_MANY'); end if;
+  insert into public.member_find_tries(nonce) values (v_nonce);
+  return jsonb_build_object('ok', true, 'matches', public._phone_gym_find(ph, p_name));
+end $$;
+revoke all on function public.phone_sign_in_find(text, text) from public;
+grant execute on function public.phone_sign_in_find(text, text) to anon, authenticated;
+
+-- ------------------------------------------------------------------ is this number the caller's own phone account?
+-- Returns the 10-digit number, or an error word. Never says whether another account exists.
+create or replace function public._phone_account_number(p_phone text) returns text
+  language plpgsql stable security definer set search_path = public, extensions as $$
+declare
+  ph text := public._norm_phone(p_phone);
+  me uuid := auth.uid();
+  my_email text;
+  k text; code text; newest text;
+begin
+  if me is null then return 'NOT_PHONE_ACCOUNT'; end if;
+  select au.email into my_email from auth.users au where au.id = me;
+  if my_email is null or my_email !~ '^m-[0-9a-f]+(-[0-9]+)?@phone\.mettleup\.fit$' then return 'NOT_PHONE_ACCOUNT'; end if;
+  if ph is null then return 'NOT_YOUR_NUMBER'; end if;
+  select secret into k from public.phone_code_settings where id;
+  if k is null then return 'NO_SECRET'; end if;
+  code := substr(encode(hmac('account:' || ph, k, 'sha256'), 'hex'), 1, 40);
+  if split_part(split_part(my_email, '@', 1), '-', 2) <> code then return 'NOT_YOUR_NUMBER'; end if;
+  -- Only the newest account of this number (0099 makes a new one when the number passed to a new person).
+  select au.email into newest from auth.users au
+   where au.email = 'm-' || code || '@phone.mettleup.fit'
+      or au.email ~ ('^m-' || code || '-[0-9]+@phone\.mettleup\.fit$')
+   order by au.created_at desc
+   limit 1;
+  if newest is distinct from my_email then return 'NOT_YOUR_NUMBER'; end if;
+  return ph;
+end $$;
+revoke all on function public._phone_account_number(text) from public, anon, authenticated;
+
+-- ------------------------------------------------------------------ "A gym added you": the check
+create or replace function public.phone_account_gyms(p_phone text, p_name text)
+  returns jsonb language plpgsql volatile security definer set search_path = public as $$
+declare
+  me uuid := auth.uid();
+  ph text;
+  n int;
+  found_rows jsonb;
+begin
+  ph := public._phone_account_number(p_phone);
+  if ph !~ '^[0-9]{10}$' then return jsonb_build_object('error', ph); end if;
+  if not coalesce((select s."on" from public.phone_gym_check_settings s where s.id), false) then
+    return jsonb_build_object('ok', true, 'off', true, 'matches', '[]'::jsonb);
+  end if;
+  perform pg_advisory_xact_lock(hashtext('gym-added:' || me::text));
+  delete from public.phone_gym_checks c where c.at < now() - interval '30 days';
+  select count(*) into n from public.phone_gym_checks c where c.user_id = me and not c.claimed
+     and c.at > now() - interval '24 hours';
+  if n >= 6 then return jsonb_build_object('error', 'TOO_MANY'); end if;
+  found_rows := public._phone_gym_find(ph, p_name);
+  insert into public.phone_gym_checks(user_id, found) values (me, jsonb_array_length(found_rows));
+  return jsonb_build_object('ok', true, 'matches', found_rows);
+end $$;
+revoke all on function public.phone_account_gyms(text, text) from public, anon;
+grant execute on function public.phone_account_gyms(text, text) to authenticated;
+
+-- ------------------------------------------------------------------ after the join: link the gym's list row
+-- 0068's member_claim_phone, with the signed-in phone account in place of the WhatsApp proof.
+create or replace function public.phone_account_claim(p_key text, p_phone text)
+  returns jsonb language plpgsql volatile security definer set search_path = public as $$
+declare
+  m public.gym_members := public._member(p_key);
+  g public.gyms;
+  ph text;
+  roster public.crm_records;
+begin
+  select * into g from public.gyms where gym_id = m.gym_id;
+  ph := public._phone_account_number(p_phone);
+  if ph !~ '^[0-9]{10}$' then return jsonb_build_object('error', ph, 'gymName', g.name); end if;
+  select r.* into roster from public.crm_records r
+   where r.gym_id = g.gym_id and r.kind = 'member' and not r.deleted
+     and coalesce(r.data->>'archived', 'false') <> 'true'
+     and public._norm_phone(r.data->>'phone') = ph
+     and public._first_name_key(r.data->>'fullName') = public._first_name_key(m.name)
+   order by case when r.data->>'createdAt' ~ '^[0-9]{1,15}$' then (r.data->>'createdAt')::bigint end nulls last, r.id
+   limit 1;
+  if roster.id is null then
+    if exists (select 1 from public.crm_records r
+                where r.gym_id = g.gym_id and r.kind = 'member' and not r.deleted
+                  and coalesce(r.data->>'archived', 'false') <> 'true'
+                  and public._norm_phone(r.data->>'phone') = ph) then
+      return jsonb_build_object('error', 'NAME_MISMATCH', 'gymName', g.name);
+    end if;
+    return jsonb_build_object('error', 'NOT_ON_ROSTER', 'gymName', g.name);
+  end if;
+  update public.gym_members
+     set checkin_phone = '+91' || ph, phone = '+91' || ph, phone_checked_at = now()
+   where member_id = m.member_id;
+  update public.gym_phone_links
+     set status = 'approved', decided_at = now(), decided_by = null, decided_by_name = 'Number checked'
+   where app_member = m.member_id and status = 'pending';
+  insert into public.phone_gym_checks(user_id, found, claimed) values (auth.uid(), 1, true);
+  return jsonb_build_object('ok', true, 'gymName', g.name);
+end $$;
+revoke all on function public.phone_account_claim(text, text) from public, anon;
+grant execute on function public.phone_account_claim(text, text) to authenticated;
+
+notify pgrst, 'reload schema';
