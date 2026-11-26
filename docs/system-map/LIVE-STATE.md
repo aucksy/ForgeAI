@@ -1175,3 +1175,58 @@ the shop-2 catalog read, LIVE-STATE.md:1083-1108). Switch on main: member paid-p
 | F-phone-735 Month report calendar | yes | n/a | n/a | yes |  |
 | F-phone-736 Muscle tips suggestion | yes | n/a | n/a | yes |  |
 | F-phone-737 Rest alerts status row | yes | n/a | n/a | yes |  |
+
+## H5-phone-tracker-components-2 (surface phone, area phone/tracker-components-2) — 39 features, written by H5-phone-tracker-components-2 on 2026-11-26
+
+The member app's workout parts, files RestPickerSheet to zoomMath plus exerciseForm, profile and progress. "Play app" =
+0.79.0 (Play listing read 26 Nov by H5-phone-components-2); main is 0.80.0 (apps/mobile/app.json:5), whose only What's
+new line (phone-number backup) is not in this area (FN-H5-phone-components-2-01). The newest change tag in these files is
+R-598 (16 Nov, the Hevy/Strong card's "stays on this phone" line, SwitcherCard.tsx:34-36), dated before the 17 Nov 0.79.0
+release; the others are R-576 and R-572, both named in 0.79.0's What's new (whatsNew.ts:95-110). So every feature here is
+on Play as on main (code-read; no git diff run). Nearly all of it runs on the phone. Server parts: trainer video links ride
+in the gym's plans and workout of the day (0051; member_gym_plans and member_gym_wod proved present, LIVE-STATE.md:1060,
+1083-1108); the gym logo on a share picture comes through our picture address (F-phone-1531, LIVE-STATE.md:667); the Gym
+tab's unread count reads the gym's messages and replies (member_talk_*, member_ask_*, LIVE-STATE.md:996). Switch on main:
+coach off (apps/mobile/src/lib/features.ts:6), so the "AI coach notes" row never shows (app/settings/effort.tsx:11).
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-phone-800 Pick a rest length | yes | n/a | n/a | yes |  |
+| F-phone-801 Rest timer bar in a workout | yes | n/a | n/a | yes | "Rest is over" sound fix in 0.79.0 |
+| F-phone-802 Log a set | yes (R-576 "why" icon) | n/a | n/a | yes (0.79.0 line 2) |  |
+| F-phone-803 Change a set type or remove the set | yes | n/a | n/a | yes |  |
+| F-phone-804 Rate how hard a set felt (RPE) | yes, behind the member's own setting | n/a | n/a | yes, same setting | the switch is a member setting, not a server or code switch |
+| F-phone-805 Superset two exercises | yes | n/a | n/a | yes |  |
+| F-phone-806 Swap an exercise | yes | n/a | n/a | yes |  |
+| F-phone-807 Share as a picture (gym logo and name) | yes | n/a | yes (logo through our address) | yes | logo only for a member in a gym |
+| F-phone-808 Share a workout, month or year as text | yes | n/a | n/a | yes |  |
+| F-phone-809 Share a routine or a folder | yes | n/a | n/a | yes |  |
+| F-phone-810 Bring routines in after a Hevy or Strong import | yes | n/a | n/a | yes | Hevy's own site not checked |
+| F-phone-811 Coming from Hevy or Strong? card | yes (R-598) | n/a | n/a | yes (R-598 before the 0.79.0 tag) |  |
+| F-phone-812 Workout recap after finishing | yes | n/a | n/a | yes |  |
+| F-phone-813 Saved workout page | yes | n/a | n/a | yes |  |
+| F-phone-814 Workout history list | yes | n/a | n/a | yes |  |
+| F-phone-815 Lighter-day line on the finish screen | yes | n/a | n/a | yes |  |
+| F-phone-816 Strength level on an exercise | yes | n/a | n/a | yes |  |
+| F-phone-817 Bottom tab bar with unread count on Gym | yes | n/a | yes (member_talk_*, member_ask_*) | yes |  |
+| F-phone-818 Demo data strip with Remove | yes | n/a | n/a | yes |  |
+| F-phone-819 Watch your trainer (YouTube link) | yes | n/a (panel side: trainer adds the link) | yes (0051: member_gym_plans, member_gym_wod) | yes | shows only when a trainer gave a link |
+| F-phone-820 Up next card on the Workout tab | yes | n/a | n/a | yes |  |
+| F-phone-821 Install MettleUp on your watch card | yes | n/a | n/a | yes |  |
+| F-phone-822 Minimised workout bar | yes | n/a | n/a | yes |  |
+| F-phone-823 Workout photos | yes | n/a | n/a | yes | photos stay on the phone |
+| F-phone-824 Settings: weekly workout goal | yes | n/a | n/a | yes |  |
+| F-phone-825 Settings: rest timer and sounds | yes | n/a | n/a | yes |  |
+| F-phone-826 Settings: open MettleUp on my watch | yes | n/a | n/a | yes |  |
+| F-phone-827 Settings: how the app picks your next weight | yes | n/a | n/a | yes |  |
+| F-phone-828 Settings: last time's numbers | yes | n/a | n/a | yes |  |
+| F-phone-829 Settings: rate each set, and AI coach notes | rate each set yes; AI coach notes **off** (coach false) | n/a | n/a | rate each set yes; coach notes **off** | features.json calls the whole row live; the coach notes half is hidden |
+| F-phone-830 Settings: muscle tips, bring back skipped muscles | yes | n/a | n/a | yes |  |
+| F-phone-831 Keep an open workout alive across the app | yes | n/a | n/a | yes |  |
+| F-phone-832 Routines and folders on the Workout tab | yes | n/a | n/a | yes | gym plans come from the gym (member_gym_plans) |
+| F-phone-833 Easy weeks for a plan | yes | n/a | n/a | yes |  |
+| F-phone-834 New or edit your own exercise: Details rows | yes (R-572) | n/a | n/a | yes (0.79.0 line 5) |  |
+| F-phone-835 Your own photo or video on an exercise | yes | n/a | n/a | yes | stays on the phone |
+| F-phone-836 Badges row on the Profile | yes | n/a | n/a | yes |  |
+| F-phone-837 Profile workouts feed | yes | n/a | n/a | yes |  |
+| F-phone-838 Profile history chart and Today goal card | yes | n/a | n/a | yes |  |
