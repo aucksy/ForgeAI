@@ -168,7 +168,7 @@ begin
   checks := checks + 1; fails := fails || pg_temp.t100_is('8none', jsonb_array_length(r->'matches')::text, '0');
   -- Each check keeps one log row: the account and the count, never the number.
   checks := checks + 1; fails := fails || pg_temp.t100_is('8log',
-    (select count(*) from public.phone_gym_checks where user_id = u_nobody and found = 0)::text, '1');
+    (select count(*) from public.phone_gym_checks where user_id = u_nobody and gyms_found = 0)::text, '1');
 
   -- 9. Limit: 6 checks per account per 24 h (Nobody has 1 already).
   for i in 1..5 loop r := public.phone_account_gyms('Nobody'); end loop;

@@ -46,7 +46,7 @@ revoke all on public.phone_gym_check_settings from public, anon, authenticated;
 create table if not exists public.phone_gym_checks (
   user_id uuid not null,
   at      timestamptz not null default now(),
-  found   int not null default 0,
+  gyms_found int not null default 0,
   claimed boolean not null default false
 );
 create index if not exists phone_gym_checks_user on public.phone_gym_checks(user_id, at);
@@ -216,7 +216,7 @@ begin
   if n >= 6 then return jsonb_build_object('error', 'TOO_MANY'); end if;
   ph := public._phone_for_code(code, p_name);
   if ph is not null then found_rows := public._phone_gym_find(ph, p_name); end if;
-  insert into public.phone_gym_checks(user_id, found) values (me, jsonb_array_length(found_rows));
+  insert into public.phone_gym_checks(user_id, gyms_found) values (me, jsonb_array_length(found_rows));
   return jsonb_build_object('ok', true, 'matches', found_rows);
 end $$;
 revoke all on function public.phone_account_gyms(text) from public, anon;
@@ -252,7 +252,7 @@ begin
   update public.gym_phone_links
      set status = 'approved', decided_at = now(), decided_by = null, decided_by_name = 'Number checked'
    where app_member = m.member_id and status = 'pending';
-  insert into public.phone_gym_checks(user_id, found, claimed) values (auth.uid(), 1, true);
+  insert into public.phone_gym_checks(user_id, gyms_found, claimed) values (auth.uid(), 1, true);
   return jsonb_build_object('ok', true, 'gymName', g.name);
 end $$;
 revoke all on function public.phone_account_claim(text) from public, anon;

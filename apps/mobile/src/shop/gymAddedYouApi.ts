@@ -186,7 +186,10 @@ async function checkNow(trigger: CheckTrigger): Promise<void> {
   });
   const online = net?.isConnected === true && net.isInternetReachable !== false;
   if (!shouldCheck({ phoneAccount, online, lastCheckAt: state.lastCheckAt, now, trigger })) return;
-  const firstName = firstNameOf((await getProfile().then((p) => p.name).catch(() => null)) ?? account?.name ?? '');
+  const firstName = firstNameOf((await getProfile().then((p) => p.name).catch((e: unknown) => {
+    console.warn(TAG, 'could not read the first name', e);
+    return null;
+  })) ?? account?.name ?? '');
   const result = resultOf(await apiPhoneAccountGyms(firstName, CHECK_TIMEOUT_MS));
   const r = afterCheck(state, result, nowMs());
   console.log(TAG, r.log);
