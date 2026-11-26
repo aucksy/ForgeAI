@@ -72,15 +72,14 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-alerts | 74 | 3.9 (155k tokens) |
 | B-switch | 56 | 4.2 (169k tokens) |
 | B-time | 37 | 4.3 (170k tokens) |
-| B-words | 35 | 4.9 (196k tokens) |
+| B-words | 36 | 4.9 (196k tokens) |
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 39 todo, 1 in progress, 1087 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 39 todo, 0 in progress, 1088 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| B-words-server-panel-worker | B-words | B-words (Language and words + 1 more) x server / server/panel-worker: 17 items | in progress | _work/B-words-server-panel-worker.md |  |
 | B-words-web-pages | B-words | B-words (Language and words + 1 more) x web / web/pages: 17 items | todo | _work/B-words-web-pages.md |  |
 | L18-gate | coord | gate: lens 18 (opportunities) runs last, on top of every other lens and hunt | todo | - |  |
 | L18-hq-app | L18 | lens 18 (Opportunities) x hq / hq/app: 2 items | todo | _work/L18-hq-app.md |  |
@@ -115,7 +114,7 @@ Counts: 39 todo, 1 in progress, 1087 done, 0 blocked. Full list: work-items.json
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
 (+ 14 more todo items, not shown)
-(+ 1079 older done items, not shown)
+(+ 1080 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
