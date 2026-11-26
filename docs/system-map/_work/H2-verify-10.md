@@ -9,3 +9,4 @@
 - G-0140 true (S2 kept)
 - G-0141 true (S2->S3: rare path)
 - G-0146 FALSE (sign-in refuses under 18 with plain words; left is S3 wording)
+- G-0142 true (S2 kept)
