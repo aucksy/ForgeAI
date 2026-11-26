@@ -1079,3 +1079,50 @@ read for any gym. Paying online goes through the panel's /api/pay (apps/mobile/s
 | F-phone-333 Tell my gym about MettleUp | yes, **off** (inside Find my gym) | yes (/api/lead) | n/a | **off** | |
 | F-phone-334 Staff door sign-in | yes, **off** (STAFF_DOOR_ON false) | n/a | n/a | **off** | |
 | F-phone-335 Automatic reminders from the gym | yes, per gym (owner's switches) and per member | n/a | yes (member_auto_reminders) | yes | |
+
+## H5-phone-shop-2 (surface phone, area phone/shop-2) — 34 features, written by H5-phone-shop-2 on 2026-11-26
+
+Second view of the member app's shop folder (files gymApi.ts to workoutCode.ts). Same ground as H5-phone-shop-1, so
+read both. "Play app" = 0.79.0; main is 0.80.0, whose only What's new line is not in this area (FN-H5-phone-components-2-01).
+One catalog read on 2026-11-26 checked all 63 gym-database functions apps/mobile/src/shop/gymApi.ts calls: **61 present**;
+member_gym_pack (0046) and member_join_day (0092) absent, already known (FN-A3-inbox-1-16). Switches on main: member
+paid-plan gate off (packages/theme/src/memberPlan.ts:28: nothing locked, Find my gym card hidden); staff door off
+(apps/mobile/src/shop/staffDoor.ts:61). Phone settings defaults (apps/mobile/src/tracker/phone/phonePrefs.ts:155-169):
+gym messages on, gym reminders on, machine use on, mates sharing off, trainer sharing off. Paying online is test mode only.
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-phone-400 Join by invite link or gym code | yes | n/a | yes (gym_preview, member_join) | yes | |
+| F-phone-401 Staff unlock with number and PIN | yes, **off** (staff door) | n/a | yes (staff_sign_in, staff_sign_out) | **off** | |
+| F-phone-402 Find my gym with my number | yes; Gym-tab card **off** (paid-plan gate) | yes (WhatsApp check live) | yes (member_find_gyms, member_claim_phone, phone_sign_in_find) | card **off**; phone sign-in on first screens yes | FN-H5-phone-shop-2-01 |
+| F-phone-403 Gym tab home | yes | n/a | yes (member_me) | yes | |
+| F-phone-404 Gym shop and orders | yes, per gym | yes (owner adds products) | yes (member_products, member_place_order, member_orders, member_cancel_order) | yes | |
+| F-phone-405 Demo copy of the shop | no way in | n/a | n/a | not reachable | FN-A5-phone-shop-2-3-01 |
+| F-phone-406 Gym messages inbox | yes | yes | yes (member_messages, member_saw_messages) | yes | |
+| F-phone-407 Gym message pop-ups | yes, phone setting (on by default) | n/a | yes (member_save_push_token, member_clear_push_token) | yes | |
+| F-phone-408 Automatic reminders | yes, phone setting (on) + owner's switches | n/a | yes (member_auto_reminders) | yes | |
+| F-phone-409 My membership and plan-ends card | yes | n/a | yes (member_membership) | yes | |
+| F-phone-410 Ask to pause or renew | yes | n/a | yes (member_ask_plan_change, member_plan_requests, member_cancel_plan_request, member_saw_plan_requests, member_gym_plans) | yes | |
+| F-phone-411 Check in by QR | yes | n/a | yes (member_check_in) | yes | |
+| F-phone-412 Workout plans from the gym | yes, per gym | n/a | yes (member_gym_plans) | yes | |
+| F-phone-413 Workout of the day | yes, per gym | n/a | yes (member_gym_wod) | yes | |
+| F-phone-414 Trainer form videos | yes, per gym (trainer adds a link) | n/a | yes (rides in member_gym_plans / member_gym_wod) | yes | |
+| F-phone-415 Measurements and diet plans | yes, per gym | n/a | yes (member_measurements, member_diet_plans) | yes | |
+| F-phone-416 Opening hours | yes | n/a | yes (member_gym_timings) | yes | |
+| F-phone-417 How busy now | yes | n/a | yes (member_gym_busy) | yes | |
+| F-phone-418 Busy times by exercise | yes, owner's switch + phone setting (on) | n/a | yes (member_machine_busy, member_machine_push) | yes | |
+| F-phone-419 Leaderboard and challenge | yes, per gym | n/a | yes (member_board, member_board_push) | yes | challenge check-in days (0091) not live |
+| F-phone-420 Gym mate profiles | yes, phone setting (off by default) | n/a | yes (member_mate_board, member_mate_profile, member_mate_share, member_mate_stop) | yes | |
+| F-phone-421 Share workouts with trainers | yes, phone setting (**off** by default, on at the join screen) | n/a | yes (member_trainer_share, member_trainer_stop, member_trainer_status); start date (member_join_day) **absent** | yes | FN-H5-phone-shop-2-02; FN-A3-inbox-1-16 |
+| F-phone-422 Ask my trainer for help | yes, needs trainer sharing on | n/a | yes (member_trainer_help) | yes | |
+| F-phone-423 Ask a trainer a question | yes, but **replaced** by Message your gym | n/a | yes (member_ask_trainer, member_questions, member_withdraw_question, member_ask_choices) | not offered in normal use | FN-H5-phone-shop-1-01 |
+| F-phone-424 Message your gym | yes | yes | yes (member_talk_list, member_talk_send, member_talk_send_to, member_talk_reply, member_talk_unread, member_talk_choices) | yes | |
+| F-phone-425 Demo copy of Message your gym | QA builds only | n/a | n/a | hidden | |
+| F-phone-426 Workout offer | yes, per gym | n/a | yes (member_offers, member_join_offer, member_leave_offer, member_offer_days) | yes | |
+| F-phone-427 Send my workout report | yes | n/a | yes (member_report_requests, member_answer_report_request, member_attach_report) | yes | |
+| F-phone-428 Bring a friend | yes | yes | yes (member_friend_invite) | yes | |
+| F-phone-429 Leave the gym | yes | n/a | yes (member_leave) | yes | |
+| F-phone-430 Gym logo on the home screen | yes | n/a | n/a | yes | |
+| F-phone-431 Pay the gym from the app | yes, per gym | **partly**: UPI yes; online test mode only | unknown (small web database) | yes | PAY_LIVE off |
+| F-phone-432 Recommend MettleUp to your gym | yes | yes (/api/lead) | n/a | unknown which screen shows it with the Find my gym card off | |
+| F-phone-433 Plus lock 7 days after plan ends | yes, **off** (paid-plan gate) | n/a | yes (member_plus_lock) | **off** | FN-H5-phone-shop-2-01 |
