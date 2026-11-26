@@ -12,3 +12,5 @@
 - G-0129 true (S2->S3: only links made before 2 Nov; list is visible, no remove)
 - G-0130 true (S2->S3: two phones on mixed versions, loses only cardio-machine details)
 - G-0131 true (S2 kept; latent until plan lock switched on)
+- G-0132 true (S2->S3: paying in trial starts at trial end; only a hand-typed HQ date, stages latent)
+- G-0133 true (S2->S3: a friendly message to an overlapping set of own members)

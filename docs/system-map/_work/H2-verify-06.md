@@ -15,3 +15,5 @@
 - G-0087 true (S2 kept)
 - G-0088 FALSE (server scope test + erase test exist)
 - G-0089 true (S2->S3: rare path)
+
+DONE: 15/15. true 13, false 2 (G-0079, G-0088), unsure 0.

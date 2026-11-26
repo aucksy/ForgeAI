@@ -12,3 +12,4 @@
 - G-0142 true (S2 kept)
 - G-0144 true (S2->S3: 4 s two-device race, visible)
 - G-0145 true (S2 kept; photos table live per LIVE-STATE, so may be in copies now)
+- G-0147 true (S2 kept)
