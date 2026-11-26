@@ -15,3 +15,6 @@
 - G-0132 true (S2->S3: paying in trial starts at trial end; only a hand-typed HQ date, stages latent)
 - G-0133 true (S2->S3: a friendly message to an overlapping set of own members)
 - G-0134 true (S2 kept)
+- G-0135 true (S2 kept)
+
+DONE: 15/15. true 15, false 0, unsure 0. Severity S2->S3: G-0121, G-0123, G-0125, G-0129, G-0130, G-0132, G-0133.
