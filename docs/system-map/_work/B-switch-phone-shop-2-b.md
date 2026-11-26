@@ -1,0 +1,4 @@
+# B-switch-phone-shop-2-b checkpoint (gap-6 x phone/shop-2)
+- 2026-11-26 H6.1-H6.5 checked: 0 new findings. Reused FN-B-switch-phone-shop-1-b-01 (plan, plan reminders and birthday wish find the member only by the QR check-in phone, 1 of 2 filled) and FN-B-switch-phone-onboarding-db-b-02 (trainer 0 of 2; share and help words say "your trainer").
+- H6.4/H6.5: the only typed boxes whose cleaning sits in this area are the staff door (switched off): mobile box uses the shared rule (no length limit, Hindi digits mapped), PIN box keeps ASCII digits only with spaces and dashes removed; PIN is typed, never autofilled, so no finding. Other boxes here are free text (message, question, bio).
+- Batch (0 of 2) is read by no feature in this area. App link (0 of 2) is the result of find-my-gym, not an input it needs.
