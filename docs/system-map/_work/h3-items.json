@@ -1,0 +1,14 @@
+[
+  {
+    "wi": "A3-inbox-1",
+    "sampled": 3,
+    "false": 3,
+    "findings": 16
+  },
+  {
+    "wi": "A3-inbox-3",
+    "sampled": 2,
+    "false": 1,
+    "findings": 11
+  }
+]
