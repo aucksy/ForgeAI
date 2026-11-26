@@ -13,3 +13,5 @@
 - G-0085 true (S2->S3: one-line guard, permission unit-tested)
 - G-0086 true (S2->S3: Play auto-update is the fallback)
 - G-0087 true (S2 kept)
+- G-0088 FALSE (server scope test + erase test exist)
+- G-0089 true (S2->S3: rare path)

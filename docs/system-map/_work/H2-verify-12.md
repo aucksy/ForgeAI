@@ -1,0 +1,5 @@
+# H2-verify-12 checkpoint
+
+## Progress
+- G-0166 true (S2 kept)
+- G-0167 true (S2->S3: backup and database sit with different providers; 7 days is the privacy promise)

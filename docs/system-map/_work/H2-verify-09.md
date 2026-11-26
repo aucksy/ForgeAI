@@ -10,3 +10,5 @@
 - G-0127 true (S2 kept)
 - G-0128 true (S2 kept)
 - G-0129 true (S2->S3: only links made before 2 Nov; list is visible, no remove)
+- G-0130 true (S2->S3: two phones on mixed versions, loses only cardio-machine details)
+- G-0131 true (S2 kept; latent until plan lock switched on)

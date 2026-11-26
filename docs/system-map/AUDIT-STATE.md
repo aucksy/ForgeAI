@@ -75,19 +75,18 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-time | 37 | 4.3 (170k tokens) |
 | B-words | 37 | 4.9 (196k tokens) |
 | L18 | 37 | 3.8 (153k tokens) |
-| H2 | 6 | 3.8 (153k tokens) |
+| H2 | 7 | 3.8 (153k tokens) |
 
 ## Work items
-Counts: 23 todo, 5 in progress, 1134 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 22 todo, 5 in progress, 1135 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | H2-verify-06 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-06.txt) | in progress | _work/H2-verify-06.md |  |
-| H2-verify-08 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-08.txt) | in progress | _work/H2-verify-08.md |  |
 | H2-verify-09 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-09.txt) | in progress | _work/H2-verify-09.md |  |
 | H2-verify-10 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-10.txt) | in progress | _work/H2-verify-10.md |  |
 | H2-verify-11 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-11.txt) | in progress | _work/H2-verify-11.md |  |
-| H2-verify-12 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-12.txt) | todo | _work/H2-verify-12.md |  |
+| H2-verify-12 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-12.txt) | in progress | _work/H2-verify-12.md |  |
 | H2-verify-13 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-13.txt) | todo | _work/H2-verify-13.md |  |
 | H2-verify-14 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-14.txt) | todo | _work/H2-verify-14.md |  |
 | H2-verify-15 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-15.txt) | todo | _work/H2-verify-15.md |  |
@@ -110,7 +109,6 @@ Counts: 23 todo, 5 in progress, 1134 done, 0 blocked. Full list: work-items.json
 | H2-verify-32 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-32.txt) | todo | _work/H2-verify-32.md |  |
 | H2-verify-33 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-33.txt) | todo | _work/H2-verify-33.md |  |
 | H2-verify-34 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-34.txt) | todo | _work/H2-verify-34.md |  |
-| CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
 | H1-dedupe | tools | 3H H1: write and run _tools/dedupe.mjs -> finding-groups.jsonl + _work/verify-queue.json | done | _work/H1-dedupe.md | 2,505 groups (43 multi); verify queue 510 (245 S1/S2 + 265 S3 sample) |
 | H2-verify-01 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-01.txt) | done | _work/H2-verify-01.md | pilot: 13 true, 1 false (account-delete fixed in 0.80.0), 1 unsure; 9 S1->S2 |
 | H2-verify-02 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-02.txt) | done | _work/H2-verify-02.md | 15 true; 2 S1->S2, 8 S2->S3 |
@@ -118,7 +116,8 @@ Counts: 23 todo, 5 in progress, 1134 done, 0 blocked. Full list: work-items.json
 | H2-verify-04 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-04.txt) | done | _work/H2-verify-04.md | 15 true; 10 S2->S3 |
 | H2-verify-05 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-05.txt) | done | _work/H2-verify-05.md | 14 true, 1 false (G-0073), 0 unsure; 6 S2->S3 |
 | H2-verify-07 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-07.txt) | done | _work/H2-verify-07.md | 15 true; 8 S2->S3; G-0093, G-0100 stay S2 |
-(+ 1126 older done items, not shown)
+| H2-verify-08 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-08.txt) | done | _work/H2-verify-08.md | 15 true; 9 S2->S3 |
+(+ 1127 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).

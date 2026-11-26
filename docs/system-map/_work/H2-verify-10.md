@@ -10,3 +10,5 @@
 - G-0141 true (S2->S3: rare path)
 - G-0146 FALSE (sign-in refuses under 18 with plain words; left is S3 wording)
 - G-0142 true (S2 kept)
+- G-0144 true (S2->S3: 4 s two-device race, visible)
+- G-0145 true (S2 kept; photos table live per LIVE-STATE, so may be in copies now)
