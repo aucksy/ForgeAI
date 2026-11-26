@@ -1505,3 +1505,35 @@ that had the problem (whatsNew.ts:92-93); already FN-A3-whats-new-phone-01.
 | F-phone-637 Folders and routines list | yes | n/a | n/a | yes |  |
 | F-phone-638 Reorder, supersets, swap, pause | yes | n/a | n/a | yes |  |
 | F-phone-639 Workout photos and trainer videos | yes | n/a | yes (member_gym_plans, member_gym_wod) | yes | videos **on** for every gym (PLAN_GATE_ON false); Pro-pack mark |
+
+## H5-server-ci-workflows (surface server, area server/ci-workflows) — 18 features, written by H5-server-ci-workflows on 2026-11-26
+
+These are the cloud runs (GitHub Actions), not screens. "Main" = the run file is on main. "Live" = what GitHub really
+does with it, read on 2026-11-26 from the public GitHub API with no login (repo aucksy/ForgeAI is public): all 22 run
+files are "active" (none switched off), plus each one's newest runs. "Live DB" and "Play app" are n/a unless the run
+touches them. Two run files on main are not in features.json at all: the iPhone TestFlight upload (draft, never run)
+and the WhatsApp test reply (added 25 Nov, never run) (FN-H5-server-ci-workflows-03).
+Main is now 0.80.0 (apps/mobile/app.json:5); the 0.79.0 in the whole-system block above is out of date. The v0.80.0
+release run passed on 26 Nov and sent 0.80.0 to Play's testing tracks (run 45766038873, job "play-upload / upload").
+Play production was 0.77.0 at the last Play Console read (21 Nov, machine live-state.csv); not re-read here.
+
+| Feature | Main | Live (GitHub) | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-server-600 Outage alarm every 10 minutes | yes | **runs about every 6 hours, not every 10 minutes** | n/a | n/a | 100 timed runs 1-26 Nov: middle gap 6.2 h, longest 11.8 h; newest 26 Nov 14:16 passed (run 45837398533) (FN-H5-server-ci-workflows-01) |
+| F-server-601 WhatsApp sign-in set-up (by hand) | yes | yes | n/a | n/a | newest 25 Nov passed (run 45601786574) |
+| F-server-602 Checks on every push | yes | yes | n/a | n/a | newest finished main run 26 Nov 08:16 passed (run 45781710531); two red runs just before it |
+| F-server-603 Database checks on every push | yes | yes | n/a (a throw-away copy, never the live database) | n/a | job "database" passed in run 45781710531 |
+| F-server-604 Razorpay test-mode check | yes | runs and passes | n/a | n/a | passes with or without its keys; whether the keys are set is unknown (FN-A5-server-ci-workflows-1-02) |
+| F-server-605 Exercise clips and pictures (by hand) | yes | yes | n/a | n/a | newest 13 Nov passed (run 43478713570) |
+| F-server-607 iPhone simulator build (paused) | yes | hand-only, as meant | n/a | n/a | last hand run 12 Nov passed (run 43193347088) |
+| F-server-610 Play store listing (by hand) | yes | yes | n/a | listing last replaced 12 Nov | 3 runs ever; newest 12 Nov passed (run 43165297971) |
+| F-server-611 Play upload to testing tracks | yes | yes | n/a | 0.80.0 sent to testing 26 Nov | inside the release run (run 45766038873); never production |
+| F-server-612 Phone conditions test (by hand) | yes | yes, but **not run for 0.80.0** | n/a | n/a | newest 17 Nov for 0.79.0 (run 44011853645) (FN-H5-server-ci-workflows-04) |
+| F-server-613 Phone test, release gate | yes | yes | n/a | n/a | ran on rc-0.80.0 26 Nov 00:39 (run 45730286630) and on main 26 Nov |
+| F-server-614 Cross-role journeys | yes | yes (uses the live server) | yes (makes test gyms) | n/a | ran on rc-0.80.0 (run 45730289257) |
+| F-server-615 Build and release on a tag | yes | yes | n/a | 0.80.0 built | v0.80.0 passed 26 Nov 06:07 (run 45766038873) after one red try (run 45724632860) |
+| F-server-616 Store pictures (by hand) | yes | yes | n/a | n/a | newest 9 Nov passed (run 42609482626) |
+| F-server-617 Robot crawl on real phones (Test Lab) | yes | **never ran after a release** | n/a | n/a | 1 run ever (18 Oct, by hand) and it stopped at "not set up yet" (run 39136145179) (FN-H5-server-ci-workflows-02) |
+| F-server-619 Watch demo video (by hand) | yes | yes | n/a | n/a | 2 runs, 4 Nov (run 41763141918) |
+| F-server-620 Watch build and checks | yes | yes | n/a | n/a | newest 17 Nov for 0.79.0 (run 44011860511); none since, no watch change needed it is not proved |
+| F-server-621 WhatsApp probe (by hand) | yes | yes | n/a | n/a | newest 12 Nov passed (run 43239958964) |
