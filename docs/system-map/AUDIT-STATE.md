@@ -72,17 +72,16 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-alerts | 74 | 3.9 (155k tokens) |
 | B-switch | 56 | 4.2 (169k tokens) |
 | B-time | 37 | 4.3 (170k tokens) |
-| B-words | 29 | 4.8 (192k tokens) |
+| B-words | 30 | 4.8 (193k tokens) |
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 42 todo, 4 in progress, 1081 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 42 todo, 3 in progress, 1082 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | B-words-panel-auth-data | B-words | B-words (Language and words + 1 more) x panel / panel/auth-data: 17 items | in progress | _work/B-words-panel-auth-data.md |  |
 | B-words-server-database-1 | B-words | B-words (Language and words + 1 more) x server / server/database-1: 17 items | in progress | _work/B-words-server-database-1.md |  |
-| B-words-server-database-2 | B-words | B-words (Language and words + 1 more) x server / server/database-2: 17 items | in progress | _work/B-words-server-database-2.md |  |
 | B-words-server-database-3 | B-words | B-words (Language and words + 1 more) x server / server/database-3: 17 items | in progress | _work/B-words-server-database-3.md |  |
 | B-words-server-hq-gate-workers | B-words | B-words (Language and words + 1 more) x server / server/hq-gate-workers: 17 items | todo | _work/B-words-server-hq-gate-workers.md |  |
 | B-words-server-panel-worker | B-words | B-words (Language and words + 1 more) x server / server/panel-worker: 17 items | todo | _work/B-words-server-panel-worker.md |  |
@@ -109,7 +108,7 @@ Counts: 42 todo, 4 in progress, 1081 done, 0 blocked. Full list: work-items.json
 | L18-phone-onboarding-db | L18 | lens 18 (Opportunities) x phone / phone/onboarding-db: 2 items | todo | _work/L18-phone-onboarding-db.md |  |
 | L18-phone-screens-1 | L18 | lens 18 (Opportunities) x phone / phone/screens-1: 2 items | todo | _work/L18-phone-screens-1.md |  |
 | L18-phone-screens-2 | L18 | lens 18 (Opportunities) x phone / phone/screens-2: 2 items | todo | _work/L18-phone-screens-2.md |  |
-| B-words-server-ci-workflows | B-words | B-words (Language and words + 1 more) x server / server/ci-workflows: 17 items | done | _work/B-words-server-ci-workflows.md | B-words ci-workflows: 1 new S4, 3 reused |
+| B-words-server-database-2 | B-words | B-words (Language and words + 1 more) x server / server/database-2: 17 items | done | _work/B-words-server-database-2.md | B-words database-2: 2 new S3, 5 reused |
 | CAL-5 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-5 ...); output is scored, never merged | done | _work/CAL-5.md | c08, c09: 16 gaps listed (not merged; scored in CAL-score) |
 | CAL-6 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-6.md | re-run 1: c01, c05, c12: 10 gaps (not merged; scored in CAL-score) |
 | CAL-7 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-7.md | re-run 1: c03, c06, c07: 15 gaps (not merged; scored in CAL-score) |
@@ -118,7 +117,7 @@ Counts: 42 todo, 4 in progress, 1081 done, 0 blocked. Full list: work-items.json
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
 (+ 17 more todo items, not shown)
-(+ 1073 older done items, not shown)
+(+ 1074 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
