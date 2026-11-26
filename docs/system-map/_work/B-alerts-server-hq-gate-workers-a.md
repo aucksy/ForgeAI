@@ -1,0 +1,8 @@
+# B-alerts-server-hq-gate-workers-a checkpoint
+## Items
+- L11.1 done: alert paths = member phone pop-ups (FCM, every minute + kick: gym messages, offers, trainer replies, member notes), help-reply pop-up (HQ), staff browser alerts (instant + 11:00 daily/weekly summary), fee-request notes and paid-online alerts (feeds), plan-end WhatsApp/SMS = stub sending nothing, read-record failure email via GitHub issue, weekly usage line on HQ only, gate worker sends nothing (not deployed). No quiet hours anywhere; all pushes high priority. New 02, 03; reused 8.
+- H2.1 done: member pop-up needs an app member of the gym (not left), a saved push address, FCM key set, notifications allowed, phone maker rules; fee note also needs the roster-to-app link; staff alert needs a subscribed browser + VAPID key; help reply needs the address left with the question.
+- H2.2 done: the server keeps only claimed counts and log lines; nothing per member goes back (01, reused panel findings).
+- H2.3 done: 01 (fee requests), reused panel-logic-1-a-01, L4-web-pages-p2-04 (plan-end reminders stub).
+- H2.4 done: Crispy Curves: roster 2, app link 0 of 2 (field-fill) -> fee request notes reach 0 of 2. SQL with gym filter: 1 app member, 0 with a push address -> gym message / offer / trainer reply / note pop-ups reach 0 of 2 roster (0 of 1 app member). Staff browsers subscribed: 2. Help reply reach not countable (feedback lives in D1, not gym rows).
+- H2.5 done: needs a real-phone check: member pop-up on OPPO/Xiaomi/Samsung with battery saver on and screen off (does the data-only high-priority message wake the app and ring on "Messages from your gym"); staff browser alert on Android Chrome with screen off.
