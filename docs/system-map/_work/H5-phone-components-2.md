@@ -1,2 +1,5 @@
 # H5-phone-components-2 checkpoint
 - 2026-11-26 started; read brief, lens rules, H5 lessons, items (30 features), live-state-facts, sibling H5-phone-components-1 and cloud-backup-ai outputs.
+- H5.1/H5.2: switches coach/nutrition/gymSync false (features.ts:6), MEMBER_PLAN_GATE_ON false, PHONE_SIGN_IN_ON true. Catalog: phone_account_pick, member_join/leave/me, join_gym_by_code, member_copy_put, member_account_delete live; edge function phone-account ACTIVE. Public: Play 0.79.0, GitHub latest v0.79.0, whats-new.json 0.79.0. Main 0.80.0 (F237 phone-number backup, AccountCard/PhoneBackup) = only main-only part of area. Help/voice need D1 + secrets: unknown (reuse FN-L16-server-panel-worker-06).
+- H5.3: 0.80.0 What's new (whatsNew.ts:72-85) and 0099 header call F237 released 25 Nov; no release exists -> FN-H5-phone-components-2-01 (S2). Other lines match live.
+- H5.4 written (LIVE-STATE.md lines 706-753, CRLF kept). Grid row written. lens-cover ok; merge --dry 2 passed 0 rejected. Code lines read ~300. Catalog reads 2 (pg_proc, edge functions). DONE

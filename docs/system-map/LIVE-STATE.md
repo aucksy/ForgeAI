@@ -702,3 +702,52 @@ calls 1301 and 1302 "behind switch", but the only switch is the gym's own look.
 | F-phone-1324 Coach chat food cards | yes, switch **off** | n/a | n/a | **off** | |
 | F-phone-1325 Coach chat voice (hold the mic) | yes, switch **off** | n/a | n/a | **off** | |
 | F-phone-1326 Exercise page History tab | yes | n/a | n/a | yes | |
+
+## H5-phone-components-2 (surface phone, area phone/components-2) — 30 features, written by H5-phone-components-2 on 2026-11-26
+
+The member app's help and feedback button, voice feedback, help replies, confirm sheets, Workout notices, "Couldn't save"
+banner, every Settings card (account, backup, gym, profile, data) and the shared screen parts. "Play app" = the public
+Google Play listing read again on 2026-11-26: **version 0.79.0**; the newest GitHub release is v0.79.0 (17 Nov) and the
+app's news file https://app.mettleup.fit/app/whats-new.json answers 0.79.0. Main is 0.80.0 (apps/mobile/app.json:5).
+The ONE part of this area that is only on main is F237 "phone number sign-in also backs up workouts" (AccountCard,
+PhoneBackup, 25 Nov). Its server half IS live: function phone_account_pick (0099, catalog read 2026-11-26) and Edge
+Function phone-account (ACTIVE, version 1). Its app half is not on Play, although the What's new entry and the 0099 file
+call it released on 25 Nov (FN-H5-phone-components-2-01). Help questions, replies, the AI answer and voice feedback run
+on the gym panel worker and its small web database (D1), which cannot be read from the laptop: their tables (0008,
+0014) and secrets (Claude help key, Groq key) are **unknown** (FN-L16-server-panel-worker-06). Switches on main: coach,
+nutrition, gymSync off (apps/mobile/src/lib/features.ts:6); Plus off (packages/theme/src/memberPlan.ts:28); plan gate off,
+so the gym logo shortcut is offered for any gym with a logo; phone sign-in ON (apps/mobile/src/onboarding/phoneSignIn.ts:32,
+its comment at line 16 still says off).
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-phone-1400 Help or feedback button | yes | yes (/api/feedback, /api/help routed) | unknown (D1) | yes | |
+| F-phone-1401 Speak your feedback | yes | yes (/api/feedback/voice routed) | unknown (D1, Groq key) | yes | Groq model whisper-large-v3; a retired model = 404 |
+| F-phone-1402 My questions and team replies | yes | yes (/api/help/replies) | unknown (D1 0009 / 0014) | yes | before 0014 only the newest reply shows, silently |
+| F-phone-1403 Quick AI answer, "Did this solve it?" | yes | yes (/api/help, /api/help/rate) | unknown (D1 0008, Claude help key) | yes | no key = no AI answer, message still saved |
+| F-phone-1404 Add my watch's log to feedback | yes | n/a | n/a | yes | |
+| F-phone-1405 "Are you sure?" sheet | yes | n/a | n/a | yes | |
+| F-phone-1406 One notice card at a time | yes | n/a | n/a | yes | |
+| F-phone-1407 "Couldn't save" banner | yes | n/a | n/a | yes | |
+| F-phone-1408 MettleUp account card | yes; phone-number backup (F237) only on main | n/a | yes (phone_account_pick, Edge Function phone-account, member_copy_put, member_account_delete) | Google account only; **no phone-number backup** | features.json says "behind switch": the only gate is the build's server set-up, which Play has; FN-H5-phone-components-2-01 |
+| F-phone-1409 Own AI key field | yes, switch **off** (coach false) | n/a | n/a | **off** | |
+| F-phone-1410 Save as a spreadsheet | yes | n/a | n/a | yes | |
+| F-phone-1411 Old Google Drive restore, undo, unlink | yes | n/a | n/a (Google Drive) | yes | |
+| F-phone-1412 Android phone backup card | yes, **hidden** (no Settings row) | n/a | n/a | hidden | |
+| F-phone-1413 Download my data | yes | n/a | n/a | yes | |
+| F-phone-1414 Restore from a backup file | yes | n/a | n/a | yes | |
+| F-phone-1415 Gym email sign-in, cloud sync | yes, switch **off** (gymSync false) | n/a | yes (join_gym_by_code) | **off** | |
+| F-phone-1416 Erase all data, remove demo | yes | n/a | n/a | yes | |
+| F-phone-1417 Hidden demo-data hold | yes, **hidden** | n/a | n/a | hidden | |
+| F-phone-1418 Gym logo on my home screen | yes (plan gate off) | n/a | yes (member_me) | yes, where the phone takes shortcuts | "behind switch" = the gym's logo and the phone's support |
+| F-phone-1419 Leave my gym, what my gym sees | yes | n/a | yes (member_leave) | yes | |
+| F-phone-1420 Gym reminders and messages on or off | yes | n/a | yes | yes | |
+| F-phone-1421 Join your gym by poster or code | yes | n/a | yes (member_join) | yes | |
+| F-phone-1422 Edit your profile | yes | n/a | n/a | yes | |
+| F-phone-1423 Calorie and macro targets | yes, switch **off** (nutrition false) | n/a | n/a | **off** | |
+| F-phone-1424 Settings menu in six groups | yes | n/a | n/a | yes | |
+| F-phone-1425 MettleUp Plus row | yes, switch **off** (MEMBER_PLAN_GATE_ON false) | n/a | yes (app_limits) | **off** | |
+| F-phone-1426 iPhone: rows left out, "Not on iPhone yet" | yes (iPhone build only) | n/a | n/a | n/a (Android) | no live iPhone app was checked |
+| F-phone-1427 Undo bar after a delete | yes | n/a | n/a | yes | |
+| F-phone-1428 "Couldn't load" state, error line | yes | n/a | n/a | yes | |
+| F-phone-1429 Font size, touch areas, screen reader, less motion | yes | n/a | n/a | yes | |
