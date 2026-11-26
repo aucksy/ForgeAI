@@ -107,7 +107,9 @@ describe('the words', () => {
 
 describe('where it shows', () => {
   it('the card takes its turn in the one notice slot, after What is new', () => {
-    expect(NOTICE_ORDER.indexOf('watch')).toBe(NOTICE_ORDER.indexOf('whatsNew') + 1);
+    // F239: the gym-added notice sits between What is new and the watch card.
+    expect(NOTICE_ORDER.indexOf('gymAdded')).toBe(NOTICE_ORDER.indexOf('whatsNew') + 1);
+    expect(NOTICE_ORDER.indexOf('watch')).toBe(NOTICE_ORDER.indexOf('gymAdded') + 1);
     expect(pickNotice({ watch: true, backup: true }, null, '2026-10-29')).toBe('watch');
     expect(pickNotice({ whatsNew: true, watch: true }, null, '2026-10-29')).toBe('whatsNew');
   });

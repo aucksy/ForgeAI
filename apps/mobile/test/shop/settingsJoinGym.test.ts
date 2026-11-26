@@ -33,7 +33,7 @@ describe('Settings → Your gym: join with a code', () => {
     expect(page).toMatch(/if \(hydrated && !link\) return <Redirect href="\/shop" \/>/);
     expect(page).not.toMatch(/<JoinGymCard|<GymCard/);
     const shop = read('src/shop/ShopScreen.tsx');
-    expect(shop).toMatch(/\{notice \? <DemoNote text=\{notice\} \/> : null\}\s*<JoinGymCard scan \/>/);
+    expect(shop).toMatch(/\{notice \? <DemoNote text=\{notice\} \/> : null\}\s*(\{\/\*[^]*?\*\/\}\s*)?<GymAddedYouCard \/>\s*<JoinGymCard scan \/>/);
     // The settings list's no-gym row opens the Gym tab.
     expect(read('src/components/settings/settingsLines.ts')).toMatch(/title: 'Join your gym', href: '\/shop'/);
   });
