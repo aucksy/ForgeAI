@@ -75,19 +75,18 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-time | 37 | 4.3 (170k tokens) |
 | B-words | 37 | 4.9 (196k tokens) |
 | L18 | 37 | 3.8 (153k tokens) |
-| H2 | 13 | 3.9 (157k tokens) |
+| H2 | 14 | 3.9 (156k tokens) |
 
 ## Work items
-Counts: 16 todo, 5 in progress, 1141 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 15 todo, 5 in progress, 1142 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
 | H2-verify-14 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-14.txt) | in progress | _work/H2-verify-14.md |  |
 | H2-verify-15 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-15.txt) | in progress | _work/H2-verify-15.md |  |
-| H2-verify-16 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-16.txt) | in progress | _work/H2-verify-16.md |  |
 | H2-verify-17 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-17.txt) | in progress | _work/H2-verify-17.md |  |
 | H2-verify-18 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-18.txt) | in progress | _work/H2-verify-18.md |  |
-| H2-verify-19 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-19.txt) | todo | _work/H2-verify-19.md |  |
+| H2-verify-19 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-19.txt) | in progress | _work/H2-verify-19.md |  |
 | H2-verify-20 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-20.txt) | todo | _work/H2-verify-20.md |  |
 | H2-verify-21 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-21.txt) | todo | _work/H2-verify-21.md |  |
 | H2-verify-22 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-22.txt) | todo | _work/H2-verify-22.md |  |
@@ -103,7 +102,6 @@ Counts: 16 todo, 5 in progress, 1141 done, 0 blocked. Full list: work-items.json
 | H2-verify-32 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-32.txt) | todo | _work/H2-verify-32.md |  |
 | H2-verify-33 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-33.txt) | todo | _work/H2-verify-33.md |  |
 | H2-verify-34 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-34.txt) | todo | _work/H2-verify-34.md |  |
-| H2-verify-06 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-06.txt) | done | _work/H2-verify-06.md | 13 true, 2 false (G-0079, G-0088); 6 S2->S3 |
 | H2-verify-07 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-07.txt) | done | _work/H2-verify-07.md | 15 true; 8 S2->S3; G-0093, G-0100 stay S2 |
 | H2-verify-08 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-08.txt) | done | _work/H2-verify-08.md | 15 true; 9 S2->S3 |
 | H2-verify-09 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-09.txt) | done | _work/H2-verify-09.md | 15 true; 7 S2->S3 |
@@ -111,7 +109,8 @@ Counts: 16 todo, 5 in progress, 1141 done, 0 blocked. Full list: work-items.json
 | H2-verify-11 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-11.txt) | done | _work/H2-verify-11.md | 13 true, 2 false (G-0163, G-0164); 11 S2->S3 |
 | H2-verify-12 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-12.txt) | done | _work/H2-verify-12.md | 14 true, 1 false (G-0177); 6 S2->S3 |
 | H2-verify-13 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-13.txt) | done | _work/H2-verify-13.md | 15 true; 6 S2->S3 |
-(+ 1133 older done items, not shown)
+| H2-verify-16 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-16.txt) | done | _work/H2-verify-16.md | 15 true; 5 S2->S3 |
+(+ 1134 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
