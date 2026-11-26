@@ -66,18 +66,17 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | L12 | 37 | 1.2 (50k tokens) |
 | L16 | 37 | 2.7 (109k tokens) |
 | H5 | 19 | 3.5 (141k tokens) |
-| B-alerts | 36 | 3.6 (144k tokens) |
+| B-alerts | 37 | 3.6 (144k tokens) |
 | B-switch | 24 | 4.0 (159k tokens) |
 | B-time | 17 | 4.1 (164k tokens) |
 | B-words | 16 | 4.7 (188k tokens) |
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 162 todo, 5 in progress, 960 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 162 todo, 4 in progress, 961 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| B-alerts-phone-screens-1-a | B-alerts | B-alerts (Notifications and messages + 1 more) x phone / phone/screens-1: 6 items | in progress | _work/B-alerts-phone-screens-1-a.md |  |
 | B-alerts-phone-screens-1-b | B-alerts | B-alerts (Did it happen? (proof of every automatic action) + 1 more) x phone / phone/screens-1: 10 items | in progress | _work/B-alerts-phone-screens-1-b.md |  |
 | B-switch-phone-onboarding-db-a | B-switch | B-switch (Should-read matrix (missing links)) x phone / phone/onboarding-db: 4 items | in progress | _work/B-switch-phone-onboarding-db-a.md |  |
 | B-switch-phone-screens-1-a | B-switch | B-switch (Should-read matrix (missing links)) x phone / phone/screens-1: 4 items | in progress | _work/B-switch-phone-screens-1-a.md |  |
@@ -116,7 +115,7 @@ Counts: 162 todo, 5 in progress, 960 done, 0 blocked. Full list: work-items.json
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
 (+ 137 more todo items, not shown)
-(+ 952 older done items, not shown)
+(+ 953 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
