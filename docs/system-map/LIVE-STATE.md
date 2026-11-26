@@ -907,3 +907,45 @@ member_claim_phone, member_find_gyms, member_me, member_leave, staff_sign_in, me
 | F-phone-1625 Light or dark look | yes | n/a | n/a | yes | in What's new 0.77.0 |
 | F-phone-1626 Gym colours and logo | yes (plan gate off) | n/a | yes (member_me) | yes | shows for every branded gym |
 | F-phone-1627 App settings on the phone | yes | n/a | n/a | yes | AI provider and voice parts hidden with the coach |
+
+## H5-phone-screens-1 (surface phone, area phone/screens-1) — 23 features, written by H5-phone-screens-1 on 2026-11-26
+
+The member app's first-level screens: start-up frame and tabs, Workout and Profile tabs, calendar, exercises and own
+exercises, body measures, 1-rep max, Hevy/Strong import, invite and check-in links, Find my gym, the Gym tab, and the
+switched-off coach and nutrition pages. "Play app" = 0.79.0 (public listing, see the H5-phone-components-2 section);
+main is 0.80.0 (apps/mobile/app.json:5), whose only What's new line (phone-number backup) is not in this area and is
+already FN-H5-phone-components-2-01. Server functions these screens reach were checked in one catalog read on
+2026-11-26: gym_preview, join_gym_by_code, member_join, member_leave, member_me, member_membership, member_check_in,
+member_board, member_mate_board, member_mate_profile, member_gym_timings, member_measurements, member_find_gyms,
+member_claim_phone, member_copy_get, member_copy_put are **all present**; member_gym_pack (0046) and member_join_day (0092),
+called by the Gym tab's shared code, are **absent** (known: FN-A3-inbox-1-16; the app treats both as "not on the server").
+Switches on main: coach, nutrition, gymSync off (apps/mobile/src/lib/features.ts:6); Plus gate off
+(packages/theme/src/memberPlan.ts:28), which also closes Find my gym (apps/mobile/src/plan/PlusPageGate.tsx:15-26) and
+hides its card (apps/mobile/src/shop/findGym.ts:157-158); staff door off (apps/mobile/src/shop/staffDoor.ts:61).
+Not compared: whether main's screens in this area differ from the v0.79.0 tag (no git allowed in this step).
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-phone-100 App start-up, frame, 3 tabs, update pop-ups | yes; cloud start-up off (gymSync false) | n/a | n/a | yes | |
+| F-phone-101 Old links land on their new page | yes | n/a | n/a | yes | |
+| F-phone-102 Workout tab: Up next, empty workout, routines | yes | n/a | n/a | yes | |
+| F-phone-103 Profile tab: numbers, chart, feed | yes | n/a | n/a | yes | |
+| F-phone-104 Edit your profile | yes | n/a | n/a | yes | |
+| F-phone-106 Calendar, streak, log a past workout | yes | n/a | n/a | yes | |
+| F-phone-109 Exercise list and one exercise's page | yes | n/a | n/a | yes | |
+| F-phone-110 Own exercises, hide library exercises | yes | n/a | n/a | yes | simpler "New exercise" in What's new 0.79.0 |
+| F-phone-111 Body weight and measurements (+ trainer's) | yes | n/a | yes (member_measurements) | yes | |
+| F-phone-113 1-rep max calculator | yes | n/a | n/a | yes | |
+| F-phone-114 Import from Hevy or Strong | yes | n/a | n/a (file, or Hevy's own site) | yes | |
+| F-phone-115 Join a gym from an invite link | yes | n/a | yes (gym_preview, member_join, join_gym_by_code) | yes | |
+| F-phone-116 Check in by QR | yes | n/a | yes (member_check_in) | yes | |
+| F-phone-117 Find my gym by WhatsApp proof | yes, **off** (Plus gate false: page leaves, card hidden) | yes (WhatsApp proof live, phone-code status inbound) | yes (member_find_gyms, member_claim_phone) | **off** | QA builds only |
+| F-phone-119 AI coach chat and settings | yes, **off** (coach false) | n/a | n/a | **off** | route sends to Workout |
+| F-phone-120 Nutrition page | yes, **off** (nutrition false) | n/a | n/a | **off** | route sends to Workout |
+| F-phone-137 Gym tab: join, gym home, board, mates, timings | yes | n/a | yes (member_me, member_membership, member_board, member_mate_board, member_mate_profile, member_gym_timings); member_gym_pack, member_join_day **absent** | yes | shop and diet rows per gym; staff door off; "Message your gym" pick in What's new 0.79.0 |
+| F-phone-233 Switched-off coach tab and nutrition log | yes, **off** | n/a | n/a | **off** | same as F-phone-119/120 |
+| F-phone-234 Workout tab and what opens from it | yes | n/a | n/a | yes | |
+| F-phone-235 Profile tab and its pages | yes | n/a | n/a | yes | |
+| F-phone-236 Exercise library pages | yes | n/a | n/a | yes | |
+| F-phone-237 Body measures page with photos | yes | n/a | yes (member_measurements) | yes | |
+| F-phone-238 Gym tab, invite link, QR check-in, scanner | yes | n/a | yes (see F-phone-137, 115, 116) | yes | |
