@@ -1839,3 +1839,33 @@ What's new: phone lines that announce the watch app went to every production mem
 | F-watch-121 "Workout saved" for about 4 s | yes | n/a | n/a | testers only |  |
 | F-watch-122 Get MettleUp on your phone (Play Store page) | yes | n/a | n/a | testers only |  |
 | F-watch-123 "Phone not connected" screen | yes | n/a | n/a | testers only |  |
+
+## H5-web-pages (surface web, area web/pages) — 8 features, written by H5-web-pages on 2026-11-26
+
+Public pages read with no login on 2026-11-26 and compared with main (line endings ignored): the gym-owner site
+(gyms.mettleup.fit + home.js), the member site (mettleup.fit + member.js), the 8 company and legal pages, the admin app's
+sw.js and manifest, and the gym page's page.js: **all identical to main**. No page carries a version label.
+**Switches today** (public /api/switches, 26 Nov): gymPages false, pageAi false, aiCharge true, **joinPay true** (main
+says JOIN_PAY "live", wrangler.jsonc:92; the 19 Nov reading in the whole-system block said false, so it was switched on since).
+LANDING "live" on main (wrangler.jsonc:84) and both marketing sites answer, so it is on live.
+**join.mettleup.fit** (the gym web page address) does not open at all: no address answers, and it is not in the panel's
+routes (wrangler.jsonc:24-33). So gym web pages need the GYM_PAGES switch AND the address set up; /api/links still sends
+join links to app.mettleup.fit (JOIN_HOST empty, wrangler.jsonc:97). Their What's new line waits in a "pending" entry (fine).
+**Gym database** (catalog read 26 Nov): gym_page_public, gym_page_ask_send, gym_page_report_send present (0080 family live);
+page_chat_ask, page_chat_contact, page_chat_reply absent (0094 not live), so the AI helper also waits for a migration.
+Old addresses: www.mettleup.fit, mettleup.in, www.mettleup.in answer 301 to mettleup.fit; /home on mettleup.fit and app
+answers 301 to gyms.mettleup.fit; the old forgeai address still opens the admin app by design (it asks the desk to move,
+hosts.js:136-138); an unknown /api address answers 404 Not found.
+Member site still offers the watch app though it is testers only on Play: FN-L12-web-pages-02 (no new finding).
+Play app: n/a for every row (these are web pages; the member site only links to the Play listing).
+
+| Feature | Main | Live web | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-web-100 Right site at each MettleUp address | yes | yes | n/a | n/a | redirects and 404 read live 26 Nov |
+| F-web-102 Gym-owner marketing site (listed "behind switch") | yes | **yes** (LANDING on; identical to main) | n/a | n/a | list mark stale: FN-H5-web-pages-01 |
+| F-web-104 Member marketing site (listed "behind switch") | yes | **yes** (identical to main) | n/a | n/a | list mark stale: FN-H5-web-pages-01; watch offer: FN-L12-web-pages-02 |
+| F-web-113 A gym's own free web page | yes | **off** (GYM_PAGES off; join.mettleup.fit not set up) | yes (gym_page_public) | n/a | needs switch + address |
+| F-web-114 Ask the gym / report a page | yes | **off** (same switch) | yes (gym_page_ask_send, gym_page_report_send) | n/a |  |
+| F-web-115 AI helper chat on the gym page | yes | **off** (PAGE_AI and GYM_PAGES off) | **no** (0094 page_chat_* absent) | n/a | also waits for migration 0094 |
+| F-web-138 Install the admin app / open offline | yes | yes (sw.js identical) | n/a | n/a | cache name fixed, no version label (sw.js:12) |
+| F-web-139 Company and legal pages | yes | yes (all 8 identical) | n/a | n/a | footer links on both sites open (200) |
