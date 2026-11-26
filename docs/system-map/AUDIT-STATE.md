@@ -41,7 +41,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | step | helpers so far | average cost |
 |---|---|---|
 | plan-review | 1 | 4.3 (171k tokens) |
-| tools | 6 | 4.7 (189k tokens) |
+| tools | 7 | 4.5 (180k tokens) |
 | A1b | 1 | 5.0 (201k tokens) |
 | A2 | 37 | 3.9 (158k tokens) |
 | A7 | 19 | 4.4 (176k tokens) |
@@ -75,22 +75,48 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-time | 37 | 4.3 (170k tokens) |
 | B-words | 37 | 4.9 (196k tokens) |
 | L18 | 37 | 3.8 (153k tokens) |
+| H2 | 1 | 3.9 (155k tokens) |
 
 ## Work items
-Counts: 1 todo, 0 in progress, 1127 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 33 todo, 0 in progress, 1129 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| H1-dedupe | tools | 3H H1: write and run _tools/dedupe.mjs -> finding-groups.jsonl + _work/verify-queue.json | todo | _work/H1-dedupe.md |  |
-| L18-web-pages | L18 | lens 18 (Opportunities) x web / web/pages: 2 items | done | _work/L18-web-pages.md | 11 ideas (4 high: join end card offers app, WhatsApp on owner site, real-gym proof) |
-| CAL-5 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-5 ...); output is scored, never merged | done | _work/CAL-5.md | c08, c09: 16 gaps listed (not merged; scored in CAL-score) |
+| H2-verify-02 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-02.txt) | todo | _work/H2-verify-02.md |  |
+| H2-verify-03 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-03.txt) | todo | _work/H2-verify-03.md |  |
+| H2-verify-04 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-04.txt) | todo | _work/H2-verify-04.md |  |
+| H2-verify-05 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-05.txt) | todo | _work/H2-verify-05.md |  |
+| H2-verify-06 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-06.txt) | todo | _work/H2-verify-06.md |  |
+| H2-verify-07 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-07.txt) | todo | _work/H2-verify-07.md |  |
+| H2-verify-08 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-08.txt) | todo | _work/H2-verify-08.md |  |
+| H2-verify-09 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-09.txt) | todo | _work/H2-verify-09.md |  |
+| H2-verify-10 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-10.txt) | todo | _work/H2-verify-10.md |  |
+| H2-verify-11 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-11.txt) | todo | _work/H2-verify-11.md |  |
+| H2-verify-12 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-12.txt) | todo | _work/H2-verify-12.md |  |
+| H2-verify-13 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-13.txt) | todo | _work/H2-verify-13.md |  |
+| H2-verify-14 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-14.txt) | todo | _work/H2-verify-14.md |  |
+| H2-verify-15 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-15.txt) | todo | _work/H2-verify-15.md |  |
+| H2-verify-16 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-16.txt) | todo | _work/H2-verify-16.md |  |
+| H2-verify-17 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-17.txt) | todo | _work/H2-verify-17.md |  |
+| H2-verify-18 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-18.txt) | todo | _work/H2-verify-18.md |  |
+| H2-verify-19 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-19.txt) | todo | _work/H2-verify-19.md |  |
+| H2-verify-20 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-20.txt) | todo | _work/H2-verify-20.md |  |
+| H2-verify-21 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-21.txt) | todo | _work/H2-verify-21.md |  |
+| H2-verify-22 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-22.txt) | todo | _work/H2-verify-22.md |  |
+| H2-verify-23 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-23.txt) | todo | _work/H2-verify-23.md |  |
+| H2-verify-24 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-24.txt) | todo | _work/H2-verify-24.md |  |
+| H2-verify-25 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-25.txt) | todo | _work/H2-verify-25.md |  |
+| H2-verify-26 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-26.txt) | todo | _work/H2-verify-26.md |  |
 | CAL-6 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-6.md | re-run 1: c01, c05, c12: 10 gaps (not merged; scored in CAL-score) |
 | CAL-7 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-7.md | re-run 1: c03, c06, c07: 15 gaps (not merged; scored in CAL-score) |
 | CAL-8 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-8.md | re-run 1: c04, c08, c13: 14 gaps (not merged; scored in CAL-score) |
 | CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
-(+ 1119 older done items, not shown)
+| H1-dedupe | tools | 3H H1: write and run _tools/dedupe.mjs -> finding-groups.jsonl + _work/verify-queue.json | done | _work/H1-dedupe.md | 2,505 groups (43 multi); verify queue 510 (245 S1/S2 + 265 S3 sample) |
+| H2-verify-01 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-01.txt) | done | _work/H2-verify-01.md | pilot: 13 true, 1 false (account-delete fixed in 0.80.0), 1 unsure; 9 S1->S2 |
+(+ 8 more todo items, not shown)
+(+ 1121 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
