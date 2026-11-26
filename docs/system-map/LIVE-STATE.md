@@ -1382,3 +1382,65 @@ is not.
 | F-phone-1132 The gym on every share picture | yes | n/a | yes (member_me) | yes | name only for a Starter gym (gymBrand.ts:6-7) |
 | F-phone-1133 Share monthly report or year in review | yes | n/a | n/a | yes |  |
 | F-phone-1134 Before/after picture | yes | n/a | n/a | yes | no body number on it |
+
+## H5-phone-tracker-services-1 (surface phone, area phone/tracker-services-1) — 40 features, written by H5-phone-tracker-services-1 on 2026-11-26
+
+The member app's workout services from aiSummaryService to plansService: logging, history, records, exports, imports,
+timers, the live card, plans, and the four gym syncs. Only the gym syncs reach our server: gym plans, workout of the day,
+trainer measurements and diet plans call member_gym_plans, member_gym_wod, member_measurements and member_diet_plans
+(shop/gymApi.ts:220-252); a catalog read on 26 Nov found all four live. No other file here calls the server (searched rpc,
+fetch, supabase, /api: no hit), so "Live panel" is n/a. The empty-workout memory's cloud copy rides the member backup
+(cloud-backup-ai area).
+Switches: the four gym syncs check the Pro-pack mark trainerPlans (gymBodySync.ts:60,108; gymPlansSync.ts:89;
+gymWodSync.ts:45), but PLAN_GATE_ON is false on main (packages/theme/src/plans.ts:40,88-89), so they are on for every
+member of every gym. features.json says "behind switch" for them; that is a Pro-pack mark, not a switch that hides them today
+(same reading as the panel rows for F-panel-304 and F-panel-326). The AI finish note is really off: FEATURES.coach is false
+(lib/features.ts:6; coachNote.ts:314), so it makes no network call. Muscle tips and photos in backup are member settings.
+"Play app" = 0.79.0; main is 0.80.0 (apps/mobile/app.json:5), whose only What's new line (phone-number backup) is not in this
+area (FN-H5-phone-components-2-01). The newest change tag in these files is R-492 (14 Nov, muscleTips.ts:16), before the
+17 Nov 0.79.0 tag, and no date after 14 Nov appears in them, so every feature here is on Play as on main (code-read; no git
+diff run). The What's new lines for the gym's workout of the day, trainer measurements, diet plans and plans as folders
+(whatsNew.ts:234,451,455,611) are true today. The old balance-check line (whatsNew.ts:254) is already FN-A3-whats-new-phone-03.
+
+| Feature | Main | Live panel | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-phone-500 Ask your own AI (copy a text) | yes | n/a | n/a | yes | no network; the member pastes it |
+| F-phone-501 Badge shelf | yes | n/a | n/a | yes |  |
+| F-phone-502 Balance check card | yes | n/a | n/a | yes | old What's new line: FN-A3-whats-new-phone-03 |
+| F-phone-503 Before/after picture | yes | n/a | n/a | yes |  |
+| F-phone-504 Workout calendar and week streak | yes | n/a | n/a | yes |  |
+| F-phone-505 Workout complete screen | yes | n/a | n/a | yes |  |
+| F-phone-506 AI-written finish note | yes, switch **off** (FEATURES.coach false) | n/a | n/a | **off**, same | correct mark |
+| F-phone-507 Target line per exercise | yes | n/a | n/a | yes |  |
+| F-phone-508 Home screen numbers | yes | n/a | n/a | yes | coach parts hidden (coach off) |
+| F-phone-509 Import from Hevy or Strong | yes | n/a | n/a | yes | file read on the phone |
+| F-phone-510 One-time repairs at app start | yes | n/a | n/a | yes |  |
+| F-phone-511 Exercise History tab | yes | n/a | n/a | yes |  |
+| F-phone-512 Exercise Summary | yes | n/a | n/a | yes |  |
+| F-phone-513 Log sets and save a workout | yes | n/a | n/a | yes |  |
+| F-phone-514 Edit a saved workout | yes | n/a | n/a | yes |  |
+| F-phone-515 Empty workout memory | yes | n/a | see cloud-backup-ai | yes | cloud copy via member backup |
+| F-phone-516 New exercise guesses | yes | n/a | n/a | yes |  |
+| F-phone-517 My own exercise photo or video | yes | n/a | n/a | yes | phone only |
+| F-phone-518 Exercise search and filters | yes | n/a | n/a | yes |  |
+| F-phone-519 Profile Workouts feed | yes | n/a | n/a | yes |  |
+| F-phone-520 Workout history | yes | n/a | n/a | yes |  |
+| F-phone-521 Finish sheet | yes | n/a | n/a | yes |  |
+| F-phone-522 Forgotten Finish pause | yes | n/a | n/a | yes |  |
+| F-phone-523 Guided first routine | yes | n/a | n/a | yes |  |
+| F-phone-524 Choose a folder | yes | n/a | n/a | yes |  |
+| F-phone-525 Trainer measurements on Body (listed "behind switch") | yes | n/a | yes (member_measurements) | yes | **on** for every gym (PLAN_GATE_ON false); Pro-pack mark |
+| F-phone-526 Gym diet plans (listed "behind switch") | yes | n/a | yes (member_diet_plans) | yes | **on** for every gym; Pro-pack mark |
+| F-phone-527 Gym plans as folders (listed "behind switch") | yes | n/a | yes (member_gym_plans) | yes | **on** for every gym; Pro-pack mark |
+| F-phone-528 Gym workout of the day (listed "behind switch") | yes | n/a | yes (member_gym_wod) | yes | **on** for every gym; Pro-pack mark |
+| F-phone-529 Save my history (CSV) | yes | n/a | n/a | yes |  |
+| F-phone-530 Save my measurements (CSV) | yes | n/a | n/a | yes |  |
+| F-phone-531 Hold timer | yes | n/a | n/a | yes |  |
+| F-phone-532 Live workout notification card | yes | n/a | n/a | yes |  |
+| F-phone-533 Record alert during a workout | yes | n/a | n/a | yes |  |
+| F-phone-534 Muscle tips | yes, member setting | n/a | n/a | yes, same (R-492, 14 Nov) |  |
+| F-phone-535 1-rep max calculator | yes | n/a | n/a | yes |  |
+| F-phone-536 Photos in my backup | yes, member setting (default off) | n/a | n/a | yes, same | Android's own backup |
+| F-phone-537 Save a photo to the gallery | yes | n/a | n/a | yes |  |
+| F-phone-538 Followed plan weeks and easy weeks | yes | n/a | n/a | yes |  |
+| F-phone-539 Get a routine folder from a program or file | yes | n/a | n/a | yes |  |
