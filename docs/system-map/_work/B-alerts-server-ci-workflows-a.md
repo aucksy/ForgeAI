@@ -1,0 +1,9 @@
+# B-alerts-server-ci-workflows-a checkpoint
+
+## Items
+- L11.1 done: alerts in this area = outage note on GitHub (email + @mention to the owner only, every "10 min" schedule, comment only when what is down changes, closes itself), key-reminder note once per end date, hand-started WhatsApp probe and test reply to the owner's own phone only. No workflow sends anything to members or gyms. Crash alerts live in a private repo (outside this area). Findings 01 (alerts proven only on a plain Pixel cloud phone, no paired watch), 02 (flapping part opens a new note + email each time); reused FN-L14-server-ci-workflows-01, FN-H5-server-ci-workflows-01, FN-B-run-server-ci-workflows-a-02.
+- H2.1 done. Outage note reaches the owner only if: the schedule really fires (it runs ~every 6 h, FN-H5-01), the public repo had a change in 60 days, the check itself does not crash, GitHub mail for @mentions is on, the email is not filed away, and his phone's mail app notifies for it. WhatsApp probe/test reply: secrets PROBE_TO / WA_TEST_TO and token set, Meta not blocking the number (131042), template approved, text mode only within 24 h of his own message.
+- H2.2 done: one recipient, nothing shows who gets it (FN-L14-01).
+- H2.3 done: backup off = silent (FN-B-run-a-01); "every 10 minutes" is really ~6 h (FN-H5-01); WhatsApp and AI not watched (FN-B-run-a-02).
+- H2.4 done: no workflow here reaches members: Crispy Curves member reach 0 of 2 (by design; field-fill: phone 2 of 2, app link 0 of 2). Outage note reaches 1 person (the owner).
+- H2.5 done: needs a real-phone check: (a) on the owner's phone, does a GitHub outage email make a sound at night (Gmail category Updates, phone Do Not Disturb)? (b) rest alert on an OPPO/Xiaomi/Samsung with battery saver on, screen off, watch paired: does the phone sound and the watch buzz?
