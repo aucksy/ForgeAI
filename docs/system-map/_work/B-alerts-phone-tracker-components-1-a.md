@@ -1,0 +1,7 @@
+# B-alerts-phone-tracker-components-1-a checkpoint
+- L11.1 done: alerts in this area are all on the member's own phone, set off by the member: plank countdown end (buzz + rest-over sound, app in front only; no watch: 02; reused FN-B-run-phone-tracker-components-1-a-01), record pop-up + chime (in-app, "Workout sounds" switch), Rest alerts warning row (reused FN-L16-phone-tracker-components-1-02), Today at your gym card (in-app only, no push). No push, WhatsApp or email starts here.
+- H2.1 done. Countdown sound: sheet open and app in front, Workout sounds on, phone not on silent/vibrate (plays-in-silent off). Rest warning row: Android only, notifications/channel/exact alarm/background limit readable. Gym workout: app linked to the gym's member list, Pro gym (trainerPlans), server function live, a workout set for today (India date).
+- H2.2 done: owner cannot see who sees the gym workout; reused FN-B-switch-panel-screens-2-b-01.
+- H2.3 done: 01 (maker battery rules unseen), reuse for gym workout.
+- H2.4 done: Crispy Curves: app link 0 of 2 roster members (field-fill.csv), 2 app members, 0 gym workouts ever set (gym_wods count 0, Crispy filter) -> Today at your gym reaches 0 of 2. Countdown and record alerts are per member, no gym reach.
+- H2.5 done: needs a real-phone check: on OPPO/Xiaomi with battery saver on, start a rest, lock the phone, see if 'Rest is over' rings on time and whether the Rest alerts line shows; plank countdown with the screen locked; watch buzz at countdown end (none expected).
