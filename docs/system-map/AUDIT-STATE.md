@@ -75,19 +75,18 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-time | 37 | 4.3 (170k tokens) |
 | B-words | 37 | 4.9 (196k tokens) |
 | L18 | 37 | 3.8 (153k tokens) |
-| H2 | 1 | 3.9 (155k tokens) |
+| H2 | 2 | 3.7 (148k tokens) |
 
 ## Work items
-Counts: 33 todo, 0 in progress, 1129 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 27 todo, 5 in progress, 1130 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| H2-verify-02 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-02.txt) | todo | _work/H2-verify-02.md |  |
-| H2-verify-03 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-03.txt) | todo | _work/H2-verify-03.md |  |
-| H2-verify-04 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-04.txt) | todo | _work/H2-verify-04.md |  |
-| H2-verify-05 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-05.txt) | todo | _work/H2-verify-05.md |  |
-| H2-verify-06 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-06.txt) | todo | _work/H2-verify-06.md |  |
-| H2-verify-07 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-07.txt) | todo | _work/H2-verify-07.md |  |
+| H2-verify-02 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-02.txt) | in progress | _work/H2-verify-02.md |  |
+| H2-verify-03 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-03.txt) | in progress | _work/H2-verify-03.md |  |
+| H2-verify-05 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-05.txt) | in progress | _work/H2-verify-05.md |  |
+| H2-verify-06 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-06.txt) | in progress | _work/H2-verify-06.md |  |
+| H2-verify-07 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-07.txt) | in progress | _work/H2-verify-07.md |  |
 | H2-verify-08 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-08.txt) | todo | _work/H2-verify-08.md |  |
 | H2-verify-09 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-09.txt) | todo | _work/H2-verify-09.md |  |
 | H2-verify-10 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-10.txt) | todo | _work/H2-verify-10.md |  |
@@ -107,7 +106,12 @@ Counts: 33 todo, 0 in progress, 1129 done, 0 blocked. Full list: work-items.json
 | H2-verify-24 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-24.txt) | todo | _work/H2-verify-24.md |  |
 | H2-verify-25 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-25.txt) | todo | _work/H2-verify-25.md |  |
 | H2-verify-26 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-26.txt) | todo | _work/H2-verify-26.md |  |
-| CAL-6 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-6.md | re-run 1: c01, c05, c12: 10 gaps (not merged; scored in CAL-score) |
+| H2-verify-27 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-27.txt) | todo | _work/H2-verify-27.md |  |
+| H2-verify-28 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-28.txt) | todo | _work/H2-verify-28.md |  |
+| H2-verify-29 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-29.txt) | todo | _work/H2-verify-29.md |  |
+| H2-verify-30 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-30.txt) | todo | _work/H2-verify-30.md |  |
+| H2-verify-31 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-31.txt) | todo | _work/H2-verify-31.md |  |
+| H2-verify-32 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-32.txt) | todo | _work/H2-verify-32.md |  |
 | CAL-7 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-7.md | re-run 1: c03, c06, c07: 15 gaps (not merged; scored in CAL-score) |
 | CAL-8 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-8.md | re-run 1: c04, c08, c13: 14 gaps (not merged; scored in CAL-score) |
 | CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
@@ -115,8 +119,9 @@ Counts: 33 todo, 0 in progress, 1129 done, 0 blocked. Full list: work-items.json
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
 | H1-dedupe | tools | 3H H1: write and run _tools/dedupe.mjs -> finding-groups.jsonl + _work/verify-queue.json | done | _work/H1-dedupe.md | 2,505 groups (43 multi); verify queue 510 (245 S1/S2 + 265 S3 sample) |
 | H2-verify-01 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-01.txt) | done | _work/H2-verify-01.md | pilot: 13 true, 1 false (account-delete fixed in 0.80.0), 1 unsure; 9 S1->S2 |
-(+ 8 more todo items, not shown)
-(+ 1121 older done items, not shown)
+| H2-verify-04 | H2 | 3H H2: verify 15 groups (_work/verify/H2-verify-04.txt) | done | _work/H2-verify-04.md | 15 true; 10 S2->S3 |
+(+ 2 more todo items, not shown)
+(+ 1122 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
