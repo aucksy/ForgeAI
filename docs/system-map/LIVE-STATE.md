@@ -1638,3 +1638,57 @@ member-phone part; production 0.77.0 (21 Nov read), main 0.80.0; not compared fe
 | F-server-431 Forgot PIN by WhatsApp code | yes | yes | yes | n/a | staff_reset_pin_with_proof, phone_code_has_account present; whether the code secret is set could not be read |
 | F-server-432 Create my gym online, one trial per number | yes | yes | yes (0061 version) | n/a | live gym_create_online uses the phone proof and trial_phones; signup check switch value not readable |
 | F-server-433 Plan limits on the server | yes | **off** (PLAN_GATE_ON false) | yes | n/a | gym_has_feature, gym_state, owner_gym_state, plan_features present; server switch plan_gate value not readable |
+
+## H5-server-database-3 (surface server, area server/database-3) — 36 features, written by H5-server-database-3 on 2026-11-26
+
+These are the gym database changes 0063 to 0098. "Live DB" comes from catalog reads on 2026-11-26: of the 194 functions
+these files make or replace, 182 are on the live database, and 28 of the 29 tables. Everything missing belongs to three
+files that really are not live: 0091 (check-in challenges: _challenge_checkin_days, _challenge_entrants, _challenge_value),
+0092 (member_join_day) and 0094 (web page AI chat: page_chat_ask, page_chat_contact, page_chat_reply, page_chat_sweep, four
+helpers and the table gym_page_chats). Files 0063, 0064, 0071, 0072, 0097 and 0098 still open with "NOT APPLIED", but
+they are live: the live _plan_word is 0072's ('ai' shown as Pro), the live alert pushes are 0098's (they use
+_alert_pending_for and handled_at), and the live self_join_send is 0089's (new trial alert words). Live switches (public
+/api/switches, 2026-11-26): joinPay true, aiCharge true, gymPages false, pageAi false. HQ online plan buying stays off
+(no BILLING setting; the database switch app_config billing_checkout could not be read: the read guard refuses it).
+Table row counts were also refused, so whether the nightly jobs and the direct-read record really run is unknown.
+"Live panel" = the panel build matches main (machine live-state.csv). "Play app" = the member-phone part; production
+0.77.0, not compared feature by feature, so "unknown" unless another section proved it.
+
+| Feature | Main | Live panel / HQ | Live DB | Play app | Notes |
+|---|---|---|---|---|---|
+| F-server-500 Buy or renew a MettleUp plan online | yes | **off** (HQ BILLING not set) | yes | n/a | hq_billing_checkout_start, hq_billing_paid, apply_gym_payment, gym_checkouts present; 0063 first line stale (FN-H5-hq-app-02) |
+| F-server-501 Numbered plan receipts | yes | yes (the panel calls owner_receipt) | yes | n/a | owner_receipt, gym_receipts, receipt_counters present; live _plan_word is 0072's; listed hidden from a stale first line |
+| F-server-502 Nightly billing job, plan-end reminders | yes | **off** (HQ BILLING not set) | yes | n/a | hq_billing_daily, gym_billing_reminders present |
+| F-server-503 HQ Payments to check | yes | yes (HQ calls hq_billing_checks) | yes | n/a | 0064 functions all present; listed hidden from a stale first line (FN-H5-hq-app-02) |
+| F-server-504 Trainer profiles and PT bookings | yes | yes | yes | n/a | owner_trainer_schedule, owner_book_pt, gym_pt_bookings present |
+| F-server-505 Nightly delete of test gyms | yes | yes (HQ nightly job) | yes | n/a | hq_purge_qa_gyms present; whether it ran was not read |
+| F-server-506 Terms version 2026-11-10 | yes | yes | yes | unknown | _terms_versions present |
+| F-server-507 Find my gym by my number | yes | n/a | yes | off on the Gym tab (FN-H5-phone-shop-2-01) | member_find_gyms, member_claim_phone, member_find_tries present |
+| F-server-508 Message your gym / Member messages | yes | yes | yes | unknown | member_talk_*, owner_talk_* present |
+| F-server-509 Member picks who reads the message | yes | yes | yes | unknown | member_talk_choices, member_talk_send_to present |
+| F-server-510 Plus lock switch | yes | yes | yes | off (member paid-plan switch, FN-H5-phone-shop-2-01) | owner_plus_lock, member_plus_lock, gym_plus_settings present |
+| F-server-511 AI Assistant credits wallet | yes | yes | yes | n/a | owner_ai_wallet, _ai_balance, gym_ai_credit_ledger present; 0071 first line stale |
+| F-server-512 AI answers counted against credits | yes | **on** (aiCharge true) | yes | unknown | listed "behind switch" but the switch is on (FN-H5-server-database-3-01) |
+| F-server-513 Members can get AI answers switch | yes | yes | yes | unknown | owner_ai_member_rules, gym_ai_member_rules present |
+| F-server-514 Gym news pop-ups | yes | yes (HQ sender) | yes | unknown | _push_note_* present |
+| F-server-515 Ask about your workout, paid plan only | yes | yes | yes | hidden in normal use (FN-H5-phone-shop-1-01) | member_ask_trainer, _tq_plan_ok present |
+| F-server-516 Gym alerts list (bell) | yes | yes | yes | n/a | owner_alerts, gym_alerts present |
+| F-server-517 Browser alerts with the app closed | yes | yes (HQ sender; /api/push/web-key answers) | yes | n/a | owner_save_web_push, hq_panel_push_instant present |
+| F-server-518 Test alert to this browser | yes | yes | yes | n/a | owner_send_test_alert, panel_test_alert_shown present |
+| F-server-519 Join online | yes | yes | yes (0089 version) | n/a | live self_join_send uses the new trial words |
+| F-server-520 Free trial when joining | yes | yes (per gym setting) | yes | n/a | _self_join_trial_days present; Crispy Curves setting not read |
+| F-server-521 Pay online when joining | yes | **on** (joinPay true) | yes | n/a | self_join_pay_gym present; listed "behind switch" but the switch is on (FN-H5-server-database-3-01); PAY_LIVE off on main = test money |
+| F-server-522 Job name on Staff & sign-in | yes | yes | yes | n/a | owner_set_person_job present |
+| F-server-523 Gym's own web page | yes | **off** (gymPages false) | yes | n/a | owner_gym_page, gym_page_public, gym_pages present |
+| F-server-524 Visitor question from the web page | yes | **off** (gymPages false) | yes | n/a | gym_page_ask_send, gym_page_asks present |
+| F-server-525 Report this page / HQ takes it down | yes | **off** (gymPages false) | yes | n/a | gym_page_report_send, hq_hide_gym_page present |
+| F-server-526 HQ per-gym web page switch | yes | yes (HQ) | yes | n/a | hq_set_web_page, gym_page_off present |
+| F-server-527 Web page photos | yes | **off** (gymPages false) | yes | n/a | owner_gym_page_photo_slot, gym_page_photo_slots present |
+| F-server-528 12 months of workouts to trainers | yes | yes | yes | unknown | member_trainer_share3 present |
+| F-server-529 Bring a friend, known number | yes | yes | yes | unknown | friend_invite_send present |
+| F-server-530 Check-in challenges | yes | n/a | **no** | unknown | 0091 not live: _challenge_checkin_days absent; waiting for a migration |
+| F-server-531 Phone asks for the join day | yes | n/a | **no** | unknown | 0092 not live: member_join_day absent; the phone shares from its own first day instead. The backlog and the 14 Nov What's new line imply it works (FN-A3-inbox-1-16) |
+| F-server-532 Sign in with your phone number | yes | n/a | yes | unknown | phone_sign_in_find present |
+| F-server-533 Web page AI helper chat | yes | **off** (pageAi false) | **no** | n/a | 0094 not live: page_chat_ask and gym_page_chats absent; waits for both the migration and the switch |
+| F-server-534 Record of direct database reads | yes | unknown (HQ needs its logs token; not readable) | yes | n/a | db_direct_reads, hq_db_reads_ingest, owner_hq_access present; listed hidden from a stale first line (FN-A3-notes-claude-1-05) |
+| F-server-535 Bell knows done and read | yes | yes (the panel calls owner_alert_list) | yes | n/a | gym_alert_reads, owner_alert_list, owner_alerts_read present; listed hidden from a stale first line (FN-A3-notes-claude-1-05) |
