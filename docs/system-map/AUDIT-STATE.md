@@ -35,6 +35,7 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | 26 Nov 06:42 (reset ~11:40) | 0 | 86 | 0 | 36→48 | phone shop-1/-2, screens, onboarding-db, native, lib-core B-*, tracker-components-1 B-*, H5 tracker-engine/lib/services-1/-2 (Opus medium), 67 merged, 0 failed | closed at 86: past the 85 usage-guard start line |
 | 26 Nov 19:47 (reset ~21:40) | 2 | 24 | 0 | 51->54 | tracker-components-2/data/engine B-*, H5 ci-workflows, database-1/-2 (Opus medium), 20 merged, 0 failed | closed at 24: his 20:05 IST stop, quiet hours only |
 | 26 Nov 21:42 (reset ~02:40) | 0 | 94 | 0 | 54->67 | BUSY TEST start 21:42 IST: F5 0, WA 54. BUSY TEST 00:30 (read 00:31 IST): F5 94, WA 67 (no helpers ran after 23:45). BUSY TEST end 23:45 IST: F5 94, WA 67. Paused 23:16 at F5 89 (85 guard line), resumed 23:37 on the manager's reminder that night lines apply, 3 more helpers. tracker-lib/services B-*, all H5, all B-alerts and B-switch, B-time (all areas), B-words panel-auth-data, tracker-services-1/-2, ci-workflows, database-1/-2/-3, hq-gate-workers, panel-worker, watch-app (Opus medium), 66 merged, 0 failed. Busy hours cost about 1.4 F5 per helper, same as quiet hours | closed at 94: past the night start line 91 |
+| 27 Nov 02:42 (reset ~07:40) | 0 | running | 0 | 67 | START 02:42 IST (quiet hours, Fri): F5 0, WA 67. B-words-web-pages, then L18-gate, L18 pilot, L18 rest (Opus medium) | running |
 
 ## Learned cost per helper type (5-hour %)
 | step | helpers so far | average cost |
@@ -72,15 +73,14 @@ weekly stop line: weekly all models only: 90 while its reset is more than 24 hou
 | B-alerts | 74 | 3.9 (155k tokens) |
 | B-switch | 56 | 4.2 (169k tokens) |
 | B-time | 37 | 4.3 (170k tokens) |
-| B-words | 36 | 4.9 (196k tokens) |
+| B-words | 37 | 4.9 (196k tokens) |
 | L18 | 0 | 5 (start value) |
 
 ## Work items
-Counts: 39 todo, 0 in progress, 1088 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
+Counts: 38 todo, 0 in progress, 1089 done, 0 blocked. Full list: work-items.jsonl. This table is written by _tools/state.mjs summary; do not edit it by hand.
 
 | id | step | what | status (todo / in progress / done) | checkpoint file | helper result (1 line) |
 |---|---|---|---|---|---|
-| B-words-web-pages | B-words | B-words (Language and words + 1 more) x web / web/pages: 17 items | todo | _work/B-words-web-pages.md |  |
 | L18-gate | coord | gate: lens 18 (opportunities) runs last, on top of every other lens and hunt | todo | - |  |
 | L18-hq-app | L18 | lens 18 (Opportunities) x hq / hq/app: 2 items | todo | _work/L18-hq-app.md |  |
 | L18-panel-assistant | L18 | lens 18 (Opportunities) x panel / panel/assistant: 2 items | todo | _work/L18-panel-assistant.md |  |
@@ -105,7 +105,8 @@ Counts: 39 todo, 0 in progress, 1088 done, 0 blocked. Full list: work-items.json
 | L18-phone-shop-1 | L18 | lens 18 (Opportunities) x phone / phone/shop-1: 2 items | todo | _work/L18-phone-shop-1.md |  |
 | L18-phone-shop-2 | L18 | lens 18 (Opportunities) x phone / phone/shop-2: 2 items | todo | _work/L18-phone-shop-2.md |  |
 | L18-phone-tracker-components-1 | L18 | lens 18 (Opportunities) x phone / phone/tracker-components-1: 2 items | todo | _work/L18-phone-tracker-components-1.md |  |
-| B-words-watch-app | B-words | B-words (Language and words + 1 more) x watch / watch/app: 17 items | done | _work/B-words-watch-app.md | B-words watch-app: 5 new (minor), 14 reused |
+| L18-phone-tracker-components-2 | L18 | lens 18 (Opportunities) x phone / phone/tracker-components-2: 2 items | todo | _work/L18-phone-tracker-components-2.md |  |
+| B-words-web-pages | B-words | B-words (Language and words + 1 more) x web / web/pages: 17 items | done | _work/B-words-web-pages.md | S2 data-in-India claim vs nightly Cloudflare copy; S3 only-gym-sees; S4 desk app; 24 reused |
 | CAL-5 | CAL | calibration helper: run every hunt on 3 calib folders (filled at launch: mkbrief.mjs CAL CAL-5 ...); output is scored, never merged | done | _work/CAL-5.md | c08, c09: 16 gaps listed (not merged; scored in CAL-score) |
 | CAL-6 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-6.md | re-run 1: c01, c05, c12: 10 gaps (not merged; scored in CAL-score) |
 | CAL-7 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-7.md | re-run 1: c03, c06, c07: 15 gaps (not merged; scored in CAL-score) |
@@ -113,8 +114,8 @@ Counts: 39 todo, 0 in progress, 1088 done, 0 blocked. Full list: work-items.json
 | CAL-9 | CAL | calibration re-run 1 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-9.md | re-run 1: c09, c10: 11 gaps (not merged; scored in CAL-score) |
 | CAL-10 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-10.md | re-run 2: c01, c03, c05: 21 gaps (not merged; scored in CAL-score) |
 | CAL-11 | CAL | calibration re-run 2 (rewritten hunts): run every hunt on calib folders; output is scored, never merged | done | _work/CAL-11.md | re-run 2: c09, c10, c12: 13 gaps (not merged; scored in CAL-score) |
-(+ 14 more todo items, not shown)
-(+ 1080 older done items, not shown)
+(+ 13 more todo items, not shown)
+(+ 1081 older done items, not shown)
 
 ## Needs Aakash
 - Nothing open. P2, P23, P24, P25: he said "take best decisions yourself..." (18 Nov 2026); the recommended option of each was taken and written into the plan (change log at its top).
