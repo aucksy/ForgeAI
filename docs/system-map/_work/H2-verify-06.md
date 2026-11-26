@@ -5,3 +5,5 @@
 - G-0077 true (S2 kept)
 - G-0078 true (S2 kept)
 - G-0079 FALSE (allow-list views + SQL tests + pay.test 284 cover hiding)
+- G-0080 true (S2->S3: per-branch key isolation)
+- G-0081 true (S2 kept)

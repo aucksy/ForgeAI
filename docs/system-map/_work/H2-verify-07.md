@@ -8,3 +8,5 @@
 - G-0095 true (S2->S3: test gap only)
 - G-0096 true (kept S2)
 - G-0097 true (kept S2)
+- G-0098 true (S2->S3: limit is stated on the card)
+- G-0099 true (S2->S3: test alert gives a partial check; evidence moved to 0098)
