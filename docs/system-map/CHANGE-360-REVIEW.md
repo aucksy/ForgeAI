@@ -531,4 +531,150 @@ if __name__ == "__main__":
   `Cost rules: never read a map or data file whole; search it and read only the rows that match. S = about 15,000 tokens, M = about 50,000, L = about 100,000 or more (estimates, audit 18 Nov 2026). A fix that passes about 30,000 tokens on questions alone: stop and tell him.`
 - Risk: the numbers are estimates until a few real flows are measured; correct them then.
 
-## F2 and F3: to be added later
+## F2. Would it have caught our gaps?
+
+Written 27 Nov 2026 by audit helper 3F-F2F3. For every serious gap this audit confirmed (141 groups, severity S1 or
+S2) and every bug in the calibration set (15), we asked: which one question, answered honestly before the build,
+would have shown this exact gap? "Strong" = a careful builder would have seen it. "Weak" = a question only brushes
+the topic. Rows: `docs/system-map/_work/out/3F-F2F3.jsonl` (kind f2).
+
+| Set | Strong | Weak | None |
+|---|---|---|---|
+| Audit gaps (141) | 69 (49%) | 70 (50%) | 2 (1%) |
+| Calibration bugs (15) | 6 (40%) | 9 (60%) | 0 |
+
+So the questions as written would have caught about half. Almost half of the 75 strong catches come from four
+questions that already exist: "which test proves each line" (13), "if a step fails, what does the user read" (8),
+"is the same fact shown in another place" (7) and "does it use personal data in a new way" (7). Most of the misses
+fall into ten kinds that no question names.
+
+The five most telling misses:
+1. **Old promises nobody re-reads.** 19 gaps are a privacy notice, the website, a help page, the data agreement or
+   an on-screen line saying one thing while the product does another (photos "never leave the phone", "our staff
+   cannot open your member list", "kept in India", "AI sees columns only"). No question says: find what we already
+   promised about this, and check it still holds.
+2. **Where a person's data goes when they leave.** 16 gaps: a member who leaves, a deleted member, a turned-off
+   shop, a removed staff member or an undone import leaves copies behind (waiting requests, photos, browser copies,
+   summaries, payment keys), or the gym cannot erase someone at all. The questions ask what data a change creates,
+   never what happens to each copy at the end.
+3. **Built is not out.** Two privacy fixes were done but members still had the old app; the phone-number backup
+   was recorded as released with no app sent; the watch app is offered on the phone and both websites but is not
+   public. No question asks which version people really have.
+4. **Timers that only run when someone opens a screen.** Messages "deleted after 180 days", offer dates after 90
+   days, six other time limits in the privacy notice, and an outage alarm "every 10 minutes" that really runs about
+   every 6 hours. No question asks which job keeps a time promise and whether it really ran.
+5. **The under-18 fix left old copies on the server** (G-0010). The right question exists ("old records under the
+   new rule", question 17), but it is marked for features only, so a fix run through the flow would skip it. Five
+   strong catches in this audit came from questions 17 and 20, both feature-only.
+
+Also missed: money arriving twice, late, after a cancel or in test mode (12 gaps); "Sent" or "they get it" with no
+proof it arrived (5); outside files and autofill read wrongly (5); items handled elsewhere that stay on lists (4,
+the same kind as calibration c01 and c03); a phone number taken as proof of who someone is (2); behaviour only a
+real phone shows (3, calibration c04, c06, c07).
+
+Proposals C-19 to C-28 add one question per kind. Each new question carries [F], except C-25, because every kind
+above was found in fixes as well as features. C-29 marks two old questions [F].
+
+### C-19 Re-read the promises already written  [apply]
+- Catches: 19 audit gaps (for example G-0005, G-0029, G-0145, G-0147, G-0199) and calibration c10, c11.
+- Exact text to paste: add to QUESTIONS.md as a new group at the end:
+  `## I. Added after the 26 Nov 2026 audit`
+  `44. [F] What have we already promised about this data or feature: privacy notice, terms, data agreement, help, website, store listing, on-screen lines? Search them by topic, and check each one still holds after the change, through every way into the data (direct database logins and staff tools included).`
+- Risk: adds reading time; the search is by topic, so it stays small.
+
+### C-20 Where every copy goes at the end  [apply]
+- Catches: 16 audit gaps (G-0004, G-0065, G-0170, G-0186, G-0187, G-0188, G-0192, G-0196, G-0204, G-0208 and others).
+- Exact text to paste: add to QUESTIONS.md group I:
+  `45. [F] When a person leaves, is deleted, signs out or comes back, or a record is removed, undone, archived or switched off: list every copy of their data (other tables, waiting requests, summaries, files and photos, backups, browser or phone copies, outside services) and say what happens to each. Is the data we keep in the backup, and can it be erased when asked?`
+- Risk: none.
+
+### C-21 Timers and automatic jobs  [apply]
+- Catches: 7 audit gaps (G-0006, G-0023, G-0150, G-0169, G-0205, G-0207, G-0230).
+- Exact text to paste: add to QUESTIONS.md group I:
+  `46. [F] Everything promised "after N days" or "every N minutes": which job does it, does that job run on its own whatever screen is opened or switch is set, and does its real run history show it ran on time? A job that deletes or changes data: how does it pick its rows, and could a real customer's data ever match?`
+- Risk: none.
+
+### C-22 Built is not out  [apply]
+- Catches: 4 audit gaps (G-0013, G-0148, G-0149, G-0154), and helps G-0153.
+- Exact text to paste: add to QUESTIONS.md group I:
+  `47. [F] Where is each part live today: which version do users really have, and is every part it needs (server, other app, store track, web address, key) out for them? Words and buttons that offer it, and notes that call it released, wait until it is.`
+- Risk: none.
+
+### C-23 Proof that something arrived  [apply]
+- Catches: 5 audit gaps (G-0033, G-0096, G-0097, G-0168, G-0242).
+- Exact text to paste: add to QUESTIONS.md group I:
+  `48. [F] When a screen tells one person that something reached another (sent, will get, notified), what proves it arrived, and what does the sender see when it did not? Every report or request people send in: who reads it, on which screen, and who is told when it is refused?`
+- Risk: none.
+
+### C-24 Done another way  [apply]
+- Catches: 4 (G-0100, G-0138, calibration c01, c03).
+- Exact text to paste: add to QUESTIONS.md group I:
+  `49. [F] If the thing an item points at gets done another way (another screen, another person, another device), does the item go away everywhere: lists, counts, badges, summaries and the messages the server sends?`
+- Risk: none.
+
+### C-25 Data from outside  [apply]
+- Catches: 5 (G-0012, G-0053, G-0137, G-0191, calibration c13).
+- Exact text to paste: add to QUESTIONS.md group I:
+  `50. Data from outside (imports, other software's files, pasted text, autofill, speech, an outside service's answer): feed it ten real samples, odd ones included, and say what each becomes. What does the screen show past the outside service's own limits (days, rows)?`
+- Risk: none.
+
+### C-26 A phone number or email as proof of who someone is  [apply]
+- Catches: 2 (G-0011, G-0179); helps G-0009 and G-0103.
+- Exact text to paste: add to QUESTIONS.md group I:
+  `51. [F] If a phone number, email or code is taken as proof of who someone is: what happens when it changes hands, is typed by a stranger, or is shared by two people?`
+- Risk: none.
+
+### C-27 What only a real device shows  [apply]
+- Catches: 3 calibration bugs (c04, c06, c07).
+- Exact text to paste: add to QUESTIONS.md group I:
+  `52. [F] What depends on the device itself: phone maker, system version, sound and battery rules, a store build that behaves unlike a test build, icons and badges the system draws? Name the real-device check, because the cloud cannot prove these.`
+- Risk: adds items to his real-phone list; keep each to one line.
+
+### C-28 MettleUp money paths  [apply]
+- Catches: 12 audit gaps (G-0111, G-0128, G-0134, G-0212, G-0214, G-0217, G-0221, G-0223, G-0225, G-0227, G-0228,
+  and helps G-0138).
+- Exact text to paste: add to `docs/change-360-project.md` under "Money":
+  `M21. [F] For every way money arrives (desk cash, UPI, payment link, join page, shop, Play, MettleUp's own billing): what happens when it arrives twice, late, after the thing was cancelled or done another way, or in test mode? Who is told, and do dues, Today, receipts, Expenses and the AI Assistant all agree? A test payment never makes a real plan, receipt or alert.`
+- Risk: none.
+
+### C-29 Two old questions should also bind fixes  [apply]
+- What happens today: questions 17 (a setting changed; old records under the new rule) and 20 (other devices and
+  copies that share the data) are feature-only. In this audit they were the strong catch for 7 gaps (G-0010,
+  G-0021, G-0054, G-0131, G-0142, G-0216, G-0224). G-0010 came from a fix (the under-18 rule), so the flow as
+  written would have skipped the one question that catches it.
+- Exact text to paste: in QUESTIONS.md put `[F] ` at the start of questions 17 and 20.
+- Risk: a fix answers two more questions (about 2 minutes each).
+
+## F3. Triage check
+
+The triage rule (SKILL.md section 1) was run over the last 30 change notes, R-597 to R-628 (R-615 has two notes,
+judged as one). Rows: `docs/system-map/_work/out/3F-F2F3.jsonl` (kind f3).
+
+- **Ask: 9 of 30 (30%). Skip: 21.** Slightly above the "under 1 in 4" target. One ask (R-606) was a set of fixes to
+  R-604 before it went live, so it would share R-604's card rather than make a second ask; counted that way, it is
+  8 of 30 (27%). 11 of the 30 notes were audit tooling, research or release steps, so among real product changes
+  the rule asks for about half. That is expected: the recent product changes were big ones.
+- **Every ask was justified.** 8 of the 9 asked changes later had gaps found (for example R-627 phone backup, R-625
+  online join payments, R-608 and R-609 birthday wishes, R-604 the bell). The flow would have been working on the
+  right changes.
+- **Skipped changes that later broke: 4, but only one is a real miss.**
+  - R-603, admin alert icon: skipped as a one-line fix with an obvious cause. It turned the status-bar badge into a
+    white square, which he saw and which was fixed the next day (R-605; calibration c04). The flow would not have
+    helped much; one real look at the alert on a phone would have.
+  - R-618 and R-615, audit tooling: skipped as tooling. The pacer then ran every 15 minutes and ate his usage limit
+    (R-622), and earlier looked in the wrong folder and ran on the wrong model (R-617). Tooling that runs by itself
+    and spends his limit is not harmless tooling.
+  - R-607 (putting the bell change live) is a step of R-604, which the rule asks for; its later bell findings belong
+    to R-604's card. Not a triage miss.
+- Could not check: R-612 (this flow) cannot have broken in use, because the switch is off. R-613 and the skips
+  marked "no" have no later finding that names them, which is not proof they are clean.
+
+### C-30 A skipped change still gets one real look when it touches what runs on its own  [apply]
+- What happens today: the skip list lets through one-line fixes and tooling. Two of those broke: a notification
+  icon (R-603) and a scheduled audit task that spent his limit (R-618).
+- Why it matters: the rule "never skips a change that later broke" fails on these, and the full flow is too heavy
+  for them. A single check is enough.
+- Change, in words: keep them in the skip lane, but add one look at the real result.
+- Exact text to paste: add to SKILL.md section 1, after the SKIP line:
+  `A SKIP-class change that changes what a notification, an icon the system draws, or a scheduled or background task does still gets one real look before it is called done: a picture of the real result, or the task's first real run read back (and what it spends of his limit).`
+- Risk: a few minutes on a small set of small changes.
