@@ -127,7 +127,7 @@
     },
     "G4_build": {
       "done": false,
-      "evidence": ""
+      "evidence": "Slice A built 27 Nov 2026: docs/legal/data-flows.json (77 rows), data-flows-allow.json (empty), apps/dashboard/test/legal/dataFlows.test.ts (20 tests; 13 deliberate breaks each failed). D15 deployed (panel b7a8005d). Slices B, C, D to come."
     },
     "G5_review": {
       "done": false,

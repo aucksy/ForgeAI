@@ -1,0 +1,4 @@
+{
+  "_about": "R-631 slice A: known gaps the data-flow check accepts for now. Ids only (D14): each row is one item the check found in the code (host:<address>@<file>, package:<library>@<file>, table:<db>:<table>, binding:<key>, backup:<key>), the finding id that explains it (docs/system-map/findings.jsonl), and an end date. Never an S1 finding. The test fails when a row's end date has passed, and when this list grows past the count written in apps/dashboard/test/legal/dataFlows.test.ts (ALLOW_MAX). It may only shrink.",
+  "rows": []
+}
