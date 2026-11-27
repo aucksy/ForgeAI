@@ -3,7 +3,10 @@
 Read together with the generic list (`~/.claude/skills/change-360/QUESTIONS.md`). These apply only to MettleUp
 (phone app, watch app, owner dashboard, website, admin panel). Owner, 18 Nov 2026: generic questions stay global;
 "if you have already custom questions for this project, that can go just for this project".
-Answers go into the project's change card (`docs/changes/R-<n>.json`, 15 Nov framework), not a second card.
+Answers: the change card `docs/changes/R-<n>.json` (template `docs/changes/_TEMPLATE.json`; the CI card check reads it) and, for the Full lane, the design note `docs/designs/R-<n>.md`. One card, never two.
+Map: docs/system-map/ (features.json, surfaces.json, findings.jsonl); search it, never read it whole.
+Bugs that reach the owner or a gym after a change: one line each in docs/ESCAPES.jsonl (date, id, what was seen,
+which gate should have caught it, the check added). Framework: No Gaps v2 (owner, 27 Nov 2026).
 
 ## Who and where
 M1. [F] Which roles: member, gym owner, desk staff, trainer, solo user, admin (Control Room), website visitor?
@@ -22,6 +25,10 @@ M8. Could a shared picture or public number reveal a member's body weight, money
 M9. Does it touch the trial, the founding price, Pro, Play Billing or payments? Payments stay in test mode until he
     says "payments live".
 
+M21. [F] For every way money arrives (desk cash, UPI, payment link, join page, shop, Play, MettleUp's own
+    billing): what happens when it arrives twice, late, after the thing was cancelled or done another way, or in
+    test mode? Who is told, and do dues, Today, receipts, Expenses and the AI Assistant all agree? A test payment
+    never makes a real plan, receipt or alert.
 ## Time and data the way his members have it
 M10. [F] Midnight India time, a Monday, the 1st of the month, a workout that crosses midnight.
 M11. His phone size, the largest display size and font size 2.0, 360 dp width.

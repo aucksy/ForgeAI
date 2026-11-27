@@ -60,6 +60,20 @@ jobs:
       - name: Silent-catch ratchet
         run: python3 scripts/ci/silent_catch_ratchet.py
 
+      # No Gaps framework (owner, 27 Nov 2026: "Yes build this framework"). From R-630 every change that touches
+      # app files carries a card (docs/changes/R-<n>.json); a card marked done has every gate of its lane done,
+      # with real proof (never only "read the code"). Seconds.
+      - name: No Gaps card check
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          python3 -m unittest discover -s scripts/ci -p 'test_card_check.py'
+          base="$BEFORE"
+          if [ -z "$base" ] || [ "$base" = 0000000000000000000000000000000000000000 ]; then base=HEAD~1; fi
+          git fetch --quiet --depth=200 origin "${{ github.sha }}" || true
+          git cat-file -e "$base^{commit}" 2>/dev/null || git fetch --quiet --depth=200 origin "$base" || true
+          python3 scripts/ci/card_check.py --base "$base" --head "${{ github.sha }}" --summary "$GITHUB_STEP_SUMMARY"
+
       # R-339 (5 Nov 2026, docs/ios/RESEARCH.md E6): every Android-only piece (native function,
       # permission, plugin, Gradle library, Android switch in TS, the Wear app) needs its iPhone twin
       # or a line in docs/ios/PARITY.yaml saying what iPhone does instead. Seconds; pyyaml is above.

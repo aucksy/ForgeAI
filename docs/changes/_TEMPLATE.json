@@ -1,0 +1,23 @@
+{
+  "id": "R-000",
+  "title": "One plain line: what changes for the user",
+  "lane": "full",
+  "family": "the cause, in a few words (one card per cause, not per symptom)",
+  "findings": [],
+  "approved_by": "Full lane only: his exact words and the date",
+  "status": "active",
+  "session_id": "",
+  "dark": false,
+  "file_boundary": [],
+  "gates": {
+    "G0_family": {"done": false, "evidence": ""},
+    "G1_design": {"done": false, "evidence": ""},
+    "G2_goldfish": {"done": false, "evidence": ""},
+    "G3_tests_first": {"done": false, "evidence": ""},
+    "G4_build": {"done": false, "evidence": ""},
+    "G5_review": {"done": false, "evidence": ""},
+    "G6_proven": {"done": false, "evidence": ""},
+    "G7_delivered": {"done": false, "evidence": ""}
+  },
+  "escapes": []
+}

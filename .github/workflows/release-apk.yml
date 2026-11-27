@@ -75,6 +75,13 @@ jobs:
           SKIP_PHONE_GATE: ${{ github.event_name == 'workflow_dispatch' && inputs.skip_phone_gate && 'true' || 'false' }}
         run: python3 scripts/ci/phone_gate.py
 
+      # No Gaps framework (owner, 27 Nov 2026): a release never ships an unfinished change. Any card still
+      # active or waiting (and not dark, behind a switch that is off) stops the release here.
+      - name: No Gaps release gate (every change card finished)
+        run: |
+          python3 -m unittest discover -s scripts/ci -p 'test_card_check.py'
+          python3 scripts/ci/card_check.py --release --summary "$GITHUB_STEP_SUMMARY"
+
   build:
     needs: phone-gate
     runs-on: ubuntu-latest
