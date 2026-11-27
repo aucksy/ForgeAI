@@ -55,7 +55,7 @@ import { getQuestionCount, getQuestions } from '../shop/questionsApi';
 import { useShop } from '../shop/ShopProvider';
 import { memberMessageCountFor, publishMemberMessageCount, subscribeMemberMessageCount } from './MemberMessageParts';
 import { publishQuestionCount, questionCountFor, subscribeQuestionCountChange } from './QuestionParts';
-import { navigate } from './router';
+import { navigate, useAddressChanges } from './router';
 import { Button, Card, color, font, radius, space } from './kit';
 import { PaymentTag, paymentRowLook } from './PaymentTag';
 import { paymentTone } from '../logic/bellGroups';
@@ -603,7 +603,11 @@ export function LatestAlertsCard() {
   // Fresh eyes (14 Nov 2026): a shop line reads the same orders as "Shop today", so the two always agree.
   const { orders } = useShop();
   // R-593: this visit to Today. News shown in an EARLIER visit is left out; news shown now stays until he leaves.
-  const [visit] = useState(() => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`);
+  const [mounted] = useState(() => `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`);
+  // CI 27 Nov 2026: Money and straight back to Today before Money was drawn kept this card on screen, so the same
+  // visit showed the news again. A visit also ends when the address leaves Today, however fast React draws it.
+  const left = useAddressChanges();
+  const visit = `${mounted}-${left}`;
   const now = Date.now();
   // R-593: only what still needs someone (logic/alertHandled.ts); the bell keeps the whole history.
   const seenInfo = gymId ? seenInfoFor(gymId, visit) : new Set<string>();

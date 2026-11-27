@@ -10,7 +10,7 @@
  * and refresh all behave normally because it is real browser history.
  */
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 
 export interface Route {
   /** Path segments after the `#/`, e.g. `['members', 'mem_1']`. */
@@ -37,6 +37,42 @@ export function replace(path: string): void {
   const next = path.startsWith('/') ? path : `/${path}`;
   window.history.replaceState(null, '', `#${next}`);
   window.dispatchEvent(new HashChangeEvent('hashchange'));
+}
+
+// ---------------------------------------------------------------- address changes, as the browser sees them
+
+/**
+ * How many times the address has changed to another page since the app opened, counted from the browser's own
+ * hashchange events. React may draw two quick changes as one (Money, then straight back to Today, before Money was
+ * ever drawn), so a screen that stays on screen across that still sees the count move: it was left, and came back.
+ */
+let addressChanges = 0;
+let lastPath: string | null = null;
+const addressListeners = new Set<() => void>();
+
+function onAddressChange(): void {
+  const path = currentRoute().path;
+  if (path === lastPath) return;
+  lastPath = path;
+  addressChanges += 1;
+  for (const l of addressListeners) l();
+}
+
+function subscribeAddress(l: () => void): () => void {
+  if (addressListeners.size === 0) {
+    lastPath = currentRoute().path;
+    window.addEventListener('hashchange', onAddressChange);
+  }
+  addressListeners.add(l);
+  return () => {
+    addressListeners.delete(l);
+    if (addressListeners.size === 0) window.removeEventListener('hashchange', onAddressChange);
+  };
+}
+
+/** The number of address changes so far (see `addressChanges`); it moves each time the page is left. */
+export function useAddressChanges(): number {
+  return useSyncExternalStore(subscribeAddress, () => addressChanges, () => 0);
 }
 
 /** Subscribe to the current route. */

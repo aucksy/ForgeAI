@@ -1184,6 +1184,7 @@ export class FakeServer {
  * device of the same gym); otherwise a new one with `offline`.
  */
 export async function openApp(page, { time = NOW, server: shared, ...serverOptions } = {}) {
+  await closePhonesFromEarlierTests();
   const server = shared ?? new FakeServer(serverOptions);
   await server.attach(page.context());
   await page.clock.install({ time });
@@ -1446,9 +1447,31 @@ export const PHONE = {
   timezoneId: 'Asia/Kolkata',
 };
 
+/**
+ * CI 27 Nov 2026: a phone opened with secondPhone and never closed lived on in the same browser through every later
+ * test of that worker (a desk phone kept syncing every 15 s during the next test, whose page then froze on a tap). So
+ * each test starts by closing the extra phones earlier tests left open. A frozen one gets 10 s, then is left alone.
+ */
+const extraPhones = [];
+async function closePhonesFromEarlierTests() {
+  let id;
+  try {
+    id = test.info().testId;
+  } catch {
+    return;
+  }
+  const old = extraPhones.filter((p) => p.testId !== id);
+  if (!old.length) return;
+  for (const p of old) extraPhones.splice(extraPhones.indexOf(p), 1);
+  await Promise.all(
+    old.map((p) => Promise.race([p.context.close().catch(() => {}), new Promise((r) => setTimeout(r, 10_000))])),
+  );
+}
+
 /** A second phone (its own browser storage) on the same pretend server, open on Welcome. */
 export async function secondPhone(browser, server, time = NOW) {
   const context = await browser.newContext({ ...PHONE, baseURL: test.info().project.use.baseURL });
+  extraPhones.push({ testId: test.info().testId, context });
   const page = await context.newPage();
   await openApp(page, { server, time });
   return page;
