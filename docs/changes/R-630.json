@@ -32,8 +32,8 @@
    "evidence": "docs/system-map/FAMILIES.md sub-families D-02, A-20, D-65"
   },
   "G1_design": {
-   "done": false,
-   "evidence": ""
+   "done": true,
+   "evidence": "docs/designs/R-630.md"
   },
   "G2_goldfish": {
    "done": false,
