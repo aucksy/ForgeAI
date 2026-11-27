@@ -1,3 +1,16 @@
+// Visit counter (owner, 27 Nov 2026, R-631 D15: "I do need the analytics enabled"): Cloudflare Web Analytics, no
+// cookies. ONLY on the public websites mettleup.fit and gyms.mettleup.fit, never the admin app; the privacy
+// notice says exactly this. Cloudflare's automatic injection is off (it would count every host, incl. the
+// admin app). test/crm/visitCounter.test.ts checks the host guard.
+(function () {
+  if (!/^(gyms\.)?mettleup\.fit$/.test(location.hostname)) return;
+  var s = document.createElement('script');
+  s.defer = true;
+  s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+  s.setAttribute('data-cf-beacon', '{"token": "ce159aa3d64b4a4594804a16ce9a9668"}');
+  document.head.appendChild(s);
+})();
+
 // The member page's only script (F184; rebuilt 4 Nov 2026, R-325). A separate file because the site's
 // security policy runs no inline script. Six jobs:
 //  1. English / Hindi (kept per browser; the same switch as the gym page, public/home/home.js);

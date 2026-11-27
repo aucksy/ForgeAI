@@ -115,15 +115,15 @@
     },
     "G1_design": {
       "done": true,
-      "evidence": "docs/designs/R-631.md v1"
+      "evidence": "docs/designs/R-631.md v3 (5f66371a)"
     },
     "G2_goldfish": {
-      "done": false,
-      "evidence": ""
+      "done": true,
+      "evidence": "Round 1 on v1: goldfish-newcomer 15, goldfish-critic 20, goldfish-promises 15 findings, all answered in v2 (df3483b3). Round 2 on v2: goldfish-critic 15 findings, all answered in v3 (5f66371a). Owner yes 27 Nov 2026: \"Yes to all your views\"."
     },
     "G3_tests_first": {
-      "done": false,
-      "evidence": ""
+      "done": true,
+      "evidence": "Per slice, before its build. D15 slice: apps/dashboard/test/crm/visitCounter.test.ts written and run green (3 tests) before the counter commit. Slices A-D: their tests (note section 9a-9h) are written first in each slice and named here as each slice starts."
     },
     "G4_build": {
       "done": false,
