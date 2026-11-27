@@ -25,6 +25,8 @@ export const META_LEFT_OUT: Readonly<Record<string, string>> = {
   cloud_copy_last_at: 'gym sign-in: cloud copy bookkeeping',
   cloud_copy_full: 'gym sign-in: cloud copy bookkeeping',
   member_account: 'gym sign-in of this phone',
+  // R-630: the under-18 delete still to finish on the server; belongs to this phone, like the sign-in.
+  under18_delete_job: 'under-18 server delete still to finish (this phone only)',
   terms_agreed: 'D7: the 18+ / terms tick given on this phone (a restore on another phone asks again)',
   cloud_identity: 'gym membership key of this phone',
   cloud_client_version: 'gym server bookkeeping',

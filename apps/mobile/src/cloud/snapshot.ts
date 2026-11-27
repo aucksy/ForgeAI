@@ -47,7 +47,9 @@ const TABLES: readonly { name: string; cols: readonly string[]; keepWhenAbsent?:
     // stays on the phone (like a custom exercise's picture); restored elsewhere, the Profile
     // shows the first letter until a new photo is picked. Older backups lack them → NULL.
     cols: ['id', 'name', 'phone', 'age', 'height_cm', 'goal', 'experience', 'gym_name', 'member_since_iso', 'calorie_target', 'protein_target_g', 'carbs_target_g', 'fat_target_g', 'unit_system', 'language',
-      'photo_uri', 'bio', 'link'],
+      'photo_uri', 'bio', 'link',
+      // R-630 (member schema v3): when the age was typed, so a restored age keeps growing from the same day.
+      'age_set_at'],
   },
   {
     name: 'exercises',

@@ -53,6 +53,26 @@ export function Under18Status({ state, onChanged }: { state: Shown; onChanged: (
       <Text accessibilityLiveRegion="polite" style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkSecondary, lineHeight: 19 }}>
         {line}
       </Text>
+      {state === 'signInNeeded' ? (
+        <View style={{ marginTop: space.md }}>
+          <GhostButton
+            label={busy ? 'Signing in…' : 'Sign in once to delete'}
+            onPress={() =>
+              void (async () => {
+                if (busy) return;
+                setBusy(true);
+                try {
+                  const { useAccount } = await import('@/store/accountStore');
+                  await useAccount.getState().signIn();
+                  await onChanged();
+                } finally {
+                  setBusy(false);
+                }
+              })()
+            }
+          />
+        </View>
+      ) : null}
       {state === 'offline' || state === 'failed' ? (
         <View style={{ marginTop: space.md }}>
           <GhostButton label={busy ? 'Trying…' : 'Try again'} onPress={() => void retry()} />

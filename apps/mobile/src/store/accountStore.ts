@@ -139,6 +139,26 @@ export const useAccount = create<AccountState>()((set, get) => ({
       // Audit FN-L4-phone-cloud-backup-ai-02: nothing of a member under 18 goes to MettleUp's server.
       const { profileUnder18 } = await import('@/cloud/copySync');
       if (await profileUnder18()) {
+        // R-630 (design note 3a): "Sign in once" is allowed only to run the under-18 delete, which then signs out.
+        // Nothing is brought back and nothing is sent: the copy stays paused and is never watched here.
+        const { readUnder18Job, runUnder18Job } = await import('@/cloud/under18Run');
+        const job = await readUnder18Job();
+        if (job?.account === 'todo') {
+          const { signInWithGoogle, signInWithPhoneProof } = await import('@/cloud/account');
+          const account = opts.phone
+            ? await signInWithPhoneProof(opts.phone.proof, opts.phone.firstName, opts.phone.mobile10)
+            : await signInWithGoogle();
+          if (!account) return { kind: 'cancelled' };
+          const { useGymShop } = await import('@/shop/gymStore');
+          const state = await runUnder18Job(useGymShop.getState().link ?? null);
+          const { under18DeleteWords } = await import('@/cloud/ageRule');
+          const { STAFF_LOGIN_WORDS } = await import('@/cloud/under18Job');
+          const words = state === 'staff' ? STAFF_LOGIN_WORDS : under18DeleteWords(state);
+          // Signed out again when the delete went through; still signed in (and sending nothing) when it must retry.
+          const { getStoredAccount } = await import('@/cloud/accountMeta');
+          set({ account: await getStoredAccount(), note: words });
+          return { kind: 'error', words };
+        }
         const { PHONE_ACCOUNT_WORDS } = await import('@/cloud/phoneAccount');
         set({ note: PHONE_ACCOUNT_WORDS.under18 });
         return { kind: 'error', words: PHONE_ACCOUNT_WORDS.under18 };
