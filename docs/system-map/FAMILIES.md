@@ -30,7 +30,7 @@ A fix is always made for a whole sub-family, with its guard, never for one findi
 | M18 | Internal notes, maps and dead code | S3 | 97 | 9 | - |
 | M20 | Shared rules copied per feature | S3 | 50 | 3 | - |
 | M23 | iPhone port | S3 | 7 | 2 | - |
-| M25 | Owner feature requests | - | 0 | 0 | O-03, O-04, O-06, O-19, O-21, O-23, O-29, O-30, O-31, O-32, O-33, O-35, O-37 |
+| M25 | Owner feature requests | - | 0 | 0 | O-03, O-04, O-06, O-19, O-21, O-23, O-29, O-30, O-31, O-32, O-33, O-35, O-37, O-39 |
 
 ## M02 Privacy promises vs real data flows (worst S1, 91 findings)
 
