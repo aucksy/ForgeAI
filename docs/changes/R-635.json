@@ -1,0 +1,29 @@
+{
+  "id": "R-635",
+  "title": "Today's news stays gone after a very fast Money and back; admin tests close phones earlier tests left open",
+  "lane": "light",
+  "family": "a page visit was counted by React drawing, not by the address; and test phones leaked across tests",
+  "findings": [],
+  "approved_by": "",
+  "status": "active",
+  "session_id": "local side session of local_3250bc09 (flaky Admin journeys, 27 Nov 2026)",
+  "dark": false,
+  "file_boundary": [
+    "apps/dashboard/src/crm/ui/router.tsx",
+    "apps/dashboard/src/crm/ui/NeedsYou.tsx",
+    "apps/dashboard/e2e/support.mjs"
+  ],
+  "gates": {
+    "G0_family": {"done": true, "evidence": "Swept: LatestAlertsCard is the only user of a per-mount visit token (grep useState visit / setTodayVisit). Leak: every secondPhone context is now tracked; no test shares a phone across tests (no beforeAll / serial)."},
+    "G1_design": {"done": false, "evidence": ""},
+    "G2_goldfish": {"done": false, "evidence": ""},
+    "G3_tests_first": {"done": false, "evidence": ""},
+    "G4_build": {"done": false, "evidence": ""},
+    "G5_review": {"done": false, "evidence": ""},
+    "G6_proven": {"done": false, "evidence": ""},
+    "G7_delivered": {"done": false, "evidence": ""}
+  },
+  "escapes": [
+    "commit 38c207af carries the code; it went out before this card existed and named no id (CI run 45977349609 refused it at the card check)"
+  ]
+}
