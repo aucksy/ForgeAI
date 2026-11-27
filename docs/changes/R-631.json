@@ -127,7 +127,7 @@
     },
     "G4_build": {
       "done": false,
-      "evidence": "Slice A built 27 Nov 2026: docs/legal/data-flows.json (77 rows), data-flows-allow.json (empty), apps/dashboard/test/legal/dataFlows.test.ts (20 tests; 13 deliberate breaks each failed). D15 deployed (panel b7a8005d). Slices B, C, D to come. Member-summary slice: phone upload removed (cloud/outbox.ts, summary.ts deleted), 0102_stop_member_summary.sql, data-flows row set to off."
+      "evidence": "Slice A built 27 Nov 2026: docs/legal/data-flows.json (77 rows), data-flows-allow.json (empty), apps/dashboard/test/legal/dataFlows.test.ts (20 tests; 13 deliberate breaks each failed). D15 deployed (panel b7a8005d). Slices B, C, D to come. Member-summary slice: phone upload removed (cloud/outbox.ts, summary.ts deleted), 0102_stop_member_summary.sql, data-flows row set to off. Slice B1 (27 Nov 2026): privacy notice EN+HI rewritten from the list (7fe90c53), fresh legal review's 17 findings applied (6fb74426, 31b291bf); not deployed; product items P1-P5 in docs/CLAUDE-NOTES.md RESUME 27 Nov 19:45."
     },
     "G5_review": {
       "done": false,
