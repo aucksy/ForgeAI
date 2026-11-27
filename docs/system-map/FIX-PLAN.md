@@ -1,0 +1,179 @@
+# Fix plan (derived by scripts/audit/fix_plan.py, 27 Nov 2026)
+
+309 families, 2510 open findings.
+
+Lanes before: {'full': 244, 'standard': 50, 'light': 15}. After: {'full': 46, 'standard': 81, 'light': 182}.
+Findings by lane: {'full': 369, 'standard': 752, 'light': 1389}.
+Need his call: 160 findings in 68 families.
+119 batches in 40 waves of up to 4 side by side.
+
+## Full lane (one at a time, his yes)
+
+- A-01 (M02 Privacy promises vs real data flows, S1, phone, 21 findings): New data flows, outside companies and stored items ship without anyone updating the privacy notice or terms, because there is no list of where data goes that is checked against the notice.
+- D-01 (M01 Release and store truth, S1, phone, 5 findings): Releases are recorded as shipped without checking that the store actually published them, so fixes and notes reach members late or not at all.
+- D-02 (M22 Consent, age and terms, S1, phone, 2 findings): The under-18 stop only blocks new saving; it does not remove what is already stored or update the status line.
+- C-01 (M13 Test and demo data on the live system, S1, server, 2 findings): Test gyms are made on the live server and recognised by their name, so a real gym with a 'QA' name can be deleted and old-brand test gyms are visible.
+- A-02 (M05 Identity, sign-in and member photo, S1, panel, 8 findings): A typed mobile number is trusted as a person's identity with no proof it is theirs and no way to change it, so recycled numbers, strangers and look-alike names can take over sign-in, messages and enquiries.
+- A-07 (M02 Privacy promises vs real data flows, S2, phone, 13 findings): Privacy sentences on screens and websites ('never sent', 'not kept', 'we never message you', 'only on this phone') are typed once by hand and not worked out from the real sharing switches and stored copies.
+- C-07 (M02 Privacy promises vs real data flows, S2, phone, 9 findings): The privacy notice and on-screen data promises are typed by hand instead of being built from the list of what is actually sent, stored or shared, so they understate what leaves the phone.
+- D-21 (M02 Privacy promises vs real data flows, S2, phone, 6 findings): Privacy and legal words were written without checking where data really goes (backups, uploads, payment store), so they promise more than is true.
+- B-03 (M02 Privacy promises vs real data flows, S2, phone, 31 findings): Privacy promises (what stays on the phone, what the gym, desk or AI never sees) are written in words but no shared test watches what actually leaves or shows.
+- D-17 (M05 Identity, sign-in and member photo, S2, phone, 7 findings): People are matched by names, first words or per-sign-in accounts instead of one stable key, so the same person becomes two records or loses data.
+- A-20 (M22 Consent, age and terms, S2, phone, 5 findings): Consent, opt-outs and age are not recorded: joining keeps no notice or 18+ record, age is a fixed number, minors can be added, default sharing has no lawful basis and members cannot opt out of offers.
+- B-06 (M04 Delete, erase, backup and restore scope, S2, phone, 19 findings): There is no single list of every place a person's or gym's data lives, so erase, sign-out, leave and delete are never checked to clear all of them.
+- C-09 (M04 Delete, erase, backup and restore scope, S2, phone, 7 findings): Backups, exports and cloud copies each list by hand which kinds of data they include, so new tables, files, columns and photos are left out.
+- A-17 (M04 Delete, erase, backup and restore scope, S2, phone, 6 findings): Restore, replace and undo on the phone act only on the phone's workouts, unaware of the background cloud copy and of other record types, so undone data returns and counts are wrong.
+- B-07 (M04 Delete, erase, backup and restore scope, S2, phone, 10 findings): Backup and bring-back are tested as separate words and steps, never as one round trip, so restore screens, Drive cards, repacked files and failed or half-saved backups go unchecked.
+- A-26 (M04 Delete, erase, backup and restore scope, S2, phone, 1 findings): The photo backup switch was moved out of reach, so members cannot turn it off.
+- A-06 (M08 Paid features, limits and AI credits, S2, phone, 14 findings): Whether a member owns MettleUp Plus, its plan type, free month and staff unlock live only on the phone, with no server record checked with Google Play, so purchases are missed, double-charged, kept after they end or guessed.
+- C-04 (M04 Delete, erase, backup and restore scope, S2, server, 11 findings): Deleting a gym, a member leaving and Erase each list by hand what to remove, so new stores are missed, some are kept too long and proof that must stay is deleted.
+- A-08 (M04 Delete, erase, backup and restore scope, S2, server, 13 findings): Keep-for limits promised in the notice are left to chance: some deletes only run when someone opens a screen and many tables have no clean-up at all, because no nightly job owns every stated limit.
+- A-03 (M08 Paid features, limits and AI credits, S2, server, 18 findings): Rate limits and AI caps are one shared bucket per day, gym or whole product with no per-caller limit (and the real caller address is lost behind our server), and some endpoints answer anyone, so one outsider can use them up or get free AI.
+- C-12 (M06 Membership and gym billing state, S2, server, 4 findings): The gym's MettleUp plan state (waiting payment, plan switch, end reminder, open pay links) is decided in several places tied to online checkout, so UPI-paying gyms are treated wrongly.
+- C-13 (M09 Server trusts the client; roles, S2, server, 3 findings): Emergency access to a gym's records was built without matching the owner-facing promise or telling the owner, so the words promise consent that the button does not need.
+- A-19 (M09 Server trusts the client; roles, S2, server, 5 findings): The data agreement promises every look at a gym's records is recorded and shown, but direct database reads, master-key reads and reads past a cap are not recorded and the record keeps raw query text.
+- A-12 (M02 Privacy promises vs real data flows, S2, web, 9 findings): Website, store listing and join-page claims about product behaviour are written by hand and not re-checked when a feature changes or is retired (Drive backup, messages, renew, reminders, switching offer).
+- A-14 (M08 Paid features, limits and AI credits, S2, web, 7 findings): AI credit rules (what costs a credit, starter credits, monthly free numbers, pack prices) are typed by hand into the website, help, HQ and credits sheet instead of read from one price table.
+- A-21 (M03 Personal data leaving the system, S2, web, 4 findings): Hiding names and numbers before sending to the AI is done separately in each call, so rewrites and some import columns send real details, and public lines claim the AI sees columns only.
+- A-22 (M05 Identity, sign-in and member photo, S2, panel, 4 findings): Facts are read from free-text names (plan names, friend names, exercise names) instead of fixed ids.
+- A-05 (M04 Delete, erase, backup and restore scope, S2, panel, 14 findings): There is no single list of every table and file that holds a person's or gym's data, so member erase, member delete and gym delete each forget some copies (photos, measurements, AI history, enquiries, shop copy, second database) or delete records that must stay.
+- A-23 (M04 Delete, erase, backup and restore scope, S2, panel, 3 findings): Copies of gym data kept on staff browsers and phones (set-aside copy, outbox, offline member list) have no end date and are not wiped when the person is removed or signs out.
+- D-19 (M04 Delete, erase, backup and restore scope, S2, panel, 6 findings): The nightly backup is not sized for growth, misses some tables and has never been restored for real.
+- A-24 (M04 Delete, erase, backup and restore scope, S2, panel, 3 findings): Excel import does not record what it changed in existing members (prices, filled details, app links, measurements), so undo removes or keeps the wrong things.
+- A-09 (M07 Payments, receipts and refunds, S2, panel, 12 findings): Whether a payment link or fee ask is open, paid online, expired, cancelled or failed is not one record every screen reads, so desk, shop, enquiry and member screens guess and show pay buttons, old UPI IDs or 'not paid' for money already taken.
+- A-10 (M07 Payments, receipts and refunds, S2, panel, 12 findings): The money records have no refunded or reversed state, so cancelling an online-paid receipt or order, a double payment, an over-payment or a wrongly confirmed payment leaves no way to record that money went back.
+- A-13 (M07 Payments, receipts and refunds, S2, panel, 8 findings): Whether a payment is test or live is not carried with each payment, so test payments create real plans, receipts, member alerts and 'Paid' lines, and help and HQ treat test as real.
+- A-18 (M07 Payments, receipts and refunds, S2, panel, 5 findings): Cash taken on a desk without internet that the server later refuses (or never receives) has no proper state, so it vanishes from dues and counts, leaves receipt gaps or sits on a removed device unseen.
+- D-25 (M07 Payments, receipts and refunds, S2, panel, 1 findings): The assistant's add-member card does not recompute the joining fee when the plan changes.
+- A-04 (M06 Membership and gym billing state, S2, panel, 17 findings): A gym's plan, trial, branch and paid-until state is changed by many separate HQ and payment actions, each with its own logic, so hand plans, trials, branches, founding places and upgrades contradict each other and the promises.
+- A-11 (M06 Membership and gym billing state, S2, panel, 11 findings): Member and gym status changes (leave, return, lapse, archive, pause, gym leaving) are not one state machine, so each feature handles them its own way and members stay archived, duplicate, lose marks or stay on machines and web pages.
+- C-14 (M06 Membership and gym billing state, S2, panel, 1 findings): Disconnecting the shop does not close it on the server.
+- D-18 (M06 Membership and gym billing state, S2, panel, 7 findings): Personal training packs are stored as membership plans and not linked to trainers, so plan readers count them and trainers never hear of them.
+- C-15 (M06 Membership and gym billing state, S2, panel, 1 findings): Import reads a plan's length from the first number in its name.
+- D-13 (M06 Membership and gym billing state, S2, panel, 9 findings): 'Stopped coming' counting ignores freezes, approved pauses, closed days and a new plan start, and is written by more than one rule.
+- A-15 (M09 Server trusts the client; roles, S2, panel, 7 findings): The server accepts role-limited actions and values (pass member, every-branch, door dates, offline flag, back-dated check-ins, option prices) exactly as the admin app sends them, so desk limits exist only on screen.
+- D-23 (M09 Server trusts the client; roles, S2, panel, 4 findings): Screens ship before the server part they call exists live, so a missing server piece reads as 'switched off' or a feature that does nothing.
+- C-16 (M09 Server trusts the client; roles, S2, panel, 1 findings): Pass visits do not store the pass company at check-in, so history is read from the member's current pass.
+- B-08 (M03 Personal data leaving the system, S2, panel, 3 findings): Personal data (names, ID numbers, typed numbers) is put into outgoing AI requests, download files or browser storage with no shared filter that strips it.
+
+## Batches
+
+- wave 1 B01 standard M03 phone: 6 findings, families A-37
+- wave 1 B02 standard M04 phone: 10 findings, families A-35, D-70
+- wave 1 B03 standard M06 phone: 10 findings, families B-33, C-64, C-81
+- wave 1 B04 standard M07 phone: 1 findings, families C-88
+- wave 2 B05 standard M08 phone: 27 findings, families B-25, A-33, A-40, A-47
+- wave 2 B10 standard M12 phone: 21 findings, families D-11, D-14
+- wave 2 B12 standard M18 phone: 3 findings, families A-55
+- wave 2 B15 standard M01 server: 7 findings, families C-34
+- wave 3 B06 standard M10 phone: 35 findings, families D-05
+- wave 3 B11 standard M15 phone: 2 findings, families D-24
+- wave 3 B16 standard M03 server: 1 findings, families C-82
+- wave 3 B17 standard M04 server: 5 findings, families C-62, A-60, B-40
+- wave 4 B07 standard M11 phone: 45 findings, families D-03
+- wave 4 B19 standard M07 server: 1 findings, families B-39
+- wave 4 B27 standard M01 web: 6 findings, families A-16
+- wave 4 B75 light M24 phone: 19 findings, families B-27, B-28, B-43
+- wave 5 B08 standard M11 phone: 35 findings, families D-04
+- wave 5 B13 standard M24 phone: 24 findings, families B-04
+- wave 5 B18 standard M05 server: 7 findings, families A-42, A-61
+- wave 5 B28 standard M07 web: 1 findings, families D-82
+- wave 6 B09 standard M11 phone: 36 findings, families D-08, C-02
+- wave 6 B26 standard M24 server: 20 findings, families B-05
+- wave 6 B29 standard M02 panel: 2 findings, families C-74
+- wave 6 B30 standard M05 panel: 3 findings, families C-55
+- wave 7 B14 standard M24 phone: 24 findings, families D-28
+- wave 7 B20 standard M08 server: 24 findings, families B-26, A-41, D-60, C-66, D-75
+- wave 7 B31 standard M06 panel: 4 findings, families A-54, A-68
+- wave 7 B35 standard M10 panel: 11 findings, families C-05
+- wave 8 B21 standard M09 server: 9 findings, families B-29, C-75
+- wave 8 B24 standard M14 server: 7 findings, families C-10
+- wave 8 B32 standard M07 panel: 27 findings, families A-28, C-30, A-59, C-72, D-73, A-67
+- wave 8 B33 standard M08 panel: 3 findings, families C-61, B-38
+- wave 9 B22 standard M12 server: 28 findings, families D-06, D-12
+- wave 9 B41 standard M16 panel: 15 findings, families C-03
+- wave 9 B43 standard M22 panel: 4 findings, families D-65
+- wave 9 B45 standard M24 panel: 47 findings, families B-02
+- wave 10 B23 standard M13 server: 8 findings, families D-16
+- wave 10 B36 standard M11 panel: 9 findings, families C-06
+- wave 10 B44 standard M24 panel: 72 findings, families B-01
+- wave 10 B49 light M01 phone: 8 findings, families A-44, A-62, B-41
+- wave 11 B25 standard M17 server: 6 findings, families D-20
+- wave 11 B37 standard M12 panel: 29 findings, families D-22, D-29
+- wave 11 B50 light M03 phone: 2 findings, families A-72, A-71
+- wave 11 B51 light M05 phone: 1 findings, families C-97
+- wave 12 B34 standard M09 panel: 27 findings, families A-30, C-44, A-50, A-48, B-36, D-71
+- wave 12 B46 standard M06 hq: 1 findings, families C-87
+- wave 12 B52 light M10 phone: 24 findings, families D-38, A-32, C-86, D-80, D-79, D-77
+- wave 12 B69 light M21 phone: 8 findings, families A-31
+- wave 13 B38 standard M14 panel: 34 findings, families D-07, D-09
+- wave 13 B56 light M13 phone: 9 findings, families D-68, D-87
+- wave 13 B74 light M24 phone: 34 findings, families B-16, B-23
+- wave 13 B76 light M12 watch: 4 findings, families D-88
+- wave 14 B39 standard M14 panel: 26 findings, families D-10, A-25, D-39
+- wave 14 B54 light M11 phone: 13 findings, families C-28, D-67, C-63
+- wave 14 B55 light M12 phone: 10 findings, families A-38, D-64
+- wave 14 B62 light M17 phone: 20 findings, families A-36, D-84, C-95
+- wave 15 B40 standard M15 panel: 9 findings, families C-08
+- wave 15 B47 standard M09 hq: 4 findings, families D-58
+- wave 15 B59 light M15 phone: 23 findings, families D-55, C-46, D-62, D-66, D-69, C-67, A-65
+- wave 15 B78 light M19 watch: 4 findings, families C-47
+- wave 16 B42 standard M21 panel: 7 findings, families C-11
+- wave 16 B57 light M14 phone: 32 findings, families C-27, C-32, D-57, C-58, C-57, C-69, A-69
+- wave 16 B73 light M24 phone: 27 findings, families B-14
+- wave 16 B82 light M05 server: 1 findings, families B-42
+- wave 17 B48 standard M12 hq: 9 findings, families D-15
+- wave 17 B65 light M18 phone: 13 findings, families C-29, C-59, C-68
+- wave 17 B77 light M15 watch: 13 findings, families D-54, A-58, C-73, C-80, C-100
+- wave 17 B88 light M23 server: 1 findings, families D-91
+- wave 18 B53 light M11 phone: 33 findings, families D-30, C-25
+- wave 18 B72 light M24 phone: 38 findings, families B-11
+- wave 18 B79 light M24 watch: 13 findings, families B-22
+- wave 18 B81 light M01 server: 2 findings, families D-72
+- wave 19 B58 light M15 phone: 40 findings, families B-20, D-46, D-50, D-51
+- wave 19 B92 light M03 web: 1 findings, families D-92
+- wave 19 B93 light M16 web: 1 findings, families C-78
+- wave 19 B95 light M06 panel: 1 findings, families D-90
+- wave 20 B60 light M16 phone: 35 findings, families D-26, B-30
+- wave 20 B91 light M24 server: 18 findings, families B-31, B-32, A-53
+- wave 20 B96 light M08 panel: 1 findings, families D-89
+- wave 20 B98 light M11 panel: 5 findings, families B-35, C-98
+- wave 21 B61 light M16 phone: 34 findings, families C-37, C-51, C-83, C-90, C-92
+- wave 21 B70 light M23 phone: 6 findings, families A-39
+- wave 21 B89 light M24 server: 22 findings, families B-15
+- wave 21 B90 light M24 server: 35 findings, families B-17, B-18
+- wave 22 B100 light M13 panel: 10 findings, families B-34, C-49
+- wave 22 B110 light M21 panel: 10 findings, families A-49, D-85
+- wave 22 B63 light M18 phone: 25 findings, families D-27
+- wave 22 B80 light M01 server: 39 findings, families B-21, D-43, D-49, A-56, C-52, C-70
+- wave 23 B109 light M19 panel: 18 findings, families D-59, C-56, C-65, C-60, C-84, D-78, C-91
+- wave 23 B64 light M18 phone: 33 findings, families A-27, D-36
+- wave 24 B114 light M24 panel: 27 findings, families B-19, B-24
+- wave 24 B66 light M19 phone: 35 findings, families C-17, D-47, D-48
+- wave 25 B112 light M24 panel: 32 findings, families B-12
+- wave 25 B67 light M19 phone: 22 findings, families C-31, C-38, C-50, C-54, A-64, C-99
+- wave 25 B84 light M14 server: 5 findings, families C-93, C-101
+- wave 26 B113 light M24 panel: 32 findings, families B-13
+- wave 26 B68 light M20 phone: 19 findings, families D-32
+- wave 26 B83 light M12 server: 34 findings, families D-37, C-24, A-51, D-74, D-76
+- wave 27 B106 light M18 panel: 5 findings, families A-46
+- wave 27 B71 light M24 phone: 74 findings, families B-09
+- wave 27 B85 light M18 server: 18 findings, families D-33
+- wave 28 B86 light M20 server: 31 findings, families D-31, D-44
+- wave 29 B104 light M16 panel: 23 findings, families D-41, C-43, A-52, C-85, A-70, C-96
+- wave 29 B87 light M21 server: 16 findings, families C-18
+- wave 29 B94 light M01 panel: 6 findings, families A-45, D-81
+- wave 30 B102 light M15 panel: 35 findings, families D-42, D-53, A-34, D-56, A-63, C-77, C-76, C-79, A-66
+- wave 30 B111 light M24 panel: 41 findings, families B-10
+- wave 30 B97 light M10 panel: 25 findings, families A-29, D-52, A-43, C-71
+- wave 31 B99 light M12 panel: 36 findings, families D-35, D-45, D-61, D-86
+- wave 32 B101 light M14 panel: 32 findings, families D-40, C-26, C-39, B-37, C-94
+- wave 33 B103 light M16 panel: 40 findings, families C-19, C-21, C-22
+- wave 34 B105 light M17 panel: 23 findings, families C-42, A-57, D-83
+- wave 34 B115 light M05 hq: 1 findings, families D-93
+- wave 35 B107 light M19 panel: 32 findings, families D-34, C-20
+- wave 36 B108 light M19 panel: 40 findings, families C-23, C-33, C-35, C-36, C-45, D-63
+- wave 37 B116 light M14 hq: 6 findings, families C-40
+- wave 38 B117 light M15 hq: 3 findings, families C-53
+- wave 39 B118 light M16 hq: 1 findings, families C-89
+- wave 40 B119 light M19 hq: 9 findings, families C-41, C-48
