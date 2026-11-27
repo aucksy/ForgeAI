@@ -14,16 +14,41 @@
     "apps/dashboard/e2e/support.mjs"
   ],
   "gates": {
-    "G0_family": {"done": true, "evidence": "Swept: LatestAlertsCard is the only user of a per-mount visit token (grep useState visit / setTodayVisit). Leak: every secondPhone context is now tracked; no test shares a phone across tests (no beforeAll / serial)."},
-    "G1_design": {"done": false, "evidence": ""},
-    "G2_goldfish": {"done": false, "evidence": ""},
-    "G3_tests_first": {"done": false, "evidence": ""},
-    "G4_build": {"done": false, "evidence": ""},
-    "G5_review": {"done": false, "evidence": ""},
-    "G6_proven": {"done": false, "evidence": ""},
-    "G7_delivered": {"done": false, "evidence": ""}
+    "G0_family": {
+      "done": true,
+      "evidence": "Swept: LatestAlertsCard is the only user of a per-mount visit token (grep useState visit / setTodayVisit). Leak: every secondPhone context is now tracked; no test shares a phone across tests (no beforeAll / serial)."
+    },
+    "G1_design": {
+      "done": false,
+      "evidence": ""
+    },
+    "G2_goldfish": {
+      "done": false,
+      "evidence": ""
+    },
+    "G3_tests_first": {
+      "done": false,
+      "evidence": ""
+    },
+    "G4_build": {
+      "done": true,
+      "evidence": "CI run 45977785606 (13ece83f, holds 38c207af): every step green, attempt 1 and attempt 2."
+    },
+    "G5_review": {
+      "done": false,
+      "evidence": ""
+    },
+    "G6_proven": {
+      "done": true,
+      "evidence": "Admin journeys (phone, real forms) green twice in a row on CI run 45977785606 attempts 1 and 2; before the fix alerts-uat:394 failed 2 of 3 runs (45962548852, 45959361427 attempt 1)."
+    },
+    "G7_delivered": {
+      "done": true,
+      "evidence": "Pushed to main: 38c207af (code) and 13ece83f (card). Admin app change, goes live with the next website deploy."
+    }
   },
   "escapes": [
-    "commit 38c207af carries the code; it went out before this card existed and named no id (CI run 45977349609 refused it at the card check)"
+    "commit 38c207af carries the code; it went out before this card existed and named no id (CI run 45977349609 refused it at the card check)",
+    "G5 fresh review not run yet: the card stays active until a fresh reviewer reads 38c207af."
   ]
 }
