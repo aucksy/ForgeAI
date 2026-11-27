@@ -15,7 +15,7 @@ export type CopyAnswer<T> = { ok: true; data: T } | { ok: false; failure: SendFa
 const READ_MS = 20_000;
 const WRITE_MS = 30_000;
 
-async function rpc(fn: string, args: Record<string, unknown> | undefined, timeoutMs: number): Promise<CopyAnswer<unknown>> {
+async function rpc(fn: string, args: Record<string, unknown> | undefined, timeoutMs: number): Promise<CopyAnswer<unknown> & { message?: string }> {
   const ac = new AbortController();
   const timer = setTimeout(() => ac.abort(), timeoutMs);
   try {
@@ -23,7 +23,7 @@ async function rpc(fn: string, args: Record<string, unknown> | undefined, timeou
     if (res.error) {
       const failure = classifyCopyError({ ...res.error, status: res.status });
       console.warn(`[cloud copy] ${fn} refused (${failure}): ${res.error.code ?? ''} ${res.error.message ?? ''}`);
-      return { ok: false, failure };
+      return { ok: false, failure, message: typeof res.error.message === 'string' ? res.error.message : '' };
     }
     return { ok: true, data: res.data };
   } catch (e) {
@@ -112,6 +112,20 @@ export async function apiAccountDelete(): Promise<CopyAnswer<'deleted' | 'kept'>
   if (!r.ok) return r;
   const d = (r.data ?? {}) as { account?: unknown };
   return { ok: true, data: d.account === 'kept' ? 'kept' : 'deleted' };
+}
+
+/**
+ * R-630: the under-18 delete of the member's own MettleUp account (0101): copy, summary, profile, sign-in.
+ * 'staff' = this sign-in is also a gym owner's or trainer's login, which is never removed (only the copy is kept off).
+ */
+export async function apiUnder18Delete(): Promise<CopyAnswer<'deleted' | 'staff'>> {
+  const r = await rpc('member_under18_delete', undefined, WRITE_MS);
+  if (!r.ok) {
+    // An owner's or trainer's login: never removed, so never retried. Not 'offline'.
+    if (/STAFF_LOGIN/.test(r.message ?? '')) return { ok: true, data: 'staff' };
+    return { ok: false, failure: r.failure };
+  }
+  return { ok: true, data: 'deleted' };
 }
 
 export async function apiAppLimits(): Promise<CopyAnswer<unknown>> {

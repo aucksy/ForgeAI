@@ -82,6 +82,16 @@ async function callWithNewer(fn: string, args: Record<string, unknown>, extra: R
   return call(fn, args, timeoutMs);
 }
 
+/**
+ * R-630: the under-18 delete by the gym member's own key (0101): trainer summary, leaderboard days and row,
+ * pop-up code. The gym's own member record stays. `missing`: the server has not had 0101 yet.
+ */
+export async function apiGymUnder18Delete(key: string): Promise<GymResult<true> | { ok: false; missing: true }> {
+  const r = await call('gym_member_under18_delete', { p_key: key }, WRITE_MS);
+  if (!r.ok) return r.noSuchFunction ? { ok: false, missing: true } : r;
+  return (r.data as { deleted?: unknown } | null)?.deleted === true ? { ok: true, data: true } : { ok: false, error: { kind: 'other' } };
+}
+
 /** Join a gym. `joinId` (audit C6-6): the same id again within a day is the same member (0020). */
 export async function apiJoin(code: string, name: string, joinId?: string): Promise<GymResult<GymLink>> {
   const base = { p_code: code, p_name: name };

@@ -34,6 +34,14 @@ export function isUnder18(typedAge: number | null | undefined, typedAtMs: number
   return a !== null && a < MIN_AGE;
 }
 
+/**
+ * Must the sheet ask before this age is saved? Only for a known age under 18, and only when the member has not
+ * already confirmed one (an under-18 delete job exists). The age is typed today, so no growth applies. PURE.
+ */
+export function ageNeedsAsk(newAge: number | null | undefined, alreadyConfirmed: boolean): boolean {
+  return typeof newAge === 'number' && newAge > 0 && newAge < MIN_AGE && !alreadyConfirmed;
+}
+
 /** Where the under-18 delete stands, for the backup line. */
 export type Under18DeleteState = 'pending' | 'offline' | 'signInNeeded' | 'deleted' | 'failed';
 

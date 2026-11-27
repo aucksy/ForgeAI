@@ -24,7 +24,7 @@ const NOT_BACKED_UP = ['cloud_copy_queue', 'cloud_copy_state', 'meta', 'progress
 /** One row per table, every column non-NULL. FK-safe insert order. */
 const FULL_ROWS: [string, Row][] = [
   ['user_profile', {
-    id: 'p1', name: 'Member', phone: '+919800000001', age: 31, height_cm: 176.5, goal: 'muscle', experience: 'intermediate',
+    id: 'p1', name: 'Member', phone: '+919800000001', age: 31, age_set_at: 1764000000000, height_cm: 176.5, goal: 'muscle', experience: 'intermediate',
     gym_name: 'Iron Temple', member_since_iso: '2025-11-02', calorie_target: 2600, protein_target_g: 150, carbs_target_g: 300,
     fat_target_g: 70, unit_system: 'imperial', language: 'hi',
     photo_uri: 'file:///app/files/profile-photo/me.jpg', bio: 'Fitness, music and tech', link: 'https://example.com/me',

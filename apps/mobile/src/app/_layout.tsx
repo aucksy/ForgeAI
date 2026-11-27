@@ -139,6 +139,10 @@ export default function RootLayout() {
   useEffect(() => {
     if (ready && status === 'ready') startGymAddedYou();
   }, [ready, status]);
+  // R-630: an unfinished under-18 delete runs again; an age under 18 from before the update gets the sheet once.
+  useEffect(() => {
+    if (ready && status === 'ready') void import('@/cloud/under18Ask').then((m) => m.startUnder18Check());
+  }, [ready, status]);
 
   useEffect(() => {
     if (!ready) return;

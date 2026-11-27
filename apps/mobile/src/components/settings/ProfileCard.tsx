@@ -245,6 +245,21 @@ export function ProfileCard({ onSaved, showHint = true }: { onSaved?: () => void
         seeded.current = { ...seeded.current, [field]: text };
         return;
       }
+      // R-630: an age under 18 is saved only after the sheet's "Delete and continue". While still typing, wait.
+      if (field === 'age') {
+        const [{ ageNeedsAsk }, { readUnder18Job }] = await Promise.all([import('@/cloud/ageRule'), import('@/cloud/under18Run')]);
+        if (ageNeedsAsk(r.write.profile?.age, (await readUnder18Job()) != null)) {
+          if (!reveal) return;
+          const { askUnder18, afterUnder18Confirmed } = await import('@/cloud/under18Ask');
+          if (!(await askUnder18())) {
+            // Cancel: the old age stays, nothing is deleted.
+            setTexts((t) => ({ ...t, age: seeded.current.age }));
+            return;
+          }
+          if (await write(r.write, field, text)) await afterUnder18Confirmed();
+          return;
+        }
+      }
       await write(r.write, field, text);
     },
     [write],

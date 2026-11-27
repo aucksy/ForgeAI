@@ -142,12 +142,16 @@ declare
     'owner_send_message','owner_set_brand','owner_set_order_status','owner_set_product_active',
     'owner_set_product_photo','owner_sign_out_person','owner_stop_offer','owner_undo_reward','owner_withdraw_message',
     'staff_give_reward','staff_key_status','staff_me','staff_sign_in',
-    'staff_sign_out'];
+    'staff_sign_out',
+    -- 0101 (R-630): the under-18 delete by the gym member's own key (checks the key itself via _member).
+    'gym_member_under18_delete'];
   -- 0032: the member's own cloud copy and "Delete my account" (each acts on auth.uid() only).
   auth_only_ok text[] := array['create_gym','delete_my_cloud_data','join_gym_by_code',
     'member_account_delete','member_copy_count','member_copy_get','member_copy_put',
     -- 0100: "A gym added you" (a signed-in PHONE account only; each checks the number is the caller's own account's).
-    'phone_account_claim','phone_account_gyms'];
+    'phone_account_claim','phone_account_gyms',
+    -- 0101 (R-630): the under-18 delete of the caller's own account (auth.uid() only; refuses staff logins).
+    'member_under18_delete'];
   fails text := ''; checks int := 0; x text; n bigint; t record;
   ga uuid; gb uuid; ka text := 'sec-test-owner-a'; kb text := 'sec-test-owner-b'; km text := 'sec-test-member-a';
   r jsonb; v bigint;

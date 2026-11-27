@@ -59,7 +59,7 @@
   },
   "G4_build": {
    "done": false,
-   "evidence": "slice A part 1 pushed: age rule, age_set_at, summary upload stop, migration 0101 (not applied). Still to build: under-18 sheet, delete calls + pending job, backup lines, About rows."
+   "evidence": "slice A part 1 pushed (6b4b0389; CI: 0101 test PASS 17 checks; old version pins fixed in part 2). Part 2: delete calls (copyApi, gymApi), the kept delete job (cloud/under18Job.ts + test, under18Run.ts), the sheet in Settings -> Profile (under18Ask.ts, ProfileCard), the check at every open (root layout), the delete line in place of the backup card (Under18Status). Still to build: 'Sign in once' button that runs the delete then signs out, BAD_KEY handling of the gym part, About rows."
   },
   "G5_review": {
    "done": false,

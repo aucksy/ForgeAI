@@ -18,6 +18,7 @@ import { accountOffered } from '@/cloud/accountGate';
 import { ACCOUNT_WORDS, copyStatusLine } from '@/cloud/accountWords';
 import { PHONE_ACCOUNT_WORDS } from '@/cloud/phoneAccount';
 import { PhoneBackup } from '@/components/settings/PhoneBackup';
+import { Under18Status, useUnder18State } from '@/components/settings/Under18Status';
 import { askConfirm, Card, GhostButton, PrimaryButton } from '@/components/ui';
 import { InlineError } from '@/components/ui/InlineError';
 import { clockTime, tinyDateWithYear, toISO } from '@/lib/date';
@@ -42,6 +43,8 @@ export function AccountCard() {
   const agreement = useTermsAgreement();
   const [notAgreed, setNotAgreed] = useState<string | null>(null);
   const phoneOn = usePhoneSignInShown();
+  // R-630: after an under-18 "Delete and continue", only the delete's line shows here (no sign-in, no backup).
+  const [under18, reloadUnder18] = useUnder18State();
 
   useFocusEffect(
     useCallback(() => {
@@ -49,6 +52,7 @@ export function AccountCard() {
     }, []),
   );
 
+  if (under18) return <Under18Status state={under18} onChanged={reloadUnder18} />;
   if (!accountOffered({ configured, inGym, signedIn: account != null })) return null;
 
   const signIn = async (): Promise<void> => {

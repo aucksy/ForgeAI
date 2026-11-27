@@ -163,7 +163,7 @@ describe('2. a backup from a newer app is refused, not half-restored', () => {
     expect(env.tracker_schema_version).toBe(TRACKER_SCHEMA_VERSION);
     expect(env.member_schema_version).toBe(MEMBER_SCHEMA_VERSION);
     expect(TRACKER_SCHEMA_VERSION).toBe(16);
-    expect(MEMBER_SCHEMA_VERSION).toBe(2);
+    expect(MEMBER_SCHEMA_VERSION).toBe(3);
   });
 
   it('newer tracker or member version: the update words; older or absent: restores', async () => {
@@ -171,11 +171,11 @@ describe('2. a backup from a newer app is refused, not half-restored', () => {
     const { PlainError } = await import('@/cloud/backupWords');
     const env = (extra: Record<string, unknown>): string =>
       JSON.stringify({ app: 'forgeai', schema_version: 1, ...extra, exported_at: '2026-10-16T00:00:00Z', tables: {} });
-    expect(() => parseSnapshot(env({ tracker_schema_version: 17, member_schema_version: 2 }))).toThrow('This backup was made by a newer MettleUp');
-    expect(() => parseSnapshot(env({ tracker_schema_version: 16, member_schema_version: 3 }))).toThrow(PlainError);
-    expect(() => parseSnapshot(env({ tracker_schema_version: 16, member_schema_version: 3 }))).toThrow('Update MettleUp from the Play Store');
+    expect(() => parseSnapshot(env({ tracker_schema_version: 17, member_schema_version: 3 }))).toThrow('This backup was made by a newer MettleUp');
+    expect(() => parseSnapshot(env({ tracker_schema_version: 16, member_schema_version: 4 }))).toThrow(PlainError);
+    expect(() => parseSnapshot(env({ tracker_schema_version: 16, member_schema_version: 4 }))).toThrow('Update MettleUp from the Play Store');
     expect(() => parseSnapshot(env({ tracker_schema_version: '16' }))).toThrow('damaged');
-    expect(parseSnapshot(env({ tracker_schema_version: 16, member_schema_version: 2 })).app).toBe('forgeai');
+    expect(parseSnapshot(env({ tracker_schema_version: 16, member_schema_version: 3 })).app).toBe('forgeai');
     expect(parseSnapshot(env({ tracker_schema_version: 9, member_schema_version: 1 })).app).toBe('forgeai');
     expect(parseSnapshot(env({})).app).toBe('forgeai');
   });
