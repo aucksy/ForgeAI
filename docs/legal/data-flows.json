@@ -288,19 +288,19 @@
       "from": "member app (when signed in)",
       "to": "gym server (Supabase member_summary)",
       "platform": "Android, iPhone",
-      "who_sees": "the member; the owner and trainers of the gym in the account's profile (policy summary_staff_read)",
-      "why": "unknown: left from the first version (0001); the server only takes the row when the account's profile has a gym, which today's gym join may not set",
-      "keep_for": "until the account is deleted",
+      "who_sees": "nobody: the server refuses the table to every app sign-in (0102)",
+      "why":"none: left from the first version (0001) and read by nothing; stopped 27 Nov 2026 (R-631, owner yes)",
+      "keep_for": "nothing kept: every row deleted by 0102",
       "how_deleted": "account delete (member_account_delete) or the under-18 delete",
-      "switch": "signed in (cloud/outbox.ts enqueueSummary); refused for under 18",
-      "live_or_test": "live",
+      "switch": "off: the phone no longer sends it (cloud/outbox.ts) and the server refuses it (0102)",
+      "live_or_test": "off",
       "under18": "delete",
       "notice_section_en": "none",
       "notice_section_hi": "none",
       "source_link": "supabase/migrations/0001_init.sql",
       "code": {
         "tables": ["supabase:public.member_summary"],
-        "markers": [{ "file": "apps/mobile/src/cloud/outbox.ts", "has": "member_summary" }]
+        "markers": [{ "file": "supabase/migrations/0102_stop_member_summary.sql", "has": "revoke all on public.member_summary" }]
       }
     },
     {

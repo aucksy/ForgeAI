@@ -103,7 +103,7 @@
     "FN-A3-website-2-07",
     "FN-L4-web-pages-p2-04"
   ],
-  "approved_by": "Owner, 27 Nov 2026: \"Yes to all your views\" (D1-D14 = option A/my view each). D15 (Cloudflare visitor counter): he asked to understand it first; no change until he says. D14: \"Don't worry about the list of issues being public.\" Then, 27 Nov 2026: \"I do want the counter. Yes. On my websites, I do need the analytics enabled. So if you want to change the words to match it, yes, do it.\" = D15 option B: keep Cloudflare Web Analytics on the public sites (mettleup.fit, gyms.mettleup.fit; not the admin app or gym pages) and name it in the notice (done 27 Nov). Repo: \"keep the repo public for now\" until real gyms and customers. Old admin address forgeai.aakashpahuja.in stays counted by the aakashpahuja.in automatic counter: owner, 27 Nov 2026, \"Leave it\" (known, accepted; do not raise again).",
+  "approved_by": "Owner, 27 Nov 2026: \"Yes to all your views\" (D1-D14 = option A/my view each). D15 (Cloudflare visitor counter): he asked to understand it first; no change until he says. D14: \"Don't worry about the list of issues being public.\" Then, 27 Nov 2026: \"I do want the counter. Yes. On my websites, I do need the analytics enabled. So if you want to change the words to match it, yes, do it.\" = D15 option B: keep Cloudflare Web Analytics on the public sites (mettleup.fit, gyms.mettleup.fit; not the admin app or gym pages) and name it in the notice (done 27 Nov). Repo: \"keep the repo public for now\" until real gyms and customers. Old admin address forgeai.aakashpahuja.in stays counted by the aakashpahuja.in automatic counter: owner, 27 Nov 2026, \"Leave it\" (known, accepted; do not raise again). Member summary (27 Nov 2026): after the two uploads were explained, he said \"Yes\" to deleting the old member_summary rows; I stop the upload (my call, clean-up).",
   "status": "active",
   "session_id": "",
   "dark": false,
@@ -123,11 +123,11 @@
     },
     "G3_tests_first": {
       "done": true,
-      "evidence": "Per slice, before its build. D15 slice: apps/dashboard/test/crm/visitCounter.test.ts written and run green (3 tests) before the counter commit. Slices A-D: their tests (note section 9a-9h) are written first in each slice and named here as each slice starts."
+      "evidence": "Per slice, before its build. D15 slice: apps/dashboard/test/crm/visitCounter.test.ts written and run green (3 tests) before the counter commit. Slices A-D: their tests (note section 9a-9h) are written first in each slice and named here as each slice starts. Member-summary slice: apps/mobile/test/cloud/noMemberSummaryUpload.test.ts (3) and the access matrix rows for member_summary turned to deny:PERM."
     },
     "G4_build": {
       "done": false,
-      "evidence": "Slice A built 27 Nov 2026: docs/legal/data-flows.json (77 rows), data-flows-allow.json (empty), apps/dashboard/test/legal/dataFlows.test.ts (20 tests; 13 deliberate breaks each failed). D15 deployed (panel b7a8005d). Slices B, C, D to come."
+      "evidence": "Slice A built 27 Nov 2026: docs/legal/data-flows.json (77 rows), data-flows-allow.json (empty), apps/dashboard/test/legal/dataFlows.test.ts (20 tests; 13 deliberate breaks each failed). D15 deployed (panel b7a8005d). Slices B, C, D to come. Member-summary slice: phone upload removed (cloud/outbox.ts, summary.ts deleted), 0102_stop_member_summary.sql, data-flows row set to off."
     },
     "G5_review": {
       "done": false,
