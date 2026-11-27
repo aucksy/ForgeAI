@@ -1,0 +1,64 @@
+{
+ "id": "R-630",
+ "title": "An under-18 stop removes saved data, and every member has a dated age and consent record",
+ "lane": "full",
+ "family": "consent, age and terms are not recorded or enforced (M22)",
+ "sub_families": [
+  "D-02",
+  "A-20",
+  "D-65"
+ ],
+ "findings": [
+  "FN-B-time-phone-cloud-backup-ai-02",
+  "FN-B-truth-phone-cloud-backup-ai-b-01",
+  "FN-B-time-phone-components-2-01",
+  "FN-L12-panel-assistant-01",
+  "FN-L4-panel-forms-01",
+  "FN-L4-phone-shop-2-03",
+  "FN-L4-server-database-1-03",
+  "FN-B-switch-panel-auth-data-01",
+  "FN-B-time-phone-shop-2-01",
+  "FN-B-words-panel-auth-data-01",
+  "FN-B-words-phone-screens-2-02"
+ ],
+ "approved_by": "his words, 27 Nov 2026: \"Okay go ahead with these 5 fixes\" (after the list of five)",
+ "status": "waiting",
+ "session_id": "",
+ "dark": false,
+ "file_boundary": [],
+ "gates": {
+  "G0_family": {
+   "done": true,
+   "evidence": "docs/system-map/FAMILIES.md sub-families D-02, A-20, D-65"
+  },
+  "G1_design": {
+   "done": false,
+   "evidence": ""
+  },
+  "G2_goldfish": {
+   "done": false,
+   "evidence": ""
+  },
+  "G3_tests_first": {
+   "done": false,
+   "evidence": ""
+  },
+  "G4_build": {
+   "done": false,
+   "evidence": ""
+  },
+  "G5_review": {
+   "done": false,
+   "evidence": ""
+  },
+  "G6_proven": {
+   "done": false,
+   "evidence": ""
+  },
+  "G7_delivered": {
+   "done": false,
+   "evidence": ""
+  }
+ },
+ "escapes": []
+}

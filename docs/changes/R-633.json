@@ -1,0 +1,70 @@
+{
+ "id": "R-633",
+ "title": "MettleUp Plus is known by the server, checked with the store, so it works on any phone",
+ "lane": "full",
+ "family": "Plus entitlement lives only on the phone (M08)",
+ "sub_families": [
+  "A-06",
+  "A-47"
+ ],
+ "findings": [
+  "FN-L19-phone-lib-core-01",
+  "FN-L19-phone-onboarding-db-01",
+  "FN-L19-phone-shop-2-01",
+  "FN-L5-phone-lib-core-01",
+  "FN-L5-phone-lib-core-02",
+  "FN-L5-phone-native-01",
+  "FN-L5-phone-native-02",
+  "FN-L5-phone-onboarding-db-01",
+  "FN-L5-phone-screens-1-02",
+  "FN-L5-phone-screens-1-03",
+  "FN-L5-phone-screens-1-04",
+  "FN-L5-phone-screens-2-01",
+  "FN-L5-phone-screens-2-02",
+  "FN-L5-phone-screens-2-04",
+  "FN-L19-phone-cloud-backup-ai-03",
+  "FN-L19-phone-tracker-components-1-01",
+  "FN-L5-phone-tracker-data-01",
+  "FN-L5-phone-tracker-services-2-01"
+ ],
+ "approved_by": "his words, 27 Nov 2026: \"Okay go ahead with these 5 fixes\" (after the list of five)",
+ "status": "waiting",
+ "session_id": "",
+ "dark": false,
+ "file_boundary": [],
+ "gates": {
+  "G0_family": {
+   "done": true,
+   "evidence": "docs/system-map/FAMILIES.md sub-families A-06, A-47"
+  },
+  "G1_design": {
+   "done": false,
+   "evidence": ""
+  },
+  "G2_goldfish": {
+   "done": false,
+   "evidence": ""
+  },
+  "G3_tests_first": {
+   "done": false,
+   "evidence": ""
+  },
+  "G4_build": {
+   "done": false,
+   "evidence": ""
+  },
+  "G5_review": {
+   "done": false,
+   "evidence": ""
+  },
+  "G6_proven": {
+   "done": false,
+   "evidence": ""
+  },
+  "G7_delivered": {
+   "done": false,
+   "evidence": ""
+  }
+ },
+ "escapes": []
+}
