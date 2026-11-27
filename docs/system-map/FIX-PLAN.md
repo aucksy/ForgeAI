@@ -2,12 +2,12 @@
 
 309 families, 2510 open findings.
 
-Lanes before: {'full': 244, 'standard': 50, 'light': 15}. After: {'full': 46, 'standard': 81, 'light': 182}.
-Findings by lane: {'full': 369, 'standard': 752, 'light': 1389}.
+Lanes before: {'full': 244, 'standard': 50, 'light': 15}. After: {'full': 275, 'standard': 27, 'light': 7}.
+Findings by lane: {'full': 2299, 'standard': 202, 'light': 9}.
 Need his call: 160 findings in 68 families.
-119 batches in 40 waves of up to 4 side by side.
+133 batches in 51 waves of up to 4 side by side.
 
-## Full lane (one at a time, his yes)
+## Full-lane families (one design note, goldfish round and yes per batch)
 
 - A-01 (M02 Privacy promises vs real data flows, S1, phone, 21 findings): New data flows, outside companies and stored items ship without anyone updating the privacy notice or terms, because there is no list of where data goes that is checked against the notice.
 - D-01 (M01 Release and store truth, S1, phone, 5 findings): Releases are recorded as shipped without checking that the store actually published them, so fixes and notes reach members late or not at all.
@@ -20,26 +20,53 @@ Need his call: 160 findings in 68 families.
 - B-03 (M02 Privacy promises vs real data flows, S2, phone, 31 findings): Privacy promises (what stays on the phone, what the gym, desk or AI never sees) are written in words but no shared test watches what actually leaves or shows.
 - D-17 (M05 Identity, sign-in and member photo, S2, phone, 7 findings): People are matched by names, first words or per-sign-in accounts instead of one stable key, so the same person becomes two records or loses data.
 - A-20 (M22 Consent, age and terms, S2, phone, 5 findings): Consent, opt-outs and age are not recorded: joining keeps no notice or 18+ record, age is a fixed number, minors can be added, default sharing has no lawful basis and members cannot opt out of offers.
+- B-04 (M24 The test system itself, S2, phone, 24 findings): Some tests pass while the feature is broken: they read the code's text, test a helper no screen uses, take a picture without checking it, make a check optional, run where the page is replaced, feed no data, or accept any count.
+- D-03 (M11 Failures hidden from people, S2, phone, 45 findings): Failures are caught and either shown as 'try again' or kept only on the device, with no shared reporter that writes a log line and sends it to MettleUp, so breakage is invisible until a gym complains.
+- D-04 (M11 Failures hidden from people, S2, phone, 35 findings): When a read fails, the code falls back to a default (empty, zero, none, all clear, paid, not demo) that looks like a true answer, so screens and decisions act on a guess.
+- D-08 (M11 Failures hidden from people, S2, phone, 18 findings): An action fails and the user is shown nothing, or is told it worked, because the failure path has no message.
+- C-02 (M11 Failures hidden from people, S2, phone, 18 findings): A failed read or call is drawn as an ordinary state (empty, not found, offline, switched off, nothing to do) because screens have no shared loading/failed/empty helper that keeps failure separate.
+- D-11 (M12 Jobs, services, storage and load unwatched, S2, phone, 12 findings): Screens poll on fixed short timers with no back-off or stop, and static files go through the worker, using up the shared free request limit.
+- D-14 (M12 Jobs, services, storage and load unwatched, S2, phone, 9 findings): Browser and phone stores have no size budget or early warning, so a full device silently drops data.
+- D-24 (M15 Sync between phone, watch, cloud and devices, S2, phone, 2 findings): Reminders and cards act on an old copy on the phone with no freshness check.
 - B-06 (M04 Delete, erase, backup and restore scope, S2, phone, 19 findings): There is no single list of every place a person's or gym's data lives, so erase, sign-out, leave and delete are never checked to clear all of them.
 - C-09 (M04 Delete, erase, backup and restore scope, S2, phone, 7 findings): Backups, exports and cloud copies each list by hand which kinds of data they include, so new tables, files, columns and photos are left out.
 - A-17 (M04 Delete, erase, backup and restore scope, S2, phone, 6 findings): Restore, replace and undo on the phone act only on the phone's workouts, unaware of the background cloud copy and of other record types, so undone data returns and counts are wrong.
 - B-07 (M04 Delete, erase, backup and restore scope, S2, phone, 10 findings): Backup and bring-back are tested as separate words and steps, never as one round trip, so restore screens, Drive cards, repacked files and failed or half-saved backups go unchecked.
 - A-26 (M04 Delete, erase, backup and restore scope, S2, phone, 1 findings): The photo backup switch was moved out of reach, so members cannot turn it off.
+- D-05 (M10 Same number counted different ways, S2, phone, 35 findings): The same number (counts, records, kg, weeks, money) is worked out by separate rules in different places, so screens disagree.
 - A-06 (M08 Paid features, limits and AI credits, S2, phone, 14 findings): Whether a member owns MettleUp Plus, its plan type, free month and staff unlock live only on the phone, with no server record checked with Google Play, so purchases are missed, double-charged, kept after they end or guessed.
+- D-16 (M13 Test and demo data on the live system, S2, server, 8 findings): New rules apply only to new records, with no backfill for existing members or data.
+- B-05 (M24 The test system itself, S2, server, 20 findings): Tests run at one fixed moment, so expiry windows, day limits, midnight in India, keep times and 'after N days' rules are never exercised.
+- D-06 (M12 Jobs, services, storage and load unwatched, S2, server, 18 findings): Automatic jobs, senders and outside services (WhatsApp, AI, payment keys, backup) have no heartbeat the outage alarm checks, and some health checks answer 'fine' when they cannot read, so a stopped job goes unnoticed.
+- D-12 (M12 Jobs, services, storage and load unwatched, S2, server, 10 findings): Server data grows with no per-gym size budget and no scheduled cleanup, so one gym or old data can fill the free database or store.
+- C-10 (M14 Messages, alerts and badges, S2, server, 7 findings): Events that need someone to act (a booking change, a payment decision, an unanswered question, a waiting join, a stopped copy) have no alert, because alerts are added by hand per event with no list of who must know.
 - C-04 (M04 Delete, erase, backup and restore scope, S2, server, 11 findings): Deleting a gym, a member leaving and Erase each list by hand what to remove, so new stores are missed, some are kept too long and proof that must stay is deleted.
 - A-08 (M04 Delete, erase, backup and restore scope, S2, server, 13 findings): Keep-for limits promised in the notice are left to chance: some deletes only run when someone opens a screen and many tables have no clean-up at all, because no nightly job owns every stated limit.
 - A-03 (M08 Paid features, limits and AI credits, S2, server, 18 findings): Rate limits and AI caps are one shared bucket per day, gym or whole product with no per-caller limit (and the real caller address is lost behind our server), and some endpoints answer anyone, so one outsider can use them up or get free AI.
 - C-12 (M06 Membership and gym billing state, S2, server, 4 findings): The gym's MettleUp plan state (waiting payment, plan switch, end reminder, open pay links) is decided in several places tied to online checkout, so UPI-paying gyms are treated wrongly.
 - C-13 (M09 Server trusts the client; roles, S2, server, 3 findings): Emergency access to a gym's records was built without matching the owner-facing promise or telling the owner, so the words promise consent that the button does not need.
 - A-19 (M09 Server trusts the client; roles, S2, server, 5 findings): The data agreement promises every look at a gym's records is recorded and shown, but direct database reads, master-key reads and reads past a cap are not recorded and the record keeps raw query text.
+- D-20 (M17 Dates, time and the calendar, S2, server, 6 findings): Jobs and lists work only on a fixed recent window, so items older than it, including ones missed during an outage, quietly vanish.
 - A-12 (M02 Privacy promises vs real data flows, S2, web, 9 findings): Website, store listing and join-page claims about product behaviour are written by hand and not re-checked when a feature changes or is retired (Drive backup, messages, renew, reminders, switching offer).
+- A-16 (M01 Release and store truth, S2, web, 6 findings): Words about which watch and phone apps exist (watch on public Play, Apple Watch, iPhone coming soon, which watches work) are written by hand and not tied to what is really released.
 - A-14 (M08 Paid features, limits and AI credits, S2, web, 7 findings): AI credit rules (what costs a credit, starter credits, monthly free numbers, pack prices) are typed by hand into the website, help, HQ and credits sheet instead of read from one price table.
 - A-21 (M03 Personal data leaving the system, S2, web, 4 findings): Hiding names and numbers before sending to the AI is done separately in each call, so rewrites and some import columns send real details, and public lines claim the AI sees columns only.
 - A-22 (M05 Identity, sign-in and member photo, S2, panel, 4 findings): Facts are read from free-text names (plan names, friend names, exercise names) instead of fixed ids.
+- B-01 (M24 The test system itself, S2, panel, 72 findings): The admin panel and HQ have logic tests but no rule that every page, sheet, card and button is opened and pressed in a browser test, so whole screens are never driven.
+- B-02 (M24 The test system itself, S2, panel, 47 findings): Screen and server tests sign in as the owner only; there is no shared way to replay them as front desk, trainer, staff, demo or a member who left, so other roles are never checked.
+- C-06 (M11 Failures hidden from people, S2, panel, 9 findings): One fixed message is used for several real situations (saved vs handed over, PIN vs code, preview vs saved, which folder), because the screen does not pick its words from the actual result.
+- D-22 (M12 Jobs, services, storage and load unwatched, S2, panel, 5 findings): Public or anonymous paths have no per-caller or total cap, or their cap switches off quietly when its store fails.
+- C-03 (M16 Screen words, help and 'say it once', S2, panel, 15 findings): Each screen writes its own 'contact MettleUp / tell your gym' line, often with no number, link or fallback, because there is no shared support-contact component.
+- D-07 (M14 Messages, alerts and badges, S2, panel, 18 findings): There is no single rule for whether a member can get an app pop-up, so send screens say 'sent' or 'members see it' without checking who will really get it.
+- D-09 (M14 Messages, alerts and badges, S2, panel, 16 findings): Writes carry no once-only request id and taps are not guarded, so a retry after a lost answer, or a double tap, saves twice or is misread as a new or bad request.
+- A-25 (M14 Messages, alerts and badges, S2, panel, 2 findings): Reminders and birthday wishes are assumed to reach the member's phone, with no check of Android's limits or whether the phone shows them.
+- D-10 (M14 Messages, alerts and badges, S2, panel, 12 findings): Pending items (requests, leads, prizes, stuck payments, questions) close only through their own button, so the same thing done another way leaves them open.
+- C-08 (M15 Sync between phone, watch, cloud and devices, S2, panel, 9 findings): Help questions, team replies, alert sign-ups, quick buttons and the shop key are kept per browser or phone instead of per gym and person, so they leak to the next user or are lost on another device.
 - A-05 (M04 Delete, erase, backup and restore scope, S2, panel, 14 findings): There is no single list of every table and file that holds a person's or gym's data, so member erase, member delete and gym delete each forget some copies (photos, measurements, AI history, enquiries, shop copy, second database) or delete records that must stay.
 - A-23 (M04 Delete, erase, backup and restore scope, S2, panel, 3 findings): Copies of gym data kept on staff browsers and phones (set-aside copy, outbox, offline member list) have no end date and are not wiped when the person is removed or signs out.
 - D-19 (M04 Delete, erase, backup and restore scope, S2, panel, 6 findings): The nightly backup is not sized for growth, misses some tables and has never been restored for real.
 - A-24 (M04 Delete, erase, backup and restore scope, S2, panel, 3 findings): Excel import does not record what it changed in existing members (prices, filled details, app links, measurements), so undo removes or keeps the wrong things.
+- C-05 (M10 Same number counted different ways, S2, panel, 11 findings): The same number (active members, ending this week, kg lifted, week goal, batch count) is counted separately on each screen, file and summary, so the same words show different numbers.
 - A-09 (M07 Payments, receipts and refunds, S2, panel, 12 findings): Whether a payment link or fee ask is open, paid online, expired, cancelled or failed is not one record every screen reads, so desk, shop, enquiry and member screens guess and show pay buttons, old UPI IDs or 'not paid' for money already taken.
 - A-10 (M07 Payments, receipts and refunds, S2, panel, 12 findings): The money records have no refunded or reversed state, so cancelling an online-paid receipt or order, a double payment, an over-payment or a wrongly confirmed payment leaves no way to record that money went back.
 - A-13 (M07 Payments, receipts and refunds, S2, panel, 8 findings): Whether a payment is test or live is not carried with each payment, so test payments create real plans, receipts, member alerts and 'Paid' lines, and help and HQ treat test as real.
@@ -54,126 +81,342 @@ Need his call: 160 findings in 68 families.
 - A-15 (M09 Server trusts the client; roles, S2, panel, 7 findings): The server accepts role-limited actions and values (pass member, every-branch, door dates, offline flag, back-dated check-ins, option prices) exactly as the admin app sends them, so desk limits exist only on screen.
 - D-23 (M09 Server trusts the client; roles, S2, panel, 4 findings): Screens ship before the server part they call exists live, so a missing server piece reads as 'switched off' or a feature that does nothing.
 - C-16 (M09 Server trusts the client; roles, S2, panel, 1 findings): Pass visits do not store the pass company at check-in, so history is read from the member's current pass.
+- C-11 (M21 Owner operations and keys, S2, panel, 7 findings): Work that MettleUp must do by hand (credit top-ups, complaints, refunds, page reports, lock-outs, delete requests) arrives through general boxes with no queue, kind or tool in HQ.
 - B-08 (M03 Personal data leaving the system, S2, panel, 3 findings): Personal data (names, ID numbers, typed numbers) is put into outgoing AI requests, download files or browser storage with no shared filter that strips it.
+- D-15 (M12 Jobs, services, storage and load unwatched, S2, hq, 9 findings): Free-tier and paid limits have no early warning to MettleUp, so the first sign is a failure.
+- A-44 (M01 Release and store truth, S3, phone, 5 findings): Google Play rules (target version, unused permissions, Android 15 bars, outside update path, trader status) are not checked before release.
+- A-62 (M01 Release and store truth, S3, phone, 2 findings): Fixes are announced in What's new before they are proven on the phone that had the problem.
+- B-41 (M01 Release and store truth, S3, phone, 1 findings): What's new dates are stored without a year, so new-feature dots come back a year later.
+- D-68 (M13 Test and demo data on the live system, S3, phone, 3 findings): Demo workouts are not flagged in one place, so widgets, exports and counts treat them as real.
+- B-14 (M24 The test system itself, S3, phone, 27 findings): Error, refusal and hint words live as strings no test reads, so the exact words members and staff see are never checked.
+- B-16 (M24 The test system itself, S3, phone, 22 findings): Tests always say yes and go forward; Cancel, Back, Not now and backing out are never pressed.
+- B-23 (M24 The test system itself, S3, phone, 12 findings): Phone and watch notifications and reminders are posted from several services and no test posts one and reads back its words, lock-screen content, channel, tap route or schedule change.
+- B-27 (M24 The test system itself, S3, phone, 9 findings): Save, start and share buttons each handle busy state on their own and no test ever presses them twice.
+- B-28 (M24 The test system itself, S3, phone, 9 findings): Settings are read once at start and no test flips them on and off (or while a screen is open) and checks the effect.
+- D-28 (M24 The test system itself, S3, phone, 24 findings): Many screens and services have no test that runs them, only tests that look for words in the code, so breakage goes unseen.
+- C-25 (M11 Failures hidden from people, S3, phone, 10 findings): Failures the apps catch themselves (saves, imports, sign-in, native alerts, watch crashes) are shown calmly but never reach MettleUp, because the crash report path is used only for uncaught crashes.
+- C-28 (M11 Failures hidden from people, S3, phone, 8 findings): A save or action that fails is caught and dropped with no word to the person, because each screen handles its own errors instead of going through one shared save helper that shows the failure.
+- D-30 (M11 Failures hidden from people, S3, phone, 23 findings): Screens pick their error words from one catch-all guess instead of the real kind of failure, so a server fault, a shared limit or a full store is shown as 'no internet', 'switched off', 'you used too much' or a vague error.
+- D-64 (M12 Jobs, services, storage and load unwatched, S3, phone, 4 findings): Outside calls are made with no time limit, so a stalled line leaves screens waiting for ever.
+- A-38 (M12 Jobs, services, storage and load unwatched, S3, phone, 6 findings): Nothing checks the apps' libraries for known security holes, so flagged spreadsheet, navigation, sharing and watch libraries ship.
+- D-26 (M16 Screen words, help and 'say it once', S3, phone, 27 findings): Screen and help words are written once and not re-checked when the feature changes, so they promise or name things that are not true.
+- B-30 (M16 Screen words, help and 'say it once', S3, phone, 8 findings): Screen words are written as fixed promises instead of being driven by the real state, so they claim things that are not true (saved, safe, a button that does not exist, a fixed 15 minutes).
+- C-37 (M16 Screen words, help and 'say it once', S3, phone, 6 findings): Internal names (database step numbers, 'old owner key', 'gym server', system prefixes, the old brand kind) reach people, because raw stored values and code words go straight into text with no plain-words layer.
+- C-51 (M16 Screen words, help and 'say it once', S3, phone, 3 findings): Leads from the member app are sent once, thinly and unlabelled, because the lead path was built without retry, detail or a source label.
+- C-27 (M14 Messages, alerts and badges, S3, phone, 9 findings): Each alert sets its own sound, vibration, channel importance and watch buzz, so OEM silencing, silent mode and the watch are handled for some alerts and not others.
+- C-58 (M14 Messages, alerts and badges, S3, phone, 3 findings): Undo bars and saved notes vanish on a fixed short timer, and one is hand-made, so screen reader users and slow readers miss them.
+- D-57 (M14 Messages, alerts and badges, S3, phone, 5 findings): Read marks, badges and tray pop-ups are set by side signals (background counts, pushes) rather than by the member actually opening the item.
+- C-69 (M14 Messages, alerts and badges, S3, phone, 2 findings): Full-screen pop-ups (phone update, watch update, free month) decide on their own when to show, so one hides or blocks another for good.
+- C-32 (M14 Messages, alerts and badges, S3, phone, 7 findings): 'Not now', 'Skip' and close on cards and offers hide them for good without saying where to find them again.
+- C-57 (M14 Messages, alerts and badges, S3, phone, 3 findings): Refreshes are throttled by a time window alone, so a real change (a pop-up tap, new workout days) waits out or is thrown away by the window.
+- D-55 (M15 Sync between phone, watch, cloud and devices, S3, phone, 5 findings): Edits and deletes on one side are not pushed to the copies held elsewhere (member app, gym mates, gym offer counts).
+- C-46 (M15 Sync between phone, watch, cloud and devices, S3, phone, 4 findings): Phone, watch, older phones and the server talk without telling each other their versions, so a newer or older side silently loses data, buttons or the reason for a refusal.
+- D-46 (M15 Sync between phone, watch, cloud and devices, S3, phone, 9 findings): Work the phone does in the background (closed-app set ticks, Health deletes, leave notes, ratings, late replies, record rebuilds) has no durable outbox, so one failure or a closed app loses it or delays it for hours.
+- D-69 (M15 Sync between phone, watch, cloud and devices, S3, phone, 3 findings): Linking a member found by number or invite to the gym list happens once and is not retried, so the member waits for a QR check-in.
+- B-20 (M15 Sync between phone, watch, cloud and devices, S3, phone, 15 findings): Pages read their data once and no test changes the data while they are open, so stale numbers after an add, delete or payment go unnoticed.
+- D-62 (M15 Sync between phone, watch, cloud and devices, S3, phone, 4 findings): Gym plan sync to the phone has no clear merge rule for deleted or edited folders, so trainer changes are lost or lead nowhere.
+- A-65 (M15 Sync between phone, watch, cloud and devices, S3, phone, 1 findings): A watch update prompt hides after Back and leaves no lasting sign.
+- D-66 (M15 Sync between phone, watch, cloud and devices, S3, phone, 4 findings): Timed work (receipts, rest alarms, hold countdowns, quiet installs) runs only while a screen is open or the app is in front, so time promises are not kept.
+- D-50 (M15 Sync between phone, watch, cloud and devices, S3, phone, 8 findings): Whether someone is new is guessed from install or join dates, so long-time members get new-member treatment and new ones get upgrade notes.
+- D-51 (M15 Sync between phone, watch, cloud and devices, S3, phone, 8 findings): The app reads only its own switches, not the phone's notification, channel, Do Not Disturb or battery settings, so it says alerts are on when the phone blocks them.
+- C-67 (M15 Sync between phone, watch, cloud and devices, S3, phone, 2 findings): Deletes and repairs that touch several tables run as separate steps, so a close mid-way leaves data half gone.
+- A-35 (M04 Delete, erase, backup and restore scope, S3, phone, 7 findings): Erase, demo load and photo delete on the phone wipe a hand-picked list of stores, so photo folders, settings, trial dates, backup copies and the watch copy remain, and failures are hidden.
+- D-70 (M04 Delete, erase, backup and restore scope, S3, phone, 3 findings): Restore, erase and sign-in do not cover every piece of member state, so some choices survive or are lost.
+- A-32 (M10 Same number counted different ways, S3, phone, 7 findings): Money and weights are rounded in many places with different rules instead of one formatter, so paise vanish and kilos and pounds drift between screens and the watch.
+- D-38 (M10 Same number counted different ways, S3, phone, 13 findings): Progress maths use fixed calendar windows and ignore the member's real training span (join date, partial weeks, long breaks, easy weeks).
+- A-40 (M08 Paid features, limits and AI credits, S3, phone, 5 findings): MettleUp Plus is built but its launch rules (renewal and cancel words, refund rule, who counts as staff, gym cover versus free month) were never decided and written down.
+- A-47 (M08 Paid features, limits and AI credits, S3, phone, 4 findings): Plus limits are checked separately in each screen and entry point, so restore and chart ranges slip past and a mid-workout change is not passed on to the workout or watch.
+- B-25 (M08 Paid features, limits and AI credits, S3, phone, 11 findings): Which features are free, Plus, gym member or Pro is decided in several places and no shared test checks who gets each lock.
+- A-33 (M08 Paid features, limits and AI credits, S3, phone, 7 findings): The hidden AI coach can be switched back on without safety rules, a report button, an app-side delete confirm, a live number check or a privacy-notice update, because no switch-on checklist exists.
+- C-88 (M07 Payments, receipts and refunds, S3, phone, 1 findings): A member paying the gym by UPI has no way to tell the gym.
+- C-81 (M06 Membership and gym billing state, S3, phone, 1 findings): The chart's opening range skips the free-plan check that later range changes run.
+- C-64 (M06 Membership and gym billing state, S3, phone, 2 findings): The forgotten-workout pause depends on the app being open and on timers that are only opened, so the workout keeps counting.
+- B-33 (M06 Membership and gym billing state, S3, phone, 7 findings): Gym-scoped data on the phone (logo, look, kept plan, hours, sync, what is sent) has no single owner, and no test moves a member from gym A to gym B.
+- A-36 (M17 Dates, time and the calendar, S3, phone, 7 findings): Dates and ages of readings are shown as day-and-month, time-only or raw day counts with no year or day, and a page's open line never refreshes.
+- A-31 (M21 Owner operations and keys, S3, phone, 8 findings): Outside icons, pictures, sounds, code packages and Hevy pages are used without a register of where they came from and what their licence asks, so credits and notices are missing.
+- A-37 (M03 Personal data leaving the system, S3, phone, 6 findings): Text typed by members, desk staff or outside files (names, batch names, exercise names, help messages) is pasted into AI prompts as trusted facts with no fence, so it can steer the AI.
+- C-17 (M19 Touch, reading and accessibility, S3, phone, 17 findings): Small controls and tappable rows are drawn as plain text with no shared tap-row or text-button style, so they do not look tappable.
+- C-31 (M19 Touch, reading and accessibility, S3, phone, 8 findings): Results, errors and new answers appear without being read out (or are read out again every minute), because there is no shared announce line.
+- C-38 (M19 Touch, reading and accessibility, S3, phone, 6 findings): Charts, calendars, picked swatches, best sets and chat senders carry meaning only by colour, bar height, hover or touch, with no words or shape.
+- D-47 (M19 Touch, reading and accessibility, S3, phone, 9 findings): Taps and links are pointed at screens by hand, and nothing checks they open the place their words name.
+- D-48 (M19 Touch, reading and accessibility, S3, phone, 9 findings): Buttons and titles are fixed to one line, and no test renders them at big font on a narrow phone.
+- A-27 (M18 Internal notes, maps and dead code, S3, phone, 17 findings): Backlog, feature list and planning notes are kept by hand and never re-derived from code and switches, so they say things are live, built, switched off or private when they are not.
+- C-29 (M18 Internal notes, maps and dead code, S3, phone, 8 findings): The list of live features and the 'not live' notes are kept by hand, so removed, hidden or now-live features are still listed wrongly and their help and leftover code linger.
+- D-27 (M18 Internal notes, maps and dead code, S3, phone, 25 findings): There is no dead-code check, so unused and switched-off code, some kept alive only by its own tests, piles up.
+- D-36 (M18 Internal notes, maps and dead code, S3, phone, 16 findings): Small rules and helpers are copied by hand into several files and have drifted apart.
+- B-22 (M24 The test system itself, S3, watch, 13 findings): The watch app has almost no screen or service tests, so its buttons, taps, phone hand-off and sensors are never driven.
+- D-54 (M15 Sync between phone, watch, cloud and devices, S3, watch, 6 findings): The watch keeps its own copies of phone settings and workout state with no sync rule, so switches and dedupe windows drift from the phone.
+- A-58 (M15 Sync between phone, watch, cloud and devices, S3, watch, 3 findings): The phone-watch link rests on assumptions (one install signal, the newest row, a counter that only rises) that break in real use.
+- C-73 (M15 Sync between phone, watch, cloud and devices, S3, watch, 2 findings): The watch keeps its own copy of set-entry rules (required weight, effort choices) instead of getting them from the phone.
+- C-80 (M15 Sync between phone, watch, cloud and devices, S3, watch, 1 findings): The watch keeps the last heart rate when the sensor says off-wrist.
+- C-47 (M19 Touch, reading and accessibility, S3, watch, 4 findings): Text is sized in fixed pixels or with a fake scaling test, so it ignores the person's bigger text setting.
+- C-34 (M01 Release and store truth, S3, server, 7 findings): The release checks prove only one path (last release, stock emulator, GitHub copy, phone without watch, one deploy order), so other real update and release paths ship unproven.
+- C-70 (M01 Release and store truth, S3, server, 2 findings): What's new notes are written by hand with no check against the real behaviour or the app they ship in, so they can say the reverse of what happens or repeat the phone's notes for the watch.
+- B-21 (M01 Release and store truth, S3, server, 14 findings): The release and CI workflows' safety stops are written as workflow text with no self-test run on every push.
+- D-43 (M01 Release and store truth, S3, server, 9 findings): Sends are marked done when they are handed over, not when they really succeed, so failures are never retried and screens say 'sent' too early.
+- D-49 (M01 Release and store truth, S3, server, 8 findings): CI checks can show green while testing nothing (skipped, warn-only, re-run, never triggered).
+- D-72 (M01 Release and store truth, S3, server, 2 findings): Cloud run setup is copied by hand into each run, so fixes and versions drift.
+- A-56 (M01 Release and store truth, S3, server, 3 findings): Server change files say by hand whether they are live, and nobody updates them after they are applied.
+- C-52 (M01 Release and store truth, S3, server, 3 findings): Database change files are not safe to run again and the live state is not checked against them, so re-running an old step undoes later ones.
+- A-42 (M05 Identity, sign-in and member photo, S3, server, 5 findings): Sign-ins and keys (panel, device, HQ, shop key, phone session) have no expiry and cannot be ended from the server, and the phone session sits in backed-up storage.
+- A-61 (M05 Identity, sign-in and member photo, S3, server, 2 findings): A gym's join code is the only thing needed to join its member app, yet it is shown on the public page and has no wrong-try limit.
+- B-15 (M24 The test system itself, S3, server, 22 findings): Alerts, bell lines, pop-ups and phone notifications are built in many places with no shared test of who gets them, what they say, where they open and when they stay quiet.
+- B-18 (M24 The test system itself, S3, server, 16 findings): Server functions and HQ routes are added without a rule that each has a database or route test, so whole calls, lists and saves are never exercised on the server.
+- B-31 (M24 The test system itself, S3, server, 7 findings): Nightly clean-ups, scheduled runs and automatic starts are tested, if at all, on one row and only when every step works.
+- B-32 (M24 The test system itself, S3, server, 7 findings): The public gym-server addresses and relay pass-through are tested only for their main page, not headers, unknown addresses or upgrades.
+- A-53 (M24 The test system itself, S3, server, 4 findings): Tests start from an empty database and a single fresh path, never from last version's data, re-runs, passing time or every payment company.
+- C-24 (M12 Jobs, services, storage and load unwatched, S3, server, 11 findings): Nightly jobs, keys, outside services and devices can stop working with only a hidden log line, because nothing records each part's last good run where HQ's health check reads it.
+- D-74 (M12 Jobs, services, storage and load unwatched, S3, server, 2 findings): The pop-up sender sends a fixed number per minute, so big gyms wait and late pop-ups are dropped.
+- D-37 (M12 Jobs, services, storage and load unwatched, S3, server, 15 findings): Database links and filters have no index and the database check never asks for index advice, so reads scan whole tables.
+- A-51 (M12 Jobs, services, storage and load unwatched, S3, server, 4 findings): Cloud build runs pull outside code by moving versions, paste typed inputs into commands, have unlimited access passes and print account details to public logs.
+- D-76 (M12 Jobs, services, storage and load unwatched, S3, server, 2 findings): The app's update check and update notes read GitHub, not the store the member installed from.
+- B-40 (M04 Delete, erase, backup and restore scope, S3, server, 1 findings): Restoring a backup brings back members who deleted their account since it was taken, and nothing re-deletes them.
+- C-62 (M04 Delete, erase, backup and restore scope, S3, server, 2 findings): The backup's own safety (one consistent moment, a separate place) is assumed rather than built and checked.
+- A-60 (M04 Delete, erase, backup and restore scope, S3, server, 2 findings): The nightly backup is a full readable copy, including secrets and PIN fingerprints, with no separate key and no record of who looks at it.
+- A-41 (M08 Paid features, limits and AI credits, S3, server, 5 findings): How many AI credits a task costs and when they come back is decided by the app or web caller, not by the server's ledger, so credits can be skipped, under-counted, charged for held-back answers or lost.
+- B-26 (M08 Paid features, limits and AI credits, S3, server, 11 findings): Daily and hourly caps (questions, orders, messages, codes, crash reports, help) are each counted their own way and no test fills a cap to its edge.
+- C-66 (M08 Paid features, limits and AI credits, S3, server, 2 findings): HQ's AI limit form sends whole defaults instead of what was changed, so a blank box becomes 0 and trial limits are overwritten.
+- D-60 (M08 Paid features, limits and AI credits, S3, server, 4 findings): AI spend is counted in some places and not others, so the monthly cost is wrong.
+- D-75 (M08 Paid features, limits and AI credits, S3, server, 2 findings): Automatic and system messages draw from the gym's own daily member-message cap.
+- B-39 (M07 Payments, receipts and refunds, S3, server, 1 findings): The server keeps a history of receipt changes that no screen ever shows the owner.
+- B-29 (M09 Server trusts the client; roles, S3, server, 8 findings): Privileged actions write log rows but tests never read them back, and one action writes none.
+- C-75 (M09 Server trusts the client; roles, S3, server, 1 findings): HQ writes the Log line before the change is checked and saved.
+- C-18 (M21 Owner operations and keys, S3, server, 16 findings): The service rests on one person's accounts, domains and single-copy keys with no written way back, so losing one account or key breaks the service.
+- C-82 (M03 Personal data leaving the system, S3, server, 1 findings): Outage and key notes are posted in a public place.
+- D-33 (M18 Internal notes, maps and dead code, S3, server, 18 findings): The feature map and set-up notes are hand-kept, not read from live state, so they say things are off or waiting that are live.
+- D-31 (M20 Shared rules copied per feature, S3, server, 22 findings): Gym pause, unpaid lock, Pro and Plus locks and page-off are checked screen by screen, so new screens and server paths miss them.
+- D-44 (M20 Shared rules copied per feature, S3, server, 9 findings): Owner settings (AI limits, trial, offers, language, message calm, alerts, defaults) are read separately by each feature or hard-coded, so some features ignore them.
+- D-82 (M07 Payments, receipts and refunds, S3, web, 1 findings): A free plan still offers online pay of zero rupees.
+- C-74 (M02 Privacy promises vs real data flows, S3, panel, 2 findings): Screens offer or promise things that were never built (a WhatsApp send, a trainer-teaches view, a limit-raise tool), because words were written ahead of the feature with no check that it exists.
+- A-45 (M01 Release and store truth, S3, panel, 5 findings): Old What's new and update notes are never retired or re-checked, so they name old pages, describe things backwards and contradict each other.
+- D-81 (M01 Release and store truth, S3, panel, 1 findings): A test message was left live in every gym's bell.
+- C-55 (M05 Identity, sign-in and member photo, S3, panel, 3 findings): PIN set, change and sign-in each carry their own rules and words, so a saved PIN can be followed by a wrong error and a change lock does not grow.
+- C-49 (M13 Test and demo data on the live system, S3, panel, 3 findings): The demo gym re-implements real gym rules in its own fake layer, so its counts, limits and approvals drift from the real gym.
+- B-34 (M13 Test and demo data on the live system, S3, panel, 7 findings): The sales demo's pretend server is never exercised by pressing buttons, so its acted-out actions, refusals, badges and reset are unchecked.
+- D-65 (M22 Consent, age and terms, S3, panel, 4 findings): Terms acceptance is captured only once at join, never re-asked on change, not re-openable and not read by HQ.
+- B-10 (M24 The test system itself, S3, panel, 41 findings): Form checks and refusal words on phone, panel and web forms are scattered per screen, so tests type only good values.
+- B-12 (M24 The test system itself, S3, panel, 32 findings): The written journeys and the tests are kept separately and nothing ties a test's expectation to an agreed rule, so they contradict each other and some tests lock in behaviour nobody decided on.
+- B-13 (M24 The test system itself, S3, panel, 32 findings): Panel tests use a fake server that always answers, so failed saves, no internet, empty lists, loading and not-online states are never seen.
+- B-19 (M24 The test system itself, S3, panel, 15 findings): Nothing simulates the app being closed, restarted, updated, reloaded or restored part-way, so recovery paths are never run.
+- B-24 (M24 The test system itself, S3, panel, 12 findings): Test gyms have one branch, so anything that changes with two or more branches (tiles, imports, timings, PINs, visitors) is never tried.
+- B-35 (M11 Failures hidden from people, S3, panel, 4 findings): Rules trim, cut or leave out what a person typed or chose without saying so, and tests lock that silence in.
+- D-35 (M12 Jobs, services, storage and load unwatched, S3, panel, 17 findings): No product usage events are recorded anywhere central, so activation, day-30 use and feature uptake are unknown and some progress lives only in one browser.
+- D-45 (M12 Jobs, services, storage and load unwatched, S3, panel, 9 findings): Pages ship as one big download with blocking fonts and late pictures, and nothing checks page speed on a phone.
+- D-29 (M12 Jobs, services, storage and load unwatched, S3, panel, 24 findings): Screens and saves recompute from the whole history on every open, tick or save instead of keeping running totals, and nothing times this against big data.
+- D-61 (M12 Jobs, services, storage and load unwatched, S3, panel, 4 findings): Bulk work and page loads send requests one after another instead of in one batch.
+- C-21 (M16 Screen words, help and 'say it once', S3, panel, 13 findings): Help articles are written by hand apart from the screens and the help check covers only some folders, so help lags, contradicts or skips live features.
+- A-52 (M16 Screen words, help and 'say it once', S3, panel, 4 findings): Help articles quote buttons and questions by hand and nothing checks them against the screens.
+- C-22 (M16 Screen words, help and 'say it once', S3, panel, 12 findings): Screens and messages name menus, tabs and buttons by hand ('in Profile', 'tap Back up now'), so the words go stale when a screen or button moves or changes.
+- C-19 (M16 Screen words, help and 'say it once', S3, panel, 15 findings): Hinglish covers only the screens whose words were wrapped in the language lookup, and nothing fails when a new line is left unwrapped or a Hinglish line is wrong.
+- D-41 (M16 Screen words, help and 'say it once', S3, panel, 10 findings): Greyed-out controls show no reason, because there is no shared disabled-with-reason control.
+- D-39 (M14 Messages, alerts and badges, S3, panel, 12 findings): Sends keep no per-member delivery or seen record, so owners, HQ and MettleUp cannot see who got or read a message.
+- C-26 (M14 Messages, alerts and badges, S3, panel, 10 findings): Shown notifications and pop-ups have no 'close when the thing is done or changed' step, so stale notices stay or keep coming after the job, renewal, switch-off or erase.
+- C-39 (M14 Messages, alerts and badges, S3, panel, 6 findings): There is no one rule that decides when a pop-up may ring (quiet hours, urgent kinds, the daily allowance, grouping edits), so each sender rings at any hour and in any amount.
+- D-40 (M14 Messages, alerts and badges, S3, panel, 12 findings): Ideas, nudges and cards do not read the shared record of what was already sent, automated or finished, so they offer the same action again.
+- B-37 (M14 Messages, alerts and badges, S3, panel, 1 findings): New-question and message alerts compare counts instead of ids, so a question that arrives just after another is answered makes no sound.
+- D-42 (M15 Sync between phone, watch, cloud and devices, S3, panel, 10 findings): Seen marks, ticks, language and notes are kept in one browser or phone instead of on the server, so other devices disagree.
+- D-53 (M15 Sync between phone, watch, cloud and devices, S3, panel, 7 findings): Door machine commands and uploads are fire-and-forget with no acknowledged queue, so failed or unreadable ones are lost and lapsed members can keep entry.
+- D-56 (M15 Sync between phone, watch, cloud and devices, S3, panel, 5 findings): The desk's offline queue does not handle final refusals, cancels with no answer, or weak lines, and buttons are not greyed offline.
+- C-77 (M15 Sync between phone, watch, cloud and devices, S3, panel, 1 findings): Putting a gym online copies once and does not send entries saved during the copy.
+- C-76 (M15 Sync between phone, watch, cloud and devices, S3, panel, 1 findings): Only the top branch list checks for unsent entries before switching.
+- A-63 (M15 Sync between phone, watch, cloud and devices, S3, panel, 2 findings): Some gym choices (set-up ticks, language) are kept in the browser, not with the gym on the server, so a new device or address loses them.
+- C-79 (M15 Sync between phone, watch, cloud and devices, S3, panel, 1 findings): The nightly door update runs inside the admin app instead of on the server.
+- A-34 (M15 Sync between phone, watch, cloud and devices, S3, panel, 7 findings): Saves have no request id, version check or single-step write, so double taps, dropped connections and two desks at once save twice or undo each other.
+- A-66 (M15 Sync between phone, watch, cloud and devices, S3, panel, 1 findings): The assistant history saves the AI's first suggestion instead of what the owner saved.
+- A-29 (M10 Same number counted different ways, S3, panel, 10 findings): Each report, tile and summary defines its own count (visits vs members, archived included, fee vs total, GST, partial weeks, cancel time), so the same number differs between screens.
+- D-52 (M10 Same number counted different ways, S3, panel, 8 findings): Whether a plan has started, ended, been renewed or is still owed is worked out separately on each screen, so dues, renewals and endings disagree.
+- A-43 (M10 Same number counted different ways, S3, panel, 5 findings): Offers, rewards and leaderboards count activity the server never verified (fixed-code check-ins, back-dated or imported workouts, made-up kg, reused codes, taken-back check-ins).
+- C-61 (M08 Paid features, limits and AI credits, S3, panel, 2 findings): Giving AI credits back is not tied to the task's real status, so a failed give-back leaves a task stuck and a worked task can still be refunded.
+- B-38 (M08 Paid features, limits and AI credits, S3, panel, 1 findings): The rule that a member needs classes left is checked only on the screen, so the server books personal training with none left.
+- A-28 (M07 Payments, receipts and refunds, S3, panel, 11 findings): Receipts, WhatsApp messages and hints each work out their own amounts, dates and plan names instead of reading one shared calculation, so they disagree with each other and the real plan.
+- A-59 (M07 Payments, receipts and refunds, S3, panel, 3 findings): Payment words in messages, invites and posters are fixed text ('pay at the desk', 'or on UPI') and do not read the gym's online-pay switch or saved UPI ID.
+- C-30 (M07 Payments, receipts and refunds, S3, panel, 8 findings): Words about how people pay (at the desk or online, UPI or company) are fixed text on each screen instead of being read from the gym's one payment setting, so they go wrong when online paying is on.
+- C-72 (M07 Payments, receipts and refunds, S3, panel, 2 findings): An offline or not-yet-confirmed receipt is handled differently on each payment screen, so one shows no receipt number and another lets it be sent.
+- D-73 (M07 Payments, receipts and refunds, S3, panel, 2 findings): GST is split only when a receipt is printed, never stored, so monthly totals and exports cannot show it.
+- A-67 (M07 Payments, receipts and refunds, S3, panel, 1 findings): Adding a GST number quietly makes every price GST-inclusive without telling the owner.
+- A-54 (M06 Membership and gym billing state, S3, panel, 3 findings): The gym Pro pack switch is off and, when on, is enforced only on new rows and on the device, so Starter gyms keep Pro pages and the website sells them as Pro-only today.
+- A-68 (M06 Membership and gym billing state, S3, panel, 1 findings): Past pass visits read the member's current pass company instead of the one saved at the visit.
+- B-36 (M09 Server trusts the client; roles, S3, panel, 3 findings): Server reads return the same answer to every caller instead of shaping it by who asks, so the desk or a stranger learns more than their role should.
+- C-44 (M09 Server trusts the client; roles, S3, panel, 4 findings): Who may see or do what (desk vs owner, branch access, pause rules) is decided screen by screen instead of from one permission rule.
+- A-50 (M09 Server trusts the client; roles, S3, panel, 4 findings): Picture storage rules and upload tickets are not tied to one gym or to published pages, so tickets are reusable, drafts can be listed and another gym's logo can be used.
+- A-48 (M09 Server trusts the client; roles, S3, panel, 4 findings): The entry-machine link was built before a trust design: machines are identified by serial alone, punches can carry any date, and the link would be unencrypted.
+- A-30 (M09 Server trusts the client; roles, S3, panel, 10 findings): There is no rule that every gym-scoped call gets a test proving another gym or member is refused, and the read-everything test checks empty tables.
+- D-71 (M09 Server trusts the client; roles, S3, panel, 2 findings): Branch-level and gym-level settings are not clearly scoped, so a change hits one branch only or a member is blocked at others.
+- A-57 (M17 Dates, time and the calendar, S3, panel, 3 findings): Date maths assumes an easy calendar: month-end starts lose days, festival lists end silently, and kept answers use the save day.
+- C-42 (M17 Dates, time and the calendar, S3, panel, 5 findings): Dates and times use whatever clock is to hand (device clock, UTC, a 05:30 reset), because there is no shared India-day and server-time helper.
+- A-49 (M21 Owner operations and keys, S3, panel, 4 findings): Logos, page photos, product photos and profile text go out to members with no rights or consent line and no report or hide step.
+- C-20 (M19 Touch, reading and accessibility, S3, panel, 14 findings): Icon buttons, card buttons, boxes and rows get no spoken name, or one that differs from what is shown, because components do not build the spoken name from their visible words and state.
+- C-23 (M19 Touch, reading and accessibility, S3, panel, 12 findings): Controls are sized one by one, so many fall under the 44/48-point finger size the apps already set as a rule.
+- C-45 (M19 Touch, reading and accessibility, S3, panel, 4 findings): Custom boxes and buttons wipe or recolour the keyboard focus ring instead of using one shared focus style.
+- C-65 (M19 Touch, reading and accessibility, S3, panel, 2 findings): Sideways-scrolling rows hide items off the edge with no scroll bar, arrow or wrap.
+- C-35 (M19 Touch, reading and accessibility, S3, panel, 7 findings): Closing a sheet, panel or form, or a rewrite, throws away what was typed or spoken, because sheets have no shared keep-the-draft or ask-before-closing rule.
+- D-34 (M19 Touch, reading and accessibility, S3, panel, 18 findings): Each input box parses numbers, phones and text itself, so Hindi digits, 'Rs.', decimal points, +91 and spaces are handled differently or wrongly.
+- C-56 (M19 Touch, reading and accessibility, S3, panel, 3 findings): Lists and searches stop at a fixed cap without saying so, because the cap is set per query with no shared 'and N more' pattern.
+- D-63 (M19 Touch, reading and accessibility, S3, panel, 4 findings): Lists stop at a fixed newest-N with no paging, so counts and older items are cut off.
+- C-36 (M19 Touch, reading and accessibility, S3, panel, 6 findings): Hand-made pick-one lists, toggles and folds lack the proper roles, open/closed state and arrow keys, because there is no shared choice component.
+- D-59 (M19 Touch, reading and accessibility, S3, panel, 4 findings): Some ways of adding a member never ask for fields that later features need (birthday, body figure).
+- A-46 (M18 Internal notes, maps and dead code, S3, panel, 5 findings): When a feature is switched off, retired or renamed, its code paths, buttons and stored names stay behind with no gate.
+- C-40 (M14 Messages, alerts and badges, S3, hq, 6 findings): The open admin app and HQ ring and pop up through their own in-page code, which skips the alert settings, the device switch and the browser's delivery limits.
+- C-53 (M15 Sync between phone, watch, cloud and devices, S3, hq, 3 findings): An admin or HQ tab left open keeps running the old version, because the page never checks for a new version.
+- C-87 (M06 Membership and gym billing state, S3, hq, 1 findings): Un-pause sets a fixed status instead of restoring the gym's earlier one.
+- D-58 (M09 Server trusts the client; roles, S3, hq, 4 findings): The owner's access list and the HQ log read a fixed list of actions, so new kinds of look or change are left out.
+- C-41 (M19 Touch, reading and accessibility, S3, hq, 6 findings): Sheets, panels and page changes do not move or hold keyboard focus, because each opens and closes itself without a shared focus-trap helper.
+- C-48 (M19 Touch, reading and accessibility, S3, hq, 3 findings): Colour tokens are picked without a contrast check, so some words and badges are too faint in light or dark look.
+- C-97 (M05 Identity, sign-in and member photo, S4, phone, 1 findings): The gym sync sign-in card has no forgotten-password path.
+- D-87 (M13 Test and demo data on the live system, S4, phone, 6 findings): One-time repairs and import markers depend on reads that can fail and leave no trace, so repairs rerun, fail silently or delay start-up.
+- C-90 (M16 Screen words, help and 'say it once', S4, phone, 20 findings): Screen text is typed in each screen instead of one shared word list, so the same thing has two, three or four names across screens and apps.
+- C-92 (M16 Screen words, help and 'say it once', S4, phone, 4 findings): House style rules (never 'OK', sentence case, plain true lines) are known but not enforced, so individual lines slip through clumsy or untrue.
+- A-69 (M14 Messages, alerts and badges, S4, phone, 3 findings): Notification channels and their words were set once and not updated as new kinds of pop-up were added to them.
+- D-84 (M17 Dates, time and the calendar, S4, phone, 11 findings): Tests wait on real time or read today's date, so they fail on slow machines or around midnight, or skip silently.
+- A-72 (M03 Personal data leaving the system, S4, phone, 1 findings): Save my history writes typed names into spreadsheet cells as-is, so a name starting with = runs as a formula.
+- A-71 (M03 Personal data leaving the system, S4, phone, 1 findings): Members can share the gym's own workout plans outside the gym with no gym check.
+- D-88 (M12 Jobs, services, storage and load unwatched, S4, watch, 4 findings): Screens hold the processor or screen awake and redraw too often, and battery use is never measured.
+- C-100 (M15 Sync between phone, watch, cloud and devices, S4, watch, 1 findings): Start-up recovery ignores a rest that ended seconds before.
+- B-42 (M05 Identity, sign-in and member photo, S4, server, 1 findings): The alerts key request to HQ has no time limit, so a slow HQ hangs it.
+- C-93 (M14 Messages, alerts and badges, S4, server, 4 findings): Pop-up sends assume success (the address is cleared, the summary claimed, the renewed address ignored) instead of confirming hand-over, so some pop-ups are lost.
+- C-101 (M14 Messages, alerts and badges, S4, server, 1 findings): Reply pop-ups put the message words on the lock screen.
+- D-92 (M03 Personal data leaving the system, S4, web, 1 findings): Raw request text is logged on parse errors, so personal data can land in the server log.
+- D-86 (M12 Jobs, services, storage and load unwatched, S4, panel, 6 findings): Long lists draw every row and pictures are drawn full size, with no virtualising or small previews.
+- C-94 (M14 Messages, alerts and badges, S4, panel, 3 findings): Lines that promise a phone notification are written as always true, though delivery depends on the member's settings and the server path.
+- D-89 (M08 Paid features, limits and AI credits, S4, panel, 1 findings): A spoken request that fails still uses up speaking time.
+- D-90 (M06 Membership and gym billing state, S4, panel, 1 findings): The assistant's wallet check is not reset when the owner switches gym.
+- D-83 (M17 Dates, time and the calendar, S4, panel, 15 findings): The India-day and date rules are written out by hand in many places, some on the device or world clock.
+- D-85 (M21 Owner operations and keys, S4, panel, 6 findings): Old ForgeAI assets and generic icons are still shipped, because no check lists the brand assets in use.
+- C-91 (M19 Touch, reading and accessibility, S4, panel, 5 findings): Whole surfaces and screens (HQ, the phone app, the assistant, signed-out and newer panel pages) are left out of the automatic accessibility check.
+- D-93 (M05 Identity, sign-in and member photo, S4, hq, 1 findings): A background check forces sign-in when the session ends and throws away what was being typed.
 
 ## Batches
 
-- wave 1 B01 standard M03 phone: 6 findings, families A-37
-- wave 1 B02 standard M04 phone: 10 findings, families A-35, D-70
-- wave 1 B03 standard M06 phone: 10 findings, families B-33, C-64, C-81
-- wave 1 B04 standard M07 phone: 1 findings, families C-88
-- wave 2 B05 standard M08 phone: 27 findings, families B-25, A-33, A-40, A-47
-- wave 2 B10 standard M12 phone: 21 findings, families D-11, D-14
-- wave 2 B12 standard M18 phone: 3 findings, families A-55
-- wave 2 B15 standard M01 server: 7 findings, families C-34
-- wave 3 B06 standard M10 phone: 35 findings, families D-05
-- wave 3 B11 standard M15 phone: 2 findings, families D-24
-- wave 3 B16 standard M03 server: 1 findings, families C-82
-- wave 3 B17 standard M04 server: 5 findings, families C-62, A-60, B-40
-- wave 4 B07 standard M11 phone: 45 findings, families D-03
-- wave 4 B19 standard M07 server: 1 findings, families B-39
-- wave 4 B27 standard M01 web: 6 findings, families A-16
-- wave 4 B75 light M24 phone: 19 findings, families B-27, B-28, B-43
-- wave 5 B08 standard M11 phone: 35 findings, families D-04
-- wave 5 B13 standard M24 phone: 24 findings, families B-04
-- wave 5 B18 standard M05 server: 7 findings, families A-42, A-61
-- wave 5 B28 standard M07 web: 1 findings, families D-82
-- wave 6 B09 standard M11 phone: 36 findings, families D-08, C-02
-- wave 6 B26 standard M24 server: 20 findings, families B-05
-- wave 6 B29 standard M02 panel: 2 findings, families C-74
-- wave 6 B30 standard M05 panel: 3 findings, families C-55
-- wave 7 B14 standard M24 phone: 24 findings, families D-28
-- wave 7 B20 standard M08 server: 24 findings, families B-26, A-41, D-60, C-66, D-75
-- wave 7 B31 standard M06 panel: 4 findings, families A-54, A-68
-- wave 7 B35 standard M10 panel: 11 findings, families C-05
-- wave 8 B21 standard M09 server: 9 findings, families B-29, C-75
-- wave 8 B24 standard M14 server: 7 findings, families C-10
-- wave 8 B32 standard M07 panel: 27 findings, families A-28, C-30, A-59, C-72, D-73, A-67
-- wave 8 B33 standard M08 panel: 3 findings, families C-61, B-38
-- wave 9 B22 standard M12 server: 28 findings, families D-06, D-12
-- wave 9 B41 standard M16 panel: 15 findings, families C-03
-- wave 9 B43 standard M22 panel: 4 findings, families D-65
-- wave 9 B45 standard M24 panel: 47 findings, families B-02
-- wave 10 B23 standard M13 server: 8 findings, families D-16
-- wave 10 B36 standard M11 panel: 9 findings, families C-06
-- wave 10 B44 standard M24 panel: 72 findings, families B-01
-- wave 10 B49 light M01 phone: 8 findings, families A-44, A-62, B-41
-- wave 11 B25 standard M17 server: 6 findings, families D-20
-- wave 11 B37 standard M12 panel: 29 findings, families D-22, D-29
-- wave 11 B50 light M03 phone: 2 findings, families A-72, A-71
-- wave 11 B51 light M05 phone: 1 findings, families C-97
-- wave 12 B34 standard M09 panel: 27 findings, families A-30, C-44, A-50, A-48, B-36, D-71
-- wave 12 B46 standard M06 hq: 1 findings, families C-87
-- wave 12 B52 light M10 phone: 24 findings, families D-38, A-32, C-86, D-80, D-79, D-77
-- wave 12 B69 light M21 phone: 8 findings, families A-31
-- wave 13 B38 standard M14 panel: 34 findings, families D-07, D-09
-- wave 13 B56 light M13 phone: 9 findings, families D-68, D-87
-- wave 13 B74 light M24 phone: 34 findings, families B-16, B-23
-- wave 13 B76 light M12 watch: 4 findings, families D-88
-- wave 14 B39 standard M14 panel: 26 findings, families D-10, A-25, D-39
-- wave 14 B54 light M11 phone: 13 findings, families C-28, D-67, C-63
-- wave 14 B55 light M12 phone: 10 findings, families A-38, D-64
-- wave 14 B62 light M17 phone: 20 findings, families A-36, D-84, C-95
-- wave 15 B40 standard M15 panel: 9 findings, families C-08
-- wave 15 B47 standard M09 hq: 4 findings, families D-58
-- wave 15 B59 light M15 phone: 23 findings, families D-55, C-46, D-62, D-66, D-69, C-67, A-65
-- wave 15 B78 light M19 watch: 4 findings, families C-47
-- wave 16 B42 standard M21 panel: 7 findings, families C-11
-- wave 16 B57 light M14 phone: 32 findings, families C-27, C-32, D-57, C-58, C-57, C-69, A-69
-- wave 16 B73 light M24 phone: 27 findings, families B-14
-- wave 16 B82 light M05 server: 1 findings, families B-42
-- wave 17 B48 standard M12 hq: 9 findings, families D-15
-- wave 17 B65 light M18 phone: 13 findings, families C-29, C-59, C-68
-- wave 17 B77 light M15 watch: 13 findings, families D-54, A-58, C-73, C-80, C-100
-- wave 17 B88 light M23 server: 1 findings, families D-91
-- wave 18 B53 light M11 phone: 33 findings, families D-30, C-25
-- wave 18 B72 light M24 phone: 38 findings, families B-11
-- wave 18 B79 light M24 watch: 13 findings, families B-22
-- wave 18 B81 light M01 server: 2 findings, families D-72
-- wave 19 B58 light M15 phone: 40 findings, families B-20, D-46, D-50, D-51
-- wave 19 B92 light M03 web: 1 findings, families D-92
-- wave 19 B93 light M16 web: 1 findings, families C-78
-- wave 19 B95 light M06 panel: 1 findings, families D-90
-- wave 20 B60 light M16 phone: 35 findings, families D-26, B-30
-- wave 20 B91 light M24 server: 18 findings, families B-31, B-32, A-53
-- wave 20 B96 light M08 panel: 1 findings, families D-89
-- wave 20 B98 light M11 panel: 5 findings, families B-35, C-98
-- wave 21 B61 light M16 phone: 34 findings, families C-37, C-51, C-83, C-90, C-92
-- wave 21 B70 light M23 phone: 6 findings, families A-39
-- wave 21 B89 light M24 server: 22 findings, families B-15
-- wave 21 B90 light M24 server: 35 findings, families B-17, B-18
-- wave 22 B100 light M13 panel: 10 findings, families B-34, C-49
-- wave 22 B110 light M21 panel: 10 findings, families A-49, D-85
-- wave 22 B63 light M18 phone: 25 findings, families D-27
-- wave 22 B80 light M01 server: 39 findings, families B-21, D-43, D-49, A-56, C-52, C-70
-- wave 23 B109 light M19 panel: 18 findings, families D-59, C-56, C-65, C-60, C-84, D-78, C-91
-- wave 23 B64 light M18 phone: 33 findings, families A-27, D-36
-- wave 24 B114 light M24 panel: 27 findings, families B-19, B-24
-- wave 24 B66 light M19 phone: 35 findings, families C-17, D-47, D-48
-- wave 25 B112 light M24 panel: 32 findings, families B-12
-- wave 25 B67 light M19 phone: 22 findings, families C-31, C-38, C-50, C-54, A-64, C-99
-- wave 25 B84 light M14 server: 5 findings, families C-93, C-101
-- wave 26 B113 light M24 panel: 32 findings, families B-13
-- wave 26 B68 light M20 phone: 19 findings, families D-32
-- wave 26 B83 light M12 server: 34 findings, families D-37, C-24, A-51, D-74, D-76
-- wave 27 B106 light M18 panel: 5 findings, families A-46
-- wave 27 B71 light M24 phone: 74 findings, families B-09
-- wave 27 B85 light M18 server: 18 findings, families D-33
-- wave 28 B86 light M20 server: 31 findings, families D-31, D-44
-- wave 29 B104 light M16 panel: 23 findings, families D-41, C-43, A-52, C-85, A-70, C-96
-- wave 29 B87 light M21 server: 16 findings, families C-18
-- wave 29 B94 light M01 panel: 6 findings, families A-45, D-81
-- wave 30 B102 light M15 panel: 35 findings, families D-42, D-53, A-34, D-56, A-63, C-77, C-76, C-79, A-66
-- wave 30 B111 light M24 panel: 41 findings, families B-10
-- wave 30 B97 light M10 panel: 25 findings, families A-29, D-52, A-43, C-71
-- wave 31 B99 light M12 panel: 36 findings, families D-35, D-45, D-61, D-86
-- wave 32 B101 light M14 panel: 32 findings, families D-40, C-26, C-39, B-37, C-94
-- wave 33 B103 light M16 panel: 40 findings, families C-19, C-21, C-22
-- wave 34 B105 light M17 panel: 23 findings, families C-42, A-57, D-83
-- wave 34 B115 light M05 hq: 1 findings, families D-93
-- wave 35 B107 light M19 panel: 32 findings, families D-34, C-20
-- wave 36 B108 light M19 panel: 40 findings, families C-23, C-33, C-35, C-36, C-45, D-63
-- wave 37 B116 light M14 hq: 6 findings, families C-40
-- wave 38 B117 light M15 hq: 3 findings, families C-53
-- wave 39 B118 light M16 hq: 1 findings, families C-89
-- wave 40 B119 light M19 hq: 9 findings, families C-41, C-48
+- wave 1 B01 full M01 phone: 13 findings, families D-01, A-44, A-62, B-41
+- wave 1 B02 full M02 phone: 21 findings, families A-01
+- wave 1 B03 full M02 phone: 31 findings, families B-03
+- wave 1 B09 full M06 phone: 10 findings, families B-33, C-64, C-81
+- wave 2 B04 full M02 phone: 28 findings, families A-07, C-07, D-21
+- wave 2 B10 full M07 phone: 1 findings, families C-88
+- wave 2 B12 full M08 phone: 4 findings, families A-47
+- wave 2 B38 full M24 phone: 34 findings, families B-16, B-23
+- wave 3 B05 full M03 phone: 8 findings, families A-37, A-72, A-71
+- wave 3 B06 full M04 phone: 36 findings, families B-06, B-07, C-09
+- wave 3 B19 full M11 phone: 8 findings, families C-28
+- wave 3 B33 full M21 phone: 8 findings, families A-31
+- wave 4 B07 full M04 phone: 17 findings, families A-17, A-26, A-35, D-70
+- wave 4 B113 standard M10 phone: 4 findings, families C-86, D-80, D-79, D-77
+- wave 4 B14 full M10 phone: 20 findings, families D-38, A-32
+- wave 4 B39 full M24 phone: 18 findings, families B-27, B-28
+- wave 5 B08 full M05 phone: 8 findings, families D-17, C-97
+- wave 5 B114 standard M11 phone: 5 findings, families D-67, C-63
+- wave 5 B16 full M11 phone: 35 findings, families D-04
+- wave 5 B35 full M24 phone: 24 findings, families B-04
+- wave 6 B11 full M08 phone: 37 findings, families A-06, B-25, A-33, A-40
+- wave 6 B117 standard M19 phone: 7 findings, families C-50, C-54, A-64
+- wave 6 B128 light M17 phone: 2 findings, families C-95
+- wave 6 B36 full M24 phone: 27 findings, families B-14
+- wave 7 B115 standard M16 phone: 1 findings, families C-83
+- wave 7 B119 standard M23 phone: 6 findings, families A-39
+- wave 7 B129 light M19 phone: 1 findings, families C-99
+- wave 7 B13 full M10 phone: 35 findings, families D-05
+- wave 8 B130 light M24 phone: 1 findings, families B-43
+- wave 8 B15 full M11 phone: 45 findings, families D-03
+- wave 8 B42 full M19 watch: 4 findings, families C-47
+- wave 8 B43 full M24 watch: 13 findings, families B-22
+- wave 9 B17 full M11 phone: 36 findings, families D-08, C-02
+- wave 9 B40 full M12 watch: 4 findings, families D-88
+- wave 9 B46 full M03 server: 1 findings, families C-82
+- wave 9 B49 full M06 server: 4 findings, families C-12
+- wave 10 B121 standard M24 phone: 38 findings, families B-11
+- wave 10 B18 full M11 phone: 33 findings, families D-30, C-25
+- wave 10 B48 full M05 server: 8 findings, families A-42, A-61, B-42
+- wave 10 B50 full M07 server: 1 findings, families B-39
+- wave 11 B116 standard M18 phone: 8 findings, families A-55, C-59, C-68
+- wave 11 B20 full M12 phone: 31 findings, families D-11, D-14, A-38, D-64
+- wave 11 B41 full M15 watch: 13 findings, families D-54, A-58, C-73, C-80, C-100
+- wave 11 B52 full M08 server: 2 findings, families D-75
+- wave 12 B21 full M13 phone: 9 findings, families D-68, D-87
+- wave 12 B27 full M17 phone: 18 findings, families A-36, D-84
+- wave 12 B32 full M19 phone: 14 findings, families C-31, C-38
+- wave 12 B34 full M22 phone: 7 findings, families D-02, A-20
+- wave 13 B122 standard M24 server: 19 findings, families B-17
+- wave 13 B22 full M14 phone: 32 findings, families C-27, C-32, D-57, C-58, C-57, C-69, A-69
+- wave 13 B56 full M13 server: 10 findings, families C-01, D-16
+- wave 13 B65 full M01 web: 6 findings, families A-16
+- wave 14 B23 full M15 phone: 34 findings, families D-24, B-20, D-46, D-50
+- wave 14 B45 full M01 server: 10 findings, families A-56, C-52, C-70, D-72
+- wave 14 B62 full M24 server: 20 findings, families B-05
+- wave 14 B67 full M03 web: 5 findings, families A-21, D-92
+- wave 15 B24 full M15 phone: 31 findings, families D-51, D-55, C-46, D-62, D-66, D-69, C-67, A-65
+- wave 15 B63 full M24 server: 38 findings, families B-15, B-18
+- wave 15 B66 full M02 web: 9 findings, families A-12
+- wave 15 B71 full M02 panel: 2 findings, families C-74
+- wave 16 B123 standard M16 web: 1 findings, families C-78
+- wave 16 B25 full M16 phone: 35 findings, families D-26, B-30
+- wave 16 B64 full M24 server: 18 findings, families B-31, B-32, A-53
+- wave 16 B68 full M07 web: 1 findings, families D-82
+- wave 17 B131 light M23 server: 1 findings, families D-91
+- wave 17 B26 full M16 phone: 33 findings, families C-37, C-51, C-90, C-92
+- wave 17 B37 full M24 phone: 24 findings, families D-28
+- wave 17 B85 full M13 panel: 10 findings, families B-34, C-49
+- wave 18 B100 full M24 panel: 72 findings, families B-01
+- wave 18 B28 full M18 phone: 25 findings, families D-27
+- wave 18 B55 full M12 server: 34 findings, families D-37, C-24, A-51, D-74, D-76
+- wave 18 B72 full M03 panel: 3 findings, families B-08
+- wave 19 B29 full M18 phone: 33 findings, families A-27, D-36
+- wave 19 B79 full M08 panel: 4 findings, families C-61, B-38, D-89
+- wave 19 B97 full M19 panel: 7 findings, families C-65, C-91
+- wave 19 B99 full M22 panel: 4 findings, families D-65
+- wave 20 B120 standard M24 phone: 74 findings, families B-09
+- wave 20 B30 full M18 phone: 8 findings, families C-29
+- wave 20 B44 full M01 server: 38 findings, families B-21, D-43, D-49, C-34
+- wave 20 B76 full M06 panel: 14 findings, families D-18, C-14, C-15, A-54, A-68, D-90
+- wave 21 B105 full M24 panel: 27 findings, families B-19, B-24
+- wave 21 B133 light M16 panel: 3 findings, families A-70, C-96
+- wave 21 B31 full M19 phone: 35 findings, families C-17, D-47, D-48
+- wave 22 B101 full M24 panel: 47 findings, families B-02
+- wave 22 B118 standard M20 phone: 19 findings, families D-32
+- wave 22 B124 standard M10 panel: 2 findings, families C-71
+- wave 22 B47 full M04 server: 29 findings, families A-08, C-04, C-62, A-60, B-40
+- wave 23 B103 full M24 panel: 32 findings, families B-12
+- wave 23 B51 full M08 server: 40 findings, families A-03, B-26, A-41, D-60, C-66
+- wave 23 B70 full M01 panel: 6 findings, families A-45, D-81
+- wave 23 B82 full M11 panel: 13 findings, families C-06, B-35
+- wave 24 B132 light M11 panel: 1 findings, families C-98
+- wave 24 B53 full M09 server: 17 findings, families A-19, C-13, B-29, C-75
+- wave 24 B89 full M15 panel: 40 findings, families C-08, D-42, D-53, A-34, D-56, A-63
+- wave 25 B102 full M24 panel: 41 findings, families B-10
+- wave 25 B106 full M05 hq: 1 findings, families D-93
+- wave 25 B54 full M12 server: 28 findings, families D-06, D-12
+- wave 25 B90 full M15 panel: 4 findings, families C-77, C-76, C-79, A-66
+- wave 26 B104 full M24 panel: 32 findings, families B-13
+- wave 26 B57 full M14 server: 12 findings, families C-10, C-93, C-101
+- wave 26 B74 full M05 panel: 15 findings, families A-02, A-22, C-55
+- wave 26 B94 full M18 panel: 5 findings, families A-46
+- wave 27 B58 full M17 server: 6 findings, families D-20
+- wave 27 B83 full M12 panel: 29 findings, families D-22, D-29
+- wave 28 B125 standard M16 panel: 6 findings, families C-43, C-85
+- wave 28 B126 standard M19 panel: 11 findings, families C-33, C-60, C-84, D-78
+- wave 28 B59 full M18 server: 18 findings, families D-33
+- wave 29 B60 full M20 server: 31 findings, families D-31, D-44
+- wave 30 B61 full M21 server: 16 findings, families C-18
+- wave 31 B69 full M08 web: 7 findings, families A-14
+- wave 32 B73 full M04 panel: 26 findings, families A-05, D-19, A-23, A-24
+- wave 33 B75 full M06 panel: 37 findings, families A-04, A-11, D-13
+- wave 34 B77 full M07 panel: 38 findings, families A-09, A-10, A-13, A-18, D-25
+- wave 35 B107 full M06 hq: 1 findings, families C-87
+- wave 35 B78 full M07 panel: 27 findings, families A-28, C-30, A-59, C-72, D-73, A-67
+- wave 36 B80 full M09 panel: 39 findings, families A-15, D-23, C-16, A-30, C-44, A-50, A-48, B-36, D-71
+- wave 37 B81 full M10 panel: 34 findings, families C-05, A-29, D-52, A-43
+- wave 38 B84 full M12 panel: 36 findings, families D-35, D-45, D-61, D-86
+- wave 39 B86 full M14 panel: 34 findings, families D-07, D-09
+- wave 40 B87 full M14 panel: 38 findings, families D-10, A-25, D-39, D-40
+- wave 41 B88 full M14 panel: 20 findings, families C-26, C-39, B-37, C-94
+- wave 42 B108 full M09 hq: 4 findings, families D-58
+- wave 42 B91 full M16 panel: 30 findings, families C-03, C-19
+- wave 43 B92 full M16 panel: 39 findings, families C-21, C-22, D-41, A-52
+- wave 44 B127 standard M16 hq: 1 findings, families C-89
+- wave 44 B93 full M17 panel: 23 findings, families C-42, A-57, D-83
+- wave 45 B95 full M19 panel: 32 findings, families D-34, C-20
+- wave 46 B96 full M19 panel: 40 findings, families C-23, C-35, C-36, C-45, D-63, D-59, C-56
+- wave 47 B98 full M21 panel: 17 findings, families C-11, A-49, D-85
+- wave 48 B109 full M12 hq: 9 findings, families D-15
+- wave 49 B110 full M14 hq: 6 findings, families C-40
+- wave 50 B111 full M15 hq: 3 findings, families C-53
+- wave 51 B112 full M19 hq: 9 findings, families C-41, C-48

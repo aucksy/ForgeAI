@@ -1,16 +1,20 @@
 """Sort the audit's 309 cause families into lanes by real risk, then into batches that can run side by side.
 
-Owner, 27 Nov 2026: "A: re-sort first". Reads docs/system-map/FAMILIES.json and findings.jsonl; writes
+Owner, 27 Nov 2026: "A: re-sort first", then "Okay, let's go with option A" (keep the framework's own lanes; run
+the slow gates once per batch). Reads docs/system-map/FAMILIES.json and findings.jsonl; writes
 docs/system-map/FIX-PLAN.json and FIX-PLAN.md. Re-runnable: the plan is derived, never typed by hand.
 
-Lanes (No Gaps framework, skill change-360):
-  full     - design note, goldfish review, his yes before build. Any S1; or S2 in a risky family
-             (privacy, personal data, delete/restore, sign-in, billing, paid limits, payments, roles, consent).
-  standard - design note + one fresh review. Other S2; a large fix; S3 in a risky family.
-  light    - batched: tests where behaviour changes, one fresh review per batch.
-A family with a finding that needs his call is listed under "his calls" too; its build waits only for that answer.
+Lanes: exactly the No Gaps framework's own rules (skill change-360, section 1), never lighter:
+  full     - any S1 or S2; or a family about money, personal data, privacy or legal words, stored data,
+             sign-in or who-is-who, automatic jobs, notifications or store truth (TOPIC_FULL); or one whose
+             findings sit on more than one screen or surface.
+  standard - an S3 problem on one surface.
+  light    - an S4 problem on one surface.
+Per batch (owner's option A): one design note (G1), one goldfish round (G2) and one yes from him cover every
+family in the batch; tests (G3), build, fresh review, proof and delivery (G4-G7) still run for every family.
+A family with a finding that needs his call is listed under "his calls"; its build waits only for that answer.
 
-Batches: light and standard families of the same master family and main surface, up to BATCH_MAX findings.
+Batches: families of the same lane, master family and main surface, up to BATCH_MAX findings.
 Waves: batches whose files do not overlap, so up to WAVE_WIDTH helpers can run at once without touching
 the same files. Order: the member app first (phone, watch), then server, web, panel, HQ.
 """
@@ -21,7 +25,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 MAP = ROOT / 'docs' / 'system-map'
-RISKY = {'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 'M22'}
+TOPIC_FULL = {'M01', 'M02', 'M03', 'M04', 'M05', 'M06', 'M07', 'M08', 'M09', 'M12', 'M13', 'M14', 'M15', 'M22'}
 SEV = {'S1': 1, 'S2': 2, 'S3': 3, 'S4': 4}
 SURFACE_ORDER = ['phone', 'watch', 'server', 'web', 'panel', 'hq']
 BATCH_MAX = 40
@@ -43,11 +47,10 @@ def main() -> None:
             if not members:
                 continue
             worst = min((SEV.get(r['severity'], 4) for r in members), default=4)
-            large = any(r.get('fix_size') == 'large' for r in members)
-            risky = m['id'] in RISKY
-            if worst == 1 or (worst == 2 and risky):
+            surfaces = {r['surface'] for r in members}
+            if worst <= 2 or m['id'] in TOPIC_FULL or len(surfaces) > 1:
                 lane = 'full'
-            elif worst == 2 or large or (risky and worst == 3):
+            elif worst == 3:
                 lane = 'standard'
             else:
                 lane = 'light'
@@ -64,7 +67,7 @@ def main() -> None:
 
     # Batches: same lane kind (light or standard), master, surface; capped by findings.
     batches = []
-    for lane in ('standard', 'light'):
+    for lane in ('full', 'standard', 'light'):
         pool = collections.defaultdict(list)
         for g in groups:
             if g['lane'] == lane:
@@ -87,7 +90,7 @@ def main() -> None:
         })
 
     # Waves: greedy, member app first; no two batches in a wave share a file.
-    order = sorted(out_batches, key=lambda b: (0 if b['lane'] == 'standard' else 1, SURFACE_ORDER.index(b['surface']) if b['surface'] in SURFACE_ORDER else 9))
+    order = sorted(out_batches, key=lambda b: (SURFACE_ORDER.index(b['surface']) if b['surface'] in SURFACE_ORDER else 9, ('full', 'standard', 'light').index(b['lane'])))
     waves = []
     for b in order:
         for w in waves:
@@ -123,7 +126,7 @@ def main() -> None:
           f"Findings by lane: {c['findings_by_lane']}.",
           f"Need his call: {c['his_call_findings']} findings in {c['his_call_families']} families.",
           f"{c['batches']} batches in {c['waves']} waves of up to {WAVE_WIDTH} side by side.", '',
-          '## Full lane (one at a time, his yes)', '']
+          '## Full-lane families (one design note, goldfish round and yes per batch)', '']
     for g in full:
         md.append(f"- {g['id']} ({g['master']} {g['master_title']}, {g['worst']}, {g['surface']}, {g['findings']} findings): {g['cause']}")
     md += ['', '## Batches', '']
