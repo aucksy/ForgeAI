@@ -1,4 +1,4 @@
--- NOT YET APPLIED LIVE: waits for the owner's yes. Re-runnable. Apply after 0099 (phone accounts), 0093
+-- APPLIED LIVE 27 Nov 2026 ~07:50 IST (owner: "yes make the database change live"). Re-runnable. Apply after 0099 (phone accounts), 0093
 -- (phone_sign_in_find), 0068 (member_find_tries, member_claim_phone, the phone index), 0061 (phone_code_settings),
 -- 0055 (_pass_company), 0050 (gym_trainers), 0023 (_first_name_key) and 0005 (_brand_json).
 -- Test: supabase/tests/0100_gym_added_you.sql (CI runs it after every migration; pasted into the SQL Editor it always
