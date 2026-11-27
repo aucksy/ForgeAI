@@ -43,7 +43,8 @@ class CardProblems(unittest.TestCase):
     def test_done_needs_every_lane_gate(self):
         d = tempfile.mkdtemp()
         os.makedirs(os.path.join(d, "docs", "designs"))
-        open(os.path.join(d, "docs", "designs", "R-630.md"), "w").write("x")
+        with open(os.path.join(d, "docs", "designs", "R-630.md"), "w") as f:
+            f.write("x")
         self.assertEqual(cc.card_problems(card(status="done", done=cc.GATES), d), [])
         self.assertTrue(cc.card_problems(card(status="done", done=cc.GATES[:-1]), d))
 
@@ -67,11 +68,20 @@ class Commits(unittest.TestCase):
         out = cc.commits_needing_cards([("a" * 40, "R-631: fix dues", ["apps/mobile/x.ts"])], {})
         self.assertEqual(len(out), 1)
 
-    def test_old_ids_docs_only_and_carded_pass(self):
+    def test_app_change_with_no_id_or_old_id_fails(self):
         commits = [("b" * 40, "R-629: old work", ["apps/mobile/x.ts"]),
-                   ("c" * 40, "R-640: notes", ["docs/CLAUDE-NOTES.md", "README.md"]),
-                   ("d" * 40, "R-630: build", ["apps/mobile/x.ts"]),
-                   ("e" * 40, "no id here", ["apps/mobile/x.ts"])]
+                   ("e" * 40, "no id here", ["supabase/migrations/0101_x.sql"])]
+        self.assertEqual(len(cc.commits_needing_cards(commits, {})), 2)
+
+    def test_id_only_in_body_does_not_count(self):
+        out = cc.commits_needing_cards([("f" * 40, "tidy" + chr(10) * 2 + "From R-630 on",["apps/mobile/x.ts"])],
+                                       {"R-630": card()})
+        self.assertEqual(len(out), 1)
+
+    def test_docs_tooling_and_carded_pass(self):
+        commits = [("c" * 40, "notes", ["docs/CLAUDE-NOTES.md", "README.md", "apps/mobile/NOTES.md"]),
+                   ("a" * 40, "framework tooling", [".github/workflows/ci.yml", "scripts/ci/card_check.py"]),
+                   ("d" * 40, "R-630: build", ["apps/mobile/x.ts"])]
         self.assertEqual(cc.commits_needing_cards(commits, {"R-630": card()}), [])
 
 
@@ -87,8 +97,10 @@ class LoadCards(unittest.TestCase):
     def test_file_name_must_match_id_and_bad_json_is_reported(self):
         d = tempfile.mkdtemp()
         os.makedirs(os.path.join(d, "docs", "changes"))
-        json.dump(card("R-630"), open(os.path.join(d, "docs", "changes", "R-631.json"), "w"))
-        open(os.path.join(d, "docs", "changes", "R-632.json"), "w").write("{bad")
+        with open(os.path.join(d, "docs", "changes", "R-631.json"), "w") as f:
+            json.dump(card("R-630"), f)
+        with open(os.path.join(d, "docs", "changes", "R-632.json"), "w") as f:
+            f.write("{bad")
         _, problems = cc.load_cards(d)
         self.assertTrue(any("must be 'R-631'" in p for p in problems))
         self.assertTrue(any("not valid JSON" in p for p in problems))

@@ -3,8 +3,9 @@
 
 Every change from R-630 on carries a card: docs/changes/R-<n>.json (template: docs/changes/README.md).
 This check refuses:
-  push    (ci.yml): a commit in the pushed range whose message names R-<n> (n >= START), changes app files
-          (not only docs), and has no card; any card that is malformed; a card marked "done" whose lane gates
+  push    (ci.yml): a commit in the pushed range that changes app files (apps/, deploy/, supabase/, packages/)
+          but names no change id R-<n> (n >= START) in its subject line, or names one that has no card; any card
+          that is malformed; a card marked "done" whose lane gates
           are not all done with evidence, whose G6 proof is only "read the code", or (Full lane) with no design
           note docs/designs/<id>.md.
   release (release-apk.yml, --release): everything above, plus any card still "active" or "waiting" unless it
@@ -30,7 +31,7 @@ LANE_DONE = {
     "light": ["G0_family", "G4_build", "G5_review", "G6_proven", "G7_delivered"],
 }
 STATUSES = {"active", "waiting", "done", "skipped"}
-DOC_ONLY = re.compile(r"^(docs/|PROGRESS|CONTEXT|CLAUDE|README)|\.md$", re.I)
+APP_PATH = re.compile(r"^(apps|deploy|supabase|packages)/")
 R_ID = re.compile(r"\bR-(\d{3,4})\b")
 READ_ONLY_PROOF = re.compile(r"^\s*(code[- ]?read|read (the )?code|by reading)", re.I)
 
@@ -85,16 +86,22 @@ def load_cards(root="."):
 
 
 def commits_needing_cards(commits, cards):
-    """commits: [(sha, message, [files])]. Returns problem lines for commits that name a new R-id with no card."""
+    """commits: [(sha, message, [files])]. Every commit that changes app files names a carded change id
+    (R-<START> or later) in its subject line. Returns problem lines."""
     out = []
     for sha, msg, files in commits:
-        app_files = [f for f in files if not DOC_ONLY.search(f)]
+        app_files = [f for f in files if APP_PATH.search(f) and not f.endswith(".md")]
         if not app_files:
             continue
-        for n in sorted({int(x) for x in R_ID.findall(msg or "")}):
-            if n >= START and f"R-{n}" not in cards:
-                out.append(f"commit {sha[:8]} names R-{n} and changes {len(app_files)} app file(s) "
-                           f"(e.g. {app_files[0]}) but docs/changes/R-{n}.json does not exist")
+        subject = (msg or "").strip().splitlines()[0] if (msg or "").strip() else ""
+        ids = sorted({int(x) for x in R_ID.findall(subject) if int(x) >= START})
+        if not ids:
+            out.append(f"commit {sha[:8]} changes {len(app_files)} app file(s) (e.g. {app_files[0]}) but its "
+                       f"subject names no change id R-{START} or later: open a card and name it")
+        for n in ids:
+            if f"R-{n}" not in cards:
+                out.append(f"commit {sha[:8]} names R-{n} and changes app files (e.g. {app_files[0]}) "
+                           f"but docs/changes/R-{n}.json does not exist")
     return out
 
 
