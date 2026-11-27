@@ -125,11 +125,22 @@ export async function scanCopy(now: () => number = Date.now): Promise<ScanPlan |
  * Audit FN-L4-phone-cloud-backup-ai-02 (F237, 25 Nov 2026): a profile under 18 saves nothing on MettleUp's server
  * (the privacy notice and terms say MettleUp is for people 18 and older). No profile, or no age: not blocked.
  */
-export async function profileUnder18(): Promise<boolean> {
+export async function profileUnder18(nowMs: number = Date.now()): Promise<boolean> {
+  // R-630: the age grows from the day it was typed (cloud/ageRule.ts). A profile with no such day yet (a fresh
+  // install, or a phone from before R-630) gets "now" stamped once, the safe side.
   try {
-    const { backupAllowedForAge } = await import('./phoneAccount');
-    const row = await getDb().getFirstAsync<{ age: number | null }>('SELECT age FROM user_profile LIMIT 1');
-    return !backupAllowedForAge(row?.age ?? null);
+    const { isUnder18 } = await import('./ageRule');
+    const db = getDb();
+    const row = await db.getFirstAsync<{ id: string; age: number | null; age_set_at: number | null }>(
+      'SELECT id, age, age_set_at FROM user_profile LIMIT 1',
+    );
+    if (!row) return false;
+    let setAt = row.age_set_at;
+    if (setAt == null) {
+      setAt = nowMs;
+      await db.runAsync('UPDATE user_profile SET age_set_at = ? WHERE id = ? AND age_set_at IS NULL', [setAt, row.id]);
+    }
+    return isUnder18(row.age, setAt, nowMs);
   } catch (e) {
     console.warn('[cloud copy] could not read the age', e);
     return false;

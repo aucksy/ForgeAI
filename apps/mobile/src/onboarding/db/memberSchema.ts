@@ -16,7 +16,7 @@
 import { getDb, getMeta, setMeta } from '@/db';
 import { TABS_NOTICE_KEY, tabsNoticeOnUpgrade } from '@/tracker/services/upNextService';
 
-export const MEMBER_SCHEMA_VERSION = 2;
+export const MEMBER_SCHEMA_VERSION = 3;
 const META_KEY = 'member_schema_version';
 
 /** SQLite has no `ADD COLUMN IF NOT EXISTS` — introspect so re-runs are idempotent. */
@@ -45,6 +45,9 @@ export async function initMemberSchema(): Promise<void> {
   await ensureColumn('user_profile', 'photo_uri', 'TEXT');
   await ensureColumn('user_profile', 'bio', 'TEXT');
   await ensureColumn('user_profile', 'link', 'TEXT');
+  // v3 (R-630, docs/designs/R-630.md 3c): when the age was typed (ms), so the age grows on each anniversary.
+  // NULL = not known yet: the age rule (cloud/copySync.ts profileUnder18) stamps "now" the first time it reads it.
+  await ensureColumn('user_profile', 'age_set_at', 'INTEGER');
   // Redesign R1: an install that had Home (an upgrade, never a fresh install) is told once where
   // Home, History and Progress went.
   if (tabsNoticeOnUpgrade(stored, MEMBER_SCHEMA_VERSION)) await setMeta(TABS_NOTICE_KEY, '1');

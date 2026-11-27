@@ -89,6 +89,11 @@ export async function updateProfile(
     params.push(value);
   }
   if (assignments.length === 0) return current;
+  // R-630: a changed age restarts its clock (the age grows from the day it was typed).
+  if (patch.age !== undefined && patch.age !== current.age) {
+    assignments.push('age_set_at = ?');
+    params.push(Date.now());
+  }
   params.push(current.id);
   await getDb().runAsync(
     `UPDATE user_profile SET ${assignments.join(', ')} WHERE id = ?`,

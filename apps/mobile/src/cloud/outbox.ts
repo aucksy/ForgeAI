@@ -23,8 +23,16 @@ async function nextClientVersion(): Promise<number> {
  * upserts it under the member's RLS. No pull, no merge, no tombstones.
  */
 
+/** R-630: the age rule, loaded late (copySync pulls in much of the app). Any failure reads as not under 18, as there. */
+async function under18(): Promise<boolean> {
+  const { profileUnder18 } = await import('@/cloud/copySync');
+  return profileUnder18();
+}
+
 export async function enqueueSummary(): Promise<void> {
   if (!(await isCloudActive())) return;
+  // R-630: nothing of a member under 18 goes to the server, the gym summary included.
+  if (await under18()) return;
   const identity = await getIdentity();
   if (!identity) return;
   const row = await buildMemberSummary(identity.displayName);
@@ -40,6 +48,10 @@ export async function enqueueSummary(): Promise<void> {
 
 export async function drainOutbox(): Promise<void> {
   if (!(await isCloudActive())) return;
+  if (await under18()) {
+    await getDb().runAsync('DELETE FROM sync_outbox'); // a summary queued before the age changed never leaves
+    return;
+  }
   const identity = await getIdentity();
   if (!identity) return;
 

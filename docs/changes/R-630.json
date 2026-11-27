@@ -22,7 +22,7 @@
   "FN-B-words-phone-screens-2-02"
  ],
  "approved_by": "his words, 27 Nov 2026: \"Okay go ahead with these 5 fixes\" (after the list of five)",
- "status": "waiting",
+ "status": "active",
  "session_id": "",
  "dark": false,
  "file_boundary": [
@@ -54,12 +54,12 @@
    "evidence": "round 1: goldfish-newcomer, goldfish-critic, goldfish-promises (30 findings); round 2: goldfish-critic (8 findings); all answered in docs/designs/R-630.md v3, 27 Nov 2026"
   },
   "G3_tests_first": {
-   "done": false,
-   "evidence": ""
+   "done": true,
+   "evidence": "slice A, written before the build: apps/mobile/test/cloud/ageRule.test.ts, supabase/tests/0101_member_under18.sql. Slices B and C add theirs before their build."
   },
   "G4_build": {
    "done": false,
-   "evidence": ""
+   "evidence": "slice A part 1 pushed: age rule, age_set_at, summary upload stop, migration 0101 (not applied). Still to build: under-18 sheet, delete calls + pending job, backup lines, About rows."
   },
   "G5_review": {
    "done": false,
