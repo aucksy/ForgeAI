@@ -85,7 +85,7 @@ describe('R-76: the join screen’s legal links open real pages, never the admin
   it('F56: the privacy notice explains Find my gym and Tell my gym, word for word', () => {
     const lines = [
       'Find my gym: if you check your mobile number in the app, we look for it on the member lists of gyms that use MettleUp, only to show you your own gym. The number is checked once and is not kept for this.',
-      "Tell my gym: if you type your gym's name and city, we keep only those two, so our team can contact that gym. We never share your number.",
+      "Tell my gym: if you type your gym's name and city, we keep only those two, so our team can contact that gym. We do not give that gym your number.",
     ];
     const body = src('privacy.body.html');
     const page = readFileSync(pub('privacy.html'), 'utf8').replace(/\r\n/g, '\n');

@@ -189,7 +189,7 @@ export const FIND_GYM = {
   // Short: at the largest text the longer "Your gym’s name (optional)" was cut off (run 43224075686).
   gymNameLabel: 'Gym name (optional)',
   cityLabel: 'City (optional)',
-  leadNote: 'If you type your gym’s name and city, the MettleUp team may contact your gym. We never share your number.',
+  leadNote: 'If you type your gym’s name and city, the MettleUp team may contact your gym. We do not give that gym your number.',
   testBuild: 'Test build: no WhatsApp message. This answer is made up.',
 } as const;
 
