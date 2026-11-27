@@ -25,7 +25,21 @@
  "status": "waiting",
  "session_id": "",
  "dark": false,
- "file_boundary": [],
+ "file_boundary": [
+  "apps/mobile/src/cloud/",
+  "apps/mobile/src/shop/",
+  "apps/mobile/src/db/",
+  "apps/mobile/src/store/accountStore.ts",
+  "apps/mobile/src/components/settings/",
+  "apps/mobile/src/onboarding/",
+  "apps/mobile/src/ai/system.ts",
+  "supabase/functions/phone-account/",
+  "supabase/migrations/0101_member_consent.sql",
+  "supabase/tests/0101_member_consent.sql",
+  "apps/dashboard/src/crm/",
+  "apps/dashboard/public/",
+  "deploy/hq/"
+ ],
  "gates": {
   "G0_family": {
    "done": true,
@@ -36,8 +50,8 @@
    "evidence": "docs/designs/R-630.md"
   },
   "G2_goldfish": {
-   "done": false,
-   "evidence": ""
+   "done": true,
+   "evidence": "round 1: goldfish-newcomer, goldfish-critic, goldfish-promises (30 findings); round 2: goldfish-critic (8 findings); all answered in docs/designs/R-630.md v3, 27 Nov 2026"
   },
   "G3_tests_first": {
    "done": false,
