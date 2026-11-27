@@ -97,3 +97,103 @@ Finding: FN-L5-panel-screens-1-01
 **Fix:** Show Paid online with the amount on each order card, hide the pay box, and say "paid online" when the desk taps Collected. Size: small.
 **Your decision:** Yes. My view: show the paid mark; it is a small change that stops a double charge at the counter. Option 1: show Paid online and change the Collected words. Option 2: also block the desk from marking cash on an order paid online.
 Finding: FN-L5-panel-shop-01
+
+### Paid shop orders can be cancelled with no refund prompt
+
+**How bad:** Serious. Money and trust: the member's money stays with the gym and nobody knows it is owed back.
+**What you would see:** On the Shop page, the Cancel order sheet says the items go back into stock and the member sees Cancelled. It never checks whether the member already paid online, and says nothing about a refund. The member can also cancel their own new order in the app, even after paying. Cancelling does not close the order's payment link either, so a saved link can still be paid for a cancelled order. The money stays at the gym's payment company with no record that it is owed back.
+**Who it hurts and how often:** Members and owners, each time a shop order paid online is cancelled. It needs live payments, which are switched off today.
+**Proof:** Found by reading the code. Pay for a shop order in the member app in test mode, then cancel it on the Shop page: no refund words appear, and the payment link still opens.
+**Fix:** Check for an online payment before cancelling, close open links, and tell the owner the money must be refunded. Size: medium.
+**Your decision:** Yes. My view: stop members cancelling a paid order on their own, and make the gym's cancel ask for a refund; the gym should own every refund. Option 1: members cannot cancel a paid order; the gym's cancel asks for a refund. Option 2: members can cancel, and the gym gets a "refund owed" item on Today.
+Finding: FN-L5-panel-shop-02
+
+### Members who bought MettleUp Plus can be charged a second time
+
+**How bad:** Serious. Money and trust: Google Play can charge a member twice, or keep charging monthly after they "switched" to yearly.
+**What you would see:** The member app decides whether to show the buy buttons only from what it remembers on the phone. After Erase all data, or when Google Play did not answer when the app started, it forgets the purchase until the next fresh start. In that gap the member sees the monthly, yearly and for-life buttons again. A for-life member who taps monthly, or a monthly member who taps for life, is charged again with no warning. A monthly member who taps yearly is told Thank you and shown "you pay every year", while Google Play keeps charging every month.
+**Who it hurts and how often:** Members who bought MettleUp Plus, only after Erase all data or when Google Play did not answer at app start. Nobody today, because buying Plus is switched off in the app.
+**Proof:** Found by reading the code. With buying switched on in a test build, buy Plus, tap Erase all data, then open the Plus screen: the buy buttons show again.
+**Fix:** Ask Google Play what the account owns each time the Plus screen opens, hide the buy buttons for an owner, and keep the plan Google Play reports. Size: small.
+**Your decision:** Yes. My view: fix it before buying is switched on; a double charge on Google Play brings refunds and one-star reviews. Option 1: fix now, before paid Plus goes live. Option 2: fix later, and only switch buying on once it is done.
+Finding: FN-L5-phone-lib-core-01
+
+### Members still see the old UPI ID after the owner changes it
+
+**How bad:** Serious. Money: members can send fees to an account the gym no longer uses.
+**What you would see:** The owner saves a new UPI ID for the gym. A member's open fee and any open shop order keep showing the old QR, the old Pay by UPI link and the old ID to copy, for up to 30 days. A shop order reuses that same old request each time the member taps pay. Money sent that way goes to an account the gym may no longer use, or to a staff member's old ID.
+**Who it hurts and how often:** Members and owners, each time a gym changes its UPI ID while payments are still open.
+**Proof:** Found by reading the code. Ask a test member to pay a fee, change the gym's UPI ID, then open the fee in the member app: the QR still carries the old ID.
+**Fix:** Always show the gym's current UPI ID when a member opens a payment. Size: small.
+**Your decision:** Yes. My view: always use the current ID; an owner who changes it means money must stop going to the old one. Option 1: show the current ID on every open payment. Option 2: also tell members with an open payment that the gym's UPI ID changed.
+Finding: FN-L5-phone-shop-1-01
+
+### Test-mode payments are announced to members and owners as real
+
+**How bad:** Serious. Trust: members get a real-looking "pay your fee" pop-up and owners see "paid" when no money moved.
+**What you would see:** While payments are still in test mode (no real money), a payment request goes out like a real one. The member's phone shows a pop-up saying their gym asked them to pay their fee, tap to pay. When a test payment is made, the gym's bell says the member paid online, see it on Money. Neither says it is a test, though each payment request knows whether it was test or live.
+**Who it hurts and how often:** Members and owners, on every payment request or payment while payments are in test mode, which is every gym today.
+**Proof:** Found by reading the code. In a test gym, send a member a fee request in test mode: the member gets the normal "pay your fee" pop-up with no test label.
+**Fix:** Send no pop-up to members for test requests, and label test payments "test, no real money" on the bell. Size: small.
+**Your decision:** Yes. My view: send no member pop-up for test requests, and label the owner's bell alert as a test; members should never meet our tests. Option 1: no member pop-up, owner alert labelled test. Option 2: keep both, labelled test.
+Finding: FN-L5-server-database-3-04
+
+### Member app shows test payments as paid; the gym records nothing
+
+**How bad:** Serious. Money and trust: a member thinks they paid, but the due stays open at the desk.
+**What you would see:** Payments are in test mode for every gym today. Yet any gym that connects Razorpay or Cashfree has member app payments switched on by default. Members then get test payment pages for their dues and shop orders. A member who finishes one sees "Paid, thank you" (or "Paid. The gym can see it." for a shop order), while no money moved. The gym's Shop page does not show the order as paid, and the due stays open at the desk. The join page and the gym's web page already keep test payments away from members; the member app does not.
+**Who it hurts and how often:** Members of gyms that connected a payment company, on every member payment while payments are in test mode.
+**Proof:** Found by reading the code. Connect a payment company to a test gym, pay a fee from the member app: it says Paid, and the desk still shows the fee as owed.
+**Fix:** Offer payment company links in the member app only when payments are live, the same rule as the join page. Size: small.
+**Your decision:** Yes. My view: use the join page's rule; in test mode members should see the UPI QR or "pay at the desk". Option 1: hide company links until payments are live. Option 2: keep them, but label the page as a test with no real money.
+Finding: FN-L5-server-panel-worker-01
+
+### Cloudflare free-limit warning comes weekly, after the busy day is over
+
+**How bad:** Serious. Trust: on a busy day every MettleUp app stops, and HQ only says so days later.
+**What you would see:** HQ checks Cloudflare's daily request count only on Monday night, for the week before. If a Tuesday runs past the free daily limit, every MettleUp app stops working until 05:30 the next morning. HQ only warns about it the following Monday. Only requests are watched; other free Cloudflare limits are not. Keeping the check light was your earlier ask, so this is a trade-off, but a busy day still goes unseen for up to a week.
+**Who it hurts and how often:** Every gym and member, on any day the apps get unusually busy.
+**Proof:** Found by reading the code. Look at HQ's usage check: it runs only on Mondays and reads only the request count.
+**Fix:** Check the day's count every few hours and warn on Needs you the same day it passes 60%, or move to Cloudflare's paid plan once gyms rely on it. Size: small.
+**Your decision:** Yes. My view: add the same-day warning now, and move to the paid plan when the first paying gyms are live. Option 1: same-day warning at 60%. Option 2: move to the paid plan now.
+Finding: FN-L8-hq-app-01
+
+### One member account can fill the whole shared database
+
+**How bad:** Serious. Trust: one broken or misused phone could stop every gym's desk from saving.
+**What you would see:** Anyone who signs in with Google gets a workout copy on our server. It is capped only by count (30,000 items) and by size per item (32 KB). Together that is close to 1 GB for one account, while the whole free database is 500 MB and is shared by every gym. Nothing limits the total size per member or how fast one account can write. If one account fills the database, desks in every gym stop saving.
+**Who it hurts and how often:** Every gym, through any one member account. It needs a damaged or misused phone; a normal member never comes close.
+**Proof:** Found by reading the code. The server checks only the item count and the size of each item, never the total for one account.
+**Fix:** Add a total size cap per member copy (a few MB is years of real training) and a write speed limit on the server. Size: small.
+**Your decision:** No.
+Finding: FN-L8-phone-cloud-backup-ai-01
+
+### Very long workouts are silently left out of the backup
+
+**How bad:** Serious. Data lost: a member moves to a new phone and one workout is missing, though Settings said all was saved.
+**What you would see:** A workout bigger than the backup's size limit per item is skipped. It is noted only in a log no member can see. It never joins the waiting count, so the backup line in Settings says the workouts are saved. On a new phone, that workout is missing.
+**Who it hurts and how often:** Members with very long workouts, which is rare.
+**Proof:** Found by reading the code. Save a test workout bigger than the size limit, let the backup run, then check Settings: it says everything is saved, and the workout is not on the server.
+**Fix:** Show a "not saved" line for a workout over the size limit, or split it so it fits. Size: small.
+**Your decision:** No.
+Finding: FN-L8-phone-cloud-backup-ai-02
+
+### After 1,000 help messages a day, every member's message is refused
+
+**How bad:** Serious. Trust: a member reporting a real problem is turned away, and the team never hears of it.
+**What you would see:** The help and feedback box takes at most 1,000 messages a day from everyone together. After that, every member who writes in reads "Too many messages today", and the message is thrown away. The phone does not keep it to send later. Nobody at MettleUp is warned before or when the limit is hit.
+**Who it hurts and how often:** Members, on any day the shared limit is reached. Messages are few today, but spam from many addresses could hit it.
+**Proof:** Found by reading the code. Send 1,000 help messages in one day from test phones, then send one more: it is refused and no alert reaches the team.
+**Fix:** Warn the team when the day's count nears the limit, and let the phone keep a refused message and send it again later. Size: medium.
+**Your decision:** No.
+Finding: FN-L8-phone-components-2-03
+
+### Aadhaar in Hindi digits or with dots slips through member import
+
+**How bad:** Serious. Privacy: a member's full Aadhaar number can be saved even though the import promises to cut it.
+**What you would see:** When an owner imports members from a file, the app cuts out any Aadhaar number it finds. It only spots one written in English digits with spaces or dashes. An Aadhaar written in Hindi digits, or with dots between the groups, comes in whole. No test checks this, nor a row fixed under "Rows to check", importing the same file twice, or the skipped-rows download. The import screen's promise line about ID numbers is never tested either.
+**Who it hurts and how often:** Gym members, on any import where an ID number is written in Hindi digits or with dots. The first reading called this only a missing test; a second check found the real gap.
+**Proof:** Found by reading the code. Import a file with an Aadhaar number written in Hindi digits, then open that member: the full number is there.
+**Fix:** Make the cut read Hindi digits and dots, and add tests for those, the fixed row, the second import and the skipped-rows file. Size: small.
+**Your decision:** No.
+Finding: FN-A8-panel-logic-1-4-07
