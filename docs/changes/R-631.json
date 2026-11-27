@@ -103,7 +103,7 @@
     "FN-A3-website-2-07",
     "FN-L4-web-pages-p2-04"
   ],
-  "approved_by": "Owner, 27 Nov 2026: \"Yes to all your views\" (D1-D14 = option A/my view each). D15 (Cloudflare visitor counter): he asked to understand it first; no change until he says. D14: \"Don't worry about the list of issues being public.\"",
+  "approved_by": "Owner, 27 Nov 2026: \"Yes to all your views\" (D1-D14 = option A/my view each). D15 (Cloudflare visitor counter): he asked to understand it first; no change until he says. D14: \"Don't worry about the list of issues being public.\" Then, 27 Nov 2026: \"I do want the counter. Yes. On my websites, I do need the analytics enabled. So if you want to change the words to match it, yes, do it.\" = D15 option B: keep Cloudflare Web Analytics on the public sites (mettleup.fit, gyms.mettleup.fit; not the admin app or gym pages) and name it in the notice (done 27 Nov). Repo: \"keep the repo public for now\" until real gyms and customers.",
   "status": "approved",
   "session_id": "",
   "dark": false,
