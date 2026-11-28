@@ -30,8 +30,9 @@ holds "## Claude's tasks" (my own work, in priority order; its own tab): keep it
   your notes survive it.
 - **⭐ Owner rule (20 Oct 2026, R-36): add NOTHING to the inbox unless he says so.** Answer his questions
   in chat and keep the answer in your notes (`docs/CLAUDE-NOTES.md`). An answer goes into the inbox
-  ONLY when he tells you to put it there ("save this in my inbox"). A feature goes into the backlog
-  ONLY when he confirms it ("okay, we'll build this", "add to plan"). Ideas and research stay in your
+  ONLY when he tells you to put it there ("save this in my inbox"). **Owner rule (28 Nov 2026): every issue, idea or improvement HE shares
+  goes into the feature backlog at once** (Planned, or Idea for research), even if it also sits in an audit plan or
+  docs/OWNER-OBSERVATIONS.md. Features I suggest myself go in only when he confirms them. Ideas and research stay in your
   notes. When he does ask for an inbox entry: `## <n>. <title> — <date>`, a `**Chat:** <chat name> —
   <session link>` line, `**Status:**`, "You asked" in short + your plain-English answer.
 - **A decision only he can make** (the #18 list below): `**Decide:** <question>` + `- A: <option>`

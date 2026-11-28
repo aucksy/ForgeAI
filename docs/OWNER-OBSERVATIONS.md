@@ -3,7 +3,7 @@
 Source: the owner's notes in Vivo Mind Space, summarised twice by the phone's AI (each note, then the whole
 collection "MettleUp Workout T..."), sent as 4 screenshots on 27 Nov 2026, plus his answers the same day (with a
 screenshot of the active workout screen, Incline Dumbbell Curl). Nothing was missing above the first screenshot.
-Each row joins a cause family in Phase C (No Gaps gate G0) together with the audit's findings; none is dropped.
+Every row is also a Feature backlog row (F243 to F279, 28 Nov 2026). Each row joins a cause family in Phase C (No Gaps gate G0) together with the audit's findings; none is dropped.
 
 | Id | Area | His observation | Status |
 |---|---|---|---|
@@ -46,3 +46,4 @@ Each row joins a cause family in Phase C (No Gaps gate G0) together with the aud
 | O-38 | Gyms | A member photo should be required (gyms cannot remember every face; it also helps spot a paused member who still trains). Self sign-up already lets the member take a picture: make it required, and require it before a pause request if the member has none. Idea: check that the picture really holds one face. His decision (27 Nov 2026): required for every gym member. Members can upload a better picture from the app (some gyms' desk webcams give unclear pictures). A correct picture must never be refused: the face check may only warn ("Use it anyway" / "Retake") and flag the picture for the gym, never block. Measure the check on real sample photos before shipping. | Open |
 | O-37 | Sign-in | Idea to explore later: for people without a gym, start with Google sign-in only and hide the Gym tab. Turn the Gym tab on when a gym is found (WhatsApp check, or a gym adds them later). Keep "Connect to a gym" in Settings. Real gym members are brought in by their gym owner anyway. | Idea |
 | O-39 | Gyms | One QR code on the entry door for everything (27 Nov 2026): a member with the app checks in; a person without the app is taken to install it. Today the check-in QR (app.mettleup.fit/c/CODE) already does this on Android: with the app it opens "Check in at <gym>"; without it, a page leads to Google Play, then says "join your gym in the app, then scan the poster again". Gaps to design: after install the app does not yet know which gym the person came from (a second scan is needed); the join QR is a separate poster; iPhone gets an "Android only" page; not yet proven on real phone cameras (Google Lens, Vivo camera). He also wants a nicer poster design, with the get-the-app part on it. | Open (needs design) |
+| O-40 | Watch | (28 Nov 2026) The watch stops reading heart rate when its screen dims, and the workout goes to the background by itself (screen off, only the 'workout active' pill stays). Fix today. | Open (F243, F244) |
