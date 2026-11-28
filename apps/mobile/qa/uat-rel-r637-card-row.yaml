@@ -10,6 +10,7 @@
 #  2. The rest button opens the rest picker; "Rest 2:00" is kept for this exercise: the button reads
 #     "Rest timer 2:00. Change" (custom rest: drawn in the accent colour).
 #  3. The ••• menu opens with the "Body part, Quads" line; no "Rest timer" row, no "History" line.
+#  4. The demo's Up next routine: the first card's line names its workout ("Previous: <day> · <workout>").
 # Pictures rel-637-*.png (qa-out/uat-release/). Run on his phone (profile owner: 360 dp, font 1.3) and with the
 # largest text (env font=2.0) to see the line end in "…" while the rest button keeps its size.
 appId: com.mettleup.app
@@ -109,3 +110,27 @@ appId: com.mettleup.app
     notVisible: '^Body part, Quads$'
     timeout: 10000
 - assertVisible: '^Rest timer 2:00\. Change$'
+# ---------------------------------------------------------------- 4. a routine: the line names its workout
+# The empty workout's line has no name ("Previous: 24 Nov"). The demo's Up next routine names the workout
+# its PREVIOUS comes from ("Previous: 24 Nov · Push A"): on his phone with the largest text it ends in "…"
+# when it does not fit, and the rest button keeps its size on the right.
+- back
+- runFlow: sub-workout-fresh.yaml
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Start$"
+- tapOn: "^Start$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout"
+    timeout: 30000
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Previous: \d{1,2} [A-Z][a-z]{2}( \d{4})?( · .+)?$'
+- assertNotVisible: '.*First time in this.*'
+- assertNotVisible: '^Last: .*'
+- takeScreenshot: rel-637-05-routine-row
