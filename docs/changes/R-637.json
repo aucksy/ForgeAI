@@ -35,7 +35,7 @@
     },
     "G3_tests_first": {
       "done": true,
-      "evidence": "Written from docs/designs/R-637.md before any code, in a commit with no code: apps/mobile/test/tracker/previousSource.test.ts (cardSourceLine/firstTimeLine one Previous form, never First time / another workout / Last), apps/mobile/test/db/previousSourceReal.test.ts (elsewhere carries the other workout's name; elsewhereOf takes the names read), apps/mobile/test/tracker/auditC1LiveWorkout.test.ts (R-637 row and menu rules replace R-359/C1-9). Failing cloud run: recorded here after the push (the commit hook needs G3 before any commit; local vitest cannot start: esbuild binary missing)."
+      "evidence": "Written from docs/designs/R-637.md before any code, pushed in c26b5783 (tests + card only): apps/mobile/test/tracker/previousSource.test.ts (cardSourceLine/firstTimeLine one Previous form, never First time / another workout / Last), apps/mobile/test/db/previousSourceReal.test.ts (elsewhere carries the other workout's name; elsewhereOf takes the names read), apps/mobile/test/tracker/auditC1LiveWorkout.test.ts (R-637 row and menu rules replace R-359/C1-9). Red: cloud CI run 46109406149 (job 140869346499) failed at Typecheck (mobile) on exactly these tests: firstTimeLine(e, today) expected 3-6 args, elsewhereOf 5th arg, elsewhere.name missing; vitest did not run after it. Note: the commit hook needs G3 done before any commit, so this evidence was finished after that push; local vitest cannot start here (esbuild binary missing)."
     },
     "G4_build": {
       "done": false,
