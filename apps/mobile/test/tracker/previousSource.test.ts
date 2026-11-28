@@ -1,11 +1,11 @@
 /**
- * 13 Oct 2026 (the owner's Hevy comparison), ideas 1 and 2 — the muted line above a live card's
- * set table:
+ * 13 Oct 2026 (the owner's Hevy comparison), ideas 1 and 2 — the muted line on a live card:
  *  - "Previous: 3 Oct · Push 1A" — where PREVIOUS comes from (day-first, the year when it isn't
  *    this year; the workout's title, else its routine's name, else the day alone);
- *  - "First time in this folder · Previous in another workout: 100 kg × 5, 3 Oct" — "Same routine" / "Same
- *    folder" found nothing, but the exercise was done elsewhere (each log type in its own words,
- *    in the member's units and the card's counting).
+ *  - R-637 (owner, 28 Nov 2026: "First time here can go ... date and then ... the name"): when
+ *    "Same routine" / "Same folder" found nothing but the exercise was done in another workout, the
+ *    line has the SAME form, naming that other workout ("Previous: 3 Oct · Legs B"). The old
+ *    first-time sentence and its "another workout" set are gone from the app.
  */
 import { afterEach, describe, expect, it } from 'vitest';
 
@@ -56,28 +56,37 @@ describe('idea 1: "Previous: 3 Oct · Push 1A"', () => {
 
 type Card = Pick<DraftExercise, 'previousSets' | 'lastFrom' | 'elsewhere' | 'logType' | 'loadMode' | 'distUnit'>;
 
-describe('idea 2: "First time in this folder · Previous in another workout: …"', () => {
-  const at = (set: PrevSet, scope: 'routine' | 'folder' = 'folder') => ({
+describe('idea 2 (R-637): done only in another workout reads "Previous: <day> · <that workout>"', () => {
+  const at = (name?: string | null, scope: 'routine' | 'folder' = 'folder', dateISO = '2026-10-03') => ({
     scope,
-    dateISO: '2026-10-03',
-    set,
+    dateISO,
+    set: { weightKg: 100, reps: 5 },
+    ...(name !== undefined ? { name } : {}),
   });
 
-  it('each scope word', () => {
-    expect(firstTimeLine(at({ weightKg: 100, reps: 5 }, 'folder'), 'weight_reps', 'metric', 'one', 'km', TODAY)).toEqual({
-      text: 'First time in this folder · Previous in another workout: 100 kg × 5, 3 Oct',
-      spoken: 'First time in this folder. Previous time in another workout: 100 kg × 5, on 3 October',
-    });
-    expect(firstTimeLine(at({ weightKg: 100, reps: 5 }, 'routine'), 'weight_reps', 'metric', 'one', 'km', TODAY)?.text).toBe(
-      'First time in this routine · Previous in another workout: 100 kg × 5, 3 Oct',
-    );
+  it('names the other workout, spoken as idea 1 is', () => {
+    expect(firstTimeLine(at('Legs B'), TODAY)).toEqual({ text: 'Previous: 3 Oct · Legs B', spoken: 'Previous is from 3 October, Legs B' });
+    // The scope word no longer changes the words.
+    expect(firstTimeLine(at('Legs B', 'routine'), TODAY)?.text).toBe('Previous: 3 Oct · Legs B');
+  });
+
+  it('no name (or a draft saved before the name was kept): the day alone', () => {
+    expect(firstTimeLine(at(null), TODAY)).toEqual({ text: 'Previous: 3 Oct', spoken: 'Previous is from 3 October' });
+    expect(firstTimeLine(at(), TODAY)?.text).toBe('Previous: 3 Oct');
+    expect(firstTimeLine(at('   '), TODAY)?.text).toBe('Previous: 3 Oct');
   });
 
   it('another year gets its year', () => {
-    const e = { scope: 'folder' as const, dateISO: '2025-03-09', set: { weightKg: 100, reps: 5 } };
-    expect(firstTimeLine(e, 'weight_reps', 'metric', 'one', 'km', TODAY)?.text).toBe('First time in this folder · Previous in another workout: 100 kg × 5, 9 Mar 2025');
+    expect(firstTimeLine(at('Legs B', 'folder', '2025-03-09'), TODAY)?.text).toBe('Previous: 9 Mar 2025 · Legs B');
   });
 
+  it('nothing elsewhere: no line', () => {
+    expect(firstTimeLine(undefined, TODAY)).toBeNull();
+    expect(firstTimeLine(null, TODAY)).toBeNull();
+  });
+});
+
+describe('a set in words, and the best set of a workout (still used to pick the other workout)', () => {
   it('each log type in its own words', () => {
     expect(setInWords({ weightKg: 100, reps: 5 }, 'weight_reps', 'metric')).toBe('100 kg × 5');
     expect(setInWords({ weightKg: 22.5, reps: 8 }, 'weight_reps', 'metric', 'both')).toBe('22.5 kg each × 8');
@@ -94,14 +103,10 @@ describe('idea 2: "First time in this folder · Previous in another workout: …
     expect(setInWords({ weightKg: 0, reps: 0, durationSec: 720 }, 'time_distance', 'metric')).toBe('12:00');
     // Nothing worth saying: no line.
     expect(setInWords({ weightKg: 0, reps: 0 }, 'time', 'metric')).toBeNull();
-    expect(firstTimeLine(at({ weightKg: 0, reps: 0 }), 'time', 'metric', 'one', 'km', TODAY)).toBeNull();
   });
 
   it('in pounds (and miles) when the member uses them', () => {
     setDisplayUnits('imperial');
-    expect(firstTimeLine(at({ weightKg: 100, reps: 5 }), 'weight_reps', 'imperial', 'one', 'km', TODAY)?.text).toBe(
-      'First time in this folder · Previous in another workout: 220.5 lb × 5, 3 Oct',
-    );
     expect(setInWords({ weightKg: 10, reps: 8 }, 'weighted', 'imperial')).toBe('+22 lb × 8');
     expect(setInWords({ weightKg: 20, reps: 8 }, 'assisted', 'imperial')).toBe('8 reps with 44.1 lb assistance');
     expect(setInWords({ weightKg: 0, reps: 0, distanceM: 1609.344 }, 'distance', 'imperial', 'one', 'km')).toBe('1 mi');
@@ -125,22 +130,63 @@ describe('idea 2: "First time in this folder · Previous in another workout: …
   });
 });
 
-describe('the card shows one line: idea 1, else idea 2, else none', () => {
+describe('the card shows one line: idea 1, else idea 2, else none (R-637: one form for both)', () => {
   const card = (c: Partial<Card>): Card => ({ previousSets: [], logType: 'weight_reps', loadMode: 'one', distUnit: 'km', ...c });
+  const prev = [{ weightKg: 80, reps: 6 }];
+  const other = (name?: string | null, dateISO = '2026-10-03') => ({
+    scope: 'folder' as const,
+    dateISO,
+    set: { weightKg: 100, reps: 5 },
+    ...(name !== undefined ? { name } : {}),
+  });
 
-  it('a previous: "Previous: …"', () => {
-    expect(cardSourceLine(card({ previousSets: [{ weightKg: 80, reps: 6 }], lastFrom: { dateISO: '2026-10-03', name: 'Push 1A' } }), 'metric', TODAY)?.text).toBe(
+  it('a previous with a name: "Previous: 3 Oct · Push 1A"', () => {
+    expect(cardSourceLine(card({ previousSets: prev, lastFrom: { dateISO: '2026-10-03', name: 'Push 1A' } }), 'metric', TODAY)?.text).toBe(
       'Previous: 3 Oct · Push 1A',
     );
   });
 
-  it('no previous but done elsewhere: the first-time line', () => {
-    const c = card({ elsewhere: { scope: 'folder', dateISO: '2026-10-03', set: { weightKg: 100, reps: 5 } } });
-    expect(cardSourceLine(c, 'metric', TODAY)?.text).toBe('First time in this folder · Previous in another workout: 100 kg × 5, 3 Oct');
+  it('a previous with no name: "Previous: 3 Oct"', () => {
+    expect(cardSourceLine(card({ previousSets: prev, lastFrom: { dateISO: '2026-10-03', name: null } }), 'metric', TODAY)?.text).toBe('Previous: 3 Oct');
+  });
+
+  it('a previous from another year: "Previous: 3 Oct 2025"', () => {
+    expect(cardSourceLine(card({ previousSets: prev, lastFrom: { dateISO: '2025-10-03', name: null } }), 'metric', TODAY)?.text).toBe(
+      'Previous: 3 Oct 2025',
+    );
+  });
+
+  it('done only in another workout, with its name: "Previous: 3 Oct · Legs B"', () => {
+    const line = cardSourceLine(card({ elsewhere: other('Legs B') }), 'metric', TODAY);
+    expect(line).toEqual({ text: 'Previous: 3 Oct · Legs B', spoken: 'Previous is from 3 October, Legs B' });
+  });
+
+  it('done only in another workout, no name: "Previous: 3 Oct"', () => {
+    expect(cardSourceLine(card({ elsewhere: other(null) }), 'metric', TODAY)?.text).toBe('Previous: 3 Oct');
+    expect(cardSourceLine(card({ elsewhere: other() }), 'metric', TODAY)?.text).toBe('Previous: 3 Oct');
   });
 
   it('neither, or a draft saved before these lines existed: no line', () => {
     expect(cardSourceLine(card({}), 'metric', TODAY)).toBeNull();
-    expect(cardSourceLine(card({ previousSets: [{ weightKg: 80, reps: 6 }] }), 'metric', TODAY)).toBeNull();
+    expect(cardSourceLine(card({ previousSets: prev }), 'metric', TODAY)).toBeNull();
+  });
+
+  it('never "First time", never "another workout", never "Last" (owner: "Previous", never "Last")', () => {
+    const lines = [
+      cardSourceLine(card({ previousSets: prev, lastFrom: { dateISO: '2026-10-03', name: 'Push 1A' } }), 'metric', TODAY),
+      cardSourceLine(card({ previousSets: prev, lastFrom: { dateISO: '2025-10-03', name: null } }), 'metric', TODAY),
+      cardSourceLine(card({ elsewhere: other('Legs B') }), 'metric', TODAY),
+      cardSourceLine(card({ elsewhere: { ...other(null), scope: 'routine' } }), 'metric', TODAY),
+      cardSourceLine(card({ elsewhere: other('Legs B', '2025-01-05') }), 'metric', TODAY),
+    ];
+    for (const l of lines) {
+      expect(l).not.toBeNull();
+      for (const said of [l!.text, l!.spoken]) {
+        expect(said).not.toMatch(/First time/i);
+        expect(said).not.toMatch(/another workout/i);
+        expect(said).not.toMatch(/^Last/);
+        expect(said).toMatch(/^Previous/);
+      }
+    }
   });
 });

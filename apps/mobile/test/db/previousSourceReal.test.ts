@@ -4,8 +4,9 @@
  *   folder Gym A: routines A1 "Gym A Push 1" and A2 "Gym A Push 2"; folder Gym B: routine B1.
  *   Bench logged ONLY from B1 (100 × 5 at RPE 9, the newest Bench of all).
  *  - "Same folder", start A1: nothing in Gym A — PREVIOUS stays empty (no cell, no hint), and the
- *    card says "First time in this folder · Previous in another workout: 100 kg × 5, <today>" from Gym B.
- *  - "Same routine": the same, "…in this routine…".
+ *    card names the Gym B workout in the same form as idea 1 (R-637, owner 28 Nov 2026):
+ *    "Previous: <today> · Gym B Push".
+ *  - "Same routine": the same words.
  *  - "Any workout": PREVIOUS is B1's 100 × 5 (with its RPE), and the card says
  *    "Previous: <today> · Gym B Push" — the workout's title, else its routine's name.
  */
@@ -89,13 +90,13 @@ async function today(): Promise<string> {
 }
 
 describe('first time in a scope (idea 2)', () => {
-  it('Same folder, nothing in Gym A: "First time in this folder · Previous in another workout: 100 kg × 5", and no PREVIOUS or hint from it', async () => {
+  it('Same folder, nothing in Gym A: "Previous: <today> · Gym B Push", and no PREVIOUS or hint from it', async () => {
     await setting('folder');
     const { card, line, previous, hints } = await startA1();
     expect(card.previousSets).toEqual([]);
     expect(card.lastFrom).toBeUndefined();
-    expect(card.elsewhere).toMatchObject({ scope: 'folder', set: { weightKg: 100, reps: 5 } });
-    expect(line).toBe(`First time in this folder · Previous in another workout: 100 kg × 5, ${await today()}`);
+    expect(card.elsewhere).toMatchObject({ scope: 'folder', set: { weightKg: 100, reps: 5 }, name: NAMES.B1 });
+    expect(line).toBe(`Previous: ${await today()} · ${NAMES.B1}`);
     // The numbers stay separate: no PREVIOUS cell and no hint quote Gym B.
     expect(previous.every((p) => p == null)).toBe(true);
     expect(hints.every((h) => h == null)).toBe(true);
@@ -105,14 +106,15 @@ describe('first time in a scope (idea 2)', () => {
     await useActiveWorkout.getState().addExercise((await getExerciseById(bench))!);
     const added = useActiveWorkout.getState().exercises[1];
     expect(added.previousSets).toEqual([]);
-    expect(added.elsewhere).toMatchObject({ scope: 'folder', set: { weightKg: 100, reps: 5 } });
+    expect(added.elsewhere).toMatchObject({ scope: 'folder', set: { weightKg: 100, reps: 5 }, name: NAMES.B1 });
     await useActiveWorkout.getState().discard();
   });
 
-  it('Same routine: "First time in this routine"', async () => {
+  it('Same routine: the same words, never "First time in this routine"', async () => {
     await setting('routine');
     const { line } = await startA1();
-    expect(line).toBe(`First time in this routine · Previous in another workout: 100 kg × 5, ${await today()}`);
+    expect(line).toBe(`Previous: ${await today()} · ${NAMES.B1}`);
+    expect(line).not.toMatch(/First time|another workout/);
     const { useActiveWorkout } = await import('@/tracker/store/activeWorkoutStore');
     await useActiveWorkout.getState().discard();
   });
@@ -149,5 +151,35 @@ describe('where PREVIOUS comes from (idea 1) and its RPE (item 1)', () => {
     expect(prevLabel(card.previousSets[0], 'weight_reps', 'km', 'metric', false)).toBe('100 × 5');
     const { useActiveWorkout } = await import('@/tracker/store/activeWorkoutStore');
     await useActiveWorkout.getState().discard();
+  });
+});
+
+describe('elsewhereOf (R-637): the other workout keeps its name', () => {
+  const folder = { routineIds: [], names: [], kind: 'folder' as const };
+  const entry = (sessionId: string) => ({
+    sessionId,
+    dateISO: '2026-10-03',
+    volumeKg: 500,
+    sets: [{ id: 'x1', sessionId, exerciseId: 'bench', setNumber: 1, weightKg: 100, reps: 5, isWarmup: false }],
+  });
+  it('names the newest other workout from the names read', async () => {
+    const { elsewhereOf } = await import('@/tracker/store/activeWorkoutStore');
+    expect(elsewhereOf(folder, [entry('s9')], 'weight_reps', 'one', new Map([['s9', 'Legs B']]))).toEqual({
+      scope: 'folder',
+      dateISO: '2026-10-03',
+      set: expect.objectContaining({ weightKg: 100, reps: 5 }),
+      name: 'Legs B',
+    });
+  });
+  it('no name read (or none known): name null, the line shows the day alone', async () => {
+    const { elsewhereOf } = await import('@/tracker/store/activeWorkoutStore');
+    expect(elsewhereOf(folder, [entry('s9')], 'weight_reps', 'one', new Map())?.name).toBeNull();
+    expect(elsewhereOf(folder, [entry('s9')], 'weight_reps', 'one')?.name).toBeNull();
+    expect(elsewhereOf(folder, [entry('s9')], 'weight_reps', 'one', new Map([['s9', null]]))?.name).toBeNull();
+  });
+  it('nothing to say: undefined, as before', async () => {
+    const { elsewhereOf } = await import('@/tracker/store/activeWorkoutStore');
+    expect(elsewhereOf(null, [entry('s9')], 'weight_reps', 'one', new Map([['s9', 'Legs B']]))).toBeUndefined();
+    expect(elsewhereOf(folder, [], 'weight_reps', 'one', new Map())).toBeUndefined();
   });
 });

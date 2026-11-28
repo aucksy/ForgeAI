@@ -238,27 +238,76 @@ describe('C1-8: the Target line shows the weight the hint shows', () => {
   });
 });
 
-describe("C1-9: the card's tag row wraps at 360 dp and font 1.3", () => {
-  it('the muscle badge, superset badge and rest pill row wraps', () => {
-    expect(read('src/tracker/components/ExerciseLogCard.tsx')).toMatch(/marginTop: 6, (marginLeft: [^,]+, )?flexDirection: 'row', flexWrap: 'wrap'/);
+// R-637 (owner, 28 Nov 2026, approved design v5) replaces the C1-9 wrapping tag row and the R-359 layout:
+// one row under the name from the card's left edge: [Superset chip] source text ... [Rest button].
+// The body-part chip moves into the ••• menu as an info line; the menu's "Rest timer" row is gone.
+describe('R-637: the card row under the name (source on the left, rest button on the right)', () => {
+  const src = read('src/tracker/components/ExerciseLogCard.tsx');
+  // The row: from the source text's spoken label to the rest button's label.
+  const rowAt = src.indexOf('accessibilityLabel={sourceLine.spoken}');
+  const row = src.slice(src.lastIndexOf('<View', rowAt), src.indexOf("'Rest timer off. Change'", rowAt) + 600);
+
+  it('starts at the card edge, not indented past the picture', () => {
+    expect(src).not.toMatch(/marginLeft: 44 \+ space\.sm/);
+    expect(rowAt).toBeGreaterThan(src.indexOf("setSheet('menu')"));
+  });
+  it('no body-part chip on the card', () => {
+    expect(src).not.toMatch(/<Badge label=\{exercise\.muscleLabel/);
+  });
+  it('the source text is one line that ends in "…"; no short form, no wrap', () => {
+    expect(rowAt).toBeGreaterThan(0);
+    expect(row).toMatch(/numberOfLines=\{1\}/);
+    expect(src).not.toMatch(/sourceShort|sourceWrapped/);
+    expect(row).not.toMatch(/flexWrap: 'wrap'/);
+  });
+  it('the superset chip comes first, then the source, then the rest button', () => {
+    const chip = row.indexOf('Superset ${supersetLabel(group)}');
+    expect(chip).toBeGreaterThan(-1);
+    expect(chip).toBeLessThan(row.indexOf('sourceLine.spoken'));
+    expect(row.indexOf('sourceLine.spoken')).toBeLessThan(row.indexOf("'Rest timer off. Change'"));
+  });
+  it('the rest button keeps its spoken label, says "Rest 2:00" / "Rest off", never shrinks, has a 44 dp tap area', () => {
+    expect(row).toContain('`Rest timer ${fmtRest(restSec)}. Change`');
+    expect(row).toContain("'Rest timer off. Change'");
+    expect(row).toMatch(/`Rest \$\{fmtRest\(restSec\)\}`/);
+    expect(row).toContain("'Rest off'");
+    expect(row).toMatch(/flexShrink: 0/);
+    expect(row).toMatch(/hitSlop=/);
+    expect(row).toContain("setSheet('rest')");
+  });
+  it('custom rest: the border and text in the accent colour', () => {
+    expect(row).toMatch(/borderColor: restIsCustom \? color\.accent/);
+    expect(row).toMatch(/color: restIsCustom \? color\.accent/);
+  });
+  it('no rest button when editing a finished workout', () => {
+    expect(row).toMatch(/editing \? null : \(/);
   });
 });
 
-
-describe("R-359: the tag row runs under the menu button to the card's edge", () => {
-  it('sits after the header row, aligned with the name, still wrapping', () => {
-    const src = read('src/tracker/components/ExerciseLogCard.tsx');
-    expect(src).toMatch(/marginTop: 6, marginLeft: 44 \+ space\.sm, flexDirection: 'row', flexWrap: 'wrap'/);
-    // The tag row comes after the menu button, not inside the name column beside it.
-    expect(src.indexOf("marginLeft: 44 + space.sm")).toBeGreaterThan(src.indexOf("setSheet('menu')"));
+describe('R-637: the ••• menu', () => {
+  const src = read('src/tracker/components/ExerciseLogCard.tsx');
+  const menu = src.slice(src.indexOf("visible={sheet === 'menu'}"), src.indexOf('<RestPickerSheet'));
+  it('opens with a "Body part" info line (muscle label, else the muscle group), spoken "Body part, Chest"', () => {
+    expect(menu).toContain('Body part');
+    expect(menu).toMatch(/exercise\.muscleLabel \?\? cap\(exercise\.muscleGroup\)/);
+    expect(menu).toMatch(/accessibilityLabel=\{`Body part, \$\{/);
+    expect(menu.indexOf('Body part')).toBeLessThan(menu.indexOf('<SheetRow'));
   });
-  it('tries the short date on the same row before it wraps (his phone, font 1.3)', () => {
-    const src = read('src/tracker/components/ExerciseLogCard.tsx');
-    // Full -> short ("31 Oct · Pull 1") -> wrapped; never back up while the text is the same.
-    expect(src).toMatch(/if \(wrapped && !sourceShort && sourceLine\.text\.startsWith\('Previous: '\)\)/);
-    expect(src).toMatch(/sourceShort \? sourceLine\.text\.slice\('Previous: '\.length\) : sourceLine\.text/);
-    // The spoken label keeps the full meaning.
-    expect(src).toMatch(/accessibilityLabel=\{sourceLine\.spoken\}/);
+  it('no "Rest timer" row and no "History" line', () => {
+    expect(menu).not.toMatch(/label="Rest timer"/);
+    expect(menu).not.toContain("openAfterMenu('rest')");
+    expect(menu).not.toMatch(/History/);
+  });
+});
+
+describe('R-637: the old words are gone from the card and its line', () => {
+  it('no "First time in this", no "Previous in another workout", no "Last:" said or shown', () => {
+    for (const f of ['src/tracker/components/ExerciseLogCard.tsx', 'src/tracker/lib/previousSource.ts']) {
+      const code = read(f);
+      expect(code, f).not.toMatch(/[`'"]First time in this/);
+      expect(code, f).not.toMatch(/[`'"]Previous in another workout/);
+      expect(code, f).not.toMatch(/[`'"]Last: /);
+    }
   });
 });
 
