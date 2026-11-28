@@ -18,7 +18,7 @@
 # and R-636: D-change, D-change-same, D-change-rehold (a workout that keeps changing on the phone holds the
 # screen; no change for the idle wait lets it go; a change holds it again), D-paused, D-paused-why,
 # D-paused-resume (a paused workout is held until the idle wait, never let go at once), D-dim-heart (the dim
-# screen shows the heart rate; INFO when the emulator gives no heart number at all).
+# rest screen shows the heart rate; INFO only when its screen cannot be read).
 #
 # Usage: watch_dim_aod_off_uat.sh <apk> <out-dir>
 set -uo pipefail
@@ -657,47 +657,55 @@ TO="$(set_timeout 15000)"
 result D-change-restore INFO "QA idle key removed; screen timeout: $TO"
 
 # ---- D-dim-heart: the owner's case (28 Nov 2026: "not capturing the heart rate when it's dim"). With the
-# emulator's fake heart data, the app's own dim screen still shows "♥ <number>" (read from the screen's
-# accessibility tree with uiautomator; the dim clock ticks once a minute, so the dump is retried). Bright first as
-# the control: an emulator that gives no heart number at all is INFO, not a pass. ----
+# emulator's heart data (bright screens here read e.g. "♥ 70"), the app's own dim screen still shows
+# "♥ <number>", read from the screen's accessibility tree with uiautomator. On the rest timer: with no rest running
+# and no paired phone the emulator shows "Phone not connected" (no heart line at all; run 46110307916). The bright
+# timer ticks every second, so its tree often cannot be read; the dim one moves once a minute. ----
 log "D-dim-heart"
 adb shell am broadcast -a whs.USE_SYNTHETIC_PROVIDERS com.google.android.wearable.healthservices >/dev/null 2>&1 || true
 adb shell am broadcast -a whs.synthetic.user.START_EXERCISE --ei exercise_options_heart_rate 128 com.google.android.wearable.healthservices >/dev/null 2>&1 || true
-ui_tree() { # the screen's tree ("" = could not be read)
+TREE=""
+ui_tree() { # sets TREE to the screen's tree ("" = could not be read)
   local i x
+  TREE=""
   for i in 1 2 3; do
     adb shell rm -f /sdcard/ui.xml >/dev/null 2>&1
     adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 || true
     x="$(adb shell cat /sdcard/ui.xml 2>/dev/null | tr -d '\r')"
-    if echo "$x" | grep -q "<hierarchy"; then echo "$x"; return; fi
+    if echo "$x" | grep -q "<hierarchy"; then TREE="$x"; return; fi
     sleep 1
   done
 }
-heart_now() { ui_tree | grep -oE '♥ [0-9]+' | head -1; }
 NOW="$(now_ms)"
 B="$(count 'self-dim-enter timeout')"
-fresh_workout 0 $((NOW - 60000))
+fresh_workout $((NOW + 25 * 60 * 1000)) $((NOW - 60000))
 HB=""
-for i in $(seq 1 6); do # bright: the 15 s screen timeout has not passed yet
-  HB="$(heart_now)"
+for i in $(seq 1 4); do # bright: the 15 s screen timeout has not passed yet
+  ui_tree
+  HB="$(echo "$TREE" | grep -oE '♥ [0-9]+' | head -1)"
   [ -n "$HB" ] && break
-  sleep 1
 done
 shot "D-dim-heart-bright"
 GD="$(wait_for 'self-dim-enter timeout' "$B" 30)"
 HD=""
-for i in $(seq 1 10); do
-  HD="$(heart_now)"
+READ=0
+for i in $(seq 1 8); do
+  ui_tree
+  [ -n "$TREE" ] && READ=1
+  HD="$(echo "$TREE" | grep -oE '♥ [0-9]+' | head -1)"
   [ -n "$HD" ] && break
   sleep 2
 done
 shot "D-dim-heart-dim"
+echo "$TREE" > "$OUT/D-dim-heart-tree.xml"
 if [ "$GD" = "1" ] && [ -n "$HD" ]; then
-  result D-dim-heart PASS "the app's own dim screen shows the heart rate (bright: ${HB:-none yet}; dim: $HD)"
-elif [ -z "$HB" ] && [ -z "$HD" ]; then
-  result D-dim-heart INFO "this emulator gave no heart number even bright (dimmed=$GD); the dim line is covered by the render tests"
+  result D-dim-heart PASS "the app's own dim rest screen shows the heart rate (bright: ${HB:-not readable}; dim: $HD)"
+elif [ "$GD" = "1" ] && [ "$READ" = "1" ] && [ -n "$HB" ]; then
+  result D-dim-heart FAIL "bright showed $HB but the dim screen has no heart number (tree read; see D-dim-heart-dim.png)"
+elif [ "$GD" = "1" ] && [ "$READ" = "1" ]; then
+  result D-dim-heart FAIL "the dim rest screen's tree has no heart number (bright not readable; see D-dim-heart-dim.png)"
 else
-  result D-dim-heart FAIL "dimmed=$GD; heart line bright: ${HB:-none}, dim: ${HD:-none}"
+  result D-dim-heart INFO "not decided: dimmed=$GD, dim tree read=$READ (see D-dim-heart-dim.png)"
 fi
 adb shell am broadcast -a whs.synthetic.user.STOP_EXERCISE com.google.android.wearable.healthservices >/dev/null 2>&1 || true
 
