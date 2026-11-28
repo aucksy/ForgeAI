@@ -69,6 +69,9 @@ abstract class WatchScreensRenderBase(private val size: WatchSize) {
     val fontScale: Float = 1f,
     val phoneAppMissing: Boolean = false,
     val phoneAppRequest: PhoneApp.Request = PhoneApp.Request.IDLE,
+    /** R-636: tagged lines that must be drawn / must not be drawn ([TextFit]). */
+    val present: List<String> = emptyList(),
+    val absent: List<String> = emptyList(),
   )
 
   /** Each screen in its active and its ambient form. */
@@ -79,6 +82,7 @@ abstract class WatchScreensRenderBase(private val size: WatchSize) {
 
   private fun shot(name: String, s: Shot, ambient: Boolean) {
     val file = File(out, "${size.name}-$name.png")
+    TextFit.cut.clear()
     captureRoboImage(file.absolutePath) {
       Scaled(s.fontScale) {
         WatchScreen(
@@ -98,6 +102,8 @@ abstract class WatchScreensRenderBase(private val size: WatchSize) {
       }
     }
     checkRoundCapture(file, size.dp, s.ring, px = size.px)
+    for (tag in s.present) assertTrue("${file.name}: \"$tag\" is not drawn but must be", TextFit.cut[tag] != null)
+    for (tag in s.absent) assertTrue("${file.name}: \"$tag\" is drawn but must not be", TextFit.cut[tag] == null)
   }
 
   @Composable
@@ -113,6 +119,18 @@ abstract class WatchScreensRenderBase(private val size: WatchSize) {
   // The hand-off's twelve screens (screens/NN-name.png and NN-name-ambient.png).
 
   @Test fun restTimer() = both("01-rest-timer", Shot(resting(), ring = true))
+
+  // R-636 (owner, 28 Nov 2026: "not capturing the heart rate when it's dim"): the dim rest timer and between-rests
+  // screens show the live heart rate while the sensor reads; while it searches or is off the wrist, no line.
+  @Test fun dimHeartRestTimer() = shot("15-dim-heart-rest-timer-ambient", Shot(resting(), ring = true, bpm = 128.0, present = listOf("heart")), ambient = true)
+
+  @Test fun dimHeartBetweenRests() = shot("16-dim-heart-between-rests-ambient", Shot(workout("Bench Press", betweenSet), ring = true, bpm = 128.0, present = listOf("heart")), ambient = true)
+
+  @Test fun dimHeartSearching() =
+    shot("17-dim-heart-searching-ambient", Shot(resting(), ring = true, bpm = 128.0, hrStatus = HeartRate.Status.WAITING, absent = listOf("heart")), ambient = true)
+
+  @Test fun dimHeartOffWrist() =
+    shot("18-dim-heart-off-wrist-ambient", Shot(workout("Bench Press", betweenSet), ring = true, bpm = null, hrStatus = HeartRate.Status.OFF_WRIST, absent = listOf("heart")), ambient = true)
 
   @Test fun restIsOver() = both("02-rest-is-over", Shot(over(), ring = false))
 

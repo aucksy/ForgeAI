@@ -86,12 +86,38 @@ describe("the app's own dim lines (R-442, Always-on OFF; R-444)", () => {
     const text = watchLogText([{ at: 1, log: R442 }]);
     const lines = text.split('\n');
     expect(lines[1]).toBe(
-      '13 lines on the watch. Off instead of dim: 0 (saver 0, aod-off 0, while held 0, old watch app 0). Dimmed by the watch (Always-on on): 0. Dimmed by the app (Always-on off): 2; screen held 3, let go 3 (idle 1, paused 1). Rebuild: 0. Last: bs0 aod0/0.',
+      '13 lines on the watch. Off instead of dim: 0 (saver 0, aod-off 0, while held 0, old watch app 0). Dimmed by the watch (Always-on on): 0. Dimmed by the app (Always-on off): 2; screen held 3, let go 3 (idle 1). Rebuild: 0. Last: bs0 aod0/0.',
     );
     expect(lines[2]).toContain('ADIM/aundim the app dims');
     expect(text).toContain('06:28:20 aundim touch');
     expect(text).toContain('06:40:30 letgo idle');
     expect(text.length).toBeLessThanOrEqual(FEEDBACK_MAX);
+  });
+
+  // R-636 (28 Nov 2026): a workout change on the phone or the watch holds the screen again ("change"), the sensor
+  // off the wrist is named once ("off-wrist"), and a pause no longer lets go (no "paused" count in the head).
+  it('R-636: the two new why words go out, and nothing else in their lines', () => {
+    expect(compactLine(`11-28 10:00:00.000 self-dim-on change ${AOD_OFF}`)?.text).toBe('10:00:00 hold change sc1 bs0 id0 aod0/0 th0');
+    expect(compactLine('11-28 10:00:01.000 self-dim-why off-wrist')?.text).toBe('10:00:01 why off-wrist');
+    // Never a heart number, whatever a line might carry.
+    expect(compactLine('11-28 10:00:01.000 self-dim-why off-wrist bpm=128 128 heart=128')?.text).toBe('10:00:01 why off-wrist');
+    // The words stay self-dim only.
+    expect(compactLine('11-28 10:00:02.000 stop change off-wrist screen=0')?.text).toBe('10:00:02 stop sc0');
+  });
+
+  it('R-636: the head counts idle let-goes only, and says what idle means now', () => {
+    const log = [
+      `11-28 10:00:00.000 self-dim-on resume ${AOD_OFF}`,
+      `11-28 10:12:00.000 self-dim-off idle ${AOD_OFF}`,
+      `11-28 10:12:05.000 self-dim-on change ${AOD_OFF}`,
+      '11-28 10:12:30.000 self-dim-why off-wrist',
+    ].join('\n');
+    const lines = watchLogText([{ at: 1, log }]).split('\n');
+    expect(lines[1]).toContain('screen held 2, let go 1 (idle 1). Rebuild: 0.');
+    expect(lines[1]).not.toContain('paused');
+    expect(lines[2]).toContain('idle = no change on phone or watch for 12 min');
+    expect(lines.join('\n')).toContain('10:12:05 hold change');
+    expect(lines.join('\n')).toContain('10:12:30 why off-wrist');
   });
 });
 
@@ -207,7 +233,7 @@ describe('the log that goes to the feedback box', () => {
     const lines = text.split('\n');
     expect(lines[0]).toBe('Watch screen log (R-441), written 11-10 15:30 UTC.');
     expect(lines[1]).toBe(
-      '9 lines on the watch. Off instead of dim: 3 (saver 3, aod-off 0, while held 0, old watch app 0). Dimmed by the watch (Always-on on): 3. Dimmed by the app (Always-on off): 0; screen held 0, let go 0 (idle 0, paused 0). Rebuild: 0. Last: bs1 aod1/1.',
+      '9 lines on the watch. Off instead of dim: 3 (saver 3, aod-off 0, while held 0, old watch app 0). Dimmed by the watch (Always-on on): 3. Dimmed by the app (Always-on off): 0; screen held 0, let go 0 (idle 0). Rebuild: 0. Last: bs1 aod1/1.',
     );
     expect(lines[2]).toMatch(/^Key: /);
     expect(lines[3]).toBe('[11-10]');

@@ -305,13 +305,30 @@ class WatchLayoutTest {
     assertEquals('−', WatchCopy.overtime(0L, 0L)[0])
   }
 
+  /**
+   * R-636 (owner, 28 Nov 2026: "not capturing the heart rate when it's dim"): the dim screen shows the heart line
+   * while the sensor reads a real number; never "♥ —", never an old number while searching, off the wrist or
+   * unavailable, never 0. The bright screen is as before.
+   */
   @Test
-  fun heartLineHidesWhenDeclinedNoSensorOrAmbient() {
+  fun heartLineShowsDimOnlyWhileReading() {
+    // Bright: as before.
     assertEquals(WatchCopy.HeartLine("♥ 132", false), WatchCopy.heartLine(true, HeartRate.Status.READING, 132.0, false))
     assertEquals(WatchCopy.HeartLine("♥ —", true), WatchCopy.heartLine(true, HeartRate.Status.WAITING, null, false))
     assertNull(WatchCopy.heartLine(false, HeartRate.Status.READING, 132.0, false))
     assertNull(WatchCopy.heartLine(true, HeartRate.Status.NO_SENSOR, null, false))
-    assertNull(WatchCopy.heartLine(true, HeartRate.Status.READING, 132.0, true))
+    // Dim and reading: the live number.
+    assertEquals(WatchCopy.HeartLine("♥ 128", false), WatchCopy.heartLine(true, HeartRate.Status.READING, 128.0, true))
+    // Dim and searching, off the wrist or unavailable: no line, even with a number left over.
+    assertNull(WatchCopy.heartLine(true, HeartRate.Status.WAITING, 128.0, true))
+    assertNull(WatchCopy.heartLine(true, HeartRate.Status.OFF_WRIST, 128.0, true))
+    assertNull(WatchCopy.heartLine(true, HeartRate.Status.UNAVAILABLE, 128.0, true))
+    // Dim, reading, but 0 or no number yet: no line (never "♥ —" on a dim screen).
+    assertNull(WatchCopy.heartLine(true, HeartRate.Status.READING, 0.0, true))
+    assertNull(WatchCopy.heartLine(true, HeartRate.Status.READING, null, true))
+    // Dim, not allowed or no sensor: no line.
+    assertNull(WatchCopy.heartLine(false, HeartRate.Status.READING, 128.0, true))
+    assertNull(WatchCopy.heartLine(true, HeartRate.Status.NO_SENSOR, 128.0, true))
   }
 
   // ---------------------------------------------------------------- UAT 1 Nov 2026

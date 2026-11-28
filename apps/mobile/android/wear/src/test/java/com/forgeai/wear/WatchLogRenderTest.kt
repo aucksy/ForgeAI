@@ -49,6 +49,10 @@ abstract class WatchLogRenderBase(private val size: WatchSize) {
     val tip: Boolean = false,
     /** R-455: tagged lines that must NOT be drawn (the tip replaces Previous; the tip is gone after set 1). */
     val absent: List<String> = emptyList(),
+    /** R-636: the heart sensor's status (the dim heart line shows only while READING). */
+    val status: HeartRate.Status = HeartRate.Status.READING,
+    /** R-636: tagged lines that MUST be drawn. */
+    val present: List<String> = emptyList(),
   )
 
   private fun both(name: String, s: Shot) {
@@ -64,7 +68,7 @@ abstract class WatchLogRenderBase(private val size: WatchSize) {
         WatchScreen(
           s.snap,
           s.bpm,
-          HeartRate.Status.READING,
+          s.status,
           hrAllowed = true,
           ambient = ambient,
           now = now,
@@ -80,6 +84,7 @@ abstract class WatchLogRenderBase(private val size: WatchSize) {
     val absent = if (ambient) s.absent - "previous" + (if (s.tip) listOf("dialTip") else emptyList()) else s.absent
     for (tag in whole) assertTrue("${file.name}: \"$tag\" was cut off with …", TextFit.cut[tag] == false)
     for (tag in absent) assertTrue("${file.name}: \"$tag\" is drawn but must not be", TextFit.cut[tag] == null)
+    for (tag in s.present) assertTrue("${file.name}: \"$tag\" is not drawn but must be", TextFit.cut[tag] != null)
   }
 
   /**
@@ -178,6 +183,20 @@ abstract class WatchLogRenderBase(private val size: WatchSize) {
   )
 
   @Test fun noHeartRate() = both("L18-no-heart-rate", Shot(nextSet(), bpm = null))
+
+  // R-636 (owner, 28 Nov 2026: "not capturing the heart rate when it's dim"): the dim top bar shows the live heart
+  // rate next to the time while the sensor reads; with no reading (searching, off the wrist, none yet) no line.
+  @Test fun dimHeartRateNextSet() = both("L28-dim-heart-rate", Shot(nextSet(), bpm = 128.0, present = listOf("heart")))
+
+  @Test fun dimHeartRateRest() = both("L29-dim-heart-rate-rest", Shot(resting(), bpm = 128.0, ring = true, present = listOf("heart")))
+
+  @Test fun dimHeartRateSearching() =
+    shot("L30-dim-heart-rate-searching-ambient", Shot(nextSet(), bpm = 128.0, status = HeartRate.Status.WAITING, absent = listOf("heart")), ambient = true)
+
+  @Test fun dimHeartRateOffWrist() =
+    shot("L31-dim-heart-rate-off-wrist-ambient", Shot(nextSet(), bpm = null, status = HeartRate.Status.OFF_WRIST, absent = listOf("heart")), ambient = true)
+
+  @Test fun dimHeartRateNone() = shot("L32-dim-heart-rate-none-ambient", Shot(nextSet(), bpm = null, absent = listOf("heart")), ambient = true)
 
   // R-354: the lower time row leaves less room here; the largest text must still fit above Go.
   @Test fun largestTextExerciseDone() = both(
