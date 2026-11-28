@@ -2,11 +2,12 @@
  * One exercise inside the active workout.
  *
  * Phase 1 — calmer, Hevy-style card:
- *  - ONE "more" button holds the occasional tools (note, rest timer, warm-up sets,
- *    plate calculator, superset, remove). The card body is just the exercise, its
- *    note, its rest time, the set table and "Add set".
- *  - The rest time sits beside the muscle tag; tap it to change it for this
- *    exercise (remembered for next time).
+ *  - ONE "more" button holds the occasional tools (note, warm-up sets, plate
+ *    calculator, superset, remove) and, at its top, the body part. The card body is
+ *    just the exercise, its note, its rest time, the set table and "Add set".
+ *  - R-637 (owner, 28 Nov 2026): under the name, "Previous: …" on the left and the rest
+ *    button on the right; tap it to change the rest for this exercise (remembered for
+ *    next time). It is the only way to the rest picker.
  *  - Notes carry forward from the last workout with this exercise.
  *  - Sets that beat the member's history get a medal as they are ticked.
  * Phase 4: "Swap exercise" in the menu — for this workout only, before a set is ticked,
@@ -366,24 +367,13 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
 
   // 13 Oct 2026: the rows' widths for this phone and text size; RPE shows at every width.
   const rowLayout = useRowLayout(logType);
-  // Where PREVIOUS comes from ("Previous: 3 Oct · Push 1A"), or the first time in this routine /
-  // folder ("First time in this folder · Previous in another workout: 100 kg × 5, 3 Oct"). Information only.
+  // Where PREVIOUS comes from ("Previous: 3 Oct · Push 1A"); R-637: done only in another workout, the
+  // same words naming that workout ("Previous: 3 Oct · Legs B"). Information only.
   const sourceLine = useMemo(
     () => cardSourceLine(exercise, units),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [exercise.previousSets, exercise.lastFrom, exercise.elsewhere, exercise.logType, exercise.loadMode, exercise.distUnit, units],
   );
-  // R-126 (owner, 25 Oct 2026): when "Previous: ..." no longer fits at the end of the row it drops to
-  // a line of its own; there it starts at the left, under the muscle tag, instead of floating right.
-  const [sourceWrapped, setSourceWrapped] = useState(false);
-  // R-359 fix (owner, 5 Nov 2026: the date belongs in the rest timer row): when the full line does not fit,
-  // first try the short form ("31 Oct · Pull 1", no "Previous:") on the same row; only if that also does not
-  // fit does it drop to its own line. One way only (full -> short -> wrapped), so it never flickers.
-  const [sourceShort, setSourceShort] = useState(false);
-  useEffect(() => {
-    setSourceShort(false);
-    setSourceWrapped(false);
-  }, [sourceLine?.text]);
   const onOpenType = useCallback((setKey: string) => setTypeFor(setKey), []);
   const onOpenRpe = useCallback((setKey: string) => setRpeFor(setKey), []);
   const onOpenTimer = useCallback((setKey: string) => setTimerFor(setKey), []);
@@ -534,55 +524,58 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
           <Glyph name="more" size={20} color={color.inkSecondary} />
         </Pressable>
       </View>
-      {/* R-359 (owner, 5 Nov 2026: "move the last session date one row up, to the right of the rest timer; there is a lot of space on the right"): the tag row sits under the name AND the ⋯ button, so it runs to the card's right edge and "Last: …" fits beside the rest time. */}
-      {/* 16 Oct 2026 audit (C1-9): the tags wrap onto a second line (360 dp at font 1.3 is
-          about 188 dp for ~311 dp of tags), so the rest pill is never pushed under the ⋯. */}
-      <View style={{ marginTop: 6, marginLeft: 44 + space.sm, flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', columnGap: space.sm, rowGap: 6 }}>
-        <Badge label={exercise.muscleLabel ?? cap(exercise.muscleGroup)} tone="accent" />
+      {/* R-637 (owner, 28 Nov 2026, approved design v5; replaces the R-359 row): one row under the picture and
+          the name, from the card's left edge: [Superset chip] "Previous: 21 Nov · Push 1A" ... [Rest 2:00 pencil].
+          The source text is one line and ends in "…" when it does not fit (360 dp, largest text); the rest
+          button keeps its size and never wraps under it. The body part moved into the ••• menu. */}
+      {group == null && !(sourceLine && !compact) && editing ? null : (
+      <View style={{ marginTop: 6, flexDirection: 'row', alignItems: 'center', gap: space.sm }}>
         {group != null ? (
-          <Pressable onPress={() => setSheet('superset')} accessibilityRole="button" accessibilityLabel="Edit superset">
+          <Pressable onPress={() => setSheet('superset')} accessibilityRole="button" accessibilityLabel="Edit superset" style={{ flexShrink: 0 }}>
             <Badge label={`Superset ${supersetLabel(group)}`} tone="neutral" />
           </Pressable>
+        ) : null}
+        {/* 13 Oct 2026: where PREVIOUS comes from. */}
+        {sourceLine && !compact ? (
+          <Text
+            accessibilityLabel={sourceLine.spoken}
+            numberOfLines={1}
+            style={{ flexShrink: 1, fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}
+          >
+            {sourceLine.text}
+          </Text>
         ) : null}
         {editing ? null : (
         <Pressable
           onPress={() => setSheet('rest')}
-          hitSlop={8}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           accessibilityRole="button"
           accessibilityLabel={restSec > 0 ? `Rest timer ${fmtRest(restSec)}. Change` : 'Rest timer off. Change'}
-          style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}
+          style={{
+            marginLeft: 'auto',
+            flexShrink: 0,
+            minHeight: 28,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 4,
+            paddingHorizontal: space.sm,
+            borderRadius: radius.pill,
+            borderWidth: 1,
+            borderColor: restIsCustom ? color.accent : color.border,
+          }}
         >
           <Icon name="clock" size={13} color={restIsCustom ? color.accent : color.inkMuted} />
-          <Text
-            style={{
-              fontFamily: type.bodySemi,
-              fontSize: type.size.caption,
-              color: restIsCustom ? color.accent : color.inkMuted,
-            }}
-          >
-            {restSec > 0 ? fmtRest(restSec) : 'Off'}
+          {/* "Rest 2:00" / "Rest off" in two pieces, so no text on the card equals a rest picker choice
+              ("Rest 2:00") drawn over it; the button is found and spoken by its label above. */}
+          <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, color: restIsCustom ? color.accent : color.inkMuted }}>Rest</Text>
+          <Text style={{ fontFamily: type.bodySemi, fontSize: type.size.caption, color: restIsCustom ? color.accent : color.inkMuted }}>
+            {restSec > 0 ? fmtRest(restSec) : 'off'}
           </Text>
+          <Glyph name="pencil" size={12} color={restIsCustom ? color.accent : color.inkMuted} />
         </Pressable>
         )}
-        {/* 13 Oct 2026: where PREVIOUS comes from. R-61 (owner, 22 Oct 2026): at the right end of
-            the muscle and rest row, where there is room; a long one wraps under it. */}
-        {sourceLine && !compact ? (
-          <Text
-            accessibilityLabel={sourceLine.spoken}
-            onLayout={(e) => {
-              const wrapped = e.nativeEvent.layout.y > 4;
-              if (wrapped && !sourceShort && sourceLine.text.startsWith('Previous: ')) {
-                setSourceShort(true);
-                return;
-              }
-              if (wrapped !== sourceWrapped) setSourceWrapped(wrapped);
-            }}
-            style={{ marginLeft: sourceWrapped ? 0 : 'auto', fontFamily: type.body, fontSize: type.size.caption, color: color.inkMuted }}
-          >
-            {sourceShort ? sourceLine.text.slice('Previous: '.length) : sourceLine.text}
-          </Text>
-        ) : null}
       </View>
+      )}
       </View>,
       )}
 
@@ -896,6 +889,27 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
       {/* ---- sheets ---- */}
       <TrackerSheet visible={sheet === 'menu'} title={exercise.name} onClose={() => setSheet(null)}>
         <View style={{ gap: 2 }}>
+          {/* R-637 (owner, 28 Nov 2026: "the body part may go in the menu"): information, not a button. */}
+          <View
+            accessible
+            accessibilityLabel={`Body part, ${exercise.muscleLabel ?? cap(exercise.muscleGroup)}`}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: space.md,
+              minHeight: 40,
+              paddingHorizontal: space.md,
+              marginBottom: space.xs,
+              borderBottomWidth: 1,
+              borderBottomColor: color.border,
+            }}
+          >
+            <Text style={{ fontFamily: type.body, fontSize: type.size.sub, color: color.inkMuted }}>Body part</Text>
+            <Text numberOfLines={1} style={{ flexShrink: 1, fontFamily: type.bodySemi, fontSize: type.size.body, color: color.ink }}>
+              {exercise.muscleLabel ?? cap(exercise.muscleGroup)}
+            </Text>
+          </View>
           <SheetRow
             label={noteOpen ? 'Edit note' : 'Add note'}
             leading={<Glyph name="pencil" size={20} color={color.accent} />}
@@ -905,14 +919,6 @@ export const ExerciseLogCard = memo(function ExerciseLogCard({
               setTimeout(() => noteRef.current?.focus(), 300);
             }}
           />
-          {editing ? null : (
-            <SheetRow
-              label="Rest timer"
-              value={restSec > 0 ? fmtRest(restSec) : 'Off'}
-              leading={<Icon name="clock" size={20} color={color.accent} />}
-              onPress={() => openAfterMenu('rest')}
-            />
-          )}
           {logType === 'weight_reps' ? (
             <SheetRow
               label="Add warm-up sets"

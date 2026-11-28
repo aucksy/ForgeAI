@@ -18,6 +18,7 @@
     "apps/mobile/test/db/previousSourceReal.test.ts",
     "apps/mobile/src/tracker/store/activeWorkoutStore.ts",
     "apps/mobile/qa/",
+    "scripts/ci/qa_shards.py",
     "docs/"
   ],
   "gates": {

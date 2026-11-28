@@ -160,14 +160,17 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "More for .*Lateral Raise.*"
-- tapOn:
-    text: "More for .*Lateral Raise.*"
-    index: 0
+# R-637 (28 Nov 2026): the rest picker opens from the card's rest button ("Rest 2:00"); the ••• menu
+# has no "Rest timer" row any more.
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Rest timer'
-- tapOn: "Rest timer"
+      FIND: 'Rest timer .*\. Change'
+- tapOn:
+    text: 'Rest timer .*\. Change'
+    below:
+      text: "More for .*Lateral Raise.*"
+    waitToSettleTimeoutMs: 300
 - runFlow:
     file: sub-see.yaml
     env:

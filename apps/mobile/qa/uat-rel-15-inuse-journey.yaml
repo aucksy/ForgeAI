@@ -79,14 +79,17 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "More for .*Lateral Raise.*"
-- tapOn:
-    text: "More for .*Lateral Raise.*"
-    index: 0
+# R-637 (28 Nov 2026): the rest picker opens from the card's rest button ("Rest 2:00"); the ••• menu
+# has no "Rest timer" row any more.
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Rest timer'
-- tapOn: "Rest timer"
+      FIND: 'Rest timer .*\. Change'
+- tapOn:
+    text: 'Rest timer .*\. Change'
+    below:
+      text: "More for .*Lateral Raise.*"
+    waitToSettleTimeoutMs: 300
 - tapOn: "Rest 5:00"
 - extendedWaitUntil:
     notVisible: 'For .*Remembered for next time\.'
@@ -95,14 +98,17 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "More for .*Leg Extension.*"
-- tapOn:
-    text: "More for .*Leg Extension.*"
-    index: 0
+# R-637 (28 Nov 2026): the rest picker opens from the card's rest button ("Rest 2:00"); the ••• menu
+# has no "Rest timer" row any more.
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Rest timer'
-- tapOn: "Rest timer"
+      FIND: 'Rest timer .*\. Change'
+- tapOn:
+    text: 'Rest timer .*\. Change'
+    below:
+      text: "More for .*Leg Extension.*"
+    waitToSettleTimeoutMs: 300
 - tapOn: "Rest 5:00"
 - extendedWaitUntil:
     notVisible: 'For .*Remembered for next time\.'
@@ -141,19 +147,19 @@ appId: com.mettleup.app
     env:
       FIELD: "Lateral Raise set 1 reps"
       VALUE: " 12"
-# ---------------------------------------------------------------- R-359: the card's "Last: ..." row
-# The demo has Leg Extension history, so its card shows "Last: <date> · <routine>" in the muscle and
-# rest row (R-359: that row now runs under the menu button to the card's edge). Picture for the
-# owner's phone size: on the same row as the rest time, or wrapped?
+# ---------------------------------------------------------------- R-637: the card's "Previous: ..." row
+# The demo has Leg Extension history, so its card shows "Previous: <date> · <routine>" on the left of
+# the rest button (R-637, 28 Nov 2026: one row from the card's edge, never "Last:"). Picture for the
+# owner's phone size.
 - runFlow:
     file: sub-find.yaml
     env:
       FIND: "More for .*Leg Extension.*"
-# Its spoken label is "Previous is from <day>, <routine>" (the words on screen may read "Last: ...").
+# Its spoken label is "Previous is from <day>, <routine>"; the words on screen "Previous: <day> · <routine>".
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: '(.*Last: .*|Previous is from .*|Previous: .*)'
+      FIND: '(Previous is from .*|Previous: .*)'
 - takeScreenshot: rel-359-01-card-last-row
 # ---------------------------------------------------------------- 1. dumbbell: the bar and its hint
 - runFlow:

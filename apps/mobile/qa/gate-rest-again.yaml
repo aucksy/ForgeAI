@@ -7,14 +7,16 @@ appId: com.mettleup.app
 - extendedWaitUntil:
     visible: "Log a set to finish|Finish workout"
     timeout: 30000
-- tapOn:
-    text: "More for .*"
-    index: 0
+# R-637 (28 Nov 2026): the rest picker opens from the card's rest button ("Rest 2:00"); the ••• menu
+# has no "Rest timer" row any more.
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Rest timer'
-- tapOn: "Rest timer"
+      FIND: 'Rest timer .*\. Change'
+- tapOn:
+    text: 'Rest timer .*\. Change'
+    index: 0
+    waitToSettleTimeoutMs: 300
 - tapOn: "${REST}"
 - tapOn:
     text: 'Mark .* set 2 complete'

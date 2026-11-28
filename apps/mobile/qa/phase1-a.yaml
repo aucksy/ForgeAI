@@ -253,11 +253,20 @@ appId: com.mettleup.app
     text: "More for .*"
     index: 0
 - takeScreenshot: 04-exercise-menu
+- back
+- extendedWaitUntil:
+    notVisible: '^Remove exercise$'
+    timeout: 10000
+# R-637 (28 Nov 2026): the rest picker opens from the card's rest button ("Rest 2:00"); the ••• menu
+# has no "Rest timer" row any more.
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Rest timer'
-- tapOn: "Rest timer"
+      FIND: 'Rest timer .*\. Change'
+- tapOn:
+    text: 'Rest timer .*\. Change'
+    index: 0
+    waitToSettleTimeoutMs: 300
 - takeScreenshot: 05-rest-picker
 - runFlow:
     file: sub-see.yaml

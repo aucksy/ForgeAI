@@ -40,13 +40,13 @@ appId: com.mettleup.app
     timeout: 20000
 # Where PREVIOUS comes from: the last Push A (Saturday's workout was Legs A; Push A was earlier).
 # R-61 (22 Oct 2026): the line now sits in the card's header (muscle and rest row), higher up.
-# R-359 fix (ad3fe56b): when the full line does not fit the row it drops "Previous: " ("22 Feb ·
-# Push A"); the spoken label keeps it. Either form passes; the day and the workout must be there.
+# R-637 (28 Nov 2026): the line is always the full "Previous: 22 Feb · Push A" (one line, "…" when it
+# does not fit; the R-359 short form is gone), on the left of the rest button.
 - scrollUntilVisible:
-    element: '(Previous: )?\d{1,2} [A-Z][a-z]{2}( \d{4})? · Push A'
+    element: 'Previous: \d{1,2} [A-Z][a-z]{2}( \d{4})? · Push A'
     direction: UP
     timeout: 15000
-- assertVisible: '(Previous: )?\d{1,2} [A-Z][a-z]{2}( \d{4})? · Push A'
+- assertVisible: 'Previous: \d{1,2} [A-Z][a-z]{2}( \d{4})? · Push A'
 # Two warm-ups for the bench (from the Hevy history), each with a PREVIOUS from last time.
 - assertVisible: 'Mark .*Bench Press warm-up 1 complete'
 - assertVisible: 'Mark .*Bench Press warm-up 2 complete'
@@ -55,14 +55,17 @@ appId: com.mettleup.app
 - assertVisible: '20( kg)? × 12'
 - takeScreenshot: w-21-bench-table
 # Rest 0:30 for the bench, so the journey waits for every rest without taking an hour.
-- tapOn:
-    text: "More for .*Bench Press.*"
-    index: 0
+# R-637 (28 Nov 2026): the rest picker opens from the card's rest button ("Rest 2:00"); the ••• menu
+# has no "Rest timer" row any more.
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Rest timer'
-- tapOn: "Rest timer"
+      FIND: 'Rest timer .*\. Change'
+- tapOn:
+    text: 'Rest timer .*\. Change'
+    below:
+      text: "More for .*Bench Press.*"
+    waitToSettleTimeoutMs: 300
 - runFlow:
     file: sub-see.yaml
     env:

@@ -243,9 +243,9 @@ describe('C1-8: the Target line shows the weight the hint shows', () => {
 // The body-part chip moves into the ••• menu as an info line; the menu's "Rest timer" row is gone.
 describe('R-637: the card row under the name (source on the left, rest button on the right)', () => {
   const src = read('src/tracker/components/ExerciseLogCard.tsx');
-  // The row: from the source text's spoken label to the rest button's label.
+  // The row: from its <View to the end of the rest button that follows the source text.
   const rowAt = src.indexOf('accessibilityLabel={sourceLine.spoken}');
-  const row = src.slice(src.lastIndexOf('<View', rowAt), src.indexOf("'Rest timer off. Change'", rowAt) + 600);
+  const row = src.slice(src.lastIndexOf('<View', rowAt), src.indexOf('</Pressable>', src.indexOf("'Rest timer off. Change'", rowAt)));
 
   it('starts at the card edge, not indented past the picture', () => {
     expect(src).not.toMatch(/marginLeft: 44 \+ space\.sm/);
@@ -269,8 +269,10 @@ describe('R-637: the card row under the name (source on the left, rest button on
   it('the rest button keeps its spoken label, says "Rest 2:00" / "Rest off", never shrinks, has a 44 dp tap area', () => {
     expect(row).toContain('`Rest timer ${fmtRest(restSec)}. Change`');
     expect(row).toContain("'Rest timer off. Change'");
-    expect(row).toMatch(/`Rest \$\{fmtRest\(restSec\)\}`/);
-    expect(row).toContain("'Rest off'");
+    // "Rest" then the time ("2:00") or "off": shown as "Rest 2:00" / "Rest off".
+    expect(row).toMatch(/>Rest<\/Text>/);
+    expect(row).toContain("{restSec > 0 ? fmtRest(restSec) : 'off'}");
+    expect(row.indexOf('>Rest</Text>')).toBeLessThan(row.indexOf("{restSec > 0 ? fmtRest(restSec) : 'off'}"));
     expect(row).toMatch(/flexShrink: 0/);
     expect(row).toMatch(/hitSlop=/);
     expect(row).toContain("setSheet('rest')");

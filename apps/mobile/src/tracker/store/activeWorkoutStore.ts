@@ -224,19 +224,19 @@ export interface DraftExercise {
   prevTyped?: true;
   /**
    * 13 Oct 2026 (idea 1): the workout PREVIOUS comes from — its day and its name (its title,
-   * else its routine's name; null = no name) — for the card's "Last: 3 Oct · Push 1A" line. It
+   * else its routine's name; null = no name) — for the card's "Previous: 3 Oct · Push 1A" line. It
    * is the workout of the "Previous values" scope, as PREVIOUS is. Absent: no previous, or a
    * draft saved before (the line is then left out).
    */
   lastFrom?: { dateISO: string; name: string | null };
   /**
    * 13 Oct 2026 (idea 2): "Same routine" / "Same folder" found nothing for this card, but the
-   * exercise was done in another workout — that workout's day and its best working set (typed
-   * form, in the card's counting). Information only ("First time in this folder · last
-   * anywhere 100 kg × 5, 3 Oct"): never PREVIOUS, a hint, a fill or a Target. Optional (older
-   * drafts).
+   * exercise was done in another workout — that workout's day, its best working set (typed
+   * form, in the card's counting) and (R-637, 28 Nov 2026) its name (title, else routine name;
+   * null or absent = none), so the card reads "Previous: 3 Oct · Legs B" as idea 1 does.
+   * Information only: never PREVIOUS, a hint, a fill or a Target. Optional (older drafts).
    */
-  elsewhere?: { scope: 'routine' | 'folder'; dateISO: string; set: PrevSet };
+  elsewhere?: { scope: 'routine' | 'folder'; dateISO: string; set: PrevSet; name?: string | null };
   sets: DraftSet[];
   /**
    * Phase 2 — how this exercise is logged and counted. Optional so drafts saved before
@@ -892,7 +892,7 @@ interface CardFacts {
   infos: Map<string, TrackerExercise>;
   /** Last time's warm-ups (`getWarmupSets`) of each card's workout; empty when they could not be read. */
   warm: WarmupsBySession;
-  /** The name of each card's PREVIOUS workout (`getWorkoutSourceNames`); empty when it could not be read. */
+  /** The name of each card's PREVIOUS workout, and of each `elsewhere` workout (R-637) (`getWorkoutSourceNames`); empty when it could not be read. */
   names: Map<string, string | null>;
   /**
    * Idea 2: for exercises with nothing in the "Previous values" scope, the last workout ANYWHERE
@@ -929,15 +929,17 @@ async function readElsewhere(
 }
 
 /**
- * Idea 2: the card's "first time in this routine / folder" facts from the last workout anywhere
- * (`elsewhere`, newest first): its day and its best working set, typed and in the card's
- * counting. undefined when there is nothing to say (no scope kind, no workout). PURE.
+ * Idea 2: the card's facts when nothing in this routine / folder, from the last workout anywhere
+ * (`elsewhere`, newest first): its day, its best working set (typed and in the card's counting)
+ * and (R-637) its name from `names` (`readSourceNames`; none read = null). undefined when there
+ * is nothing to say (no scope kind, no workout). PURE.
  */
 export function elsewhereOf(
   scope: HistoryScope | null,
   elsewhere: readonly ExerciseHistoryEntry[] | undefined,
   logType: LogType,
   mode: LoadMode,
+  names: ReadonlyMap<string, string | null> = new Map(),
 ): DraftExercise['elsewhere'] {
   const last = elsewhere?.[0];
   if (!scope?.kind || !last) return undefined;
@@ -945,7 +947,12 @@ export function elsewhereOf(
     last.sets.map((s) => toPrevSet(s, logType, mode)),
     logType,
   );
-  return best ? { scope: scope.kind, dateISO: last.dateISO, set: best } : undefined;
+  return best ? { scope: scope.kind, dateISO: last.dateISO, set: best, name: names.get(last.sessionId) ?? null } : undefined;
+}
+
+/** R-637: the sessions the "elsewhere" reads came from (the newest of each), for `readSourceNames`. PURE. */
+function elsewhereSessions(elsewhere: ReadonlyMap<string, readonly ExerciseHistoryEntry[]>): string[] {
+  return [...new Set([...elsewhere.values()].flatMap((h) => (h[0] ? [h[0].sessionId] : [])))];
 }
 
 /**
@@ -989,7 +996,7 @@ async function prefetchCardFacts(
       const src = lastCardSource(hist.get(c.exerciseId) ?? [], c.card);
       return src ? [{ sessionId: src.sessionId, exerciseId: c.exerciseId }] : [];
     });
-    // The "Last: 3 Oct · Push 1A" line names each card's PREVIOUS workout; idea 2 reads the last
+    // The "Previous: 3 Oct · Push 1A" line names each card's PREVIOUS workout; idea 2 reads the last
     // workout anywhere for exercises the scope found nothing for. Beside the warm-ups, never
     // blocking a start.
     // R-136: a body-weight move already read every workout: nothing "elsewhere" to say.
@@ -999,7 +1006,9 @@ async function prefetchCardFacts(
       readSourceNames(sources.map((x) => x.sessionId)),
       readElsewhere(empty, scope, before),
     ]);
-    return { hist, rest, notes, bests, infos, warm, names, elsewhere };
+    // R-637: the other workout's name too, so its line reads "Previous: 3 Oct · Legs B".
+    const otherNames = await readSourceNames(elsewhereSessions(elsewhere).filter((id) => !names.has(id)));
+    return { hist, rest, notes, bests, infos, warm, names: new Map([...names, ...otherNames]), elsewhere };
   } catch {
     return null;
   }
@@ -1087,7 +1096,8 @@ async function buildDraftExercise(
   let elsewhere: DraftExercise['elsewhere'];
   if (hist.length === 0 && scope?.kind) {
     const other = facts ? facts.elsewhere.get(ex.id) : (await readElsewhere([ex.id], scope, opts.before ?? null)).get(ex.id);
-    elsewhere = elsewhereOf(scope, other, logType, mode);
+    const otherNames = facts ? facts.names : await readSourceNames(other?.[0] ? [other[0].sessionId] : []);
+    elsewhere = elsewhereOf(scope, other, logType, mode, otherNames);
   }
   // An easy week asks for exactly half the sets, even when last time had more rows.
   // TG-08: last time's drop sets come back AS drop sets, in their place (their PREVIOUS is the
@@ -2757,8 +2767,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         previous[h.exerciseId] = prior.map((s) => toPrevSet(s, lt));
         if (prior[0]) sources.push({ sessionId: prior[0].sessionId, exerciseId: h.exerciseId });
       }
-      // A failed read never refuses the edit: the warm-up rows then show no PREVIOUS, the card
-      // no "Last:" name, and no "First time in this folder" line.
+      // A failed read never refuses the edit: the warm-up rows then show no PREVIOUS, and the card's
+      // "Previous: ..." line no name (or no line).
       const priorOf = new Map(histories.map((h) => [h.exerciseId, previousExcludingSession(h.history, session.id)]));
       const dayOf = new Map(histories.flatMap((h) => h.history.map((x) => [x.sessionId, x.dateISO] as const)));
       const empty = histories
@@ -2769,6 +2779,8 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         readSourceNames(sources.map((x) => x.sessionId)),
         readElsewhere(empty, scope, before),
       ]);
+      // R-637: the other workout's name, for "Previous: 3 Oct · Legs B".
+      const otherNames = await readSourceNames(elsewhereSessions(other));
       const warmOf = (exerciseId: string): PrevSet[] => {
         const src = sources.find((x) => x.exerciseId === exerciseId);
         const lt = kinds[exerciseId]?.logType ?? 'weight_reps';
@@ -2779,7 +2791,7 @@ export const useActiveWorkout = create<ActiveWorkoutState>()((set, get) => {
         const dateISO = src ? dayOf.get(src.sessionId) : undefined;
         if (src && dateISO) return { lastFrom: { dateISO, name: names.get(src.sessionId) ?? null } };
         const lt = kinds[exerciseId]?.logType ?? 'weight_reps';
-        const found = elsewhereOf(scopeOfEx(exerciseId), other.get(exerciseId), lt, kinds[exerciseId]?.loadMode ?? 'one');
+        const found = elsewhereOf(scopeOfEx(exerciseId), other.get(exerciseId), lt, kinds[exerciseId]?.loadMode ?? 'one', otherNames);
         return found ? { elsewhere: found } : {};
       };
       const exercises = buildEditDraft(session, meta, previous, { makeKey: uuid }, kinds).map((e) => ({

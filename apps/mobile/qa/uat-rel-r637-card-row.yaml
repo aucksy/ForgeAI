@@ -1,0 +1,111 @@
+# Part UAT (also alone: only=u637). R-637 (owner, 28 Nov 2026, approved design v5): the row under an exercise's
+# name in a live workout. His words: keep the rest timer button on the right; "the date may be on the foreground
+# active exercise screen and the body part may go in the menu"; "the menu also has the rest timer changer. I
+# don't understand the need of it."
+# From a fresh install with the demo (it starts afresh itself, so it runs anywhere in the part):
+#  1. An empty workout + Leg Extension (the demo has its history): under the name, "Previous: <day> · <workout>"
+#     on the left and the rest button on the right ("Rest 1:30", spoken "Rest timer 1:30. Change"; the
+#     demo's own rest for it, whatever it is, shows the same way).
+#     Negative: no body-part chip ("Quads") on the card, no "First time in this ...", never "Last:".
+#  2. The rest button opens the rest picker; "Rest 2:00" is kept for this exercise: the button reads
+#     "Rest timer 2:00. Change" (custom rest: drawn in the accent colour).
+#  3. The ••• menu opens with the "Body part, Quads" line; no "Rest timer" row, no "History" line.
+# Pictures rel-637-*.png (qa-out/uat-release/). Run on his phone (profile owner: 360 dp, font 1.3) and with the
+# largest text (env font=2.0) to see the line end in "…" while the rest button keeps its size.
+appId: com.mettleup.app
+---
+- runFlow: gate-demo.yaml
+- tapOn:
+    text: "^Workout$"
+    index: 0
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Start empty workout$"
+- tapOn: "^Start empty workout$"
+- tapOn:
+    text: "(?i)^allow$"
+    optional: true
+- runFlow: sub-start-blank.yaml
+- extendedWaitUntil:
+    visible: "Log a set to finish|Finish workout|^Add exercise$"
+    timeout: 30000
+    optional: true
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Log a set to finish|Finish workout|^Add exercise$'
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "^Add exercise$"
+- tapOn:
+    text: "^Add exercise$"
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: "Search exercises"
+    timeout: 20000
+- tapOn: "Search exercises"
+- inputText: " Leg Extension"
+- tapOn:
+    text: "Select Leg Extension"
+    index: 0
+- tapOn: "Add 1"
+- extendedWaitUntil:
+    visible: "Leg Extension set 1 weight, kilograms"
+    timeout: 20000
+# ---------------------------------------------------------------- 1. the row: source left, rest button right
+- runFlow:
+    file: sub-find.yaml
+    env:
+      FIND: "More for .*Leg Extension.*"
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Previous: \d{1,2} [A-Z][a-z]{2}( \d{4})?( · .+)?$'
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Rest timer \d+:\d\d\. Change$|^Rest timer off\. Change$'
+# Negative: the body part left the card; the old first-time sentence and "Last:" never show.
+- assertNotVisible: '^Quads$'
+- assertNotVisible: '.*First time in this.*'
+- assertNotVisible: '.*Previous in another workout.*'
+- assertNotVisible: '^Last: .*'
+- takeScreenshot: rel-637-01-card-row
+# ---------------------------------------------------------------- 2. the rest button opens the rest picker
+- tapOn:
+    text: '^Rest timer \d+:\d\d\. Change$|^Rest timer off\. Change$'
+    waitToSettleTimeoutMs: 300
+- extendedWaitUntil:
+    visible: 'For Leg Extension\. Remembered for next time\.'
+    timeout: 10000
+- takeScreenshot: rel-637-02-rest-picker
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: '^Rest 2:00$'
+- tapOn: '^Rest 2:00$'
+- extendedWaitUntil:
+    notVisible: 'For .*Remembered for next time\.'
+    timeout: 10000
+- assertVisible: '^Rest timer 2:00\. Change$'
+- takeScreenshot: rel-637-03-custom-rest
+# ---------------------------------------------------------------- 3. the ••• menu: body part on top, no rest row
+- tapOn:
+    text: "More for .*Leg Extension.*"
+    index: 0
+    waitToSettleTimeoutMs: 300
+# The menu opens with its information line (the top of the sheet: in view without scrolling).
+- extendedWaitUntil:
+    visible: '^Body part, Quads$'
+    timeout: 10000
+- assertNotVisible: '^Rest timer$'
+- assertNotVisible: '^History$'
+- assertNotVisible: '^History, .*'
+- takeScreenshot: rel-637-04-menu
+- back
+- extendedWaitUntil:
+    notVisible: '^Body part, Quads$'
+    timeout: 10000
+- assertVisible: '^Rest timer 2:00\. Change$'

@@ -72,14 +72,17 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "More for .*Incline Dumbbell Press.*"
-- tapOn:
-    text: "More for .*Incline Dumbbell Press.*"
-    index: 0
+# R-637 (28 Nov 2026): the rest picker opens from the card's rest button ("Rest 2:00"); the ••• menu
+# has no "Rest timer" row any more.
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Rest timer'
-- tapOn: "Rest timer"
+      FIND: 'Rest timer .*\. Change'
+- tapOn:
+    text: 'Rest timer .*\. Change'
+    below:
+      text: "More for .*Incline Dumbbell Press.*"
+    waitToSettleTimeoutMs: 300
 - tapOn: "Rest 5:00"
 - extendedWaitUntil:
     notVisible: 'For .*Remembered for next time\.'
@@ -88,14 +91,17 @@ appId: com.mettleup.app
     file: sub-find.yaml
     env:
       FIND: "More for .*Leg Extension.*"
-- tapOn:
-    text: "More for .*Leg Extension.*"
-    index: 0
+# R-637 (28 Nov 2026): the rest picker opens from the card's rest button ("Rest 2:00"); the ••• menu
+# has no "Rest timer" row any more.
 - runFlow:
     file: sub-see.yaml
     env:
-      FIND: 'Rest timer'
-- tapOn: "Rest timer"
+      FIND: 'Rest timer .*\. Change'
+- tapOn:
+    text: 'Rest timer .*\. Change'
+    below:
+      text: "More for .*Leg Extension.*"
+    waitToSettleTimeoutMs: 300
 - tapOn: "Rest 1:00"
 - extendedWaitUntil:
     notVisible: 'For .*Remembered for next time\.'

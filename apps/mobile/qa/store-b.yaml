@@ -50,8 +50,8 @@ appId: com.mettleup.app
     optional: true
 - runFlow: sub-inuse-close.yaml
 - scrollUntilVisible:
-    # R-359 fix (ad3fe56b): the short form drops "Previous: " when the full line does not fit.
-    element: '(Previous: .*|\d{1,2} [A-Z][a-z]{2}( \d{4})? · .*)'
+    # R-637 (28 Nov 2026): always the full "Previous: <day> · <workout>" (the R-359 short form is gone).
+    element: 'Previous: .*'
     direction: UP
     timeout: 15000
     optional: true

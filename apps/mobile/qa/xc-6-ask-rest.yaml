@@ -19,10 +19,16 @@ appId: com.mettleup.app
       WEIGHT: " 60"
       REPS: " 8"
 # xc-sub-rest-tick.yaml, up to the tick (its last check, "Skip rest", waits for the ask below).
+# R-637 (28 Nov 2026): the rest picker opens from the card's rest button ("Rest 2:00"); the ••• menu
+# has no "Rest timer" row any more.
+- runFlow:
+    file: sub-see.yaml
+    env:
+      FIND: 'Rest timer .*\. Change'
 - tapOn:
-    text: "More for .*"
+    text: 'Rest timer .*\. Change'
     index: 0
-- tapOn: "Rest timer"
+    waitToSettleTimeoutMs: 300
 - runFlow:
     file: xc-sub-find.yaml
     env:

@@ -1,15 +1,15 @@
 /**
- * Where a live card's PREVIOUS comes from — the one muted line above its set table (13 Oct 2026,
+ * Where a live card's PREVIOUS comes from — the one muted line under the exercise name (13 Oct 2026,
  * the owner's Hevy comparison). PURE.
  *
  *  - Idea 1, the card has a previous: "Previous: 3 Oct · Push 1A" — the day of the workout PREVIOUS
  *    quotes (with its year when it isn't this year) and that workout's name (its title, else its
  *    routine's name; no name → the day alone). It is the workout of the "Previous values" scope,
  *    because it IS the workout PREVIOUS comes from. Spoken "Previous is from 3 October, Push 1A".
- *  - Idea 2, "Same routine" / "Same folder" found nothing, but the exercise was done elsewhere:
- *    "First time in this folder · Previous in another workout: 100 kg × 5, 3 Oct" — that workout's best working
- *    set, in the member's units and the card's counting. Information only: its numbers never
- *    reach PREVIOUS, a hint or a tick.
+ *  - Idea 2, "Same routine" / "Same folder" found nothing, but the exercise was done in another
+ *    workout: R-637 (owner, 28 Nov 2026: "First time here can go ... date and then ... the name") —
+ *    the SAME form, naming that other workout ("Previous: 3 Oct · Legs B"). Information only: its
+ *    numbers never reach PREVIOUS, a hint or a tick.
  *  - Neither (never done, or "Any workout" with no history): no line.
  */
 import { fromISO, tinyDateWithYear, todayISO } from '@/lib/date';
@@ -120,24 +120,12 @@ export function setInWords(p: PrevSet, lt: LogType, units: UnitSystem, mode: Loa
 }
 
 /**
- * Idea 2: "First time in this folder · Previous in another workout: 100 kg × 5, 3 Oct" ("…in this routine…").
- * null when there is nothing to say. PURE.
+ * Idea 2 (R-637): done only in another workout — the same words as idea 1, naming that workout
+ * ("Previous: 3 Oct · Legs B"; no name → "Previous: 3 Oct"). null when there is nothing to say. PURE.
  */
-export function firstTimeLine(
-  e: DraftExercise['elsewhere'] | null | undefined,
-  lt: LogType,
-  units: UnitSystem,
-  mode: LoadMode = 'one',
-  distUnit: DistUnit = 'km',
-  today: string = todayISO(),
-): SourceLine | null {
+export function firstTimeLine(e: DraftExercise['elsewhere'] | null | undefined, today: string = todayISO()): SourceLine | null {
   if (!e?.dateISO) return null;
-  const set = setInWords(e.set, lt, units, mode, distUnit);
-  if (!set) return null;
-  return {
-    text: `First time in this ${e.scope} · Previous in another workout: ${set}, ${tinyDateWithYear(e.dateISO, today)}`,
-    spoken: `First time in this ${e.scope}. Previous time in another workout: ${set}, on ${spokenDay(e.dateISO, today)}`,
-  };
+  return lastFromLine({ dateISO: e.dateISO, name: e.name ?? null }, today);
 }
 
 /**
@@ -149,5 +137,5 @@ export function cardSourceLine(
   today: string = todayISO(),
 ): SourceLine | null {
   if (ex.previousSets.length > 0) return lastFromLine(ex.lastFrom, today);
-  return firstTimeLine(ex.elsewhere, ex.logType ?? 'weight_reps', units, ex.loadMode ?? 'one', ex.distUnit ?? 'km', today);
+  return firstTimeLine(ex.elsewhere, today);
 }
