@@ -515,7 +515,7 @@ work (owner, 22 Oct). On the page: the "Feature backlog" tab, with a Comment box
 | F260 Guided tours for new users | Planned | Your list, 27 Nov 2026 (O-19). | A short tour shows a new user how to set up a routine and how a workout works, once, and can be skipped. |
 | F261 Splash screen blends with the gym logo | Planned | Your list, 27 Nov 2026 (O-31). | The app finds the background colour of an uploaded gym logo and uses it on the launch screen, so the logo does not sit in a box. |
 | F262 MettleUp logo and gym logo together at launch | Planned | Your list, 27 Nov 2026 (O-32). | After a gym is connected, the launch screen shows both logos. |
-| F263 Start with Google only and hide the Gym tab for people without a gym | Idea | Your list, 27 Nov 2026 (O-37): an idea to explore later. | People without a gym sign in with Google and see no Gym tab. The tab appears when a gym is found. 'Connect to a gym' stays in Settings. |
+| F263 Start with Google only and hide the Gym tab for people without a gym | Idea | Your list, 27 Nov 2026 (O-37): an idea to explore later. Your addition, 28 Nov 2026 (still an idea to explore): gym members could also sign up with Google, so their name, email and maybe photo fill in by themselves; anyone who signs in, even by email, could then have their gym found automatically, and the phone number check would be needed only for other things. | People without a gym sign in with Google and see no Gym tab. The tab appears when a gym is found. 'Connect to a gym' stays in Settings. |
 
 ### Admin app (gym owner and staff)
 | Feature | Status | Details | How it will work |
