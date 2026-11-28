@@ -1,0 +1,65 @@
+{
+  "id": "R-636",
+  "title": "Watch keeps the workout on screen (phone activity counts, pause no longer lets go at once) and keeps reading heart rate while dim",
+  "lane": "full",
+  "family": "the watch treats 'nobody touched the watch' as 'nobody is training' and 'dim' as 'nobody needs the heart rate'",
+  "findings": [
+    "O-05",
+    "O-40",
+    "F243 (step A)",
+    "F244 (step A)"
+  ],
+  "approved_by": "Owner 28 Nov 2026: \"Ok, so yes, build it today ... don't worry about the limit, continue building it, and of course, take the whole thing through the 360 review\"",
+  "status": "active",
+  "session_id": "939ae594-17ee-4dc6-9ba6-f9f5273f9acf",
+  "dark": false,
+  "file_boundary": [
+    "apps/mobile/android/wear/src/main/java/com/forgeai/wear/SelfDim.kt",
+    "apps/mobile/android/wear/src/main/java/com/forgeai/wear/MainActivity.kt",
+    "apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchLayout.kt",
+    "apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchScreens.kt",
+    "apps/mobile/android/wear/src/main/java/com/forgeai/wear/LogScreens.kt",
+    "apps/mobile/android/wear/src/main/java/com/forgeai/wear/WatchState.kt",
+    "apps/mobile/android/wear/src/test/java/com/forgeai/wear/",
+    "apps/mobile/src/lib/watchDiag.ts",
+    "apps/mobile/test/lib/watchDiag.test.ts",
+    "scripts/ci/watch_dim_aod_off_uat.sh",
+    "scripts/ci/watch_keep_screen_uat.sh",
+    "docs/"
+  ],
+  "gates": {
+    "G0_family": {
+      "done": true,
+      "evidence": "docs/designs/R-636.md section 2: grep of releaseWhy/inputAt/input(/released/dimmed/ambient/onScreen/heart.start/heartLine/HeartLine in wear/*.kt, phone src (watchDiag.ts reason list), dashboard, website. 5 siblings fixed (idle counts only watch input; instant paused let-go; sensor off when self-dimmed; dim heart line hidden in WatchCopy.heartLine and LogScreens TopBar; stale number off-wrist), AOD-on system dim and once-a-minute loops named and left."
+    },
+    "G1_design": {
+      "done": true,
+      "evidence": "docs/designs/R-636.md"
+    },
+    "G2_goldfish": {
+      "done": true,
+      "evidence": "Round 1 (28 Nov): newcomer 14, critic 17, promises 10 findings; all answered, note section 10. Round 2 (28 Nov, last): newcomer 14, critic 14, promises 10; all answered or accepted, note section 11. Accepted risks: unmeasured battery and per-reading dim redraw (step B lowers), wall-clock jumps (4-hour limit), diary of his past workouts not read, brief screens keep the sensor. Owner words (What's new, permission line, website) are (HIM) questions at release, none blocking the build."
+    },
+    "G3_tests_first": {
+      "done": true,
+      "evidence": "Tests written from docs/designs/R-636.md section 9 before the code, commit 11c102a9: apps/mobile/android/wear/src/test/java/com/forgeai/wear/SelfDimTest.kt, WatchLayoutTest.kt, WatchLogRenderTest.kt, WatchScreensRenderTest.kt, apps/mobile/test/lib/watchDiag.test.ts. Red: Wear OS build run 46109549313 https://github.com/aucksy/ForgeAI/actions/runs/46109549313 (job build, step 'Watch unit tests + watch screens (rendered)' failed in compileDebugUnitTestKotlin, e.g. 'No parameter with name activityAt found', 'Unresolved reference workoutChanged'); CI run 46109549290 also red (the card was not yet in that commit)."
+    },
+    "G4_build": {
+      "done": false,
+      "evidence": ""
+    },
+    "G5_review": {
+      "done": false,
+      "evidence": ""
+    },
+    "G6_proven": {
+      "done": false,
+      "evidence": ""
+    },
+    "G7_delivered": {
+      "done": false,
+      "evidence": ""
+    }
+  },
+  "escapes": []
+}
