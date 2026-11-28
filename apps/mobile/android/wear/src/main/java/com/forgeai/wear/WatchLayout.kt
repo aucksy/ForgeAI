@@ -265,7 +265,7 @@ object WatchCopy {
 
   /**
    * The phone's workout timer is paused: its live card's line ([WatchState.Snapshot.text]) starts "Paused · "
-   * (liveCard.ts). The app's own dim screen lets the screen go then (SelfDim.releaseWhy).
+   * (liveCard.ts). R-636: no longer a reason to let the screen go (only the diary's paused= reads it).
    */
   fun paused(text: String): Boolean = text.trimStart().startsWith(PAUSED.trimEnd())
 
@@ -347,12 +347,16 @@ object WatchCopy {
   data class HeartLine(val text: String, val waiting: Boolean)
 
   /**
-   * Null (no line, the column re-centres) when the member said no, the watch has no sensor, or the
-   * screen is in ambient (no live heart rate there). Otherwise the reading, or "♥ —" until one comes.
+   * Null (no line, the column re-centres) when the member said no or the watch has no sensor. Bright: the
+   * reading, or "♥ —" until one comes. R-636 (owner, 28 Nov 2026: "not capturing the heart rate when it's
+   * dim"): dimmed ([ambient], the watch's or the app's own dim screen), the live number only while the sensor
+   * is READING a number above 0; never "♥ —", never an old number while it searches, is off the wrist or
+   * unavailable (the sensor runs dimmed only while the app holds the screen, SelfDim.measureHeart).
    */
   fun heartLine(allowed: Boolean, status: HeartRate.Status, bpm: Double?, ambient: Boolean): HeartLine? {
-    if (ambient || !allowed || status == HeartRate.Status.NO_SENSOR) return null
+    if (!allowed || status == HeartRate.Status.NO_SENSOR) return null
     val value = RestText.bpm(bpm)
+    if (ambient) return if (status == HeartRate.Status.READING && value != "—") HeartLine("$HEART $value", waiting = false) else null
     return HeartLine("$HEART $value", waiting = value == "—")
   }
 }

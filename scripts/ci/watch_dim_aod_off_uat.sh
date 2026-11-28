@@ -15,7 +15,10 @@
 # D-tap-safe, D-wrist-down, D-wrist-up, D-rest-end, D-leave, D-setting, D-saver (when the emulator enters
 # Battery Saver; INFO when it cannot), D-end, D-no-workout, and the battery guard: D-idle, D-idle-touch,
 # D-idle-off, D-idle-wake (no input for the idle wait lets the screen go; QA-only key shortens 12 min to 40 s),
-# D-paused, D-paused-resume (a workout paused on the phone never holds the screen).
+# and R-636: D-change, D-change-same, D-change-rehold (a workout that keeps changing on the phone holds the
+# screen; no change for the idle wait lets it go; a change holds it again), D-paused, D-paused-why,
+# D-paused-resume (a paused workout is held until the idle wait, never let go at once), D-dim-heart (the dim
+# screen shows the heart rate; INFO when the emulator gives no heart number at all).
 #
 # Usage: watch_dim_aod_off_uat.sh <apk> <out-dir>
 set -uo pipefail
@@ -531,48 +534,172 @@ ui_prefs
 TO="$(set_timeout 15000)"
 result D-idle-restore INFO "QA idle key removed; screen timeout: $TO"
 
-# ---- D-paused: the workout timer is paused on the phone: the app never holds the screen; it turns fully off by
-# the watch's 15 s timeout (negative), and the diary says why (self-dim-off paused). ----
-log "D-paused"
-NOW="$(now_ms)"
-B="$(count 'self-dim-off paused')"
-BON="$(count 'self-dim-on')"
-fresh_workout 0 $((NOW - 60000)) "" "Paused · Set 3 of 4"
-G="$(wait_for 'self-dim-off paused' "$B" 8)"
-KP="$(keep_on)"
-shot "D-paused-open"
-sleep 20
-shot "D-paused-off"
-WP="$(awake)"
-DP="$(dark "$OUT/shots/D-paused-off.png")"
-ONP="$(count 'self-dim-on')"
-if [ "$G" = "1" ] && [ "$KP" = "0" ] && [ "$ONP" = "$BON" ] && [ "$WP" != "Awake" ] && [ "$DP" = "1" ]; then
-  result D-paused PASS "paused workout: never held (diary self-dim-off paused, no keep-on), fully off by the watch's timeout (power $WP)"
-else
-  result D-paused FAIL "paused workout: self-dim-off paused=$G, keep=$KP, self-dim-on $BON -> $ONP, after 20 s power=$WP black=$DP"
-fi
-# R-557: the paused wake names why it was not held (hold=0 ... paused=1); the black screen after it is a stop
-# line with held=0 and cause=always-on-off (the shape the phone counts as "Off instead of dim").
-WHYP="$(count 'self-dim-why resume hold=0 workout=1 front=1 aod=0 saver=0 blacked=0 paused=1')"
-if [ "$WHYP" -ge 1 ]; then
-  result D-paused-why PASS "the paused wake wrote why the screen was not held (hold=0 ... paused=1)"
-else
-  result D-paused-why FAIL "no self-dim-why hold=0 paused=1 line ($(diag | grep -E 'self-dim-why' | tail -2 | tr '\n' ' '))"
-fi
-result D-paused-stop INFO "stop lines while paused: $(diag | grep -E ' stop ' | tail -2 | sed -E 's/^.* stop //' | tr '\n' '|')"
-# Resumed on the phone (its next message drops "Paused · "; the emulator has no phone, so the app is reopened
-# on that state): held again. The live switch (LaunchedEffect on the paused line) is covered by SelfDimTest.
-B="$(count 'self-dim-on (resume|state)')"
+# ---- R-636: a workout that keeps changing holds the screen; the heart rate on the dim screen ----
+# The emulator has no paired phone, so a live update from the phone is pushed with a test-only extra:
+# `am start --es qaWorkout '<json>'` reaches the running app (onNewIntent) and goes through the same
+# WatchState.onWorkout path as the phone's message. MainActivity reads it only on a test system build
+# (ro.build.type not "user", the same guard as the QA idle key): never on a member's watch.
+QSEQ=10
+qa_push() { # set-line: a live workout update as the phone sends it (ASCII text; the seq always goes up)
+  QSEQ=$((QSEQ + 1))
+  printf '{"seq":%d,"active":true,"title":"Bench Press","text":"%s","set":"%s","last":"60 kg x 8","goal":"60 kg x 8"}' \
+    "$QSEQ" "$1" "$1" > /tmp/qa.json
+  adb push /tmp/qa.json /data/local/tmp/qa.json >/dev/null
+  adb shell "am start -n $ACT --es qaWorkout \"\$(cat /data/local/tmp/qa.json)\"" >/dev/null 2>&1 || true
+}
+idle_setup() { # the QA idle wait (ms) and the watch's screen timeout (ms), on a fresh start of the app
+  adb shell am force-stop $PKG
+  sleep 1
+  ui_prefs "$1"
+  adb shell input keyevent KEYCODE_WAKEUP
+  set_timeout "$2" >/dev/null
+}
+
+# ---- D-change: the member logs on the phone and never touches the watch. Each change to the workout (a new
+# set line) restarts the idle wait, so the screen stays held; with no change for the idle wait it is let go;
+# a change after that holds it again (diary "self-dim-on change"). QA idle wait 30 s, screen timeout 90 s. ----
+log "D-change"
+idle_setup 30000 90000
 NOW="$(now_ms)"
 fresh_workout 0 $((NOW - 60000))
-G="$(wait_for 'self-dim-on (resume|state)' "$B" 8)"
+sleep 3
+K0="$(keep_on)"
+B="$(count 'self-dim-off idle')"
+BQ="$(count 'qa-workout')"
+for i in 1 2 3 4; do # pushes at about 0, 20, 40 and 60 s: 70 s with changes, never 30 s without one
+  qa_push "Set $i of 4"
+  if [ "$i" -lt 4 ]; then sleep 20; fi
+done
+LAST="$(date +%s)"
+sleep 10
+KC="$(keep_on)"
+NC="$(count 'self-dim-off idle')"
+NQ="$(count 'qa-workout')"
+shot "D-change-held"
+if [ "$K0" = "1" ] && [ "$KC" = "1" ] && [ "$NC" = "$B" ] && [ "$NQ" -ge $((BQ + 4)) ]; then
+  result D-change PASS "70 s of workout changes from the phone, no watch input: still held (KEEP_SCREEN_ON), no self-dim-off idle"
+else
+  result D-change FAIL "changes every 20 s: held before=$K0, after 70 s=$KC, self-dim-off idle $B -> $NC, pushes read $BQ -> $NQ ($(diag | grep -E 'self-dim|qa-workout' | tail -4 | tr '\n' ' '))"
+fi
+# The same workout again (only the seq moves, as a phone resending it): not a change, so let go 30 s after the
+# last real change.
+G=0
+for i in 1 2 3; do
+  qa_push "Set 4 of 4"
+  G="$(wait_for 'self-dim-off idle' "$B" 20)"
+  [ "$G" = "1" ] && break
+done
+GONE=$(( $(date +%s) - LAST ))
+KS="$(keep_on)"
+shot "D-change-same"
+if [ "$G" = "1" ] && [ "$KS" = "0" ] && [ "$GONE" -ge 25 ] && [ "$GONE" -le 50 ]; then
+  result D-change-same PASS "the same workout resent (no change): let go ${GONE} s after the last change (diary self-dim-off idle)"
+else
+  result D-change-same FAIL "same workout resent: self-dim-off idle=$G after ${GONE} s (want 25-50), KEEP_SCREEN_ON=$KS"
+fi
+# A real change on the let-go screen (still on: 90 s timeout) holds it again.
+B="$(count 'self-dim-on change')"
+qa_push "Set 1 of 3"
+GC="$(wait_for 'self-dim-on change' "$B" 8)"
+KR="$(keep_on)"
+shot "D-change-rehold"
+if [ "$GC" = "1" ] && [ "$KR" = "1" ]; then
+  result D-change-rehold PASS "a workout change after the let-go held the screen again (diary self-dim-on change, KEEP_SCREEN_ON)"
+else
+  result D-change-rehold FAIL "change after the let-go: self-dim-on change=$GC, KEEP_SCREEN_ON=$KR, power=$(awake)"
+fi
+result D-change-wrist INFO "off-wrist lines (a change off the wrist does not count): $(count 'self-dim-why off-wrist')"
+
+# ---- D-paused: the workout timer is paused on the phone (R-636: no instant let-go any more). The screen is held
+# (the wake's why line says hold=1 ... paused=1) until the idle wait, then let go as "idle", never "paused". The
+# workout resumed on the phone is a change: held again. QA idle wait 30 s, screen timeout 90 s. ----
+log "D-paused"
+idle_setup 30000 90000
+NOW="$(now_ms)"
+BP="$(count 'self-dim-off paused')"
+B="$(count 'self-dim-off idle')"
+fresh_workout 0 $((NOW - 60000)) "" "Paused · Set 3 of 4"
+T0="$(date +%s)"
+sleep 3
+KP="$(keep_on)"
+shot "D-paused-open"
+G="$(wait_for 'self-dim-off idle' "$B" 60)"
+GONE=$(( $(date +%s) - T0 ))
+KG="$(keep_on)"
+NP="$(count 'self-dim-off paused')"
+shot "D-paused-let-go"
+if [ "$KP" = "1" ] && [ "$G" = "1" ] && [ "$GONE" -ge 20 ] && [ "$KG" = "0" ] && [ "$NP" = "$BP" ]; then
+  result D-paused PASS "paused workout: held at first (KEEP_SCREEN_ON), let go only after the idle wait (${GONE} s, self-dim-off idle), never self-dim-off paused"
+else
+  result D-paused FAIL "paused workout: held at first=$KP, self-dim-off idle=$G after ${GONE} s (want >= 20), keep after=$KG, self-dim-off paused $BP -> $NP"
+fi
+WHYP="$(count 'self-dim-why resume hold=1 workout=1 front=1 aod=0 saver=0 blacked=0 paused=1')"
+if [ "$WHYP" -ge 1 ]; then
+  result D-paused-why PASS "the paused wake wrote that the screen is held although paused (hold=1 ... paused=1)"
+else
+  result D-paused-why FAIL "no self-dim-why hold=1 paused=1 line ($(diag | grep -E 'self-dim-why' | tail -2 | tr '\n' ' '))"
+fi
+# Resumed on the phone: its next message drops "Paused · " (pushed live): a change, so held again.
+B="$(count 'self-dim-on change')"
+qa_push "Set 3 of 4"
+G="$(wait_for 'self-dim-on change' "$B" 8)"
 KR="$(keep_on)"
 shot "D-paused-resumed"
 if [ "$G" = "1" ] && [ "$KR" = "1" ]; then
-  result D-paused-resume PASS "workout no longer paused: MettleUp holds the screen again (self-dim-on, KEEP_SCREEN_ON)"
+  result D-paused-resume PASS "workout resumed on the phone: MettleUp holds the screen again (self-dim-on change, KEEP_SCREEN_ON)"
 else
-  result D-paused-resume FAIL "not paused any more: self-dim-on=$G, KEEP_SCREEN_ON=$KR"
+  result D-paused-resume FAIL "resumed on the phone: self-dim-on change=$G, KEEP_SCREEN_ON=$KR"
 fi
+adb shell am force-stop $PKG
+sleep 1
+ui_prefs
+TO="$(set_timeout 15000)"
+result D-change-restore INFO "QA idle key removed; screen timeout: $TO"
+
+# ---- D-dim-heart: the owner's case (28 Nov 2026: "not capturing the heart rate when it's dim"). With the
+# emulator's fake heart data, the app's own dim screen still shows "♥ <number>" (read from the screen's
+# accessibility tree with uiautomator; the dim clock ticks once a minute, so the dump is retried). Bright first as
+# the control: an emulator that gives no heart number at all is INFO, not a pass. ----
+log "D-dim-heart"
+adb shell am broadcast -a whs.USE_SYNTHETIC_PROVIDERS com.google.android.wearable.healthservices >/dev/null 2>&1 || true
+adb shell am broadcast -a whs.synthetic.user.START_EXERCISE --ei exercise_options_heart_rate 128 com.google.android.wearable.healthservices >/dev/null 2>&1 || true
+ui_tree() { # the screen's tree ("" = could not be read)
+  local i x
+  for i in 1 2 3; do
+    adb shell rm -f /sdcard/ui.xml >/dev/null 2>&1
+    adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 || true
+    x="$(adb shell cat /sdcard/ui.xml 2>/dev/null | tr -d '\r')"
+    if echo "$x" | grep -q "<hierarchy"; then echo "$x"; return; fi
+    sleep 1
+  done
+}
+heart_now() { ui_tree | grep -oE '♥ [0-9]+' | head -1; }
+NOW="$(now_ms)"
+B="$(count 'self-dim-enter timeout')"
+fresh_workout 0 $((NOW - 60000))
+HB=""
+for i in $(seq 1 6); do # bright: the 15 s screen timeout has not passed yet
+  HB="$(heart_now)"
+  [ -n "$HB" ] && break
+  sleep 1
+done
+shot "D-dim-heart-bright"
+GD="$(wait_for 'self-dim-enter timeout' "$B" 30)"
+HD=""
+for i in $(seq 1 10); do
+  HD="$(heart_now)"
+  [ -n "$HD" ] && break
+  sleep 2
+done
+shot "D-dim-heart-dim"
+if [ "$GD" = "1" ] && [ -n "$HD" ]; then
+  result D-dim-heart PASS "the app's own dim screen shows the heart rate (bright: ${HB:-none yet}; dim: $HD)"
+elif [ -z "$HB" ] && [ -z "$HD" ]; then
+  result D-dim-heart INFO "this emulator gave no heart number even bright (dimmed=$GD); the dim line is covered by the render tests"
+else
+  result D-dim-heart FAIL "dimmed=$GD; heart line bright: ${HB:-none}, dim: ${HD:-none}"
+fi
+adb shell am broadcast -a whs.synthetic.user.STOP_EXERCISE com.google.android.wearable.healthservices >/dev/null 2>&1 || true
 
 adb shell dumpsys power 2>/dev/null | tr -d '\r' > "$OUT/power-end.txt" || true
 adb logcat -d > "$OUT/logcat.txt" || true

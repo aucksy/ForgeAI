@@ -58,7 +58,8 @@ import kotlin.math.ceil
  * drawn at its own px on the 456 px round canvas and scaled by screen width / 456 ([Px]). Screens:
  * 1 Next set, 2a/2b the crown on weight or reps, 3 effort, 4 Saved + rest timer, 5 rest is over,
  * 6 exercise done, 7 not saved; each has its always-on (dim) form: black, ink #BDBDBD, grey
- * #7A7A7A, outlines only, no fills, no seconds, no heart rate, no buttons.
+ * #7A7A7A, outlines only, no fills, no seconds, no buttons; R-636 (28 Nov 2026, owner: "not capturing the
+ * heart rate when it's dim"): the live heart rate next to the time while the sensor reads (before: none).
  * The flow itself (what each tap does) is pure, in WatchLog.kt; MainActivity keeps its state.
  */
 
@@ -219,7 +220,9 @@ private fun fillIcon(d: String, color: Color): ImageVector =
 
 /**
  * Time and heart rate, top centre (22 px / 600, was 20; the heart in the accent), its top at
- * [LogLayout.TOP_BAR] on every logging screen (R-354). Dim: the time only.
+ * [LogLayout.TOP_BAR] on every logging screen (R-354). R-636 (owner, 28 Nov 2026: "not capturing the heart
+ * rate when it's dim"): dim, the time and the live heart rate while the sensor reads ([WatchCopy.heartLine]
+ * gives no line otherwise); the heart is an outline there, as every dim mark is.
  */
 @Composable
 private fun TopBar(px: Px, now: Long, heart: WatchCopy.HeartLine?, ambient: Boolean, timeInk: Color, ink: LogInk) {
@@ -230,9 +233,13 @@ private fun TopBar(px: Px, now: Long, heart: WatchCopy.HeartLine?, ambient: Bool
   Centered(px, LogLayout.TOP_BAR) {
     Row(verticalAlignment = Alignment.CenterVertically) {
       Line(time, px, size, FontWeight.SemiBold, timeInk, spacing = 0.02f, lineHeight = 1.2f, tabular = true, tag = "clock")
-      if (heart != null && !ambient) {
+      if (heart != null) {
         Spacer(Modifier.width(px.dp(12f)))
-        StrokeIcon(px.dp(16f), "heartIcon", "heartFill", ink.acc) { fillIcon(HEART_FILL, ink.acc) }
+        if (ambient) {
+          StrokeIcon(px.dp(16f), "heartIcon", "heartOutline", ink.acc) { strokeIcon(listOf(IconPath(HEART_FILL, ink.acc)), 1.7f, StrokeCap.Round, StrokeJoin.Round) }
+        } else {
+          StrokeIcon(px.dp(16f), "heartIcon", "heartFill", ink.acc) { fillIcon(HEART_FILL, ink.acc) }
+        }
         Spacer(Modifier.width(px.dp(4f)))
         Line(heart.text.removePrefix(WatchCopy.HEART).trim(), px, size, FontWeight.Bold, if (heart.waiting) ink.grey else ink.ink, tabular = true, tag = "heart")
       }

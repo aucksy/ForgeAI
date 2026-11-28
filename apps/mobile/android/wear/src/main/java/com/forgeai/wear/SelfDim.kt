@@ -29,10 +29,12 @@ import android.provider.Settings
  * Battery guard (review of R-442, 10 Nov 2026): a workout counts as open for 4 h after the phone last spoke of
  * it, so a member who walked away, left the workout paused or forgot to finish kept the screen on (dimmed, the
  * processor awake, the wrist sensor running) for up to 4 h. Now the screen is let go ([releaseWhy]) after
- * [IDLE_RELEASE_MS] with no tap, crown turn, button or wrist raise ("idle"), and at once while the phone's
- * workout timer is paused ("paused", [WatchCopy.paused]). Let go = keep-screen-on cleared and the wrist sensor
- * stopped; the watch's own timeout then turns the screen fully off. The next tap, crown turn or the watch's own
- * wake (tilt-to-wake brings MettleUp back) holds it again, and so does the workout being resumed on the phone.
+ * [IDLE_RELEASE_MS] with no tap, crown turn, button or wrist raise and (R-636) no change to the workout on the
+ * phone or the watch ("idle"). Let go = keep-screen-on cleared and the wrist and heart sensors stopped; the
+ * watch's own timeout then turns the screen fully off. The next tap, crown turn or the watch's own wake
+ * (tilt-to-wake brings MettleUp back) holds it again, and so does a workout change while MettleUp is still on
+ * screen ("change"). R-636: a pause on the phone no longer lets go at once, and the heart rate keeps reading on
+ * the app's own dim screen while it is held ([measureHeart]).
  *
  * Everything here that decides is PURE and JVM-tested (SelfDimTest); [MainActivity] does the Android side.
  */
@@ -84,7 +86,8 @@ object SelfDim {
    * wakes and not one line saying whether the app held the screen, because [MainActivity]'s check wrote nothing
    * when nothing changed. Now every wake writes this ("self-dim-why resume ..."): [hold] the result, then each
    * input of [wanted] and [releaseWhy] (front = MettleUp in front, blacked = a black screen already this
-   * workout, paused = the phone's workout timer paused, quiet = no input for the idle wait). "?" = unreadable.
+   * workout, paused = the phone's workout timer paused (R-636: written as read, no longer a reason to let go),
+   * quiet = no input and no workout change for the idle wait). "?" = unreadable.
    * Keys match the phone's watchDiag.ts KEYS (anything else is dropped there). PURE.
    */
   fun inputs(
@@ -106,7 +109,7 @@ object SelfDim {
     null -> "?"
   }
 
-  /** Battery guard: no tap, crown turn, button or wrist raise for this long and the screen is let go. */
+  /** Battery guard: no tap, crown turn, button, wrist raise or (R-636) workout change for this long: let go. */
   const val IDLE_RELEASE_MS = 12 * 60_000L
 
   /**
@@ -127,15 +130,67 @@ object SelfDim {
     if (testOs && qaOverride > 0L) qaOverride.coerceIn(QA_IDLE_MIN_MS, IDLE_RELEASE_MS) else IDLE_RELEASE_MS
 
   /**
-   * Why a screen [wanted] is let go anyway: "paused" while the phone's workout timer is paused, "idle" when the
-   * last tap, crown turn, button or wrist raise ([inputAt]) is [idleMs] or more ago; null = keep holding it. A
-   * clock that went back (now before [inputAt]) is not idle. PURE.
+   * Why a screen [wanted] is let go anyway: "idle" when the last activity ([activityAt], see [activityAt]) is
+   * [idleMs] or more ago; null = keep holding it. A clock that went back (now before [activityAt]) is not idle.
+   *
+   * R-636 (owner, 27 and 28 Nov 2026, O-05 / O-40: the workout "is automatically going in the background ... which
+   * also turns off the screen"): the instant "paused" let-go is gone. A pause on the phone is a workout change like
+   * any other, so a paused workout is held until the same idle wait, and the word stays "idle" (a tap holds it again).
+   * PURE.
    */
-  fun releaseWhy(now: Long, inputAt: Long, paused: Boolean, idleMs: Long = IDLE_RELEASE_MS): String? = when {
-    paused -> "paused"
-    now - inputAt >= idleMs -> "idle"
-    else -> null
-  }
+  fun releaseWhy(now: Long, activityAt: Long, idleMs: Long = IDLE_RELEASE_MS): String? =
+    if (now - activityAt >= idleMs) "idle" else null
+
+  /**
+   * R-636: the idle wait's activity: the later of the last watch input ([inputAt]: tap, crown, button, wrist raise,
+   * the watch's own wake) and the last workout change ([changeAt], [workoutChanged]; 0 = none yet). [inputAt] alone
+   * still drives the bright-to-dim timeout and the wrist-down quiet window. PURE.
+   */
+  fun activityAt(inputAt: Long, changeAt: Long): Long = maxOf(inputAt, changeAt)
+
+  /**
+   * R-636: did the screen's copy of the workout CHANGE? Any field but [WatchState.Snapshot.accent] (the gym colour):
+   * a rest started or ended (on the phone, by ±15 or Skip on the watch, or the watch's own rest alarm), the set line
+   * (covers pause and resume), the next set, "Rest is over", "Workout saved", the logging screens' boxes and row. An
+   * equal copy (a retry, a flush, a re-send) is no change. PURE.
+   */
+  fun workoutChanged(old: WatchState.Snapshot, new: WatchState.Snapshot): Boolean =
+    old.copy(accent = null) != new.copy(accent = null)
+
+  /**
+   * R-636: off the wrist ([HeartRate.Status.OFF_WRIST]) a workout change is not activity: only the watch's own input
+   * counts, so a watch left on a bench goes dark after the idle wait as before. PURE.
+   */
+  fun countsChange(status: HeartRate.Status): Boolean = status != HeartRate.Status.OFF_WRIST
+
+  /**
+   * R-636: is the heart sensor on? [onScreen]: MettleUp in front. [systemDim]: the watch's own dim state (Always-on
+   * on): never there (the processor sleeps between its redraws, and no idle wait guards it). [selfDim]: the app's
+   * own dim screen: only while [held] (the app keeps the screen on; after a let-go the sensor stops). [allowed]:
+   * heart rate permitted. [workoutOrRest]: a workout open or a rest running. [locked]: the "needs MettleUp Plus"
+   * screen (heart rate on the watch is part of the paid watch app). The bright screen is as before. PURE.
+   */
+  fun measureHeart(
+    onScreen: Boolean,
+    systemDim: Boolean,
+    selfDim: Boolean,
+    held: Boolean,
+    allowed: Boolean,
+    workoutOrRest: Boolean,
+    locked: Boolean,
+  ): Boolean = onScreen && allowed && workoutOrRest && !locked && !systemDim && (!selfDim || held)
+
+  /**
+   * The watch's system is a test build ([buildType] = Build.TYPE, not "user"): only there do the QA idle key and the
+   * test-only live workout push (MainActivity, "qaWorkout") count. Never on a member's watch. PURE.
+   */
+  fun testOs(buildType: String): Boolean = buildType != "user"
+
+  /** R-636 diary word: the screen was held again because the workout changed (on the phone or the watch). */
+  const val WHY_CHANGE = "change"
+
+  /** R-636 diary word, once per time: the heart sensor said the watch is off the wrist while the screen was held. */
+  const val WHY_OFF_WRIST = "off-wrist"
 
   /** The dim wait: the watch's own screen timeout, kept between [MIN_TIMEOUT_MS] and [MAX_TIMEOUT_MS]. PURE. */
   fun timeoutMs(setting: Long?): Long =

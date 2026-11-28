@@ -80,7 +80,7 @@ const EVENTS: Record<string, string> = {
 const SELF_DIM = new Set(['hold', 'letgo', 'ADIM', 'aundim', 'why']);
 
 /** The only "why" words a self-dim line may carry: what happened, never anything the member typed. */
-const SELF_DIM_WHY = new Set(['stop', 'state', 'check', 'resume', 'setting', 'idle', 'paused', 'touch', 'crown', 'key', 'wrist-up', 'wrist-down', 'timeout']);
+const SELF_DIM_WHY = new Set(['stop', 'state', 'check', 'resume', 'setting', 'idle', 'paused', 'change', 'off-wrist', 'touch', 'crown', 'key', 'wrist-up', 'wrist-down', 'timeout']);
 
 /** Events dropped first when the log is too long (they say least about a black screen). */
 const MINOR = new Set(['focus', 'unfocus', 'pause', 'intent']);
@@ -209,15 +209,14 @@ export function watchLogText(items: WatchDiagItem[], max: number = FEEDBACK_MAX,
   const holds = lines.filter((l) => l.event === 'hold').length;
   const letGo = lines.filter((l) => l.event === 'letgo');
   const idle = letGo.filter((l) => / idle( |$)/.test(l.text)).length;
-  const paused = letGo.filter((l) => / paused( |$)/.test(l.text)).length;
   const rebuilds = lines.filter((l) => l.event === 'REBUILD').length;
   const lastState = [...lines].reverse().find((l) => / bs[01?]/.test(l.text));
   const bs = lastState ? (/ (bs[01?])/.exec(lastState.text)?.[1] ?? '') : '';
   const aod = lastState ? (/ (aod[0-9?/-]+)/.exec(lastState.text)?.[1] ?? '') : '';
   const head = [
     `Watch screen log (R-441), written ${when(w.at) || 'at an unknown time'}${items.length > 1 ? `, newest of ${items.length} watches` : ''}.${watchApp ? ` Watch app: ${watchApp}.` : ''}${popup ? ` Pop-up: ${popup}.` : ''}`,
-    `${lines.length} lines on the watch. Off instead of dim: ${black} (saver ${saver}, aod-off ${aodOff}, while held ${heldBlack}, old watch app ${oldApp}). Dimmed by the watch (Always-on on): ${dims}. Dimmed by the app (Always-on off): ${selfDims}; screen held ${holds}, let go ${letGo.length} (idle ${idle}, paused ${paused}). Rebuild: ${rebuilds}. Last: ${[bs, aod].filter(Boolean).join(' ') || '-'}.`,
-    'Key: sc screen on, bs Battery Saver, id idle, aod always-on global/secure, th theatre, amb dimmed, wo workout open, bo rebuild armed, hd the app holds the screen; DIM/undim the watch dims, ADIM/aundim the app dims, hold/letgo the app keeps the screen on or lets go (and why); why the check on each wake (fr app in front, bk black before, pa paused, qt unused 12 min). Times are the watch clock.',
+    `${lines.length} lines on the watch. Off instead of dim: ${black} (saver ${saver}, aod-off ${aodOff}, while held ${heldBlack}, old watch app ${oldApp}). Dimmed by the watch (Always-on on): ${dims}. Dimmed by the app (Always-on off): ${selfDims}; screen held ${holds}, let go ${letGo.length} (idle ${idle}). Rebuild: ${rebuilds}. Last: ${[bs, aod].filter(Boolean).join(' ') || '-'}.`,
+    'Key: sc screen on, bs Battery Saver, id idle, aod always-on global/secure, th theatre, amb dimmed, wo workout open, bo rebuild armed, hd the app holds the screen; DIM/undim the watch dims, ADIM/aundim the app dims, hold/letgo the app keeps the screen on or lets go (and why: idle = no change on phone or watch for 12 min, change = the workout changed, off-wrist = the watch is off the wrist); why the check on each wake (fr app in front, bk black before, pa paused, qt quiet 12 min). Times are the watch clock.',
   ].join('\n');
 
   const budget = max - head.length - 1;

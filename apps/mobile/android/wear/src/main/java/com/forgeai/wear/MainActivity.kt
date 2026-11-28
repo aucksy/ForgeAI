@@ -43,8 +43,9 @@ import kotlinx.coroutines.delay
  * The watch screen (WatchScreens.kt). R-207 (29 Oct 2026): the designer's "Ring" screens, chosen
  * from state alone ([ScreenSelector]): two first-launch permission screens (the only taps), phone
  * not connected, nothing open, rest timer, rest is over, between rests. Glance-only: the screen has
- * no "Complete set" any more. Heart rate is measured only while this screen is visible, not dimmed,
- * and a workout is open.
+ * no "Complete set" any more. Heart rate is measured only while this screen is visible and a workout is
+ * open (or a rest runs): bright, and (R-636) on the app's own dim screen while it holds the screen; never in
+ * the watch's own dim state (SelfDim.measureHeart). It is only shown: never saved, sent or written in the diary.
  *
  * R-166 (28 Oct 2026): ambient mode. With the watch's always-on screen the app stays on screen when
  * the watch dims (the ambient twin of each screen, redrawn about once a minute).
@@ -100,8 +101,24 @@ class MainActivity : ComponentActivity() {
   private var inputAt by mutableLongStateOf(0L)
 
   /**
-   * Battery guard: why the screen is let go although the workout would have it held ("idle": no input for
-   * [SelfDim.IDLE_RELEASE_MS]; "paused": the phone's workout timer is paused); null = not let go.
+   * R-636: when the screen's copy of the workout last CHANGED ([SelfDim.workoutChanged]; the watch's clock, 0 =
+   * none yet). Used ONLY by the idle wait ([SelfDim.activityAt]); the dim timeout and the wrist-down quiet window
+   * still follow [inputAt] alone. Not moved while the sensor says off the wrist ([SelfDim.countsChange]).
+   */
+  private var changeAt = 0L
+
+  /** R-636: the last copy of the workout compared ([onSnapshot]); null = none yet (the first is the baseline). */
+  private var lastSnap: WatchState.Snapshot? = null
+
+  /** R-636: "off-wrist" was written in the diary for this time off the wrist (once each time). */
+  private var offWristNoted = false
+
+  /** R-636: uptime of the last test-only live workout push ([QA_WORKOUT]); its onResume is not a watch input. */
+  private var qaPushAt = 0L
+
+  /**
+   * Battery guard: why the screen is let go although the workout would have it held ("idle": no input and no
+   * workout change for [SelfDim.IDLE_RELEASE_MS]); null = not let go. R-636: there is no "paused" any more.
    */
   private var released: String? = null
 
@@ -170,23 +187,19 @@ class MainActivity : ComponentActivity() {
     AmbientDiag.note(this, "create", if (savedInstanceState != null) "restored" else "")
     // Watch update ready (10 Nov 2026): the phone reads this app's version from the Data Layer.
     WatchVersion.publish(this, "start")
-    heart = HeartRate(this, { bpm = it }, { hrStatus = it })
+    heart = HeartRate(this, { bpm = it }, ::onHeartStatus)
     setContent {
       val snap = WatchState.snapshot
       // R-442: dimmed by the watch (ambient) or by the app itself (Always-on display off): drawn the same.
       val dimmed = ambient || selfDim
+      // R-636: a change to the workout (phone or watch) is activity for the idle wait, and holds a let-go screen
+      // again while MettleUp is on screen.
+      LaunchedEffect(snap) { onSnapshot(snap) }
       // R-442: is the app to keep the screen on and dim it itself? Checked when the screen or the workout
       // changes, then every few seconds while a workout is up (it may end by the phone's silence alone).
-      // Battery guard: a pause on the phone lets the screen go; the workout resumed holds it again (a fresh
-      // start for the idle wait: the member was busy on the phone).
-      val paused = WatchCopy.paused(snap.text)
-      LaunchedEffect(onScreen, snap.workoutActive, paused) {
-        if (!paused && released == "paused") {
-          inputAt = System.currentTimeMillis()
-          refreshSelfDim("resume")
-        } else {
-          refreshSelfDim("state")
-        }
+      // R-636: a pause on the phone no longer lets the screen go (it is a workout change like any other).
+      LaunchedEffect(onScreen, snap.workoutActive) {
+        refreshSelfDim("state")
         while (onScreen && (snap.workoutActive || selfDimOn)) {
           delay(SelfDim.RECHECK_MS)
           refreshSelfDim("check")
@@ -205,8 +218,20 @@ class MainActivity : ComponentActivity() {
           ambientTick = System.currentTimeMillis()
         }
       }
-      // Not in ambient: the dimmed screen shows no live bpm, so the sensor rests too (battery; 0.60.0 review).
-      val measure = onScreen && !dimmed && hrAllowed && (snap.workoutActive || snap.rest != null)
+      // R-636 (owner, 28 Nov 2026: "not capturing the heart rate when it's dim"): bright as before, and on the
+      // app's own dim screen while it holds the screen (the 0.60.0 battery choice reversed for that case only, at
+      // his request); never in the watch's own dim state (Always-on on), never after a let-go.
+      // locked = false: the watch cannot tell the "needs MettleUp Plus" screen today (the phone sends it as an
+      // ordinary workout, WearSync.workoutLocked, and the plan switch is off for everyone).
+      val measure = SelfDim.measureHeart(
+        onScreen = onScreen,
+        systemDim = ambient,
+        selfDim = selfDim,
+        held = selfDimOn,
+        allowed = hrAllowed,
+        workoutOrRest = snap.workoutActive || snap.rest != null,
+        locked = false,
+      )
       DisposableEffect(measure) {
         if (measure) heart.start()
         onDispose {
@@ -489,7 +514,8 @@ class MainActivity : ComponentActivity() {
     WorkoutLive.onScreenUp(this)
     AmbientDiag.note(this, "resume", AmbientDiag.state(this))
     // R-442: back in front: bright, and the app dims itself again if Always-on display is off.
-    inputAt = System.currentTimeMillis()
+    // R-636: the resume that follows a test-only workout push (qaWorkout) is not a watch input.
+    if (SystemClock.uptimeMillis() - qaPushAt > QA_PUSH_RESUME_MS) inputAt = System.currentTimeMillis()
     refreshSelfDim("resume")
     // R-353: last time the screen went OFF where it should have dimmed (AmbientDiag.Heal). Rebuild this
     // screen once, which registers it for the dim state again (the observer does that only in onCreate).
@@ -526,6 +552,7 @@ class MainActivity : ComponentActivity() {
   override fun onNewIntent(intent: Intent) {
     super.onNewIntent(intent)
     AmbientDiag.note(this, "new-intent", intent.action ?: "")
+    qaWorkout(intent)
   }
 
   override fun onStop() {
@@ -570,13 +597,16 @@ class MainActivity : ComponentActivity() {
     val aod = SelfDim.aodOn(this)
     val saver = SelfDim.saverOn(this)
     val blacked = blackedWorkout >= 0 && blackedWorkout == AmbientDiag.workoutCount
-    // Read from the saved state, not the snapshot: on opening, the snapshot is still the old one, and a
-    // paused workout was held for half a second (cloud watch check D-paused, run 42803353941).
+    // Written in the diary's why line only (R-636: a pause is no longer a reason to let go).
     val pausedNow = WatchCopy.paused(WatchState.setLine(this))
     val mode = SelfDim.wanted(workoutOpen = open, onScreen = onScreen, aodOn = aod, saverOn = saver, blackedOut = blacked)
-    // Battery guard: held only while someone uses the watch and the workout is not paused on the phone.
+    // Battery guard: held while someone uses the watch OR the workout keeps changing (R-636: phone or watch).
     val rel = if (mode) {
-      SelfDim.releaseWhy(now = System.currentTimeMillis(), inputAt = inputAt, paused = pausedNow, idleMs = idleReleaseMs())
+      SelfDim.releaseWhy(
+        now = System.currentTimeMillis(),
+        activityAt = SelfDim.activityAt(inputAt = inputAt, changeAt = changeAt),
+        idleMs = idleReleaseMs(),
+      )
     } else {
       null
     }
@@ -586,8 +616,7 @@ class MainActivity : ComponentActivity() {
     if (why == "resume") {
       AmbientDiag.note(this, "self-dim-why", "$why " + SelfDim.inputs(want, open, onScreen, aod, saver, blacked, pausedNow, rel == "idle"))
     }
-    // A new reason to let go is written in the diary even when the screen was not held (a workout that came
-    // up already paused shows "self-dim-off paused", so a black screen there is explained).
+    // A new reason to let go is written in the diary even when the screen was not held.
     val newlyReleased = rel != null && rel != released
     released = rel
     if (want == selfDimOn && !newlyReleased) return
@@ -596,10 +625,12 @@ class MainActivity : ComponentActivity() {
       try {
         if (want) {
           window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-          inputAt = System.currentTimeMillis()
+          // R-636: held again by a workout change: that change is the fresh start (changeAt is already now);
+          // inputAt keeps the last real input, so the dim timeout is not restarted by the phone.
+          if (why != SelfDim.WHY_CHANGE) inputAt = System.currentTimeMillis()
           startWrist()
         } else {
-          // The workout ended, was paused or nobody used the watch for 12 minutes (or Always-on came back):
+          // The workout ended or nothing changed and nobody used the watch for 12 minutes (or Always-on came back):
           // the screen is let go. Left dimmed, the watch's own timeout now turns it off; a touch makes it
           // bright first (and, after "idle", holds it again).
           window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
@@ -632,6 +663,70 @@ class MainActivity : ComponentActivity() {
   private fun input(why: String) {
     inputAt = System.currentTimeMillis()
     if (released == "idle") refreshSelfDim(why)
+  }
+
+  /**
+   * R-636: the screen's copy of the workout changed (phone or watch: a set ticked, a rest, a pause, a new set
+   * line). Any field but the gym's colour counts ([SelfDim.workoutChanged]) and moves the idle wait's clock,
+   * unless the sensor says the watch is off the wrist ([SelfDim.countsChange]). After an "idle" let-go, a change
+   * while MettleUp is on screen holds the screen again ("self-dim-on change" in the diary).
+   */
+  private fun onSnapshot(snap: WatchState.Snapshot) {
+    val old = lastSnap
+    lastSnap = snap
+    if (old == null || !SelfDim.workoutChanged(old, snap)) return
+    if (!SelfDim.countsChange(hrStatus)) return
+    changeAt = System.currentTimeMillis()
+    if (released == "idle" && onScreen) refreshSelfDim(SelfDim.WHY_CHANGE)
+  }
+
+  /**
+   * The heart sensor's state. R-636: off the wrist (or no reading any more) clears the last number, so the dim
+   * screen never shows an old one; "off-wrist" is written in the diary once per time off the wrist while the
+   * screen is held. The diary gets only the word, never the heart rate.
+   */
+  private fun onHeartStatus(status: HeartRate.Status) {
+    hrStatus = status
+    if (status == HeartRate.Status.OFF_WRIST || status == HeartRate.Status.UNAVAILABLE) bpm = null
+    if (status != HeartRate.Status.OFF_WRIST) {
+      offWristNoted = false
+    } else if (selfDimOn && !offWristNoted) {
+      offWristNoted = true
+      AmbientDiag.note(this, "self-dim-why", SelfDim.WHY_OFF_WRIST)
+    }
+  }
+
+  /**
+   * R-636, test builds of the watch's system ONLY ([SelfDim.testOs], the same guard as [SelfDim.QA_IDLE_KEY]):
+   * the cloud watch check pushes a live workout update with `am start --es qaWorkout '<json>'`, as the phone's
+   * DataLayer item would (the emulator has no paired phone). Ignored on a member's watch. Returns true if used.
+   */
+  private fun qaWorkout(intent: Intent): Boolean {
+    if (!SelfDim.testOs(Build.TYPE)) return false
+    val raw = intent.getStringExtra(QA_WORKOUT) ?: return false
+    intent.removeExtra(QA_WORKOUT)
+    return try {
+      val j = org.json.JSONObject(raw)
+      qaPushAt = SystemClock.uptimeMillis()
+      WatchState.onWorkout(
+        this,
+        j.optBoolean("active", true),
+        j.optString("title", ""),
+        j.optLong("seq", 0L),
+        j.optString("text", ""),
+        j.optString("done", ""),
+        NextSet(j.optString("set", ""), j.optString("last", ""), j.optString("goal", "")),
+        j.optString("accent", ""),
+        j.optBoolean("saved", false),
+        j.optBoolean("logFlow", false),
+        null,
+      )
+      AmbientDiag.note(this, "qa-workout", "seq ${j.optLong("seq", 0L)}")
+      true
+    } catch (e: Exception) {
+      Log.w("ForgeWear", "qa workout not read", e)
+      false
+    }
   }
 
   /** Dims the screen (the app's own dim state): lowest brightness, the dim screens. */
@@ -985,6 +1080,12 @@ class MainActivity : ComponentActivity() {
     private const val KEY_TIP_SHOWN = "dialTipShown"
     private const val PHONE_CHECK_MS = 15_000L
     private const val PHONE_RECHECK_MS = 3_000L
+
+    /** R-636: the test-only live workout push's extra (read on a test build of the watch's system only). */
+    private const val QA_WORKOUT = "qaWorkout"
+
+    /** R-636: an onResume this soon after a [QA_WORKOUT] push belongs to it (not a watch input). */
+    private const val QA_PUSH_RESUME_MS = 2_000L
 
     /** The screen is up (between onStart and onStop): [WorkoutStarted] then posts no card. */
     @Volatile
